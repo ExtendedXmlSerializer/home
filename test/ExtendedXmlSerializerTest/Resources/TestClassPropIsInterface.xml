@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassPropIsInterface type="ExtendedXmlSerialization.Test.TestObject.TestClassPropIsInterface">
+  <PropInter1 type="ExtendedXmlSerialization.Test.TestObject.TestClassInheritInterface1">
+    <PropFromInterface>PropInter1</PropFromInterface>
+  </PropInter1>
+  <PropInter2 type="ExtendedXmlSerialization.Test.TestObject.TestClassInheritInterface2">
+    <PropFromInterface>PropInter2</PropFromInterface>
+    <PropFromClass>PropClass1</PropFromClass>
+  </PropInter2>
+</TestClassPropIsInterface>

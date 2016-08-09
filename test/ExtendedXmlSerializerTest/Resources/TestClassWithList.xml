@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassWithList type="ExtendedXmlSerialization.Test.TestObject.TestClassWithList">
+  <ListStr>
+    <string>str1</string>
+    <string>str2</string>
+  </ListStr>
+  <ListObj>
+    <TestClassFromList type="ExtendedXmlSerialization.Test.TestObject.TestClassFromList">
+      <PropString>s1</PropString>
+      <PropInt>1</PropInt>
+    </TestClassFromList>
+    <TestClassFromList type="ExtendedXmlSerialization.Test.TestObject.TestClassFromList">
+      <PropString>s2</PropString>
+      <PropInt>2</PropInt>
+    </TestClassFromList>
+  </ListObj>
+</TestClassWithList>
