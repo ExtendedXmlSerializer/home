@@ -1,0 +1,25 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "ExtendedXmlSerializer": "1.0.0-*",
+    "ExtendedXmlSerializer.Autofac": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "net451": {} ,
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+  }
+}

@@ -16,6 +16,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EBF1CB73-B
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializerTest", "test\ExtendedXmlSerializerTest\ExtendedXmlSerializerTest.xproj", "{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Autofac", "src\ExtendedXmlSerializer.Autofac\ExtendedXmlSerializer.Autofac.xproj", "{7A2DEB5A-9EF2-4029-808A-D62473F30257}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A789F6C4-91DE-47A0-BD7E-E59562409BE7}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Samples", "ExtendedXmlSerializer.Samples\ExtendedXmlSerializer.Samples.xproj", "{426AF10E-B683-44C4-9849-FF8E14D3A3AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +36,14 @@ Global
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2DEB5A-9EF2-4029-808A-D62473F30257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2DEB5A-9EF2-4029-808A-D62473F30257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2DEB5A-9EF2-4029-808A-D62473F30257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2DEB5A-9EF2-4029-808A-D62473F30257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426AF10E-B683-44C4-9849-FF8E14D3A3AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,5 +51,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{474C8CF3-1FBB-4507-9156-D5DC153F4EB8} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
+		{7A2DEB5A-9EF2-4029-808A-D62473F30257} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
+		{426AF10E-B683-44C4-9849-FF8E14D3A3AD} = {A789F6C4-91DE-47A0-BD7E-E59562409BE7}
 	EndGlobalSection
 EndGlobal
