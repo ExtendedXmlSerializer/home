@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Cache
             Type type = Type.GetType(typeName);
             if (type != null)
                 return type;
-
+#if NETSTANDARD1_6
             // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
             // https://github.com/dotnet/corefx/issues/8806
             // https://github.com/dotnet/corefx/issues/8910
@@ -71,6 +71,17 @@ namespace ExtendedXmlSerialization.Cache
                 if (type != null)
                     return type;
             }
+#else
+            foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                type = c.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+#endif
+
             throw new Exception("Unknown type "+ typeName);
         }
 

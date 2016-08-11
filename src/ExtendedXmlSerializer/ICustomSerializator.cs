@@ -19,44 +19,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
-using ExtendedXmlSerialization.Test.TestObject;
+using System.Xml;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.Test
+namespace ExtendedXmlSerialization
 {
-    public class TestSerializatorFactory : ISerializatorUtilFactory
+
+    /// <summary>
+    /// Defines a custom object serializer for a particualr type.
+    /// </summary>
+    /// <typeparam name="T">The type of object to migration</typeparam>
+    public interface ICustomSerializator<T> : ICustomSerializator
     {
-        public IMigrationMap GetMigrationMap(Type type)
-        {
-            switch (type.Name)
-            {
-                case "TestClassWithMap":
-                    return new TestClassMigrationMap();
-                default:
-                    return null;
-            }
+        T Read(XElement element);
+        void Write(XmlWriter writer, T obj);
+    }
 
-        }
-
-        public IMigrationMap<T> GetMigrationMap<T>()
-        {
-            return (IMigrationMap<T>)GetMigrationMap(typeof(T));
-        }
-
-        public ISerializableModel GetSerializableModel(Type type)
-        {
-            switch (type.Name)
-            {
-                case "TestClassWithSerializer":
-                    return new TestClassSerializer();
-                default:
-                    return null;
-            }
-        }
-
-        public ISerializableModel<T> GetSerializableModel<T>()
-        {
-            return (ISerializableModel<T>)GetSerializableModel(typeof(T));
-        }
+    /// <summary>
+    /// Defines a custom object serializer for a particualr type.
+    /// </summary>
+    public interface ICustomSerializator
+    {
+        Type Type { get; }
+        object ReadObject(XElement element);
+        void WriteObject(XmlWriter writer, object obj);
     }
 }

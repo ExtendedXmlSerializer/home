@@ -19,41 +19,47 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization
 {
     /// <summary>
-    /// The factory for creating IMigrationMap and ISerializableModel 
+    /// Base class for castom object serializer
     /// </summary>
-    public interface ISerializatorUtilFactory
+    /// <typeparam name="T">The type of object to serialize and deserialize</typeparam>
+    public abstract class AbstractCustomSerializator<T> : ICustomSerializator<T>
     {
         /// <summary>
-        /// Gets <see cref="IMigrationMap" /> for particualr type
+        /// Gets the type of object to deserialize
         /// </summary>
-        /// <param name="type">The type of object to migration</param>
-        /// <returns>The <see cref="IMigrationMap"/></returns>
-        IMigrationMap GetMigrationMap(Type type);
+        public Type Type => typeof(T);
+
+        object ICustomSerializator.ReadObject(XElement element)
+        {
+           return Read(element);
+        }
+
+        void ICustomSerializator.WriteObject(XmlWriter writer, object obj)
+        {
+            Write(writer, (T)obj);
+        }
+        
+        /// <summary>
+        /// Read <see cref="XElement"/> and return object
+        /// </summary>
+        /// <param name="element">The node to read</param>
+        /// <returns>The object</returns>
+        public abstract T Read(XElement element);
 
         /// <summary>
-        /// Gets <see cref="IMigrationMap{T}" /> for particualr type
+        /// Write xml of object to <see cref="XmlWriter"/>
         /// </summary>
-        /// <typeparam name="T">The type of object to migration</typeparam>
-        /// <returns>The <see cref="IMigrationMap{T}"/></returns>
-        IMigrationMap<T> GetMigrationMap<T>();
+        /// <param name="writer">The <see cref="XmlWriter"/> to write object</param>
+        /// <param name="obj">The object to write</param>
+        public abstract void Write(XmlWriter writer, T obj);
 
-        /// <summary>
-        /// Gets <see cref="ISerializableModel"/> for particular type
-        /// </summary>
-        /// <param name="type">The type of object to serialization or deserialization</param>
-        /// <returns>The <see cref="ISerializableModel"/></returns>
-        ISerializableModel GetSerializableModel(Type type);
-
-        /// <summary>
-        /// Gets <see cref="ISerializableModel{T}"/> for particular type
-        /// </summary>
-        /// <typeparam name="T">The type of object to serialization or deserialization</typeparam>
-        /// <returns>The <see cref="ISerializableModel{T}"/></returns>
-        ISerializableModel<T> GetSerializableModel<T>();
     }
 }

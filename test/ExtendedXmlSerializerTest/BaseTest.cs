@@ -27,6 +27,8 @@ namespace ExtendedXmlSerialization.Test
 {
     public class BaseTest
     {
+        protected ExtendedXmlSerializer Serializer = new ExtendedXmlSerializer();
+
         private static string SerializeObject(object toSerialize)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
@@ -41,16 +43,16 @@ namespace ExtendedXmlSerialization.Test
         public void CheckCompatibilityWithDefaultSerializator(object obj)
         {
             var standardXml = SerializeObject(obj);
-            var obj2 = ExtendedXmlSerializer.Deserialize(standardXml, obj.GetType());
+            var obj2 = Serializer.Deserialize(standardXml, obj.GetType());
             XmlAssert.AreEqual(standardXml, SerializeObject(obj2));
         }
 
         public void CheckSerializationAndDeserialization(string xmlPath, object obj)
         {
             var xml = EmbeddedResources.Get(xmlPath);
-            XmlAssert.AreEqual(xml, ExtendedXmlSerializer.Serialize(obj));
-            var obj2 = ExtendedXmlSerializer.Deserialize(xml, obj.GetType());
-            XmlAssert.AreEqual(xml, ExtendedXmlSerializer.Serialize(obj2));
+            XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
+            var obj2 = Serializer.Deserialize(xml, obj.GetType());
+            XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
         }
     }
 }

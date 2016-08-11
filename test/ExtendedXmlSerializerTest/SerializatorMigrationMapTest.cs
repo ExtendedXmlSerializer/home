@@ -19,24 +19,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Test.TestObject;
 using ExtendedXmlSerialization.Test.Tools;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializatorMigrationMapTest
+    public class SerializatorMigrationMapTest : BaseTest
     {
         public SerializatorMigrationMapTest()
         {
-            SerializatorFactory.Factory = new TestSerializatorFactory();
+            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            {
+                MigrationMaps = new List<IMigrationMap> { new TestClassMigrationMap() }
+            };
         }
 
         [Fact]
         public void MapVersion2()
         {
             var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV2.xml");
-            var klasa = ExtendedXmlSerializer.Deserialize<TestClassWithMap>(xml);
+            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
 
             Assert.Equal(klasa.NowyWezel, "test");
             Assert.Equal(klasa.ZmianaWartosci, "Stara");
@@ -50,7 +55,7 @@ namespace ExtendedXmlSerialization.Test
         {
             var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV1.xml");
 
-            var klasa = ExtendedXmlSerializer.Deserialize<TestClassWithMap>(xml);
+            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
             Assert.Equal(klasa.NowyWezel, "test");
             Assert.Equal(klasa.ZmianaWartosci, "Stara");
             Assert.NotNull(klasa.PropClass);
@@ -63,7 +68,7 @@ namespace ExtendedXmlSerialization.Test
         {
             var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV0.xml");
 
-            var klasa = ExtendedXmlSerializer.Deserialize<TestClassWithMap>(xml);
+            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
             Assert.Equal(klasa.NowyWezel, "Wartosc");
             Assert.Equal(klasa.ZmianaWartosci, "Nowa");
             Assert.NotNull(klasa.PropClass);
@@ -76,7 +81,7 @@ namespace ExtendedXmlSerialization.Test
         {
             var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapWithoutVer.xml");
 
-            var klasa = ExtendedXmlSerializer.Deserialize<TestClassWithMap>(xml);
+            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
             Assert.Equal(klasa.NowyWezel, "Wartosc");
             Assert.Equal(klasa.ZmianaWartosci, "Nowa");
             Assert.NotNull(klasa.PropClass);

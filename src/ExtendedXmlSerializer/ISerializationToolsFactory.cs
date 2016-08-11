@@ -19,16 +19,27 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+using System;
+
 namespace ExtendedXmlSerialization
 {
     /// <summary>
-    /// The Serializator factory to set configuration.
+    /// The factory for creating tools used during serialization.
     /// </summary>
-    public static class SerializatorFactory
+    public interface ISerializationToolsFactory
     {
         /// <summary>
-        /// Gets and sets factory.
+        /// Gets <see cref="IMigrationMap" /> for particualr type
         /// </summary>
-        public static ISerializatorUtilFactory Factory { get; set; }
+        /// <param name="type">The type of object to migration</param>
+        /// <returns>The <see cref="IMigrationMap"/></returns>
+        IMigrationMap GetMigrationMap(Type type);
+
+        /// <summary>
+        /// Gets <see cref="ICustomSerializator"/> for particular type
+        /// </summary>
+        /// <param name="type">The type of object to serialization or deserialization</param>
+        /// <returns>The <see cref="ICustomSerializator"/></returns>
+        ICustomSerializator GetCustomSerializer(Type type);
     }
 }

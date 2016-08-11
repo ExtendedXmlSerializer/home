@@ -32,11 +32,15 @@ namespace ExtendedXmlSerialization
     /// <typeparam name="T">The type of object to deserialize</typeparam>
     public abstract class AbstractMigrationMap<T> : IMigrationMap<T>
     {
-
         /// <summary>
         /// Gets the dictionary of migartions
         /// </summary>
         public abstract Dictionary<int, Action<XElement>> Migrations { get; }
+
+        /// <summary>
+        /// Gets the type of object to deserialize
+        /// </summary>
+        public Type Type => typeof(T);
 
         /// <summary>
         /// Gets the version of object

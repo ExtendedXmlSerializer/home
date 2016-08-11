@@ -39,6 +39,9 @@ namespace ExtendedXmlSerialization
     public interface IMigrationMap
     {
         int Version { get; }
+
+        Type Type { get; }
+
         void Map(Type targetType, XElement currentNode, int currentNodeVer);
     }
 }

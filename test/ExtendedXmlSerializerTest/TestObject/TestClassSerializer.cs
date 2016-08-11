@@ -26,7 +26,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassSerializer : AbstractSerializableModel<TestClassWithSerializer>
+    public class TestClassSerializer : AbstractCustomSerializator<TestClassWithSerializer>
     {
         public override TestClassWithSerializer Read(XElement element)
         {

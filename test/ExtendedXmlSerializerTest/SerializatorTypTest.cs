@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Test
         public SerializatorTypTest()
         {
 
-            SerializatorFactory.Factory = new TestSerializatorFactory();
+            //ExtendedXmlSerializerConfig.Factory = new TestSerializationFactory();
         }
 
         [Fact]

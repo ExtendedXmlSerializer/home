@@ -64,11 +64,6 @@ namespace ExtendedXmlSerialization.Cache
             {
                 GenericArguments = type.GetGenericArguments();
             }
-            if (SerializatorFactory.Factory != null)
-            {
-                MigrationMap = SerializatorFactory.Factory.GetMigrationMap(type);
-                SerializableModel = SerializatorFactory.Factory.GetSerializableModel(type);
-            }
             Properties = GetPropertieToSerialze(type);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type);
@@ -94,8 +89,6 @@ namespace ExtendedXmlSerialization.Cache
         }
         public bool IsPrimitive { get; private set; }
         public bool IsReadAsPrimitive { get; private set; }
-        public IMigrationMap MigrationMap { get; private set; }
-        public ISerializableModel SerializableModel { get; private set; }
         public List<PropertieDefinition> Properties { get; private set; }
         public Type Type { get; private set; }
         public string Name { get; private set; }
