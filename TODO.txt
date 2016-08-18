@@ -1,0 +1,6 @@
+1. Dictionary, IDictionary 
+2. IList, ISet - property
+3. http://www.codeproject.com/Articles/15646/A-Deep-XmlSerializer-Supporting-Complex-Classes-En
+4. atribute to change name of property
+5. byte[]
+6. Object References / Object Extractor

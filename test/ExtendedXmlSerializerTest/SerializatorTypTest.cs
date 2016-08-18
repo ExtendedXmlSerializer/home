@@ -26,12 +26,6 @@ namespace ExtendedXmlSerialization.Test
 {
     public class SerializatorTypTest : BaseTest
     {
-        public SerializatorTypTest()
-        {
-
-            //ExtendedXmlSerializerConfig.Factory = new TestSerializationFactory();
-        }
-
         [Fact]
         public void ClassPrimitiveTypes()
         {
@@ -71,7 +65,16 @@ namespace ExtendedXmlSerialization.Test
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithList.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
+        [Fact]
+        public void ClassWithHashSet()
+        {
+            var obj = new TestClassWithHashSet();
+            obj.Init();
 
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithHashSet.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+        
         [Fact]
         public void TestClassWithListWithClass()
         {
@@ -79,6 +82,7 @@ namespace ExtendedXmlSerialization.Test
             obj.Init();
 
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithListWithClass.xml", obj);
+//            CheckCompatibilityWithDefaultSerializator(obj);
         }
 
 
@@ -89,6 +93,7 @@ namespace ExtendedXmlSerialization.Test
             obj.Init();
 
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPropIsInterface.xml", obj);
+            //CheckCompatibilityWithDefaultSerializator(obj);
         }
 
         [Fact]

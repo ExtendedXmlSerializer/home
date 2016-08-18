@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassInheritance type="ExtendedXmlSerialization.Test.TestObject.TestClassInheritance">
+  <Id2>3</Id2>
+  <Id>2</Id>
+</TestClassInheritance>

@@ -20,8 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -29,8 +31,15 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition
     {
+        public Expression<Func<int[]>> item;
         public TypeDefinition(Type type)
         {
+            item = () => new int[] {1, 2, 3}; 
+
+
+           var action = item.Compile();
+            var result = action();
+
             Type = type;
             Name = type.Name;
 
@@ -38,8 +47,10 @@ namespace ExtendedXmlSerialization.Cache
             if (typeInfo.IsGenericType)
             {
                 Type[] types = type.GetGenericArguments();
-                Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p=>p.Name)));
-                }
+                Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
+            }
+
+
             FullName = type.FullName;
 
             IsPrimitive = IsTypPrimitive(type);
@@ -48,29 +59,56 @@ namespace ExtendedXmlSerialization.Cache
                 PrimitiveName = GetPrimitiveName(type);
             }
 
+            IsArray = typeInfo.IsArray;
+
+            if (!IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                
+                IsEnumerable = true;
+            }
+
+            if (IsEnumerable)
+            {
+                var elementType = type.GetElementType();
+                if (elementType != null)
+                {
+                    Name = "ArrayOf" + elementType?.Name;
+                }
+                else
+                {
+                    Type[] types = type.GetGenericArguments();
+                    Name = "ArrayOf"+ string.Join("", types.Select(p => p.Name));
+                }
+                if (typeInfo.IsGenericType)
+                {
+                    GenericArguments = type.GetGenericArguments();
+                    MethodAddToList = ObjectAccessors.CreateMethodAdd(type);
+                }
+            }
+
             IsReadAsPrimitive = typeInfo.IsPrimitive || typeInfo.IsValueType || type == typeof(string) ||
                                 (typeInfo.IsGenericType &&
                                  type.GetGenericTypeDefinition() == typeof(Nullable<>));
 
             IsObjectToSerialize = !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                                   !typeInfo.IsEnum && !(type == typeof(string)) &&
-                                  //not generic or generic but not List<>
-                                  (!typeInfo.IsGenericType || (typeInfo.IsGenericType && type.GetGenericTypeDefinition() != typeof(List<>)));
+                                  //not generic or generic but not List<> and Set<>
+                                  (!typeInfo.IsGenericType || 
+                                    (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)
+                                  ));
             IsEnum = typeInfo.IsEnum;
 
-            IsGenericList = typeInfo.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
 
-            if (IsGenericList)
-            {
-                GenericArguments = type.GetGenericArguments();
-            }
             Properties = GetPropertieToSerialze(type);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type);
+
+            
         }
 
-        public Type[] GenericArguments { get; private set; }
-        
+        public ObjectAccessors.AddItemToCollection MethodAddToList { get; set; }
+
+
         private static List<PropertieDefinition> GetPropertieToSerialze(Type type)
         {
             var result = new List<PropertieDefinition>();
@@ -88,6 +126,10 @@ namespace ExtendedXmlSerialization.Cache
             return result;
         }
         public bool IsPrimitive { get; private set; }
+        public bool IsArray { get; private set; }
+        public bool IsEnumerable { get; private set; }
+        public Type[] GenericArguments { get; set; }
+
         public bool IsReadAsPrimitive { get; private set; }
         public List<PropertieDefinition> Properties { get; private set; }
         public Type Type { get; private set; }
@@ -95,7 +137,7 @@ namespace ExtendedXmlSerialization.Cache
         public string FullName { get; private set; }
         public bool IsObjectToSerialize { get; private set; }
         public bool IsEnum { get; private set; }
-        public bool IsGenericList { get; private set; }
+
         public string PrimitiveName { get; private set; }
         public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
         

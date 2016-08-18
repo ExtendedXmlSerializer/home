@@ -32,24 +32,14 @@ namespace ExtendedXmlSerialization.Autofac
         {
             _context = context;
         }
-        public IMigrationMap GetMigrationMap(Type type)
-        {
-            var genericTyep = typeof(IMigrationMap<>).MakeGenericType(type);
-            object result;
-            if (_context.TryResolve(genericTyep, out result))
-            {
-                return result as IMigrationMap;
-            }
-            return null;
-        }
 
-        public ICustomSerializator GetCustomSerializer(Type type)
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type)
         {
-            var genericTyep = typeof(ICustomSerializator<>).MakeGenericType(type);
+            var genericTyep = typeof(ExtendedXmlSerializerConfig<>).MakeGenericType(type);
             object result;
             if (_context.TryResolve(genericTyep, out result))
             {
-                return result as ICustomSerializator;
+                return result as IExtendedXmlSerializerConfig;
             }
             return null;
         }

@@ -19,31 +19,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Test.TestObject;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassMigrationMap : AbstractMigrationMap<TestClassWithMap>
+    public class TestClassWithMapConfig : ExtendedXmlSerializerConfig<TestClassWithMap>
     {
-        private static readonly Dictionary<int, Action<XElement>> MigrationMap = new Dictionary<int, Action<XElement>>
-            {
-                {0, MigrationV0 },
-                {1, MigrationV1 }
-            };
-
-        public override int Version
+        public TestClassWithMapConfig()
         {
-            get { return 2; }
+            AddMigration(MigrationV0).AddMigration(MigrationV1);
         }
-
-        public override Dictionary<int, Action<XElement>> Migrations
-        {
-            get { return MigrationMap; }
-        }
-
+        
         public static void MigrationV0(XElement node)
         {
             // Delete not exists node
@@ -66,12 +54,11 @@ namespace ExtendedXmlSerialization.Test.TestObject
             if (element != null)
             {
                 var newElement = new XElement("PropClass", new XElement("Wezel1", element.Value),
-                                           new XElement("Wartosc", "1"));
+                    new XElement("Wartosc", "1"));
                 newElement.SetAttributeValue("type", "ExtendedXmlSerialization.Test.TestObject.TestClassMapFromPrimitive");
                 node.Add(newElement);
                 element.Remove();
             }
         }
-
     }
 }

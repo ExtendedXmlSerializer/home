@@ -21,6 +21,7 @@
 // SOFTWARE.
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Test.TestObject;
+using ExtendedXmlSerialization.Test.TestObjectConfigs;
 using ExtendedXmlSerialization.Test.Tools;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
             {
-                MigrationMaps = new List<IMigrationMap> { new TestClassMigrationMap() }
+                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassWithMapConfig() }
             };
         }
 

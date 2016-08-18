@@ -19,30 +19,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Collections.Generic;
+using System;
+using System.Globalization;
+using System.Xml;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
-using Xunit;
 
-namespace ExtendedXmlSerialization.Test
+namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class SerializatorCustomSerializerTest : BaseTest
+    public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>
     {
-        public SerializatorCustomSerializerTest()
+        public TestClassWithSerializerConfig()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> {new TestClassWithSerializerConfig()}
-            };
+            this.CustomSerializer(Serializer, Deserialize);
         }
 
-        [Fact]
-        public void TestClassWithSerializer()
+        public TestClassWithSerializer Deserialize(XElement element)
         {
-            var obj = new TestClassWithSerializer("String", 17);
+            var xElement = element.Element("String");
+            var xElement1 = element.Element("Int");
+            if (xElement != null && xElement1 != null)
+            {
+                string strValue = xElement.Value;
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
+                int intValue = Convert.ToInt32(xElement1.Value);
+                return new TestClassWithSerializer(strValue, intValue);
+            }
+            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+        }
+
+        public void Serializer(XmlWriter writer, TestClassWithSerializer obj)
+        {
+            writer.WriteElementString("String", obj.PropStr);
+            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

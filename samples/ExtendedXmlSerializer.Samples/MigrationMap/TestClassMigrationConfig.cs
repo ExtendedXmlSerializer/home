@@ -19,30 +19,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml;
+using System.Linq;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-
-    /// <summary>
-    /// Defines a custom object serializer for a particualr type.
-    /// </summary>
-    /// <typeparam name="T">The type of object to migration</typeparam>
-    public interface ICustomSerializator<T> : ICustomSerializator
+    public class TestClassMigrationConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        T Read(XElement element);
-        void Write(XmlWriter writer, T obj);
-    }
+        public TestClassMigrationConfig()
+        {
+            AddMigration(MigrationV0).AddMigration(MigrationV1);
+        }
 
-    /// <summary>
-    /// Defines a custom object serializer for a particualr type.
-    /// </summary>
-    public interface ICustomSerializator
-    {
-        Type Type { get; }
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
+        public static void MigrationV0(XElement node)
+        {
+            var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
+            // Add new node
+            node.Add(new XElement("Name", typeElement.Value));
+            // Remove old node
+            typeElement.Remove();
+        }
+
+        public static void MigrationV1(XElement node)
+        {
+            // Add new node
+            node.Add(new XElement("Value", "Calculated"));
+        }
     }
 }

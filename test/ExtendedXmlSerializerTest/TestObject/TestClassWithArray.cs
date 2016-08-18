@@ -19,15 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-namespace ExtendedXmlSerialization.Samples.CustomSerializator
+namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClass
+    public class TestClassWithArray
     {
-        public TestClass(string paramStr)
-        {
-            PropStr = paramStr;
-        }
-
-        public string PropStr { get; private set; }
+        public int[] ArrayOfInt { get; set; }
     }
 }

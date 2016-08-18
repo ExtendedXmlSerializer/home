@@ -19,15 +19,38 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-namespace ExtendedXmlSerialization.Samples.CustomSerializator
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Test.TestObject;
+using ExtendedXmlSerialization.Test.TestObjectConfigs;
+using Xunit;
+
+namespace ExtendedXmlSerialization.Test
 {
-    public class TestClass
+    public class SerializationReference: BaseTest
     {
-        public TestClass(string paramStr)
+        public SerializationReference()
         {
-            PropStr = paramStr;
+            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            {
+                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassReferenceConfig() }
+            };
         }
 
-        public string PropStr { get; private set; }
+        [Fact]
+        public void SerializationRefernece()
+        {
+            TestClassReference obj = new TestClassReference();
+            obj.Id = 1;
+            obj.CyclicReference = obj;
+            obj.ObjectA = new TestClassReference {Id = 2};
+            obj.ReferenceToObjectA = obj.ObjectA;
+            obj.Lists = new List<TestClassReference>
+            {
+                new TestClassReference {Id = 3},
+                new TestClassReference {Id = 4}
+            };
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassReference.xml", obj);
+        }
     }
 }

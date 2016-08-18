@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
-using System.Reflection;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Cache
 {
@@ -32,6 +32,8 @@ namespace ExtendedXmlSerialization.Cache
         internal delegate object PropertyGetter(object item);
 
         internal delegate void PropertySetter(object item, object value);
+
+        internal delegate void AddItemToCollection(object item, object value);
 
         internal static ObjectActivator CreateObjectActivator(Type type)
         {
@@ -63,6 +65,42 @@ namespace ExtendedXmlSerialization.Cache
             LambdaExpression lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
 
             PropertyGetter compiled = (PropertyGetter)lambda.Compile();
+            return compiled;
+        }
+
+        internal static AddItemToCollection CreateMethodAdd(Type type)
+        {
+            // Object (type object) from witch the data are retrieved
+            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+
+            // Object casted to specific type using the operator "as".
+            UnaryExpression itemCasted = Expression.TypeAs(itemObject, type);
+
+            var arguments = type.GetGenericArguments();
+            ParameterExpression value = Expression.Parameter(typeof(object), "value");
+            Expression paramCasted = Expression.Convert(value, arguments[0]);
+
+            MethodInfo method = type.GetMethod("Add");
+            
+            //            MethodInfo method = type
+            //               .GetMethods()
+            //               .FirstOrDefault(m => m.Name == "Add" && m.GetParameters().Length == 1).MakeGenericMethod(typeof(object));
+
+
+            //            ParameterExpression vehicleParameter = Expression.Parameter(
+            //                typeof(object), "v");
+            //            var vehicleFunc = Expression.Lambda<Func<Vehicle, bool>>(
+            //                Expression.Call(
+            //                    method,
+            //                    Expression.Property(
+            //                        vehicleParameter,
+            //                        typeof(Vehicle).GetProperty("Tank")),
+            //                    tankFunction), vehicleParameter);
+            Expression conversion = Expression.Call(itemCasted, method, paramCasted);
+
+            LambdaExpression lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
+
+            AddItemToCollection compiled = (AddItemToCollection)lambda.Compile();
             return compiled;
         }
 

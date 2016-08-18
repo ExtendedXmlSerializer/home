@@ -20,9 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using ExtendedXmlSerialization.Autofac;
 
@@ -34,7 +31,7 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
         {
             Program.PrintHeader("Deserialization old version of xml");
             var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.MigrationMaps.Add(new TestClassMigrationMap());
+            toolsFactory.Configurations.Add(new TestClassMigrationConfig());
             ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 
             Run(serializer);
@@ -45,7 +42,7 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 
             var builder = new ContainerBuilder();
             builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<TestClassMigrationMap>().As<IMigrationMap<TestClass>>().SingleInstance();
+            builder.RegisterType<TestClassMigrationConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
             var containter = builder.Build();
 
             var serializer = containter.Resolve<IExtendedXmlSerializer>();

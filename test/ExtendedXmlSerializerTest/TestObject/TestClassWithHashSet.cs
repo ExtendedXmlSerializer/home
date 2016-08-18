@@ -19,15 +19,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-namespace ExtendedXmlSerialization.Samples.CustomSerializator
+using System.Collections.Generic;
+
+namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClass
+    public class TestClassFromHashSet
     {
-        public TestClass(string paramStr)
+        public string PropString { get; set; }
+        public int PropInt { get; set; }
+    }
+
+    public class TestClassWithHashSet
+    {
+        public void Init()
         {
-            PropStr = paramStr;
+            ListStr = new HashSet<string> {"str1", "str2"};
+            ListObj = new HashSet<TestClassFromList>
+            {
+                new TestClassFromList {PropString = "s1", PropInt = 1},
+                new TestClassFromList {PropString = "s2", PropInt = 2}
+            };
         }
 
-        public string PropStr { get; private set; }
+        public HashSet<string> ListStr { get; set; }
+        public HashSet<TestClassFromList> ListObj { get; set; }
     }
 }

@@ -19,29 +19,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Test.TestObject;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    /// <summary>
-    /// Defines a migration map for a particualr type.
-    /// </summary>
-    /// <typeparam name="T">The type of object to migration</typeparam>
-    public interface IMigrationMap<T> : IMigrationMap
+    public class TestClassReferenceConfig : ExtendedXmlSerializerConfig<TestClassReference>
     {
-
-    }
-
-    /// <summary>
-    /// Defines a migration map for particular type
-    /// </summary>
-    public interface IMigrationMap
-    {
-        int Version { get; }
-
-        Type Type { get; }
-
-        void Map(Type targetType, XElement currentNode, int currentNodeVer);
+        public TestClassReferenceConfig()
+        {
+            ObjectReference(obj => obj.Id);
+        }
     }
 }

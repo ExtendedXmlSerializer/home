@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+using System.Collections.Generic;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
@@ -58,6 +59,33 @@ namespace ExtendedXmlSerialization.Test
             var obj = 8.4m;
 
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestDecimal.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void SerializeArrayOfInt()
+        {
+            var obj = new int[] {1, 2, 3};
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void SerializeList()
+        {
+            var obj = new List<int>() {1, 2, 3};
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void SerializeHashSet()
+        {
+            var obj = new HashSet<int>() { 1, 2, 3 };
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
     }

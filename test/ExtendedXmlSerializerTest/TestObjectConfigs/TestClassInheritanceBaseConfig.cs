@@ -19,33 +19,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Globalization;
-using System.Xml;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Test.TestObject;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassSerializer : AbstractCustomSerializator<TestClassWithSerializer>
+    public class TestClassInheritanceBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceBase>
     {
-        public override TestClassWithSerializer Read(XElement element)
+        public TestClassInheritanceBaseConfig()
         {
-            var xElement = element.Element("String");
-            var xElement1 = element.Element("Int");
-            if (xElement != null && xElement1 != null)
-            {
-                string strValue = xElement.Value;
-
-                int intValue = Convert.ToInt32(xElement1.Value);
-                return new TestClassWithSerializer(strValue, intValue);
-            }
-            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
-        }
-
-        public override void Write(XmlWriter writer, TestClassWithSerializer obj)
-        {
-            writer.WriteElementString("String", obj.PropStr);
-            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+            ObjectReference(obj=>obj.Id).ExtractToList("Sensors");
         }
     }
 }

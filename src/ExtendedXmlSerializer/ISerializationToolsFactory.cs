@@ -28,18 +28,6 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public interface ISerializationToolsFactory
     {
-        /// <summary>
-        /// Gets <see cref="IMigrationMap" /> for particualr type
-        /// </summary>
-        /// <param name="type">The type of object to migration</param>
-        /// <returns>The <see cref="IMigrationMap"/></returns>
-        IMigrationMap GetMigrationMap(Type type);
-
-        /// <summary>
-        /// Gets <see cref="ICustomSerializator"/> for particular type
-        /// </summary>
-        /// <param name="type">The type of object to serialization or deserialization</param>
-        /// <returns>The <see cref="ICustomSerializator"/></returns>
-        ICustomSerializator GetCustomSerializer(Type type);
+        IExtendedXmlSerializerConfig GetConfiguration(Type type);
     }
 }

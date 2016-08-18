@@ -21,8 +21,10 @@
 // SOFTWARE.
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
@@ -36,6 +38,7 @@ namespace ExtendedXmlSerialization
     {
         private ISerializationToolsFactory _toolsFactory;
 
+        private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
@@ -75,17 +78,7 @@ namespace ExtendedXmlSerialization
             {
                 using (XmlWriter xw = XmlWriter.Create(ms))
                 {
-                    if (def.IsPrimitive)
-                    {
-                        WriteXmlPrimitive(o, xw, def);
-                    }
-                    else
-                    {
-                        xw.WriteStartElement(def.Name);
-                        WriteXml(xw, o, def);
-                        xw.WriteEndElement();
-                    }
-
+                    WriteXml(xw, o, def);
                 }
                 ms.Position = 0;
 
@@ -94,7 +87,23 @@ namespace ExtendedXmlSerialization
                     xml = sr.ReadToEnd();
                 }
             }
+            _referencesObjects.Clear();
             return xml;
+        }
+
+        private void WriteXmlArray(object o, XmlWriter writer, TypeDefinition def, string name)
+        {
+            writer.WriteStartElement(name ?? def.Name);
+            var array =  o as IEnumerable;
+            if (array != null)
+            {
+                foreach (var item in array)
+                {
+                    var itemDef = TypeDefinitionCache.GetDefinition(item.GetType());
+                    WriteXml(writer, item, itemDef);
+                }
+            }
+            writer.WriteEndElement();
         }
 
         /// <summary>
@@ -107,15 +116,9 @@ namespace ExtendedXmlSerialization
         {
             var def = TypeDefinitionCache.GetDefinition(type);
             XDocument doc = XDocument.Parse(xml);
-            if (def.IsPrimitive)
-            {
-                if (doc.Root == null)
-                {
-                    throw new Exception("Missing root node.");
-                }
-                return PrimitiveValueTools.GetPrimitiveValue(doc.Root.Value, type, doc.Root.Name.LocalName);
-            }
-            return ReadXml(doc.Root, def);
+            var result = ReadXml(doc.Root, def);
+            _referencesObjects.Clear();
+            return result;
         }
 
         /// <summary>
@@ -131,6 +134,16 @@ namespace ExtendedXmlSerialization
 
         private object ReadXml(XElement currentNode, TypeDefinition type, object instance = null)
         {
+            if (type.IsPrimitive)
+            {
+                return PrimitiveValueTools.GetPrimitiveValue(currentNode.Value, type.Type, currentNode.Name.LocalName);
+            }
+
+            if (type.IsArray || type.IsEnumerable)
+            {
+                return ReadXmlArray(currentNode, type);
+            }
+
             if (currentNode == null)
                 return null;
 
@@ -148,27 +161,53 @@ namespace ExtendedXmlSerialization
                 currentNodeDef = type;
             }
 
-            // Run migrator if exists
-            var migrator = GetMigrationMap(currentNodeDef);
-            if (migrator != null)
+            // Get configuration for type
+            var configuration = GetConfiguration(currentNodeDef);
+            if (configuration != null)
             {
-                int currentNodeVer = 0;
-                var serializeVersion = currentNode.Attribute("serializeVersion");
-                if (serializeVersion != null)
+                // Run migrator if exists
+                if (configuration.Version > 0)
                 {
-                    currentNodeVer = int.Parse(serializeVersion.Value);
+                    configuration.Map(currentNodeDef.Type, currentNode);
                 }
-                migrator.Map(currentNodeDef.Type, currentNode, currentNodeVer);
+                // run custom serializer if exists
+                if (configuration.IsCustomSerializer)
+                {
+                    return configuration.ReadObject(currentNode);
+                }
             }
-            // run custom serializer if exists
-            var customSerializer = GetCustomSerializer(currentNodeDef);
-            if (customSerializer != null)
-            {
-                return customSerializer.ReadObject(currentNode);
-            }
-
+            
             // Create new instance if not exists
             var currentObject = instance ?? currentNodeDef.ObjectActivator();
+
+            if (configuration != null)
+            {
+                if (configuration.IsObjectReference)
+                {
+                    string refId = currentNode.Attribute("ref")?.Value;
+                    if (!string.IsNullOrEmpty(refId))
+                    {
+                        var key = currentNodeDef.FullName + "_" + refId;
+                        if (_referencesObjects.ContainsKey(key))
+                        {
+                            return _referencesObjects[key];
+                        }
+                        throw new Exception("Deserializer ref object before whole object");
+                    }
+                    string objectId = currentNode.Attribute("id")?.Value;
+                    if (!string.IsNullOrEmpty(objectId))
+                    {
+                        var key = currentNodeDef.FullName + "_" + objectId;
+                        if (_referencesObjects.ContainsKey(key))
+                        {
+                            throw new Exception("Xml contains many instances of " + currentNodeDef.FullName + " id=" +
+                                                objectId);
+                        }
+                        _referencesObjects.Add(key, currentObject);
+                    }
+                }
+            }
+
             // Read all elements
             foreach (var xElement in currentNode.Elements())
             {
@@ -184,8 +223,6 @@ namespace ExtendedXmlSerialization
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
                     Type targetType = TypeDefinitionCache.GetType(xElement.Attribute("type").Value);
-                    if (targetType == null)
-                        throw new Exception($"Can not find the type {xElement.Attribute("type").Value}");
                     var targetTypeDef = TypeDefinitionCache.GetDefinition(targetType);
                     var obj = propertyInfo.Getter(currentObject);
                     if (obj == null || obj.GetType() != targetType)
@@ -195,36 +232,20 @@ namespace ExtendedXmlSerialization
                     var obj2 = ReadXml(xElement, targetTypeDef, obj);
                     propertyInfo.Setter(currentObject, obj2);
                 }
-                else if (propertyDef.IsObjectToSerialize)
+                else if (propertyDef.IsObjectToSerialize || propertyDef.IsArray || propertyDef.IsEnumerable)
                 {
                     //If xml does not contain type but we known that it is object
                     var obj = propertyInfo.Getter(currentObject);
-                    if (obj == null)
+                    object obj2;
+                    if (propertyDef.IsArray)
                     {
-                        obj = propertyDef.ObjectActivator();
+                        obj2 = ReadXmlArray(xElement, propertyDef, obj);
                     }
-                    var obj2 = ReadXml(xElement, propertyDef, obj);
+                    else
+                    {
+                        obj2 = ReadXml(xElement, propertyDef, obj);
+                    }
                     propertyInfo.Setter(currentObject, obj2);
-                }
-                else if (propertyDef.IsGenericList)
-                {
-                    IList obj = propertyInfo.Getter(currentObject) as IList ??
-                                (IList)propertyDef.ObjectActivator();
-                    Type itemType = propertyDef.GenericArguments[0];
-                    var itemTypeDef = TypeDefinitionCache.GetDefinition(itemType);
-                    foreach (XElement item in xElement.Elements())
-                    {
-                        if (itemTypeDef.IsReadAsPrimitive)
-                        {
-                            object primitive = PrimitiveValueTools.GetPrimitiveValue(item.Value, itemType, xElement.Name.LocalName);
-                            obj.Add(primitive);
-                        }
-                        else
-                        {
-                            obj.Add(ReadXml(item, itemTypeDef));
-                        }
-                    }
-                    propertyInfo.Setter(currentObject, obj);
                 }
                 else
                 {
@@ -239,29 +260,109 @@ namespace ExtendedXmlSerialization
             return currentObject;
         }
 
-        private static void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def)
+        private object ReadXmlArray(XElement currentNode, TypeDefinition type, object instance = null)
         {
-            xw.WriteStartElement(def.PrimitiveName);
+            int arrayCount = currentNode.Elements().Count();
+            var elements = currentNode.Elements().ToArray();
+
+            object list = null;
+            Array array = null;
+            if (type.IsArray)
+            {
+                array = (Array) instance ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
+            }
+            else
+            {
+                list = instance ?? type.ObjectActivator();
+            }
+            for (int i = 0; i < arrayCount; i++)
+            {
+                var element = elements[i];
+                TypeDefinition cd = null;
+                var ta = element.Attribute("type");
+                if (ta != null)
+                {
+                    var currentNodeType = TypeDefinitionCache.GetType(ta.Value);
+                    cd = TypeDefinitionCache.GetDefinition(currentNodeType);
+                }
+                if (type.IsArray)
+                {
+                    if (cd == null)
+                    {
+                        cd = TypeDefinitionCache.GetDefinition(type.Type.GetElementType());
+                    }
+                    array?.SetValue(ReadXml(element, cd), i);
+                }
+                else
+                {
+                    if (cd == null)
+                    {
+                        cd = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
+                    }
+                    type.MethodAddToList(list, ReadXml(element, cd));
+                }
+            }
+            if (type.IsArray)
+            {
+                return array;
+            }
+            return list;
+        }
+
+        private static void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null)
+        {
+            xw.WriteStartElement(name ?? def.PrimitiveName);
             xw.WriteString(PrimitiveValueTools.SetPrimitiveValue(o, def.Type));
             xw.WriteEndElement();
         }
 
-        private void WriteXml(XmlWriter writer, object o, TypeDefinition type)
+        private void WriteXml(XmlWriter writer, object o, TypeDefinition type, string name = null)
         {
+            if (type.IsPrimitive)
+            {
+                WriteXmlPrimitive(o, writer, type, name);
+                return;
+            }
+            if (type.IsArray || type.IsEnumerable)
+            {
+                WriteXmlArray(o, writer, type, name);
+                return;
+            }
+            writer.WriteStartElement(name ?? type.Name);
             writer.WriteAttributeString("type", type.FullName);
 
-            var migraor = GetMigrationMap(type);
-            if (migraor != null && migraor.Version > 0)
-            {
-                writer.WriteAttributeString("serializeVersion",
-                    migraor.Version.ToString(CultureInfo.InvariantCulture));
-            }
+            
+            // Get configuration for type
+            var configuration = GetConfiguration(type);
 
-            var customSerializer = GetCustomSerializer(type);
-            if (customSerializer != null)
+            if (configuration != null)
             {
-                customSerializer.WriteObject(writer, o);
-                return;
+                if (configuration.IsObjectReference)
+                {
+                    var objectId = configuration.GetObjectId(o);
+                    
+                    var key = type.FullName + "_" + objectId;
+                    if (_referencesObjects.ContainsKey(key))
+                    {
+                        writer.WriteAttributeString("ref", configuration.GetObjectId(o));
+                        writer.WriteEndElement();
+                        return;
+                    }
+                    writer.WriteAttributeString("id", configuration.GetObjectId(o));
+                    _referencesObjects.Add(key, o);
+                }
+
+                if (configuration.Version > 0)
+                {
+                    writer.WriteAttributeString("serializeVersion",
+                        configuration.Version.ToString(CultureInfo.InvariantCulture));
+                }
+                if (configuration.IsCustomSerializer)
+                {
+                    configuration.WriteObject(writer, o);
+                    writer.WriteEndElement();
+                    return;
+                }
             }
 
             var properties = type.Properties;
@@ -273,11 +374,9 @@ namespace ExtendedXmlSerialization
 
                 var defType = TypeDefinitionCache.GetDefinition(propertyValue.GetType());
 
-                if (defType.IsObjectToSerialize)
+                if (defType.IsObjectToSerialize || defType.IsArray || defType.IsEnumerable)
                 {
-                    writer.WriteStartElement(propertyInfo.Name);
-                    WriteXml(writer, propertyValue, defType);
-                    writer.WriteEndElement();
+                    WriteXml(writer, propertyValue, defType, propertyInfo.Name);
                 }
                 else if (defType.IsEnum)
                 {
@@ -285,46 +384,17 @@ namespace ExtendedXmlSerialization
                     writer.WriteString(propertyValue.ToString());
                     writer.WriteEndElement();
                 }
-                else if (defType.IsGenericList)
-                {
-                    writer.WriteStartElement(propertyInfo.Name);
-                    var lista = propertyValue as IList;
-                    if (lista != null && lista.Count > 0)
-                    {
-                        foreach (var element in lista)
-                        {
-                            var defElement = TypeDefinitionCache.GetDefinition(element.GetType());
-                            if (defElement.IsPrimitive)
-                            {
-                                WriteXmlPrimitive(element, writer, defElement);
-                            }
-                            else
-                            {
-                                writer.WriteStartElement(defElement.Name);
-                                WriteXml(writer, element, defElement);
-                                writer.WriteEndElement();
-                            }
-                        }
-                    }
-                    writer.WriteEndElement();
-                }
                 else
                 {
-                    writer.WriteStartElement(propertyInfo.Name);
-                    writer.WriteString(PrimitiveValueTools.SetPrimitiveValue(propertyValue, defType.Type));
-                    writer.WriteEndElement();
+                    WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name);
                 }
             }
+            writer.WriteEndElement();
         }
 
-        private ICustomSerializator GetCustomSerializer(TypeDefinition type)
+        private IExtendedXmlSerializerConfig GetConfiguration(TypeDefinition type)
         {
-            return _toolsFactory?.GetCustomSerializer(type.Type);
-        }
-
-        private IMigrationMap GetMigrationMap(TypeDefinition type)
-        {
-            return _toolsFactory?.GetMigrationMap(type.Type);
+            return _toolsFactory?.GetConfiguration(type.Type);
         }
     }
 }

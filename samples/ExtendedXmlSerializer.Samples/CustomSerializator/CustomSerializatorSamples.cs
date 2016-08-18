@@ -20,9 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Autofac;
 using ExtendedXmlSerialization.Autofac;
 
@@ -35,7 +32,7 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
             Program.PrintHeader("Custom serialization");
 
             var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.CustomSerializators.Add(new TestClassSerializer());
+            toolsFactory.Configurations.Add(new TestClassConfig());
             ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 
             Run(serializer);
@@ -47,7 +44,7 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 
             var builder = new ContainerBuilder();
             builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<TestClassSerializer>().As<ICustomSerializator<TestClass>>().SingleInstance();
+            builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
             var containter = builder.Build();
 
             var serializer = containter.Resolve<IExtendedXmlSerializer>();

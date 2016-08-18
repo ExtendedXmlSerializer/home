@@ -19,46 +19,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-    /// <summary>
-    /// Base class for castom object serializer
-    /// </summary>
-    /// <typeparam name="T">The type of object to serialize and deserialize</typeparam>
-    public abstract class AbstractCustomSerializator<T> : ICustomSerializator<T>
+    public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        /// <summary>
-        /// Gets the type of object to deserialize
-        /// </summary>
-        public Type Type => typeof(T);
-
-        object ICustomSerializator.ReadObject(XElement element)
+        public TestClassConfig()
         {
-           return Read(element);
+            CustomSerializer(Serializer, Deserialize);
         }
 
-        void ICustomSerializator.WriteObject(XmlWriter writer, object obj)
+        public TestClass Deserialize(XElement element)
         {
-            Write(writer, (T)obj);
+            return new TestClass(element.Element("String").Value);
         }
-        
-        /// <summary>
-        /// Read <see cref="XElement"/> and return object
-        /// </summary>
-        /// <param name="element">The node to read</param>
-        /// <returns>The object</returns>
-        public abstract T Read(XElement element);
 
-        /// <summary>
-        /// Write xml of object to <see cref="XmlWriter"/>
-        /// </summary>
-        /// <param name="writer">The <see cref="XmlWriter"/> to write object</param>
-        /// <param name="obj">The object to write</param>
-        public abstract void Write(XmlWriter writer, T obj);
-
+        public void Serializer(XmlWriter writer, TestClass obj)
+        {
+            writer.WriteElementString("String", obj.PropStr);
+        }
     }
 }
