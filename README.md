@@ -1,6 +1,18 @@
 # ExtendedXmlSerializer
-Extended Xml Serializer for .Net
+Extended Xml Serializer for .NET
 
+Support platforms
+* .NET 4.5 
+* .NET Platform Standard 1.6
+
+Support features
+* deserialization xml from standard XMLSerializer
+* serialization class, struct, generic class, primitive type, generic list, array, enum
+* serialization class with property interface
+* serialization circular reference and reference Id
+* deserialization old version of xml
+* custom serializer
+* POCO - all configurations (migrations, custom serializer...) is outside the class
 
 ## Serialization
 ```csharp
@@ -9,7 +21,7 @@ var obj = new TestClass();
 var xml = serializer.Serialize(obj);
 ```
 
-## Derialization
+## Deserialization
 ```csharp
 var obj2 = serializer.Deserialize<TestClass>(xml);
 ```
@@ -27,22 +39,27 @@ If your class has to be serialized in a non-standard way:
         public string PropStr { get; private set; }
     }
 ```
-You must create custom serializer:
+You must configure custom serializer:
 ```csharp
-	public class TestClassSerializer : AbstractCustomSerializator<TestClass>
+	public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        public override TestClass Read(XElement element)
+        public TestClassConfig()
+        {
+            CustomSerializer(Serializer, Deserialize);
+        }
+
+        public TestClass Deserialize(XElement element)
         {
             return new TestClass(element.Element("String").Value);
         }
 
-        public override void Write(XmlWriter writer, TestClass obj)
+        public void Serializer(XmlWriter writer, TestClass obj)
         {
             writer.WriteElementString("String", obj.PropStr);
         }
     }
 ```
-Then you must register your custom serializer. See point configuration.
+Then you must register your TestClassConfig class. See point configuration.
 
 ## Deserialize old version of xml
 If you had a class:
@@ -71,24 +88,13 @@ Then you added new property and you want to calculate a new value while deserial
     }
 ```
 
-You can migrate old version of xml:
+You can migrate old version of xml using migrations:
 ```csharp
-    public class TestClassMigrationMap : AbstractMigrationMap<TestClass>
+	public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        private static readonly Dictionary<int, Action<XElement>> MigrationMap = new Dictionary<int, Action<XElement>>
-            {
-                {0, MigrationV0 },
-                {1, MigrationV1 }
-            };
-
-        public override int Version
+        public TestClassConfig()
         {
-            get { return 2; }
-        }
-
-        public override Dictionary<int, Action<XElement>> Migrations
-        {
-            get { return MigrationMap; }
+            AddMigration(MigrationV0).AddMigration(MigrationV1);
         }
 
         public static void MigrationV0(XElement node)
@@ -107,18 +113,82 @@ You can migrate old version of xml:
         }
     }
 ```
-Then you must register your MigrationMap. See point configuration.
+Then you must register your TestClassConfig class. See point configuration.
+
+## Object reference and circular reference
+If you have a class:
+```csharp
+    public class Person
+    {
+        public int Id { get; set; }
+     
+	    public string Name { get; set; }
+
+        public Person Boss { get; set; }
+    }
+
+    public class Company
+    {
+        public List<Person> Employees { get; set; }
+    }
+```
+
+then you create object with circular reference, like this:
+```csharp
+    var boss = new Person {Id = 1, Name = "John"};
+    boss.Boss = boss; //himself boss
+    var worker = new Person {Id = 2, Name = "Oliver"};
+    worker.Boss = boss;
+    var obj = new Company
+    {
+        Employees = new List<Person>
+        {
+            worker,
+            boss
+        }
+    };
+```
+
+You must configure Person class as reference object:
+```csharp
+    public class PersonConfig : ExtendedXmlSerializerConfig<Person>
+    {
+        public PersonConfig()
+        {
+            ObjectReference(p => p.Id);
+        }
+    }
+```
+Then you must register your PersonConfig class. See point configuration.
+
+Output xml will look like this:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Company type="Samples.Company">
+   <Employees>
+      <Person type="Samples.Person" id="2">
+         <Id>2</Id>
+         <Name>Oliver</Name>
+         <Boss type="Samples.Person" ref="1" />
+      </Person>
+      <Person type="Samples.Person" id="1">
+         <Id>1</Id>
+         <Name>John</Name>
+         <Boss type="Samples.Person" ref="1" />
+      </Person>
+   </Employees>
+</Company>
+```
 
 ## Configuration
-For use MigrationMap and CustomSerializator you must register them in ExtendedXmlSerializer. You can do this in two ways.
+For use config class you must register them in ExtendedXmlSerializer. You can do this in two ways.
 
 #### Use SimpleSerializationToolsFactory class
 ```csharp
 var toolsFactory = new SimpleSerializationToolsFactory();
-// Register custom serializer
-toolsFactory.CustomSerializators.Add(new TestClassSerializer());
-// Register MigrationMap
-toolsFactory.MigrationMaps.Add(new TestClassMigrationMap());
+// Register your config class
+toolsFactory.Configurations.Add(new TestClassConfig());
+
 ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 ```
 
@@ -127,10 +197,10 @@ ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 var builder = new ContainerBuilder();
 // Register ExtendedXmlSerializer module
 builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-// Register custom serializer
-builder.RegisterType<TestClassSerializer>().As<ICustomSerializator<TestClass>>().SingleInstance();
-// Register MigrationMap
-builder.RegisterType<TestClassMigrationMap>().As<IMigrationMap<TestClass>>().SingleInstance();
+
+// Register your config class
+builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
+
 var containter = builder.Build();
 
 // Resolve ExtendedXmlSerializer

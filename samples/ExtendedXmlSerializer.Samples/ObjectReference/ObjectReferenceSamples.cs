@@ -20,29 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
+using System.Collections.Generic;
 using Autofac;
 using ExtendedXmlSerialization.Autofac;
 
-namespace ExtendedXmlSerialization.Samples.MigrationMap
+namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
-    public class MigrationMapSamples
+    public class ObjectReferenceSamples
     {
         public static void RunSimpleConfig()
         {
-            Program.PrintHeader("Deserialization old version of xml");
+            Program.PrintHeader("Serialization reference object");
             var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.Configurations.Add(new TestClassConfig());
+            toolsFactory.Configurations.Add(new PersonConfig());
             ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 
             Run(serializer);
-        }        
+        }
         public static void RunAutofacConfig()
         {
-            Program.PrintHeader("Deserialization old version of xml - autofac config");
+            Program.PrintHeader("Serialization reference object - autofac config");
 
             var builder = new ContainerBuilder();
             builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
+            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
             var containter = builder.Build();
 
             var serializer = containter.Resolve<IExtendedXmlSerializer>();
@@ -51,22 +52,24 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 
         private static void Run(IExtendedXmlSerializer serializer)
         {
-            var xml =
-                @"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClass type=""ExtendedXmlSerialization.Samples.MigrationMap.TestClass"">
-<Id>1</Id>
-<Type>Type</Type>
-</TestClass>";
+            var boss = new Person {Id = 1, Name = "John"};
+            boss.Boss = boss; //himself boss
+            var worker = new Person {Id = 2, Name = "Oliver"};
+            worker.Boss = boss;
+            var obj = new Company
+            {
+                Employees = new List<Person>
+                {
+                    worker,
+                    boss
+                }
+            };
+          
+            var xml = serializer.Serialize(obj);
             Console.WriteLine(xml);
-            var obj = serializer.Deserialize<TestClass>(xml);
 
-            Console.WriteLine("Obiect Id = " + obj.Id);
-            Console.WriteLine("Obiect Name = " + obj.Name);
-            Console.WriteLine("Obiect Value = " + obj.Value);
-
-            Console.WriteLine("Serialization to new version");
-            var xml2 = serializer.Serialize(obj);
-            Console.WriteLine(xml2);
+            var obj2 = serializer.Deserialize<Company>(xml);
+            Console.WriteLine("Employees count = " + obj2.Employees.Count);
         }
     }
 }

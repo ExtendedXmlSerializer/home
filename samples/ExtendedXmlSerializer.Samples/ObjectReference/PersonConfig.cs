@@ -19,30 +19,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
-using Xunit;
-
-namespace ExtendedXmlSerialization.Test
+namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
-    public class SerializatorCustomSerializerTest : BaseTest
+    public class PersonConfig : ExtendedXmlSerializerConfig<Person>
     {
-        public SerializatorCustomSerializerTest()
+        public PersonConfig()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> {new TestClassWithSerializerConfig()}
-            };
-        }
-
-        [Fact]
-        public void TestClassWithSerializer()
-        {
-            var obj = new TestClassWithSerializer("String", 17);
-
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
+            ObjectReference(p => p.Id);
         }
     }
 }

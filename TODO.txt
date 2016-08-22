@@ -3,4 +3,3 @@
 3. atribute to change name of property
 4. byte[]
 5. Extract objects list
-6. Check Vector, Matrix, bigint itp.

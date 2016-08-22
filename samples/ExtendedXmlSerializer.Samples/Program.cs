@@ -19,10 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 using System;
 using ExtendedXmlSerialization.Samples.CustomSerializator;
 using ExtendedXmlSerialization.Samples.MigrationMap;
+using ExtendedXmlSerialization.Samples.ObjectReference;
 using ExtendedXmlSerialization.Samples.Simple;
 
 namespace ExtendedXmlSerialization.Samples
@@ -43,6 +43,8 @@ namespace ExtendedXmlSerialization.Samples
             CustomSerializatorSamples.RunAutofacConfig();
             MigrationMapSamples.RunSimpleConfig();
             MigrationMapSamples.RunAutofacConfig();
+            ObjectReferenceSamples.RunSimpleConfig();
+            ObjectReferenceSamples.RunAutofacConfig();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();

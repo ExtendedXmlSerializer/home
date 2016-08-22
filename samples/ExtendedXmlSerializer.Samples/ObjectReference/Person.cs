@@ -19,32 +19,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+using System.Collections.Generic;
 
-using System.Linq;
-using System.Xml.Linq;
-
-namespace ExtendedXmlSerialization.Samples.MigrationMap
+namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
-    public class TestClassMigrationConfig : ExtendedXmlSerializerConfig<TestClass>
+    public class Person
     {
-        public TestClassMigrationConfig()
-        {
-            AddMigration(MigrationV0).AddMigration(MigrationV1);
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
 
-        public static void MigrationV0(XElement node)
-        {
-            var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
-            // Add new node
-            node.Add(new XElement("Name", typeElement.Value));
-            // Remove old node
-            typeElement.Remove();
-        }
+        public Person Boss { get; set; }
+    }
 
-        public static void MigrationV1(XElement node)
-        {
-            // Add new node
-            node.Add(new XElement("Value", "Calculated"));
-        }
+    public class Company
+    {
+        public List<Person> Employees { get; set; }
     }
 }

@@ -19,30 +19,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
-using Xunit;
+using System.Linq;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.Test
+namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-    public class SerializatorCustomSerializerTest : BaseTest
+    public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        public SerializatorCustomSerializerTest()
+        public TestClassConfig()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> {new TestClassWithSerializerConfig()}
-            };
+            AddMigration(MigrationV0).AddMigration(MigrationV1);
         }
 
-        [Fact]
-        public void TestClassWithSerializer()
+        public static void MigrationV0(XElement node)
         {
-            var obj = new TestClassWithSerializer("String", 17);
+            var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
+            // Add new node
+            node.Add(new XElement("Name", typeElement.Value));
+            // Remove old node
+            typeElement.Remove();
+        }
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
+        public static void MigrationV1(XElement node)
+        {
+            // Add new node
+            node.Add(new XElement("Value", "Calculated"));
         }
     }
 }
