@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
