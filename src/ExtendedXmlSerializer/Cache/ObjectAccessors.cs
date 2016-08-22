@@ -32,20 +32,31 @@ namespace ExtendedXmlSerialization.Cache
         internal delegate object PropertyGetter(object item);
 
         internal delegate void PropertySetter(object item, object value);
-
+        
         internal delegate void AddItemToCollection(object item, object value);
 
-        internal static ObjectActivator CreateObjectActivator(Type type)
+        internal static ObjectActivator CreateObjectActivator(Type type, bool isPrimitive)
         {
-            var constructor = type.GetConstructor(Type.EmptyTypes);
-            if (constructor == null)
-                return null;
+            var typeInfo = type.GetTypeInfo();
+            //if isClass or struct but not abstract, enum or primitive
+            if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum && !typeInfo.IsPrimitive)
+            {
+                if (typeInfo.IsClass)
+                {
+                    //class must have constructor
+                    var constructor = type.GetConstructor(Type.EmptyTypes);
+                    if (constructor == null)
+                        return null;
+                }
 
-            NewExpression newExp = Expression.New(type);
+                var newExp = Expression.Convert(Expression.New(type), typeof(object));
 
-            var lambda = Expression.Lambda<ObjectActivator>(newExp);
+                var lambda = Expression.Lambda<ObjectActivator>(newExp);
 
-            return lambda.Compile();
+                return lambda.Compile();
+            }
+                
+            return null;
         }
         
         internal static PropertyGetter CreatePropertyGetter(Type type, string propertyName)
@@ -54,10 +65,10 @@ namespace ExtendedXmlSerialization.Cache
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.TypeAs(itemObject, type);
+            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
 
             // Property from casted object
-            MemberExpression property = Expression.Property(itemCasted, propertyName);
+            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
 
             // Because we use this function also for value type we need to add conversion to object
             Expression conversion = Expression.Convert(property, typeof(object));
@@ -74,7 +85,7 @@ namespace ExtendedXmlSerialization.Cache
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.TypeAs(itemObject, type);
+            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
 
             var arguments = type.GetGenericArguments();
             ParameterExpression value = Expression.Parameter(typeof(object), "value");
@@ -82,20 +93,6 @@ namespace ExtendedXmlSerialization.Cache
 
             MethodInfo method = type.GetMethod("Add");
             
-            //            MethodInfo method = type
-            //               .GetMethods()
-            //               .FirstOrDefault(m => m.Name == "Add" && m.GetParameters().Length == 1).MakeGenericMethod(typeof(object));
-
-
-            //            ParameterExpression vehicleParameter = Expression.Parameter(
-            //                typeof(object), "v");
-            //            var vehicleFunc = Expression.Lambda<Func<Vehicle, bool>>(
-            //                Expression.Call(
-            //                    method,
-            //                    Expression.Property(
-            //                        vehicleParameter,
-            //                        typeof(Vehicle).GetProperty("Tank")),
-            //                    tankFunction), vehicleParameter);
             Expression conversion = Expression.Call(itemCasted, method, paramCasted);
 
             LambdaExpression lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
@@ -110,10 +107,11 @@ namespace ExtendedXmlSerialization.Cache
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.TypeAs(itemObject, type);
-
+            Expression itemCasted = type.GetTypeInfo().IsValueType
+                ? Expression.Unbox(itemObject, type)
+                : Expression.Convert(itemObject, type);
             // Property from casted object
-            MemberExpression property = Expression.Property(itemCasted, propertyName);
+            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
 
             // Secound parameter - value to set
             ParameterExpression value = Expression.Parameter(typeof(object), "value");

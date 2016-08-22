@@ -22,7 +22,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+#if NETSTANDARD1_6
 using Microsoft.Extensions.DependencyModel;
+#endif
 
 namespace ExtendedXmlSerialization.Cache
 {
@@ -66,10 +68,18 @@ namespace ExtendedXmlSerialization.Cache
             // https://github.com/dotnet/corefx/issues/8910
             foreach (RuntimeLibrary runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
             {
-                var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
-                type = assembly.GetType(typeName);
-                if (type != null)
-                    return type;
+                try
+                {
+                    var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
+                
+                    type = assembly.GetType(typeName);
+                    if (type != null)
+                        return type;
+                }
+                catch
+                {  
+                    continue;
+                }
             }
 #else
             foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())

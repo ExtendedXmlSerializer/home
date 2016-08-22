@@ -23,27 +23,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.Cache
 {
+    public struct Test
+    {
+        public int X;
+    }
+
     internal class TypeDefinition
     {
-        public Expression<Func<int[]>> item;
+
         public TypeDefinition(Type type)
         {
-            item = () => new int[] {1, 2, 3}; 
-
-
-           var action = item.Compile();
-            var result = action();
-
             Type = type;
             Name = type.Name;
 
-            var typeInfo= type.GetTypeInfo();
+            var typeInfo = type.GetTypeInfo();
             if (typeInfo.IsGenericType)
             {
                 Type[] types = type.GetGenericArguments();
@@ -63,7 +61,7 @@ namespace ExtendedXmlSerialization.Cache
 
             if (!IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type))
             {
-                
+
                 IsEnumerable = true;
             }
 
@@ -77,7 +75,7 @@ namespace ExtendedXmlSerialization.Cache
                 else
                 {
                     Type[] types = type.GetGenericArguments();
-                    Name = "ArrayOf"+ string.Join("", types.Select(p => p.Name));
+                    Name = "ArrayOf" + string.Join("", types.Select(p => p.Name));
                 }
                 if (typeInfo.IsGenericType)
                 {
@@ -86,24 +84,22 @@ namespace ExtendedXmlSerialization.Cache
                 }
             }
 
-            IsReadAsPrimitive = typeInfo.IsPrimitive || typeInfo.IsValueType || type == typeof(string) ||
-                                (typeInfo.IsGenericType &&
-                                 type.GetGenericTypeDefinition() == typeof(Nullable<>));
+            IsClass = !typeInfo.IsPrimitive && !typeInfo.IsValueType && !IsPrimitive && !typeInfo.IsEnum &&
+                      !(type == typeof(string));
 
-            IsObjectToSerialize = !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
-                                  !typeInfo.IsEnum && !(type == typeof(string)) &&
-                                  //not generic or generic but not List<> and Set<>
-                                  (!typeInfo.IsGenericType || 
-                                    (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)
-                                  ));
+            IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
+                !IsPrimitive &&
+                !typeInfo.IsEnum && !(type == typeof(string)) &&
+                //not generic or generic but not List<> and Set<>
+                (!typeInfo.IsGenericType ||
+                 (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)));
+            if (IsObjectToSerialize)
+            {
+                Properties = GetPropertieToSerialze(type);
+            }
             IsEnum = typeInfo.IsEnum;
 
-
-            Properties = GetPropertieToSerialze(type);
-
-            ObjectActivator = ObjectAccessors.CreateObjectActivator(type);
-
-            
+            ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToList { get; set; }
@@ -115,32 +111,55 @@ namespace ExtendedXmlSerialization.Cache
             var properties = type.GetProperties();
             foreach (PropertyInfo propertyInfo in properties)
             {
-                if (!propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic || propertyInfo.GetIndexParameters().Length > 0)
+                if (!propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic ||
+                    propertyInfo.GetIndexParameters().Length > 0)
+                {
                     continue;
+                }
 
                 bool ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                if (ignore) continue;
+                if (ignore)
+                {
+                    continue;
+                }
 
                 result.Add(new PropertieDefinition(type, propertyInfo));
             }
+
+            var fields = type.GetFields();
+            foreach (FieldInfo field in fields)
+            {
+                if (field.IsLiteral && !field.IsInitOnly)
+                {
+                    continue;
+                }
+                bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
+                if (ignore)
+                {
+                    continue;
+                }
+
+                result.Add(new PropertieDefinition(type, field));
+            }
             return result;
         }
+
         public bool IsPrimitive { get; private set; }
         public bool IsArray { get; private set; }
         public bool IsEnumerable { get; private set; }
         public Type[] GenericArguments { get; set; }
 
-        public bool IsReadAsPrimitive { get; private set; }
         public List<PropertieDefinition> Properties { get; private set; }
         public Type Type { get; private set; }
         public string Name { get; private set; }
         public string FullName { get; private set; }
         public bool IsObjectToSerialize { get; private set; }
+        public bool IsClass { get; private set; }
         public bool IsEnum { get; private set; }
 
         public string PrimitiveName { get; private set; }
         public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
-        
+
         public PropertieDefinition GetProperty(string name)
         {
             return Properties.FirstOrDefault(p => p.Name == name);
@@ -151,6 +170,18 @@ namespace ExtendedXmlSerialization.Cache
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Object:
+                    if (type == typeof(Guid))
+                    {
+                        return true;
+                    }
+                    if (type == typeof(TimeSpan))
+                    {
+                        return true;
+                    }
+                    if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    {
+                        return true;
+                    }
                     return false;
                 case TypeCode.Boolean:
                 case TypeCode.Char:
@@ -166,14 +197,20 @@ namespace ExtendedXmlSerialization.Cache
                 case TypeCode.Double:
                 case TypeCode.Decimal:
                 case TypeCode.DateTime:
-                case TypeCode.String:                  
+                case TypeCode.String:
                     return true;
                 default:
                     return false;
             }
         }
+
         private static string GetPrimitiveName(Type type)
         {
+
+            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                type = type.GetGenericArguments()[0];
+            }
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Boolean:
@@ -207,10 +244,17 @@ namespace ExtendedXmlSerialization.Cache
                 case TypeCode.String:
                     return "string";
                 default:
+                    if (type == typeof(Guid))
+                    {
+                        return "guid";
+                    }
+                    if (type == typeof(TimeSpan))
+                    {
+                        return "TimeSpan";
+                    }
+
                     throw new InvalidOperationException("Unknown primitive type " + type.FullName);
             }
         }
-
-
     }
 }

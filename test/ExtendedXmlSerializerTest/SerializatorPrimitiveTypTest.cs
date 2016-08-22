@@ -19,7 +19,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
+using System;
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
@@ -31,7 +34,7 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = "test";
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestString.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?><string>test</string>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -40,7 +43,8 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = true;
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestBool.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<boolean>True</boolean>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -49,7 +53,8 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = 456;
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestInt.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<int>456</int>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -58,7 +63,8 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = 8.4m;
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestDecimal.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<decimal>8.4</decimal>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -67,7 +73,12 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = new int[] {1, 2, 3};
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32>
+  <int>1</int>
+  <int>2</int>
+  <int>3</int>
+</ArrayOfInt32>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -76,7 +87,12 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = new List<int>() {1, 2, 3};
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32>
+  <int>1</int>
+  <int>2</int>
+  <int>3</int>
+</ArrayOfInt32>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -85,8 +101,40 @@ namespace ExtendedXmlSerialization.Test
         {
             var obj = new HashSet<int>() { 1, 2, 3 };
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfInt.xml", obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32>
+  <int>1</int>
+  <int>2</int>
+  <int>3</int>
+</ArrayOfInt32>", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void SerializeGuid()
+        {
+            var obj = new Guid("7db85a35-1f66-4e5c-9c4a-33a937a9258b");
+            CheckCompatibilityWithDefaultSerializator(obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?><guid>7db85a35-1f66-4e5c-9c4a-33a937a9258b</guid>", obj);
+            
+        }
+
+        [Fact]
+        public void SerializeTimeStamp()
+        {
+            var obj = new TimeSpan(1, 2, 3, 4);
+            CheckCompatibilityWithDefaultSerializator(obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?><TimeSpan>P1DT2H3M4S</TimeSpan>", obj);
+
+        }
+
+        [Fact]
+        public void SerializeNullableTyp()
+        {
+            int? obj = 1;
+            CheckCompatibilityWithDefaultSerializator(obj);
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?><int>1</int>", obj);
+
         }
     }
 }

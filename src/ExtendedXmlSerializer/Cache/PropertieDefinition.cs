@@ -30,14 +30,32 @@ namespace ExtendedXmlSerialization.Cache
         {
             Name = propertyInfo.Name;
             Type = propertyInfo.PropertyType;
-            Getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
-            Setter = ObjectAccessors.CreatePropertySetter(type, propertyInfo.Name);
+            _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
+            _propertySetter = ObjectAccessors.CreatePropertySetter(type, propertyInfo.Name);
         }
 
-        public ObjectAccessors.PropertyGetter Getter { get; private set; }
-        public ObjectAccessors.PropertySetter Setter { get; private set; }
+        public PropertieDefinition(Type type, FieldInfo fieldInfo)
+        {
+            Name = fieldInfo.Name;
+            Type = fieldInfo.FieldType;
+            _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
+            _propertySetter = ObjectAccessors.CreatePropertySetter(type, fieldInfo.Name);
+        }
+
+        private readonly ObjectAccessors.PropertyGetter _getter;
+        private readonly ObjectAccessors.PropertySetter _propertySetter;
+        
         public string Name { get; private set; }
         public Type Type { get; private set; }
 
+        public object GetValue(object obj)
+        {
+            return _getter(obj);
+        }
+
+        public void SetValue(object obj, object value)
+        {
+            _propertySetter?.Invoke(obj, value);
+        }
     }
 }
