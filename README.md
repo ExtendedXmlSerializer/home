@@ -1,3 +1,4 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true)](https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer) [![NuGet](https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg)](https://www.nuget.org/packages/ExtendedXmlSerializer/)
 # ExtendedXmlSerializer
 Extended Xml Serializer for .NET
 
