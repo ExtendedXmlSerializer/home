@@ -27,10 +27,12 @@ namespace ExtendedXmlSerialization.Test
 {
     public class SerializationStruct :BaseTest
     {
+#if !NET451
+        //TODO Set Single in struct on .net 4.5.1
         [Fact]
         public void Struct()
         {
-            Vector2 vector2 = new Vector2(1, 2);
+            var vector2 = new Vector2(1, 2);
 
             CheckSerializationAndDeserializationByXml(
                 @"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -39,6 +41,7 @@ namespace ExtendedXmlSerialization.Test
             CheckCompatibilityWithDefaultSerializator(vector2);
             
         }
+#endif
 
         [Fact]
         public void StructWithConst()

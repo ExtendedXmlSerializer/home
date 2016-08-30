@@ -28,6 +28,11 @@ namespace ExtendedXmlSerialization.Test
     public class BaseTest
     {
         protected ExtendedXmlSerializer Serializer = new ExtendedXmlSerializer();
+#if NET451
+        private const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+#else
+        private const string CoreLib = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+#endif
 
         private static string SerializeObject(object toSerialize)
         {
@@ -50,6 +55,7 @@ namespace ExtendedXmlSerialization.Test
         public void CheckSerializationAndDeserialization(string xmlPath, object obj)
         {
             var xml = EmbeddedResources.Get(xmlPath);
+            xml = xml.Replace("[CORELIB]", CoreLib);
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
             var obj2 = Serializer.Deserialize(xml, obj.GetType());
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
@@ -57,6 +63,7 @@ namespace ExtendedXmlSerialization.Test
 
         public void CheckSerializationAndDeserializationByXml(string xml, object obj)
         {
+            xml = xml.Replace("[CORELIB]", CoreLib);
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
             var obj2 = Serializer.Deserialize(xml, obj.GetType());
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
