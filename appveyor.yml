@@ -1,0 +1,29 @@
+version: '{build}'  
+pull_requests:  
+  do_not_increment_build_number: true
+branches:  
+  only:
+  - master
+nuget:  
+  disable_publish_on_pr: true
+build_script:  
+- ps: .\Build.ps1
+test: off  
+artifacts:  
+- path: .\artifacts\**\*.nupkg
+  name: NuGet
+deploy:  
+- provider: NuGet
+  server: https://www.myget.org/F/wojtpl2/api/v2/package
+  api_key:
+    secure: BsmciYCnU/C8uSfDOl1UfCHBEGydgoeDHR0BBqhrdMHGxevM44GP7CsgSt8fUTCx
+  skip_symbols: true
+  on:
+    branch: master
+- provider: NuGet
+  name: production
+  api_key:
+    secure: yFPxvMk/R3dKOIHX0Egl9ry//R+ffvf9CPFpXjMnUpcy4vMrRYbIlxkKCqE1EjPJ
+  on:
+    branch: master
+    appveyor_repo_tag: true

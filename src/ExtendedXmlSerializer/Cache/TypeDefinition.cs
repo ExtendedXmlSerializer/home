@@ -133,6 +133,10 @@ namespace ExtendedXmlSerialization.Cache
                 {
                     continue;
                 }
+                if (field.IsInitOnly)
+                {
+                    continue;
+                }
                 bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
                 if (ignore)
                 {
