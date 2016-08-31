@@ -1,5 +1,6 @@
 ﻿{
-  "version": "1.0.0",
+  "title": "ExtendedXmlSerializer.Autofac",
+  "version": "1.0.1",
   "packOptions": {
     "owners": [ "Wojciech Nagórski" ],
     "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
@@ -15,14 +16,13 @@
       "autofac"
     ]
   },
-  "description": "Extended Xml Serializer for .NET",
+  "description": "Extended Xml Serializer for .NET - Autofac integration",
   "authors": [
     "Wojciech Nagórski"
   ],
   "dependencies": {
     "ExtendedXmlSerializer": {
-      "target": "project",
-      "version": "1.0.0-*"
+      "target": "project"
     },
     "Autofac": "4.0.0"
   },

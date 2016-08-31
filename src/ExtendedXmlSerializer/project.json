@@ -1,6 +1,6 @@
 ﻿{
   "title": "ExtendedXmlSerializer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packOptions": {
     "owners": [ "Wojciech Nagórski" ],
     "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",

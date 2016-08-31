@@ -5,8 +5,12 @@
   },
 
   "dependencies": {
-    "ExtendedXmlSerializer": "1.0.0-*",
-    "ExtendedXmlSerializer.Autofac": "1.0.0-*"
+    "ExtendedXmlSerializer": {
+      "target": "project"
+    },
+    "ExtendedXmlSerializer.Autofac": {
+      "target": "project"
+    }
   },
 
   "frameworks": {
