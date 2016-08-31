@@ -1,8 +1,8 @@
-{
+ï»¿{
   "title": "ExtendedXmlSerializer",
   "version": "1.0.0",
   "packOptions": {
-    "owners": [ "Wojciech Nagórski" ],
+    "owners": [ "Wojciech NagÃ³rski" ],
     "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
     "projectUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer",
     "repository": {
@@ -17,7 +17,7 @@
   },
   "description": "Extended Xml Serializer for .NET",
   "authors": [
-    "Wojciech Nagórski"
+    "Wojciech NagÃ³rski"
   ],
 
   "frameworks": {

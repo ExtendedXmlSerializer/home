@@ -111,7 +111,9 @@ namespace ExtendedXmlSerialization.Cache
             var properties = type.GetProperties();
             foreach (PropertyInfo propertyInfo in properties)
             {
-                if (!propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic ||
+                var getMethod = propertyInfo.GetGetMethod(true);
+                if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
+                    !propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic ||
                     propertyInfo.GetIndexParameters().Length > 0)
                 {
                     continue;
@@ -133,7 +135,7 @@ namespace ExtendedXmlSerialization.Cache
                 {
                     continue;
                 }
-                if (field.IsInitOnly)
+                if (field.IsInitOnly || field.IsStatic)
                 {
                     continue;
                 }
