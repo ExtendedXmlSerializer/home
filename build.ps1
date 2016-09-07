@@ -53,14 +53,21 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 EnsurePsbuildInstalled
 
 exec { & dotnet restore }
+#.\nuget.exe restore src\ExtendedXmlSerializer.WebApi\packages.config -SolutionDirectory .
 
 Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
-Invoke-MSBuild
+Invoke-MSBuild -configuration Release 
 
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
+#$path = (Get-Item -Path ".\" -Verbose).FullName;
+
+#exec { & Invoke-MSBuild  src\xtendedXmlSerializer.WebApi\ExtendedXmlSerializer.WebApi.csproj -configuration Release -properties @{'SolutionDir'='"'+$path+'"'} }
 exec { & dotnet test .\test\ExtendedXmlSerializerTest -c Release }
 
 exec { & dotnet pack .\src\ExtendedXmlSerializer -c Release -o .\artifacts --version-suffix=$revision }  
 exec { & dotnet pack .\src\ExtendedXmlSerializer.Autofac -c Release -o .\artifacts --version-suffix=$revision }  
+
+#exec { & .\nuget pack src\ExtendedXmlSerializer.WebApi\ExtendedXmlSerializer.WebApi.csproj -Properties Configuration=Release}
+exec { & dotnet pack .\src\ExtendedXmlSerializer.WebApi -c Release -o .\artifacts --version-suffix=$revision}

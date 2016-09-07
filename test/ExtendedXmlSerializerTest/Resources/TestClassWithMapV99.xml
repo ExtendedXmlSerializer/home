@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassWithMap type="ExtendedXmlSerialization.Test.TestObject.TestClassWithMap" serializeVersion="99">
+<TestClassWithMap type="ExtendedXmlSerialization.Test.TestObject.TestClassWithMap" ver="99">
   <ZmianaWartosci>Stara</ZmianaWartosci>
   <NowyWezel>test</NowyWezel>
   <PropClass type="ExtendedXmlSerialization.Test.TestObject.TestClassMapFromPrimitive">
