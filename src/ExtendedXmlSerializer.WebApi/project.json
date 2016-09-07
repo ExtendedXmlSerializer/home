@@ -1,0 +1,43 @@
+﻿{
+  "title": "ExtendedXmlSerializer.WebApi",
+  "version": "1.1.0",
+  "packOptions": {
+    "owners": [ "Wojciech Nagórski" ],
+    "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
+    "projectUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/wojtpl2/ExtendedXmlSerializer"
+    },
+    "tags": [
+      "xmlserializer",
+      "xmlserialization",
+      "serialization"
+    ]
+  },
+  "description": "Extended Xml Serializer for .NET",
+  "authors": [
+    "Wojciech Nagórski"
+  ],
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "ExtendedXmlSerializer": {
+      "target": "project"
+    },
+    "Microsoft.AspNet.WebApi.Client": "5.0.0",
+    "Microsoft.AspNet.WebApi.Core": "5.0.0",
+    "Newtonsoft.Json": "4.5.11" 
+  },
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Data": "4.0.0.0",
+        "System.Net.Http": "4.0.0.0",
+        "System.Xml": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0"
+      }
+    }
+    }
+}

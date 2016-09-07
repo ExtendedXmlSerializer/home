@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -94,10 +95,10 @@ namespace ExtendedXmlSerialization
         void IExtendedXmlSerializerConfig.Map(Type targetType, XElement currentNode)
         {
             int currentNodeVer = 0;
-            var serializeVersion = currentNode.Attribute("serializeVersion");
-            if (serializeVersion != null)
+            var ver = currentNode.Attribute("ver");
+            if (ver != null)
             {
-                currentNodeVer = int.Parse(serializeVersion.Value);
+                currentNodeVer = int.Parse(ver.Value);
             }
             if (currentNodeVer > Version)
             {
