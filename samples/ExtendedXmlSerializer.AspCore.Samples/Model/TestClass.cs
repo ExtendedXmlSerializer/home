@@ -19,22 +19,43 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Web.Http;
 
-namespace ExtendedXmlSerialization.WebApi
+using System;
+
+namespace ExtendedXmlSerialization.AspCore.Samples.Model
 {
-    public static class HttpConfigurationExtension
+    public enum TestClassPriority
     {
-        public static void RegisterExtendedXmlSerializer(this HttpConfiguration config)
-        {
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.Add(new ExtendedXmlSerializerXmlMediaTypeFormatter(new ExtendedXmlSerializer()));
-        }
+        Lowest,
+        Normal,
+        Highest
+    }
 
-        public static void RegisterExtendedXmlSerializer(this HttpConfiguration config, IExtendedXmlSerializer serializer)
-        {
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.Add(new ExtendedXmlSerializerXmlMediaTypeFormatter(serializer));
-        }
+    /* version 0
+    public class TestClass
+    {
+        public Guid Guid { get; set; }
+        public string Name { get; set; }
+        public Int Year { get; set; }
+    }
+    */
+
+    /* version 1
+    public class TestClass
+    {
+        public Guid Guid { get; set; }
+        public string Name { get; set; }
+        public DateTime DateTime { get; set; }
+    }
+*/
+
+    //version 2
+    public class TestClass
+    {
+        public Guid Guid { get; set; }
+        public string Name { get; set; }
+        public DateTime DateTime { get; set; }
+
+        public TestClassPriority Priority { get; set; }
     }
 }

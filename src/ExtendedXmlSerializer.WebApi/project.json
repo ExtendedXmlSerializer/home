@@ -12,10 +12,12 @@
     "tags": [
       "xmlserializer",
       "xmlserialization",
-      "serialization"
+      "serialization",
+      "WebApi",
+      "ExtendedXmlSerializer"
     ]
   },
-  "description": "Extended Xml Serializer for .NET",
+  "description": "Extended Xml Serializer for .NET - WebApi integration",
   "authors": [
     "Wojciech Nagórski"
   ],
@@ -25,13 +27,15 @@
   "dependencies": {
     "ExtendedXmlSerializer": {
       "target": "project"
-    },
-    "Microsoft.AspNet.WebApi.Client": "5.0.0",
-    "Microsoft.AspNet.WebApi.Core": "5.0.0",
-    "Newtonsoft.Json": "4.5.11" 
+    }
   },
   "frameworks": {
-    "net451": {
+    "net45": {
+      "dependencies": {
+        "Microsoft.AspNet.WebApi.Client": "5.0.0",
+        "Microsoft.AspNet.WebApi.Core": "5.0.0",
+        "Newtonsoft.Json": "4.5.11"
+      },
       "frameworkAssemblies": {
         "System.Data": "4.0.0.0",
         "System.Net.Http": "4.0.0.0",
@@ -39,5 +43,5 @@
         "System.Xml.Linq": "4.0.0.0"
       }
     }
-    }
+  }
 }

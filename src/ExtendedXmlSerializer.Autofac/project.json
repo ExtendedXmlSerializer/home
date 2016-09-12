@@ -13,7 +13,8 @@
       "xmlserializer",
       "xmlserialization",
       "serialization",
-      "autofac"
+      "autofac",
+      "ExtendedXmlSerializer"
     ]
   },
   "description": "Extended Xml Serializer for .NET - Autofac integration",
@@ -28,7 +29,7 @@
   },
 
   "frameworks": {
-    "net451": {},
+    "net45": {},
     "netstandard1.6": {
       "dependencies": {
         "NETStandard.Library": "1.6.0"

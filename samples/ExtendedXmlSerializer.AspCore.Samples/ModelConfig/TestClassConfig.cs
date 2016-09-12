@@ -19,22 +19,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Web.Http;
 
-namespace ExtendedXmlSerialization.WebApi
+using System;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.AspCore.Samples.Model;
+
+namespace ExtendedXmlSerialization.AspCore.Samples.ModelConfig
 {
-    public static class HttpConfigurationExtension
+    public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
-        public static void RegisterExtendedXmlSerializer(this HttpConfiguration config)
+        public TestClassConfig()
         {
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.Add(new ExtendedXmlSerializerXmlMediaTypeFormatter(new ExtendedXmlSerializer()));
+            this.AddMigration(Migration1).AddMigration(Migration2);
+        }
+        private void Migration1(XElement node)
+        {
+            var year = node.Element("Year");
+            if (year == null) return;
+
+            var newValue = new DateTime(int.Parse(year.Value), 1, 1);
+            node.Add(new XElement("DateTime", newValue));
+            year.Remove();
         }
 
-        public static void RegisterExtendedXmlSerializer(this HttpConfiguration config, IExtendedXmlSerializer serializer)
+        private void Migration2(XElement node)
         {
-            config.Formatters.Remove(config.Formatters.XmlFormatter);
-            config.Formatters.Add(new ExtendedXmlSerializerXmlMediaTypeFormatter(serializer));
+            node.Add(new XElement("Priority", TestClassPriority.Highest));
         }
+
+
     }
 }

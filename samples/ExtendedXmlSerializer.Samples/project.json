@@ -14,7 +14,7 @@
   },
 
   "frameworks": {
-    "net451": {} ,
+    "net45": {} ,
     "netcoreapp1.0": {
       "imports": "dnxcore50",
       "dependencies": {

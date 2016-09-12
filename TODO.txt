@@ -2,4 +2,3 @@
 2. IList, ISet - property
 3. atribute to change name of property
 4. byte[]
-5. Extract objects list
