@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.WebApi.Samples
             var simpleConfig = new SimpleSerializationToolsFactory();
             simpleConfig.Configurations.Add(new TestClassConfig());
 
-           // config.RegisterExtendedXmlSerializer(new ExtendedXmlSerializer(simpleConfig));
+            config.RegisterExtendedXmlSerializer(new ExtendedXmlSerializer(simpleConfig));
 
             // Web API routes
             config.MapHttpAttributeRoutes();
