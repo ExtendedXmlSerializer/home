@@ -32,6 +32,14 @@ namespace ExtendedXmlSerialization.AspCore.Samples.Controllers
     [Route("api/[controller]")]
     public class TestClassController : Controller
     {
+// Only for autofac configuration
+//        private readonly IExtendedXmlSerializer _serializer;
+//
+//        public TestClassController(IExtendedXmlSerializer serializer)
+//        {
+//            _serializer = serializer;
+//        }
+
         private static readonly List<TestClass> Data = new List<TestClass>()
         {
             new TestClass {Guid = Guid.NewGuid(), Name = "FromDb", DateTime = new DateTime(2010, 01, 01), Priority = TestClassPriority.Lowest}

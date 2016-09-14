@@ -29,10 +29,12 @@ namespace ExtendedXmlSerialization.WebApi.Samples
     {
         public static void Register(HttpConfiguration config)
         {
+            // Manual creation of IExtendedXmlSerializer or resolve it from AutoFac.
             var simpleConfig = new SimpleSerializationToolsFactory();
             simpleConfig.Configurations.Add(new TestClassConfig());
+            var serializer = new ExtendedXmlSerializer(simpleConfig);
 
-            config.RegisterExtendedXmlSerializer(new ExtendedXmlSerializer(simpleConfig));
+            config.RegisterExtendedXmlSerializer(serializer);
 
             // Web API routes
             config.MapHttpAttributeRoutes();
