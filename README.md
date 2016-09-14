@@ -6,6 +6,10 @@ Support platforms
 * .NET 4.5 
 * .NET Platform Standard 1.6
 
+Support framework:
+* ASP.NET Core
+* WebApi
+
 Support features
 * deserialization xml from standard XMLSerializer
 * serialization class, struct, generic class, primitive type, generic list, array, enum
@@ -16,20 +20,20 @@ Support features
 * POCO - all configurations (migrations, custom serializer...) is outside the class
 
 ## Serialization
-```csharp
+```C#
 ExtendedXmlSerializer serializer = new ExtendedXmlSerializer();
 var obj = new TestClass();
 var xml = serializer.Serialize(obj);
 ```
 
 ## Deserialization
-```csharp
+```C#
 var obj2 = serializer.Deserialize<TestClass>(xml);
 ```
 
 ## Custom serialization
 If your class has to be serialized in a non-standard way:
-```csharp
+```C#
     public class TestClass
     {
         public TestClass(string paramStr)
@@ -41,7 +45,7 @@ If your class has to be serialized in a non-standard way:
     }
 ```
 You must configure custom serializer:
-```csharp
+```C#
 	public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
         public TestClassConfig()
@@ -64,23 +68,39 @@ Then you must register your TestClassConfig class. See point configuration.
 
 ## Deserialize old version of xml
 If you had a class:
-```csharp
+```C#
     public class TestClass
     {
         public int Id { get; set; }
         public string Type { get; set; } 
     }
 ```
+and generated xml look like:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TestClass type="Samples.TestClass">
+  <Id>1</Id>
+  <Type>Type</Type>
+</TestClass>
+```
 Then you renamed property:
-```csharp
+```C#
     public class TestClass
     {
         public int Id { get; set; }
         public string Name { get; set; } 
     }
 ```
+and generated xml look like:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TestClass type="Samples.TestClass" ver="1">
+  <Id>1</Id>
+  <Name>Type</Name>
+</TestClass>
+```
 Then you added new property and you want to calculate a new value while deserialization.
-```csharp
+```C#
     public class TestClass
     {
         public int Id { get; set; }
@@ -88,9 +108,17 @@ Then you added new property and you want to calculate a new value while deserial
         public string Value { get; set; }
     }
 ```
-
-You can migrate old version of xml using migrations:
-```csharp
+and new xml should look like:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<TestClass type="Samples.TestClass" ver="2">
+  <Id>1</Id>
+  <Name>Type</Name>
+  <Value>Calculated</Value>
+</TestClass>
+```
+You can migrate (read) old version of xml using migrations:
+```C#
 	public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
         public TestClassConfig()
@@ -118,7 +146,7 @@ Then you must register your TestClassConfig class. See point configuration.
 
 ## Object reference and circular reference
 If you have a class:
-```csharp
+```C#
     public class Person
     {
         public int Id { get; set; }
@@ -135,7 +163,7 @@ If you have a class:
 ```
 
 then you create object with circular reference, like this:
-```csharp
+```C#
     var boss = new Person {Id = 1, Name = "John"};
     boss.Boss = boss; //himself boss
     var worker = new Person {Id = 2, Name = "Oliver"};
@@ -151,7 +179,7 @@ then you create object with circular reference, like this:
 ```
 
 You must configure Person class as reference object:
-```csharp
+```C#
     public class PersonConfig : ExtendedXmlSerializerConfig<Person>
     {
         public PersonConfig()
@@ -185,7 +213,7 @@ Output xml will look like this:
 For use config class you must register them in ExtendedXmlSerializer. You can do this in two ways.
 
 #### Use SimpleSerializationToolsFactory class
-```csharp
+```C#
 var toolsFactory = new SimpleSerializationToolsFactory();
 // Register your config class
 toolsFactory.Configurations.Add(new TestClassConfig());
@@ -194,7 +222,7 @@ ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 ```
 
 #### Use Autofac integration
-```csharp
+```C#
 var builder = new ContainerBuilder();
 // Register ExtendedXmlSerializer module
 builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
@@ -208,4 +236,99 @@ var containter = builder.Build();
 var serializer = containter.Resolve<IExtendedXmlSerializer>();
 ```
 
+## ASP.NET Core integration
+You can integrate the ExtendedXmlSerializer with ASP.NET Core, so that your services will generate XML using a ExtendedXmlSerializer. You only need to install [ExtendedXmlSerializer.AspCore](https://www.nuget.org/packages/ExtendedXmlSerializer.AspCore/) and configure it in Startup.cs.
 
+#### Use SimpleSerializationToolsFactory class
+This configuration is very simple. You just need create configuration for ExtendedXmlSerializer and add formatters to MVC.
+```C#
+public void ConfigureServices(IServiceCollection services)
+{
+    // Custom create ExtendedXmlSerializer
+    SimpleSerializationToolsFactory factory = new SimpleSerializationToolsFactory();
+    factory.Configurations.Add(new TestClassConfig());
+    IExtendedXmlSerializer serializer = new ExtendedXmlSerializer(factory);
+
+    // Add services to the collection.
+    services.AddMvc(options =>
+    {
+        options.RespectBrowserAcceptHeader = true; // false by default
+
+        //Add ExtendedXmlSerializer's formatter
+        options.OutputFormatters.Add(new ExtendedXmlSerializerOutputFormatter(serializer));
+        options.InputFormatters.Add(new ExtendedXmlSerializerInputFormatter(serializer));
+    });
+}
+```
+#### Use Autofac integration
+This configuration is more difficult but recommended. You have to install [Autofac.Extensions.DependencyInjectio](www.nuget.org/packages/Autofac.Extensions.DependencyInjection/) and read Autofac [documentation](docs.autofac.org/en/latest/integration/aspnetcore.html). The following code adds a MVC service and creates a container AutoFac.
+```C#
+public IServiceProvider ConfigureServices(IServiceCollection services)
+{
+    // Add services to the collection.
+    services.AddMvc(options =>
+    {
+        options.RespectBrowserAcceptHeader = true; // false by default
+
+        //Resolve ExtendedXmlSerializer
+        IExtendedXmlSerializer serializer = ApplicationContainer.Resolve<IExtendedXmlSerializer>();
+
+        //Add ExtendedXmlSerializer's formatter
+        options.OutputFormatters.Add(new ExtendedXmlSerializerOutputFormatter(serializer));
+        options.InputFormatters.Add(new ExtendedXmlSerializerInputFormatter(serializer));
+    });
+
+    // Create the container builder.
+    var builder = new ContainerBuilder();
+
+    // Register dependencies, populate the services from
+    // the collection, and build the container. If you want
+    // to dispose of the container at the end of the app,
+    // be sure to keep a reference to it as a property or field.
+    builder.Populate(services);
+    builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
+    builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
+    this.ApplicationContainer = builder.Build();
+
+    // Create the IServiceProvider based on the container.
+    return new AutofacServiceProvider(this.ApplicationContainer);
+}
+```
+In this case you can also inject IExtendedXmlSerializer into your controller:
+```C#
+    [Route("api/[controller]")]
+    public class TestClassController : Controller
+    {
+        private readonly IExtendedXmlSerializer _serializer;
+
+        public TestClassController(IExtendedXmlSerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
+        ...
+    } 
+```
+
+## WebApi integration
+You can integrate ExtendedXmlSerializer with WebApi, so that your services will generate XML using a ExtendedXmlSerializer. You only need to install [ExtendedXmlSerializer.WebApi](www.nuget.org/packages/ExtendedXmlSerializer.WebApi/) and configure it in WebApi configuration. You can do it using autofac or SimpleSerializationToolsFactory e.g.:
+```C#
+public static void Register(HttpConfiguration config)
+{
+    // Manual creation of IExtendedXmlSerializer or resolve it from AutoFac.
+    var simpleConfig = new SimpleSerializationToolsFactory();
+    simpleConfig.Configurations.Add(new TestClassConfig());
+    var serializer = new ExtendedXmlSerializer(simpleConfig);
+
+    config.RegisterExtendedXmlSerializer(serializer);
+
+    // Web API routes
+    config.MapHttpAttributeRoutes();
+
+    config.Routes.MapHttpRoute(
+        name: "DefaultApi",
+        routeTemplate: "api/{controller}/{id}",
+        defaults: new { id = RouteParameter.Optional }
+    );
+}
+```
