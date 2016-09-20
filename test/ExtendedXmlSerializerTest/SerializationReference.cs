@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
             {
-                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassReferenceConfig() }
+                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassReferenceConfig(), new InterfaceReferenceConfig() }
             };
         }
 
@@ -72,5 +72,21 @@ namespace ExtendedXmlSerialization.Test
 
         }
 
+        [Fact]
+        public void SerializationListOfInterfaceReference()
+        {
+           
+            var parent = new TestClassReference() { Id = 1 };
+            var other = new TestClassReference { Id = 2, ObjectA = parent, ReferenceToObjectA = parent };
+
+            var obj = new List<IReference>();
+            obj.Add(new TestClassReference { Id = 3, ObjectA = parent, ReferenceToObjectA = parent });
+            obj.Add(new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other });
+            obj.Add(other);
+            obj.Add(parent);
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ListOfInterfaceReference.xml", obj);
+
+        }
     }
 }

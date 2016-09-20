@@ -28,14 +28,8 @@ using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    public struct Test
-    {
-        public int X;
-    }
-
     internal class TypeDefinition
-    {
-
+    { 
         public TypeDefinition(Type type)
         {
             Type = type;
@@ -47,8 +41,7 @@ namespace ExtendedXmlSerialization.Cache
                 Type[] types = type.GetGenericArguments();
                 Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
             }
-
-
+            
             FullName = type.FullName;
 
             IsPrimitive = IsTypPrimitive(type);
@@ -70,7 +63,7 @@ namespace ExtendedXmlSerialization.Cache
                 var elementType = type.GetElementType();
                 if (elementType != null)
                 {
-                    Name = "ArrayOf" + elementType?.Name;
+                    Name = "ArrayOf" + elementType.Name;
                 }
                 else
                 {
@@ -85,11 +78,11 @@ namespace ExtendedXmlSerialization.Cache
             }
 
             IsClass = !typeInfo.IsPrimitive && !typeInfo.IsValueType && !IsPrimitive && !typeInfo.IsEnum &&
-                      !(type == typeof(string));
+                      type != typeof(string);
 
             IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                 !IsPrimitive &&
-                !typeInfo.IsEnum && !(type == typeof(string)) &&
+                !typeInfo.IsEnum && type != typeof(string) &&
                 //not generic or generic but not List<> and Set<>
                 (!typeInfo.IsGenericType ||
                  (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)));

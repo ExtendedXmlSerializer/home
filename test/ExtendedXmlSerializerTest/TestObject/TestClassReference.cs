@@ -29,7 +29,11 @@ namespace ExtendedXmlSerialization.Test.TestObject
 
         public List<TestClassReference> All { get; set; }
     }
-    public class TestClassReference
+    public interface IReference
+    {
+        int Id { get; set; }
+    }
+    public class TestClassReference : IReference
     {
         public int Id { get; set; }
         public TestClassReference CyclicReference { get; set; }

@@ -116,7 +116,7 @@ namespace ExtendedXmlSerialization
                     {
                         var objectId = conf.GetObjectId(item);
 
-                        var key = type.FullName + "_" + objectId;
+                        var key = item.GetType().FullName + "_" + objectId;
                         if (!_referencesObjects.ContainsKey(key) && !_reservedReferencesObjects.ContainsKey(key))
                         {
                             toWriteReservedObject.Add(key);
@@ -131,7 +131,7 @@ namespace ExtendedXmlSerialization
                     if (conf != null && conf.IsObjectReference)
                     {
                         var objectId = conf.GetObjectId(item);
-                        var key = type.FullName + "_" + objectId;
+                        var key = item.GetType() + "_" + objectId;
                         if (toWriteReservedObject.Contains(key))
                         {
                             writeReservedObject = true;
