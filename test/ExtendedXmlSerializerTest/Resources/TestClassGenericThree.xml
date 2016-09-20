@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassGenericThreeOfStringInt32TestClassPrimitiveTypes type="ExtendedXmlSerialization.Test.TestObject.TestClassGenericThree`3[[System.String, [CORELIB]],[System.Int32, [CORELIB]],[ExtendedXmlSerialization.Test.TestObject.TestClassPrimitiveTypes, ExtendedXmlSerializerTest, Version=1.1.0.0, Culture=neutral, PublicKeyToken=null]]">
+<TestClassGenericThreeOfStringInt32TestClassPrimitiveTypes type="ExtendedXmlSerialization.Test.TestObject.TestClassGenericThree`3[[System.String, [CORELIB]],[System.Int32, [CORELIB]],[ExtendedXmlSerialization.Test.TestObject.TestClassPrimitiveTypes, ExtendedXmlSerializerTest, Version=1.1.1.0, Culture=neutral, PublicKeyToken=null]]">
   <GenericProp>StringValue</GenericProp>
   <GenericProp2>1</GenericProp2>
   <GenericProp3 type="ExtendedXmlSerialization.Test.TestObject.TestClassPrimitiveTypes">
