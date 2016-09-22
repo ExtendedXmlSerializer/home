@@ -69,7 +69,24 @@ namespace ExtendedXmlSerialization.Test
             };
 
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassReferenceWithList.xml", obj);
+        }
 
+        [Fact]
+        public void SerializationDictionaryWithReference()
+        {
+            var obj = new TestClassReferenceWithDictionary();
+            obj.Parent = new TestClassReference() { Id = 1 };
+            var other = new TestClassReference { Id = 2, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent };
+
+            obj.All = new Dictionary<int, TestClassReference>()
+            {
+                {3, new TestClassReference {Id = 3, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent}},
+                {4, new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other}},
+                {2, other},
+                {1, obj.Parent}
+            };
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassReferenceWithDictionary.xml", obj);
         }
 
         [Fact]

@@ -12,7 +12,7 @@ Support framework:
 
 Support features
 * deserialization xml from standard XMLSerializer
-* serialization class, struct, generic class, primitive type, generic list, array, enum
+* serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
 * serialization class with property interface
 * serialization circular reference and reference Id
 * deserialization old version of xml
@@ -29,6 +29,43 @@ var xml = serializer.Serialize(obj);
 ## Deserialization
 ```C#
 var obj2 = serializer.Deserialize<TestClass>(xml);
+```
+
+## Serialization of dictionary
+You can serialize generic Dictionary<TKey, TValue>. Dictionary can store any type.
+```C#
+public class TestClass
+{
+	public Dictionary<int, string> Dictionary { get; set; }
+}
+var obj = new TestClass
+{
+	Dictionary = new Dictionary<int, string>
+	{
+		{1, "First"},
+		{2, "Second"},
+		{3, "Other"},
+	}
+};
+```
+Output xml will look like:
+```xml
+<TestClass type="Samples.TestClass">
+  <Dictionary>
+    <Item>
+        <Key>1</Key>
+        <Value>First</Value>
+    </Item>
+    <Item>
+        <Key>2</Key>
+        <Value>Second</Value>
+    </Item>
+    <Item>
+        <Key>3</Key>
+        <Value>Other</Value>
+    </Item>
+  </Dictionary>
+</TestClass>
 ```
 
 ## Custom serialization

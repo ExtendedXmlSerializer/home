@@ -23,6 +23,13 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
+    public class TestClassReferenceWithDictionary
+    {
+        public TestClassReference Parent { get; set; }
+
+        public Dictionary<int, TestClassReference> All { get; set; }
+    }
+
     public class TestClassReferenceWithList
     {
         public TestClassReference Parent { get; set; }

@@ -92,6 +92,29 @@ namespace ExtendedXmlSerialization
             return xml;
         }
 
+        private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name)
+        {
+            writer.WriteStartElement(name ?? def.Name);
+            var dict = o as IDictionary;
+            if (dict != null)
+            {
+                foreach (DictionaryEntry item in dict)
+                {
+                    writer.WriteStartElement("Item");
+   
+                    var itemDef = TypeDefinitionCache.GetDefinition(item.Key.GetType());
+                    WriteXml(writer, item.Key, itemDef, "Key");
+
+                    var itemValueDef = TypeDefinitionCache.GetDefinition(item.Value.GetType());
+                    WriteXml(writer, item.Value, itemValueDef, "Value");
+
+                    writer.WriteEndElement();
+                }
+            }
+
+            writer.WriteEndElement();
+        }
+
         private void WriteXmlArray(object o, XmlWriter writer, TypeDefinition def, string name)
         {
             writer.WriteStartElement(name ?? def.Name);
@@ -175,6 +198,10 @@ namespace ExtendedXmlSerialization
             if (type.IsPrimitive)
             {
                 return PrimitiveValueTools.GetPrimitiveValue(currentNode.Value, type.Type, currentNode.Name.LocalName);
+            }
+            if (type.IsDictionary)
+            {
+                return ReadXmlDictionary(currentNode, type);
             }
 
             if (type.IsArray || type.IsEnumerable)
@@ -272,19 +299,11 @@ namespace ExtendedXmlSerialization
                     var obj2 = ReadXml(xElement, targetTypeDef, obj);
                     propertyInfo.SetValue(currentObject, obj2);
                 }
-                else if (propertyDef.IsObjectToSerialize || propertyDef.IsArray || propertyDef.IsEnumerable)
+                else if (propertyDef.IsObjectToSerialize || propertyDef.IsArray || propertyDef.IsEnumerable || propertyDef.IsDictionary)
                 {
                     //If xml does not contain type but we known that it is object
                     var obj = propertyInfo.GetValue(currentObject);
-                    object obj2;
-                    if (propertyDef.IsArray)
-                    {
-                        obj2 = ReadXmlArray(xElement, propertyDef, obj);
-                    }
-                    else
-                    {
-                        obj2 = ReadXml(xElement, propertyDef, obj);
-                    }
+                    var obj2 = ReadXml(xElement, propertyDef, obj);
                     propertyInfo.SetValue(currentObject, obj2);
                 }
                 else
@@ -298,6 +317,49 @@ namespace ExtendedXmlSerialization
                 }
             }
             return currentObject;
+        }
+
+        private object ReadXmlDictionary(XElement currentNode, TypeDefinition type, object instance = null)
+        {
+            int arrayCount = currentNode.Elements().Count();
+            var elements = currentNode.Elements().ToArray();
+
+            object dict = instance ?? type.ObjectActivator(); ;
+
+            for (int i = 0; i < arrayCount; i++)
+            {
+                var element = elements[i];
+                TypeDefinition keyDef = null;
+                TypeDefinition ValuDef = null;
+
+                var key = element.Element("Key");
+                var value = element.Element("Value");
+
+                var keyTypeAttr = key.Attribute("type");
+                if (keyTypeAttr != null)
+                {
+                    var nodeType = TypeDefinitionCache.GetType(keyTypeAttr.Value);
+                    keyDef = TypeDefinitionCache.GetDefinition(nodeType);
+                }
+                else
+                {
+                    keyDef = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
+                }
+
+                var valueTypeAttr = value.Attribute("type");
+                if (valueTypeAttr != null)
+                {
+                    var nodeType = TypeDefinitionCache.GetType(valueTypeAttr.Value);
+                    ValuDef = TypeDefinitionCache.GetDefinition(nodeType);
+                }
+                else
+                {
+                    ValuDef = TypeDefinitionCache.GetDefinition(type.GenericArguments[1]);
+                }
+
+                type.MethodAddToDictionary(dict, ReadXml(key, keyDef), ReadXml(value, ValuDef));
+            }
+            return dict;
         }
 
         private object ReadXmlArray(XElement currentNode, TypeDefinition type, object instance = null)
@@ -339,7 +401,7 @@ namespace ExtendedXmlSerialization
                     {
                         cd = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
                     }
-                    type.MethodAddToList(list, ReadXml(element, cd));
+                    type.MethodAddToCollection(list, ReadXml(element, cd));
                 }
             }
             if (type.IsArray)
@@ -361,6 +423,11 @@ namespace ExtendedXmlSerialization
             if (type.IsPrimitive)
             {
                 WriteXmlPrimitive(o, writer, type, name);
+                return;
+            }
+            if (type.IsDictionary)
+            {
+                WriteXmlDictionary(o, writer, type, name);
                 return;
             }
             if (type.IsArray || type.IsEnumerable)

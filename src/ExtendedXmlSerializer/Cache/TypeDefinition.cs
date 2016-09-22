@@ -60,6 +60,10 @@ namespace ExtendedXmlSerialization.Cache
 
             if (IsEnumerable)
             {
+                if (typeof(IDictionary).IsAssignableFrom(type))
+                {
+                    IsDictionary = true;
+                }
                 var elementType = type.GetElementType();
                 if (elementType != null)
                 {
@@ -73,7 +77,14 @@ namespace ExtendedXmlSerialization.Cache
                 if (typeInfo.IsGenericType)
                 {
                     GenericArguments = type.GetGenericArguments();
-                    MethodAddToList = ObjectAccessors.CreateMethodAdd(type);
+                    if (IsDictionary)
+                    {
+                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+                    }
+                    else
+                    {
+                        MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type);
+                    }
                 }
             }
 
@@ -95,7 +106,8 @@ namespace ExtendedXmlSerialization.Cache
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
         }
 
-        public ObjectAccessors.AddItemToCollection MethodAddToList { get; set; }
+        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
+        public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
 
 
         private static List<PropertieDefinition> GetPropertieToSerialze(Type type)
@@ -146,6 +158,7 @@ namespace ExtendedXmlSerialization.Cache
         public bool IsPrimitive { get; private set; }
         public bool IsArray { get; private set; }
         public bool IsEnumerable { get; private set; }
+        public bool IsDictionary { get; private set; }
         public Type[] GenericArguments { get; set; }
 
         public List<PropertieDefinition> Properties { get; private set; }
