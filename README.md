@@ -32,7 +32,7 @@ var obj2 = serializer.Deserialize<TestClass>(xml);
 ```
 
 ## Serialization of dictionary
-You can serialize generic Dictionary<TKey, TValue>. Dictionary can store any type.
+You can serialize generic dictionary, that can store any type.
 ```C#
 public class TestClass
 {
