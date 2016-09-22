@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System.IO;
+using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Test.Tools;
 
@@ -55,15 +56,23 @@ namespace ExtendedXmlSerialization.Test
         public void CheckSerializationAndDeserialization(string xmlPath, object obj)
         {
             var xml = EmbeddedResources.Get(xmlPath);
-            xml = xml.Replace("[CORELIB]", CoreLib);
+            xml = ReplaceVariable(xml);
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
             var obj2 = Serializer.Deserialize(xml, obj.GetType());
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
         }
 
-        public void CheckSerializationAndDeserializationByXml(string xml, object obj)
+        private static string ReplaceVariable(string xml)
         {
             xml = xml.Replace("[CORELIB]", CoreLib);
+            xml = xml.Replace("[EXTENDEDXMLSERIALIZER_VERSION]",
+                typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
+            return xml;
+        }
+
+        public void CheckSerializationAndDeserializationByXml(string xml, object obj)
+        {
+            xml = ReplaceVariable(xml);
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
             var obj2 = Serializer.Deserialize(xml, obj.GetType());
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
