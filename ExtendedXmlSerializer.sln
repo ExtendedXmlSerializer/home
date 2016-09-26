@@ -31,6 +31,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.WebAp
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.AspCore", "src\ExtendedXmlSerializer.AspCore\ExtendedXmlSerializer.AspCore.xproj", "{CAD86947-AF5F-4AAC-A334-0218DA106545}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Performance.Tests", "test\ExtendedXmlSerializer.Performance.Tests\ExtendedXmlSerializer.Performance.Tests.xproj", "{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,10 @@ Global
 		{CAD86947-AF5F-4AAC-A334-0218DA106545}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAD86947-AF5F-4AAC-A334-0218DA106545}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAD86947-AF5F-4AAC-A334-0218DA106545}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +83,6 @@ Global
 		{2BA71BBD-69FC-4477-A08B-F42DA5840F73} = {A789F6C4-91DE-47A0-BD7E-E59562409BE7}
 		{DC9019A7-4E8C-4C9B-8096-6FC5DA02CBCD} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
 		{CAD86947-AF5F-4AAC-A334-0218DA106545} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
+		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 	EndGlobalSection
 EndGlobal

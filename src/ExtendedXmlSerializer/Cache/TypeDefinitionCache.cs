@@ -34,27 +34,25 @@ namespace ExtendedXmlSerialization.Cache
         private static readonly ConcurrentDictionary<Type, TypeDefinition> TypeDefinitions = new ConcurrentDictionary<Type, TypeDefinition>();
         private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
 
-		public static TypeDefinition GetDefinition(Type type)
-		{
-			if (TypeDefinitions.ContainsKey(type))
-			{
-				return TypeDefinitions[type];
-			}
-
-			TypeDefinition result = new TypeDefinition(type);
-			TypeDefinitions.TryAdd(type, result);
-			return result;
-		}
-
-        public static Type GetType(string naneType)
+        public static TypeDefinition GetDefinition(Type type)
         {
-            if (TypeCache.ContainsKey(naneType))
+            TypeDefinition result;
+            if (!TypeDefinitions.TryGetValue(type, out result))
             {
-                return TypeCache[naneType];
+                result = new TypeDefinition(type);
+                TypeDefinitions.TryAdd(type, result);
             }
+            return result;
+        }
 
-            var result = GetTypeFromName(naneType);
-            TypeCache.TryAdd(naneType, result);
+        public static Type GetType(string typeName)
+        {
+            Type result;
+            if (!TypeCache.TryGetValue(typeName, out result))
+            {
+                result = GetTypeFromName(typeName);
+                TypeCache.TryAdd(typeName, result);
+            }
             return result;
         }
 

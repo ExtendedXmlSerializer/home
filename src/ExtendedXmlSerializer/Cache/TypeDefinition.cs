@@ -39,16 +39,18 @@ namespace ExtendedXmlSerialization.Cache
             if (typeInfo.IsGenericType)
             {
                 Type[] types = type.GetGenericArguments();
+
+                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    Type = type.GetGenericArguments()[0];
+                }
+
                 Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
             }
             
             FullName = type.FullName;
 
-            IsPrimitive = IsTypPrimitive(type);
-            if (IsPrimitive)
-            {
-                PrimitiveName = GetPrimitiveName(type);
-            }
+            GetPrimitiveInfo(Type);
 
             IsArray = typeInfo.IsArray;
 
@@ -69,14 +71,14 @@ namespace ExtendedXmlSerialization.Cache
                 {
                     Name = "ArrayOf" + elementType.Name;
                 }
-                else
-                {
-                    Type[] types = type.GetGenericArguments();
-                    Name = "ArrayOf" + string.Join("", types.Select(p => p.Name));
-                }
+
                 if (typeInfo.IsGenericType)
                 {
                     GenericArguments = type.GetGenericArguments();
+                    if (elementType == null)
+                    {
+                        Name = "ArrayOf" + string.Join("", GenericArguments.Select(p => p.Name));
+                    }
                     if (IsDictionary)
                     {
                         MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
@@ -88,8 +90,6 @@ namespace ExtendedXmlSerialization.Cache
                 }
             }
 
-            IsClass = !typeInfo.IsPrimitive && !typeInfo.IsValueType && !IsPrimitive && !typeInfo.IsEnum &&
-                      type != typeof(string);
 
             IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                 !IsPrimitive &&
@@ -101,8 +101,7 @@ namespace ExtendedXmlSerialization.Cache
             {
                 Properties = GetPropertieToSerialze(type);
             }
-            IsEnum = typeInfo.IsEnum;
-
+            
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
         }
 
@@ -166,10 +165,10 @@ namespace ExtendedXmlSerialization.Cache
         public string Name { get; private set; }
         public string FullName { get; private set; }
         public bool IsObjectToSerialize { get; private set; }
-        public bool IsClass { get; private set; }
         public bool IsEnum { get; private set; }
 
         public string PrimitiveName { get; private set; }
+        public TypeCode TypeCode { get; set; }
         public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
 
         public PropertieDefinition GetProperty(string name)
@@ -177,96 +176,75 @@ namespace ExtendedXmlSerialization.Cache
             return Properties.FirstOrDefault(p => p.Name == name);
         }
 
-        private static bool IsTypPrimitive(Type type)
+        private void GetPrimitiveInfo(Type type)
         {
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Object:
-                    if (type == typeof(Guid))
-                    {
-                        return true;
-                    }
-                    if (type == typeof(TimeSpan))
-                    {
-                        return true;
-                    }
-                    if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    {
-                        return true;
-                    }
-                    return false;
-                case TypeCode.Boolean:
-                case TypeCode.Char:
-                case TypeCode.SByte:
-                case TypeCode.Byte:
-                case TypeCode.Int16:
-                case TypeCode.UInt16:
-                case TypeCode.Int32:
-                case TypeCode.UInt32:
-                case TypeCode.Int64:
-                case TypeCode.UInt64:
-                case TypeCode.Single:
-                case TypeCode.Double:
-                case TypeCode.Decimal:
-                case TypeCode.DateTime:
-                case TypeCode.String:
-                    return true;
-                default:
-                    return false;
-            }
-        }
+            IsEnum = type.GetTypeInfo().IsEnum;
 
-        private static string GetPrimitiveName(Type type)
-        {
+            TypeCode = Type.GetTypeCode(type);
 
-            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            {
-                type = type.GetGenericArguments()[0];
-            }
-            switch (Type.GetTypeCode(type))
+            switch (TypeCode)
             {
                 case TypeCode.Boolean:
-                    return "boolean";
+                    PrimitiveName = "boolean";
+                    break;
                 case TypeCode.Char:
-                    return "char";
+                    PrimitiveName = "char";
+                    break;
                 case TypeCode.SByte:
-                    return "byte";
+                    PrimitiveName = "byte";
+                    break;
                 case TypeCode.Byte:
-                    return "unsignedByte";
+                    PrimitiveName = "unsignedByte";
+                    break;
                 case TypeCode.Int16:
-                    return "short";
+                    PrimitiveName = "short";
+                    break;
                 case TypeCode.UInt16:
-                    return "unsignedShort";
+                    PrimitiveName = "unsignedShort";
+                    break;
                 case TypeCode.Int32:
-                    return "int";
+                    PrimitiveName = "int";
+                    break;
                 case TypeCode.UInt32:
-                    return "unsignedInt";
+                    PrimitiveName = "unsignedInt";
+                    break;
                 case TypeCode.Int64:
-                    return "long";
+                    PrimitiveName = "long";
+                    break;
                 case TypeCode.UInt64:
-                    return "unsignedLong";
+                    PrimitiveName = "unsignedLong";
+                    break;
                 case TypeCode.Single:
-                    return "float";
+                    PrimitiveName = "float";
+                    break;
                 case TypeCode.Double:
-                    return "double";
+                    PrimitiveName = "double";
+                    break;
                 case TypeCode.Decimal:
-                    return "decimal";
+                    PrimitiveName = "decimal";
+                    break;
                 case TypeCode.DateTime:
-                    return "dateTime";
+                    PrimitiveName = "dateTime";
+                    break;
                 case TypeCode.String:
-                    return "string";
+                    PrimitiveName = "string";
+                    break;
                 default:
                     if (type == typeof(Guid))
                     {
-                        return "guid";
+                        PrimitiveName = "guid";
+
+                        break;
                     }
                     if (type == typeof(TimeSpan))
                     {
-                        return "TimeSpan";
+                        PrimitiveName = "TimeSpan";
+                        break;
                     }
 
-                    throw new InvalidOperationException("Unknown primitive type " + type.FullName);
+                    break;
             }
+            IsPrimitive = !string.IsNullOrEmpty(PrimitiveName);          
         }
     }
 }

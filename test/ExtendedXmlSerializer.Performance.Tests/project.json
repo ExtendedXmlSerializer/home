@@ -1,0 +1,53 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "allowUnsafe": true
+  },
+  "configurations": {
+    "Debug": {
+      "buildOptions": {
+        "define": [ "DEBUG", "TRACE" ]
+      }
+    },
+    "Release": {
+      "buildOptions": {
+        "define": [ "RELEASE", "TRACE" ],
+        "optimize": true
+      }
+    }
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "ExtendedXmlSerializer": {
+      "target": "project"
+    },
+    "BenchmarkDotNet": "0.9.9"
+  },
+
+  "frameworks": {
+    "net45": {
+      "buildOptions": {
+        "define": [ "CLASSIC" ]
+      },
+      "frameworkAssemblies": {
+        "System.Reflection": "4.0.0.0"
+      },
+      "dependencies": {
+        "BenchmarkDotNet.Diagnostics.Windows": "0.9.9"
+      }
+    },
+    "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "CORE" ]
+      },
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        },
+        "System.ComponentModel.EventBasedAsync": "4.0.11"
+      }
+    }
+  }
+}

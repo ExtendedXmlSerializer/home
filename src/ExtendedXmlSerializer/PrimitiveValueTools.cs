@@ -22,14 +22,15 @@
 using System;
 using System.Reflection;
 using System.Xml;
+using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization
 {
     internal static class PrimitiveValueTools
     {
-        public static string SetPrimitiveValue(object value, Type type)
+        public static string SetPrimitiveValue(object value, TypeDefinition type)
         {
-            switch (Type.GetTypeCode(type))
+            switch (type.TypeCode)
             {
                 case TypeCode.Boolean:
                     return value.ToString();
@@ -62,30 +63,26 @@ namespace ExtendedXmlSerialization
                 case TypeCode.String:
                     return (string)value;
                 default:
-                    if (type == typeof(Guid))
+                    if (type.Type == typeof(Guid))
                     {
                         return XmlConvert.ToString((Guid)value);
                     }
-                    if (type == typeof(TimeSpan))
+                    if (type.Type == typeof(TimeSpan))
                     {
                         return XmlConvert.ToString((TimeSpan)value);
                     }
                     return value.ToString();
             }
         }
-        public static object GetPrimitiveValue(string value, Type type, string nodeName)
+        public static object GetPrimitiveValue(string value, TypeDefinition type, string nodeName)
         {
             try
             {
-                if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                if (type.IsEnum)
                 {
-                    type = type.GetGenericArguments()[0];
+                    return Enum.Parse(type.Type, value);
                 }
-                if (type.GetTypeInfo().IsEnum)
-                {
-                    return Enum.Parse(type, value);
-                }
-                switch (Type.GetTypeCode(type))
+                switch (type.TypeCode)
                 {
                     case TypeCode.Boolean:
                         return Convert.ToBoolean(value);
@@ -118,11 +115,11 @@ namespace ExtendedXmlSerialization
                     case TypeCode.String:
                         return value;
                     default:
-                        if (type == typeof(Guid))
+                        if (type.Type== typeof(Guid))
                         {
                             return XmlConvert.ToGuid(value);
                         }
-                        if (type == typeof(TimeSpan))
+                        if (type.Type == typeof(TimeSpan))
                         {
                             return XmlConvert.ToTimeSpan(value);
                         }

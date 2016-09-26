@@ -88,6 +88,7 @@ namespace ExtendedXmlSerialization
                     xml = sr.ReadToEnd();
                 }
             }
+
             _referencesObjects.Clear();
             return xml;
         }
@@ -197,7 +198,7 @@ namespace ExtendedXmlSerialization
         {
             if (type.IsPrimitive)
             {
-                return PrimitiveValueTools.GetPrimitiveValue(currentNode.Value, type.Type, currentNode.Name.LocalName);
+                return PrimitiveValueTools.GetPrimitiveValue(currentNode.Value, type, currentNode.Name.LocalName);
             }
             if (type.IsDictionary)
             {
@@ -312,7 +313,7 @@ namespace ExtendedXmlSerialization
                     {
                         continue;
                     }
-                    object primitive = PrimitiveValueTools.GetPrimitiveValue(value, propertyInfo.Type, xElement.Name.LocalName);
+                    object primitive = PrimitiveValueTools.GetPrimitiveValue(value, propertyDef, xElement.Name.LocalName);
                     propertyInfo.SetValue(currentObject, primitive);
                 }
             }
@@ -414,7 +415,7 @@ namespace ExtendedXmlSerialization
         private static void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null)
         {
             xw.WriteStartElement(name ?? def.PrimitiveName);
-            xw.WriteString(PrimitiveValueTools.SetPrimitiveValue(o, def.Type));
+            xw.WriteString(PrimitiveValueTools.SetPrimitiveValue(o, def));
             xw.WriteEndElement();
         }
 
