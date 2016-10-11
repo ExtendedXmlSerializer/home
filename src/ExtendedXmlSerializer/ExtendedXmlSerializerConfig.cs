@@ -21,6 +21,8 @@
 // SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -138,5 +140,30 @@ namespace ExtendedXmlSerialization
         {
             return getObjectId((T) obj).ToString();
         }
+
+        bool IExtendedXmlSerializerConfig.CheckPropertyEncryption(string propertyName)
+        {
+            return PropertiesToEncrypt.Contains(propertyName);
+        }
+
+        public void Encrypt<TProperty>(Expression<Func<T, TProperty>> expression)
+        {
+            MemberExpression member = expression.Body as MemberExpression;
+            if (member == null)
+                throw new ArgumentException($"Expression '{expression}' refers to a method, not a property.");
+
+            PropertyInfo propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException($"Expression '{expression}' refers to a field, not a property.");
+
+            if (Type != propInfo.DeclaringType && propInfo.DeclaringType != null &&
+                !Type.GetTypeInfo().IsSubclassOf(propInfo.DeclaringType))
+                throw new ArgumentException(
+                    $"Expresion '{expression}' refers to a property that is not from type {Type}.");
+
+            PropertiesToEncrypt.Add(propInfo.Name);
+        }
+
+        private List<string> PropertiesToEncrypt { get; set; } = new List<string>();
     }
 }

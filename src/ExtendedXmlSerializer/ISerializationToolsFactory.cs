@@ -29,5 +29,7 @@ namespace ExtendedXmlSerialization
     public interface ISerializationToolsFactory
     {
         IExtendedXmlSerializerConfig GetConfiguration(Type type);
+
+        IPropertyEncryption EncryptionAlgorithm { get; }
     }
 }

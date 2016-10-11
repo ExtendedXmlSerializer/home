@@ -11,13 +11,19 @@ Support framework:
 * WebApi
 
 Support features
-* deserialization xml from standard XMLSerializer
-* serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
-* serialization class with property interface
-* serialization circular reference and reference Id
-* deserialization old version of xml
-* custom serializer
-* POCO - all configurations (migrations, custom serializer...) is outside the class
+* Deserialization xml from standard XMLSerializer
+* Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
+* Serialization class with property interface
+* Serialization circular reference and reference Id
+* Deserialization of old version of xml
+* Custom serializer
+* POCO - all configurations (migrations, custom serializer...) are outside the class
+
+Standard XML Serializer in .NET is very limited.
+* Does not support serialization of class with circular reference or class with interface property.
+* There is no mechanism for reading the old version of XML.
+* If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.
+* Does not support IoC
 
 ## Serialization
 ```C#
@@ -48,7 +54,7 @@ var obj = new TestClass
 	}
 };
 ```
-Output xml will look like:
+Output XML will look like:
 ```xml
 <TestClass type="Samples.TestClass">
   <Dictionary>
@@ -101,7 +107,7 @@ You must configure custom serializer:
         }
     }
 ```
-Then you must register your TestClassConfig class. See point configuration.
+Then, you must register your TestClassConfig class. See point configuration.
 
 ## Deserialize old version of xml
 If you had a class:
@@ -112,7 +118,7 @@ If you had a class:
         public string Type { get; set; } 
     }
 ```
-and generated xml look like:
+and generated XML look like:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <TestClass type="Samples.TestClass">
@@ -128,7 +134,7 @@ Then you renamed property:
         public string Name { get; set; } 
     }
 ```
-and generated xml look like:
+and generated XML look like:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <TestClass type="Samples.TestClass" ver="1">
@@ -136,7 +142,7 @@ and generated xml look like:
   <Name>Type</Name>
 </TestClass>
 ```
-Then you added new property and you want to calculate a new value while deserialization.
+Then, you added new property and you wanted to calculate a new value during deserialization.
 ```C#
     public class TestClass
     {
@@ -145,7 +151,7 @@ Then you added new property and you want to calculate a new value while deserial
         public string Value { get; set; }
     }
 ```
-and new xml should look like:
+and new XML should look like:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <TestClass type="Samples.TestClass" ver="2">
@@ -154,7 +160,7 @@ and new xml should look like:
   <Value>Calculated</Value>
 </TestClass>
 ```
-You can migrate (read) old version of xml using migrations:
+You can migrate (read) old version of XML using migrations:
 ```C#
 	public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
     {
@@ -179,7 +185,7 @@ You can migrate (read) old version of xml using migrations:
         }
     }
 ```
-Then you must register your TestClassConfig class. See point configuration.
+Then, you must register your TestClassConfig class. See point configuration.
 
 ## Object reference and circular reference
 If you have a class:
@@ -225,9 +231,9 @@ You must configure Person class as reference object:
         }
     }
 ```
-Then you must register your PersonConfig class. See point configuration.
+Then, you must register your PersonConfig class. See point configuration.
 
-Output xml will look like this:
+Output XML will look like this:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Company type="Samples.Company">
@@ -247,7 +253,7 @@ Output xml will look like this:
 ```
 
 ## Configuration
-For use config class you must register them in ExtendedXmlSerializer. You can do this in two ways.
+For using config class, you must register them in ExtendedXmlSerializer. You can do this in two ways.
 
 #### Use SimpleSerializationToolsFactory class
 ```C#
@@ -298,7 +304,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 #### Use Autofac integration
-This configuration is more difficult but recommended. You have to install [Autofac.Extensions.DependencyInjectio](www.nuget.org/packages/Autofac.Extensions.DependencyInjection/) and read Autofac [documentation](docs.autofac.org/en/latest/integration/aspnetcore.html). The following code adds a MVC service and creates a container AutoFac.
+This configuration is more difficult but recommended. You have to install [Autofac.Extensions.DependencyInjectio](www.nuget.org/packages/Autofac.Extensions.DependencyInjection/) and read Autofac [documentation](docs.autofac.org/en/latest/integration/aspnetcore.html). The following code adds an MVC service and creates a container AutoFac.
 ```C#
 public IServiceProvider ConfigureServices(IServiceCollection services)
 {
@@ -331,7 +337,7 @@ public IServiceProvider ConfigureServices(IServiceCollection services)
     return new AutofacServiceProvider(this.ApplicationContainer);
 }
 ```
-In this case you can also inject IExtendedXmlSerializer into your controller:
+In this case, you can also inject IExtendedXmlSerializer into your controller:
 ```C#
     [Route("api/[controller]")]
     public class TestClassController : Controller

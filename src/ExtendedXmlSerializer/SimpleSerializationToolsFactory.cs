@@ -43,6 +43,7 @@ namespace ExtendedXmlSerialization
         public List<IExtendedXmlSerializerConfig> Configurations { get; set; }
 
 
+
         public IExtendedXmlSerializerConfig GetConfiguration(Type type)
         {
             foreach (var migrationMap in Configurations)
@@ -54,5 +55,7 @@ namespace ExtendedXmlSerialization
             }
             return null;
         }
+
+        public IPropertyEncryption EncryptionAlgorithm { get; set; }
     }
 }

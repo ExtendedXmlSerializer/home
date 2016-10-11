@@ -313,6 +313,19 @@ namespace ExtendedXmlSerialization
                     {
                         continue;
                     }
+
+                    if (configuration != null)
+                    {
+                        if (configuration.CheckPropertyEncryption(propertyInfo.Name))
+                        {
+                            var algorithm = GetEncryptionAlgorithm();
+                            if (algorithm != null)
+                            {
+                                value = algorithm.Decrypt(value);
+                            }
+                        }
+                    }
+
                     object primitive = PrimitiveValueTools.GetPrimitiveValue(value, propertyDef, xElement.Name.LocalName);
                     propertyInfo.SetValue(currentObject, primitive);
                 }
@@ -412,10 +425,19 @@ namespace ExtendedXmlSerialization
             return list;
         }
 
-        private static void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null)
+        private void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null, bool toEncrypt = false)
         {
             xw.WriteStartElement(name ?? def.PrimitiveName);
-            xw.WriteString(PrimitiveValueTools.SetPrimitiveValue(o, def));
+            var value = PrimitiveValueTools.SetPrimitiveValue(o, def);
+            if (toEncrypt)
+            {
+                var algorithm = GetEncryptionAlgorithm();
+                if (algorithm != null)
+                {
+                    value = algorithm.Encrypt(value);
+                }
+            }
+            xw.WriteString(value);
             xw.WriteEndElement();
         }
 
@@ -497,7 +519,16 @@ namespace ExtendedXmlSerialization
                 }
                 else
                 {
-                    WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name);
+                    bool toEncrypt = false;
+                    if (configuration != null)
+                    {
+                        if (configuration.CheckPropertyEncryption(propertyInfo.Name))
+                        {
+                            toEncrypt = true;
+                        }
+                    }
+
+                    WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name, toEncrypt);
                 }
             }
             writer.WriteEndElement();
@@ -506,6 +537,11 @@ namespace ExtendedXmlSerialization
         private IExtendedXmlSerializerConfig GetConfiguration(Type type)
         {
             return _toolsFactory?.GetConfiguration(type);
+        }
+
+        private IPropertyEncryption GetEncryptionAlgorithm()
+        {
+            return _toolsFactory?.EncryptionAlgorithm;
         }
     }
 }

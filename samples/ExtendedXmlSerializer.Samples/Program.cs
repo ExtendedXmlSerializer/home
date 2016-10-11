@@ -21,6 +21,7 @@
 // SOFTWARE.
 using System;
 using ExtendedXmlSerialization.Samples.CustomSerializator;
+using ExtendedXmlSerialization.Samples.Encrypt;
 using ExtendedXmlSerialization.Samples.MigrationMap;
 using ExtendedXmlSerialization.Samples.ObjectReference;
 using ExtendedXmlSerialization.Samples.Simple;
@@ -45,6 +46,8 @@ namespace ExtendedXmlSerialization.Samples
             MigrationMapSamples.RunAutofacConfig();
             ObjectReferenceSamples.RunSimpleConfig();
             ObjectReferenceSamples.RunAutofacConfig();
+            EncryptSamples.RunSimpleConfig();
+            EncryptSamples.RunAutofacConfig();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();

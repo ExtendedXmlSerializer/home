@@ -82,6 +82,7 @@ namespace ExtendedXmlSerialization
                 {
                     return Enum.Parse(type.Type, value);
                 }
+
                 switch (type.TypeCode)
                 {
                     case TypeCode.Boolean:

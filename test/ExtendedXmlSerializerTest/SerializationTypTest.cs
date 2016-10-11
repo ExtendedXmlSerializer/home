@@ -24,7 +24,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializatorTypTest : BaseTest
+    public class SerializationTypTest : BaseTest
     {
         [Fact]
         public void ClassPrimitiveTypes()
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Test
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullableSetNull.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
-       
+
         [Fact]
         public void ClassWithList()
         {
@@ -65,6 +65,7 @@ namespace ExtendedXmlSerialization.Test
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithList.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
+
         [Fact]
         public void ClassWithHashSet()
         {
@@ -74,7 +75,7 @@ namespace ExtendedXmlSerialization.Test
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithHashSet.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
-        
+
         [Fact]
         public void TestClassWithListWithClass()
         {

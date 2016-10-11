@@ -19,30 +19,46 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Collections.Generic;
 using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializatorCustomSerializerTest : BaseTest
+
+    public class SerializationGeneric : BaseTest
     {
-        public SerializatorCustomSerializerTest()
+        [Fact]
+        public void TestClassGeneric()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> {new TestClassWithSerializerConfig()}
-            };
+            var obj = new TestClassGeneric<string>();
+            obj.Init("StringValue");
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassGeneric.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
         }
 
         [Fact]
-        public void TestClassWithSerializer()
+        public void TestClassGenericThree()
         {
-            var obj = new TestClassWithSerializer("String", 17);
+            var obj = new TestClassGenericThree<string, int, TestClassPrimitiveTypes>();
+            obj.Init("StringValue", 1, new TestClassPrimitiveTypes());
+            obj.GenericProp3.Init();
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassGenericThree.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void TestClassPropGeneric()
+        {
+            var pop = new TestClassGenericThree<string, int, decimal>();
+            pop.Init("StringValue", 1, 4.4m);
+            var obj = new TestClassPropGeneric();
+            obj.PropGenric = pop;
+
+
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPropGeneric.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
         }
     }
 }

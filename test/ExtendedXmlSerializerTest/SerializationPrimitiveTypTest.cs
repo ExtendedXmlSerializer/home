@@ -25,7 +25,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializatorPrimitiveTypTest: BaseTest
+    public class SerializationPrimitiveTypTest: BaseTest
     {
         [Fact]
         public void SerializeString()

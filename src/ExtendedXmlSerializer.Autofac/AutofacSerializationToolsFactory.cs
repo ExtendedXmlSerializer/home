@@ -43,5 +43,18 @@ namespace ExtendedXmlSerialization.Autofac
             }
             return null;
         }
+
+        public IPropertyEncryption EncryptionAlgorithm
+        {
+            get
+            {
+                IPropertyEncryption result;
+                if (_context.TryResolve(out result))
+                {
+                    return result;
+                }
+                return null;
+            }
+        }
     }
 }

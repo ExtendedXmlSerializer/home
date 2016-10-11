@@ -27,9 +27,9 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializatorMigrationMapTest : BaseTest
+    public class SerializationMigrationMapTest : BaseTest
     {
-        public SerializatorMigrationMapTest()
+        public SerializationMigrationMapTest()
         {
             Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
             {

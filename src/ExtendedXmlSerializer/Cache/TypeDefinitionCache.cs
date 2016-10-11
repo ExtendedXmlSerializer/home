@@ -23,7 +23,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
 #endif
 
@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.Cache
             Type type = Type.GetType(typeName);
             if (type != null)
                 return type;
-#if NETSTANDARD1_6
+#if NETSTANDARD1_6 || NETSTANDARD2_0
             // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
             // https://github.com/dotnet/corefx/issues/8806
             // https://github.com/dotnet/corefx/issues/8910
