@@ -1,4 +1,7 @@
 ﻿{
+  "buildOptions": {
+    "keyFile": "../../ExtendedXmlSerializer.snk"
+  },
   "title": "ExtendedXmlSerializer.Autofac",
   "version": "1.2.0",
   "packOptions": {
