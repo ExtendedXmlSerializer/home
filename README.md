@@ -16,6 +16,7 @@ Support features
 * Serialization class with property interface
 * Serialization circular reference and reference Id
 * Deserialization of old version of xml
+* Property encryption
 * Custom serializer
 * POCO - all configurations (migrations, custom serializer...) are outside the class
 
@@ -110,6 +111,8 @@ You must configure custom serializer:
 Then, you must register your TestClassConfig class. See point configuration.
 
 ## Deserialize old version of xml
+In standard XMLSerializer you can't deserialize XML in case you change model. In ExtendedXMLSerializer you can create migrator for each class separately. E.g.: If you have big class, that uses small class and this small class will be changed you can create migrator only for this small class. You don't have to modify whole big XML. Now I will show you a simple example:
+
 If you had a class:
 ```C#
     public class TestClass
@@ -252,14 +255,56 @@ Output XML will look like this:
 </Company>
 ```
 
+## Property Encryption
+If you have a class with a property that needs to be encrypted:
+
+```C#
+    public class Person
+    {
+        public string Name { get; set; }
+        public string Password { get; set; }
+    }
+```
+
+You must implement interface IPropertyEncryption. For example, it will show the Base64 encoding, but in the real world better to use something safer, eg. RSA.:
+```C#
+    public class Base64PropertyEncryption : IPropertyEncryption
+    {
+        public string Encrypt(string value)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+        }
+
+        public string Decrypt(string value)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+        }
+    }
+```
+In the Person class configuration you need to specify which properties are to be encrypted:
+```C#
+    public class PersonConfig : ExtendedXmlSerializerConfig<Person>
+    {
+        public PersonConfig()
+        {
+            Encrypt(p => p.Password);
+        }
+    }
+```
+Then, you must register your PersonConfig class and your implementation of IPropertyEncryption. See point configuration.
+
 ## Configuration
 For using config class, you must register them in ExtendedXmlSerializer. You can do this in two ways.
 
 #### Use SimpleSerializationToolsFactory class
 ```C#
 var toolsFactory = new SimpleSerializationToolsFactory();
+
 // Register your config class
 toolsFactory.Configurations.Add(new TestClassConfig());
+
+// If you want to use property encryption you must register your implementation of IPropertyEncryption, e.g.:
+toolsFactory.EncryptionAlgorithm = new Base64PropertyEncryption(); 
 
 ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
 ```
@@ -272,6 +317,9 @@ builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
 
 // Register your config class
 builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
+
+// If you want to use property encryption you must register your implementation of IPropertyEncryption, e.g.:
+builder.RegisterType<Base64PropertyEncryption>().As<IPropertyEncryption>().SingleInstance();
 
 var containter = builder.Build();
 
