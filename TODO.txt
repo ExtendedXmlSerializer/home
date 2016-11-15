@@ -1,3 +1,4 @@
 1. Property IDictionary IList, ISet
-2. Atribute to change name of property
-3. byte[]
+2. XmlAttribute
+3. var ser = serializer.Serialize(obj, new XmlRootAttribute("CustomRootName"));
+4. byte[]
