@@ -1,0 +1,3 @@
+﻿<TestClass type="ExtendedXmlSerialization.Test.TestObject.TestClassWithXmlRootAttribute">
+  <Id>123</Id>
+</TestClass>

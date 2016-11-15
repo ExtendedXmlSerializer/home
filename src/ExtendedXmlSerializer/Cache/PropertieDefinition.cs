@@ -26,10 +26,11 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class PropertieDefinition
     {
-        public PropertieDefinition(Type type, PropertyInfo propertyInfo)
+        public PropertieDefinition(Type type, PropertyInfo propertyInfo, string name)
         {
-            Name = propertyInfo.Name;
+            Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
             Type = propertyInfo.PropertyType;
+
             _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
             _propertySetter = ObjectAccessors.CreatePropertySetter(type, propertyInfo.Name);
         }

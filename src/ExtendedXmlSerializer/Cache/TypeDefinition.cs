@@ -90,6 +90,11 @@ namespace ExtendedXmlSerialization.Cache
                 }
             }
 
+            XmlRootAttribute attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>();
+            if (attribute != null)
+            {
+                Name = attribute.ElementName;
+            }
 
             IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                 !IsPrimitive &&
@@ -129,7 +134,15 @@ namespace ExtendedXmlSerialization.Cache
                     continue;
                 }
 
-                result.Add(new PropertieDefinition(type, propertyInfo));
+                var name = string.Empty;
+
+                var xmlElement = propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+                if (xmlElement != null)
+                {
+                    name = xmlElement.ElementName;
+                }
+
+                result.Add(new PropertieDefinition(type, propertyInfo, name));
             }
 
             var fields = type.GetFields();

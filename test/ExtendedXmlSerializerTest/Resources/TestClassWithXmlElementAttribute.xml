@@ -1,0 +1,3 @@
+﻿<TestClassWithXmlElementAttribute type="ExtendedXmlSerialization.Test.TestObject.TestClassWithXmlElementAttribute">
+  <Identifier>123</Identifier>
+</TestClassWithXmlElementAttribute>
