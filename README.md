@@ -18,6 +18,7 @@ Support features
 * Deserialization of old version of xml
 * Property encryption
 * Custom serializer
+* Support XmlElementAttribute and XmlRootAttribute
 * POCO - all configurations (migrations, custom serializer...) are outside the class
 
 Standard XML Serializer in .NET is very limited.
@@ -423,3 +424,10 @@ public static void Register(HttpConfiguration config)
     );
 }
 ```
+
+##History
+* 2016-11-15 - Support XmlElementAttribute and XmlRootAttribute
+* 2016-10-18 - Property encryption
+* 2016-09-22 - Support of Dictionary<TKey, TSource>
+* 2016-09-14 - Integration with ASP.NET Core and WebApi
+* 2016-08-31 - First version
