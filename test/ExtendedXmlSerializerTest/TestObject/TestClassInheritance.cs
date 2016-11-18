@@ -19,6 +19,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
+using System.Xml.Serialization;
+
 namespace ExtendedXmlSerialization.Test.TestObject
 {
     public class TestClassInheritanceBase
@@ -38,5 +41,37 @@ namespace ExtendedXmlSerialization.Test.TestObject
             Id = 2;
             Id2 = 3;
         }
+    }
+
+    public class TestClassInheritanceWithOrderBase
+    {
+        [XmlElement(Order = 2)]
+        public int Id { get; set; }
+
+        public virtual void Init()
+        {
+            Id = 1;
+        }
+    }
+    public class TestClassInheritanceWithOrder : TestClassInheritanceWithOrderBase
+    {
+        [XmlElement(Order = 1)]
+        public int Id2 { get; set; }
+        public override void Init()
+        {
+            Id = 2;
+            Id2 = 3;
+        }
+    }
+
+    public interface IInterfaceWithOrder
+    {
+        int Id { get; set; }
+    }
+
+    public class TestClassInterfaceInheritanceWithOrder : IInterfaceWithOrder
+    {
+        public int Id2 { get; set; }
+        public int Id { get; set; }
     }
 }

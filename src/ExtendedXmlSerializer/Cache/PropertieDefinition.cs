@@ -29,16 +29,15 @@ namespace ExtendedXmlSerialization.Cache
         public PropertieDefinition(Type type, PropertyInfo propertyInfo, string name)
         {
             Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
-            Type = propertyInfo.PropertyType;
-
+            TypeDefinition = TypeDefinitionCache.GetDefinition(propertyInfo.PropertyType);
             _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
             _propertySetter = ObjectAccessors.CreatePropertySetter(type, propertyInfo.Name);
         }
 
-        public PropertieDefinition(Type type, FieldInfo fieldInfo)
+        public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
         {
-            Name = fieldInfo.Name;
-            Type = fieldInfo.FieldType;
+            Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
+            TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
             _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
             _propertySetter = ObjectAccessors.CreatePropertySetter(type, fieldInfo.Name);
         }
@@ -47,8 +46,9 @@ namespace ExtendedXmlSerialization.Cache
         private readonly ObjectAccessors.PropertySetter _propertySetter;
         
         public string Name { get; private set; }
-        public Type Type { get; private set; }
-
+        public TypeDefinition TypeDefinition { get; set; }
+        public int Order { get; set; } = -1;
+        public int MetadataToken { get; set; }
         public object GetValue(object obj)
         {
             return _getter(obj);

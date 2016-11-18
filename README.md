@@ -426,6 +426,7 @@ public static void Register(HttpConfiguration config)
 ```
 
 ##History
+* 2016-11-18 - Support sorting parameters and fix serialization of Object property
 * 2016-11-15 - Support XmlElementAttribute and XmlRootAttribute
 * 2016-10-18 - Property encryption
 * 2016-09-22 - Support of Dictionary<TKey, TSource>

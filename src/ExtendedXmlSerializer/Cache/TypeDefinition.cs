@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition
     { 
-        public TypeDefinition(Type type)
+        public void Init(Type type)
         {
             Type = type;
             Name = type.Name;
@@ -118,6 +118,8 @@ namespace ExtendedXmlSerialization.Cache
         {
             var result = new List<PropertieDefinition>();
             var properties = type.GetProperties();
+            int order = -1;
+            
             foreach (PropertyInfo propertyInfo in properties)
             {
                 var getMethod = propertyInfo.GetGetMethod(true);
@@ -135,19 +137,26 @@ namespace ExtendedXmlSerialization.Cache
                 }
 
                 var name = string.Empty;
-
+                order = -1;
                 var xmlElement = propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
                 if (xmlElement != null)
                 {
                     name = xmlElement.ElementName;
+                    order = xmlElement.Order;
                 }
-
-                result.Add(new PropertieDefinition(type, propertyInfo, name));
+                var property = new PropertieDefinition(type, propertyInfo, name);
+                property.MetadataToken = propertyInfo.MetadataToken;
+                if (order != -1)
+                {
+                    property.Order = order;
+                }
+                result.Add(property);
             }
 
             var fields = type.GetFields();
             foreach (FieldInfo field in fields)
             {
+                
                 if (field.IsLiteral && !field.IsInitOnly)
                 {
                     continue;
@@ -161,9 +170,43 @@ namespace ExtendedXmlSerialization.Cache
                 {
                     continue;
                 }
+                var name = string.Empty;
+                order = -1;
+                var xmlElement = field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+                if (xmlElement != null)
+                {
+                    name = xmlElement.ElementName;
+                    order = xmlElement.Order;
+                }
 
-                result.Add(new PropertieDefinition(type, field));
+                var property = new PropertieDefinition(type, field, name);
+                property.MetadataToken = field.MetadataToken;
+                if (order != -1)
+                {
+                    property.Order = order;
+                }
+                result.Add(property);
             }
+            
+            result.Sort((p1, p2) =>
+                {
+                    if (p1.Order == -1 || p2.Order == -1)
+                    {
+                        if (p1.Order > -1)
+                        {
+                            return -1;
+                        }
+                        if (p2.Order > -1)
+                        {
+                            return 1;
+                        }
+                        return p1.MetadataToken.CompareTo(p2.MetadataToken);
+                    }
+
+                    return p1.Order.CompareTo(p2.Order);
+                }
+            );
+
             return result;
         }
 

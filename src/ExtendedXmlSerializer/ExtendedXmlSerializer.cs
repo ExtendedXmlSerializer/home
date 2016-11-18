@@ -286,14 +286,14 @@ namespace ExtendedXmlSerialization
                 {
                     throw new InvalidOperationException("Missing property " + currentNode.Name.LocalName + "\\" + localName);
                 }
-                var propertyDef = TypeDefinitionCache.GetDefinition(propertyInfo.Type);
+                var propertyDef = propertyInfo.TypeDefinition;
                 if (xElement.HasAttributes && xElement.Attribute("type") != null)
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
                     Type targetType = TypeDefinitionCache.GetType(xElement.Attribute("type").Value);
                     var targetTypeDef = TypeDefinitionCache.GetDefinition(targetType);
                     var obj = propertyInfo.GetValue(currentObject);
-                    if (obj == null || obj.GetType() != targetType)
+                    if ((obj == null || obj.GetType() != targetType) && targetTypeDef.ObjectActivator != null)
                     {
                         obj = targetTypeDef.ObjectActivator();
                     }
@@ -425,9 +425,13 @@ namespace ExtendedXmlSerialization
             return list;
         }
 
-        private void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null, bool toEncrypt = false)
+        private void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null, bool toEncrypt = false, string valueType = null)
         {
             xw.WriteStartElement(name ?? def.PrimitiveName);
+            if (!string.IsNullOrEmpty(valueType))
+            {
+                xw.WriteAttributeString("type", valueType);
+            }
             var value = PrimitiveValueTools.SetPrimitiveValue(o, def);
             if (toEncrypt)
             {
@@ -527,8 +531,14 @@ namespace ExtendedXmlSerialization
                             toEncrypt = true;
                         }
                     }
-
-                    WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name, toEncrypt);
+                    if (propertyInfo.TypeDefinition.Type.FullName != defType.Type.FullName)
+                    {
+                        WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name, toEncrypt, defType.Type.FullName);
+                    }
+                    else
+                    {
+                        WriteXmlPrimitive(propertyValue, writer, defType, propertyInfo.Name, toEncrypt);
+                    }
                 }
             }
             writer.WriteEndElement();

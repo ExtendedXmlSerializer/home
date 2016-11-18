@@ -19,7 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Linq;
 using System.Xml.Linq;
 using Xunit;
 
@@ -27,44 +26,16 @@ namespace ExtendedXmlSerialization.Test.Tools
 {
     public static class XmlAssert
     {
-        public static void AreEqual(string expected,
-                            string actual)
+        public static void AreEqual(string expected, string actual)
         {
             Assert.Equal(
-                (object) Normalize(XElement.Parse(expected)).ToString(),
-                Normalize(XElement.Parse(actual)).ToString());
-        }
-        public static void AreEqual(XElement expected,
-                                    XElement actual)
-        {
-            Assert.Equal(
-                (object) Normalize(expected).ToString(),
-                Normalize(actual).ToString());
+                XElement.Parse(expected).ToString(),
+                XElement.Parse(actual).ToString());
         }
 
-        private static XElement Normalize(XElement element)
+        public static void AreEqual(XElement expected, XElement actual)
         {
-            if (element.HasElements)
-            {
-                return new XElement(
-                    element.Name,
-                    element.Attributes()
-                           .OrderBy(a => a.Name.ToString()),
-                    element.Elements()
-                           .OrderBy(a => a.Name.ToString())
-                           .Select(Normalize));
-            }
-
-            if (element.IsEmpty)
-            {
-                return new XElement(
-                    element.Name,
-                    element.Attributes()
-                           .OrderBy(a => a.Name.ToString()));
-            }
-
-            return new XElement(element.Name, element.Attributes()
-                                                     .OrderBy(a => a.Name.ToString()), element.Value);
+            Assert.Equal(expected.ToString(), actual.ToString());
         }
     }
 }

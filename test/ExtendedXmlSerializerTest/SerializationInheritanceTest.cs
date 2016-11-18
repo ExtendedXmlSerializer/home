@@ -31,9 +31,8 @@ namespace ExtendedXmlSerialization.Test
         {
             TestClassInheritanceBase baseClass = new TestClassInheritance();
             baseClass.Init();
-
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassInheritance.xml", baseClass);
             CheckCompatibilityWithDefaultSerializator(baseClass);
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassInheritance.xml", baseClass);
         }
     }
 }

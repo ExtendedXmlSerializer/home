@@ -39,8 +39,9 @@ namespace ExtendedXmlSerialization.Cache
             TypeDefinition result;
             if (!TypeDefinitions.TryGetValue(type, out result))
             {
-                result = new TypeDefinition(type);
+                result = new TypeDefinition();
                 TypeDefinitions.TryAdd(type, result);
+                result.Init(type);
             }
             return result;
         }
