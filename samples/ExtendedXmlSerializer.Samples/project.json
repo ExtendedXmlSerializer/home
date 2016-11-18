@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.4.0",
+  "version": "1.4.1",
   "buildOptions": {
     "emitEntryPoint": true
   },
@@ -14,7 +14,7 @@
   },
 
   "frameworks": {
-    "net45": {} ,
+    "net45": {},
     "netcoreapp1.0": {
       "imports": "dnxcore50",
       "dependencies": {
