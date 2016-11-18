@@ -426,9 +426,9 @@ public static void Register(HttpConfiguration config)
 ```
 
 ##History
-* 2016-11-18 - Support sorting parameters and fix serialization of Object property
-* 2016-11-15 - Support XmlElementAttribute and XmlRootAttribute
-* 2016-10-18 - Property encryption
-* 2016-09-22 - Support of Dictionary<TKey, TSource>
-* 2016-09-14 - Integration with ASP.NET Core and WebApi
-* 2016-08-31 - First version
+* 2016-11-18 - v1.4.1 - Support sorting parameters and fix serialization of Object property
+* 2016-11-15 - v1.4.0 - Support XmlElementAttribute and XmlRootAttribute
+* 2016-10-18 - v1.3.0 - Property encryption
+* 2016-09-22 - v1.2.0 - Support of Dictionary<TKey, TSource>
+* 2016-09-14 - v1.1.0 - Integration with ASP.NET Core and WebApi
+* 2016-08-31 - v1.0.0 - First version
