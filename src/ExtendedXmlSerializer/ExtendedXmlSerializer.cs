@@ -37,8 +37,7 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
         private ISerializationToolsFactory _toolsFactory;
-        private readonly IElementTypeLocator _elementTypeLocator = ElementTypeLocator.Default;
-
+        
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
         
@@ -53,17 +52,9 @@ namespace ExtendedXmlSerialization
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) : this( toolsFactory, ElementTypeLocator.Default ) {}
-
-        /// <summary>
-        /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
-        /// </summary>
-        /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
-        /// <param name="elementTypeLocator">The element type locator.</param>
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory, IElementTypeLocator elementTypeLocator)
+        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
         {
             _toolsFactory = toolsFactory;
-            _elementTypeLocator = elementTypeLocator;
         }
 
         /// <summary>
@@ -130,7 +121,7 @@ namespace ExtendedXmlSerialization
         {
             writer.WriteStartElement(name ?? def.Name);
             List<string> toWriteReservedObject = new List<string>();
-            var elementType = _elementTypeLocator.Locate( def.Type );
+            var elementType = ElementTypeLocator.Default.Locate( def.Type );
             if (elementType != null)
             {
                 var enumerable = o as IEnumerable;
@@ -396,7 +387,7 @@ namespace ExtendedXmlSerialization
                 list = instance ?? type.ObjectActivator();
             }
 
-            var elementType = _elementTypeLocator.Locate( type.Type );
+            var elementType = ElementTypeLocator.Default.Locate( type.Type );
             var elementDefinition = TypeDefinitionCache.GetDefinition(elementType);
             for (int i = 0; i < arrayCount; i++)
             {
