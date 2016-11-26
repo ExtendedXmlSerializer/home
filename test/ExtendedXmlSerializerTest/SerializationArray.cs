@@ -19,6 +19,8 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
+using System.Collections.ObjectModel;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -47,6 +49,38 @@ namespace ExtendedXmlSerialization.Test
             var obj = new TestClassWithArray();
             obj.ArrayOfInt = new[] {1, 2, 3};
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithArray.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void CollectionOfObject()
+        {
+            var obj = new Collection<TestClassPrimitiveTypes>
+            {
+                new TestClassPrimitiveTypes(),
+                new TestClassPrimitiveTypes()
+            };
+            obj[0].Init();
+            obj[1].Init();
+
+            
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+        [Fact]
+        public void ClosedGenericCollectionOfObject()
+        {
+            var obj = new TestClassCollection
+            {
+                new TestClassPrimitiveTypes(),
+                new TestClassPrimitiveTypes()
+            };
+            obj[0].Init();
+            obj[1].Init();
+
+            
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ClosedGenericCollectionOfObject.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
     }

@@ -36,7 +36,8 @@ namespace ExtendedXmlSerialization.Cache
             Name = type.Name;
 
             var typeInfo = type.GetTypeInfo();
-            if (typeInfo.IsGenericType)
+            var isGenericType = typeInfo.IsGenericType;
+            if (isGenericType)
             {
                 Type[] types = type.GetGenericArguments();
 
@@ -54,39 +55,31 @@ namespace ExtendedXmlSerialization.Cache
 
             IsArray = typeInfo.IsArray;
 
-            if (!IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type))
-            {
-
-                IsEnumerable = true;
-            }
+            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
 
             if (IsEnumerable)
             {
-                if (typeof(IDictionary).IsAssignableFrom(type))
-                {
-                    IsDictionary = true;
-                }
-                var elementType = type.GetElementType();
-                if (elementType != null)
-                {
-                    Name = "ArrayOf" + elementType.Name;
-                }
+                IsDictionary = typeof(IDictionary).IsAssignableFrom(type);
 
-                if (typeInfo.IsGenericType)
+                var elementType = ElementTypeLocator.Default.Locate(type);
+                if (isGenericType)
                 {
                     GenericArguments = type.GetGenericArguments();
-                    if (elementType == null)
-                    {
-                        Name = "ArrayOf" + string.Join("", GenericArguments.Select(p => p.Name));
-                    }
-                    if (IsDictionary)
-                    {
-                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
-                    }
-                    else
-                    {
-                        MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type);
-                    }
+                }
+                else if ( elementType != null )
+                {
+                    GenericArguments = new[] { elementType };
+                }
+
+                Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : type.Name;
+
+                if (IsDictionary)
+                {
+                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+                }
+                else if (elementType != null && !IsArray)
+                {
+                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
                 }
             }
 
@@ -100,8 +93,8 @@ namespace ExtendedXmlSerialization.Cache
                 !IsPrimitive &&
                 !typeInfo.IsEnum && type != typeof(string) &&
                 //not generic or generic but not List<> and Set<>
-                (!typeInfo.IsGenericType ||
-                 (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)));
+                (!isGenericType ||
+                 isGenericType && !IsEnumerable);
             if (IsObjectToSerialize)
             {
                 Properties = GetPropertieToSerialze(type);

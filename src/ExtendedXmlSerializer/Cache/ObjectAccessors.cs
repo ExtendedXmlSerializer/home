@@ -111,7 +111,7 @@ namespace ExtendedXmlSerialization.Cache
             return compiled;
         }
 
-        internal static AddItemToCollection CreateMethodAddCollection(Type type)
+        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType = null)
         {
             // Object (type object) from witch the data are retrieved
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
@@ -119,11 +119,11 @@ namespace ExtendedXmlSerialization.Cache
             // Object casted to specific type using the operator "as".
             UnaryExpression itemCasted = Expression.Convert(itemObject, type);
 
-            var arguments = type.GetGenericArguments();
+            var parameterType = elementType ?? type.GetGenericArguments()[0];
 
             ParameterExpression value = Expression.Parameter(typeof(object), "value");
 
-            Expression castedParam = Expression.Convert(value, arguments[0]);
+            Expression castedParam = Expression.Convert(value, parameterType);
 
             MethodInfo method = type.GetMethod("Add");
             

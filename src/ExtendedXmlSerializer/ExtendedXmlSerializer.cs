@@ -37,9 +37,11 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
         private ISerializationToolsFactory _toolsFactory;
+        private readonly IElementTypeLocator _elementTypeLocator = ElementTypeLocator.Default;
 
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
+        
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
@@ -51,9 +53,17 @@ namespace ExtendedXmlSerialization
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
+        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) : this( toolsFactory, ElementTypeLocator.Default ) {}
+
+        /// <summary>
+        /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
+        /// </summary>
+        /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
+        /// <param name="elementTypeLocator">The element type locator.</param>
+        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory, IElementTypeLocator elementTypeLocator)
         {
             _toolsFactory = toolsFactory;
+            _elementTypeLocator = elementTypeLocator;
         }
 
         /// <summary>
@@ -120,50 +130,45 @@ namespace ExtendedXmlSerialization
         {
             writer.WriteStartElement(name ?? def.Name);
             List<string> toWriteReservedObject = new List<string>();
-            var array =  o as Array;
-            var list = o as IEnumerable;
-            if (array != null || list != null)
+            var elementType = _elementTypeLocator.Locate( def.Type );
+            if (elementType != null)
             {
-                Type type;
-                if (array != null)
+                var enumerable = o as IEnumerable;
+                if (enumerable != null)
                 {
-                    type = def.Type.GetElementType();
-                }
-                else
-                {
-                    type = def.GenericArguments[0];
-                }
-                var conf = GetConfiguration(type);
-                if (conf != null && conf.IsObjectReference)
-                {
-                    foreach (var item in array ?? list)
-                    {
-                        var objectId = conf.GetObjectId(item);
-
-                        var key = item.GetType().FullName + "_" + objectId;
-                        if (!_referencesObjects.ContainsKey(key) && !_reservedReferencesObjects.ContainsKey(key))
-                        {
-                            toWriteReservedObject.Add(key);
-                            _reservedReferencesObjects.Add(key, item);
-                        }
-                    }
-                }
-                foreach (var item in array ?? list)
-                {
-                    var itemDef = TypeDefinitionCache.GetDefinition(item.GetType());
-                    var writeReservedObject = false;
+                    var items = enumerable as Array ?? enumerable.Cast<object>().ToArray();
+                    var conf = GetConfiguration(elementType);
                     if (conf != null && conf.IsObjectReference)
                     {
-                        var objectId = conf.GetObjectId(item);
-                        var key = item.GetType() + "_" + objectId;
-                        if (toWriteReservedObject.Contains(key))
+                        foreach (var item in items)
                         {
-                            writeReservedObject = true;
+                            var objectId = conf.GetObjectId(item);
+
+                            var key = item.GetType().FullName + "_" + objectId;
+                            if (!_referencesObjects.ContainsKey(key) && !_reservedReferencesObjects.ContainsKey(key))
+                            {
+                                toWriteReservedObject.Add(key);
+                                _reservedReferencesObjects.Add(key, item);
+                            }
                         }
                     }
-                    WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject);
+                
+                    foreach (var item in items)
+                    {
+                        var itemDef = TypeDefinitionCache.GetDefinition(item.GetType());
+                        var writeReservedObject = false;
+                        if (conf != null && conf.IsObjectReference)
+                        {
+                            var objectId = conf.GetObjectId(item);
+                            var key = item.GetType() + "_" + objectId;
+                            if (toWriteReservedObject.Contains(key))
+                            {
+                                writeReservedObject = true;
+                            }
+                        }
+                        WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject);
+                    }
                 }
-               
             }
             writer.WriteEndElement();
         }
@@ -378,44 +383,35 @@ namespace ExtendedXmlSerialization
 
         private object ReadXmlArray(XElement currentNode, TypeDefinition type, object instance = null)
         {
-            int arrayCount = currentNode.Elements().Count();
             var elements = currentNode.Elements().ToArray();
-
+            int arrayCount = elements.Length;
             object list = null;
             Array array = null;
             if (type.IsArray)
             {
-                array = (Array) instance ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
+                array =  instance as Array ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
             }
             else
             {
                 list = instance ?? type.ObjectActivator();
             }
+
+            var elementType = _elementTypeLocator.Locate( type.Type );
+            var elementDefinition = TypeDefinitionCache.GetDefinition(elementType);
             for (int i = 0; i < arrayCount; i++)
             {
                 var element = elements[i];
-                TypeDefinition cd = null;
                 var ta = element.Attribute("type");
-                if (ta != null)
-                {
-                    var currentNodeType = TypeDefinitionCache.GetType(ta.Value);
-                    cd = TypeDefinitionCache.GetDefinition(currentNodeType);
-                }
+                var definition = ta != null ? TypeDefinitionCache.GetDefinition( TypeDefinitionCache.GetType(ta.Value) ) : elementDefinition;
+
+                var xml = ReadXml(element, definition);
                 if (type.IsArray)
                 {
-                    if (cd == null)
-                    {
-                        cd = TypeDefinitionCache.GetDefinition(type.Type.GetElementType());
-                    }
-                    array?.SetValue(ReadXml(element, cd), i);
+                    array?.SetValue(xml, i);
                 }
                 else
                 {
-                    if (cd == null)
-                    {
-                        cd = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
-                    }
-                    type.MethodAddToCollection(list, ReadXml(element, cd));
+                    type.MethodAddToCollection(list, xml);
                 }
             }
             if (type.IsArray)
