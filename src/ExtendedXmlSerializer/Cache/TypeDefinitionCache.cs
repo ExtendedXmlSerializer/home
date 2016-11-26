@@ -33,28 +33,16 @@ namespace ExtendedXmlSerialization.Cache
     {
         private static readonly ConcurrentDictionary<Type, TypeDefinition> TypeDefinitions = new ConcurrentDictionary<Type, TypeDefinition>();
         private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
+        private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 
         public static TypeDefinition GetDefinition(Type type)
         {
-            TypeDefinition result;
-            if (!TypeDefinitions.TryGetValue(type, out result))
-            {
-                result = new TypeDefinition();
-                TypeDefinitions.TryAdd(type, result);
-                result.Init(type);
-            }
-            return result;
+            return TypeDefinitions.GetOrAdd( type, t => new TypeDefinition( t ) );
         }
 
         public static Type GetType(string typeName)
         {
-            Type result;
-            if (!TypeCache.TryGetValue(typeName, out result))
-            {
-                result = GetTypeFromName(typeName);
-                TypeCache.TryAdd(typeName, result);
-            }
-            return result;
+            return TypeCache.GetOrAdd( typeName, GetTypeFromNameDelegate );
         }
 
         private static Type GetTypeFromName(string typeName)

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test
 {
     public class BaseTest
     {
-        protected ExtendedXmlSerializer Serializer = new ExtendedXmlSerializer();
+        protected ExtendedXmlSerializer Serializer { get; } = new ExtendedXmlSerializer();
 #if NET451
         private const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #else
