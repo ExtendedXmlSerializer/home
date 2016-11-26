@@ -95,8 +95,7 @@ namespace ExtendedXmlSerialization.Cache
                 !IsPrimitive &&
                 !typeInfo.IsEnum && type != typeof(string) &&
                 //not generic or generic but not List<> and Set<>
-                (!isGenericType ||
-                 isGenericType && !IsEnumerable);
+                (!isGenericType || !IsEnumerable);
             properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
             
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
@@ -111,14 +110,14 @@ namespace ExtendedXmlSerialization.Cache
             var result = new List<PropertieDefinition>();
             if ( IsObjectToSerialize )
             {
-                var properties = Type.GetProperties();
                 int order = -1;
             
-                foreach (PropertyInfo propertyInfo in properties)
+                foreach (PropertyInfo propertyInfo in Type.GetProperties())
                 {
+                    var elementType = ElementTypeLocator.Default.Locate( propertyInfo.PropertyType );
                     var getMethod = propertyInfo.GetGetMethod(true);
                     if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
-                        !propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic ||
+                       !propertyInfo.CanWrite && elementType == null || ( !propertyInfo.GetSetMethod(true)?.IsPublic ?? false ) ||
                         propertyInfo.GetIndexParameters().Length > 0)
                     {
                         continue;

@@ -125,7 +125,7 @@ namespace ExtendedXmlSerialization.Cache
 
             Expression castedParam = Expression.Convert(value, parameterType);
 
-            MethodInfo method = type.GetMethod("Add");
+            MethodInfo method = AddMethodLocator.Default.Locate( type );
             
             Expression conversion = Expression.Call(itemCasted, method, castedParam);
 

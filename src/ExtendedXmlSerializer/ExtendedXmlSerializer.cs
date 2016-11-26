@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
@@ -211,7 +212,7 @@ namespace ExtendedXmlSerialization
 
             if (type.IsArray || type.IsEnumerable)
             {
-                return ReadXmlArray(currentNode, type);
+                return ReadXmlArray(currentNode, type, instance);
             }
 
             if (currentNode == null)
@@ -309,7 +310,10 @@ namespace ExtendedXmlSerialization
                     //If xml does not contain type but we known that it is object
                     var obj = propertyInfo.GetValue(currentObject);
                     var obj2 = ReadXml(xElement, propertyDef, obj);
-                    propertyInfo.SetValue(currentObject, obj2);
+                    if ( obj == null && obj2 != null )
+                    {
+                        propertyInfo.SetValue(currentObject, obj2);
+                    }
                 }
                 else
                 {

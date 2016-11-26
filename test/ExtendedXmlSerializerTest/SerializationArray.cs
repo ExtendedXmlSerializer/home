@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -81,6 +82,20 @@ namespace ExtendedXmlSerialization.Test
 
             
             CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ClosedGenericCollectionOfObject.xml", obj);
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
+
+         [Fact]
+        public void ClassWithReadOnlyCollectionProperty()
+        {
+            var obj = new TestClassWithReadOnlyCollectionProperty();
+            obj.Items.Add( new TestClassPrimitiveTypes() );
+            obj.Items.Add( new TestClassPrimitiveTypes() );
+            obj.Items[0].Init();
+            obj.Items[1].Init();
+
+            
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.ClassWithReadOnlyCollectionProperty.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
     }
