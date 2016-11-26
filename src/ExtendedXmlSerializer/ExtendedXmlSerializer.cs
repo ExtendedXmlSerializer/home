@@ -36,6 +36,14 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
+        const string Type = "type";
+        const string Ref = "ref";
+        const string Version = "ver";
+        const string Id = "id";
+        const string Key = "Key";
+        const string Value = "Value";
+        const string Underscore = "_";
+        const string Item = "Item";
         private ISerializationToolsFactory _toolsFactory;
         
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
@@ -102,13 +110,13 @@ namespace ExtendedXmlSerialization
             {
                 foreach (DictionaryEntry item in dict)
                 {
-                    writer.WriteStartElement("Item");
+                    writer.WriteStartElement(Item);
    
                     var itemDef = TypeDefinitionCache.GetDefinition(item.Key.GetType());
-                    WriteXml(writer, item.Key, itemDef, "Key");
+                    WriteXml(writer, item.Key, itemDef, Key);
 
                     var itemValueDef = TypeDefinitionCache.GetDefinition(item.Value.GetType());
-                    WriteXml(writer, item.Value, itemValueDef, "Value");
+                    WriteXml(writer, item.Value, itemValueDef, Value);
 
                     writer.WriteEndElement();
                 }
@@ -135,7 +143,7 @@ namespace ExtendedXmlSerialization
                         {
                             var objectId = conf.GetObjectId(item);
 
-                            var key = item.GetType().FullName + "_" + objectId;
+                            var key = item.GetType().FullName + Underscore + objectId;
                             if (!_referencesObjects.ContainsKey(key) && !_reservedReferencesObjects.ContainsKey(key))
                             {
                                 toWriteReservedObject.Add(key);
@@ -151,7 +159,7 @@ namespace ExtendedXmlSerialization
                         if (conf != null && conf.IsObjectReference)
                         {
                             var objectId = conf.GetObjectId(item);
-                            var key = item.GetType() + "_" + objectId;
+                            var key = item.GetType() + Underscore + objectId;
                             if (toWriteReservedObject.Contains(key))
                             {
                                 writeReservedObject = true;
@@ -211,7 +219,7 @@ namespace ExtendedXmlSerialization
 
             TypeDefinition currentNodeDef = null;
             // Retrieve type from XML (Property can be base type. In xml can be saved inherited object)
-            var typeAttribute = currentNode.Attribute("type");
+            var typeAttribute = currentNode.Attribute(Type);
             if (typeAttribute != null)
             {
                 var currentNodeType = TypeDefinitionCache.GetType(typeAttribute.Value);
@@ -246,20 +254,20 @@ namespace ExtendedXmlSerialization
             {
                 if (configuration.IsObjectReference)
                 {
-                    string refId = currentNode.Attribute("ref")?.Value;
+                    string refId = currentNode.Attribute(Ref)?.Value;
                     if (!string.IsNullOrEmpty(refId))
                     {
-                        var key = currentNodeDef.FullName + "_" + refId;
+                        var key = currentNodeDef.FullName + Underscore + refId;
                         if (_referencesObjects.ContainsKey(key))
                         {
                             return _referencesObjects[key];
                         }
                         _referencesObjects.Add(key, currentObject);
                     }
-                    string objectId = currentNode.Attribute("id")?.Value;
+                    string objectId = currentNode.Attribute(Id)?.Value;
                     if (!string.IsNullOrEmpty(objectId))
                     {
-                        var key = currentNodeDef.FullName + "_" + objectId;
+                        var key = currentNodeDef.FullName + Underscore + objectId;
                         if (_referencesObjects.ContainsKey(key))
                         {
                             currentObject = _referencesObjects[key];
@@ -283,10 +291,10 @@ namespace ExtendedXmlSerialization
                     throw new InvalidOperationException("Missing property " + currentNode.Name.LocalName + "\\" + localName);
                 }
                 var propertyDef = propertyInfo.TypeDefinition;
-                if (xElement.HasAttributes && xElement.Attribute("type") != null)
+                if (xElement.HasAttributes && xElement.Attribute(Type) != null)
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
-                    Type targetType = TypeDefinitionCache.GetType(xElement.Attribute("type").Value);
+                    Type targetType = TypeDefinitionCache.GetType(xElement.Attribute(Type).Value);
                     var targetTypeDef = TypeDefinitionCache.GetDefinition(targetType);
                     var obj = propertyInfo.GetValue(currentObject);
                     if ((obj == null || obj.GetType() != targetType) && targetTypeDef.ObjectActivator != null)
@@ -342,10 +350,10 @@ namespace ExtendedXmlSerialization
                 TypeDefinition keyDef = null;
                 TypeDefinition ValuDef = null;
 
-                var key = element.Element("Key");
-                var value = element.Element("Value");
+                var key = element.Element(Key);
+                var value = element.Element(Value);
 
-                var keyTypeAttr = key.Attribute("type");
+                var keyTypeAttr = key.Attribute(Type);
                 if (keyTypeAttr != null)
                 {
                     var nodeType = TypeDefinitionCache.GetType(keyTypeAttr.Value);
@@ -356,7 +364,7 @@ namespace ExtendedXmlSerialization
                     keyDef = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
                 }
 
-                var valueTypeAttr = value.Attribute("type");
+                var valueTypeAttr = value.Attribute(Type);
                 if (valueTypeAttr != null)
                 {
                     var nodeType = TypeDefinitionCache.GetType(valueTypeAttr.Value);
@@ -392,7 +400,7 @@ namespace ExtendedXmlSerialization
             for (int i = 0; i < arrayCount; i++)
             {
                 var element = elements[i];
-                var ta = element.Attribute("type");
+                var ta = element.Attribute(Type);
                 var definition = ta != null ? TypeDefinitionCache.GetDefinition( TypeDefinitionCache.GetType(ta.Value) ) : elementDefinition;
 
                 var xml = ReadXml(element, definition);
@@ -417,7 +425,7 @@ namespace ExtendedXmlSerialization
             xw.WriteStartElement(name ?? def.PrimitiveName);
             if (!string.IsNullOrEmpty(valueType))
             {
-                xw.WriteAttributeString("type", valueType);
+                xw.WriteAttributeString(Type, valueType);
             }
             var value = PrimitiveValueTools.SetPrimitiveValue(o, def);
             if (toEncrypt)
@@ -450,7 +458,7 @@ namespace ExtendedXmlSerialization
                 return;
             }
             writer.WriteStartElement(name ?? type.Name);
-            writer.WriteAttributeString("type", type.FullName);
+            writer.WriteAttributeString(Type, type.FullName);
             
             // Get configuration for type
             var configuration = GetConfiguration(type.Type);
@@ -461,24 +469,24 @@ namespace ExtendedXmlSerialization
                 {
                     var objectId = configuration.GetObjectId(o);
                     
-                    var key = type.FullName + "_" + objectId;
+                    var key = type.FullName + Underscore + objectId;
                     if (writeReservedObject && _reservedReferencesObjects.ContainsKey(key))
                     {
                         _reservedReferencesObjects.Remove(key);
                     }
                     else if (_referencesObjects.ContainsKey(key) || _reservedReferencesObjects.ContainsKey(key))
                     {
-                        writer.WriteAttributeString("ref", objectId);
+                        writer.WriteAttributeString(Ref, objectId);
                         writer.WriteEndElement();
                         return;
                     }
-                    writer.WriteAttributeString("id", objectId);
+                    writer.WriteAttributeString(Id, objectId);
                     _referencesObjects.Add(key, o);
                 }
 
                 if (configuration.Version > 0)
                 {
-                    writer.WriteAttributeString("ver",
+                    writer.WriteAttributeString(Version,
                         configuration.Version.ToString(CultureInfo.InvariantCulture));
                 }
                 if (configuration.IsCustomSerializer)
