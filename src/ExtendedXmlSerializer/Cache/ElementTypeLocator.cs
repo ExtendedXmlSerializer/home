@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,16 +33,22 @@ namespace ExtendedXmlSerialization.Cache
         Type Locate( Type type );
     }
 
-    public class ElementTypeLocator : IElementTypeLocator
+    public class ElementTypeLocator : ConcurrentDictionary<Type, Type>, IElementTypeLocator
     {
+        readonly static Func<Type, Type> PerformLocationDelegate = PerformLocation;
         readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
         public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
         ElementTypeLocator() {}
 
-        // Attribution: http://stackoverflow.com/a/17713382/3602057
         public Type Locate( Type type )
         {
-            // Type is Array
+            return GetOrAdd( type, PerformLocationDelegate );
+        }
+
+        // Attribution: http://stackoverflow.com/a/17713382/3602057
+        static Type PerformLocation( Type type )
+        {
+             // Type is Array
             // short-circuit if you expect lots of arrays 
             if ( ArrayInfo.IsAssignableFrom( type ) )
                 return type.GetElementType();
