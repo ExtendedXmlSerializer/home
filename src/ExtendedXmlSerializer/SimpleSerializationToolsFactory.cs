@@ -21,6 +21,7 @@
 // SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization
 {
@@ -48,7 +49,7 @@ namespace ExtendedXmlSerialization
         {
             foreach (var migrationMap in Configurations)
             {
-                if (migrationMap.Type == type)
+                if (migrationMap.IsSatisfiedBy(type))
                 {
                     return migrationMap;
                 }

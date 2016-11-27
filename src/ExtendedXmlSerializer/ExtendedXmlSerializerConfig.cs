@@ -46,6 +46,7 @@ namespace ExtendedXmlSerialization
         {
             _migrations = new Dictionary<int, Action<XElement>>();
             Version = 0;
+            specification = Type.GetTypeInfo().IsAssignableFrom;
         }
 
         /// <summary>
@@ -67,6 +68,7 @@ namespace ExtendedXmlSerialization
         private Func<XElement, T> _deserialize;
         private Action<XmlWriter, T> _serializer;
         private Func<T, object> getObjectId;
+        readonly Func<Type, bool> specification;
 
         public void CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize)
         {
@@ -132,6 +134,11 @@ namespace ExtendedXmlSerialization
             _serializer(writer, (T) obj);
         }
 
+        public bool IsSatisfiedBy( Type type )
+        {
+            return specification( type );
+        }
+
         bool IExtendedXmlSerializerConfig.IsCustomSerializer { get; set; }
         bool IExtendedXmlSerializerConfig.IsObjectReference { get; set; }
         string IExtendedXmlSerializerConfig.ExtractedListName { get; set; }
@@ -157,7 +164,7 @@ namespace ExtendedXmlSerialization
                 throw new ArgumentException($"Expression '{expression}' refers to a field, not a property.");
 
             if (Type != propInfo.DeclaringType && propInfo.DeclaringType != null &&
-                !Type.GetTypeInfo().IsSubclassOf(propInfo.DeclaringType))
+                !IsSatisfiedBy(propInfo.DeclaringType))
                 throw new ArgumentException(
                     $"Expresion '{expression}' refers to a property that is not from type {Type}.");
 

@@ -27,11 +27,13 @@ namespace ExtendedXmlSerialization
 {
     public interface IExtendedXmlSerializerConfig
     {
-        Type Type { get; }
-        int Version { get; set; }
+        Type Type { get; } // Consider making obsolete as logic is now contained within implementation.
+        int Version { get; set; } // Consider making getter only, defined by implementation.
         void Map(Type targetType, XElement currentNode);
         object ReadObject(XElement element);
         void WriteObject(XmlWriter writer, object obj);
+
+        bool IsSatisfiedBy(Type type);
 
         bool IsCustomSerializer { get; set; }
         bool IsObjectReference { get; set; }
