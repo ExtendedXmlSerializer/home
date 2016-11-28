@@ -37,14 +37,14 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        const string Type = "type";
-        const string Ref = "ref";
-        const string Version = "ver";
-        const string Id = "id";
-        const string Key = "Key";
-        const string Value = "Value";
-        const string Underscore = "_";
-        const string Item = "Item";
+        public const string Type = "type";
+        public const string Ref = "ref";
+        public const string Version = "ver";
+        public const string Id = "id";
+        public const string Key = "Key";
+        public const string Value = "Value";
+        public const string Underscore = "_";
+        public const string Item = "Item";
         private ISerializationToolsFactory _toolsFactory;
         
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
