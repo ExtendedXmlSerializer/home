@@ -431,7 +431,7 @@ namespace ExtendedXmlSerialization
             {
                 xw.WriteAttributeString(Type, valueType);
             }
-            var value = PrimitiveValueTools.SetPrimitiveValue(o, def);
+            var value = PrimitiveValueTools.SetPrimitiveValue(o, def.Type);
             if (toEncrypt)
             {
                 var algorithm = GetEncryptionAlgorithm();

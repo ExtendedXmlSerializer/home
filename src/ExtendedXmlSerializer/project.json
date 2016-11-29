@@ -41,6 +41,7 @@
         }
     },
     "dependencies": {
-        "System.Collections.Immutable": "1.3.0"
+        "System.Collections.Immutable": "1.3.0",
+        "System.ComponentModel": "4.0.1"
     }
 }

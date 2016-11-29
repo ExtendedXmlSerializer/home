@@ -28,9 +28,9 @@ namespace ExtendedXmlSerialization
 {
     internal static class PrimitiveValueTools
     {
-        public static string SetPrimitiveValue(object value, TypeDefinition type)
+        public static string SetPrimitiveValue(object value, Type type)
         {
-            switch (type.TypeCode)
+            switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Boolean:
                     return value.ToString();
@@ -63,11 +63,11 @@ namespace ExtendedXmlSerialization
                 case TypeCode.String:
                     return (string)value;
                 default:
-                    if (type.Type == typeof(Guid))
+                    if (type == typeof(Guid))
                     {
                         return XmlConvert.ToString((Guid)value);
                     }
-                    if (type.Type == typeof(TimeSpan))
+                    if (type == typeof(TimeSpan))
                     {
                         return XmlConvert.ToString((TimeSpan)value);
                     }
