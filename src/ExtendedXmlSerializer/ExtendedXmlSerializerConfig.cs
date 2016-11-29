@@ -42,11 +42,15 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
         IExtendedXmlSerializerConfig
     {
-        public ExtendedXmlSerializerConfig()
+        readonly private static Func<Type, bool> Specification = typeof(T).GetTypeInfo().IsAssignableFrom;
+
+        public ExtendedXmlSerializerConfig() : this(Specification) {}
+
+        public ExtendedXmlSerializerConfig(Func<Type, bool> specification)
         {
             _migrations = new Dictionary<int, Action<XElement>>();
             Version = 0;
-            specification = Type.GetTypeInfo().IsAssignableFrom;
+            _specification = specification;
         }
 
         /// <summary>
@@ -63,12 +67,12 @@ namespace ExtendedXmlSerialization
         /// <summary>
         /// Gets the version of object
         /// </summary>
-        public int Version { get; set; }
+        public int Version { get; private set; }
 
         private Func<XElement, T> _deserialize;
         private Action<XmlWriter, T> _serializer;
-        private Func<T, object> getObjectId;
-        readonly Func<Type, bool> specification;
+        private Func<T, object> _getObjectId;
+        readonly Func<Type, bool> _specification;
 
         public void CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize)
         {
@@ -85,7 +89,7 @@ namespace ExtendedXmlSerialization
 
         public IObjectReferenceConfiguration<T> ObjectReference(Func<T, object> idFunc)
         {
-            this.getObjectId = idFunc;
+            _getObjectId = idFunc;
             ((IExtendedXmlSerializerConfig) this).IsObjectReference = true;
             return this;
         }
@@ -134,9 +138,9 @@ namespace ExtendedXmlSerialization
             _serializer(writer, (T) obj);
         }
 
-        public bool IsSatisfiedBy( Type type )
+        public bool IsSatisfiedBy(Type type)
         {
-            return specification( type );
+            return _specification(type);
         }
 
         bool IExtendedXmlSerializerConfig.IsCustomSerializer { get; set; }
@@ -145,7 +149,7 @@ namespace ExtendedXmlSerialization
 
         string IExtendedXmlSerializerConfig.GetObjectId(object obj)
         {
-            return getObjectId((T) obj).ToString();
+            return _getObjectId((T) obj).ToString();
         }
 
         bool IExtendedXmlSerializerConfig.CheckPropertyEncryption(string propertyName)

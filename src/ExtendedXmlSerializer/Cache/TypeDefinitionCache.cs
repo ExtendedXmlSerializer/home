@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
@@ -31,13 +32,13 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal static class TypeDefinitionCache
     {
-        private static readonly ConcurrentDictionary<Type, TypeDefinition> TypeDefinitions = new ConcurrentDictionary<Type, TypeDefinition>();
+        private static readonly ConditionalWeakTable<Type, TypeDefinition> TypeDefinitions = new ConditionalWeakTable<Type, TypeDefinition>();
         private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
         private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 
         public static TypeDefinition GetDefinition(Type type)
         {
-            return TypeDefinitions.GetOrAdd( type, t => new TypeDefinition( t ) );
+            return TypeDefinitions.GetValue( type, t => new TypeDefinition( t ) );
         }
 
         public static Type GetType(string typeName)
