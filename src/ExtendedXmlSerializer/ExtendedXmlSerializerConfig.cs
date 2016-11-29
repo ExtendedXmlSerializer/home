@@ -67,7 +67,7 @@ namespace ExtendedXmlSerialization
         /// <summary>
         /// Gets the version of object
         /// </summary>
-        public int Version { get; set; }
+        public int Version { get; private set; }
 
         private Func<XElement, T> _deserialize;
         private Action<XmlWriter, T> _serializer;
@@ -89,7 +89,7 @@ namespace ExtendedXmlSerialization
 
         public IObjectReferenceConfiguration<T> ObjectReference(Func<T, object> idFunc)
         {
-            this._getObjectId = idFunc;
+            _getObjectId = idFunc;
             ((IExtendedXmlSerializerConfig) this).IsObjectReference = true;
             return this;
         }

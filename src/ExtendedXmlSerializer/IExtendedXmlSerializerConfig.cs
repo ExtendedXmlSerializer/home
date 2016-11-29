@@ -27,10 +27,7 @@ namespace ExtendedXmlSerialization
 {
     public interface IExtendedXmlSerializerConfig
     {
-        [Obsolete( "This property is no longer used.")]
-        Type Type { get; }
-
-        int Version { get; set; } // Consider making getter only, defined by implementation.
+        int Version { get; } // Consider making getter only, defined by implementation.
         void Map(Type targetType, XElement currentNode);
         object ReadObject(XElement element);
         void WriteObject(XmlWriter writer, object obj);
