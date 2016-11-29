@@ -405,7 +405,9 @@ namespace ExtendedXmlSerialization
             {
                 var element = elements[i];
                 var ta = element.Attribute(Type);
-                var definition = ta != null ? TypeDefinitionCache.GetDefinition( TypeDefinitionCache.GetType(ta.Value) ) : elementDefinition;
+                var definition = ta != null
+                    ? TypeDefinitionCache.GetDefinition(TypeDefinitionCache.GetType(ta.Value))
+                    : elementDefinition;
 
                 var xml = ReadXml(element, definition);
                 if (type.IsArray)
