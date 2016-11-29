@@ -435,5 +435,5 @@ public static void Register(HttpConfiguration config)
 
 ##Contributors
 
-* Wojciech Nagórski - original version
-* Mike-EEE - many improvements
+* [Wojciech Nagórski](https://github.com/wojtpl2) - original version
+* [Mike-EEE](https://github.com/Mike-EEE) - many improvements
