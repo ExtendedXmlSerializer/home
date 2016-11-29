@@ -432,3 +432,8 @@ public static void Register(HttpConfiguration config)
 * 2016-09-22 - v1.2.0 - Support of Dictionary<TKey, TSource>
 * 2016-09-14 - v1.1.0 - Integration with ASP.NET Core and WebApi
 * 2016-08-31 - v1.0.0 - First version
+
+##Contributors
+
+* Wojciech Nagórski - original version
+* Mike-EEE - many improvements
