@@ -19,28 +19,31 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml;
-using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization
+using System.Collections.Generic;
+using System.IO;
+using Xunit;
+
+namespace ExtendedXmlSerialization.Test
 {
-    public interface IExtendedXmlSerializerConfig
+    public class SerializationSpecificationTest : BaseTest
     {
-        [Obsolete( "This property is no longer used.")]
-        Type Type { get; }
+        readonly private static IExtendedXmlSerializerConfig 
+            Stream = new ExtendedXmlSerializerConfig<object>( type => type == typeof(MemoryStream) ),
+            Null = new ExtendedXmlSerializerConfig<object>( type => type == null ),
+            Eight = new ExtendedXmlSerializerConfig<object>( type => type.Name.Length == 8 );
+            
+        [Fact]
+        public void VerifySpecification()
+        {
+            var sut = new SimpleSerializationToolsFactory
+                      {
+                          Configurations = new List<IExtendedXmlSerializerConfig> {Null, Stream, Eight}
+                      };
 
-        int Version { get; set; } // Consider making getter only, defined by implementation.
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
-
-        bool IsSatisfiedBy(Type type);
-
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+            Assert.Equal(Stream, sut.GetConfiguration(typeof(MemoryStream)));
+            Assert.Equal(Null, sut.GetConfiguration(null));
+            Assert.Equal(Eight, sut.GetConfiguration(typeof(BaseTest)));
+        }
     }
 }
