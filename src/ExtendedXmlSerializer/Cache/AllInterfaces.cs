@@ -19,25 +19,28 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
-using System.Xml;
-using System.Xml.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Cache
 {
-    public interface IExtendedXmlSerializerConfig
+    public sealed class AllInterfaces
     {
-        int Version { get; } // Consider making getter only, defined by implementation.
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
+        readonly Func<Type, IEnumerable<Type>> selector;
 
-        bool IsSatisfiedBy(Type type);
+        public static AllInterfaces Instance { get; } = new AllInterfaces();
+        AllInterfaces()
+        {
+            selector = Yield;
+        }
 
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+        public IEnumerable<Type> Yield( Type parameter ) =>
+            new[] { parameter }
+                .Concat( parameter.GetTypeInfo().ImplementedInterfaces.SelectMany( selector ) )
+                .Where( x => x.GetTypeInfo().IsInterface )
+                .Distinct();
     }
 }

@@ -19,25 +19,42 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
-using System.Xml;
-using System.Xml.Linq;
+using System.Collections.Concurrent;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Cache
 {
-    public interface IExtendedXmlSerializerConfig
+    public interface IAddMethodLocator
     {
-        int Version { get; } // Consider making getter only, defined by implementation.
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
+        MethodInfo Locate( Type type );
+    }
 
-        bool IsSatisfiedBy(Type type);
+    public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
+    {
+        const string Add = "Add";
+        readonly static Func<Type, MethodInfo> LocateDelegate = LocateMethod;
 
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+        public static AddMethodLocator Default { get; } = new AddMethodLocator();
+        AddMethodLocator()  {}
+
+        public MethodInfo Locate( Type type )
+        {
+            return GetOrAdd( type, LocateDelegate );
+        }
+
+        static MethodInfo LocateMethod( Type type )
+        {
+            foreach (var candidate in AllInterfaces.Instance.Yield(type))
+            {
+                var method = candidate.GetMethod(Add);
+                if (method != null)
+                {
+                    return method;
+                }
+            }
+            return null;
+        }
     }
 }

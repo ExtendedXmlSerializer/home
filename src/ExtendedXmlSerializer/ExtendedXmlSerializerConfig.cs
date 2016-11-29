@@ -42,10 +42,15 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
         IExtendedXmlSerializerConfig
     {
-        public ExtendedXmlSerializerConfig()
+        readonly private static Func<Type, bool> Specification = typeof(T).GetTypeInfo().IsAssignableFrom;
+
+        public ExtendedXmlSerializerConfig() : this(Specification) {}
+
+        public ExtendedXmlSerializerConfig(Func<Type, bool> specification)
         {
             _migrations = new Dictionary<int, Action<XElement>>();
             Version = 0;
+            _specification = specification;
         }
 
         /// <summary>
@@ -62,11 +67,12 @@ namespace ExtendedXmlSerialization
         /// <summary>
         /// Gets the version of object
         /// </summary>
-        public int Version { get; set; }
+        public int Version { get; private set; }
 
         private Func<XElement, T> _deserialize;
         private Action<XmlWriter, T> _serializer;
-        private Func<T, object> getObjectId;
+        private Func<T, object> _getObjectId;
+        readonly Func<Type, bool> _specification;
 
         public void CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize)
         {
@@ -83,7 +89,7 @@ namespace ExtendedXmlSerialization
 
         public IObjectReferenceConfiguration<T> ObjectReference(Func<T, object> idFunc)
         {
-            this.getObjectId = idFunc;
+            _getObjectId = idFunc;
             ((IExtendedXmlSerializerConfig) this).IsObjectReference = true;
             return this;
         }
@@ -132,13 +138,18 @@ namespace ExtendedXmlSerialization
             _serializer(writer, (T) obj);
         }
 
+        public bool IsSatisfiedBy(Type type)
+        {
+            return _specification(type);
+        }
+
         bool IExtendedXmlSerializerConfig.IsCustomSerializer { get; set; }
         bool IExtendedXmlSerializerConfig.IsObjectReference { get; set; }
         string IExtendedXmlSerializerConfig.ExtractedListName { get; set; }
 
         string IExtendedXmlSerializerConfig.GetObjectId(object obj)
         {
-            return getObjectId((T) obj).ToString();
+            return _getObjectId((T) obj).ToString();
         }
 
         bool IExtendedXmlSerializerConfig.CheckPropertyEncryption(string propertyName)
@@ -157,7 +168,7 @@ namespace ExtendedXmlSerialization
                 throw new ArgumentException($"Expression '{expression}' refers to a field, not a property.");
 
             if (Type != propInfo.DeclaringType && propInfo.DeclaringType != null &&
-                !Type.GetTypeInfo().IsSubclassOf(propInfo.DeclaringType))
+                !IsSatisfiedBy(propInfo.DeclaringType))
                 throw new ArgumentException(
                     $"Expresion '{expression}' refers to a property that is not from type {Type}.");
 

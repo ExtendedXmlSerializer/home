@@ -29,14 +29,17 @@ using System.Xml.Serialization;
 namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition
-    { 
-        public void Init(Type type)
+    {
+        readonly Lazy<IEnumerable<PropertieDefinition>> properties;
+
+        public TypeDefinition(Type type)
         {
             Type = type;
             Name = type.Name;
 
             var typeInfo = type.GetTypeInfo();
-            if (typeInfo.IsGenericType)
+            var isGenericType = typeInfo.IsGenericType;
+            if (isGenericType)
             {
                 Type[] types = type.GetGenericArguments();
 
@@ -54,39 +57,31 @@ namespace ExtendedXmlSerialization.Cache
 
             IsArray = typeInfo.IsArray;
 
-            if (!IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type))
-            {
-
-                IsEnumerable = true;
-            }
+            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
 
             if (IsEnumerable)
             {
-                if (typeof(IDictionary).IsAssignableFrom(type))
-                {
-                    IsDictionary = true;
-                }
-                var elementType = type.GetElementType();
-                if (elementType != null)
-                {
-                    Name = "ArrayOf" + elementType.Name;
-                }
+                IsDictionary = typeof(IDictionary).IsAssignableFrom(type);
 
-                if (typeInfo.IsGenericType)
+                var elementType = ElementTypeLocator.Default.Locate(type);
+                if (isGenericType)
                 {
                     GenericArguments = type.GetGenericArguments();
-                    if (elementType == null)
-                    {
-                        Name = "ArrayOf" + string.Join("", GenericArguments.Select(p => p.Name));
-                    }
-                    if (IsDictionary)
-                    {
-                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
-                    }
-                    else
-                    {
-                        MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type);
-                    }
+                }
+                else if ( elementType != null )
+                {
+                    GenericArguments = new[] { elementType };
+                }
+
+                Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : type.Name;
+
+                if (IsDictionary)
+                {
+                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+                }
+                else if (elementType != null && !IsArray)
+                {
+                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
                 }
             }
 
@@ -100,12 +95,8 @@ namespace ExtendedXmlSerialization.Cache
                 !IsPrimitive &&
                 !typeInfo.IsEnum && type != typeof(string) &&
                 //not generic or generic but not List<> and Set<>
-                (!typeInfo.IsGenericType ||
-                 (typeInfo.IsGenericType && !typeof(IEnumerable).IsAssignableFrom(type)));
-            if (IsObjectToSerialize)
-            {
-                Properties = GetPropertieToSerialze(type);
-            }
+                (!isGenericType || !IsEnumerable);
+            properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
             
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
         }
@@ -114,99 +105,101 @@ namespace ExtendedXmlSerialization.Cache
         public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
 
 
-        private static List<PropertieDefinition> GetPropertieToSerialze(Type type)
+        private IEnumerable<PropertieDefinition> GetPropertieToSerialze()
         {
             var result = new List<PropertieDefinition>();
-            var properties = type.GetProperties();
-            int order = -1;
-            
-            foreach (PropertyInfo propertyInfo in properties)
+            if ( IsObjectToSerialize )
             {
-                var getMethod = propertyInfo.GetGetMethod(true);
-                if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
-                    !propertyInfo.CanWrite || !propertyInfo.GetSetMethod(true).IsPublic ||
-                    propertyInfo.GetIndexParameters().Length > 0)
-                {
-                    continue;
-                }
-
-                bool ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                if (ignore)
-                {
-                    continue;
-                }
-
-                var name = string.Empty;
-                order = -1;
-                var xmlElement = propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
-                if (xmlElement != null)
-                {
-                    name = xmlElement.ElementName;
-                    order = xmlElement.Order;
-                }
-                var property = new PropertieDefinition(type, propertyInfo, name);
-                property.MetadataToken = propertyInfo.MetadataToken;
-                if (order != -1)
-                {
-                    property.Order = order;
-                }
-                result.Add(property);
-            }
-
-            var fields = type.GetFields();
-            foreach (FieldInfo field in fields)
-            {
-                
-                if (field.IsLiteral && !field.IsInitOnly)
-                {
-                    continue;
-                }
-                if (field.IsInitOnly || field.IsStatic)
-                {
-                    continue;
-                }
-                bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                if (ignore)
-                {
-                    continue;
-                }
-                var name = string.Empty;
-                order = -1;
-                var xmlElement = field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
-                if (xmlElement != null)
-                {
-                    name = xmlElement.ElementName;
-                    order = xmlElement.Order;
-                }
-
-                var property = new PropertieDefinition(type, field, name);
-                property.MetadataToken = field.MetadataToken;
-                if (order != -1)
-                {
-                    property.Order = order;
-                }
-                result.Add(property);
-            }
+                int order = -1;
             
-            result.Sort((p1, p2) =>
+                foreach (PropertyInfo propertyInfo in Type.GetProperties())
                 {
-                    if (p1.Order == -1 || p2.Order == -1)
+                    var elementType = ElementTypeLocator.Default.Locate( propertyInfo.PropertyType );
+                    var getMethod = propertyInfo.GetGetMethod(true);
+                    if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
+                       !propertyInfo.CanWrite && elementType == null || ( !propertyInfo.GetSetMethod(true)?.IsPublic ?? false ) ||
+                        propertyInfo.GetIndexParameters().Length > 0)
                     {
-                        if (p1.Order > -1)
-                        {
-                            return -1;
-                        }
-                        if (p2.Order > -1)
-                        {
-                            return 1;
-                        }
-                        return p1.MetadataToken.CompareTo(p2.MetadataToken);
+                        continue;
                     }
 
-                    return p1.Order.CompareTo(p2.Order);
-                }
-            );
+                    bool ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
+                    if (ignore)
+                    {
+                        continue;
+                    }
 
+                    var name = string.Empty;
+                    order = -1;
+                    var xmlElement = propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+                    if (xmlElement != null)
+                    {
+                        name = xmlElement.ElementName;
+                        order = xmlElement.Order;
+                    }
+                    var property = new PropertieDefinition(Type, propertyInfo, name);
+                    property.MetadataToken = propertyInfo.MetadataToken;
+                    if (order != -1)
+                    {
+                        property.Order = order;
+                    }
+                    result.Add(property);
+                }
+
+                var fields = Type.GetFields();
+                foreach (FieldInfo field in fields)
+                {
+                
+                    if (field.IsLiteral && !field.IsInitOnly)
+                    {
+                        continue;
+                    }
+                    if (field.IsInitOnly || field.IsStatic)
+                    {
+                        continue;
+                    }
+                    bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
+                    if (ignore)
+                    {
+                        continue;
+                    }
+                    var name = string.Empty;
+                    order = -1;
+                    var xmlElement = field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+                    if (xmlElement != null)
+                    {
+                        name = xmlElement.ElementName;
+                        order = xmlElement.Order;
+                    }
+
+                    var property = new PropertieDefinition(Type, field, name);
+                    property.MetadataToken = field.MetadataToken;
+                    if (order != -1)
+                    {
+                        property.Order = order;
+                    }
+                    result.Add(property);
+                }
+            
+                result.Sort((p1, p2) =>
+                    {
+                        if (p1.Order == -1 || p2.Order == -1)
+                        {
+                            if (p1.Order > -1)
+                            {
+                                return -1;
+                            }
+                            if (p2.Order > -1)
+                            {
+                                return 1;
+                            }
+                            return p1.MetadataToken.CompareTo(p2.MetadataToken);
+                        }
+
+                        return p1.Order.CompareTo(p2.Order);
+                    }
+                );
+            }
             return result;
         }
 
@@ -216,7 +209,7 @@ namespace ExtendedXmlSerialization.Cache
         public bool IsDictionary { get; private set; }
         public Type[] GenericArguments { get; set; }
 
-        public List<PropertieDefinition> Properties { get; private set; }
+        public IEnumerable<PropertieDefinition> Properties => properties.Value;
         public Type Type { get; private set; }
         public string Name { get; private set; }
         public string FullName { get; private set; }

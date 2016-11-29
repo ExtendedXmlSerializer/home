@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Cache
             Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
             TypeDefinition = TypeDefinitionCache.GetDefinition(propertyInfo.PropertyType);
             _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
-            _propertySetter = ObjectAccessors.CreatePropertySetter(type, propertyInfo.Name);
+            _propertySetter = CreateSetter( type, propertyInfo.Name, propertyInfo.CanWrite );
         }
 
         public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
@@ -39,14 +39,25 @@ namespace ExtendedXmlSerialization.Cache
             Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
             TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
             _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
-            _propertySetter = ObjectAccessors.CreatePropertySetter(type, fieldInfo.Name);
+            _propertySetter = CreateSetter( type, fieldInfo.Name, !fieldInfo.IsInitOnly );
+        }
+
+        ObjectAccessors.PropertySetter CreateSetter( Type type, string name, bool writable )
+        {
+            if ( writable )
+            {
+                return ObjectAccessors.CreatePropertySetter(type, name);
+            }
+
+            var result = TypeDefinition.MethodAddToCollection != null ? new ObjectAccessors.PropertySetter( TypeDefinition.MethodAddToCollection ) : null;
+            return result;
         }
 
         private readonly ObjectAccessors.PropertyGetter _getter;
         private readonly ObjectAccessors.PropertySetter _propertySetter;
         
         public string Name { get; private set; }
-        public TypeDefinition TypeDefinition { get; set; }
+        public TypeDefinition TypeDefinition { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }
         public object GetValue(object obj)

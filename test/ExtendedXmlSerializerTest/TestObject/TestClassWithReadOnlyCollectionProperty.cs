@@ -19,25 +19,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml;
-using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization
+using System.Collections.Generic;
+
+namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public interface IExtendedXmlSerializerConfig
+    public sealed class TestClassWithReadOnlyCollectionProperty
     {
-        int Version { get; } // Consider making getter only, defined by implementation.
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
-
-        bool IsSatisfiedBy(Type type);
-
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+        public IList<TestClassPrimitiveTypes> Items { get; } = new List<TestClassPrimitiveTypes>();
     }
 }
