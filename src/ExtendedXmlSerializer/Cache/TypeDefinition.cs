@@ -75,13 +75,16 @@ namespace ExtendedXmlSerialization.Cache
 
                 Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : type.Name;
 
-                if (IsDictionary)
+                if (!typeInfo.IsInterface)
                 {
-                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
-                }
-                else if (elementType != null && !IsArray)
-                {
-                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
+                    if (IsDictionary)
+                    {
+                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+                    }
+                    else if (elementType != null && !IsArray)
+                    {
+                        MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
+                    }
                 }
             }
 

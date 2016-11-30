@@ -103,9 +103,13 @@ namespace ExtendedXmlSerialization
             return xml;
         }
 
-        private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name)
+        private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
             writer.WriteStartElement(name ?? def.Name);
+            if (forceSaveType)
+            {
+                writer.WriteAttributeString(Type, def.FullName);
+            }
             var dict = o as IDictionary;
             if (dict != null)
             {
@@ -126,9 +130,13 @@ namespace ExtendedXmlSerialization
             writer.WriteEndElement();
         }
 
-        private void WriteXmlArray(object o, XmlWriter writer, TypeDefinition def, string name)
+        private void WriteXmlArray(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
             writer.WriteStartElement(name ?? def.Name);
+            if (forceSaveType)
+            {
+                writer.WriteAttributeString(Type, def.FullName);
+            }
             List<string> toWriteReservedObject = new List<string>();
             var elementType = ElementTypeLocator.Default.Locate( def.Type );
             if (elementType != null)
@@ -218,20 +226,9 @@ namespace ExtendedXmlSerialization
             if (currentNode == null)
                 return null;
 
-            TypeDefinition currentNodeDef = null;
-            // Retrieve type from XML (Property can be base type. In xml can be saved inherited object)
-            var typeAttribute = currentNode.Attribute(Type);
-            if (typeAttribute != null)
-            {
-                var currentNodeType = TypeDefinitionCache.GetType(typeAttribute.Value);
-                currentNodeDef = TypeDefinitionCache.GetDefinition(currentNodeType);
-            }
-            // If xml does not contain type get property type
-            if (currentNodeDef == null)
-            {
-                currentNodeDef = type;
-            }
-
+            // Retrieve type from XML (Property can be base type. In xml can be saved inherited object) or type of get property
+            var currentNodeDef = GetElementTypeDefinition(currentNode) ?? type;
+           
             // Get configuration for type
             var configuration = GetConfiguration(currentNodeDef.Type);
             if (configuration != null)
@@ -346,40 +343,20 @@ namespace ExtendedXmlSerialization
             int arrayCount = currentNode.Elements().Count();
             var elements = currentNode.Elements().ToArray();
 
-            object dict = instance ?? type.ObjectActivator(); ;
+            var definition = GetElementTypeDefinition(currentNode) ?? type;
+            object dict = instance ?? definition.ObjectActivator();
 
             for (int i = 0; i < arrayCount; i++)
             {
                 var element = elements[i];
-                TypeDefinition keyDef = null;
-                TypeDefinition ValuDef = null;
-
+                
                 var key = element.Element(Key);
                 var value = element.Element(Value);
 
-                var keyTypeAttr = key.Attribute(Type);
-                if (keyTypeAttr != null)
-                {
-                    var nodeType = TypeDefinitionCache.GetType(keyTypeAttr.Value);
-                    keyDef = TypeDefinitionCache.GetDefinition(nodeType);
-                }
-                else
-                {
-                    keyDef = TypeDefinitionCache.GetDefinition(type.GenericArguments[0]);
-                }
+                var keyDef = GetElementTypeDefinition(key, type.GenericArguments[0]);
+                var valuDef = GetElementTypeDefinition(value, type.GenericArguments[1]);
 
-                var valueTypeAttr = value.Attribute(Type);
-                if (valueTypeAttr != null)
-                {
-                    var nodeType = TypeDefinitionCache.GetType(valueTypeAttr.Value);
-                    ValuDef = TypeDefinitionCache.GetDefinition(nodeType);
-                }
-                else
-                {
-                    ValuDef = TypeDefinitionCache.GetDefinition(type.GenericArguments[1]);
-                }
-
-                type.MethodAddToDictionary(dict, ReadXml(key, keyDef), ReadXml(value, ValuDef));
+                type.MethodAddToDictionary(dict, ReadXml(key, keyDef), ReadXml(value, valuDef));
             }
             return dict;
         }
@@ -396,18 +373,15 @@ namespace ExtendedXmlSerialization
             }
             else
             {
-                list = instance ?? type.ObjectActivator();
+                var definition = GetElementTypeDefinition(currentNode) ?? type;
+                list = instance ?? definition.ObjectActivator();
             }
 
             var elementType = ElementTypeLocator.Default.Locate( type.Type );
-            var elementDefinition = TypeDefinitionCache.GetDefinition(elementType);
             for (int i = 0; i < arrayCount; i++)
             {
                 var element = elements[i];
-                var ta = element.Attribute(Type);
-                var definition = ta != null
-                    ? TypeDefinitionCache.GetDefinition(TypeDefinitionCache.GetType(ta.Value))
-                    : elementDefinition;
+                var definition = GetElementTypeDefinition(element, elementType);
 
                 var xml = ReadXml(element, definition);
                 if (type.IsArray)
@@ -424,6 +398,16 @@ namespace ExtendedXmlSerialization
                 return array;
             }
             return list;
+        }
+
+        private TypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)
+        {
+            var typeAttribute = element.Attribute(Type);
+            if (typeAttribute != null)
+            {
+                return TypeDefinitionCache.GetDefinition(TypeDefinitionCache.GetType(typeAttribute.Value));
+            }
+            return defuaultType == null ? null : TypeDefinitionCache.GetDefinition(defuaultType);
         }
 
         private void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null, bool toEncrypt = false, string valueType = null)
@@ -446,7 +430,7 @@ namespace ExtendedXmlSerialization
             xw.WriteEndElement();
         }
 
-        private void WriteXml(XmlWriter writer, object o, TypeDefinition type, string name = null, bool writeReservedObject = false)
+        private void WriteXml(XmlWriter writer, object o, TypeDefinition type, string name = null, bool writeReservedObject = false, bool forceSaveType = false)
         {
             if (type.IsPrimitive)
             {
@@ -455,12 +439,12 @@ namespace ExtendedXmlSerialization
             }
             if (type.IsDictionary)
             {
-                WriteXmlDictionary(o, writer, type, name);
+                WriteXmlDictionary(o, writer, type, name, forceSaveType);
                 return;
             }
             if (type.IsArray || type.IsEnumerable)
             {
-                WriteXmlArray(o, writer, type, name);
+                WriteXmlArray(o, writer, type, name, forceSaveType);
                 return;
             }
             writer.WriteStartElement(name ?? type.Name);
@@ -514,7 +498,7 @@ namespace ExtendedXmlSerialization
 
                 if (defType.IsObjectToSerialize || defType.IsArray || defType.IsEnumerable)
                 {
-                    WriteXml(writer, propertyValue, defType, propertyInfo.Name);
+                    WriteXml(writer, propertyValue, defType, propertyInfo.Name, forceSaveType: propertyInfo.TypeDefinition.FullName != defType.FullName);
                 }
                 else if (defType.IsEnum)
                 {
