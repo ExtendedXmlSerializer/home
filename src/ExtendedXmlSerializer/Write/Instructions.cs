@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
@@ -133,7 +134,7 @@ namespace ExtendedXmlSerialization.Write
         {
             if (services.Current.Instance.GetType() != _type)
             {
-                services.Member(ExtendedXmlSerializer.Type, _type.FullName);
+                services.Property(ExtendedXmlSerializer.Type, _type.FullName);
             }
         }
     }
@@ -147,17 +148,17 @@ namespace ExtendedXmlSerialization.Write
             _member = member;
         }
 
-        protected override void Execute(IWriteServices services) => services.Member(_member.Name, services.Current.Content);
+        protected override void Execute(IWriteServices services) => services.Property(_member.Name, services.Current.Content);
     }
 
-    class EmitObjectPropertyInstruction : EmitMemberInstructionBase
+    class EmitMemberAsPropertyInstruction : EmitMemberInstructionBase
     {
-        public EmitObjectPropertyInstruction(MemberInfo member) : base(member, new StartNewContentContextInstruction(new EmitMemberInstruction(member))) {}
+        public EmitMemberAsPropertyInstruction(MemberInfo member) : base(member, new StartNewContentContextInstruction(new EmitMemberInstruction(member))) {}
     }
 
-    class EmitObjectContentInstruction : EmitMemberInstructionBase
+    class EmitMemberAsContentInstruction : EmitMemberInstructionBase
     {
-        public EmitObjectContentInstruction(MemberInfo member, IInstruction content) : base(member, content) {}
+        public EmitMemberAsContentInstruction(MemberInfo member, IInstruction content) : base(member, content) {}
     }
 
     abstract class EmitMemberInstructionBase : DecoratedWriteInstruction
@@ -265,7 +266,17 @@ namespace ExtendedXmlSerialization.Write
             }
         }
 
-        protected abstract IDisposable DetermineContext(IWriteServices services);
+        protected abstract IDisposable DetermineContext(IWriteServices context);
+    }
+
+    class StartNewMembersContextInstruction : NewWriteContextInstructionBase
+    {
+        private readonly IImmutableSet<MemberInfo> _members;
+        public StartNewMembersContextInstruction(IImmutableSet<MemberInfo> members, IInstruction instruction) : base(instruction)
+        {
+            _members = members;
+        }
+        protected override IDisposable DetermineContext(IWriteServices context) => context.New(_members);
     }
 
     class StartNewContentContextInstruction : NewWriteContextInstructionBase
@@ -275,8 +286,8 @@ namespace ExtendedXmlSerialization.Write
 
         public StartNewContentContextInstruction(IInstruction instruction) : base(instruction) {}
 
-        protected override IDisposable DetermineContext(IWriteServices services) =>
-            services.New(services.Serialize(services.Current.Instance));
+        protected override IDisposable DetermineContext(IWriteServices context) =>
+            context.New(context.Serialize(context.Current.Instance));
     }
 
     class StartNewMemberContextInstruction : NewWriteContextInstructionBase
@@ -288,14 +299,14 @@ namespace ExtendedXmlSerialization.Write
             _member = member;
         }
 
-        protected override IDisposable DetermineContext(IWriteServices services) => services.New(_member);
+        protected override IDisposable DetermineContext(IWriteServices context) => context.New(_member);
     }
 
     class StartNewContextFromRootInstruction : NewWriteContextInstructionBase
     {
         public StartNewContextFromRootInstruction(IInstruction instruction) : base(instruction) {}
 
-        protected override IDisposable DetermineContext(IWriteServices services) => 
-            services.New(services.Current.Root);
+        protected override IDisposable DetermineContext(IWriteServices context) => 
+            context.New(context.Current.Root);
     }
 }

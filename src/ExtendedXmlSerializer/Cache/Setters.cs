@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Cache
 			}
 
 			var setter = TypeDefinitionCache.GetDefinition(key.GetMemberType())?.MethodAddToCollection;
-			var result = setter != null ? new ObjectAccessors.PropertySetter( setter ) : null;
+			var result = setter != null ? new ObjectAccessors.PropertySetter(setter) : null;
 			return result;
 		}
 	}

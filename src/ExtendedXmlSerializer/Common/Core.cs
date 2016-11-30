@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Xml;
@@ -67,20 +68,20 @@ namespace ExtendedXmlSerialization.Common
 
 
 
-    class FixedDecoratedInstruction : IInstructionBuilder
+    class FixedDecoratedInstruction : IInstructions
     {
-        private readonly IInstructionBuilder _builder;
+        private readonly IInstructions _builder;
         private readonly Type _type;
 
-        public FixedDecoratedInstruction(IInstructionBuilder builder, Type type)
+        public FixedDecoratedInstruction(IInstructions builder, Type type)
         {
             _builder = builder;
             _type = type;
         }
 
-        public IInstruction Build(Type type) => Get();
+        public IInstruction For(Type type) => Get();
 
-        public IInstruction Get() => _builder.Build(_type);
+        public IInstruction Get() => _builder.For(_type);
     }
 
     class DeferredInstruction : IInstruction
@@ -130,8 +131,10 @@ namespace ExtendedXmlSerialization.Common
 
     public static class Extensions
     {
-        public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this) => @this.OfType<T>(); // Avoids boxing.
-        public static IEnumerable<T> Immutable<T>(this IEnumerable<T> @this) => @this.ToImmutableArray().AsEnumerable();
+        /*public static IEnumerable<TResult> SelectAssigned<TSource, TResult>( this IEnumerable<TSource> @this, Func<TSource, TResult> select ) => @this.Select( select ).Where(item => item != null);*/
+
+        /*public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this) => @this.OfType<T>(); // Avoids (direct) boxing.
+        public static IEnumerable<T> Immutable<T>(this IEnumerable<T> @this) => @this.ToImmutableArray().AsEnumerable();*/
 
         public static Type GetMemberType(this MemberInfo memberInfo) =>
             (memberInfo as MethodInfo)?.ReturnType ??
@@ -162,9 +165,11 @@ namespace ExtendedXmlSerialization.Common
 
     class CompositeInstruction : IInstruction
     {
-        private readonly IEnumerable<IInstruction> _instructions;
-        public CompositeInstruction(params IInstruction[] instructions) : this(instructions.Immutable()) {}
-        public CompositeInstruction(IEnumerable<IInstruction> instructions)
+        private readonly ImmutableArray<IInstruction> _instructions;
+
+		public CompositeInstruction(IEnumerable<IInstruction> instructions) : this(instructions.ToImmutableArray()) {}
+        public CompositeInstruction(params IInstruction[] instructions) : this(instructions.ToImmutableArray()) {}
+        public CompositeInstruction(ImmutableArray<IInstruction> instructions)
         {
             _instructions = instructions;
         }

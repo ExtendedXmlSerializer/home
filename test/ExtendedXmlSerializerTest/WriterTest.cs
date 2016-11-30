@@ -22,13 +22,13 @@ namespace ExtendedXmlSerialization.Test
         public void VerifyBasic()
         {
 
-            var subject = new TestClassWithMap();
-            subject.Init();
-            // var subject = new Dictionary<string, string> { {"Hello", "World!"} };
+            /*var subject = new TestClassWithMap();
+            subject.Init();*/
+            //var subject = new Dictionary<string, string> { {"Hello", "World!"} };
 
-/*TestClassReference subject = new TestClassReference();
+TestClassReference subject = new TestClassReference();
                     subject.Id = 1;
-                    subject.CyclicReference = subject;*/
+                    subject.CyclicReference = subject;
                     /*subject.ObjectA = new TestClassReference {Id = 2};
                     subject.ReferenceToObjectA = subject.ObjectA;
                     subject.Lists = new List<TestClassReference>
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test
                     };*/
 
             var extensions = new DefaultWriteExtensions(Serializer.SerializationToolsFactory);
-            var data = new Write.Serializer(/*extensions*/).Serialize(subject);
+            var data = new Write.Serializer(extensions).Serialize(subject);
             Debugger.Break();
 
         }
