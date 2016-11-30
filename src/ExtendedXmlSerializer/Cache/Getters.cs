@@ -21,22 +21,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
 namespace ExtendedXmlSerialization.Cache
 {
-	sealed class Getters : WeakCacheBase<MemberInfo, ObjectAccessors.PropertyGetter>
+	sealed class Getters : WeakCache<MemberInfo, ObjectAccessors.PropertyGetter>
 	{
 		public static Getters Default { get; } = new Getters();
-		Getters() {}
-
-		protected override ObjectAccessors.PropertyGetter Callback(MemberInfo key)
-		{
-			var getter = ObjectAccessors.CreatePropertyGetter(key);
-			var callback = new ConditionalWeakTable<object, object>.CreateValueCallback(getter);
-			var cache = new WeakCache<object, object>(callback);
-			ObjectAccessors.PropertyGetter result = cache.Get;
-			return result;
-		}
+		Getters() : base(ObjectAccessors.CreatePropertyGetter) {}
 	}
 }
