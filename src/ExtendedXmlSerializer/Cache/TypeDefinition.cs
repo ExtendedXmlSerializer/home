@@ -137,7 +137,7 @@ namespace ExtendedXmlSerialization.Cache
                         name = xmlElement.ElementName;
                         order = xmlElement.Order;
                     }
-                    var property = new PropertieDefinition(Type, propertyInfo, name);
+                    var property = new PropertieDefinition(propertyInfo, name);
                     property.MetadataToken = propertyInfo.MetadataToken;
                     if (order != -1)
                     {
@@ -172,7 +172,7 @@ namespace ExtendedXmlSerialization.Cache
                         order = xmlElement.Order;
                     }
 
-                    var property = new PropertieDefinition(Type, field, name);
+                    var property = new PropertieDefinition(field, name);
                     property.MetadataToken = field.MetadataToken;
                     if (order != -1)
                     {

@@ -28,7 +28,9 @@ namespace ExtendedXmlSerialization
 {
     internal static class PrimitiveValueTools
     {
-        public static string SetPrimitiveValue(object value, Type type)
+	    public static string SetPrimitiveValue(object value) => SetPrimitiveValue(value, value.GetType());
+
+	    public static string SetPrimitiveValue(object value, Type type)
         {
             switch (Type.GetTypeCode(type))
             {

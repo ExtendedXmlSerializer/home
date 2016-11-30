@@ -19,43 +19,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
+
 using System.Reflection;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Cache
 {
     internal class PropertieDefinition
     {
-        public PropertieDefinition(Type type, PropertyInfo memberInfo, string name)
+        public PropertieDefinition(MemberInfo memberInfo, string name)
         {
             MemberInfo = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.PropertyType);
-            _getter = ObjectAccessors.CreatePropertyGetter(type, memberInfo.Name);
-            _propertySetter = CreateSetter( type, memberInfo.Name, memberInfo.CanWrite );
+            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            _getter = Getters.Default.Get(memberInfo);
+            _propertySetter = Setters.Default.Get(memberInfo);
         }
 
-        public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
+       /* public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
         {
             MemberInfo = fieldInfo;
             Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
             TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
             _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
             _propertySetter = CreateSetter( type, fieldInfo.Name, !fieldInfo.IsInitOnly );
-        }
+        }*/
 
-        ObjectAccessors.PropertySetter CreateSetter( Type type, string name, bool writable )
-        {
-            if ( writable )
-            {
-                return ObjectAccessors.CreatePropertySetter(type, name);
-            }
-
-            var result = TypeDefinition.MethodAddToCollection != null ? new ObjectAccessors.PropertySetter( TypeDefinition.MethodAddToCollection ) : null;
-            return result;
-        }
-
-
+        
         private readonly ObjectAccessors.PropertyGetter _getter;
         private readonly ObjectAccessors.PropertySetter _propertySetter;
 

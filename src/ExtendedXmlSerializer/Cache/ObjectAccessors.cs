@@ -61,16 +61,16 @@ namespace ExtendedXmlSerialization.Cache
             return null;
         }
         
-        internal static PropertyGetter CreatePropertyGetter(Type type, string propertyName)
+        internal static PropertyGetter CreatePropertyGetter(MemberInfo member)
         {
             // Object (type object) from witch the data are retrieved
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
+            UnaryExpression itemCasted = Expression.Convert(itemObject, member.DeclaringType);
 
             // Property from casted object
-            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
+            MemberExpression property = Expression.PropertyOrField(itemCasted, member.Name);
 
             // Because we use this function also for value type we need to add conversion to object
             Expression conversion = Expression.Convert(property, typeof(object));
