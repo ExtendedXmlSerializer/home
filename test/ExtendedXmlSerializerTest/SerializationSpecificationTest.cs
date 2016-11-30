@@ -19,31 +19,77 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 using System.Collections.Generic;
 using System.IO;
+using ExtendedXmlSerialization.Test.TestObject;
+using ExtendedXmlSerialization.Test.TestObjectConfigs;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
     public class SerializationSpecificationTest : BaseTest
     {
-        readonly private static IExtendedXmlSerializerConfig 
-            Stream = new ExtendedXmlSerializerConfig<object>( type => type == typeof(MemoryStream) ),
-            Null = new ExtendedXmlSerializerConfig<object>( type => type == null ),
-            Eight = new ExtendedXmlSerializerConfig<object>( type => type.Name.Length == 8 );
-            
+        public SerializationSpecificationTest()
+        {
+            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            {
+                Configurations = new List<IExtendedXmlSerializerConfig>
+                {
+                    new TestClassInheritanceWithMigrationsBaseConfig(),
+                    new TestClassInheritanceWithMigrationsAConfig(),
+                    new TestClassInheritanceWithMigrationsBConfig()
+                }
+            };
+        }
+        private static readonly IExtendedXmlSerializerConfig
+            Stream = new ExtendedXmlSerializerConfig<object>(type => type == typeof(MemoryStream)),
+            Null = new ExtendedXmlSerializerConfig<object>(type => type == null),
+            Eight = new ExtendedXmlSerializerConfig<object>(type => type.Name.Length == 8);
+
         [Fact]
         public void VerifySpecification()
         {
             var sut = new SimpleSerializationToolsFactory
-                      {
-                          Configurations = new List<IExtendedXmlSerializerConfig> {Null, Stream, Eight}
-                      };
+            {
+                Configurations = new List<IExtendedXmlSerializerConfig> {Null, Stream, Eight}
+            };
 
             Assert.Equal(Stream, sut.GetConfiguration(typeof(MemoryStream)));
             Assert.Equal(Null, sut.GetConfiguration(null));
             Assert.Equal(Eight, sut.GetConfiguration(typeof(BaseTest)));
+        }
+
+        [Fact]
+        public void SpecificationForInheritance()
+        {
+            var objA =
+                Serializer.Deserialize<TestClassInheritanceWithMigrationsA>(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsA"">
+<Property>1</Property>
+<OtherProperty>2</OtherProperty>
+</TestClassInheritanceWithMigrationsA>");
+
+            Assert.Equal(1, objA.ChangedProperty);
+            Assert.Equal(2, objA.OtherChangedProperty);
+
+            var objBase =
+                Serializer.Deserialize<TestClassInheritanceWithMigrationsBase>(
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsBase"">
+<Property>1</Property>
+</TestClassInheritanceWithMigrationsA>");
+
+            Assert.Equal(1, objBase.ChangedProperty);
+
+            var objB =
+                Serializer.Deserialize<TestClassInheritanceWithMigrationsB>(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsB"">
+<Property>1</Property>
+<ProprtyWithoutChanges>3</ProprtyWithoutChanges>
+</TestClassInheritanceWithMigrationsA>");
+
+            Assert.Equal(1, objB.ChangedProperty);
+            Assert.Equal(3, objB.ProprtyWithoutChanges);
         }
     }
 }
