@@ -19,25 +19,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Test.TestObject;
+using Xunit;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Test
 {
-    public interface IExtendedXmlSerializerConfig
+    public class SerializationPropertyInterfaceOfListTest :BaseTest
     {
-        int Version { get; }
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
-
-        bool IsSatisfiedBy(Type type);
-
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+        [Fact]
+        public void PropertyInterfaceOfList()
+        {
+            var obj = new TestClassPropertyInterfaceOfList();
+            obj.Init();
+            
+            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassPropertyInterfaceOfList type=""ExtendedXmlSerialization.Test.TestObject.TestClassPropertyInterfaceOfList"">
+<List type=""System.Collections.Generic.List`1[[System.String, [CORELIB]]]""><string>Item1</string></List>
+<Dictionary type=""System.Collections.Generic.Dictionary`2[[System.String, [CORELIB]],[System.String, [CORELIB]]]""><Item><Key>Key</Key><Value>Value</Value></Item></Dictionary>
+<Set type=""System.Collections.Generic.HashSet`1[[System.String, [CORELIB]]]""><string>Item1</string></Set>
+</TestClassPropertyInterfaceOfList>", obj);
+        }
     }
 }

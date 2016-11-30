@@ -19,25 +19,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
-using System.Xml;
-using System.Xml.Linq;
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public interface IExtendedXmlSerializerConfig
+    public class TestClassInheritanceWithCustomSerializerBase
     {
-        int Version { get; }
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
+        public string FirstProperty { get; set; }
+    }
 
-        bool IsSatisfiedBy(Type type);
+    public class TestClassInheritanceWithCustomSerializerA : TestClassInheritanceWithCustomSerializerBase
+    {
+        public string SecondProperty { get; set; }
+    }
 
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
+    public class TestClassInheritanceWithCustomSerializerB : TestClassInheritanceWithCustomSerializerBase
+    {
+        public string ThirdProperty { get; set; }
     }
 }
