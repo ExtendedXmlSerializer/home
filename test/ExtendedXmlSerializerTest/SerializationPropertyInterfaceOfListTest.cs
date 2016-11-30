@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Test
             CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <TestClassPropertyInterfaceOfList type=""ExtendedXmlSerialization.Test.TestObject.TestClassPropertyInterfaceOfList"">
 <List type=""System.Collections.Generic.List`1[[System.String, [CORELIB]]]""><string>Item1</string></List>
-<Dictionary type=""System.Collections.Generic.Dictionary`2[[System.String, [CORELIB]],[System.String, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]""><Item><Key>Key</Key><Value>Value</Value></Item></Dictionary>
+<Dictionary type=""System.Collections.Generic.Dictionary`2[[System.String, [CORELIB]],[System.String, [CORELIB]]]""><Item><Key>Key</Key><Value>Value</Value></Item></Dictionary>
 <Set type=""System.Collections.Generic.HashSet`1[[System.String, [CORELIB]]]""><string>Item1</string></Set>
 </TestClassPropertyInterfaceOfList>", obj);
         }
