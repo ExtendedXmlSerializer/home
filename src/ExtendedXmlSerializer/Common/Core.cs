@@ -27,6 +27,26 @@ namespace ExtendedXmlSerialization.Common
         public override string ToString() => _name;
     }*/
 
+        public class IsTypeSpecification<T> : ISpecification<object>
+        {
+            public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
+            IsTypeSpecification() {}
+
+            public bool IsSatisfiedBy(object parameter) => parameter is T;
+        }
+
+    public class SpecificationAdapter<T> : ISpecification<object>
+    {
+        private readonly ISpecification<T> _specification;
+
+        public SpecificationAdapter(ISpecification<T> specification)
+        {
+            _specification = specification;
+        }
+
+        public bool IsSatisfiedBy(object parameter) => parameter is T && _specification.IsSatisfiedBy((T)parameter);
+    }
+
     public interface IParameterizedSource<in TParameter, out TResult>
     {
         TResult Get( TParameter parameter );
@@ -118,7 +138,7 @@ namespace ExtendedXmlSerialization.Common
         bool IsSatisfiedBy( T parameter );
     }
 
-    class DecoratedInstruction : IInstruction
+    /*class DecoratedInstruction : IInstruction
     {
         private readonly IInstruction _instruction;
         public DecoratedInstruction(IInstruction instruction)
@@ -127,10 +147,14 @@ namespace ExtendedXmlSerialization.Common
         }
 
         public virtual void Execute(IServiceProvider services) => _instruction.Execute(services);
-    }
+    }*/
 
     public static class Extensions
     {
+		public static void Property(this IWritingServices @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
+
+        public static ISpecification<object> Adapt<T>(this ISpecification<T> @this) => new SpecificationAdapter<T>(@this);
+
         /*public static IEnumerable<TResult> SelectAssigned<TSource, TResult>( this IEnumerable<TSource> @this, Func<TSource, TResult> select ) => @this.Select( select ).Where(item => item != null);*/
 
         /*public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this) => @this.OfType<T>(); // Avoids (direct) boxing.
@@ -167,7 +191,7 @@ namespace ExtendedXmlSerialization.Common
     {
         private readonly ImmutableArray<IInstruction> _instructions;
 
-		public CompositeInstruction(IEnumerable<IInstruction> instructions) : this(instructions.ToImmutableArray()) {}
+        public CompositeInstruction(IEnumerable<IInstruction> instructions) : this(instructions.ToImmutableArray()) {}
         public CompositeInstruction(params IInstruction[] instructions) : this(instructions.ToImmutableArray()) {}
         public CompositeInstruction(ImmutableArray<IInstruction> instructions)
         {

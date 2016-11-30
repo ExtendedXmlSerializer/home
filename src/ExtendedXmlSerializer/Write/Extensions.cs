@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Write
 {
     public interface IWriterExtension
     {
-        bool Starting(IWriteContext context);
-        void Finished(IWriteContext context);
+        bool Starting(IWritingServices services);
+        void Finished(IWritingServices services);
     }
 
     public class DefaultWriteExtensions : CompositeExtension
@@ -30,11 +31,11 @@ namespace ExtendedXmlSerialization.Write
             _extensions = extensions;
         }
 
-        public bool Starting(IWriteContext context)
+        public bool Starting(IWritingServices services)
         {
             foreach (var extension in _extensions)
             {
-                if (!extension.Starting(context))
+                if (!extension.Starting(services))
                 {
                     return false;
                 }
@@ -42,11 +43,11 @@ namespace ExtendedXmlSerialization.Write
             return true;
         }
 
-        public void Finished(IWriteContext context)
+        public void Finished(IWritingServices services)
         {
             foreach (var extension in _extensions)
             {
-                extension.Finished(context);
+                extension.Finished(services);
             }
         }
     }
@@ -81,66 +82,66 @@ namespace ExtendedXmlSerialization.Write
 
     public abstract class WritingExtensionBase : IWriterExtension
     {
-        public virtual bool Starting(IWriteContext context)
+        public virtual bool Starting(IWritingServices services)
         {
-            var current = context.Current;
+            var current = services.Current;
             if (current.Content != null)
             {
-                return StartingContent(context, current.Instance, current.Member, current.Content);
+                return StartingContent(services, current.Instance, current.Member, current.Content);
             }
 
             if (current.Member != null)
             {
-                return StartingMember(context, current.Instance, current.Member);
+                return StartingMember(services, current.Instance, current.Member);
             }
 
             if (current.Members != null)
             {
-                return StartingMembers(context, current.Instance, current.Members);
+                return StartingMembers(services, current.Instance, current.Members);
             }
 
             var result = current.Instance != null
-                ? StartingInstance(context, current.Instance)
-                : Initializing(context);
+                ? StartingInstance(services, current.Instance)
+                : Initializing(services);
             return result;
         }
 
-        protected virtual bool Initializing(IWriteContext context) => true;
-        protected virtual bool StartingInstance(IWriteContext context, object instance) => true;
-        protected virtual bool StartingMembers(IWriteContext context, object instance, IImmutableSet<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWriteContext context, object instance, MemberInfo member) => true;
-        protected virtual bool StartingContent(IWriteContext context, object instance, MemberInfo member, string content) => true;
+        protected virtual bool Initializing(IWritingServices services) => true;
+        protected virtual bool StartingInstance(IWritingServices services, object instance) => true;
+        protected virtual bool StartingMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members) => true;
+        protected virtual bool StartingMember(IWritingServices services, object instance, MemberInfo member) => true;
+        protected virtual bool StartingContent(IWritingServices services, object instance, MemberInfo member, string content) => true;
 
-        public virtual void Finished(IWriteContext context)
+        public virtual void Finished(IWritingServices services)
         {
-            var current = context.Current;
+            var current = services.Current;
             if (current.Content != null)
             {
-                FinishedContent(context, current.Instance, current.Member, current.Content);
+                FinishedContent(services, current.Instance, current.Member, current.Content);
             }
             else if (current.Member != null)
             {
-                FinishedMember(context, current.Instance, current.Member);
+                FinishedMember(services, current.Instance, current.Member);
             }
             else if (current.Members != null)
             {
-                FinishedMembers(context, current.Instance, current.Members);
+                FinishedMembers(services, current.Instance, current.Members);
             }
             else if (current.Instance != null)
             {
-                FinishedInstance(context, current.Instance);
+                FinishedInstance(services, current.Instance);
             }
             else
             {
-                Completed(context);
+                Completed(services);
             }
         }
 
-        protected virtual void FinishedInstance(IWriteContext context, object instance) {}
-        protected virtual void FinishedMembers(IWriteContext context, object instance, IImmutableSet<MemberInfo> members) {}
-        protected virtual void FinishedMember(IWriteContext context, object instance, MemberInfo member) {}
-        protected virtual void FinishedContent(IWriteContext context, object instance, MemberInfo member, string content) {}
-        protected virtual void Completed(IWriteContext context) {}
+        protected virtual void FinishedInstance(IWritingServices services, object instance) {}
+        protected virtual void FinishedMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members) {}
+        protected virtual void FinishedMember(IWritingServices services, object instance, MemberInfo member) {}
+        protected virtual void FinishedContent(IWritingServices services, object instance, MemberInfo member, string content) {}
+        protected virtual void Completed(IWritingServices services) {}
     }
 
     public class VersionExtension : WritingExtensionBase
@@ -152,18 +153,18 @@ namespace ExtendedXmlSerialization.Write
             _factory = factory;
         }
 
-        protected override bool StartingMembers(IWriteContext context, object instance, IImmutableSet<MemberInfo> members)
+        protected override bool StartingMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members)
         {
             var type = instance.GetType();
             var version = _factory
                 .GetConfiguration(type)?
                 .Version;
 
-            if (version != null)
+            if (version != null && version > 0)
             {
-                context.Attach(new VersionProperty(version.Value));
+                services.Attach(new VersionProperty(version.Value));
             }
-            return base.StartingMembers(context, instance, members);
+            return base.StartingMembers(services, instance, members);
         }
     }
 
@@ -194,7 +195,7 @@ namespace ExtendedXmlSerialization.Write
             _factory = factory;
         }
 
-        protected override bool StartingMembers(IWriteContext context, object instance, IImmutableSet<MemberInfo> members)
+        protected override bool StartingMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members)
         {
             var type = instance.GetType();
             var configuration = _factory.GetConfiguration(type);
@@ -205,23 +206,23 @@ namespace ExtendedXmlSerialization.Write
                 var key = $"{type.FullName}{ExtendedXmlSerializer.Underscore}{objectId}";
                 var contains = _references.ContainsKey(key);
                 var property = contains ? (IAttachedProperty)new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
-                context.Attach(property);
                 var result = !contains;
+                services.Property(property);
                 if (result)
                 {
                     _references.Add(key, instance);
                 }
                 return result;
             }
-            return base.StartingMembers(context, instance, members);
+            return base.StartingMembers(services, instance, members);
         }
 
-        protected override bool Initializing(IWriteContext context)
+        protected override bool Initializing(IWritingServices services)
         {
             _references.Clear();
-            return base.Initializing(context);
+            return base.Initializing(services);
         }
 
-        protected override void Completed(IWriteContext context) => _references.Clear();
+        protected override void Completed(IWritingServices services) => _references.Clear();
     }
 }

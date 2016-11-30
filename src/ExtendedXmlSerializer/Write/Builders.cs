@@ -22,28 +22,62 @@ namespace ExtendedXmlSerialization.Write
             : base(member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName ?? member.Name) {}
     }
 
-    public interface IInstructionSpecification : ISpecification<Type>, ISpecification<MemberInfo>, ISpecification<WriteContext>
+    public interface IInstructionSpecification : ISpecification<object>
     {
         bool Defer(MemberInfo member);
     }
 
     abstract class InstructionSpecificationBase : IInstructionSpecification
     {
-        public abstract bool IsSatisfiedBy(Type parameter);
-
-        public abstract bool IsSatisfiedBy(MemberInfo parameter);
-
-        public abstract bool IsSatisfiedBy(WriteContext parameter);
-
+        public abstract bool IsSatisfiedBy(object parameter);
+        
         public virtual bool Defer(MemberInfo member) => false;
+    }
+
+    class SpecificationCandidatesSelector : IParameterizedSource<object, IEnumerable<object>>
+    {
+        public static SpecificationCandidatesSelector Default { get; } = new SpecificationCandidatesSelector();
+        SpecificationCandidatesSelector() {}
+
+        public IEnumerable<object> Get(object parameter)
+        {
+            yield return parameter;
+            var member = parameter as MemberInfo;
+            if (member != null)
+            {
+                yield return member.GetMemberType();
+            }
+
+            if (parameter is WriteContext)
+            {
+                var context = (WriteContext)parameter;
+                yield return context.Member;
+                yield return context.Member.GetMemberType();
+            }
+
+        }
     }
 
     class InstructionSpecification : InstructionSpecificationBase
     {
+        private readonly IParameterizedSource<object, IEnumerable<object>> _candidates;
+        private readonly Func<MemberInfo, bool> _defer;
+        private readonly Func<object, bool>[] _specifications;
         public static InstructionSpecification Default { get; } = new InstructionSpecification();
-        InstructionSpecification() : this(context => false) {}
+        InstructionSpecification()
+            : this(
+                SpecificationCandidatesSelector.Default, context => false,
+                IsTypeSpecification<IAttachedProperty>.Default.Adapt().IsSatisfiedBy) {}
 
-        private readonly Func<Type, bool> _isPropertyType;
+        public InstructionSpecification(IParameterizedSource<object, IEnumerable<object>> candidates,
+                                        Func<MemberInfo, bool> defer, params Func<object, bool>[] specifications)
+        {
+            _candidates = candidates;
+            _defer = defer;
+            _specifications = specifications;
+        }
+
+        /*private readonly Func<Type, bool> _isPropertyType;
         private readonly Func<MemberInfo, bool> _isPropertyMember;
         private readonly Func<WriteContext, bool> _isPropertyDeferred;
         private readonly Func<MemberInfo, bool> _shouldDefer;
@@ -65,12 +99,28 @@ namespace ExtendedXmlSerialization.Write
             _isPropertyMember = isPropertyMember;
             _isPropertyDeferred = isPropertyDeferred;
             _shouldDefer = shouldDefer;
+        }*/
+
+        /*public override bool IsSatisfiedBy(Type parameter) => _isPropertyType(parameter);
+        public override bool IsSatisfiedBy(MemberInfo parameter) => _isPropertyMember(parameter) || IsSatisfiedBy(parameter.GetMemberType());
+        public override bool IsSatisfiedBy(WriteContext parameter) => _isPropertyDeferred(parameter) || IsSatisfiedBy(parameter.Member);*/
+        public override bool IsSatisfiedBy(object parameter)
+        {
+            var candidates = _candidates.Get(parameter);
+            foreach (var candidate in candidates)
+            {
+                foreach (var specification in _specifications)
+                {
+                    if (specification(candidate))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
-        public override bool IsSatisfiedBy(Type parameter) => _isPropertyType(parameter);
-        public override bool IsSatisfiedBy(MemberInfo parameter) => _isPropertyMember(parameter) || IsSatisfiedBy(parameter.GetMemberType());
-        public override bool IsSatisfiedBy(WriteContext parameter) => _isPropertyDeferred(parameter) || IsSatisfiedBy(parameter.Member);
-        public override bool Defer(MemberInfo member) => _shouldDefer(member);
+        public override bool Defer(MemberInfo member) => _defer(member);
     }
 
     class IsPropertyMemberSpecification : ISpecification<MemberInfo>
@@ -93,11 +143,18 @@ namespace ExtendedXmlSerialization.Write
     {
         public new static AutoAttributeSpecification Default { get; } = new AutoAttributeSpecification();
         AutoAttributeSpecification() : base(
-            IsPrimitiveSpecification.Default.IsSatisfiedBy,
-            IsPropertyMemberSpecification.Default.IsSatisfiedBy,
-            AutoAttributeValueSpecification.Default.IsSatisfiedBy,
-            info => info.GetMemberType() == typeof(string)
+            SpecificationCandidatesSelector.Default,
+            info => info.GetMemberType() == typeof(string),
+            IsPrimitiveSpecification.Default.Adapt().IsSatisfiedBy,
+            IsPropertyMemberSpecification.Default.Adapt().IsSatisfiedBy,
+            AutoAttributeValueSpecification.Default.Adapt().IsSatisfiedBy
         ) {}
+    }
+
+    class AutoAttributeInstructionCompiler : DefaultInstructionCompiler
+    {
+        public new static AutoAttributeInstructionCompiler Default { get; } = new AutoAttributeInstructionCompiler();
+        AutoAttributeInstructionCompiler() : base(AutoAttributeSpecification.Default) {}
     }
 
     class AutoAttributeValueSpecification : ISpecification<WriteContext>
@@ -132,12 +189,6 @@ namespace ExtendedXmlSerialization.Write
         AdditionalInstructions() {}
 
         public IImmutableList<IInstructions> Get(IInstructions parameter) => ImmutableList.Create<IInstructions>();
-    }
-
-    class AutoAttributeInstructionCompiler : DefaultInstructionCompiler
-    {
-        public new static AutoAttributeInstructionCompiler Default { get; } = new AutoAttributeInstructionCompiler();
-        AutoAttributeInstructionCompiler() : base(AutoAttributeSpecification.Default) {}
     }
 
     class DefaultInstructionCompiler : IInstructionCompiler
@@ -205,7 +256,7 @@ namespace ExtendedXmlSerialization.Write
         protected abstract IInstruction PerformBuild(Type type);
     }
 
-    class SerializableMembers : WeakCacheBase<Type, IImmutableSet<MemberInfo>>
+    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
     {
         public static SerializableMembers Default { get; } = new SerializableMembers();
         SerializableMembers() : this(CanSerializeSpecification.Default.IsSatisfiedBy) {}
@@ -217,7 +268,7 @@ namespace ExtendedXmlSerialization.Write
             _serializable = serializable;
         }
 
-        protected override IImmutableSet<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableHashSet();
+        protected override IImmutableList<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
 
         IEnumerable<MemberInfo> GetWritableMembers(Type type)
         {
@@ -253,36 +304,30 @@ namespace ExtendedXmlSerialization.Write
 
     class ObjectMemberInstructions : IInstructions
     {
-        readonly private static Func<Type, IImmutableSet<MemberInfo>> Members = SerializableMembers.Default.Get;
+        readonly private static Func<Type, IImmutableList<MemberInfo>> Members = SerializableMembers.Default.Get;
 
         private readonly IInstructions _primary;
-        private readonly Func<MemberInfo, bool> _specification;
-        private readonly Func<Type, bool> _propertyTypeSpecification;
-        private readonly Func<WriteContext, bool> _emit;
+        private readonly Func<object, bool> _specification;
         private readonly Func<MemberInfo, bool> _deferred;
-        private readonly Func<Type, IImmutableSet<MemberInfo>> _members;
+        private readonly Func<Type, IImmutableList<MemberInfo>> _members;
         private readonly Func<MemberInfo, IInstruction> _property, _content;
 
         public ObjectMemberInstructions(IInstructions primary, IInstructionSpecification specification)
             : this(primary, specification, specification.Defer, new MemberInstructionFactory(primary)) {}
 
         public ObjectMemberInstructions(IInstructions primary, IInstructionSpecification specification, Func<MemberInfo, bool> deferred, IMemberInstructionFactory factory)
-            : this(primary, specification.IsSatisfiedBy, specification.IsSatisfiedBy, specification.IsSatisfiedBy, deferred, factory.Property, factory.Content, Members) {}
+            : this(primary, specification.IsSatisfiedBy, deferred, factory.Property, factory.Content, Members) {}
 
         public ObjectMemberInstructions(
             IInstructions primary,
-            Func<MemberInfo, bool> specification, 
-            Func<Type, bool> propertyTypeSpecification, 
-            Func<WriteContext, bool> emit,
+            Func<object, bool> specification, 
             Func<MemberInfo, bool> deferred, 
             Func<MemberInfo, IInstruction> property,
             Func<MemberInfo, IInstruction> content, 
-            Func<Type, IImmutableSet<MemberInfo>> members
+            Func<Type, IImmutableList<MemberInfo>> members
         ) {
             _primary = primary;
             _specification = specification;
-            _propertyTypeSpecification = propertyTypeSpecification;
-            _emit = emit;
             _deferred = deferred;
             _property = property;
             _content = content;
@@ -292,14 +337,14 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction For(Type type)
         {
             var all = _members(type);
-            var deferred = all.Where(_deferred).ToImmutableHashSet();
-            var members = all.Except(deferred);
-            var properties = members.Where(_specification).ToArray();
+            var deferred = all.Where(_deferred).ToImmutableList();
+            var members = all.Except(deferred).ToArray();
+            var properties = members.Where<MemberInfo>(_specification).ToArray();
             var contents = members.Except(properties);
             
             var body = new CompositeInstruction(
                 new CompositeInstruction(properties.Select(_property)),
-                new EmitDeferredMembersInstruction(deferred, _property, _content, _emit, new EmitAttachedPropertiesInstruction(_primary, _propertyTypeSpecification)),
+                new EmitDeferredMembersInstruction(deferred, _property, _content, _specification, new EmitAttachedPropertiesInstruction(_primary, _specification)),
                 new CompositeInstruction(contents.Select(_content))
             );
             var result = new StartNewMembersContextInstruction(all, body);
@@ -310,20 +355,20 @@ namespace ExtendedXmlSerialization.Write
     class EmitAttachedPropertiesInstruction : WriteInstructionBase
     {
         private readonly IInstructions _primary;
-        private readonly Func<Type, bool> _specification;
-        public EmitAttachedPropertiesInstruction(IInstructions primary, Func<Type, bool> specification)
+        private readonly Func<object, bool> _specification;
+        public EmitAttachedPropertiesInstruction(IInstructions primary, Func<object, bool> specification)
         {
             _primary = primary;
             _specification = specification;
         }
 
-        protected override void Execute(IWriteServices services)
+        protected override void Execute(IWritingServices services)
         {
             var all = services.GetProperties();
             var properties = Properties(all).ToArray();
             foreach (var property in properties)
             {
-                services.Property(property.Name, services.Serialize(property.Value));
+                services.Property(property);
             }
 
             foreach (var content in all.Except(properties))
@@ -337,7 +382,7 @@ namespace ExtendedXmlSerialization.Write
         {
             foreach (var property in source)
             {
-                if (_specification(property.Value.GetType()))
+                if (_specification(property))
                 {
                     yield return property;
                 }
@@ -347,13 +392,13 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitDeferredMembersInstruction : DecoratedWriteInstruction
     {
-        private readonly IImmutableSet<MemberInfo> _members;
+        private readonly IImmutableList<MemberInfo> _members;
         private readonly Func<MemberInfo, IInstruction> _property, _content;
-        private readonly Func<WriteContext, bool> _specification;
+        private readonly Func<object, bool> _specification;
 
-        public EmitDeferredMembersInstruction(IImmutableSet<MemberInfo> members, Func<MemberInfo, IInstruction> property,
+        public EmitDeferredMembersInstruction(IImmutableList<MemberInfo> members, Func<MemberInfo, IInstruction> property,
                                               Func<MemberInfo, IInstruction> content,
-                                              Func<WriteContext, bool> specification, IInstruction instruction) : base(instruction)
+                                              Func<object, bool> specification, IInstruction instruction) : base(instruction)
         {
             _members = members;
             _property = property;
@@ -361,7 +406,7 @@ namespace ExtendedXmlSerialization.Write
             _specification = specification;
         }
 
-        protected override void Execute(IWriteServices services)
+        protected override void Execute(IWritingServices services)
         {
             var properties = Properties(services.Current).ToArray();
             
@@ -505,7 +550,7 @@ namespace ExtendedXmlSerialization.Write
         protected override IInstruction PerformBuild(Type type)
         {
             var elementType = ElementTypeLocator.Default.Locate(type);
-            var instructions = _builder.For(elementType);
+            var instructions = new EmitObjectInstruction(elementType, _builder.For(elementType));
             var result = new EmitEnumerableInstruction(instructions);
             return result;
         }

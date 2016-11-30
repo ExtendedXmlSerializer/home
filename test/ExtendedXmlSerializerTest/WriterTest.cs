@@ -12,7 +12,7 @@ namespace ExtendedXmlSerialization.Test
     {
         public WriterTest()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory
             {
                 Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassReferenceConfig(), new InterfaceReferenceConfig() }
             };
@@ -29,13 +29,13 @@ namespace ExtendedXmlSerialization.Test
 TestClassReference subject = new TestClassReference();
                     subject.Id = 1;
                     subject.CyclicReference = subject;
-                    /*subject.ObjectA = new TestClassReference {Id = 2};
+                    subject.ObjectA = new TestClassReference {Id = 2};
                     subject.ReferenceToObjectA = subject.ObjectA;
                     subject.Lists = new List<TestClassReference>
                     {
                         new TestClassReference {Id = 3},
                         new TestClassReference {Id = 4}
-                    };*/
+                    };
 
             var extensions = new DefaultWriteExtensions(Serializer.SerializationToolsFactory);
             var data = new Write.Serializer(extensions).Serialize(subject);
