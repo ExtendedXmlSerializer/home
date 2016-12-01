@@ -19,7 +19,7 @@ namespace ExtendedXmlSerialization.Write
     class MemberInfoNameProvider : FixedNameProvider
     {
         public MemberInfoNameProvider(MemberInfo member) 
-            : base(member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName ?? member.Name) {}
+            : base(member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ?? member.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? member.Name) {}
     }
 
     public interface IInstructionSpecification : ISpecification<object>
@@ -303,7 +303,9 @@ namespace ExtendedXmlSerialization.Write
             
             var body = new CompositeInstruction(
                 new CompositeInstruction(properties.Select(_property).ToImmutableList()),
-                new EmitDeferredMembersInstruction(deferred, _property, _content, _specification, new EmitAttachedPropertiesInstruction(_primary, _specification)),
+                new EmitDeferredMembersInstruction(DifferentiatingDefinitions.Default.Get(type), deferred, _property,
+                                                   _content, _specification,
+                                                   new EmitAttachedPropertiesInstruction(_primary, _specification)),
                 new CompositeInstruction(contents.Select(_content).ToImmutableList())
             );
             var result = new StartNewMembersContextInstruction(all, body);
@@ -348,17 +350,39 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
+    class DifferentiatingMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
+    {
+        private readonly IImmutableList<MemberInfo> _definition;
+        public DifferentiatingMembers(Type definition) : this(SerializableMembers.Default.Get(definition)) { }
+        public DifferentiatingMembers(IImmutableList<MemberInfo> definition)
+        {
+            _definition = definition;
+        }
+
+        protected override IImmutableList<MemberInfo> Callback(Type key) => SerializableMembers.Default.Get(key).Except(_definition).ToImmutableList();
+    }
+
+    class DifferentiatingDefinitions : WeakCache<Type, Func<Type, IImmutableList<MemberInfo>>>
+    {
+        public static DifferentiatingDefinitions Default { get; } = new DifferentiatingDefinitions();
+        DifferentiatingDefinitions() : base(type => new DifferentiatingMembers(type).Get) {}
+    }
+
     class EmitDeferredMembersInstruction : DecoratedWriteInstruction
     {
-        private readonly IImmutableList<MemberInfo> _members;
+        private readonly Func<Type, IImmutableList<MemberInfo>> _differentiating;
+        private readonly IImmutableList<MemberInfo> _deferred;
         private readonly Func<MemberInfo, IInstruction> _property, _content;
         private readonly Func<object, bool> _specification;
 
-        public EmitDeferredMembersInstruction(IImmutableList<MemberInfo> members, Func<MemberInfo, IInstruction> property,
-                                              Func<MemberInfo, IInstruction> content,
-                                              Func<object, bool> specification, IInstruction instruction) : base(instruction)
+        public EmitDeferredMembersInstruction(
+            Func<Type, IImmutableList<MemberInfo>> differentiating, IImmutableList<MemberInfo> deferred,
+            Func<MemberInfo, IInstruction> property,
+            Func<MemberInfo, IInstruction> content, Func<object, bool> specification,
+            IInstruction instruction) : base(instruction)
         {
-            _members = members;
+            _differentiating = differentiating;
+            _deferred = deferred;
             _property = property;
             _content = content;
             _specification = specification;
@@ -366,7 +390,9 @@ namespace ExtendedXmlSerialization.Write
 
         protected override void Execute(IWriting services)
         {
-            var properties = Properties(services.Current).ToArray();
+            var total = _deferred.Concat(_differentiating(services.Current.Instance.GetType())).ToImmutableList();
+                
+            var properties = Properties(total, services.Current).ToArray();
             
             foreach (var instruction in properties.Select(_property))
             {
@@ -375,17 +401,19 @@ namespace ExtendedXmlSerialization.Write
 
             base.Execute(services);
 
-            foreach (var instruction in _members.Except(properties).Select(_content))
+            foreach (var instruction in total.Except(properties).Select(_content))
             {
                 instruction.Execute(services);
             }
         }
 
-        IEnumerable<MemberInfo> Properties(WriteContext current)
+        bool Specification<T>(T parameter) => _specification(parameter);
+
+        IEnumerable<MemberInfo> Properties(IEnumerable<MemberInfo> total, WriteContext current)
         {
-            foreach (var member in _members)
+            foreach (var member in total)
             {
-                if (_specification(new WriteContext(current.Root, current.Instance, _members, member, null)))
+                if (Specification(new WriteContext(current.Root, current.Instance, _deferred, member, null)))
                 {
                     yield return member;
                 }

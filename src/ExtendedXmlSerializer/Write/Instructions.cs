@@ -198,6 +198,14 @@ namespace ExtendedXmlSerialization.Write
         string Get(IServiceProvider services);
     }
 
+    /*class InstanceTypeNameProvider : INameProvider
+    {
+        public static InstanceTypeNameProvider Default { get; } = new InstanceTypeNameProvider();
+        InstanceTypeNameProvider() {}
+
+        public string Get(IServiceProvider services) => services.AsValid<IWritingContext>().Current.Instance.GetType().Name;
+    }*/
+
     class TypeDefinitionNameProvider : FixedNameProvider
     {
         public TypeDefinitionNameProvider(Type type) : base(TypeDefinitionCache.GetDefinition(type).Name) {}

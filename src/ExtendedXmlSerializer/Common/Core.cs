@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Xml;
 using ExtendedXmlSerialization.Write;
 
@@ -151,6 +152,8 @@ namespace ExtendedXmlSerialization.Common
 
     static class Extensions
     {
+        public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
+
         // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
         public static bool IsAssignableFromGeneric(this Type @this, Type candidate)
         {
