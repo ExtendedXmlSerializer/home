@@ -26,6 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Cache
 {
@@ -57,9 +58,9 @@ namespace ExtendedXmlSerialization.Cache
                                                                   }.ToImmutableDictionary();
 
         readonly Lazy<IEnumerable<PropertieDefinition>> _properties;
-	    readonly private static Type TypeObject = typeof(object);
+        readonly private static Type TypeObject = typeof(object);
 
-	    public TypeDefinition(Type type)
+        public TypeDefinition(Type type)
         {
             Type = type;
             TypeCode = Type.GetTypeCode(type);
@@ -69,27 +70,23 @@ namespace ExtendedXmlSerialization.Cache
 
             var typeInfo = type.GetTypeInfo();
             var isGenericType = typeInfo.IsGenericType;
+            
             if (isGenericType)
             {
+                Type = Nullable.GetUnderlyingType(type) ?? Type;
                 Type[] types = type.GetGenericArguments();
-
-                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    Type = type.GetGenericArguments()[0];
-                }
-
                 Name = Name.Replace($"`{types.Length}", $"Of{string.Join(string.Empty, types.Select(p => p.Name))}");
             }
             
             FullName = type.FullName;
 
-            IsEnum = type.GetTypeInfo().IsEnum;
+            IsEnum = typeInfo.IsEnum;
             IsArray = typeInfo.IsArray;
             IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
 
             if (IsEnumerable)
             {
-                IsDictionary = typeof(IDictionary).IsAssignableFrom(type);
+                IsDictionary = typeof(IDictionary).IsAssignableFrom(type) || typeof(IDictionary<,>).IsAssignableFromGeneric(type);
 
                 var elementType = ElementTypeLocator.Default.Locate(type);
                 if (isGenericType)

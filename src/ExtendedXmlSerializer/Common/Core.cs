@@ -151,7 +151,28 @@ namespace ExtendedXmlSerialization.Common
 
     static class Extensions
     {
-		
+        // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
+        public static bool IsAssignableFromGeneric(this Type @this, Type candidate)
+        {
+            var interfaceTypes = candidate.GetInterfaces();
+
+            foreach (var it in interfaceTypes)
+            {
+                if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == @this)
+                    return true;
+            }
+
+            var typeInfo = candidate.GetTypeInfo();
+            if (typeInfo.IsGenericType && candidate.GetGenericTypeDefinition() == @this)
+                return true;
+
+            Type baseType = typeInfo.BaseType;
+            if (baseType == null) return false;
+
+            return IsAssignableFromGeneric(@this, baseType);
+        }
+
+        
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
         public static void Property(this IWriting @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
@@ -192,11 +213,11 @@ namespace ExtendedXmlSerialization.Common
 
     class CompositeInstruction : IInstruction
     {
-        private readonly ImmutableArray<IInstruction> _instructions;
+        private readonly IEnumerable<IInstruction> _instructions;
 
-        public CompositeInstruction(IEnumerable<IInstruction> instructions) : this(instructions.ToImmutableArray()) {}
-        public CompositeInstruction(params IInstruction[] instructions) : this(instructions.ToImmutableArray()) {}
-        public CompositeInstruction(ImmutableArray<IInstruction> instructions)
+        // public CompositeInstruction(IEnumerable<IInstruction> instructions) : this(instructions.ToImmutableArray()) {}
+        public CompositeInstruction(params IInstruction[] instructions) : this(instructions.AsEnumerable()) {}
+        public CompositeInstruction(IEnumerable<IInstruction> instructions)
         {
             _instructions = instructions;
         }

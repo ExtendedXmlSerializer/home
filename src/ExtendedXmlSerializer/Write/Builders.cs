@@ -77,33 +77,6 @@ namespace ExtendedXmlSerialization.Write
             _specifications = specifications;
         }
 
-        /*private readonly Func<Type, bool> _isPropertyType;
-        private readonly Func<MemberInfo, bool> _isPropertyMember;
-        private readonly Func<WriteContext, bool> _isPropertyDeferred;
-        private readonly Func<MemberInfo, bool> _shouldDefer;
-
-        public InstructionSpecification(Func<WriteContext, bool> isPropertyDeferred)
-            : this(info => false, isPropertyDeferred) {}
-
-        public InstructionSpecification(Func<MemberInfo, bool> isProperty, Func<WriteContext, bool> isPropertyDeferred)
-            : this(isProperty, isPropertyDeferred, info => false) {}
-
-        public InstructionSpecification(Func<MemberInfo, bool> isPropertyMember,
-                                        Func<WriteContext, bool> isPropertyDeferred, Func<MemberInfo, bool> shouldDefer)
-            : this(type => false, isPropertyMember, isPropertyDeferred, shouldDefer) {}
-
-        public InstructionSpecification(Func<Type, bool> isPropertyType, Func<MemberInfo, bool> isPropertyMember,
-                                        Func<WriteContext, bool> isPropertyDeferred, Func<MemberInfo, bool> shouldDefer)
-        {
-            _isPropertyType = isPropertyType;
-            _isPropertyMember = isPropertyMember;
-            _isPropertyDeferred = isPropertyDeferred;
-            _shouldDefer = shouldDefer;
-        }*/
-
-        /*public override bool IsSatisfiedBy(Type parameter) => _isPropertyType(parameter);
-        public override bool IsSatisfiedBy(MemberInfo parameter) => _isPropertyMember(parameter) || IsSatisfiedBy(parameter.GetMemberType());
-        public override bool IsSatisfiedBy(WriteContext parameter) => _isPropertyDeferred(parameter) || IsSatisfiedBy(parameter.Member);*/
         public override bool IsSatisfiedBy(object parameter)
         {
             var candidates = _candidates.Get(parameter);
@@ -329,9 +302,9 @@ namespace ExtendedXmlSerialization.Write
             var contents = members.Except(properties);
             
             var body = new CompositeInstruction(
-                new CompositeInstruction(properties.Select(_property)),
+                new CompositeInstruction(properties.Select(_property).ToImmutableList()),
                 new EmitDeferredMembersInstruction(deferred, _property, _content, _specification, new EmitAttachedPropertiesInstruction(_primary, _specification)),
-                new CompositeInstruction(contents.Select(_content))
+                new CompositeInstruction(contents.Select(_content).ToImmutableList())
             );
             var result = new StartNewMembersContextInstruction(all, body);
             return result;
@@ -539,16 +512,16 @@ namespace ExtendedXmlSerialization.Write
     {
         readonly private static Func<Type, bool> Specification = IsSatisfiedBy;
 
-        private readonly IWritePlan _builder;
+        private readonly IWritePlan _primary;
 
-        public EnumerableWritePlan(IWritePlan builder) : base(Specification)
+        public EnumerableWritePlan(IWritePlan primary) : base(Specification)
         {
-            _builder = builder;
+            _primary = primary;
         }
 
-        private static bool IsSatisfiedBy(Type arg)
+        private static bool IsSatisfiedBy(Type type)
         {
-            var definition = TypeDefinitionCache.GetDefinition(arg);
+            var definition = TypeDefinitionCache.GetDefinition(type);
             var result = definition.IsArray || definition.IsEnumerable;
             return result;
         }
@@ -556,20 +529,20 @@ namespace ExtendedXmlSerialization.Write
         protected override IInstruction PerformBuild(Type type)
         {
             var elementType = ElementTypeLocator.Default.Locate(type);
-            var template = new EmitObjectInstruction(elementType, _builder.For(elementType));
-            var result = new EmitEnumerableInstruction(template);
+            var template = new EmitObjectInstruction(elementType, _primary.For(elementType));
+            var result = new EmitTypedContextInstruction(new EmitEnumerableInstruction(template));
             return result;
         }
     }
 
-    class EmitTypeSpecification : ISpecification<IWritingContext>
+    class EmitMemberTypeSpecification : ISpecification<IWritingContext>
     {
-        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
-        EmitTypeSpecification() {}
+        public static EmitMemberTypeSpecification Default { get; } = new EmitMemberTypeSpecification();
+        EmitMemberTypeSpecification() {}
         public bool IsSatisfiedBy(IWritingContext parameter)
         {
             var context = parameter.GetMemberContext();
-            var result = context != null && parameter.Current.Instance.GetType() != context.Value.Member.GetMemberType();
+            var result = context != null && context.Value.Member.IsWritable() && parameter.Current.Instance.GetType() != context?.Member.GetMemberType();
             return result;
         }
     }
@@ -626,10 +599,10 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction For(Type type) => _instruction;
     }
 
-    class EmitDifferingTypeInstruction : ConditionalWriteInstruction
+    class EmitContextTypeInstruction : ConditionalWriteInstruction
     {
-        public static EmitDifferingTypeInstruction Default { get; } = new EmitDifferingTypeInstruction();
-        EmitDifferingTypeInstruction() : base(EmitTypeSpecification.Default, EmitCurrentInstanceTypeInstruction.Default) {}
+        public static EmitContextTypeInstruction Default { get; } = new EmitContextTypeInstruction();
+        EmitContextTypeInstruction() : base(EmitMemberTypeSpecification.Default, EmitCurrentInstanceTypeInstruction.Default) {}
     }
 
     class PrimitiveWritePlan : ConditionalWritePlan
@@ -637,7 +610,7 @@ namespace ExtendedXmlSerialization.Write
         readonly private static IWritePlan Emit =
             new FixedWritePlan(
                 new CompositeInstruction(
-                    EmitDifferingTypeInstruction.Default,
+                    EmitContextTypeInstruction.Default,
                     StartNewContentContextInstruction.Default
                     )
                 );
@@ -665,7 +638,7 @@ namespace ExtendedXmlSerialization.Write
             }
             var keys = new EmitObjectInstruction(ExtendedXmlSerializer.Key, _builder.For(arguments[0]));
             var values = new EmitObjectInstruction(ExtendedXmlSerializer.Value, _builder.For(arguments[1]));
-            var result = new EmitDictionaryInstruction(keys, values);
+            var result = new EmitTypedContextInstruction(new EmitDictionaryInstruction(keys, values));
             return result;
         }
     }

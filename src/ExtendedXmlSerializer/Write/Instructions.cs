@@ -215,18 +215,10 @@ namespace ExtendedXmlSerialization.Write
         public string Get(IServiceProvider services) => _name;
     }
 
-    /*class EmitTypedObjectInstruction : CompositeInstruction
+    class EmitTypedContextInstruction : CompositeInstruction
     {
-        public EmitTypedObjectInstruction(string name, IInstruction instruction)
-            : this(new FixedNameProvider(name), instruction) {}
-
-        public EmitTypedObjectInstruction(MemberInfo member, IInstruction instruction)
-            : this(new MemberInfoNameProvider(member), instruction) {}
-
-        public EmitTypedObjectInstruction(Type type, IInstruction instruction)
-            : this(new TypeDefinitionNameProvider(type), instruction) {}
-        public EmitTypedObjectInstruction(INameProvider provider, IInstruction body) : base(EmitDifferingTypeInstruction.Default, new EmitObjectInstruction(provider, body)) {}
-    }*/
+        public EmitTypedContextInstruction(IInstruction body) : base(EmitContextTypeInstruction.Default, body) {}
+    }
     
     class EmitObjectInstruction : DecoratedWriteInstruction
     {
@@ -248,7 +240,8 @@ namespace ExtendedXmlSerialization.Write
 
         protected override void Execute(IWriting services)
         {
-            services.StartObject(_provider.Get(services));
+            var name = _provider.Get(services);
+            services.StartObject(name);
             base.Execute(services);
             services.EndObject();
         }
