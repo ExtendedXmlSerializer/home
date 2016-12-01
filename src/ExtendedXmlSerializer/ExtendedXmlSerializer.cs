@@ -59,17 +59,8 @@ namespace ExtendedXmlSerialization
         /// </summary>
         public ExtendedXmlSerializer()
         {
-            Extensions.Add(new DefaultWriteWritingExtensions(this));
+            Extensions.Add(new DefaultWritingExtensions(this));
             _serializer = new Serializer(Create);
-        }
-
-        private IWriting Create(IWriter writer)
-        {
-            var context = new DefaultWritingContext();
-            var serializer = new EncryptedObjectSerializer(this, context);
-            var extension = new CompositeWritingExtension(Extensions);
-            var result = new Writing(writer, context, extension, serializer, writer, extension, this);
-            return result;
         }
 
         /// <summary>
@@ -98,6 +89,15 @@ namespace ExtendedXmlSerialization
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
         public string Serialize(object o) => _serializer.Serialize(o);
+
+        private IWriting Create(IWriter writer)
+        {
+            var context = new DefaultWritingContext();
+            var serializer = new EncryptedObjectSerializer(this, context);
+            var extension = new CompositeWritingExtension(Extensions);
+            var result = new Writing(writer, context, extension, serializer, writer, extension, this);
+            return result;
+        }
 
         private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {

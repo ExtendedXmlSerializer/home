@@ -37,9 +37,9 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class DefaultWriteWritingExtensions : CompositeWritingExtension
+    class DefaultWritingExtensions : CompositeWritingExtension
     {
-        public DefaultWriteWritingExtensions(ISerializationToolsFactory factory) : base(
+        public DefaultWritingExtensions(ISerializationToolsFactory factory) : base(
             new ObjectReferencesExtension(factory),
             new VersionExtension(factory),
             new CustomSerializationExtension(factory)
