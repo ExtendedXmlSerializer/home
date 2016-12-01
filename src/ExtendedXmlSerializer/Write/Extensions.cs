@@ -9,10 +9,10 @@ using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Write
 {
-    public interface IWriterExtension
+    public interface IWritingExtension
     {
-        bool Starting(IWritingServices services);
-        void Finished(IWritingServices services);
+        bool Starting(IWriting services);
+        void Finished(IWriting services);
     }
 
 
@@ -20,7 +20,7 @@ namespace ExtendedXmlSerialization.Write
     {
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
-        public static void Property(this IWritingServices @this, IAttachedProperty property)
+        public static void Property(this IWriting @this, IAttachedProperty property)
             => @this.Property(property.Name, @this.Serialize(property.Value));
 
         public static WriteContext? Parent(this IWritingContext @this) => @this.Hierarchy.ElementAtOrDefault(1);
@@ -37,27 +37,27 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    public class DefaultWriteExtensions : CompositeExtension
+    class DefaultWriteWritingExtensions : CompositeWritingExtension
     {
-        public DefaultWriteExtensions(ISerializationToolsFactory factory) : base(
+        public DefaultWriteWritingExtensions(ISerializationToolsFactory factory) : base(
             new ObjectReferencesExtension(factory),
             new VersionExtension(factory),
             new CustomSerializationExtension(factory)
         ) {}
     }
 
-    public class CompositeExtension : IWriterExtension
+    class CompositeWritingExtension : CompositeServiceProvider, IWritingExtension
     {
-        private readonly IEnumerable<IWriterExtension> _extensions;
+        private readonly IEnumerable<IWritingExtension> _extensions;
 
-        public CompositeExtension(params IWriterExtension[] extensions) : this(extensions.ToImmutableList()) {}
+        public CompositeWritingExtension(params IWritingExtension[] extensions) : this(extensions.ToImmutableList()) {}
 
-        public CompositeExtension(IEnumerable<IWriterExtension> extensions)
+        public CompositeWritingExtension(IEnumerable<IWritingExtension> extensions) : base(extensions)
         {
             _extensions = extensions;
         }
 
-        public bool Starting(IWritingServices services)
+        public bool Starting(IWriting services)
         {
             foreach (var extension in _extensions)
             {
@@ -69,7 +69,7 @@ namespace ExtendedXmlSerialization.Write
             return true;
         }
 
-        public void Finished(IWritingServices services)
+        public void Finished(IWriting services)
         {
             foreach (var extension in _extensions)
             {
@@ -110,9 +110,9 @@ namespace ExtendedXmlSerialization.Write
         DefaultWritingExtension() {}
     }
 
-    public abstract class WritingExtensionBase : IWriterExtension
+    public abstract class WritingExtensionBase : IWritingExtension
     {
-        public virtual bool Starting(IWritingServices services)
+        public virtual bool Starting(IWriting services)
         {
             var current = services.Current;
             if (current.Content != null)
@@ -136,13 +136,13 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
 
-        protected virtual bool Initializing(IWritingServices services) => true;
-        protected virtual bool StartingInstance(IWritingServices services, object instance) => true;
-        protected virtual bool StartingMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWritingServices services, object instance, MemberInfo member) => true;
-        protected virtual bool StartingContent(IWritingServices services, object instance, MemberInfo member, string content) => true;
+        protected virtual bool Initializing(IWriting services) => true;
+        protected virtual bool StartingInstance(IWriting services, object instance) => true;
+        protected virtual bool StartingMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) => true;
+        protected virtual bool StartingMember(IWriting services, object instance, MemberInfo member) => true;
+        protected virtual bool StartingContent(IWriting services, object instance, MemberInfo member, string content) => true;
 
-        public virtual void Finished(IWritingServices services)
+        public virtual void Finished(IWriting services)
         {
             var current = services.Current;
             if (current.Content != null)
@@ -167,11 +167,11 @@ namespace ExtendedXmlSerialization.Write
             }
         }
 
-        protected virtual void FinishedInstance(IWritingServices services, object instance) {}
-        protected virtual void FinishedMembers(IWritingServices services, object instance, IImmutableList<MemberInfo> members) {}
-        protected virtual void FinishedMember(IWritingServices services, object instance, MemberInfo member) {}
-        protected virtual void FinishedContent(IWritingServices services, object instance, MemberInfo member, string content) {}
-        protected virtual void Completed(IWritingServices services) {}
+        protected virtual void FinishedInstance(IWriting services, object instance) {}
+        protected virtual void FinishedMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) {}
+        protected virtual void FinishedMember(IWriting services, object instance, MemberInfo member) {}
+        protected virtual void FinishedContent(IWriting services, object instance, MemberInfo member, string content) {}
+        protected virtual void Completed(IWriting services) {}
     }
 
     public abstract class ConfigurationWritingExtensionBase : WritingExtensionBase
@@ -183,7 +183,7 @@ namespace ExtendedXmlSerialization.Write
             _factory = factory;
         }
 
-        public override bool Starting(IWritingServices services)
+        public override bool Starting(IWriting services)
         {
             var current = services.Current;
             if (current.Instance != null)
@@ -212,13 +212,13 @@ namespace ExtendedXmlSerialization.Write
             return base.Starting(services);
         }
 
-        protected virtual bool StartingInstance(IWritingServices services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingInstance(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                 object instance) => true;
-        protected virtual bool StartingMembers(IWritingServices services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWritingServices services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration,
                                               object instance, MemberInfo member) => true;
-        protected virtual bool StartingContent(IWritingServices services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                object instance, MemberInfo member, string content) => true;
     }
 
@@ -226,7 +226,7 @@ namespace ExtendedXmlSerialization.Write
     {
         public CustomSerializationExtension(ISerializationToolsFactory factory) : base(factory) {}
 
-        protected override bool StartingMembers(IWritingServices services, IExtendedXmlSerializerConfig configuration, object instance,
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
                                                 IImmutableList<MemberInfo> members)
         {
             if (configuration.IsCustomSerializer)
@@ -242,7 +242,7 @@ namespace ExtendedXmlSerialization.Write
     {
         public VersionExtension(ISerializationToolsFactory factory) : base(factory) {}
 
-        protected override bool StartingMembers(IWritingServices services, IExtendedXmlSerializerConfig configuration, object instance,
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
                                                 IImmutableList<MemberInfo> members)
         {
             var version = configuration.Version;
@@ -276,7 +276,7 @@ namespace ExtendedXmlSerialization.Write
 
         public ObjectReferencesExtension(ISerializationToolsFactory factory) : base(factory) {}
 
-        protected override bool StartingMembers(IWritingServices services, IExtendedXmlSerializerConfig configuration, object instance,
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
                                                 IImmutableList<MemberInfo> members)
         {
             if (configuration.IsObjectReference)
@@ -295,12 +295,12 @@ namespace ExtendedXmlSerialization.Write
             return base.StartingMembers(services, configuration, instance, members);
         }
 
-        protected override bool Initializing(IWritingServices services)
+        protected override bool Initializing(IWriting services)
         {
             _references.Clear();
             return base.Initializing(services);
         }
 
-        protected override void Completed(IWritingServices services) => _references.Clear();
+        protected override void Completed(IWriting services) => _references.Clear();
     }
 }

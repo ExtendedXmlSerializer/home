@@ -88,12 +88,12 @@ namespace ExtendedXmlSerialization.Common
 
 
 
-    class FixedDecoratedInstruction : IInstructions
+    class FixedDecoratedWritePlan : IWritePlan
     {
-        private readonly IInstructions _builder;
+        private readonly IWritePlan _builder;
         private readonly Type _type;
 
-        public FixedDecoratedInstruction(IInstructions builder, Type type)
+        public FixedDecoratedWritePlan(IWritePlan builder, Type type)
         {
             _builder = builder;
             _type = type;
@@ -149,11 +149,12 @@ namespace ExtendedXmlSerialization.Common
         public virtual void Execute(IServiceProvider services) => _instruction.Execute(services);
     }*/
 
-    public static class Extensions
+    static class Extensions
     {
+		
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
-        public static void Property(this IWritingServices @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
+        public static void Property(this IWriting @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this) => new SpecificationAdapter<T>(@this);
 

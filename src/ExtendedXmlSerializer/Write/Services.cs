@@ -17,45 +17,24 @@ namespace ExtendedXmlSerialization.Write
 
     public class Serializer : ISerializer
     {
-        readonly private static IInstructions BuildPlan = DefaultInstructionCompiler.Default.Compile();
-        // public static Serializer Default { get; } = new Serializer();
-        public Serializer() : this(BuildPlan) {}
+        readonly private static IWritePlan Plan = DefaultWritingPlan.Default.Compile();
+        
+        private readonly IWritePlan _plan;
+        private readonly Func<IWriter, IWriting> _writing;
+        
+        public Serializer(Func<IWriter, IWriting> writing) : this(Plan, writing) {}
 
-        private readonly IInstructions _instructions;
-        private readonly IObjectSerializer _serializer;
-        private readonly IWriterExtension _extension;
-        private readonly IWritingContext _context;
-        private readonly IServiceProvider _services;
-
-        public Serializer(IInstructions instructions)
-            : this(instructions, DefaultWritingExtension.Default) {}
-
-        public Serializer(params IWriterExtension[] extensions)
-            : this(BuildPlan, extensions.Length == 1 ? extensions[0] : new CompositeExtension(extensions)) {}
-
-        public Serializer(IInstructions instructions, IWriterExtension extension)
-            : this(
-                instructions, 
-                ObjectSerializer.Default, 
-                new DefaultWritingContext(), 
-                extension,
-                DefaultServiceProvider.Default
-        ) {}
-
-        public Serializer(IInstructions instructions, IObjectSerializer serializer, IWritingContext context,
-                          IWriterExtension extension, IServiceProvider services)
+        public Serializer(IWritePlan plan, Func<IWriter, IWriting> writing)
         {
-            _instructions = instructions;
-            _serializer = serializer;
-            _extension = extension;
-            _context = context;
-            _services = services;
+            _plan = plan;
+            _writing = writing;
         }
 
         public void Serialize(IWriter writer, object instance)
         {
-            var instruction = _instructions.For(instance.GetType());
-            using (var services = new WritingServices(writer, _serializer, _context, _extension, new CompositeServiceProvider(instance, writer, _services)))
+            var instruction = _plan.For(instance.GetType());
+
+            using (var services = _writing(writer))
             {
                 using (services.Start(instance))
                 {
@@ -125,7 +104,11 @@ namespace ExtendedXmlSerialization.Write
         public void Dispose() => _writer.Dispose();
     }
 
-    public interface IWritingServices : IWriter, IObjectSerializer, IWritingContext, IServiceProvider, IWriterExtension {}
+    public interface IWriting : IWriter, IObjectSerializer, IWritingContext, IServiceProvider, IWritingExtension
+    {
+        void Attach(IAttachedProperty property);
+        IImmutableList<IAttachedProperty> GetProperties();
+    }
 
     public struct WriteContext
     {
@@ -170,9 +153,6 @@ namespace ExtendedXmlSerialization.Write
         WriteContext Current { get; }
         IEnumerable<WriteContext> Hierarchy { get; }
 
-        void Attach(IAttachedProperty property);
-        IImmutableList<IAttachedProperty> GetProperties();
-
         IDisposable Start(object root);
         IDisposable New(object instance);
         IDisposable New(IImmutableList<MemberInfo> members);
@@ -180,14 +160,8 @@ namespace ExtendedXmlSerialization.Write
         IDisposable New(string content);
     }
 
-    public class AttachedProperties : WeakCache<object, ICollection<IAttachedProperty>>
-    {
-        public AttachedProperties() : base(key => new Collection<IAttachedProperty>()) {}
-    }
-
     class DefaultWritingContext : IWritingContext
     {
-        readonly private AttachedProperties _properties = new AttachedProperties();
         readonly private Stack<WriteContext> _chain = new Stack<WriteContext>();
         readonly private DelegatedDisposable _popper;
 
@@ -207,15 +181,6 @@ namespace ExtendedXmlSerialization.Write
             return _popper;
         }
         void Undo() => _chain.Pop();
-
-        public void Attach(IAttachedProperty property) => _properties.Get(Current.Instance).Add(property);
-        public IImmutableList<IAttachedProperty> GetProperties()
-        {
-            var list = _properties.Get(Current.Instance);
-            var result = list.ToImmutableList();
-            list.Clear();
-            return result;
-        }
 
         public IDisposable Start(object root)
         {
@@ -250,20 +215,44 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class WritingServices : IWritingServices
+    public interface IAttachedProperties
+    {
+        void Attach(object instance, IAttachedProperty property);
+        ICollection<IAttachedProperty> GetProperties(object instance);
+    }
+
+    class AttachedProperties : IAttachedProperties
+    {
+        public static AttachedProperties Default { get; } = new AttachedProperties();
+        AttachedProperties() {}
+
+        private readonly WeakCache<object, ICollection<IAttachedProperty>> 
+            _properties = new WeakCache<object, ICollection<IAttachedProperty>>(_ => new Collection<IAttachedProperty>());
+
+        public void Attach(object instance, IAttachedProperty property) => _properties.Get(instance).Add(property);
+        public ICollection<IAttachedProperty> GetProperties(object instance) => _properties.Get(instance);
+    }
+
+    class Writing : IWriting
     {
         private readonly IWriter _writer;
         private readonly IObjectSerializer _serializer;
+        private readonly IAttachedProperties _properties;
         private readonly IWritingContext _context;
-        private readonly IWriterExtension _extension;
+        private readonly IWritingExtension _extension;
         private readonly IServiceProvider _services;
-        
-        public WritingServices(IWriter writer, IObjectSerializer serializer, IWritingContext context, IWriterExtension extension, IServiceProvider services)
+
+        public Writing(IWriter writer, IWritingContext context, IWritingExtension extension, IObjectSerializer serializer, params object[] services)
+            : this(writer, context, extension, serializer, AttachedProperties.Default, new CompositeServiceProvider(services)) {}
+
+        public Writing(IWriter writer, IWritingContext context, IWritingExtension extension,
+                       IObjectSerializer serializer, IAttachedProperties properties, IServiceProvider services)
         {
             _writer = writer;
-            _serializer = serializer;
             _context = context;
             _extension = extension;
+            _serializer = serializer;
+            _properties = properties;
             _services = services;
         }
 
@@ -283,11 +272,10 @@ namespace ExtendedXmlSerialization.Write
         {
             Finished(this);
             _writer.Dispose();
-            // throw new InvalidOperationException("This writer does not support this operation.");
         }
 
-        public bool Starting(IWritingServices services) => _extension.Starting(services);
-        public void Finished(IWritingServices services) => _extension.Finished(services);
+        public bool Starting(IWriting services) => _extension.Starting(services);
+        public void Finished(IWriting services) => _extension.Finished(services);
 
         public IDisposable Start(object root)
         {
@@ -296,8 +284,14 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
 
-        public void Attach(IAttachedProperty property) => _context.Attach(property);
-        public IImmutableList<IAttachedProperty> GetProperties() => _context.GetProperties();
+        public void Attach(IAttachedProperty property) => _properties.Attach(_context.Current.Instance, property);
+        public IImmutableList<IAttachedProperty> GetProperties()
+        {
+            var list = _properties.GetProperties(_context.Current.Instance);
+            var result = list.ToImmutableList();
+            list.Clear();
+            return result;
+        }
 
         public IDisposable New(object instance) => _context.New(instance);
         public IDisposable New(IImmutableList<MemberInfo> members) => _context.New(members);
@@ -318,6 +312,9 @@ namespace ExtendedXmlSerialization.Write
         private readonly IObjectSerializer _inner;
         private readonly IWritingContext _context;
 
+        public EncryptedObjectSerializer(ISerializationToolsFactory factory, IWritingContext context)
+            : this(factory, ObjectSerializer.Default, context) {}
+
         public EncryptedObjectSerializer(ISerializationToolsFactory factory, IObjectSerializer inner, IWritingContext context)
         {
             _factory = factory;
@@ -328,7 +325,7 @@ namespace ExtendedXmlSerialization.Write
         public string Serialize(object instance)
         {
             var content = _inner.Serialize(instance);
-            var algorithm = _factory?.EncryptionAlgorithm;
+            var algorithm = _factory.EncryptionAlgorithm;
             if (algorithm != null)
             {
                 var type = instance.GetType();

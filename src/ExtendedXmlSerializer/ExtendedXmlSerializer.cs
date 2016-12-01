@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace ExtendedXmlSerialization
     /// <summary>
     /// Extended Xml Serializer
     /// </summary>
-    public class ExtendedXmlSerializer : IExtendedXmlSerializer
+    public class ExtendedXmlSerializer : IExtendedXmlSerializer, ISerializationToolsFactory, IServiceProvider
     {
         public const string Type = "type";
         public const string Ref = "ref";
@@ -48,7 +49,8 @@ namespace ExtendedXmlSerialization
         public const string Underscore = "_";
         public const string Item = "Item";
         private ISerializationToolsFactory _toolsFactory;
-        
+
+        private readonly ISerializer _serializer;
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
         
@@ -57,13 +59,24 @@ namespace ExtendedXmlSerialization
         /// </summary>
         public ExtendedXmlSerializer()
         {
+            Extensions.Add(new DefaultWriteWritingExtensions(this));
+            _serializer = new Serializer(Create);
+        }
+
+        private IWriting Create(IWriter writer)
+        {
+            var context = new DefaultWritingContext();
+            var serializer = new EncryptedObjectSerializer(this, context);
+            var extension = new CompositeWritingExtension(Extensions);
+            var result = new Writing(writer, context, extension, serializer, writer, extension, this);
+            return result;
         }
 
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
+        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) : this()
         {
             _toolsFactory = toolsFactory;
         }
@@ -77,35 +90,14 @@ namespace ExtendedXmlSerialization
             set { _toolsFactory = value; }
         }
 
+        public ICollection<IWritingExtension> Extensions { get; } = new Collection<IWritingExtension>();
+
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o)
-        {
-            /*var def = TypeDefinitionCache.GetDefinition(o.GetType());
-
-            string xml;
-            using (var ms = new MemoryStream())
-            {
-                using (XmlWriter xw = XmlWriter.Create(ms))
-                {
-                    WriteXml(xw, o, def);
-                }
-                ms.Position = 0;
-
-                using (var sr = new StreamReader(ms))
-                {
-                    xml = sr.ReadToEnd();
-                }
-                _referencesObjects.Clear();
-            }*/
-
-            var serializer = SerializationToolsFactory != null ? new Serializer(new DefaultWriteExtensions(SerializationToolsFactory)) : new Serializer();
-            var result = serializer.Serialize(o);
-            return result;
-        }
+        public string Serialize(object o) => _serializer.Serialize(o);
 
         private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
@@ -327,10 +319,9 @@ namespace ExtendedXmlSerialization
                     {
                         if (configuration.CheckPropertyEncryption(propertyInfo.Name))
                         {
-                            var algorithm = GetEncryptionAlgorithm();
-                            if (algorithm != null)
+                            if (EncryptionAlgorithm != null)
                             {
-                                value = algorithm.Decrypt(value);
+                                value = EncryptionAlgorithm.Decrypt(value);
                             }
                         }
                     }
@@ -424,10 +415,9 @@ namespace ExtendedXmlSerialization
             var value = PrimitiveValueTools.SetPrimitiveValue(o, def.Type);
             if (toEncrypt)
             {
-                var algorithm = GetEncryptionAlgorithm();
-                if (algorithm != null)
+                if (EncryptionAlgorithm != null)
                 {
-                    value = algorithm.Encrypt(value);
+                    value = EncryptionAlgorithm.Encrypt(value);
                 }
             }
             xw.WriteString(value);
@@ -533,14 +523,12 @@ namespace ExtendedXmlSerialization
             writer.WriteEndElement();
         }
 
-        private IExtendedXmlSerializerConfig GetConfiguration(Type type)
-        {
-            return _toolsFactory?.GetConfiguration(type);
-        }
+        public IPropertyEncryption EncryptionAlgorithm => _toolsFactory?.EncryptionAlgorithm;
 
-        private IPropertyEncryption GetEncryptionAlgorithm()
-        {
-            return _toolsFactory?.EncryptionAlgorithm;
-        }
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type)
+            => _toolsFactory?.GetConfiguration(type);
+
+        public object GetService(Type serviceType)
+            => serviceType.GetTypeInfo().IsInstanceOfType(serviceType) ? this : null;
     }
 }
