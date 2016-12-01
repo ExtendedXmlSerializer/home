@@ -375,7 +375,6 @@ namespace ExtendedXmlSerialization.Write
             {
                 new EmitObjectInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
             }
-            
         }
 
         IEnumerable<IAttachedProperty> Properties(IEnumerable<IAttachedProperty> source)
