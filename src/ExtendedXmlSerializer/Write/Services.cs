@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Write
         public Serializer(IInstructions instructions, IWriterExtension extension)
             : this(
                 instructions, 
-                ToolingObjectSerializer.Default, 
+                ObjectSerializer.Default, 
                 new DefaultWritingContext(), 
                 extension,
                 DefaultServiceProvider.Default

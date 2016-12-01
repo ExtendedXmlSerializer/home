@@ -132,7 +132,7 @@ namespace ExtendedXmlSerialization.Write
 
         protected override void Execute(IWritingServices services)
         {
-            if (services.Current.Instance.GetType() != _type)
+            // if (services.Current.Instance.GetType() != _type)
             {
                 services.Property(ExtendedXmlSerializer.Type, _type.FullName);
             }

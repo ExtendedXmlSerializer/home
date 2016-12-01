@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
@@ -68,12 +69,12 @@ namespace ExtendedXmlSerialization.Write
         }
     }*/
 
-    class ToolingObjectSerializer : IObjectSerializer
+    class ObjectSerializer : IObjectSerializer
     {
-        public static ToolingObjectSerializer Default { get; } = new ToolingObjectSerializer();
-        ToolingObjectSerializer() {}
+        public static ObjectSerializer Default { get; } = new ObjectSerializer();
+        ObjectSerializer() {}
 
-        public string Serialize(object instance) => instance as string ?? PrimitiveValueTools.SetPrimitiveValue(instance);
+        public string Serialize(object instance) => instance as string ?? (instance as Enum)?.ToString() ?? PrimitiveValueTools.SetPrimitiveValue(instance);
     }
 
     public class DefaultWritingExtension : WritingExtensionBase
