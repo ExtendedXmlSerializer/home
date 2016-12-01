@@ -111,7 +111,7 @@ namespace ExtendedXmlSerialization.Cache
             return compiled;
         }
 
-        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType = null)
+        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType)
         {
             // Object (type object) from witch the data are retrieved
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
@@ -125,7 +125,7 @@ namespace ExtendedXmlSerialization.Cache
 
             Expression castedParam = Expression.Convert(value, parameterType);
 
-            MethodInfo method = AddMethodLocator.Default.Locate( type );
+            MethodInfo method = AddMethodLocator.Default.Locate(type, parameterType);
             
             Expression conversion = Expression.Call(itemCasted, method, castedParam);
 

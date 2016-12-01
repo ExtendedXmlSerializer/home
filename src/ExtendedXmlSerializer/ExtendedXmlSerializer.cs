@@ -502,7 +502,7 @@ namespace ExtendedXmlSerialization
 
                 if (defType.IsObjectToSerialize || defType.IsArray || defType.IsEnumerable)
                 {
-                    WriteXml(writer, propertyValue, defType, propertyInfo.Name, forceSaveType: propertyInfo.TypeDefinition.FullName != defType.FullName);
+                    WriteXml(writer, propertyValue, defType, propertyInfo.Name, forceSaveType: propertyInfo.MemberInfo.IsWritable() && propertyInfo.TypeDefinition.FullName != defType.FullName);
                 }
                 else if (defType.IsEnum)
                 {
