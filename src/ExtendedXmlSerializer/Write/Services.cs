@@ -169,7 +169,7 @@ namespace ExtendedXmlSerialization.Write
     public interface IWritingContext
     {
         WriteContext Current { get; }
-        IEnumerable<WriteContext> History { get; }
+        IEnumerable<WriteContext> Hierarchy { get; }
 
         void Attach(IAttachedProperty property);
         IImmutableList<IAttachedProperty> GetProperties();
@@ -239,7 +239,7 @@ namespace ExtendedXmlSerialization.Write
         public IDisposable New(string content) => New(_chain.Peek(), content);
         IDisposable New(WriteContext root, string content) => New(new WriteContext(root.Root, root.Instance, root.Members, root.Member, content));
 
-        public IEnumerable<WriteContext> History => _chain.Reverse().ToImmutableList();
+        public IEnumerable<WriteContext> Hierarchy => _chain.Reverse().ToImmutableList();
     }
 
     class WritingServices : IWritingServices
@@ -296,7 +296,7 @@ namespace ExtendedXmlSerialization.Write
         public IDisposable New(MemberInfo member) => _context.New(member);
         public IDisposable New(string content) => _context.New(content);
         public WriteContext Current => _context.Current;
-        public IEnumerable<WriteContext> History => _context.History;
+        public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
     }
 
     public interface IObjectSerializer

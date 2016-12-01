@@ -121,22 +121,24 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
+    class EmitInstanceTypeInstruction : EmitTypeInstruction
+    {
+        public static EmitInstanceTypeInstruction Default { get; } = new EmitInstanceTypeInstruction();
+        EmitInstanceTypeInstruction() : base(context => context.Current.Instance.GetType()) {}
+    }
+
     class EmitTypeInstruction : WriteInstructionBase
     {
-        readonly Type _type;
+        private readonly Func<IWritingContext, Type> _provider;
 
-        public EmitTypeInstruction(Type type)
+        // public EmitTypeInstruction(Type type) : this(type.Accept) {}
+
+        public EmitTypeInstruction(Func<IWritingContext, Type> provider)
         {
-            _type = type;
+            _provider = provider;
         }
 
-        protected override void Execute(IWritingServices services)
-        {
-            // if (services.Current.Instance.GetType() != _type)
-            {
-                services.Property(ExtendedXmlSerializer.Type, _type.FullName);
-            }
-        }
+        protected override void Execute(IWritingServices services) => services.Property(ExtendedXmlSerializer.Type, _provider(services).FullName);
     }
 
     class EmitMemberContentInstruction : WriteInstructionBase

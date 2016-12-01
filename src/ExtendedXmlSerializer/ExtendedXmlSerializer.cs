@@ -416,7 +416,7 @@ namespace ExtendedXmlSerialization
 
         private void WriteXmlPrimitive(object o, XmlWriter xw, TypeDefinition def, string name = null, bool toEncrypt = false, string valueType = null)
         {
-            xw.WriteStartElement(name ?? def.PrimitiveName);
+            xw.WriteStartElement(name ?? def.Name);
             if (!string.IsNullOrEmpty(valueType))
             {
                 xw.WriteAttributeString(Type, valueType);

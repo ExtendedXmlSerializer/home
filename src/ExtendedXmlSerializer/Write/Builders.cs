@@ -215,7 +215,7 @@ namespace ExtendedXmlSerialization.Write
             collection.AddRange(
                 new IInstructions[]
                     {
-                        ContentInstructions.Default,
+                        PrimitiveInstructions.Default,
                         new DictionaryInstructions(selector),
                         new EnumerableInstructions(selector),
                         new ObjectInstructions(selector, _specification)
@@ -436,10 +436,12 @@ namespace ExtendedXmlSerialization.Write
     class MemberInstructionFactory : IMemberInstructionFactory
     {
         readonly private static Func<MemberInfo, IInstruction> PropertyDelegate = CreateProperty;
-        
+        /*readonly private static ConditionalWriteInstruction EmitMemberType =
+            new ConditionalWriteInstruction(EmitTypeSpecification.Default, EmitInstanceTypeInstruction.Default);*/
+
         private readonly IInstructions _instructions;
         readonly private Func<MemberInfo, IInstruction> _property, _content;
-        
+
         public MemberInstructionFactory(IInstructions primary)
         {
             _instructions = primary;
@@ -455,10 +457,10 @@ namespace ExtendedXmlSerialization.Write
             new EmitMemberAsContentInstruction(
                     member,
                     new DeferredInstruction(
-                        new FixedDecoratedInstruction(
-                            _instructions, member.GetMemberType()
-                        ).Get
-                    )
+                            new FixedDecoratedInstruction(
+                                _instructions, member.GetMemberType()
+                            ).Get
+                        )
                 );
         
         sealed class Wrap
@@ -486,7 +488,7 @@ namespace ExtendedXmlSerialization.Write
         }
 
         protected override IInstruction PerformBuild(Type type) => 
-            new CompositeInstruction(new EmitTypeInstruction(type), _members.For(type));
+            new CompositeInstruction(EmitInstanceTypeInstruction.Default, _members.For(type));
     }
 
     class RootInstructions : IInstructions
@@ -548,11 +550,41 @@ namespace ExtendedXmlSerialization.Write
         protected override IInstruction PerformBuild(Type type)
         {
             var elementType = ElementTypeLocator.Default.Locate(type);
-            var instructions = new EmitObjectInstruction(elementType, _builder.For(elementType));
-            var result = new EmitEnumerableInstruction(instructions);
+            var template = new EmitObjectInstruction(elementType, _builder.For(elementType));
+            var result = new EmitEnumerableInstruction(template);
             return result;
         }
     }
+
+    /*class EmitTypeSpecification : ISpecification<IWritingContext>
+    {
+        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
+        EmitTypeSpecification() {}
+        public bool IsSatisfiedBy(IWritingContext parameter)
+        {
+            var member = parameter.Current.Member;
+            var result = member != null && parameter.Current.Instance.GetType() != member.GetMemberType();
+            return result;
+        }
+    }
+
+    class ConditionalWriteInstruction : DecoratedWriteInstruction
+    {
+        private readonly ISpecification<IWritingContext> _specification;
+        
+        public ConditionalWriteInstruction(ISpecification<IWritingContext> specification, IInstruction instruction) : base(instruction)
+        {
+            _specification = specification;
+        }
+
+        protected override void Execute(IWritingServices services)
+        {
+            if (_specification.IsSatisfiedBy(services))
+            {
+                base.Execute(services);
+            }
+        }
+    }*/
 
     class FirstAssignedInstructions : IInstructions
     {
@@ -588,10 +620,10 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction For(Type type) => _instruction;
     }
 
-    class ContentInstructions : ConditionalInstructions
+    class PrimitiveInstructions : ConditionalInstructions
     {
-        public static ContentInstructions Default { get; } = new ContentInstructions();
-        ContentInstructions() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, new FixedInstructions(StartNewContentContextInstruction.Default)) {}
+        public static PrimitiveInstructions Default { get; } = new PrimitiveInstructions();
+        PrimitiveInstructions() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, new FixedInstructions(StartNewContentContextInstruction.Default)) {}
     }
 
     class DictionaryInstructions : ConditionalInstructionsBase

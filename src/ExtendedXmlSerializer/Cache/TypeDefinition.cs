@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -30,12 +31,41 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition
     {
-        readonly Lazy<IEnumerable<PropertieDefinition>> properties;
+        
+        readonly static IDictionary<TypeCode, string> Codes = new Dictionary<TypeCode, string>
+                                                              {
+                                                                  {TypeCode.Boolean, "boolean"},
+                                                                  {TypeCode.Char, "char"},
+                                                                  {TypeCode.SByte, "byte"},
+                                                                  {TypeCode.Byte, "unsignedByte"},
+                                                                  {TypeCode.Int16, "short"},
+                                                                  {TypeCode.UInt16, "unsignedShort"},
+                                                                  {TypeCode.Int32, "int"},
+                                                                  {TypeCode.UInt32, "unsignedInt"},
+                                                                  {TypeCode.Int64, "long"},
+                                                                  {TypeCode.UInt64, "unsignedLong"},
+                                                                  {TypeCode.Single, "float"},
+                                                                  {TypeCode.Double, "double"},
+                                                                  {TypeCode.Decimal, "decimal"},
+                                                                  {TypeCode.DateTime, "dateTime"},
+                                                                  {TypeCode.String, "string"},
+                                                              }.ToImmutableDictionary();
+
+        readonly private static IDictionary<Type, string> Other = new Dictionary<Type, string>
+                                                                  {
+                                                                      {typeof(Guid), "guid"},
+                                                                      {typeof(TimeSpan), "TimeSpan"},
+                                                                  }.ToImmutableDictionary();
+
+        readonly Lazy<IEnumerable<PropertieDefinition>> _properties;
 
         public TypeDefinition(Type type)
         {
             Type = type;
-            Name = type.Name;
+            TypeCode = Type.GetTypeCode(type);
+            string name;
+            IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name);
+            Name = IsPrimitive ? name : type.Name;
 
             var typeInfo = type.GetTypeInfo();
             var isGenericType = typeInfo.IsGenericType;
@@ -48,15 +78,13 @@ namespace ExtendedXmlSerialization.Cache
                     Type = type.GetGenericArguments()[0];
                 }
 
-                Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
+                Name = Name.Replace($"`{types.Length}", $"Of{string.Join(string.Empty, types.Select(p => p.Name))}");
             }
             
             FullName = type.FullName;
 
-            GetPrimitiveInfo(Type);
-
+            IsEnum = type.GetTypeInfo().IsEnum;
             IsArray = typeInfo.IsArray;
-
             IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
 
             if (IsEnumerable)
@@ -96,14 +124,13 @@ namespace ExtendedXmlSerialization.Cache
                 !typeInfo.IsEnum && type != typeof(string) &&
                 //not generic or generic but not List<> and Set<>
                 (!isGenericType || !IsEnumerable);
-            properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
+            _properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
             
             ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
         public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
-
 
         private IEnumerable<PropertieDefinition> GetPropertieToSerialze()
         {
@@ -203,97 +230,25 @@ namespace ExtendedXmlSerialization.Cache
             return result;
         }
 
-        public bool IsPrimitive { get; private set; }
-        public bool IsArray { get; private set; }
-        public bool IsEnumerable { get; private set; }
-        public bool IsDictionary { get; private set; }
-        public Type[] GenericArguments { get; set; }
+        public bool IsPrimitive { get; }
+        public bool IsArray { get; }
+        public bool IsEnumerable { get; }
+        public bool IsDictionary { get; }
+        public Type[] GenericArguments { get; }
 
-        public IEnumerable<PropertieDefinition> Properties => properties.Value;
-        public Type Type { get; private set; }
-        public string Name { get; private set; }
+        public IEnumerable<PropertieDefinition> Properties => _properties.Value;
+        public Type Type { get; }
+        public string Name { get; }
         public string FullName { get; private set; }
-        public bool IsObjectToSerialize { get; private set; }
-        public bool IsEnum { get; private set; }
+        public bool IsObjectToSerialize { get; }
+        public bool IsEnum { get; }
 
-        public string PrimitiveName { get; private set; }
-        public TypeCode TypeCode { get; set; }
+        public TypeCode TypeCode { get; }
         public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
 
         public PropertieDefinition GetProperty(string name)
         {
             return Properties.FirstOrDefault(p => p.Name == name);
-        }
-
-        private void GetPrimitiveInfo(Type type)
-        {
-            IsEnum = type.GetTypeInfo().IsEnum;
-
-            TypeCode = Type.GetTypeCode(type);
-
-            switch (TypeCode)
-            {
-                case TypeCode.Boolean:
-                    PrimitiveName = "boolean";
-                    break;
-                case TypeCode.Char:
-                    PrimitiveName = "char";
-                    break;
-                case TypeCode.SByte:
-                    PrimitiveName = "byte";
-                    break;
-                case TypeCode.Byte:
-                    PrimitiveName = "unsignedByte";
-                    break;
-                case TypeCode.Int16:
-                    PrimitiveName = "short";
-                    break;
-                case TypeCode.UInt16:
-                    PrimitiveName = "unsignedShort";
-                    break;
-                case TypeCode.Int32:
-                    PrimitiveName = "int";
-                    break;
-                case TypeCode.UInt32:
-                    PrimitiveName = "unsignedInt";
-                    break;
-                case TypeCode.Int64:
-                    PrimitiveName = "long";
-                    break;
-                case TypeCode.UInt64:
-                    PrimitiveName = "unsignedLong";
-                    break;
-                case TypeCode.Single:
-                    PrimitiveName = "float";
-                    break;
-                case TypeCode.Double:
-                    PrimitiveName = "double";
-                    break;
-                case TypeCode.Decimal:
-                    PrimitiveName = "decimal";
-                    break;
-                case TypeCode.DateTime:
-                    PrimitiveName = "dateTime";
-                    break;
-                case TypeCode.String:
-                    PrimitiveName = "string";
-                    break;
-                default:
-                    if (type == typeof(Guid))
-                    {
-                        PrimitiveName = "guid";
-
-                        break;
-                    }
-                    if (type == typeof(TimeSpan))
-                    {
-                        PrimitiveName = "TimeSpan";
-                        break;
-                    }
-
-                    break;
-            }
-            IsPrimitive = !string.IsNullOrEmpty(PrimitiveName);          
         }
     }
 }
