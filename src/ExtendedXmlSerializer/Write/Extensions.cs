@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Common;
@@ -12,6 +13,28 @@ namespace ExtendedXmlSerialization.Write
     {
         bool Starting(IWritingServices services);
         void Finished(IWritingServices services);
+    }
+
+
+    public static class Extensions
+    {
+        // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
+
+        public static void Property(this IWritingServices @this, IAttachedProperty property)
+            => @this.Property(property.Name, @this.Serialize(property.Value));
+
+        public static WriteContext? Parent(this IWritingContext @this) => @this.Hierarchy.ElementAtOrDefault(1);
+
+        public static WriteContext? GetMemberContext(this IWritingContext @this)
+        {
+            if (@this.Current.Member != null)
+            {
+                return @this.Current;
+            }
+            var parent = @this.Parent();
+            var result = parent?.Member != null ? parent : null;
+            return result;
+        }
     }
 
     public class DefaultWriteExtensions : CompositeExtension
@@ -74,7 +97,11 @@ namespace ExtendedXmlSerialization.Write
         public static ObjectSerializer Default { get; } = new ObjectSerializer();
         ObjectSerializer() {}
 
-        public string Serialize(object instance) => instance as string ?? (instance as Enum)?.ToString() ?? PrimitiveValueTools.SetPrimitiveValue(instance);
+        public string Serialize(object instance)
+        {
+            var result = instance as string ?? (instance as Enum)?.ToString() ?? PrimitiveValueTools.SetPrimitiveValue(instance);
+            return result;
+        }
     }
 
     public class DefaultWritingExtension : WritingExtensionBase
@@ -199,14 +226,15 @@ namespace ExtendedXmlSerialization.Write
     {
         public CustomSerializationExtension(ISerializationToolsFactory factory) : base(factory) {}
 
-        protected override bool StartingInstance(IWritingServices services, IExtendedXmlSerializerConfig configuration, object instance)
+        protected override bool StartingMembers(IWritingServices services, IExtendedXmlSerializerConfig configuration, object instance,
+                                                IImmutableList<MemberInfo> members)
         {
             if (configuration.IsCustomSerializer)
             {
                 configuration.WriteObject(services.Get<XmlWriter>(), instance);
                 return false;
             }
-            return base.StartingInstance(services, configuration, instance);
+            return base.StartingMembers(services, configuration, instance, members);	
         }
     }
 

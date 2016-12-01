@@ -151,7 +151,7 @@ namespace ExtendedXmlSerialization.Common
 
     public static class Extensions
     {
-        public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
+        // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
         public static void Property(this IWritingServices @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
 

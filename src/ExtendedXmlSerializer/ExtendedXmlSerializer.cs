@@ -102,7 +102,7 @@ namespace ExtendedXmlSerialization
                 _referencesObjects.Clear();
             }*/
 
-            var serializer = SerializationToolsFactory != null ? new Serializer(new DefaultWriteExtensions(SerializationToolsFactory)) : Serializer.Default;
+            var serializer = SerializationToolsFactory != null ? new Serializer(new DefaultWriteExtensions(SerializationToolsFactory)) : new Serializer();
             var result = serializer.Serialize(o);
             return result;
         }

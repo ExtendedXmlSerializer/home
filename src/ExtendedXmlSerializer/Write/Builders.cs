@@ -218,7 +218,8 @@ namespace ExtendedXmlSerialization.Write
                         PrimitiveInstructions.Default,
                         new DictionaryInstructions(selector),
                         new EnumerableInstructions(selector),
-                        new ObjectInstructions(selector, _specification)
+                        new GeneralObjectInstructions(selector), 
+                        new ObjectInstructions(selector, _specification),
                     }
                     .Concat(_additional.Get(selector))
             );
@@ -436,9 +437,7 @@ namespace ExtendedXmlSerialization.Write
     class MemberInstructionFactory : IMemberInstructionFactory
     {
         readonly private static Func<MemberInfo, IInstruction> PropertyDelegate = CreateProperty;
-        /*readonly private static ConditionalWriteInstruction EmitMemberType =
-            new ConditionalWriteInstruction(EmitTypeSpecification.Default, EmitInstanceTypeInstruction.Default);*/
-
+        
         private readonly IInstructions _instructions;
         readonly private Func<MemberInfo, IInstruction> _property, _content;
 
@@ -472,6 +471,27 @@ namespace ExtendedXmlSerialization.Write
             }
 
             public IInstruction Get(MemberInfo member) => new StartNewMemberContextInstruction(member, _factory(member));
+        }
+    }
+
+    class GeneralObjectInstructions : ConditionalInstructions
+    {
+        public GeneralObjectInstructions(IInstructions builder) : base(type => type == typeof(object), new FixedInstructions(new EmitGeneralObjectInstruction(builder))) {}
+    }
+
+    class EmitGeneralObjectInstruction : WriteInstructionBase
+    {
+        private readonly IInstructions _selector;
+        public EmitGeneralObjectInstruction(IInstructions selector)
+        {
+            _selector = selector;
+        }
+
+        protected override void Execute(IWritingServices services)
+        {
+            var type = services.Current.Instance.GetType();
+            var selected = _selector.For(type);
+            selected?.Execute(services);
         }
     }
 
@@ -556,14 +576,14 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    /*class EmitTypeSpecification : ISpecification<IWritingContext>
+    class EmitTypeSpecification : ISpecification<IWritingContext>
     {
         public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
         EmitTypeSpecification() {}
         public bool IsSatisfiedBy(IWritingContext parameter)
         {
-            var member = parameter.Current.Member;
-            var result = member != null && parameter.Current.Instance.GetType() != member.GetMemberType();
+            var context = parameter.GetMemberContext();
+            var result = context != null && parameter.Current.Instance.GetType() != context.Value.Member.GetMemberType();
             return result;
         }
     }
@@ -584,7 +604,7 @@ namespace ExtendedXmlSerialization.Write
                 base.Execute(services);
             }
         }
-    }*/
+    }
 
     class FirstAssignedInstructions : IInstructions
     {
@@ -622,8 +642,14 @@ namespace ExtendedXmlSerialization.Write
 
     class PrimitiveInstructions : ConditionalInstructions
     {
+        readonly private static IInstructions Emit =
+            new FixedInstructions(
+                new CompositeInstruction(
+                    new ConditionalWriteInstruction(EmitTypeSpecification.Default, EmitInstanceTypeInstruction.Default),
+                    StartNewContentContextInstruction.Default));
+            
         public static PrimitiveInstructions Default { get; } = new PrimitiveInstructions();
-        PrimitiveInstructions() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, new FixedInstructions(StartNewContentContextInstruction.Default)) {}
+        PrimitiveInstructions() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, Emit) {}
     }
 
     class DictionaryInstructions : ConditionalInstructionsBase

@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Xml;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
@@ -19,8 +18,8 @@ namespace ExtendedXmlSerialization.Write
     public class Serializer : ISerializer
     {
         readonly private static IInstructions BuildPlan = DefaultInstructionCompiler.Default.Compile();
-        public static Serializer Default { get; } = new Serializer();
-        Serializer() : this(BuildPlan) {}
+        // public static Serializer Default { get; } = new Serializer();
+        public Serializer() : this(BuildPlan) {}
 
         private readonly IInstructions _instructions;
         private readonly IObjectSerializer _serializer;
@@ -239,7 +238,16 @@ namespace ExtendedXmlSerialization.Write
         public IDisposable New(string content) => New(_chain.Peek(), content);
         IDisposable New(WriteContext root, string content) => New(new WriteContext(root.Root, root.Instance, root.Members, root.Member, content));
 
-        public IEnumerable<WriteContext> Hierarchy => _chain.Reverse().ToImmutableList();
+        public IEnumerable<WriteContext> Hierarchy
+        {
+            get
+            {
+                foreach (var context in _chain)
+                {
+                    yield return context;
+                }
+            }
+        }
     }
 
     class WritingServices : IWritingServices
