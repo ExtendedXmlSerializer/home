@@ -26,35 +26,35 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    public interface IAddMethodLocator
-    {
-        MethodInfo Locate( Type type );
-    }
+	public interface IAddMethodLocator
+	{
+		MethodInfo Locate(Type type, Type elementType);
+	}
 
-    public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
-    {
-        const string Add = "Add";
-        readonly static Func<Type, MethodInfo> LocateDelegate = LocateMethod;
+	public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
+	{
+		const string Add = "Add";
+		
+		public static AddMethodLocator Default { get; } = new AddMethodLocator();
+		AddMethodLocator() {}
 
-        public static AddMethodLocator Default { get; } = new AddMethodLocator();
-        AddMethodLocator()  {}
+		public MethodInfo Locate(Type type, Type elementType)
+		{
+			return GetOrAdd(type, t => Get(type, elementType));
+		}
 
-        public MethodInfo Locate( Type type )
-        {
-            return GetOrAdd( type, LocateDelegate );
-        }
-
-        static MethodInfo LocateMethod( Type type )
-        {
-            foreach (var candidate in AllInterfaces.Instance.Yield(type))
-            {
-                var method = candidate.GetMethod(Add);
-                if (method != null)
-                {
-                    return method;
-                }
-            }
-            return null;
-        }
-    }
+		static MethodInfo Get(Type type, Type elementType)
+		{
+			foreach (var candidate in AllInterfaces.Instance.Yield(type))
+			{
+				var method = candidate.GetMethod(Add);
+				var parameters = method?.GetParameters();
+				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
+				{
+					return method;						
+				}
+			}
+			return null;
+		}
+	}
 }
