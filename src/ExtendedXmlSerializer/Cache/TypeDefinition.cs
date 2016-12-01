@@ -31,7 +31,6 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition
     {
-        
         readonly static IDictionary<TypeCode, string> Codes = new Dictionary<TypeCode, string>
                                                               {
                                                                   {TypeCode.Boolean, "boolean"},
@@ -58,8 +57,9 @@ namespace ExtendedXmlSerialization.Cache
                                                                   }.ToImmutableDictionary();
 
         readonly Lazy<IEnumerable<PropertieDefinition>> _properties;
+	    readonly private static Type TypeObject = typeof(object);
 
-        public TypeDefinition(Type type)
+	    public TypeDefinition(Type type)
         {
             Type = type;
             TypeCode = Type.GetTypeCode(type);
@@ -121,7 +121,7 @@ namespace ExtendedXmlSerialization.Cache
 
             IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                 !IsPrimitive &&
-                !typeInfo.IsEnum && type != typeof(string) &&
+                !typeInfo.IsEnum && type != TypeObject &&
                 //not generic or generic but not List<> and Set<>
                 (!isGenericType || !IsEnumerable);
             _properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );

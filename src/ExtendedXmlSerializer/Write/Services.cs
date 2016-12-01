@@ -17,7 +17,7 @@ namespace ExtendedXmlSerialization.Write
 
     public class Serializer : ISerializer
     {
-        readonly private static IWritePlan Plan = DefaultWritingPlan.Default.Compile();
+        readonly private static IWritePlan Plan = DefaultWritePlanComposer.Default.Compose();
         
         private readonly IWritePlan _plan;
         private readonly Func<IWriter, IWriting> _writing;
@@ -328,10 +328,9 @@ namespace ExtendedXmlSerialization.Write
             var algorithm = _factory.EncryptionAlgorithm;
             if (algorithm != null)
             {
-                var type = instance.GetType();
-                var member = _context.Current.Member;
-                var encrypt = member == null ||
-                              (_factory.GetConfiguration(type)?.CheckPropertyEncryption(member.Name) ?? true);
+                var context = _context.GetMemberContext();
+                var encrypt = context?.Member == null ||
+                              (_factory.GetConfiguration(context?.Instance.GetType())?.CheckPropertyEncryption(context?.Member.Name) ?? true);
                 if (encrypt)
                 {
                     var result = algorithm.Encrypt(content);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
@@ -79,7 +80,7 @@ namespace ExtendedXmlSerialization.Write
 
         public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
             new EmitObjectInstruction(ExtendedXmlSerializer.Item,
-                                      new EmitDictionaryPairInstruction(key, value))
+                                           new EmitDictionaryPairInstruction(key, value))
         ) {}
 
         public EmitDictionaryInstruction(IInstruction entry)
@@ -121,10 +122,10 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class EmitInstanceTypeInstruction : EmitTypeInstruction
+    class EmitCurrentInstanceTypeInstruction : EmitTypeInstruction
     {
-        public static EmitInstanceTypeInstruction Default { get; } = new EmitInstanceTypeInstruction();
-        EmitInstanceTypeInstruction() : base(context => context.Current.Instance.GetType()) {}
+        public static EmitCurrentInstanceTypeInstruction Default { get; } = new EmitCurrentInstanceTypeInstruction();
+        EmitCurrentInstanceTypeInstruction() : base(context => context.Current.Instance.GetType()) {}
     }
 
     class EmitTypeInstruction : WriteInstructionBase
@@ -214,6 +215,18 @@ namespace ExtendedXmlSerialization.Write
         public string Get(IServiceProvider services) => _name;
     }
 
+    /*class EmitTypedObjectInstruction : CompositeInstruction
+    {
+        public EmitTypedObjectInstruction(string name, IInstruction instruction)
+            : this(new FixedNameProvider(name), instruction) {}
+
+        public EmitTypedObjectInstruction(MemberInfo member, IInstruction instruction)
+            : this(new MemberInfoNameProvider(member), instruction) {}
+
+        public EmitTypedObjectInstruction(Type type, IInstruction instruction)
+            : this(new TypeDefinitionNameProvider(type), instruction) {}
+        public EmitTypedObjectInstruction(INameProvider provider, IInstruction body) : base(EmitDifferingTypeInstruction.Default, new EmitObjectInstruction(provider, body)) {}
+    }*/
     
     class EmitObjectInstruction : DecoratedWriteInstruction
     {
