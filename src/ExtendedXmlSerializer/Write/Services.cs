@@ -56,13 +56,44 @@ namespace ExtendedXmlSerialization.Write
         public void Serialize(IWriter writer, object instance)
         {
             var instruction = _instructions.For(instance.GetType());
-            using (var services = new WritingServices(writer, _serializer, _context, _extension, _services))
+            using (var services = new WritingServices(writer, _serializer, _context, _extension, new CompositeServiceProvider(instance, writer, _services)))
             {
                 using (services.Start(instance))
                 {
                     instruction.Execute(services);
                 }
             }
+        }
+    }
+
+    class CompositeServiceProvider : IServiceProvider
+    {
+        private readonly IEnumerable<IServiceProvider> _services;
+        private readonly IEnumerable<object> _items;
+
+        public CompositeServiceProvider(params object[] services) : this(services.ToImmutableHashSet()) {}
+
+        CompositeServiceProvider(IImmutableSet<object> items) : this(items.OfType<IServiceProvider>().ToImmutableHashSet(), items) {}
+
+        CompositeServiceProvider(IEnumerable<IServiceProvider> services, IEnumerable<object> items)
+        {
+            _services = services;
+            _items = items;
+        }
+
+        public object GetService(Type serviceType) => _items.FirstOrDefault(serviceType.GetTypeInfo().IsInstanceOfType) ?? FromServices(serviceType);
+
+        private object FromServices(Type serviceType)
+        {
+            foreach (var service in _services)
+            {
+                var result = service.GetService(serviceType);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
     }
 
@@ -77,11 +108,11 @@ namespace ExtendedXmlSerialization.Write
         void Property(string name, string content);
     }
 
-    public class Writer : IWriter
+    class Writer : CompositeServiceProvider, IWriter
     {
         private readonly XmlWriter _writer;
 
-        public Writer(XmlWriter writer)
+        public Writer(XmlWriter writer) : base(writer)
         {
             _writer = writer;
         }
@@ -228,7 +259,7 @@ namespace ExtendedXmlSerialization.Write
             _services = services;
         }
 
-        public object GetService(Type serviceType) => _services.GetService(serviceType);
+        public object GetService(Type serviceType) => serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
 
         public void StartObject(string name) => _writer.StartObject(name);
 

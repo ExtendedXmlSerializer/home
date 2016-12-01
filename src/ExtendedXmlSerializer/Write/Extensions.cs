@@ -146,11 +146,11 @@ namespace ExtendedXmlSerialization.Write
         protected virtual void Completed(IWritingServices services) {}
     }
 
-    public abstract class ConfigurationWritingExtension : WritingExtensionBase
+    public abstract class ConfigurationWritingExtensionBase : WritingExtensionBase
     {
         private readonly ISerializationToolsFactory _factory;
 
-        protected ConfigurationWritingExtension(ISerializationToolsFactory factory)
+        protected ConfigurationWritingExtensionBase(ISerializationToolsFactory factory)
         {
             _factory = factory;
         }
@@ -194,7 +194,7 @@ namespace ExtendedXmlSerialization.Write
                                                object instance, MemberInfo member, string content) => true;
     }
 
-    public class CustomSerializationExtension : ConfigurationWritingExtension
+    public class CustomSerializationExtension : ConfigurationWritingExtensionBase
     {
         public CustomSerializationExtension(ISerializationToolsFactory factory) : base(factory) {}
 
@@ -209,7 +209,7 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    public class VersionExtension : ConfigurationWritingExtension
+    public class VersionExtension : ConfigurationWritingExtensionBase
     {
         public VersionExtension(ISerializationToolsFactory factory) : base(factory) {}
 
@@ -240,7 +240,7 @@ namespace ExtendedXmlSerialization.Write
         public ObjectIdProperty(string value) : base(ExtendedXmlSerializer.Id, value) {}
     }
 
-    public class ObjectReferencesExtension : ConfigurationWritingExtension
+    public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
     {
         private readonly IDictionary<object, object>
             _references = new ConcurrentDictionary<object, object>();

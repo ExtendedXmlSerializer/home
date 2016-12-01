@@ -227,7 +227,6 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-
     public interface IInstructions
     {
         IInstruction For(Type type);

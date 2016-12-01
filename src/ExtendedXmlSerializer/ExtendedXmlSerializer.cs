@@ -29,6 +29,8 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization
 {
@@ -82,7 +84,7 @@ namespace ExtendedXmlSerialization
         /// <returns>xml document in string</returns>
         public string Serialize(object o)
         {
-            var def = TypeDefinitionCache.GetDefinition(o.GetType());
+            /*var def = TypeDefinitionCache.GetDefinition(o.GetType());
 
             string xml;
             using (var ms = new MemoryStream())
@@ -97,10 +99,12 @@ namespace ExtendedXmlSerialization
                 {
                     xml = sr.ReadToEnd();
                 }
-            }
+                _referencesObjects.Clear();
+            }*/
 
-            _referencesObjects.Clear();
-            return xml;
+            var serializer = SerializationToolsFactory != null ? new Serializer(new DefaultWriteExtensions(SerializationToolsFactory)) : Serializer.Default;
+            var result = serializer.Serialize(o);
+            return result;
         }
 
         private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
