@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TestClassWithReadOnlyCollectionProperty type="ExtendedXmlSerialization.Test.TestObject.TestClassWithReadOnlyCollectionProperty">
-	<Items type="System.Collections.Generic.List`1[[ExtendedXmlSerialization.Test.TestObject.TestClassPrimitiveTypes, ExtendedXmlSerializerTest, Version=[EXTENDEDXMLSERIALIZER_VERSION], Culture=neutral, PublicKeyToken=null]]">
+	<Items>
     <TestClassPrimitiveTypes type="ExtendedXmlSerialization.Test.TestObject.TestClassPrimitiveTypes">
       <PropString>TestString</PropString>
       <PropInt>-1</PropInt>
