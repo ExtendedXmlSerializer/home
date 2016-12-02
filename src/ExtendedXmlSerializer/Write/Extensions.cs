@@ -26,7 +26,7 @@ namespace ExtendedXmlSerialization.Write
 
         public static WriteContext? Parent(this IWritingContext @this, int level = 1) => @this.Hierarchy.ElementAtOrDefault(level);
 
-        public static WriteContext? GetValueContext(this IWritingContext @this)
+        public static WriteContext? GetMemberContext(this IWritingContext @this)
         {
             if (@this.Current.Member != null)
             {
@@ -59,11 +59,9 @@ namespace ExtendedXmlSerialization.Write
             _values = values;
         }
 
-
-
         protected override bool StartingMember(IWriting services, object instance, MemberInfo member, object currentMemberValue)
         {
-            var defaultValue = _values(member.GetMemberType());
+            var defaultValue = _values(services.Current.MemberType);
             var result = currentMemberValue != defaultValue;
             return result;
         }
@@ -261,8 +259,9 @@ namespace ExtendedXmlSerialization.Write
                     return result;
                 }
             }
-            
-            return base.Starting(writing);
+
+            var starting = base.Starting(writing);
+            return starting;
         }
 
         protected virtual bool StartingInstance(IWriting services, IExtendedXmlSerializerConfig configuration,
@@ -339,31 +338,31 @@ namespace ExtendedXmlSerialization.Write
         protected override bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                     object instance,
                                                     MemberInfo member, object memberValue) =>
-            Reference(services, For(member.GetMemberType()), memberValue);
+            Reference(services, For(services.Current.MemberType), memberValue);
 
         protected override bool StartingInstance(IWriting services, IExtendedXmlSerializerConfig configuration, object instance) => 
             Reference(services, configuration, instance);
 
         private bool Reference(IWriting services, IExtendedXmlSerializerConfig configuration, object instance)
         {
-            if (configuration.IsObjectReference)
+            if (configuration?.IsObjectReference ?? false)
             {
                 var objectId = configuration.GetObjectId(instance);
                 var reference = _references.ContainsKey(instance);
                 var property = reference ? (IAttachedProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
                 var result = !reference;
-                services.Attach(property);
                 if (result)
                 {
-                    
+                    services.Attach(property);
                     _references.Add(instance, instance);
                 }
                 else
                 {
-                    // services.Property(property);
+                    services.Property(property);
                 }
+                return result;
             }
-            return false;
+            return true;
         }
 
         /* protected override bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberInfo member)

@@ -18,8 +18,10 @@ namespace ExtendedXmlSerialization.Write
 
     class MemberInfoNameProvider : FixedNameProvider
     {
-        public MemberInfoNameProvider(MemberInfo member) 
-            : base(member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ?? member.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? member.Name) {}
+        public MemberInfoNameProvider(MemberInfo member)
+            : base(
+                member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
+                member.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? member.Name) {}
     }
 
     public interface IInstructionSpecification : ISpecification<object>
@@ -146,7 +148,7 @@ namespace ExtendedXmlSerialization.Write
 
         public bool IsSatisfiedBy(WriteContext parameter)
         {
-            if (parameter.Member.GetMemberType() == Type)
+            if (parameter.MemberType == Type)
             {
                 var value = Getters.Default.Get(parameter.Member).Invoke(parameter.Instance) as string;
                 var result = value?.Length < _maxLength;
@@ -455,25 +457,36 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly IWritePlan _writePlan;
         private readonly IInstructionSpecification _specification;
-        
+        readonly private static StartNewMemberValueContextInstruction PropertyContent =
+            new StartNewMemberValueContextInstruction(StartNewValueContextFromMemberValueInstruction.Default);
+
         public MemberInstructionFactory(IWritePlan primary, IInstructionSpecification specification)
         {
             _writePlan = primary;
             _specification = specification;
         }
 
-        IMemberInstruction Content(MemberInfo member) =>
-            new EmitMemberAsContentInstruction(
+        IInstruction Content(MemberInfo member) =>
+            new EmitObjectInstruction(
                 member,
-                new DeferredInstruction(
-                    new FixedDecoratedWritePlan(
-                        _writePlan, member.GetMemberType()
-                    ).Get
-                )
-            );
+                new StartNewMemberValueContextInstruction(
+                    new StartNewContextFromMemberValueInstruction(
+                        new DeferredInstruction(
+                            new FixedDecoratedWritePlan(_writePlan, member.GetMemberType()).Get
+                        )
+                    )
+                ));
 
-        public IMemberInstruction Get(MemberInfo parameter) => 
-            _specification.IsSatisfiedBy(parameter) ? new EmitMemberAsPropertyInstruction(parameter) : Content(parameter);
+        public IMemberInstruction Get(MemberInfo parameter)
+        {
+            var property = _specification.IsSatisfiedBy(parameter);
+            var content = property ? PropertyContent : Content(parameter);
+            var context = new StartNewMemberContextInstruction(parameter, content);
+            var result = property
+                ? (IMemberInstruction) new EmitMemberAsPropertyInstruction(context)
+                : new EmitMemberAsContentInstruction(context);
+            return result;
+        }
     }
     class GeneralObjectWritePlan : ConditionalWritePlan
     {
@@ -583,9 +596,14 @@ namespace ExtendedXmlSerialization.Write
         EmitMemberTypeSpecification() {}
         public bool IsSatisfiedBy(IWritingContext parameter)
         {
-            var context = parameter.GetValueContext();
-            var result = context != null && context.Value.Member.IsWritable() && parameter.Current.Instance.GetType() != context?.Member.GetMemberType();
-            return result;
+	        var context = parameter.GetMemberContext().GetValueOrDefault();
+			switch (context.State)
+            {
+                case WriteState.MemberValue:
+                    var result = context.Member.IsWritable() && context.MemberValue?.GetType() != context.MemberType;
+                    return result;
+            }
+            return false;
         }
     }
 
@@ -653,7 +671,7 @@ namespace ExtendedXmlSerialization.Write
             new FixedWritePlan(
                 new CompositeInstruction(
                     EmitContextTypeInstruction.Default,
-                    StartNewValueContextInstruction.Default
+                    StartNewValueContextFromInstanceInstruction.Default
                     )
                 );
             

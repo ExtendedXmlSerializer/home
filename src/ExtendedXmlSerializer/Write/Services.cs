@@ -113,13 +113,15 @@ namespace ExtendedXmlSerialization.Write
 
     public struct WriteContext
     {
-        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members, MemberInfo member, object memberValue, string content)
+        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
+                            MemberInfo member, Type memberType, object memberValue, string content)
         {
             State = state;
             Root = root;
             Instance = instance;
             Members = members;
             Member = member;
+            MemberType = memberType;
             MemberValue = memberValue;
             Content = content;
         }
@@ -129,6 +131,7 @@ namespace ExtendedXmlSerialization.Write
         public object Instance { get; }
         public IImmutableList<MemberInfo> Members { get; }
         public MemberInfo Member { get; }
+        public Type MemberType { get; }
         public object MemberValue { get; }
         public string Content { get; }
     }
@@ -191,20 +194,20 @@ namespace ExtendedXmlSerialization.Write
             {
                 throw new InvalidOperationException("A request to start a new writing context was made, but it has already started.");
             }
-            return New(new WriteContext(WriteState.Root, root, null, null, null, null, null));
+            return New(new WriteContext(WriteState.Root, root, null, null, null, null, null, null));
         }
 
         public IDisposable New(object instance)
         {
             var previous = _chain.Peek();
-            var result = New(new WriteContext(WriteState.Instance, previous.Root, instance, null, null, null, null));
+            var result = New(new WriteContext(WriteState.Instance, previous.Root, instance, null, null, null, null, null));
             return result;
         }
 
         public IDisposable New(IImmutableList<MemberInfo> members)
         {
             var previous = _chain.Peek();
-            var result = New(new WriteContext(WriteState.Members, previous.Root, previous.Instance, members, null, null, null));
+            var result = New(new WriteContext(WriteState.Members, previous.Root, previous.Instance, members, null, null, null, null));
             return result;
         }
         
@@ -212,7 +215,7 @@ namespace ExtendedXmlSerialization.Write
         {
             var previous = _chain.Peek();
             var value = Getters.Default.Get(member).Invoke(previous.Instance);
-            var context = new WriteContext(WriteState.Member, previous.Root, previous.Instance, previous.Members, member, value, null);
+            var context = new WriteContext(WriteState.Member, previous.Root, previous.Instance, previous.Members, member, member.GetMemberType(), value, null);
             var result = New(context);
             return result;
         }
@@ -220,7 +223,7 @@ namespace ExtendedXmlSerialization.Write
         public IDisposable NewMemberValue()
         {
             var previous = _chain.Peek();
-            var context = new WriteContext(WriteState.MemberValue, previous.Root, previous.Instance, previous.Members, previous.Member, previous.MemberValue, null);
+            var context = new WriteContext(WriteState.MemberValue, previous.Root, previous.Instance, previous.Members, previous.Member, previous.MemberType, previous.MemberValue, null);
             var result = New(context);
             return result;
         }
@@ -228,7 +231,7 @@ namespace ExtendedXmlSerialization.Write
         public IDisposable New(string value)
         {
             var previous = _chain.Peek();
-            var context = new WriteContext(WriteState.Content, previous.Root, previous.Instance, previous.Members, previous.Member, previous.MemberValue, value);
+            var context = new WriteContext(WriteState.Content, previous.Root, previous.Instance, previous.Members, previous.Member, previous.MemberType, previous.MemberValue, value);
             var result = New(context);
             return result;
         }
@@ -360,7 +363,7 @@ namespace ExtendedXmlSerialization.Write
             var algorithm = _factory.EncryptionAlgorithm;
             if (algorithm != null)
             {
-                var context = _context.GetValueContext();
+                var context = _context.GetMemberContext();
                 var encrypt = context?.Member == null ||
                               (_factory.GetConfiguration(context?.Instance.GetType())?.CheckPropertyEncryption(context?.Member.Name) ?? true);
                 if (encrypt)

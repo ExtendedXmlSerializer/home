@@ -295,13 +295,13 @@ namespace ExtendedXmlSerialization.Write
         protected override IDisposable DetermineContext(IWriting writing) => writing.New(_members);
     }
 
-    class StartNewValueContextInstruction : StartNewValueContextInstructionBase
+    class StartNewValueContextFromInstanceInstruction : StartNewValueContextInstructionBase
     {
-        public static StartNewValueContextInstruction Default { get; } = new StartNewValueContextInstruction();
-        StartNewValueContextInstruction() : this(writing => writing.Current.Instance) {}
+        public static StartNewValueContextFromInstanceInstruction Default { get; } = new StartNewValueContextFromInstanceInstruction();
+        StartNewValueContextFromInstanceInstruction() : this(writing => writing.Current.Instance) {}
 
         private readonly Func<IWriting, object> _source;
-        public StartNewValueContextInstruction(Func<IWriting, object> source) : base(EmitContentInstruction.Default)
+        public StartNewValueContextFromInstanceInstruction(Func<IWriting, object> source) : base(EmitContentInstruction.Default)
         {
             _source = source;
         }
@@ -324,10 +324,10 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class StartNewMemberValueAsValueContextInstruction : StartNewValueContextInstructionBase
+    class StartNewValueContextFromMemberValueInstruction : StartNewValueContextInstructionBase
     {
-        public static StartNewMemberValueAsValueContextInstruction Default { get; } = new StartNewMemberValueAsValueContextInstruction();
-        StartNewMemberValueAsValueContextInstruction() : base(EmitContentAsMemberPropertyInstruction.Default) {}
+        public static StartNewValueContextFromMemberValueInstruction Default { get; } = new StartNewValueContextFromMemberValueInstruction();
+        StartNewValueContextFromMemberValueInstruction() : base(EmitContentAsMemberPropertyInstruction.Default) {}
         
         protected override object DetermineInstance(IWriting writing)
         {
@@ -341,38 +341,13 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    /*class StartNewMemberValueContextInstruction : NewWriteContextInstructionBase
-    {
-        public StartNewMemberValueContextInstruction(IInstruction instruction) : base(instruction) {}
-        protected override IDisposable DetermineContext(IWriting context)
-        {
-            var getter = Getters.Default.Get(context.Current.Member);
-            var value = getter.Invoke(context.Current.Instance);
-            var memberValue = new MemberValue(value);
-            var result = context.New(memberValue);
-            return result;
-        }
-    }*/
-
     class EmitMemberAsPropertyInstruction : DecoratedWriteInstruction, IPropertyInstruction
     {
-        readonly private static StartNewMemberValueContextInstruction Emit =
-            new StartNewMemberValueContextInstruction(StartNewMemberValueAsValueContextInstruction.Default);
-
-        public EmitMemberAsPropertyInstruction(MemberInfo member)
-            : this(new StartNewMemberContextInstruction(member, Emit)) {}
-
         public EmitMemberAsPropertyInstruction(IInstruction instruction) : base(instruction) {}
     }
 
     class EmitMemberAsContentInstruction : DecoratedWriteInstruction, IContentInstruction
     {
-        public EmitMemberAsContentInstruction(MemberInfo member, IInstruction instruction) : this(
-            new StartNewMemberContextInstruction(member, 
-                new EmitObjectInstruction(member, new StartNewMemberValueContextInstruction(instruction))
-            )
-        ) {}
-
         public EmitMemberAsContentInstruction(IInstruction instruction) : base(instruction) {}
     }
 
@@ -394,11 +369,16 @@ namespace ExtendedXmlSerialization.Write
         protected override IDisposable DetermineContext(IWriting writing) => writing.New(_member);
     }
 
+    class StartNewContextFromMemberValueInstruction : NewWriteContextInstructionBase
+    {
+        public StartNewContextFromMemberValueInstruction(IInstruction instruction) : base(instruction) {}
+        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.MemberValue);
+    }
+
     class StartNewContextFromRootInstruction : NewWriteContextInstructionBase
     {
         public StartNewContextFromRootInstruction(IInstruction instruction) : base(instruction) {}
 
-        protected override IDisposable DetermineContext(IWriting writing) => 
-            writing.New(writing.Current.Root);
+        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.Root);
     }
 }
