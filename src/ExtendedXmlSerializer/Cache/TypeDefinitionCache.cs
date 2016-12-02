@@ -32,13 +32,13 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal static class TypeDefinitionCache
     {
-        private static readonly ConditionalWeakTable<Type, TypeDefinition> TypeDefinitions = new ConditionalWeakTable<Type, TypeDefinition>();
+        private static readonly WeakCache<Type, TypeDefinition> TypeDefinitions = new WeakCache<Type, TypeDefinition>( t => new TypeDefinition( t ) );
         private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
         private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 
         public static TypeDefinition GetDefinition(Type type)
         {
-            return TypeDefinitions.GetValue( type, t => new TypeDefinition( t ) );
+            return TypeDefinitions.Get( type );
         }
 
         public static Type GetType(string typeName)

@@ -26,6 +26,14 @@ namespace ExtendedXmlSerialization.Write
 
         public static WriteContext? Parent(this IWritingContext @this, int level = 1) => @this.Hierarchy.ElementAtOrDefault(level);
 
+        public static WriteContext? GetArrayContext(this IWritingContext @this)
+        {
+            var parent = @this.Parent((int) @this.Current.State);
+            var instance = parent?.Instance;
+            var result = instance != null && Arrays.Default.Is(instance) ? parent : null;
+            return result;
+        }
+
         public static WriteContext? GetMemberContext(this IWritingContext @this)
         {
             if (@this.Current.Member != null)
@@ -325,35 +333,55 @@ namespace ExtendedXmlSerialization.Write
     public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
     {
         private readonly IDictionary<object, object>
+            _elements = new ConcurrentDictionary<object, object>(),
             _references = new ConcurrentDictionary<object, object>();
 
         public ObjectReferencesExtension(ISerializationToolsFactory factory) : base(factory) {}
 
         protected override bool Initializing(IWriting services)
         {
-            _references.Clear();
+            Clear();
             return base.Initializing(services);
         }
 
-        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
-                                                IImmutableList<MemberInfo> members)
+        private void Clear()
         {
-            return Reference(services, configuration, instance);
+            _elements.Clear();
+            _references.Clear();
         }
 
-        /*protected override bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                                    object instance,
-                                                    MemberInfo member, object memberValue)
+        protected override bool StartingInstance(IWriting services, object instance)
         {
-            return Reference(services, For(services.Current.MemberType), memberValue);
-        }*/
+            foreach (var item in Arrays.Default.AsArray(instance))
+            {
+                if (!_elements.ContainsKey(item))
+                {
+                    _elements.Add(item, item);
+                }
+            }
+            return base.StartingInstance(services, instance);
+        }
 
-        private bool Reference(IWriting services, IExtendedXmlSerializerConfig configuration, object instance)
+        protected override void FinishedInstance(IWriting services, object instance)
+        {
+            if (Arrays.Default.Is(instance))
+            {
+                _elements.Clear();
+            }
+            base.FinishedInstance(services, instance);
+        }
+
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
+                                                IImmutableList<MemberInfo> members) => 
+            Reference(services, configuration, instance, services.GetArrayContext() == null && _elements.ContainsKey(instance));
+
+        private bool Reference(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, bool force = false)
         {
             if (configuration?.IsObjectReference ?? false)
             {
                 var objectId = configuration.GetObjectId(instance);
-                var reference = _references.ContainsKey(instance);
+                var contains = _references.ContainsKey(instance);
+                var reference = contains || force;
                 var property = reference ? (IAttachedProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
                 var result = !reference;
                 if (result)
@@ -370,22 +398,6 @@ namespace ExtendedXmlSerialization.Write
             return true;
         }
 
-        /* protected override bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberInfo member)
-        {
-            var memberConfiguration = For(member.GetMemberType());
-            if (memberConfiguration != null)
-            {
-                var value = Getters.Default.Get(member).Invoke(instance);
-                if (value != null)
-                {
-                    var result = Store(services, memberConfiguration, value);
-                    return result;
-                }
-            } 
-
-            return base.StartingMember(services, configuration, instance, member);
-        }*/
-
-        protected override void Completed(IWriting services) => _references.Clear();
+        protected override void Completed(IWriting services) => Clear();
     }
 }

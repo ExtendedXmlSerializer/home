@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
 
@@ -102,21 +103,20 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitEnumerableInstruction : WriteInstructionBase<IEnumerable>
     {
-        private readonly IInstruction _instruction;
+        private readonly IInstruction _template;
 
-        public EmitEnumerableInstruction(IInstruction instruction)
+        public EmitEnumerableInstruction(IInstruction template)
         {
-            _instruction = instruction;
+            _template = template;
         }
 
         protected override void Execute(IWriting writing, IEnumerable instance)
         {
-            var items = instance as Array ?? instance.Cast<object>().ToArray();
-            foreach (var item in items)
+            foreach (var item in Arrays.Default.AsArray(instance))
             {
                 using (writing.New(item))
                 {
-                    _instruction.Execute(writing);
+                    _template.Execute(writing);
                 }
             }
         }
@@ -198,13 +198,13 @@ namespace ExtendedXmlSerialization.Write
         string Get(IServiceProvider services);
     }
 
-    /*class InstanceTypeNameProvider : INameProvider
+    class InstanceTypeNameProvider : INameProvider
     {
         public static InstanceTypeNameProvider Default { get; } = new InstanceTypeNameProvider();
         InstanceTypeNameProvider() {}
 
         public string Get(IServiceProvider services) => services.AsValid<IWritingContext>().Current.Instance.GetType().Name;
-    }*/
+    }
 
     class TypeDefinitionNameProvider : FixedNameProvider
     {

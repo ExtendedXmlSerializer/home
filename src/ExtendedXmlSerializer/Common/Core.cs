@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml;
+using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization.Common
@@ -149,6 +151,31 @@ namespace ExtendedXmlSerialization.Common
 
         public virtual void Execute(IServiceProvider services) => _instruction.Execute(services);
     }*/
+
+    class Arrays : WeakCache<object, Array>
+    {
+        readonly static Array Array = (object[]) Enumerable.Empty<object>();
+
+        public static Arrays Default { get; } = new Arrays();
+        Arrays() : base(key => null) {}
+
+        public Array AsArray(object instance)
+        {
+            var items = Get(instance);
+            if (items != null)
+            {
+                return items;
+            }
+            var result = Is(instance)
+                ? (instance as Array ?? ((IEnumerable) instance).Cast<object>().ToArray())
+                : Array;
+            Default.Add(instance, result);
+            return result;
+        }
+
+        public bool Is(object instance) => TypeDefinitionCache.GetDefinition(instance.GetType()).IsEnumerable;
+    }
+
 
     static class Extensions
     {

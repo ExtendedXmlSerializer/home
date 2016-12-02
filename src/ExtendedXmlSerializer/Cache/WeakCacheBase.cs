@@ -36,6 +36,18 @@ namespace ExtendedXmlSerialization.Cache
 
 		protected abstract TValue Callback(TKey key);
 
+		public bool Contains(TKey key)
+		{
+			TValue temp;
+			return _cache.TryGetValue(key, out temp);
+		}
+
+		public void Add(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, value);
+		}
+
 		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }
