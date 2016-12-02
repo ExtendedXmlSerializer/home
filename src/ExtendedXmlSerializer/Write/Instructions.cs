@@ -132,8 +132,6 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly Func<IWritingContext, Type> _provider;
 
-        // public EmitTypeInstruction(Type type) : this(type.Accept) {}
-
         public EmitTypeInstruction(Func<IWritingContext, Type> provider)
         {
             _provider = provider;
@@ -144,54 +142,11 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitContentAsMemberPropertyInstruction : WriteInstructionBase
     {
-        /*private readonly MemberInfo _member;
-
-        public EmitMemberContentInstruction(MemberInfo member)
-        {
-            _member = member;
-        }*/
-
         public static EmitContentAsMemberPropertyInstruction Default { get; } = new EmitContentAsMemberPropertyInstruction();
         EmitContentAsMemberPropertyInstruction() {}
 
         protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member.Name, writing.Current.Content);
     }
-
-    /*class EmitMemberAsPropertyInstruction : EmitMemberInstructionBase
-    {
-        public EmitMemberAsPropertyInstruction(MemberInfo member) 
-            : base(member, ) {}
-    }*/
-
-    /*class EmitMemberAsContentInstruction : EmitMemberInstructionBase
-    {
-        public EmitMemberAsContentInstruction(MemberInfo member, IInstruction content) : 
-            base(member, ) {}
-    }*/
-
-    /*abstract class EmitMemberInstructionBase : DecoratedWriteInstruction
-    {
-        private readonly ObjectAccessors.PropertyGetter _selector;
-        private readonly object _defaultValue;
-
-        protected EmitMemberInstructionBase(MemberInfo member, IInstruction content)
-            : this(new StartNewMemberContextInstruction(member, content), DefaultValues.Default.Get(member.GetMemberType()))
-        {}
-
-        protected EmitMemberInstructionBase(IInstruction content, object defaultValue)
-            : base(content)
-        {
-            _defaultValue = defaultValue;
-        }
-
-        /*protected override void Execute(IWriting services)
-        {
-            if (services.Current.MemberValue != _defaultValue) // TODO: Move this to a specifica
-            {
-                base.Execute(services);
-            }
-        }#1#
-    }*/
 
     public interface INameProvider
     {

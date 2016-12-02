@@ -584,7 +584,11 @@ namespace ExtendedXmlSerialization.Write
         protected override IInstruction PerformBuild(Type type)
         {
             var elementType = ElementTypeLocator.Default.Locate(type);
-            var template = new EmitObjectInstruction(elementType, _primary.For(elementType));
+            // HACK: This should not be necessary.  Consider a <Element exs:Type="[type]" /> or equivalent format for v2.0.
+            var provider = elementType.GetTypeInfo().IsInterface
+                ? (INameProvider) InstanceTypeNameProvider.Default
+                    : new TypeDefinitionNameProvider(elementType);
+            var template = new EmitObjectInstruction(provider, _primary.For(elementType));
             var result = new EmitTypedContextInstruction(new EmitEnumerableInstruction(template));
             return result;
         }
