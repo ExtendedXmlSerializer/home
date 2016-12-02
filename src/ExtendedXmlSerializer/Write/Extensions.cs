@@ -335,13 +335,18 @@ namespace ExtendedXmlSerialization.Write
             return base.Initializing(services);
         }
 
-        protected override bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                                    object instance,
-                                                    MemberInfo member, object memberValue) =>
-            Reference(services, For(services.Current.MemberType), memberValue);
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
+                                                IImmutableList<MemberInfo> members)
+        {
+            return Reference(services, configuration, instance);
+        }
 
-        protected override bool StartingInstance(IWriting services, IExtendedXmlSerializerConfig configuration, object instance) => 
-            Reference(services, configuration, instance);
+        /*protected override bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
+                                                    object instance,
+                                                    MemberInfo member, object memberValue)
+        {
+            return Reference(services, For(services.Current.MemberType), memberValue);
+        }*/
 
         private bool Reference(IWriting services, IExtendedXmlSerializerConfig configuration, object instance)
         {

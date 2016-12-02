@@ -596,8 +596,8 @@ namespace ExtendedXmlSerialization.Write
         EmitMemberTypeSpecification() {}
         public bool IsSatisfiedBy(IWritingContext parameter)
         {
-	        var context = parameter.GetMemberContext().GetValueOrDefault();
-			switch (context.State)
+            var context = parameter.GetMemberContext().GetValueOrDefault();
+            switch (context.State)
             {
                 case WriteState.MemberValue:
                     var result = context.Member.IsWritable() && context.MemberValue?.GetType() != context.MemberType;
