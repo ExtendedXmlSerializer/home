@@ -488,23 +488,28 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
     }
+
     class GeneralObjectWritePlan : ConditionalWritePlan
     {
-        public GeneralObjectWritePlan(IWritePlan plan) : base(type => type == typeof(object), new FixedWritePlan(new EmitGeneralObjectInstruction(plan))) {}
+        public GeneralObjectWritePlan(IWritePlan plan) : base(type => type == typeof(object),
+                                                              new FixedWritePlan(
+                                                                  new CompositeInstruction(
+                                                                      EmitCurrentInstanceTypeInstruction.Default,
+                                                                      new EmitGeneralObjectInstruction(plan)))) {}
     }
 
     class EmitGeneralObjectInstruction : WriteInstructionBase
     {
-        private readonly IWritePlan _selector;
-        public EmitGeneralObjectInstruction(IWritePlan selector)
+        private readonly IWritePlan _plan;
+        public EmitGeneralObjectInstruction(IWritePlan plan)
         {
-            _selector = selector;
+            _plan = plan;
         }
 
         protected override void Execute(IWriting writing)
         {
             var type = writing.Current.Instance.GetType();
-            var selected = _selector.For(type);
+            var selected = _plan.For(type);
             selected?.Execute(writing);
         }
     }
@@ -672,12 +677,7 @@ namespace ExtendedXmlSerialization.Write
     class PrimitiveWritePlan : ConditionalWritePlan
     {
         readonly private static IWritePlan Emit =
-            new FixedWritePlan(
-                new CompositeInstruction(
-                    EmitContextTypeInstruction.Default,
-                    StartNewValueContextFromInstanceInstruction.Default
-                    )
-                );
+            new FixedWritePlan(StartNewValueContextFromInstanceInstruction.Default);
             
         public static PrimitiveWritePlan Default { get; } = new PrimitiveWritePlan();
         PrimitiveWritePlan() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, Emit) {}

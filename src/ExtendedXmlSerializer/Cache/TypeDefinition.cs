@@ -62,51 +62,50 @@ namespace ExtendedXmlSerialization.Cache
 
         public TypeDefinition(Type type)
         {
-            Type = type;
-            TypeCode = Type.GetTypeCode(type);
+	        Type = Nullable.GetUnderlyingType(type) ?? type;
+            TypeCode = Type.GetTypeCode(Type);
             string name;
             IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name);
-            Name = IsPrimitive ? name : type.Name;
+            Name = IsPrimitive ? name : Type.Name;
 
-            var typeInfo = type.GetTypeInfo();
+            var typeInfo = Type.GetTypeInfo();
             var isGenericType = typeInfo.IsGenericType;
             
             if (isGenericType)
             {
-                Type = Nullable.GetUnderlyingType(type) ?? Type;
-                Type[] types = type.GetGenericArguments();
+                Type[] types = Type.GetGenericArguments();
                 Name = Name.Replace($"`{types.Length}", $"Of{string.Join(string.Empty, types.Select(p => p.Name))}");
             }
             
-            FullName = type.FullName;
+            FullName = Type.FullName;
 
             IsEnum = typeInfo.IsEnum;
             IsArray = typeInfo.IsArray;
-            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
+            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(Type);
 
             if (IsEnumerable)
             {
-                IsDictionary = typeof(IDictionary).IsAssignableFrom(type) || typeof(IDictionary<,>).IsAssignableFromGeneric(type);
+                IsDictionary = typeof(IDictionary).IsAssignableFrom(Type) || typeof(IDictionary<,>).IsAssignableFromGeneric(Type);
 
-                var elementType = ElementTypeLocator.Default.Locate(type);
+                var elementType = ElementTypeLocator.Default.Locate(Type);
                 if (isGenericType)
                 {
-                    GenericArguments = type.GetGenericArguments();
+                    GenericArguments = Type.GetGenericArguments();
                 }
                 else if ( elementType != null )
                 {
                     GenericArguments = new[] { elementType };
                 }
 
-                Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : type.Name;
+                Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : Type.Name;
 
                 if (IsDictionary)
                 {
-                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(Type);
                 }
                 else if (elementType != null && !IsArray)
                 {
-                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
+                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(Type, elementType);
                 }
             }
 
@@ -118,12 +117,12 @@ namespace ExtendedXmlSerialization.Cache
 
             IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
                 !IsPrimitive &&
-                !typeInfo.IsEnum && type != TypeObject &&
+                !typeInfo.IsEnum && Type != TypeObject &&
                 //not generic or generic but not List<> and Set<>
                 (!isGenericType || !IsEnumerable);
             _properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
             
-            ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
+            ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }

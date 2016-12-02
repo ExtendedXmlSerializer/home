@@ -42,12 +42,12 @@ namespace ExtendedXmlSerialization.Write
         void IWriteInstruction<T>.Execute( IWriting writing, T instance ) => Execute(writing, instance);
     }
 
-    class EmitContentInstruction : WriteInstructionBase
+    class EmitInstanceValueInstruction : WriteInstructionBase
     {
-        public static EmitContentInstruction Default { get; } = new EmitContentInstruction();
-        EmitContentInstruction() {}
+        public static EmitInstanceValueInstruction Default { get; } = new EmitInstanceValueInstruction();
+        EmitInstanceValueInstruction() {}
 
-        protected override void Execute(IWriting writing) => writing.Emit(writing.Current.Content);
+        protected override void Execute(IWriting writing) => writing.Emit(writing.Current.Value);
     }
 
     class EmitDictionaryPairInstruction : WriteInstructionBase<DictionaryEntry>
@@ -145,7 +145,7 @@ namespace ExtendedXmlSerialization.Write
         public static EmitContentAsMemberPropertyInstruction Default { get; } = new EmitContentAsMemberPropertyInstruction();
         EmitContentAsMemberPropertyInstruction() {}
 
-        protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member.Name, writing.Current.Content);
+        protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member.Name, writing.Current.Value);
     }
 
     public interface INameProvider
@@ -256,7 +256,7 @@ namespace ExtendedXmlSerialization.Write
         StartNewValueContextFromInstanceInstruction() : this(writing => writing.Current.Instance) {}
 
         private readonly Func<IWriting, object> _source;
-        public StartNewValueContextFromInstanceInstruction(Func<IWriting, object> source) : base(EmitContentInstruction.Default)
+        public StartNewValueContextFromInstanceInstruction(Func<IWriting, object> source) : base(EmitInstanceValueInstruction.Default)
         {
             _source = source;
         }

@@ -114,7 +114,7 @@ namespace ExtendedXmlSerialization.Write
     public struct WriteContext
     {
         public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
-                            MemberInfo member, Type memberType, object memberValue, string content)
+                            MemberInfo member, Type memberType, object memberValue, string value)
         {
             State = state;
             Root = root;
@@ -123,7 +123,7 @@ namespace ExtendedXmlSerialization.Write
             Member = member;
             MemberType = memberType;
             MemberValue = memberValue;
-            Content = content;
+            Value = value;
         }
 
         public WriteState State { get; set; }
@@ -133,7 +133,7 @@ namespace ExtendedXmlSerialization.Write
         public MemberInfo Member { get; }
         public Type MemberType { get; }
         public object MemberValue { get; }
-        public string Content { get; }
+        public string Value { get; }
     }
 
     public interface IAttachedProperty

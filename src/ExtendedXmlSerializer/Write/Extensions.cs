@@ -144,9 +144,9 @@ namespace ExtendedXmlSerialization.Write
         public virtual bool Starting(IWriting writing)
         {
             var current = writing.Current;
-            if (current.Content != null)
+            if (current.Value != null)
             {
-                return StartingContent(writing, current.Instance, current.Member, current.MemberValue, current.Content);
+                return StartingContent(writing, current.Instance, current.Member, current.MemberValue, current.Value);
             }
 
             if (current.Member != null)
@@ -181,9 +181,9 @@ namespace ExtendedXmlSerialization.Write
         public virtual void Finished(IWriting services)
         {
             var current = services.Current;
-            if (current.Content != null)
+            if (current.Value != null)
             {
-                FinishedContent(services, current.Instance, current.Member, current.MemberValue, current.Content);
+                FinishedContent(services, current.Instance, current.Member, current.MemberValue, current.Value);
             }
             /*else if (current.HasValue)
             {
@@ -244,9 +244,9 @@ namespace ExtendedXmlSerialization.Write
                 var configuration = For(type);
                 if (configuration != null)
                 {
-                    if (current.Content != null)
+                    if (current.Value != null)
                     {
-                        return StartingContent(writing, configuration, current.Instance, current.Member, current.MemberValue, current.Content);
+                        return StartingContent(writing, configuration, current.Instance, current.Member, current.MemberValue, current.Value);
                     }
 
                     if (current.Member != null)
