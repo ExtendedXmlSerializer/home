@@ -45,24 +45,24 @@ namespace ExtendedXmlSerialization.Write
 
     class CompositeServiceProvider : IServiceProvider
     {
-        private readonly IEnumerable<IServiceProvider> _services;
-        private readonly IEnumerable<object> _items;
+        private readonly IEnumerable<IServiceProvider> _providers;
+        private readonly IEnumerable<object> _services;
 
         public CompositeServiceProvider(params object[] services) : this(services.ToImmutableHashSet()) {}
 
         CompositeServiceProvider(IImmutableSet<object> items) : this(items.OfType<IServiceProvider>().ToImmutableHashSet(), items) {}
 
-        CompositeServiceProvider(IEnumerable<IServiceProvider> services, IEnumerable<object> items)
+        CompositeServiceProvider(IEnumerable<IServiceProvider> providers, IEnumerable<object> services)
         {
+            _providers = providers;
             _services = services;
-            _items = items;
         }
 
-        public object GetService(Type serviceType) => _items.FirstOrDefault(serviceType.GetTypeInfo().IsInstanceOfType) ?? FromServices(serviceType);
+        public object GetService(Type serviceType) => _services.FirstOrDefault(serviceType.GetTypeInfo().IsInstanceOfType) ?? FromServices(serviceType);
 
         private object FromServices(Type serviceType)
         {
-            foreach (var service in _services)
+            foreach (var service in _providers)
             {
                 var result = service.GetService(serviceType);
                 if (result != null)
@@ -264,6 +264,41 @@ namespace ExtendedXmlSerialization.Write
 
         public void Attach(object instance, IAttachedProperty property) => _properties.Get(instance).Add(property);
         public ICollection<IAttachedProperty> GetProperties(object instance) => _properties.Get(instance);
+    }
+
+    public interface IWritingFactory : IParameterizedSource<IWriter, IWriting>, ISerializationToolsFactory,
+                                       IServiceProvider
+    {
+        ICollection<IWritingExtension> Extensions { get; }
+    }
+
+    class WritingFactory : CompositeServiceProvider, IWritingFactory
+    {
+        private readonly ISerializationToolsFactory _factory;
+
+        public WritingFactory(ISerializationToolsFactory factory, ICollection<object> services) : this(factory, services, new Collection<IWritingExtension>()) {}
+
+        public WritingFactory(ISerializationToolsFactory factory, ICollection<object> services, ICollection<IWritingExtension> extensions) : base(services)
+        {
+            _factory = factory;
+            Extensions = extensions;
+        }
+
+        public ICollection<IWritingExtension> Extensions { get; }
+        
+        public IWriting Get(IWriter parameter)
+        {
+            var context = new DefaultWritingContext();
+            var serializer = new EncryptedObjectSerializer(this, context);
+            var extension = new CompositeWritingExtension(Extensions);
+            var result = new Writing(parameter, context, extension, serializer,
+                /*services:*/parameter, extension, this);
+            return result;
+        }
+
+        IExtendedXmlSerializerConfig ISerializationToolsFactory.GetConfiguration(Type type) => _factory.GetConfiguration(type);
+
+        IPropertyEncryption ISerializationToolsFactory.EncryptionAlgorithm => _factory.EncryptionAlgorithm;
     }
 
     class Writing : IWriting

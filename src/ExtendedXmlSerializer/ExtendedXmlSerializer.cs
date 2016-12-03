@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization
     /// <summary>
     /// Extended Xml Serializer
     /// </summary>
-    public class ExtendedXmlSerializer : IExtendedXmlSerializer, ISerializationToolsFactory, IServiceProvider
+    public class ExtendedXmlSerializer : IExtendedXmlSerializer, ISerializationToolsFactory
     {
         public const string Type = "type";
         public const string Ref = "ref";
@@ -48,28 +48,61 @@ namespace ExtendedXmlSerialization
         public const string Value = "Value";
         public const string Underscore = "_";
         public const string Item = "Item";
-        private ISerializationToolsFactory _toolsFactory;
+        private readonly ISerializationToolsFactoryHost _toolsFactory;
+        private readonly IWritingFactory _writingFactory;
 
         private readonly ISerializer _serializer;
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
-        
+
+
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
-        public ExtendedXmlSerializer()
-        {
-            Extensions.Add(new DefaultWritingExtensions(this));
-            _serializer = new Serializer(Create);
-        }
+        /// 
+        public ExtendedXmlSerializer() : this(DefaultSerializationToolsFactory.Default) {}
 
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) : this()
+        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) 
+            : this(new SerializationToolsFactoryHost(toolsFactory), new Collection<object>()) {}
+
+        /// <summary>
+        /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="services"></param>
+        public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services)
+            : this(host, services, new WritingFactory(host, services)) {}
+
+        /// <summary>
+        /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="services"></param>
+        /// <param name="writingFactory"></param>
+        public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services,
+                                     IWritingFactory writingFactory)
+            : this(host, services, writingFactory, new Serializer(writingFactory.Get)) {}
+
+        /// <summary>
+        /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="services"></param>
+        /// <param name="writingFactory"></param>
+        /// <param name="serializer"></param>
+        public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services,
+                                     IWritingFactory writingFactory, ISerializer serializer)
         {
-            _toolsFactory = toolsFactory;
+            _toolsFactory = host;
+            _writingFactory = writingFactory;
+            _serializer = serializer;
+            Services = services;
+            Services.Add(this);
+            WritingExtensions.Add(new DefaultWritingExtensions(this));
         }
 
         /// <summary>
@@ -78,10 +111,12 @@ namespace ExtendedXmlSerialization
         public ISerializationToolsFactory SerializationToolsFactory
         {
             get { return _toolsFactory; }
-            set { _toolsFactory = value; }
+            set { _toolsFactory.Assign(value); }
         }
 
-        public ICollection<IWritingExtension> Extensions { get; } = new Collection<IWritingExtension>();
+        public ICollection<IWritingExtension> WritingExtensions => _writingFactory.Extensions;
+
+        public ICollection<object> Services { get; }
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
@@ -89,15 +124,6 @@ namespace ExtendedXmlSerialization
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
         public string Serialize(object o) => _serializer.Serialize(o);
-
-        private IWriting Create(IWriter writer)
-        {
-            var context = new DefaultWritingContext();
-            var serializer = new EncryptedObjectSerializer(this, context);
-            var extension = new CompositeWritingExtension(Extensions);
-            var result = new Writing(writer, context, extension, serializer, writer, extension, this);
-            return result;
-        }
 
         private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
@@ -535,8 +561,37 @@ namespace ExtendedXmlSerialization
 
         public IExtendedXmlSerializerConfig GetConfiguration(Type type)
             => _toolsFactory?.GetConfiguration(type);
+    }
 
-        public object GetService(Type serviceType)
-            => serviceType.GetTypeInfo().IsInstanceOfType(serviceType) ? this : null;
+    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
+    {
+        void Assign(ISerializationToolsFactory factory);
+    }
+
+    class DefaultSerializationToolsFactory : ISerializationToolsFactory
+    {
+        public static DefaultSerializationToolsFactory Default { get; } = new DefaultSerializationToolsFactory();
+        DefaultSerializationToolsFactory() {}
+
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => null;
+
+        public IPropertyEncryption EncryptionAlgorithm => null;
+    }
+
+    class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
+    {
+        public SerializationToolsFactoryHost() {}
+
+        public SerializationToolsFactoryHost(ISerializationToolsFactory factory)
+        {
+            Factory = factory;
+        }
+
+        ISerializationToolsFactory Factory { get; set; }
+
+        public void Assign(ISerializationToolsFactory factory) => Factory = factory;
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => Factory?.GetConfiguration(type);
+
+        public IPropertyEncryption EncryptionAlgorithm => Factory?.EncryptionAlgorithm;
     }
 }
