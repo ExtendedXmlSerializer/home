@@ -178,10 +178,10 @@ namespace ExtendedXmlSerialization.Write
         public string Get(IServiceProvider services) => _name;
     }
 
-    class EmitTypedContextInstruction : CompositeInstruction
+    /*class EmitTypedContextInstruction : CompositeInstruction
     {
         public EmitTypedContextInstruction(IInstruction body) : base(EmitContextTypeInstruction.Default, body) {}
-    }
+    }*/
     
     class EmitObjectInstruction : DecoratedWriteInstruction
     {

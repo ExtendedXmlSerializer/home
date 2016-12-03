@@ -292,6 +292,7 @@ namespace ExtendedXmlSerialization.Write
         {
             if (configuration.IsCustomSerializer)
             {
+                EmitCurrentInstanceTypeInstruction.Default.Execute(services);
                 configuration.WriteObject(services.Get<XmlWriter>(), instance);
                 return false;
             }
@@ -309,6 +310,7 @@ namespace ExtendedXmlSerialization.Write
             var version = configuration.Version;
             if (version > 0)
             {
+                EmitCurrentInstanceTypeInstruction.Default.Execute(services);
                 services.Attach(new VersionProperty(version));
             }
             return base.StartingMembers(services, configuration, instance, members);

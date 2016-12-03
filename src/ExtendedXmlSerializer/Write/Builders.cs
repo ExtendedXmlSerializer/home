@@ -215,7 +215,7 @@ namespace ExtendedXmlSerialization.Write
         {
             _builder = builder;
         }
-        protected override IInstruction PerformBuild(Type type) => _builder.For(type);
+        protected override IInstruction Plan(Type type) => _builder.For(type);
     }
 
     abstract class ConditionalWritePlanBase : IWritePlan
@@ -227,8 +227,8 @@ namespace ExtendedXmlSerialization.Write
             _specification = specification;
         }
 
-        public IInstruction For(Type type) => _specification(type) ? PerformBuild(type) : null;
-        protected abstract IInstruction PerformBuild(Type type);
+        public IInstruction For(Type type) => _specification(type) ? Plan(type) : null;
+        protected abstract IInstruction Plan(Type type);
     }
 
     class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
@@ -303,7 +303,7 @@ namespace ExtendedXmlSerialization.Write
                     )
                 )
             );
-            var result = new StartNewMembersContextInstruction(all, body);
+            var result = new StartNewMembersContextInstruction(all, new EmitWithTypeInstruction(body));
             return result;
         }
     }
@@ -493,8 +493,7 @@ namespace ExtendedXmlSerialization.Write
     {
         public GeneralObjectWritePlan(IWritePlan plan) : base(type => type == typeof(object),
                                                               new FixedWritePlan(
-                                                                  new CompositeInstruction(
-                                                                      EmitCurrentInstanceTypeInstruction.Default,
+                                                                  new EmitWithTypeInstruction(
                                                                       new EmitGeneralObjectInstruction(plan)))) {}
     }
 
@@ -526,8 +525,8 @@ namespace ExtendedXmlSerialization.Write
             _members = members;
         }
 
-        protected override IInstruction PerformBuild(Type type) => 
-            new CompositeInstruction(EmitCurrentInstanceTypeInstruction.Default, _members.For(type));
+        protected override IInstruction Plan(Type type) => _members.For(type);
+
     }
 
     class RootWritePlan : IWritePlan
@@ -586,7 +585,7 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
 
-        protected override IInstruction PerformBuild(Type type)
+        protected override IInstruction Plan(Type type)
         {
             var elementType = ElementTypeLocator.Default.Locate(type);
             // HACK: This should not be necessary.  Consider a <Element exs:Type="[type]" /> or equivalent format for v2.0.
@@ -594,7 +593,7 @@ namespace ExtendedXmlSerialization.Write
                 ? (INameProvider) InstanceTypeNameProvider.Default
                     : new TypeDefinitionNameProvider(elementType);
             var template = new EmitObjectInstruction(provider, _primary.For(elementType));
-            var result = new EmitTypedContextInstruction(new EmitEnumerableInstruction(template));
+            var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(template));
             return result;
         }
     }
@@ -668,10 +667,19 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction For(Type type) => _instruction;
     }
 
-    class EmitContextTypeInstruction : ConditionalWriteInstruction
+
+    class EmitTypeForTemplateInstruction : EmitWithTypeInstruction
     {
-        public static EmitContextTypeInstruction Default { get; } = new EmitContextTypeInstruction();
-        EmitContextTypeInstruction() : base(EmitMemberTypeSpecification.Default, EmitCurrentInstanceTypeInstruction.Default) {}
+        readonly private static IInstruction Specification =
+            new ConditionalWriteInstruction(EmitMemberTypeSpecification.Default, EmitCurrentInstanceTypeInstruction.Default);
+        public EmitTypeForTemplateInstruction(IInstruction body) : base(Specification, body) {}
+    }
+
+    class EmitWithTypeInstruction : CompositeInstruction
+    {
+        public EmitWithTypeInstruction(IInstruction body) : this(EmitCurrentInstanceTypeInstruction.Default, body) {}
+        
+        public EmitWithTypeInstruction(IInstruction type, IInstruction body) : base(type, body) {}
     }
 
     class PrimitiveWritePlan : ConditionalWritePlan
@@ -692,7 +700,7 @@ namespace ExtendedXmlSerialization.Write
             _builder = builder;
         }
 
-        protected override IInstruction PerformBuild(Type type)
+        protected override IInstruction Plan(Type type)
         {
             var arguments = TypeDefinitionCache.GetDefinition(type).GenericArguments;
             if (arguments.Length != 2)
@@ -702,7 +710,7 @@ namespace ExtendedXmlSerialization.Write
             }
             var keys = new EmitObjectInstruction(ExtendedXmlSerializer.Key, _builder.For(arguments[0]));
             var values = new EmitObjectInstruction(ExtendedXmlSerializer.Value, _builder.For(arguments[1]));
-            var result = new EmitTypedContextInstruction(new EmitDictionaryInstruction(keys, values));
+            var result = new EmitTypeForTemplateInstruction(new EmitDictionaryInstruction(keys, values));
             return result;
         }
     }

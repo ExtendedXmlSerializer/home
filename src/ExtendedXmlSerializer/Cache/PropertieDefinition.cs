@@ -32,26 +32,19 @@ namespace ExtendedXmlSerialization.Cache
             MemberInfo = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
             TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            IsWritable = memberInfo.IsWritable();
             _getter = Getters.Default.Get(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
         }
 
-       /* public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
-        {
-            MemberInfo = fieldInfo;
-            Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
-            _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
-            _propertySetter = CreateSetter( type, fieldInfo.Name, !fieldInfo.IsInitOnly );
-        }*/
 
-        
         private readonly ObjectAccessors.PropertyGetter _getter;
         private readonly ObjectAccessors.PropertySetter _propertySetter;
 
         public string Name { get; private set; }
         public TypeDefinition TypeDefinition { get; }
         public MemberInfo MemberInfo { get; }
+        public bool IsWritable { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }
         public object GetValue(object obj)

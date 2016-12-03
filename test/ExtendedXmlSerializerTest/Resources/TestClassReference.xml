@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="1">
   <Id>1</Id>
-  <CyclicReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+  <CyclicReference ref="1" />
   <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="2">
     <Id>2</Id>
   </ObjectA>
-  <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="2" />
+  <ReferenceToObjectA ref="2" />
   <Lists>
     <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="3">
       <Id>3</Id>
