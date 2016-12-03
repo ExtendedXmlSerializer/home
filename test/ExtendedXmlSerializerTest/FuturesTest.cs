@@ -12,9 +12,9 @@ namespace ExtendedXmlSerialization.Test
         {
             var host = new SerializationToolsFactoryHost();
             var services = new List<object>();
-            var factory = new WritingFactory(host, services);
+            var writings = new WritingFactory(host, services);
             var plan = AutoAttributeWritePlanComposer.Default.Compose();
-            var serializer = new ExtendedXmlSerializer(host, services, factory, new Serializer(plan, factory.Get));
+            var serializer = new ExtendedXmlSerializer(host, services, new AssignmentFactory(host), writings, new Serializer(plan, writings));
             var instance = new TestClassPrimitiveTypes().Init();
             var data = serializer.Serialize(instance);
             Assert.Equal(
@@ -27,9 +27,9 @@ namespace ExtendedXmlSerialization.Test
         {
             var host = new SerializationToolsFactoryHost();
             var services = new List<object>();
-            var factory = new WritingFactory(host, services);
+            var writings = new WritingFactory(host, services);
             var plan = AutoAttributeWritePlanComposer.Default.Compose();
-            var serializer = new ExtendedXmlSerializer(host, services, factory, new Serializer(plan, factory.Get));
+            var serializer = new ExtendedXmlSerializer(host, services, new AssignmentFactory(host), writings, new Serializer(plan, writings));
             var instance = new TestClassPrimitiveTypes().Init();
             instance.PropString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed urna sapien, pulvinar et consequat sit amet, fermentum in volutpat. This sentence should break the property out into content.";
             var data = serializer.Serialize(instance);

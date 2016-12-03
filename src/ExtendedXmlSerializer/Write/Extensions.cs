@@ -21,8 +21,8 @@ namespace ExtendedXmlSerialization.Write
     {
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
-        public static void Property(this IWriting @this, IAttachedProperty property)
-            => @this.Property(property.Name, @this.Serialize(property.Value));
+        /*public static void Property(this IWriting @this, IProperty property)
+            => @this.Property(property.Name, @this.Serialize(property.Value));*/
 
         public static WriteContext? Parent(this IWritingContext @this, int level = 1) => @this.Hierarchy.ElementAtOrDefault(level);
 
@@ -144,10 +144,10 @@ namespace ExtendedXmlSerialization.Write
         public virtual bool Starting(IWriting writing)
         {
             var current = writing.Current;
-            if (current.Value != null)
+            /*if (current.Text != null)
             {
-                return StartingContent(writing, current.Instance, current.Member, current.Value);
-            }
+                return StartingContent(writing, current.Instance, current.Member, current.Text);
+            }*/
 
             if (current.Member != null)
             {
@@ -176,20 +176,20 @@ namespace ExtendedXmlSerialization.Write
         protected virtual bool StartingMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) => true;
         protected virtual bool StartingMember(IWriting services, object instance, MemberContext context) => true;
         protected virtual bool StartingMemberValue(IWriting services, object instance, MemberContext context) => true;
-        protected virtual bool StartingContent(IWriting services, object instance, MemberContext? context, string content) => true;
+        /*protected virtual bool StartingContent(IWriting services, object instance, MemberContext? context, string content) => true;*/
 
         public virtual void Finished(IWriting services)
         {
             var current = services.Current;
-            if (current.Value != null)
+            /*if (current.Text != null)
             {
-                FinishedContent(services, current.Instance, current.Member, current.Value);
-            }
+                FinishedContent(services, current.Instance, current.Member, current.Text);
+            }*/
             /*else if (current.HasValue)
             {
                 FinishedMemberValue(services, current.Instance, current.Member, current.MemberValue);
             }*/
-            else if (current.Member != null)
+            if (current.Member != null)
             {
                 switch (current.State)
                 {
@@ -220,7 +220,7 @@ namespace ExtendedXmlSerialization.Write
         protected virtual void FinishedMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) {}
         protected virtual void FinishedMember(IWriting services, object instance, MemberContext member) {}
         protected virtual void FinishedMemberValue(IWriting services, object instance, MemberContext member) {}
-        protected virtual void FinishedContent(IWriting services, object instance, MemberContext? member, string content) {}
+        /*protected virtual void FinishedContent(IWriting services, object instance, MemberContext? member, string content) {}*/
         protected virtual void Completed(IWriting services) {}
     }
 
@@ -244,10 +244,10 @@ namespace ExtendedXmlSerialization.Write
                 var configuration = For(type);
                 if (configuration != null)
                 {
-                    if (current.Value != null)
+                    /*if (current.Text != null)
                     {
-                        return StartingContent(writing, configuration, current.Instance, current.Member, current.Value);
-                    }
+                        return StartingContent(writing, configuration, current.Instance, current.Member, current.Text);
+                    }*/
 
                     if (current.Member != null)
                     {
@@ -279,8 +279,8 @@ namespace ExtendedXmlSerialization.Write
         protected virtual bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberContext member) => true;
         protected virtual bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
                                               object instance, MemberContext member) => true;
-        protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                               object instance, MemberContext? member, string content) => true;
+        /*protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
+                                               object instance, MemberContext? member, string content) => true;*/
     }
 
     public class CustomSerializationExtension : ConfigurationWritingExtensionBase
@@ -317,17 +317,28 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class VersionProperty : AttachedPropertyBase
+	class MemberProperty : PropertyBase
+	{
+		public MemberProperty(MemberContext member) : base(member.Metadata.Name, member.Value) {}
+	}
+
+    class TypeProperty : PropertyBase
+    {
+        public TypeProperty(object instance) : this(instance.GetType()) {}
+        public TypeProperty(Type type) : base(ExtendedXmlSerializer.Type, type.FullName) {}
+    }
+
+    class VersionProperty : PropertyBase
     {
         public VersionProperty(int version) : base(ExtendedXmlSerializer.Version, version) {}
     }
 
-    class ObjectReferenceProperty : AttachedPropertyBase
+    class ObjectReferenceProperty : PropertyBase
     {
         public ObjectReferenceProperty(string value) : base(ExtendedXmlSerializer.Ref, value) {}
     }
 
-    class ObjectIdProperty : AttachedPropertyBase
+    class ObjectIdProperty : PropertyBase
     {
         public ObjectIdProperty(string value) : base(ExtendedXmlSerializer.Id, value) {}
     }
@@ -384,7 +395,7 @@ namespace ExtendedXmlSerialization.Write
                 var objectId = configuration.GetObjectId(instance);
                 var contains = _references.ContainsKey(instance);
                 var reference = contains || force;
-                var property = reference ? (IAttachedProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
+                var property = reference ? (IProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
                 var result = !reference;
                 if (result)
                 {
@@ -393,7 +404,7 @@ namespace ExtendedXmlSerialization.Write
                 }
                 else
                 {
-                    services.Property(property);
+                    services.Emit(property);
                 }
                 return result;
             }

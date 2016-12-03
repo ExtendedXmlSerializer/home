@@ -49,7 +49,8 @@ namespace ExtendedXmlSerialization
         public const string Underscore = "_";
         public const string Item = "Item";
         private readonly ISerializationToolsFactoryHost _toolsFactory;
-        private readonly IWritingFactory _writingFactory;
+        private readonly IAssignmentFactory _assignments;
+        private readonly IWritingFactory _writings;
 
         private readonly ISerializer _serializer;
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
@@ -67,38 +68,44 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="toolsFactory">The instance of <see cref="ISerializationToolsFactory"/></param>
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory) 
-            : this(new SerializationToolsFactoryHost(toolsFactory), new Collection<object>()) {}
+            : this(new SerializationToolsFactoryHost(toolsFactory), new HashSet<object>()) {}
 
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="host"></param>
         /// <param name="services"></param>
+        /// <param name="instanceFactory"></param>
         public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services)
-            : this(host, services, new WritingFactory(host, services)) {}
+            : this(host, services, new AssignmentFactory(host), new WritingFactory(host, services)) {}
 
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="host"></param>
         /// <param name="services"></param>
-        /// <param name="writingFactory"></param>
+        /// <param name="writings"></param>
+        /// <param name="assignments"></param>
         public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services,
-                                     IWritingFactory writingFactory)
-            : this(host, services, writingFactory, new Serializer(writingFactory.Get)) {}
+                                     IAssignmentFactory assignments,
+                                     IWritingFactory writings)
+            : this(host, services, assignments, writings, new Serializer(writings)) {}
 
         /// <summary>
         /// Creates an instance of <see cref="ExtendedXmlSerializer"/>
         /// </summary>
         /// <param name="host"></param>
         /// <param name="services"></param>
-        /// <param name="writingFactory"></param>
+        /// <param name="assignments"></param>
+        /// <param name="writings"></param>
         /// <param name="serializer"></param>
         public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services,
-                                     IWritingFactory writingFactory, ISerializer serializer)
+                                     IAssignmentFactory assignments,
+                                     IWritingFactory writings, ISerializer serializer)
         {
             _toolsFactory = host;
-            _writingFactory = writingFactory;
+            _assignments = assignments;
+            _writings = writings;
             _serializer = serializer;
             Services = services;
             Services.Add(this);
@@ -114,7 +121,7 @@ namespace ExtendedXmlSerialization
             set { _toolsFactory.Assign(value); }
         }
 
-        public ICollection<IWritingExtension> WritingExtensions => _writingFactory.Extensions;
+        public ICollection<IWritingExtension> WritingExtensions => _writings.Extensions;
 
         public ICollection<object> Services { get; }
 
@@ -123,7 +130,18 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => _serializer.Serialize(o);
+        public string Serialize(object o)
+        {
+            using (var stream = new MemoryStream())
+            {
+                var assignment = _assignments.Create(stream, o);
+                _serializer.Serialize(assignment);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                var result = new StreamReader(stream).ReadToEnd();
+                return result;
+            }
+        }
 
         private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
@@ -578,7 +596,7 @@ namespace ExtendedXmlSerialization
         public IPropertyEncryption EncryptionAlgorithm => null;
     }
 
-	public class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
+    public class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
     {
         public SerializationToolsFactoryHost() {}
 

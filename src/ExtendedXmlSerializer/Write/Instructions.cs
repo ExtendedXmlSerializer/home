@@ -42,14 +42,7 @@ namespace ExtendedXmlSerialization.Write
         void IWriteInstruction<T>.Execute( IWriting writing, T instance ) => Execute(writing, instance);
     }
 
-    class EmitInstanceValueInstruction : WriteInstructionBase
-    {
-        public static EmitInstanceValueInstruction Default { get; } = new EmitInstanceValueInstruction();
-        EmitInstanceValueInstruction() {}
-
-        protected override void Execute(IWriting writing) => writing.Emit(writing.Current.Value);
-    }
-
+    
     class EmitDictionaryPairInstruction : WriteInstructionBase<DictionaryEntry>
     {
         private readonly IInstruction _key;
@@ -137,15 +130,26 @@ namespace ExtendedXmlSerialization.Write
             _provider = provider;
         }
 
-        protected override void Execute(IWriting writing) => writing.Property(ExtendedXmlSerializer.Type, _provider(writing).FullName);
+        protected override void Execute(IWriting writing) => writing.Emit(new TypeProperty(_provider(writing)));
     }
 
-    class EmitContentAsMemberPropertyInstruction : WriteInstructionBase
+    class EmitMemberAsTextInstruction : WriteInstructionBase
     {
-        public static EmitContentAsMemberPropertyInstruction Default { get; } = new EmitContentAsMemberPropertyInstruction();
-        EmitContentAsMemberPropertyInstruction() {}
+        public static EmitMemberAsTextInstruction Default { get; } = new EmitMemberAsTextInstruction();
+        EmitMemberAsTextInstruction() {}
 
-        protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member?.Metadata.Name, writing.Current.Value);
+        protected override void Execute(IWriting writing)
+        {
+            var member = writing.Current.Member;
+            if (member != null)
+            {
+                writing.Emit(new MemberProperty(member.Value));
+            }
+            else
+            {
+	            throw new InvalidOperationException($"An attempt was made to emit a member of '{writing.Current.Instance.GetType()}' but it is not available.");
+            }
+        }
     }
 
     public interface INameProvider
@@ -204,9 +208,9 @@ namespace ExtendedXmlSerialization.Write
         protected override void Execute(IWriting writing)
         {
             var name = _provider.Get(writing);
-            writing.StartObject(name);
+            writing.BeginContent(name);
             base.Execute(writing);
-            writing.EndObject();
+            writing.EndContent();
         }
     }
 
@@ -250,7 +254,7 @@ namespace ExtendedXmlSerialization.Write
         protected override IDisposable DetermineContext(IWriting writing) => writing.New(_members);
     }
 
-    class StartNewValueContextFromInstanceInstruction : StartNewValueContextInstructionBase
+    /*class StartNewValueContextFromInstanceInstruction : StartNewValueContextInstructionBase
     {
         public static StartNewValueContextFromInstanceInstruction Default { get; } = new StartNewValueContextFromInstanceInstruction();
         StartNewValueContextFromInstanceInstruction() : this(writing => writing.Current.Instance) {}
@@ -264,6 +268,15 @@ namespace ExtendedXmlSerialization.Write
         protected override object DetermineInstance(IWriting writing) => _source(writing);
     }
 
+        /*class EmitInstanceValueInstruction : WriteInstructionBase
+    {
+        public static EmitInstanceValueInstruction Default { get; } = new EmitInstanceValueInstruction();
+        EmitInstanceValueInstruction() {}
+
+        protected override void Execute(IWriting writing) => writing.Emit(writing.Current.Text);
+    }*/
+
+		/*
     abstract class StartNewValueContextInstructionBase : NewWriteContextInstructionBase
     {
         protected StartNewValueContextInstructionBase(IInstruction instruction) : base(instruction) {}
@@ -282,7 +295,7 @@ namespace ExtendedXmlSerialization.Write
     class StartNewValueContextFromMemberValueInstruction : StartNewValueContextInstructionBase
     {
         public static StartNewValueContextFromMemberValueInstruction Default { get; } = new StartNewValueContextFromMemberValueInstruction();
-        StartNewValueContextFromMemberValueInstruction() : base(EmitContentAsMemberPropertyInstruction.Default) {}
+        StartNewValueContextFromMemberValueInstruction() : base(EmitMemberAsTextInstruction.Default) {}
         
         protected override object DetermineInstance(IWriting writing)
         {
@@ -294,6 +307,14 @@ namespace ExtendedXmlSerialization.Write
             }
             throw new InvalidOperationException($"A call was made to serialize the member value of '{writing.Current.Member?.Metadata}', but it has not been set.");
         }
+    }*/
+
+    class EmitInstanceAsTextInstruction : WriteInstructionBase
+    {
+        public static EmitInstanceAsTextInstruction Default { get; } = new EmitInstanceAsTextInstruction();
+        EmitInstanceAsTextInstruction() {}
+
+        protected override void Execute(IWriting writing) => writing.Emit(writing.Current.Instance);
     }
 
     class EmitMemberAsPropertyInstruction : DecoratedWriteInstruction, IPropertyInstruction
@@ -309,7 +330,7 @@ namespace ExtendedXmlSerialization.Write
     class StartNewMemberValueContextInstruction : NewWriteContextInstructionBase
     {
         public StartNewMemberValueContextInstruction(IInstruction content) : base(content) {}
-        protected override IDisposable DetermineContext(IWriting writing) => writing.NewMemberValue();
+        protected override IDisposable DetermineContext(IWriting writing) => writing.NewMemberContext();
     }
 
     class StartNewMemberContextInstruction : NewWriteContextInstructionBase

@@ -69,12 +69,35 @@ namespace ExtendedXmlSerialization.Common
         protected override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
     }
 
-    public interface IParameterizedSource<in TParameter, out TResult>
+    public interface IFactory<in TParameter, out TResult>
     {
-        TResult Get( TParameter parameter );
+        TResult Create(TParameter parameter);
     }
 
-    public static class SerializerExtensions
+    public interface IContent
+    {
+        object Value { get; }
+    }
+
+    public interface IProperty : IContent
+    {
+        string Name { get; }
+    }
+
+    abstract class PropertyBase : IProperty
+    {
+        protected PropertyBase(string name, object value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public string Name { get; }
+
+        public object Value { get; }
+    }
+
+    /*public static class SerializerExtensions
     {
         public static string Serialize(this ISerializer @this, object instance)
         {
@@ -98,7 +121,7 @@ namespace ExtendedXmlSerialization.Common
                 @this.Serialize(writer, instance);
             }
         }
-    }
+    }*/
 
     class DefaultServiceProvider : IServiceProvider
     {
@@ -224,7 +247,7 @@ namespace ExtendedXmlSerialization.Common
         
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
-        public static void Property(this IWriting @this, IAttachedProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
+        // public static void Property(this IWriting @this, IProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this) => new SpecificationAdapter<T>(@this);
 

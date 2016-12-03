@@ -36,12 +36,12 @@ namespace ExtendedXmlSerialization.Write
         public virtual bool Defer(MemberInfo member) => false;
     }
 
-    class SpecificationCandidatesSelector : IParameterizedSource<object, IEnumerable<object>>
+    class SpecificationCandidatesSelector : IFactory<object, IEnumerable<object>>
     {
         public static SpecificationCandidatesSelector Default { get; } = new SpecificationCandidatesSelector();
         SpecificationCandidatesSelector() {}
 
-        public IEnumerable<object> Get(object parameter)
+        public IEnumerable<object> Create(object parameter)
         {
             yield return parameter;
             var member = parameter as MemberInfo;
@@ -103,16 +103,16 @@ namespace ExtendedXmlSerialization.Write
 
     class InstructionSpecification : InstructionSpecificationBase
     {
-        private readonly IParameterizedSource<object, IEnumerable<object>> _candidates;
+        private readonly IFactory<object, IEnumerable<object>> _candidates;
         private readonly Func<MemberInfo, bool> _defer;
         private readonly IImmutableList<IInstructionCandidateSpecification> _specifications;
         public static InstructionSpecification Default { get; } = new InstructionSpecification();
         InstructionSpecification()
             : this(
                 SpecificationCandidatesSelector.Default, context => false,
-                new InstructionCandidateSpecification(IsTypeSpecification<IAttachedProperty>.Default.IsSatisfiedBy)) {}
+                new InstructionCandidateSpecification(IsTypeSpecification<IProperty>.Default.IsSatisfiedBy)) {}
 
-        public InstructionSpecification(IParameterizedSource<object, IEnumerable<object>> candidates,
+        public InstructionSpecification(IFactory<object, IEnumerable<object>> candidates,
                                         Func<MemberInfo, bool> defer, params IInstructionCandidateSpecification[] specifications)
         {
             _candidates = candidates;
@@ -122,7 +122,7 @@ namespace ExtendedXmlSerialization.Write
 
         public override bool IsSatisfiedBy(object parameter)
         {
-            var candidates = _candidates.Get(parameter);
+            var candidates = _candidates.Create(parameter);
             foreach (var candidate in candidates)
             {
                 foreach (var specification in _specifications)
@@ -194,12 +194,12 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class AdditionalInstructions : IParameterizedSource<IWritePlan, IImmutableList<IWritePlan>>
+    class AdditionalInstructions : IFactory<IWritePlan, IImmutableList<IWritePlan>>
     {
         public static AdditionalInstructions Default { get; } = new AdditionalInstructions();
         AdditionalInstructions() {}
 
-        public IImmutableList<IWritePlan> Get(IWritePlan parameter) => ImmutableList.Create<IWritePlan>();
+        public IImmutableList<IWritePlan> Create(IWritePlan parameter) => ImmutableList.Create<IWritePlan>();
     }
 
     public class DefaultWritePlanComposer : IWritePlanComposer
@@ -208,12 +208,12 @@ namespace ExtendedXmlSerialization.Write
         DefaultWritePlanComposer() : this(InstructionSpecification.Default) {}
 
         private readonly IInstructionSpecification _specification;
-        private readonly IParameterizedSource<IWritePlan, IImmutableList<IWritePlan>> _additional;
+        private readonly IFactory<IWritePlan, IImmutableList<IWritePlan>> _additional;
 
         public DefaultWritePlanComposer(IInstructionSpecification specification) : this(specification, AdditionalInstructions.Default) {}
 
         public DefaultWritePlanComposer(IInstructionSpecification specification,
-                                        IParameterizedSource<IWritePlan, IImmutableList<IWritePlan>> additional)
+                                        IFactory<IWritePlan, IImmutableList<IWritePlan>> additional)
         {
             _specification = specification;
             _additional = additional;
@@ -232,7 +232,7 @@ namespace ExtendedXmlSerialization.Write
                         new ObjectWritePlan(selector, _specification),
                         new GeneralObjectWritePlan(selector), 
                     }
-                    .Concat(_additional.Get(selector))
+                    .Concat(_additional.Create(selector))
             );
             var result = new CachedWritePlan(new RootWritePlan(selector));
             return result;
@@ -304,7 +304,7 @@ namespace ExtendedXmlSerialization.Write
         private readonly Func<Type, IImmutableList<MemberInfo>> _members;
         
         public ObjectMembersWritePlan(IWritePlan primary, IInstructionSpecification specification)
-            : this(primary, new MemberInstructionFactory(primary, specification).Get, specification.IsSatisfiedBy, specification.Defer, Members) {}
+            : this(primary, new MemberInstructionFactory(primary, specification).Create, specification.IsSatisfiedBy, specification.Defer, Members) {}
 
         public ObjectMembersWritePlan(
             IWritePlan primary, 
@@ -413,7 +413,7 @@ namespace ExtendedXmlSerialization.Write
             var properties = Properties(all).ToArray();
             foreach (var property in properties)
             {
-                writing.Property(property);
+                writing.Emit(property);
             }
 
             foreach (var content in all.Except(properties))
@@ -422,7 +422,7 @@ namespace ExtendedXmlSerialization.Write
             }
         }
 
-        IEnumerable<IAttachedProperty> Properties(IEnumerable<IAttachedProperty> source)
+        IEnumerable<IProperty> Properties(IEnumerable<IProperty> source)
         {
             foreach (var property in source)
             {
@@ -494,7 +494,7 @@ namespace ExtendedXmlSerialization.Write
     public interface IPropertyInstruction : IMemberInstruction {}
     public interface IContentInstruction : IMemberInstruction {}
 
-    public interface IMemberInstructionFactory : IParameterizedSource<MemberContext, IMemberInstruction>
+    public interface IMemberInstructionFactory : IFactory<MemberContext, IMemberInstruction>
     {}
 
     class MemberInstructionFactory : IMemberInstructionFactory
@@ -502,7 +502,7 @@ namespace ExtendedXmlSerialization.Write
         private readonly IWritePlan _writePlan;
         private readonly IInstructionSpecification _specification;
         readonly private static StartNewMemberValueContextInstruction PropertyContent =
-            new StartNewMemberValueContextInstruction(StartNewValueContextFromMemberValueInstruction.Default);
+            new StartNewMemberValueContextInstruction(EmitMemberAsTextInstruction.Default);
 
         public MemberInstructionFactory(IWritePlan primary, IInstructionSpecification specification)
         {
@@ -523,7 +523,7 @@ namespace ExtendedXmlSerialization.Write
 
         bool Specification<T>(T parameter) => _specification.IsSatisfiedBy(parameter);
 
-        public IMemberInstruction Get(MemberContext parameter)
+        public IMemberInstruction Create(MemberContext parameter)
         {
             var property = Specification(parameter);
             var content = property ? PropertyContent : Content(parameter);
@@ -732,7 +732,7 @@ namespace ExtendedXmlSerialization.Write
     class PrimitiveWritePlan : ConditionalWritePlan
     {
         readonly private static IWritePlan Emit =
-            new FixedWritePlan(StartNewValueContextFromInstanceInstruction.Default);
+            new FixedWritePlan(EmitInstanceAsTextInstruction.Default);
             
         public static PrimitiveWritePlan Default { get; } = new PrimitiveWritePlan();
         PrimitiveWritePlan() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, Emit) {}
