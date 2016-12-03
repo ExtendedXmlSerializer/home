@@ -6,19 +6,19 @@
   <All>
     <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="3">
       <Id>3</Id>
-      <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
-      <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+      <ObjectA ref="1" />
+      <ReferenceToObjectA ref="1" />
     </TestClassReference>
     <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="4">
       <Id>4</Id>
-      <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="2" />
-      <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="2" />
+      <ObjectA ref="2" />
+      <ReferenceToObjectA ref="2" />
     </TestClassReference>
     <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="2">
       <Id>2</Id>
-      <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
-      <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+      <ObjectA ref="1" />
+      <ReferenceToObjectA ref="1" />
     </TestClassReference>
-    <TestClassReference type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+    <TestClassReference ref="1" />
   </All>
 </TestClassReferenceWithList>

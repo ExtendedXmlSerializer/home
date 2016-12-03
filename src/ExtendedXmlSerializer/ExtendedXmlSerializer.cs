@@ -448,7 +448,6 @@ namespace ExtendedXmlSerialization
                 return;
             }
             writer.WriteStartElement(name ?? type.Name);
-            writer.WriteAttributeString(Type, type.FullName);
             
             // Get configuration for type
             var configuration = GetConfiguration(type.Type);
@@ -470,8 +469,13 @@ namespace ExtendedXmlSerialization
                         writer.WriteEndElement();
                         return;
                     }
+                    writer.WriteAttributeString(Type, type.FullName);
                     writer.WriteAttributeString(Id, objectId);
                     _referencesObjects.Add(key, o);
+                }
+                else
+                {
+                    writer.WriteAttributeString(Type, type.FullName);
                 }
 
                 if (configuration.Version > 0)
@@ -485,6 +489,10 @@ namespace ExtendedXmlSerialization
                     writer.WriteEndElement();
                     return;
                 }
+            }
+            else
+            {
+                writer.WriteAttributeString(Type, type.FullName);
             }
 
             var properties = type.Properties;
