@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization
     /// <summary>
     /// Extended Xml Serializer
     /// </summary>
-    public class ExtendedXmlSerializer : IExtendedXmlSerializer, ISerializationToolsFactory
+    public class ExtendedXmlSerializer : IExtendedXmlSerializer, ISerializationToolsFactory 
     {
         public const string Type = "type";
         public const string Ref = "ref";
@@ -75,7 +75,6 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="host"></param>
         /// <param name="services"></param>
-        /// <param name="instanceFactory"></param>
         public ExtendedXmlSerializer(ISerializationToolsFactoryHost host, ICollection<object> services)
             : this(host, services, new AssignmentFactory(host), new WritingFactory(host, services)) {}
 
@@ -579,37 +578,5 @@ namespace ExtendedXmlSerialization
 
         public IExtendedXmlSerializerConfig GetConfiguration(Type type)
             => _toolsFactory?.GetConfiguration(type);
-    }
-
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
-    {
-        void Assign(ISerializationToolsFactory factory);
-    }
-
-    class DefaultSerializationToolsFactory : ISerializationToolsFactory
-    {
-        public static DefaultSerializationToolsFactory Default { get; } = new DefaultSerializationToolsFactory();
-        DefaultSerializationToolsFactory() {}
-
-        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => null;
-
-        public IPropertyEncryption EncryptionAlgorithm => null;
-    }
-
-    public class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
-    {
-        public SerializationToolsFactoryHost() {}
-
-        public SerializationToolsFactoryHost(ISerializationToolsFactory factory)
-        {
-            Factory = factory;
-        }
-
-        ISerializationToolsFactory Factory { get; set; }
-
-        public void Assign(ISerializationToolsFactory factory) => Factory = factory;
-        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => Factory?.GetConfiguration(type);
-
-        public IPropertyEncryption EncryptionAlgorithm => Factory?.EncryptionAlgorithm;
     }
 }
