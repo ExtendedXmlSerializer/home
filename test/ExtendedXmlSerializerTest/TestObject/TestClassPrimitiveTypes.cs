@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Test.TestObject
     }
     public class TestClassPrimitiveTypes
     {
-        public void Init()
+        public TestClassPrimitiveTypes Init()
         {
             PropString = "TestString";
             PropInt = -1;
@@ -63,6 +63,7 @@ namespace ExtendedXmlSerialization.Test.TestObject
             PropByte = 23;
             PropSbyte = 33;
             PropChar = 'g';
+	        return this;
         }
 
         public string PropString { get; set; }

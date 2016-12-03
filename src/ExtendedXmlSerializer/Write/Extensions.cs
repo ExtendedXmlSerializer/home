@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
 
-        public static WriteContext? GetMemberContext(this IWritingContext @this)
+        public static WriteContext? GetContextWithMember(this IWritingContext @this)
         {
             if (@this.Current.Member != null)
             {
@@ -67,10 +67,10 @@ namespace ExtendedXmlSerialization.Write
             _values = values;
         }
 
-        protected override bool StartingMember(IWriting services, object instance, MemberInfo member, object currentMemberValue)
+        protected override bool StartingMember(IWriting services, object instance, MemberContext member)
         {
-            var defaultValue = _values(services.Current.MemberType);
-            var result = currentMemberValue != defaultValue;
+            var defaultValue = _values(services.Current.Member?.MemberType);
+            var result = member.Value != defaultValue;
             return result;
         }
     }
@@ -146,7 +146,7 @@ namespace ExtendedXmlSerialization.Write
             var current = writing.Current;
             if (current.Value != null)
             {
-                return StartingContent(writing, current.Instance, current.Member, current.MemberValue, current.Value);
+                return StartingContent(writing, current.Instance, current.Member, current.Value);
             }
 
             if (current.Member != null)
@@ -154,9 +154,9 @@ namespace ExtendedXmlSerialization.Write
                 switch (current.State)
                 {
                     case WriteState.MemberValue:
-                        return StartingMemberValue(writing, current.Instance, current.Member, current.MemberValue);
+                        return StartingMemberValue(writing, current.Instance, current.Member.GetValueOrDefault());
                     default:
-                        return StartingMember(writing, current.Instance, current.Member, current.MemberValue);
+                        return StartingMember(writing, current.Instance, current.Member.GetValueOrDefault());
                 }
             }
 
@@ -174,16 +174,16 @@ namespace ExtendedXmlSerialization.Write
         protected virtual bool Initializing(IWriting services) => true;
         protected virtual bool StartingInstance(IWriting services, object instance) => true;
         protected virtual bool StartingMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWriting services, object instance, MemberInfo member, object currentMemberValue) => true;
-        protected virtual bool StartingMemberValue(IWriting services, object instance, MemberInfo member, object memberValue) => true;
-        protected virtual bool StartingContent(IWriting services, object instance, MemberInfo member, object memberValue, string content) => true;
+        protected virtual bool StartingMember(IWriting services, object instance, MemberContext context) => true;
+        protected virtual bool StartingMemberValue(IWriting services, object instance, MemberContext context) => true;
+        protected virtual bool StartingContent(IWriting services, object instance, MemberContext? context, string content) => true;
 
         public virtual void Finished(IWriting services)
         {
             var current = services.Current;
             if (current.Value != null)
             {
-                FinishedContent(services, current.Instance, current.Member, current.MemberValue, current.Value);
+                FinishedContent(services, current.Instance, current.Member, current.Value);
             }
             /*else if (current.HasValue)
             {
@@ -194,10 +194,10 @@ namespace ExtendedXmlSerialization.Write
                 switch (current.State)
                 {
                     case WriteState.MemberValue:
-                        FinishedMemberValue(services, current.Instance, current.Member, current.MemberValue);
+                        FinishedMemberValue(services, current.Instance, current.Member.GetValueOrDefault());
                         break;
                     default:
-                        FinishedMember(services, current.Instance, current.Member);
+                        FinishedMember(services, current.Instance, current.Member.GetValueOrDefault());
                         break;
                 }
                 
@@ -218,9 +218,9 @@ namespace ExtendedXmlSerialization.Write
 
         protected virtual void FinishedInstance(IWriting services, object instance) {}
         protected virtual void FinishedMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) {}
-        protected virtual void FinishedMember(IWriting services, object instance, MemberInfo member) {}
-        protected virtual void FinishedMemberValue(IWriting services, object instance, MemberInfo member, object memberValue) {}
-        protected virtual void FinishedContent(IWriting services, object instance, MemberInfo member, object memberValue, string content) {}
+        protected virtual void FinishedMember(IWriting services, object instance, MemberContext member) {}
+        protected virtual void FinishedMemberValue(IWriting services, object instance, MemberContext member) {}
+        protected virtual void FinishedContent(IWriting services, object instance, MemberContext? member, string content) {}
         protected virtual void Completed(IWriting services) {}
     }
 
@@ -246,7 +246,7 @@ namespace ExtendedXmlSerialization.Write
                 {
                     if (current.Value != null)
                     {
-                        return StartingContent(writing, configuration, current.Instance, current.Member, current.MemberValue, current.Value);
+                        return StartingContent(writing, configuration, current.Instance, current.Member, current.Value);
                     }
 
                     if (current.Member != null)
@@ -254,10 +254,10 @@ namespace ExtendedXmlSerialization.Write
                         switch (current.State)
                         {
                             case WriteState.MemberValue:
-                                return StartingMemberValue(writing, configuration, current.Instance, current.Member, current.MemberValue);
+                                return StartingMemberValue(writing, configuration, current.Instance, current.Member.GetValueOrDefault());
                                 
                             default:
-                                return StartingMember(writing, configuration, current.Instance, current.Member, current.MemberValue);
+                                return StartingMember(writing, configuration, current.Instance, current.Member.GetValueOrDefault());
                         }
                     }
 
@@ -276,11 +276,11 @@ namespace ExtendedXmlSerialization.Write
                                                 object instance) => true;
         protected virtual bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberInfo member, object currentMemberValue) => true;
+        protected virtual bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberContext member) => true;
         protected virtual bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                              object instance, MemberInfo member, object memberValue) => true;
+                                              object instance, MemberContext member) => true;
         protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                               object instance, MemberInfo member, object memberValue, string content) => true;
+                                               object instance, MemberContext? member, string content) => true;
     }
 
     public class CustomSerializationExtension : ConfigurationWritingExtensionBase

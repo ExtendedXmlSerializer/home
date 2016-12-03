@@ -578,7 +578,7 @@ namespace ExtendedXmlSerialization
         public IPropertyEncryption EncryptionAlgorithm => null;
     }
 
-    class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
+	public class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
     {
         public SerializationToolsFactoryHost() {}
 

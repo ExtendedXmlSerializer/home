@@ -38,7 +38,26 @@ namespace ExtendedXmlSerialization.Common
             public bool IsSatisfiedBy(object parameter) => parameter is T;
         }
 
-    public class SpecificationAdapter<T> : ISpecification<object>
+    public class DelegatedSpecification<T> : ISpecification<T>
+    {
+        readonly Func<T, bool> _delegate;
+
+        public DelegatedSpecification( Func<T, bool> @delegate )
+        {
+            this._delegate = @delegate;
+        }
+
+        public bool IsSatisfiedBy( T parameter ) => _delegate.Invoke( parameter );
+    }
+
+    public abstract class SpecificationAdapterBase<T> : ISpecification<object>
+    {
+        public bool IsSatisfiedBy(object parameter) => parameter is T && IsSatisfiedBy((T)parameter);
+
+        protected abstract bool IsSatisfiedBy(T parameter);
+    }
+
+    public class SpecificationAdapter<T> : SpecificationAdapterBase<T>
     {
         private readonly ISpecification<T> _specification;
 
@@ -47,7 +66,7 @@ namespace ExtendedXmlSerialization.Common
             _specification = specification;
         }
 
-        public bool IsSatisfiedBy(object parameter) => parameter is T && _specification.IsSatisfiedBy((T)parameter);
+        protected override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
     }
 
     public interface IParameterizedSource<in TParameter, out TResult>

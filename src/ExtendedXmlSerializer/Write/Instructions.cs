@@ -145,7 +145,7 @@ namespace ExtendedXmlSerialization.Write
         public static EmitContentAsMemberPropertyInstruction Default { get; } = new EmitContentAsMemberPropertyInstruction();
         EmitContentAsMemberPropertyInstruction() {}
 
-        protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member.Name, writing.Current.Value);
+        protected override void Execute(IWriting writing) => writing.Property(writing.Current.Member?.Metadata.Name, writing.Current.Value);
     }
 
     public interface INameProvider
@@ -289,10 +289,10 @@ namespace ExtendedXmlSerialization.Write
             switch (writing.Current.State)
             {
                 case WriteState.MemberValue:
-                    var result = writing.Current.MemberValue;
+                    var result = writing.Current.Member?.Value;
                     return result;
             }
-            throw new InvalidOperationException($"A call was made to serialize the member value of '{writing.Current.Member}', but it has not been set.");
+            throw new InvalidOperationException($"A call was made to serialize the member value of '{writing.Current.Member?.Metadata}', but it has not been set.");
         }
     }
 
@@ -327,7 +327,7 @@ namespace ExtendedXmlSerialization.Write
     class StartNewContextFromMemberValueInstruction : NewWriteContextInstructionBase
     {
         public StartNewContextFromMemberValueInstruction(IInstruction instruction) : base(instruction) {}
-        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.MemberValue);
+        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.Member?.Value);
     }
 
     class StartNewContextFromRootInstruction : NewWriteContextInstructionBase
