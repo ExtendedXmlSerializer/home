@@ -465,6 +465,11 @@ namespace ExtendedXmlSerialization
                     }
                     else if (_referencesObjects.ContainsKey(key) || _reservedReferencesObjects.ContainsKey(key))
                     {
+                        if (forceSaveType)
+                        {
+                            writer.WriteAttributeString(Type, type.FullName);
+                        }
+
                         writer.WriteAttributeString(Ref, objectId);
                         writer.WriteEndElement();
                         return;
