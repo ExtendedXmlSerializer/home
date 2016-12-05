@@ -26,9 +26,9 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationReference: BaseTest
+    public class SerializationReferenceTest: BaseTest
     {
-        public SerializationReference()
+        public SerializationReferenceTest()
         {
             Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
             {
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test
             obj.CyclicReference = obj;
             obj.ObjectA = new TestClassReference {Id = 2};
             obj.ReferenceToObjectA = obj.ObjectA;
-            obj.Lists = new List<TestClassReference>
+            obj.Lists = new List<IReference>
             {
                 new TestClassReference {Id = 3},
                 new TestClassReference {Id = 4}
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Test
             obj.Parent = new TestClassReference() {Id = 1};
             var other = new TestClassReference {Id = 2, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent};
             
-            obj.All = new List<TestClassReference>
+            obj.All = new List<IReference>
             {
                 new TestClassReference {Id = 3, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent},
                 new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other},
@@ -78,7 +78,7 @@ namespace ExtendedXmlSerialization.Test
             obj.Parent = new TestClassReference() { Id = 1 };
             var other = new TestClassReference { Id = 2, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent };
 
-            obj.All = new Dictionary<int, TestClassReference>()
+            obj.All = new Dictionary<int, IReference>()
             {
                 {3, new TestClassReference {Id = 3, ObjectA = obj.Parent, ReferenceToObjectA = obj.Parent}},
                 {4, new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other}},

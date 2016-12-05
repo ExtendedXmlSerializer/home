@@ -8,8 +8,8 @@
       <Key>3</Key>
       <Value type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="3">
         <Id>3</Id>
-        <ObjectA ref="1" />
-        <ReferenceToObjectA ref="1" />
+        <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+        <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
       </Value>
     </Item>
     <Item>
@@ -18,19 +18,19 @@
         <Id>4</Id>
         <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" id="2">
           <Id>2</Id>
-          <ObjectA ref="1" />
-          <ReferenceToObjectA ref="1" />
+          <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
+          <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
         </ObjectA>
-        <ReferenceToObjectA ref="2" />
+        <ReferenceToObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="2" />
       </Value>
     </Item>
     <Item>
       <Key>2</Key>
-      <Value ref="2" />
+      <Value type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="2" />
     </Item>
     <Item>
       <Key>1</Key>
-      <Value ref="1" />
+      <Value type="ExtendedXmlSerialization.Test.TestObject.TestClassReference" ref="1" />
     </Item>
   </All>
 </TestClassReferenceWithDictionary>

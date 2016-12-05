@@ -31,6 +31,14 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
         }
     }
 
+    public class TestClassConcreteReferenceConfig : ExtendedXmlSerializerConfig<TestClassConcreteReference>
+    {
+        public TestClassConcreteReferenceConfig()
+        {
+            ObjectReference(obj => obj.Id);
+        }
+    }
+
     public class InterfaceReferenceConfig : ExtendedXmlSerializerConfig<IReference>
     {
         public InterfaceReferenceConfig()
