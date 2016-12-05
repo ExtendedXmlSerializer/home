@@ -36,12 +36,12 @@ namespace ExtendedXmlSerialization.Write
         public virtual bool Defer(MemberInfo member) => false;
     }
 
-    class SpecificationCandidatesSelector : IFactory<object, IEnumerable<object>>
+    class SpecificationCandidatesSelector : IParameterizedSource<object, IEnumerable<object>>
     {
         public static SpecificationCandidatesSelector Default { get; } = new SpecificationCandidatesSelector();
         SpecificationCandidatesSelector() {}
 
-        public IEnumerable<object> Create(object parameter)
+        public IEnumerable<object> Get(object parameter)
         {
             yield return parameter;
             var member = parameter as MemberInfo;
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerialization.Write
 
     class InstructionSpecification : InstructionSpecificationBase
     {
-        private readonly IFactory<object, IEnumerable<object>> _candidates;
+        private readonly IParameterizedSource<object, IEnumerable<object>> _candidates;
         private readonly Func<MemberInfo, bool> _defer;
         private readonly IImmutableList<IInstructionCandidateSpecification> _specifications;
         public static InstructionSpecification Default { get; } = new InstructionSpecification();
@@ -112,7 +112,7 @@ namespace ExtendedXmlSerialization.Write
                 SpecificationCandidatesSelector.Default, context => false,
                 new InstructionCandidateSpecification(IsTypeSpecification<IProperty>.Default.IsSatisfiedBy)) {}
 
-        public InstructionSpecification(IFactory<object, IEnumerable<object>> candidates,
+        public InstructionSpecification(IParameterizedSource<object, IEnumerable<object>> candidates,
                                         Func<MemberInfo, bool> defer, params IInstructionCandidateSpecification[] specifications)
         {
             _candidates = candidates;
@@ -122,7 +122,7 @@ namespace ExtendedXmlSerialization.Write
 
         public override bool IsSatisfiedBy(object parameter)
         {
-            var candidates = _candidates.Create(parameter);
+            var candidates = _candidates.Get(parameter);
             foreach (var candidate in candidates)
             {
                 foreach (var specification in _specifications)
@@ -168,11 +168,11 @@ namespace ExtendedXmlSerialization.Write
         ) {}
     }
 
-    public class AutoAttributeWritePlanComposer : DefaultWritePlanComposer
+    /*public class AutoAttributePlanSelector : PlanSelector
     {
-        public new static AutoAttributeWritePlanComposer Default { get; } = new AutoAttributeWritePlanComposer();
-        AutoAttributeWritePlanComposer() : base(AutoAttributeSpecification.Default) {}
-    }
+        public new static AutoAttributePlanSelector Default { get; } = new AutoAttributePlanSelector();
+        AutoAttributePlanSelector() : base(AutoAttributeSpecification.Default) {}
+    }*/
 
     class AutoAttributeValueSpecification : MemberValueSpecificationBase<string>
     {
@@ -194,50 +194,195 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class AdditionalInstructions : IFactory<IWritePlan, IImmutableList<IWritePlan>>
+    /*public class EnableExtensionPlanAlteration : IAlteration<IWritePlan>
     {
-        public static AdditionalInstructions Default { get; } = new AdditionalInstructions();
-        AdditionalInstructions() {}
+        private readonly IWritingExtension _extension;
 
-        public IImmutableList<IWritePlan> Create(IWritePlan parameter) => ImmutableList.Create<IWritePlan>();
+        public EnableExtensionPlanAlteration(IWritingExtension extension)
+        {
+            _extension = extension;
+        }
+
+        public IWritePlan Get(IWritePlan parameter) => new ExtensionEnabledWritePlan(parameter, _extension);
+    }*/
+
+/*
+    public class ExtensionEnabledPlanSelector : IPlanSelector
+    {
+        private readonly IPlanSelector _selector;
+        private readonly IWritingExtension _extension;
+
+        public ExtensionEnabledPlanSelector(IPlanSelector selector, IWritingExtension extension)
+        {
+            _selector = selector;
+            _extension = extension;
+        }
+
+        public IEnumerable<IWritePlan> Get(IWritePlan parameter)
+        {
+            var items = _selector.Get(parameter);
+            foreach (var plan in items)
+            {
+                yield return new ExtensionEnabledWritePlan(plan, _extension);
+            }
+        }
     }
+*/
 
-    public class DefaultWritePlanComposer : IWritePlanComposer
+    public interface IPlanSelector : IParameterizedSource<IWritePlan, IEnumerable<IWritePlan>> {}
+    public class PlanSelector : IPlanSelector
     {
-        public static DefaultWritePlanComposer Default { get; } = new DefaultWritePlanComposer();
-        DefaultWritePlanComposer() : this(InstructionSpecification.Default) {}
+        /*public static PlanSelector Default { get; } = new PlanSelector();
+        PlanSelector() : this(InstructionSpecification.Default) {}*/
 
         private readonly IInstructionSpecification _specification;
-        private readonly IFactory<IWritePlan, IImmutableList<IWritePlan>> _additional;
-
-        public DefaultWritePlanComposer(IInstructionSpecification specification) : this(specification, AdditionalInstructions.Default) {}
-
-        public DefaultWritePlanComposer(IInstructionSpecification specification,
-                                        IFactory<IWritePlan, IImmutableList<IWritePlan>> additional)
+        
+        public PlanSelector(IInstructionSpecification specification)
         {
             _specification = specification;
-            _additional = additional;
+        }
+
+        public IEnumerable<IWritePlan> Get(IWritePlan parameter)
+        {
+            yield return PrimitiveWritePlan.Default;
+            yield return new DictionaryWritePlan(parameter);
+            yield return new EnumerableWritePlan(parameter);
+            yield return new ObjectWritePlan(parameter, _specification);
+            yield return new GeneralObjectWritePlan(parameter);
+        }
+    }
+
+    class CacheWritePlanAlteration : IAlteration<IWritePlan>
+    {
+        public static CacheWritePlanAlteration Default { get; } = new CacheWritePlanAlteration();
+        CacheWritePlanAlteration() {}
+
+        public IWritePlan Get(IWritePlan parameter) => new CachedWritePlan(parameter);
+    }
+
+    public class WritePlanComposer : IWritePlanComposer
+    {
+        /*public static WritePlanComposer Default { get; } = new WritePlanComposer();
+        WritePlanComposer() : this(PlanSelector.Default) {}*/
+
+        private readonly IAlteration<IWritePlan> _alteration;
+        private readonly IPlanSelector _selector;
+
+        public WritePlanComposer(IPlanSelector selector) : this(CacheWritePlanAlteration.Default, selector) {}
+
+        public WritePlanComposer(IAlteration<IWritePlan> alteration, IPlanSelector selector)
+        {
+            _alteration = alteration;
+            _selector = selector;
         }
 
         public IWritePlan Compose()
         {
-            var collection = new List<IWritePlan>();
-            var selector = new CachedWritePlan(new FirstAssignedWritePlan(collection));
-            collection.AddRange(
-                new IWritePlan[]
-                    {
-                        PrimitiveWritePlan.Default,
-                        new DictionaryWritePlan(selector),
-                        new EnumerableWritePlan(selector),
-                        new ObjectWritePlan(selector, _specification),
-                        new GeneralObjectWritePlan(selector), 
-                    }
-                    .Concat(_additional.Create(selector))
-            );
-            var result = new CachedWritePlan(new RootWritePlan(selector));
+            var plans = new OrderedSet<IWritePlan>();
+            var select = _alteration.Get(new SelectFirstAssignedWritePlan(plans));
+            foreach (var plan in _selector.Get(select))
+            {
+                plans.Add(plan);
+            }
+
+            var result = new RootWritePlan(select);
             return result;
         }
     }
+
+        class DecoratedWritePlan : IWritePlan
+    {
+        private readonly IWritePlan _plan;
+
+        public DecoratedWritePlan(IWritePlan plan)
+        {
+            _plan = plan;
+        }
+
+        public virtual IInstruction For(Type type) => _plan.For(type);
+    }
+
+    class FixedDecoratedWritePlan : IWritePlan
+    {
+        private readonly IWritePlan _builder;
+        private readonly Type _type;
+
+        public FixedDecoratedWritePlan(IWritePlan builder, Type type)
+        {
+            _builder = builder;
+            _type = type;
+        }
+
+        public IInstruction For(Type type) => Get();
+
+        public IInstruction Get() => _builder.For(_type);
+    }
+
+
+    /*class AlteringWritePlan : DecoratedWritePlan
+    {
+        private readonly IInstructionGraph _graph;
+        private readonly IAlteration<IInstruction> _alteration;
+
+        public AlteringWritePlan(IWritePlan plan, IAlteration<IInstruction> alteration)
+            : this(plan, InstructionGraph.Default, alteration) {}
+
+        public AlteringWritePlan(IWritePlan plan, IInstructionGraph graph, IAlteration<IInstruction> alteration) : base(plan)
+        {
+            _graph = graph;
+            _alteration = alteration;
+        }
+
+        public override IInstruction For(Type type)
+        {
+            var original = base.For(type);
+            var graph = _graph.For(original).Select(_alteration.Get).ToImmutableList();
+            var result = new CompositeInstruction(graph);
+            return result;
+        }
+    }*/
+
+    /*class ExtensionEnabledWritePlan : AlteringWritePlan
+    {
+        public ExtensionEnabledWritePlan(IWritePlan plan, IWritingExtension extension) : base(plan, new EnableExtensionInstructionAlteration(extension)) {}
+    }*/
+
+    /*public interface IInstructionGraph
+    {
+        IImmutableList<IInstruction> For(IInstruction instruction);
+    }*/
+
+/*
+    class InstructionGraph : WeakCacheBase<IInstruction, IImmutableList<IInstruction>>, IInstructionGraph
+    {
+        public static InstructionGraph Default { get; } = new InstructionGraph();
+        InstructionGraph() {}
+
+        public IImmutableList<IInstruction> For(IInstruction instruction) => Get(instruction);
+
+        protected override IImmutableList<IInstruction> Callback(IInstruction key)
+        {
+            var immutableList = Yield(key).ToImmutableList();
+            return immutableList;
+        }
+
+        private static IEnumerable<IInstruction> Yield(IInstruction key)
+        {
+            yield return key;
+            var enumerable = key as IEnumerable<IInstruction>;
+            if (enumerable != null)
+            {
+                foreach (var instruction in enumerable)
+                {
+                    foreach (var item in Yield(instruction))
+                    {
+                        yield return item;
+                    }
+                }
+            }
+        }
+    }
+*/
 
     public interface IWritePlan
     {
@@ -304,15 +449,12 @@ namespace ExtendedXmlSerialization.Write
         private readonly Func<Type, IImmutableList<MemberInfo>> _members;
         
         public ObjectMembersWritePlan(IWritePlan primary, IInstructionSpecification specification)
-            : this(primary, new MemberInstructionFactory(primary, specification).Create, specification.IsSatisfiedBy, specification.Defer, Members) {}
+            : this(primary, new MemberInstructionFactory(primary, specification).Get, specification.IsSatisfiedBy, specification.Defer, Members) {}
 
-        public ObjectMembersWritePlan(
-            IWritePlan primary, 
-            Func<MemberContext, IMemberInstruction> factory, 
-            Func<object, bool> specification,
-            Func<MemberInfo, bool> deferred,
-            Func<Type, IImmutableList<MemberInfo>> members
-        ) {
+        public ObjectMembersWritePlan(IWritePlan primary, Func<MemberContext, IMemberInstruction> factory,
+                                      Func<object, bool> specification, Func<MemberInfo, bool> deferred,
+                                      Func<Type, IImmutableList<MemberInfo>> members)
+        {
             _primary = primary;
             _deferred = deferred;
             _factory = factory;
@@ -328,111 +470,26 @@ namespace ExtendedXmlSerialization.Write
             var properties = members.OfType<IPropertyInstruction>().ToImmutableList();
             var contents = members.Except(properties).ToImmutableList();
             
-            var body = new CompositeInstruction(
-                new CompositeInstruction(properties),
-                new EmitDifferentiatingMembersInstruction(type, _factory,
+            var body = 
+                new EmitWithTypeInstruction(
                     new CompositeInstruction(
-                        new EmitDeferredMembersInstruction(deferred, _factory,
-                                                           new EmitAttachedPropertiesInstruction(_primary,
-                                                                                                 _specification)),
-                        new CompositeInstruction(contents)
+                        new CompositeInstruction(properties),
+                        new EmitDifferentiatingMembersInstruction(type, _factory,
+                            new CompositeInstruction(
+                                new EmitDeferredMembersInstruction(deferred, _factory,
+                                                                   new EmitAttachedPropertiesInstruction(_primary,
+                                                                                                         _specification)),
+                                new CompositeInstruction(contents)
+                            )
+                        )
                     )
-                )
-            );
-            var result = new StartNewMembersContextInstruction(all, new EmitWithTypeInstruction(body));
+                );
+            var result = new StartNewMembersContextInstruction(all, body);
             return result;
         }
     }
 
-    abstract class EmitMembersInstructionBase : DecoratedWriteInstruction
-    {
-        private readonly Func<MemberContext, IMemberInstruction> _factory;
-        
-        protected EmitMembersInstructionBase(Func<MemberContext, IMemberInstruction> factory, IInstruction instruction) : base(instruction)
-        {
-            _factory = factory;
-        }
-
-        protected override void Execute(IWriting writing)
-        {
-            var all = DetermineSet(writing);
-
-            var instructions = all.Select(_factory).ToArray();
-
-            var properties = instructions.OfType<IPropertyInstruction>().ToArray();
-            
-            foreach (var instruction in properties)
-            {
-                instruction.Execute(writing);
-            }
-
-            base.Execute(writing);
-
-            foreach (var instruction in instructions.Except(properties))
-            {
-                instruction.Execute(writing);
-            }
-        }
-
-        protected abstract IImmutableList<MemberContext> DetermineSet(IWriting services);
-    }
-
-    class EmitDifferentiatingMembersInstruction : EmitMembersInstructionBase
-    {
-        private readonly Func<Type, IImmutableList<MemberContext>> _differentiating;
-
-        public EmitDifferentiatingMembersInstruction(Type type, Func<MemberContext, IMemberInstruction> factory,
-                                                     IInstruction instruction)
-            : this(DifferentiatingDefinitions.Default.Get(type), factory, instruction) {}
-
-        public EmitDifferentiatingMembersInstruction(
-            Func<Type, IImmutableList<MemberContext>> differentiating,
-            Func<MemberContext, IMemberInstruction> factory,
-            IInstruction instruction) : base(factory, instruction)
-        {
-            _differentiating = differentiating;
-        }
-
-        protected override IImmutableList<MemberContext> DetermineSet(IWriting services)
-            => _differentiating(services.Current.Instance.GetType());
-    }
-
-    class EmitAttachedPropertiesInstruction : WriteInstructionBase
-    {
-        private readonly IWritePlan _primary;
-        private readonly Func<object, bool> _specification;
-        public EmitAttachedPropertiesInstruction(IWritePlan primary, Func<object, bool> specification)
-        {
-            _primary = primary;
-            _specification = specification;
-        }
-
-        protected override void Execute(IWriting writing)
-        {
-            var all = writing.GetProperties();
-            var properties = Properties(all).ToArray();
-            foreach (var property in properties)
-            {
-                writing.Emit(property);
-            }
-
-            foreach (var content in all.Except(properties))
-            {
-                new EmitObjectInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(writing);
-            }
-        }
-
-        IEnumerable<IProperty> Properties(IEnumerable<IProperty> source)
-        {
-            foreach (var property in source)
-            {
-                if (_specification(property))
-                {
-                    yield return property;
-                }
-            }
-        }
-    }
+    
 
     class DifferentiatingMembers : WeakCacheBase<Type, IImmutableList<MemberContext>>
     {
@@ -467,66 +524,40 @@ namespace ExtendedXmlSerialization.Write
         DifferentiatingDefinitions() : base(type => new DifferentiatingMembers(type).Get) {}
     }
 
-    class EmitDeferredMembersInstruction : EmitMembersInstructionBase
-    {
-        private readonly IImmutableList<MemberInfo> _deferred;
-
-        public EmitDeferredMembersInstruction(
-            IImmutableList<MemberInfo> deferred,
-            Func<MemberContext, IMemberInstruction> factory,
-            IInstruction instruction) : base(factory, instruction)
-        {
-            _deferred = deferred;
-        }
-
-        protected override IImmutableList<MemberContext> DetermineSet(IWriting services) => Yield(services).ToImmutableList();
-
-        private IEnumerable<MemberContext> Yield(IWritingContext context)
-        {
-            foreach (var member in _deferred)
-            {
-                yield return MemberContexts.Default.Locate(context.Current.Instance, member);
-            }
-        }
-    }
-
-    public interface IMemberInstruction : IInstruction {}
-    public interface IPropertyInstruction : IMemberInstruction {}
-    public interface IContentInstruction : IMemberInstruction {}
-
-    public interface IMemberInstructionFactory : IFactory<MemberContext, IMemberInstruction>
+    public interface IMemberInstructionFactory : IParameterizedSource<MemberContext, IMemberInstruction>
     {}
 
     class MemberInstructionFactory : IMemberInstructionFactory
     {
         private readonly IWritePlan _writePlan;
         private readonly IInstructionSpecification _specification;
-        readonly private static StartNewMemberValueContextInstruction PropertyContent =
-            new StartNewMemberValueContextInstruction(EmitMemberAsTextInstruction.Default);
+        readonly private StartNewMemberValueContextInstruction _property;
 
-        public MemberInstructionFactory(IWritePlan primary, IInstructionSpecification specification)
+        public MemberInstructionFactory(IWritePlan plan, IInstructionSpecification specification)
         {
-            _writePlan = primary;
+            _writePlan = plan;
             _specification = specification;
+            _property = new StartNewMemberValueContextInstruction(EmitMemberAsTextInstruction.Default);
         }
 
         IInstruction Content(MemberContext member) =>
             new EmitObjectInstruction(
                 member.Metadata,
-                new StartNewMemberValueContextInstruction(
-                    new StartNewContextFromMemberValueInstruction(
-                        new DeferredInstruction(
-                            new FixedDecoratedWritePlan(_writePlan, member.MemberType).Get
+                    new StartNewMemberValueContextInstruction(
+                        new StartNewContextFromMemberValueInstruction(
+                            new DeferredInstruction(
+                                new FixedDecoratedWritePlan(_writePlan, member.MemberType).Get
+                            )
                         )
                     )
-                ));
+                );
 
         bool Specification<T>(T parameter) => _specification.IsSatisfiedBy(parameter);
 
-        public IMemberInstruction Create(MemberContext parameter)
+        public IMemberInstruction Get(MemberContext parameter)
         {
             var property = Specification(parameter);
-            var content = property ? PropertyContent : Content(parameter);
+            var content = property ? _property : Content(parameter);
             var context = new StartNewMemberContextInstruction(parameter.Metadata, content);
             var result = property
                 ? (IMemberInstruction) new EmitMemberAsPropertyInstruction(context)
@@ -537,26 +568,11 @@ namespace ExtendedXmlSerialization.Write
 
     class GeneralObjectWritePlan : ConditionalWritePlan
     {
-        public GeneralObjectWritePlan(IWritePlan plan) : base(type => type == typeof(object),
-                                                              new FixedWritePlan(
-                                                                  new EmitWithTypeInstruction(
-                                                                      new EmitGeneralObjectInstruction(plan)))) {}
-    }
-
-    class EmitGeneralObjectInstruction : WriteInstructionBase
-    {
-        private readonly IWritePlan _plan;
-        public EmitGeneralObjectInstruction(IWritePlan plan)
-        {
-            _plan = plan;
-        }
-
-        protected override void Execute(IWriting writing)
-        {
-            var type = writing.Current.Instance.GetType();
-            var selected = _plan.For(type);
-            selected?.Execute(writing);
-        }
+        public GeneralObjectWritePlan(IWritePlan plan) : base(
+            type => type == typeof(object),
+            new FixedWritePlan(
+                new EmitWithTypeInstruction(
+                    new EmitGeneralObjectInstruction(plan)))) {}
     }
 
     class ObjectWritePlan : ConditionalWritePlanBase
@@ -577,16 +593,16 @@ namespace ExtendedXmlSerialization.Write
 
     class RootWritePlan : IWritePlan
     {
-        private readonly IWritePlan _builder;
-
-        public RootWritePlan(IWritePlan builder)
+        private readonly IWritePlan _plan;
+        
+        public RootWritePlan(IWritePlan plan)
         {
-            _builder = builder;
+            _plan = plan;
         }
 
         public IInstruction For(Type type)
         {
-            var content = _builder.For(type);
+            var content = _plan.For(type);
             if (content == null)
             {
                 throw new InvalidOperationException($"Could not find instruction for type '{type}'");
@@ -596,32 +612,22 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class CachedWritePlan : IWritePlan
+    class CachedWritePlan : WeakCache<Type, IInstruction>, IWritePlan
     {
-        private readonly ConditionalWeakTable<Type, IInstruction> _cache =
-            new ConditionalWeakTable<Type, IInstruction>();
+        public CachedWritePlan(IWritePlan inner) : base(inner.For) {}
 
-        private readonly ConditionalWeakTable<Type, IInstruction>.CreateValueCallback _callback;
-
-        public CachedWritePlan(IWritePlan inner) : this(inner.For) {}
-
-        public CachedWritePlan(ConditionalWeakTable<Type, IInstruction>.CreateValueCallback callback)
-        {
-            _callback = callback;
-        }
-
-        public IInstruction For(Type type) => _cache.GetValue(type, _callback);
+        public IInstruction For(Type type) => Get(type);
     }
 
     class EnumerableWritePlan : ConditionalWritePlanBase
     {
         readonly private static Func<Type, bool> Specification = IsSatisfiedBy;
 
-        private readonly IWritePlan _primary;
+        private readonly IWritePlan _plan;
 
-        public EnumerableWritePlan(IWritePlan primary) : base(Specification)
+        public EnumerableWritePlan(IWritePlan plan) : base(Specification)
         {
-            _primary = primary;
+            _plan = plan;
         }
 
         private static bool IsSatisfiedBy(Type type)
@@ -638,7 +644,7 @@ namespace ExtendedXmlSerialization.Write
             var provider = elementType.GetTypeInfo().IsInterface
                 ? (INameProvider) InstanceTypeNameProvider.Default
                     : new TypeDefinitionNameProvider(elementType);
-            var template = new EmitObjectInstruction(provider, _primary.For(elementType));
+            var template = new EmitObjectInstruction(provider, _plan.For(elementType));
             var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(template));
             return result;
         }
@@ -662,29 +668,11 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class ConditionalWriteInstruction : DecoratedWriteInstruction
-    {
-        private readonly ISpecification<IWritingContext> _specification;
-        
-        public ConditionalWriteInstruction(ISpecification<IWritingContext> specification, IInstruction instruction) : base(instruction)
-        {
-            _specification = specification;
-        }
-
-        protected override void Execute(IWriting writing)
-        {
-            if (_specification.IsSatisfiedBy(writing))
-            {
-                base.Execute(writing);
-            }
-        }
-    }
-
-    class FirstAssignedWritePlan : IWritePlan
+    class SelectFirstAssignedWritePlan : IWritePlan
     {
         readonly ICollection<IWritePlan> _providers;
 
-        public FirstAssignedWritePlan(ICollection<IWritePlan> providers)
+        public SelectFirstAssignedWritePlan(ICollection<IWritePlan> providers)
         {
             _providers = providers;
         }
@@ -712,21 +700,6 @@ namespace ExtendedXmlSerialization.Write
         }
 
         public IInstruction For(Type type) => _instruction;
-    }
-
-
-    class EmitTypeForTemplateInstruction : EmitWithTypeInstruction
-    {
-        readonly private static IInstruction Specification =
-            new ConditionalWriteInstruction(EmitMemberTypeSpecification.Default, EmitCurrentInstanceTypeInstruction.Default);
-        public EmitTypeForTemplateInstruction(IInstruction body) : base(Specification, body) {}
-    }
-
-    class EmitWithTypeInstruction : CompositeInstruction
-    {
-        public EmitWithTypeInstruction(IInstruction body) : this(EmitCurrentInstanceTypeInstruction.Default, body) {}
-        
-        public EmitWithTypeInstruction(IInstruction type, IInstruction body) : base(type, body) {}
     }
 
     class PrimitiveWritePlan : ConditionalWritePlan

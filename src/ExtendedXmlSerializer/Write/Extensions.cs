@@ -1,7 +1,32 @@
-﻿using System;
+﻿// MIT License
+// 
+// Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -10,15 +35,32 @@ using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Write
 {
-    public interface IWritingExtension
-    {
-        bool Starting(IWriting writing);
-        void Finished(IWriting services);
-    }
-
-
+    
     public static class Extensions
     {
+        /*/// <summary>
+        /// Attribution: http://stackoverflow.com/a/11221963/3602057
+        /// </summary>
+        /// <param name="serializer"></param>
+        /// <param name="stream"></param>
+        /// <param name="data"></param>
+        /// <param name="namespaces"></param>
+        public static void WriteObject(
+            this XmlObjectSerializer serializer,
+            Stream stream, object data,
+            Dictionary<string, string> namespaces )
+        {
+            using ( var writer = XmlWriter.Create( stream, new XmlWriterSettings() ) )
+            {
+                serializer.WriteStartObject( writer, data );
+                foreach ( var pair in namespaces )
+                {
+                    writer.WriteAttributeString( "xmlns", pair.Key, null, pair.Value );
+                }
+                serializer.WriteObjectContent( writer, data );
+                serializer.WriteEndObject( writer );
+            }
+        }*/
         // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
         /*public static void Property(this IWriting @this, IProperty property)
@@ -46,80 +88,43 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class DefaultWritingExtensions : CompositeWritingExtension
+    class DefaultWritingExtensions : CompositeExtension
     {
         public DefaultWritingExtensions(ISerializationToolsFactory factory) : base(
-            MemberValueExistsExtension.Default,
             new ObjectReferencesExtension(factory),
             new VersionExtension(factory),
             new CustomSerializationExtension(factory)
         ) {}
     }
 
-    class MemberValueExistsExtension : WritingExtensionBase
+    class DefaultMemberValueAssignedExtension : MemberValueAssignedExtension
     {
-        private readonly Func<Type, object> _values;
-        public static MemberValueExistsExtension Default { get; } = new MemberValueExistsExtension();
-        MemberValueExistsExtension() : this(DefaultValues.Default.Get) {}
+        public new static DefaultMemberValueAssignedExtension Default { get; } = new DefaultMemberValueAssignedExtension();
+        DefaultMemberValueAssignedExtension() {}
 
-        public MemberValueExistsExtension(Func<Type, object> values)
+        protected override bool StartingMember(IWriting writing, object instance, MemberContext context) => 
+            context.Value is Enum || base.StartingMember(writing, instance, context);
+    }
+
+    class MemberValueAssignedExtension : WritingExtensionBase
+    {
+        public static MemberValueAssignedExtension Default { get; } = new MemberValueAssignedExtension();
+        protected MemberValueAssignedExtension() : this(DefaultValues.Default.Get) {}
+
+        private readonly Func<Type, object> _values;
+
+        public MemberValueAssignedExtension(Func<Type, object> values)
         {
             _values = values;
         }
 
         protected override bool StartingMember(IWriting services, object instance, MemberContext member)
         {
-            var defaultValue = _values(services.Current.Member?.MemberType);
-            var result = member.Value != defaultValue;
+            var defaultValue = _values(member.MemberType);
+            var result = !Equals(member.Value, defaultValue);
             return result;
         }
     }
-
-    class CompositeWritingExtension : CompositeServiceProvider, IWritingExtension
-    {
-        private readonly IEnumerable<IWritingExtension> _extensions;
-
-        public CompositeWritingExtension(params IWritingExtension[] extensions) : this(extensions.ToImmutableList()) {}
-
-        public CompositeWritingExtension(IEnumerable<IWritingExtension> extensions) : base(extensions)
-        {
-            _extensions = extensions;
-        }
-
-        public bool Starting(IWriting writing)
-        {
-            foreach (var extension in _extensions)
-            {
-                if (!extension.Starting(writing))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public void Finished(IWriting services)
-        {
-            foreach (var extension in _extensions)
-            {
-                extension.Finished(services);
-            }
-        }
-    }
-
-    /*class ExtensionInstruction : DecoratedWriteInstruction
-    {
-        protected ExtensionInstruction(IInstruction instruction) : base(instruction) {}
-
-        protected override void Execute(IWriteServices services)
-        {
-            if (services.Starting(services))
-            {
-                base.Execute(services);
-            }
-            services.Finished(services);
-        }
-    }*/
 
     class ObjectSerializer : IObjectSerializer
     {
@@ -133,62 +138,56 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    /*public class DefaultWritingExtension : WritingExtensionBase
-    {
-        public static DefaultWritingExtension Default { get; } = new DefaultWritingExtension();
-        DefaultWritingExtension() {}
-    }*/
+    public interface IWritingExtension : IExtension<IWriting> {}
 
-    public abstract class WritingExtensionBase : IWritingExtension
+    public abstract class WritingExtensionBase : ExtensionBase<IWriting>, IWritingExtension
     {
-        public virtual bool Starting(IWriting writing)
+        public override bool Starting(IWriting services)
         {
-            var current = writing.Current;
-            /*if (current.Text != null)
-            {
-                return StartingContent(writing, current.Instance, current.Member, current.Text);
-            }*/
+            var current = services.Current;
 
             if (current.Member != null)
             {
                 switch (current.State)
                 {
                     case WriteState.MemberValue:
-                        return StartingMemberValue(writing, current.Instance, current.Member.GetValueOrDefault());
+                        return StartingMemberValue(services, current.Instance, current.Member.GetValueOrDefault());
                     default:
-                        return StartingMember(writing, current.Instance, current.Member.GetValueOrDefault());
+                        return StartingMember(services, current.Instance, current.Member.GetValueOrDefault());
                 }
             }
 
             if (current.Members != null)
             {
-                return StartingMembers(writing, current.Instance, current.Members);
+                return StartingMembers(services, current.Instance, current.Members);
             }
 
             var result = current.Instance != null
-                ? StartingInstance(writing, current.Instance)
-                : Initializing(writing);
+                ? StartingInstance(services, current.Instance)
+                : Initializing(services);
             return result;
         }
 
-        protected virtual bool Initializing(IWriting services) => true;
-        protected virtual bool StartingInstance(IWriting services, object instance) => true;
-        protected virtual bool StartingMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWriting services, object instance, MemberContext context) => true;
-        protected virtual bool StartingMemberValue(IWriting services, object instance, MemberContext context) => true;
+        bool IExtension.Starting(IServiceProvider services) => Starting(services.AsValid<IWriting>());
+
+        protected virtual bool Initializing(IWriting writing) => true;
+        protected virtual bool StartingInstance(IWriting writing, object instance) => true;
+        protected virtual bool StartingMembers(IWriting writing, object instance, IImmutableList<MemberInfo> members) => true;
+        protected virtual bool StartingMember(IWriting writing, object instance, MemberContext context) => true;
+        protected virtual bool StartingMemberValue(IWriting writing, object instance, MemberContext context) => true;
         /*protected virtual bool StartingContent(IWriting services, object instance, MemberContext? context, string content) => true;*/
 
-        public virtual void Finished(IWriting services)
+        void IExtension.Finished(IServiceProvider services) => Finished(services.AsValid<IWriting>());
+
+        protected virtual void FinishedInstance(IWriting writing, object instance) {}
+        protected virtual void FinishedMembers(IWriting writing, object instance, IImmutableList<MemberInfo> members) {}
+        protected virtual void FinishedMember(IWriting writing, object instance, MemberContext member) {}
+        protected virtual void FinishedMemberValue(IWriting writing, object instance, MemberContext member) {}
+        protected virtual void Completed(IWriting writing) {}
+
+        public override void Finished(IWriting services)
         {
             var current = services.Current;
-            /*if (current.Text != null)
-            {
-                FinishedContent(services, current.Instance, current.Member, current.Text);
-            }*/
-            /*else if (current.HasValue)
-            {
-                FinishedMemberValue(services, current.Instance, current.Member, current.MemberValue);
-            }*/
             if (current.Member != null)
             {
                 switch (current.State)
@@ -215,13 +214,6 @@ namespace ExtendedXmlSerialization.Write
                 Completed(services);
             }
         }
-
-        protected virtual void FinishedInstance(IWriting services, object instance) {}
-        protected virtual void FinishedMembers(IWriting services, object instance, IImmutableList<MemberInfo> members) {}
-        protected virtual void FinishedMember(IWriting services, object instance, MemberContext member) {}
-        protected virtual void FinishedMemberValue(IWriting services, object instance, MemberContext member) {}
-        /*protected virtual void FinishedContent(IWriting services, object instance, MemberContext? member, string content) {}*/
-        protected virtual void Completed(IWriting services) {}
     }
 
     public abstract class ConfigurationWritingExtensionBase : WritingExtensionBase
@@ -244,11 +236,6 @@ namespace ExtendedXmlSerialization.Write
                 var configuration = For(type);
                 if (configuration != null)
                 {
-                    /*if (current.Text != null)
-                    {
-                        return StartingContent(writing, configuration, current.Instance, current.Member, current.Text);
-                    }*/
-
                     if (current.Member != null)
                     {
                         switch (current.State)
@@ -272,12 +259,12 @@ namespace ExtendedXmlSerialization.Write
             return starting;
         }
 
-        protected virtual bool StartingInstance(IWriting services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingInstance(IWriting writing, IExtendedXmlSerializerConfig configuration,
                                                 object instance) => true;
-        protected virtual bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingMembers(IWriting writing, IExtendedXmlSerializerConfig configuration,
                                                object instance, IImmutableList<MemberInfo> members) => true;
-        protected virtual bool StartingMember(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, MemberContext member) => true;
-        protected virtual bool StartingMemberValue(IWriting services, IExtendedXmlSerializerConfig configuration,
+        protected virtual bool StartingMember(IWriting writing, IExtendedXmlSerializerConfig configuration, object instance, MemberContext member) => true;
+        protected virtual bool StartingMemberValue(IWriting writing, IExtendedXmlSerializerConfig configuration,
                                               object instance, MemberContext member) => true;
         /*protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                object instance, MemberContext? member, string content) => true;*/
@@ -285,24 +272,39 @@ namespace ExtendedXmlSerialization.Write
 
     public class CustomSerializationExtension : ConfigurationWritingExtensionBase
     {
-        public CustomSerializationExtension(ISerializationToolsFactory factory) : base(factory) {}
+        private readonly IInstruction _instruction;
+
+        public CustomSerializationExtension(ISerializationToolsFactory factory) : this(factory, EmitTypeInstruction.Default)
+        {}
+
+        public CustomSerializationExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
+        {
+            _instruction = instruction;
+        }
 
         protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
                                                 IImmutableList<MemberInfo> members)
         {
             if (configuration.IsCustomSerializer)
             {
-                EmitCurrentInstanceTypeInstruction.Default.Execute(services);
+                _instruction.Execute(services);
                 configuration.WriteObject(services.Get<XmlWriter>(), instance);
                 return false;
             }
-            return base.StartingMembers(services, configuration, instance, members);	
+            return base.StartingMembers(services, configuration, instance, members);    
         }
     }
 
     public class VersionExtension : ConfigurationWritingExtensionBase
     {
-        public VersionExtension(ISerializationToolsFactory factory) : base(factory) {}
+        private readonly IInstruction _instruction;
+
+        public VersionExtension(ISerializationToolsFactory factory) : this(factory, EmitTypeInstruction.Default) {}
+
+        public VersionExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
+        {
+            _instruction = instruction;
+        }
 
         protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
                                                 IImmutableList<MemberInfo> members)
@@ -310,22 +312,24 @@ namespace ExtendedXmlSerialization.Write
             var version = configuration.Version;
             if (version > 0)
             {
-                EmitCurrentInstanceTypeInstruction.Default.Execute(services);
+                _instruction.Execute(services);
                 services.Attach(new VersionProperty(version));
             }
             return base.StartingMembers(services, configuration, instance, members);
         }
     }
 
-	class MemberProperty : PropertyBase
-	{
-		public MemberProperty(MemberContext member) : base(member.Metadata.Name, member.Value) {}
-	}
+    class MemberProperty : PropertyBase, INamespace
+    {
+        public MemberProperty(MemberContext member) : base(member.Metadata.Name, member.Value) {}
+
+        public Uri Identifier { get; } = null; // TODO: resolve from property value.
+        public string Prefix => null; // TODO: resolve from property value.
+    }
 
     class TypeProperty : PropertyBase
     {
-        public TypeProperty(object instance) : this(instance.GetType()) {}
-        public TypeProperty(Type type) : base(ExtendedXmlSerializer.Type, type.FullName) {}
+        public TypeProperty(string type) : base(ExtendedXmlSerializer.Type, type) {}
     }
 
     class VersionProperty : PropertyBase
@@ -345,62 +349,49 @@ namespace ExtendedXmlSerialization.Write
 
     public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
     {
-        private readonly IDictionary<object, object>
-            _elements = new ConcurrentDictionary<object, object>(),
-            _references = new ConcurrentDictionary<object, object>();
-
+        private readonly WeakCache<IWriting, Context> _contexts = new WeakCache<IWriting, Context>(_ => new Context());
+        
         public ObjectReferencesExtension(ISerializationToolsFactory factory) : base(factory) {}
-
-        protected override bool Initializing(IWriting services)
-        {
-            Clear();
-            return base.Initializing(services);
-        }
-
-        private void Clear()
-        {
-            _elements.Clear();
-            _references.Clear();
-        }
 
         protected override bool StartingInstance(IWriting services, object instance)
         {
+            var elements = _contexts.Get(services).Elements;
             foreach (var item in Arrays.Default.AsArray(instance))
             {
-                if (!_elements.ContainsKey(item))
+                if (!elements.Contains(item))
                 {
-                    _elements.Add(item, item);
+                    elements.Add(item, item);
                 }
             }
             return base.StartingInstance(services, instance);
         }
 
-        protected override void FinishedInstance(IWriting services, object instance)
+        protected override void FinishedInstance(IWriting writing, object instance)
         {
             if (Arrays.Default.Is(instance))
             {
-                _elements.Clear();
+                _contexts.Get(writing).Elements.Clear();
             }
-            base.FinishedInstance(services, instance);
+            base.FinishedInstance(writing, instance);
         }
 
         protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration, object instance,
-                                                IImmutableList<MemberInfo> members) => 
-            Reference(services, configuration, instance, services.GetArrayContext() == null && _elements.ContainsKey(instance));
-
-        private bool Reference(IWriting services, IExtendedXmlSerializerConfig configuration, object instance, bool force = false)
+                                                IImmutableList<MemberInfo> members)
         {
             if (configuration?.IsObjectReference ?? false)
             {
+                var context = _contexts.Get(services);
+                var elements = context.Elements;
+                var references = context.References;
                 var objectId = configuration.GetObjectId(instance);
-                var contains = _references.ContainsKey(instance);
-                var reference = contains || force;
+                var contains = references.Contains(instance);
+                var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
                 var property = reference ? (IProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
                 var result = !reference;
                 if (result)
                 {
                     services.Attach(property);
-                    _references.Add(instance, instance);
+                    references.Add(instance, instance);
                 }
                 else
                 {
@@ -411,6 +402,18 @@ namespace ExtendedXmlSerialization.Write
             return true;
         }
 
-        protected override void Completed(IWriting services) => Clear();
+        class Context
+        {
+            public Context() : this(new ConcurrentDictionary<object, object>(), new ConcurrentDictionary<object, object>()) {}
+
+            public Context(IDictionary references, IDictionary elements)
+            {
+                References = references;
+                Elements = elements;
+            }
+
+            public IDictionary References { get; }
+            public IDictionary Elements { get; }
+        }
     }
 }

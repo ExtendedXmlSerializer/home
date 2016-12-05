@@ -22,25 +22,20 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public class ExtendedSerializerProfileVersion20 : ExtendedSerializationProfileBase
+	public abstract class SerializationProfileBase : ISerializationProfile
 	{
-		public static ExtendedSerializerProfileVersion20 Default { get; } = new ExtendedSerializerProfileVersion20();
-		ExtendedSerializerProfileVersion20() : base(new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2")) {}
-
-		public override IExtendedXmlSerializer Create()
+		protected SerializationProfileBase(Uri uri)
 		{
-			var host = new SerializationToolsFactoryHost();
-			var services = new HashSet<object>();
-			var writings = new WritingFactory(host, services);
-			var plan = AutoAttributeWritePlanComposer.Default.Compose();
-			var result = new ExtendedXmlSerializer(host, services, new AssignmentFactory(host), writings,
-			                                       new Serializer(plan, writings));
-			return result;
+			Identifier = uri;
 		}
+
+		public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
+
+		public Uri Identifier { get; }
+
+		public abstract ISerialization New();
 	}
 }

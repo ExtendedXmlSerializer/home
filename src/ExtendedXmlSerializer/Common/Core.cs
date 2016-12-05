@@ -1,36 +1,72 @@
-﻿using System;
+﻿// MIT License
+// 
+// Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Xml;
 using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization.Common
 {
-    /*public static class KnownAttributes
+    public class CompositeAlteration<T> : IAlteration<T>
     {
-        public static KnownAttribute Type { get; } = new KnownAttribute(ExtendedXmlSerializer.Type);
-    }
+        private readonly IEnumerable<IAlteration<T>> _alterations;
 
-    public class KnownAttribute
-    {
-        private readonly string _name;
+        public CompositeAlteration(params IAlteration<T>[] alterations) : this(alterations.AsEnumerable()) {}
 
-        public KnownAttribute(string name)
+        public CompositeAlteration(IEnumerable<IAlteration<T>> alterations)
         {
-            _name = name;
+            _alterations = alterations;
         }
 
-        public override string ToString() => _name;
-    }*/
+        public T Get(T parameter) => _alterations.Aggregate(parameter, (current, alteration) => alteration.Get(current));
+    }
 
-        public class IsTypeSpecification<T> : ISpecification<object>
+    public class DecoratedAlteration<T> : IAlteration<T>
+    {
+        private readonly IAlteration<T> _alteration;
+        public DecoratedAlteration(IAlteration<T> alteration)
+        {
+            _alteration = alteration;
+        }
+
+        public T Get(T parameter) => _alteration.Get(parameter);
+    }
+
+    public interface IAlteration<T> : IParameterizedSource<T, T> {}
+
+    class Self<T> : IAlteration<T>
+    {
+        public static Self<T> Default { get; } = new Self<T>();
+        Self() {}
+
+        public T Get(T parameter) => parameter;
+    }
+
+    public class IsTypeSpecification<T> : ISpecification<object>
         {
             public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
             IsTypeSpecification() {}
@@ -44,7 +80,7 @@ namespace ExtendedXmlSerialization.Common
 
         public DelegatedSpecification( Func<T, bool> @delegate )
         {
-            this._delegate = @delegate;
+            _delegate = @delegate;
         }
 
         public bool IsSatisfiedBy( T parameter ) => _delegate.Invoke( parameter );
@@ -69,9 +105,11 @@ namespace ExtendedXmlSerialization.Common
         protected override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
     }
 
-    public interface IFactory<in TParameter, out TResult>
+    
+
+    public interface IParameterizedSource<in TParameter, out TResult>
     {
-        TResult Create(TParameter parameter);
+        TResult Get(TParameter parameter);
     }
 
     public interface IContent
@@ -131,24 +169,6 @@ namespace ExtendedXmlSerialization.Common
         public object GetService(Type serviceType) => null;
     }
 
-
-
-    class FixedDecoratedWritePlan : IWritePlan
-    {
-        private readonly IWritePlan _builder;
-        private readonly Type _type;
-
-        public FixedDecoratedWritePlan(IWritePlan builder, Type type)
-        {
-            _builder = builder;
-            _type = type;
-        }
-
-        public IInstruction For(Type type) => Get();
-
-        public IInstruction Get() => _builder.For(_type);
-    }
-
     class DeferredInstruction : IInstruction
     {
         private readonly Lazy<IInstruction> _source;
@@ -176,8 +196,9 @@ namespace ExtendedXmlSerialization.Common
 
         public object Get(Type type) => _cache.GetValue(type, _callback);
 
-        private object Callback(Type type) => type.GetTypeInfo().IsValueType ? Activator.CreateInstance(type) : null;
+        private static object Callback(Type type) => type.GetTypeInfo().IsValueType ? Activator.CreateInstance(type) : null;
     }
+
     public interface ISpecification<in T>
     {
         bool IsSatisfiedBy( T parameter );
@@ -283,7 +304,7 @@ namespace ExtendedXmlSerialization.Common
         }
     }
 
-    class CompositeInstruction : IInstruction
+    class CompositeInstruction : IInstruction/*, IEnumerable<IInstruction>*/
     {
         private readonly IEnumerable<IInstruction> _instructions;
 
@@ -301,6 +322,10 @@ namespace ExtendedXmlSerialization.Common
                 instruction.Execute(services);
             }
         }
+
+        /*public IEnumerator<IInstruction> GetEnumerator() => _instructions.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();*/
     }
 
     sealed class DelegatedDisposable : IDisposable
@@ -390,9 +415,4 @@ namespace ExtendedXmlSerialization.Common
             _writer.Dispose();
         }
     }*/
-
-    public interface IInstruction
-    {
-        void Execute(IServiceProvider services);
-    }
 }

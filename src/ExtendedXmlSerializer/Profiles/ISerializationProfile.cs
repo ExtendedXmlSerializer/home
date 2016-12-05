@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +22,15 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public abstract class ExtendedSerializationProfileBase : IExtendedSerializationProfile
+	public interface ISerializationProfile : ISpecification<Uri>,
+	                                         IUniqueResource
 	{
-		protected ExtendedSerializationProfileBase(Uri uri)
-		{
-			Identifier = uri;
-		}
-
-		public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
-
-		public abstract IExtendedXmlSerializer Create();
-
-		public Uri Identifier { get; }
+		ISerialization New();
 	}
+
+    
 }

@@ -20,13 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization
 {
     /// <summary>
     /// Interface Extended Xml Serializer
     /// </summary>
-    public interface IExtendedXmlSerializer
+    public interface IExtendedXmlSerializer : IServiceRepository
     {
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
@@ -55,5 +57,10 @@ namespace ExtendedXmlSerialization
         /// Gets or sets <see cref="ISerializationToolsFactory"/>
         /// </summary>
         ISerializationToolsFactory SerializationToolsFactory { get; set; }
+
+        /// <summary>
+        /// Extensions for this instance.
+        /// </summary>
+        IList<IExtension> Extensions { get; }
     }
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public interface IExtendedSerializationRepository : IFactory<Uri, IExtendedXmlSerializer> {}
+	public interface IExtendedSerializationRepository : IParameterizedSource<Uri, IExtendedXmlSerializer> {}
 }

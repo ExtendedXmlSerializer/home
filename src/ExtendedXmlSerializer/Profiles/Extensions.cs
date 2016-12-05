@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.IO;
 using System.Linq;
 
 namespace ExtendedXmlSerialization.Profiles
@@ -38,6 +39,18 @@ namespace ExtendedXmlSerialization.Profiles
 		/// <param name="this"></param>
 		/// <returns></returns>
 		public static IExtendedXmlSerializer Create(this IExtendedSerializationRepository @this)
-			=> @this.Create(DefaultIdentifier);
+			=> @this.Get(DefaultIdentifier);
+
+		public static string Serialize(this ISerialization @this, object instance)
+		{
+			using (var stream = new MemoryStream())
+			{
+				@this.Serialize(stream, instance);
+				stream.Seek(0, SeekOrigin.Begin);
+
+				var result = new StreamReader(stream).ReadToEnd();
+				return result;
+			}
+		}
 	}
 }
