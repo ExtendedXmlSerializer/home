@@ -118,10 +118,10 @@ namespace ExtendedXmlSerialization
                     writer.WriteStartElement(Item);
    
                     var itemDef = TypeDefinitionCache.GetDefinition(item.Key.GetType());
-                    WriteXml(writer, item.Key, itemDef, Key);
+                    WriteXml(writer, item.Key, itemDef, Key, forceSaveType: def.GenericArguments[0].FullName != itemDef.FullName);
 
                     var itemValueDef = TypeDefinitionCache.GetDefinition(item.Value.GetType());
-                    WriteXml(writer, item.Value, itemValueDef, Value);
+                    WriteXml(writer, item.Value, itemValueDef, Value, forceSaveType: def.GenericArguments[1].FullName != itemValueDef.FullName);
 
                     writer.WriteEndElement();
                 }
@@ -174,7 +174,7 @@ namespace ExtendedXmlSerialization
                                 writeReservedObject = true;
                             }
                         }
-                        WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject);
+                        WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject, forceSaveType: elementType.FullName != itemDef.FullName);
                     }
                 }
             }

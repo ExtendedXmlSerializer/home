@@ -25,16 +25,16 @@ namespace ExtendedXmlSerialization.Test.TestObject
 {
     public class TestClassReferenceWithDictionary
     {
-        public TestClassReference Parent { get; set; }
+        public IReference Parent { get; set; }
 
-        public Dictionary<int, TestClassReference> All { get; set; }
+        public Dictionary<int, IReference> All { get; set; }
     }
 
     public class TestClassReferenceWithList
     {
-        public TestClassReference Parent { get; set; }
+        public IReference Parent { get; set; }
 
-        public List<TestClassReference> All { get; set; }
+        public List<IReference> All { get; set; }
     }
     public interface IReference
     {
@@ -49,5 +49,31 @@ namespace ExtendedXmlSerialization.Test.TestObject
         public IReference ReferenceToObjectA { get; set; }
 
         public List<IReference> Lists { get; set; }
+    }
+
+    public class TestClassConcreteReferenceWithDictionary
+    {
+        public TestClassConcreteReference Parent { get; set; }
+
+        public Dictionary<int, TestClassConcreteReference> All { get; set; }
+    }
+
+
+    public class TestClassConcreteReferenceWithList
+    {
+        public TestClassConcreteReference Parent { get; set; }
+
+        public List<TestClassConcreteReference> All { get; set; }
+    }
+
+    public class TestClassConcreteReference : IReference
+    {
+        public int Id { get; set; }
+        public TestClassConcreteReference CyclicReference { get; set; }
+        public TestClassConcreteReference ObjectA { get; set; }
+
+        public TestClassConcreteReference ReferenceToObjectA { get; set; }
+
+        public List<TestClassConcreteReference> Lists { get; set; }
     }
 }
