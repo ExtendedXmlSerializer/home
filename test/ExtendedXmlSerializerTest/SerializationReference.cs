@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test
             obj.CyclicReference = obj;
             obj.ObjectA = new TestClassReference {Id = 2};
             obj.ReferenceToObjectA = obj.ObjectA;
-            obj.Lists = new List<TestClassReference>
+            obj.Lists = new List<IReference>
             {
                 new TestClassReference {Id = 3},
                 new TestClassReference {Id = 4}
