@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassConcreteReference type="ExtendedXmlSerialization.Test.TestObject.TestClassConcreteReference" id="1">
+  <Id>1</Id>
+  <CyclicReference ref="1" />
+  <ObjectA type="ExtendedXmlSerialization.Test.TestObject.TestClassConcreteReference" id="2">
+    <Id>2</Id>
+  </ObjectA>
+  <ReferenceToObjectA ref="2" />
+  <Lists>
+      <TestClassConcreteReference type="ExtendedXmlSerialization.Test.TestObject.TestClassConcreteReference" id="3">
+      <Id>3</Id>
+    </TestClassConcreteReference>
+      <TestClassConcreteReference type="ExtendedXmlSerialization.Test.TestObject.TestClassConcreteReference" id="4">
+      <Id>4</Id>
+    </TestClassConcreteReference>
+  </Lists>
+</TestClassConcreteReference>

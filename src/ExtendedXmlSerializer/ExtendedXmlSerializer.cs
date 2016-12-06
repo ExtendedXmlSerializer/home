@@ -118,10 +118,10 @@ namespace ExtendedXmlSerialization
                     writer.WriteStartElement(Item);
    
                     var itemDef = TypeDefinitionCache.GetDefinition(item.Key.GetType());
-                    WriteXml(writer, item.Key, itemDef, Key);
+                    WriteXml(writer, item.Key, itemDef, Key, forceSaveType: def.GenericArguments[0].FullName != itemDef.FullName);
 
                     var itemValueDef = TypeDefinitionCache.GetDefinition(item.Value.GetType());
-                    WriteXml(writer, item.Value, itemValueDef, Value);
+                    WriteXml(writer, item.Value, itemValueDef, Value, forceSaveType: def.GenericArguments[1].FullName != itemValueDef.FullName);
 
                     writer.WriteEndElement();
                 }
@@ -174,7 +174,7 @@ namespace ExtendedXmlSerialization
                                 writeReservedObject = true;
                             }
                         }
-                        WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject);
+                        WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject, forceSaveType: elementType.FullName != itemDef.FullName);
                     }
                 }
             }
@@ -448,7 +448,6 @@ namespace ExtendedXmlSerialization
                 return;
             }
             writer.WriteStartElement(name ?? type.Name);
-            writer.WriteAttributeString(Type, type.FullName);
             
             // Get configuration for type
             var configuration = GetConfiguration(type.Type);
@@ -466,12 +465,22 @@ namespace ExtendedXmlSerialization
                     }
                     else if (_referencesObjects.ContainsKey(key) || _reservedReferencesObjects.ContainsKey(key))
                     {
+                        if (forceSaveType)
+                        {
+                            writer.WriteAttributeString(Type, type.FullName);
+                        }
+
                         writer.WriteAttributeString(Ref, objectId);
                         writer.WriteEndElement();
                         return;
                     }
+                    writer.WriteAttributeString(Type, type.FullName);
                     writer.WriteAttributeString(Id, objectId);
                     _referencesObjects.Add(key, o);
+                }
+                else
+                {
+                    writer.WriteAttributeString(Type, type.FullName);
                 }
 
                 if (configuration.Version > 0)
@@ -485,6 +494,10 @@ namespace ExtendedXmlSerialization
                     writer.WriteEndElement();
                     return;
                 }
+            }
+            else
+            {
+                writer.WriteAttributeString(Type, type.FullName);
             }
 
             var properties = type.Properties;
