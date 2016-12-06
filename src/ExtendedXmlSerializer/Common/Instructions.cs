@@ -17,6 +17,11 @@ namespace ExtendedXmlSerialization.Common
         protected abstract void Execute(T services);
     }
 
+    public class DecoratedInstruction : DecoratedInstruction<IServiceProvider>
+    {
+        public DecoratedInstruction(IInstruction instruction) : base(instruction) {}
+    }
+
     public class DecoratedInstruction<T> : InstructionBase<T> where T : IServiceProvider
     {
         private readonly IInstruction _instruction;
@@ -133,6 +138,22 @@ namespace ExtendedXmlSerialization.Common
         }
 
         protected override INamespace Callback(Type key) => new Namespace(new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
+    }
+
+    class DefaultNamespaces : IParameterizedSource<Type, IImmutableList<INamespace>>
+    {
+        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
+        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
+
+        private readonly IImmutableList<INamespace> _namespaces;
+
+
+        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
+        {
+            _namespaces = namespaces;
+        }
+
+        public IImmutableList<INamespace> Get(Type parameter) => _namespaces;
     }
 
     class DefaultNamespaceLocator : INamespaceLocator

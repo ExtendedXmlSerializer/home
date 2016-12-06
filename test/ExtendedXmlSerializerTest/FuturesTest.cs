@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Profiles;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -55,6 +57,23 @@ namespace ExtendedXmlSerialization.Test
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassPrimitiveTypes xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"" PropInt=""-1"" PropuInt=""2234"" PropDecimal=""3.346"" PropDecimalMinValue=""-79228162514264337593543950335"" PropDecimalMaxValue=""79228162514264337593543950335"" PropFloat=""7.4432"" PropFloatNaN=""NaN"" PropFloatPositiveInfinity=""INF"" PropFloatNegativeInfinity=""-INF"" PropFloatMinValue=""-3.40282347E+38"" PropFloatMaxValue=""3.40282347E+38"" PropDouble=""3.4234"" PropDoubleNaN=""NaN"" PropDoublePositiveInfinity=""INF"" PropDoubleNegativeInfinity=""-INF"" PropDoubleMinValue=""-1.7976931348623157E+308"" PropDoubleMaxValue=""1.7976931348623157E+308"" PropLong=""234234142"" PropUlong=""2345352534"" PropShort=""23"" PropUshort=""2344"" PropDateTime=""2014-01-23T00:00:00"" PropByte=""23"" PropSbyte=""33"" PropChar=""103"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><PropString>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed urna sapien, pulvinar et consequat sit amet, fermentum in volutpat. This sentence should break the property out into content.</PropString></TestClassPrimitiveTypes>",
 				data
 			);
+		}
+
+		public class SubjectWithPropertyFromExternalAssembly
+		{
+			public ICollection<string> List { get; set; } = new List<string> { "Hello World!" };
+
+			public IComparer Comparer { get; set; } = new XNodeDocumentOrderComparer();
+		}
+
+		[Fact]
+		public void VerifyComplexPropertyFromExternalAssembly()
+		{
+			/*var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+			var instance = new SubjectWithPropertyFromExternalAssembly {};
+			var data = serializer.Serialize(instance);
+			Debugger.Break();*/
+			
 		}
 
 		[Fact]

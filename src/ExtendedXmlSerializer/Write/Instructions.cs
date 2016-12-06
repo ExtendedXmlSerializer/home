@@ -225,7 +225,12 @@ namespace ExtendedXmlSerialization.Write
             _name = name;
         }
 
-        public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(instance), _name(instance));
+        public IElement Get(INamespaceLocator locator, object instance)
+        {
+            var ns = locator.Get(instance);
+            var element = new Element(ns, _name(instance));
+            return element;
+        }
     }
 
     class FixedNameProvider : ElementProviderBase
@@ -235,18 +240,14 @@ namespace ExtendedXmlSerialization.Write
 
     class MemberInfoElementProvider : IElementProvider
     {
-        private readonly MemberInfo _member;
-        private readonly string _name;
+        private readonly MemberContext _member;
 
-        public MemberInfoElementProvider(MemberInfo member) : this(member, MemberNames.Default.Get(member)) {}
-
-        public MemberInfoElementProvider(MemberInfo member, string name)
+        public MemberInfoElementProvider(MemberContext member)
         {
             _member = member;
-            _name = name;
         }
 
-        public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(_member.DeclaringType), _name);
+        public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(_member.Metadata.DeclaringType), _member.DisplayName);
     }
 
     class EmitInstanceInstruction : DecoratedWriteInstruction
@@ -256,7 +257,7 @@ namespace ExtendedXmlSerialization.Write
         public EmitInstanceInstruction(string name, IInstruction instruction)
             : this(new FixedNameProvider(name), instruction) {}
 
-        public EmitInstanceInstruction(MemberInfo member, IInstruction instruction)
+        public EmitInstanceInstruction(MemberContext member, IInstruction instruction)
             : this(new MemberInfoElementProvider(member), instruction) {}
 
         public EmitInstanceInstruction(Type type, IInstruction instruction)
@@ -272,8 +273,6 @@ namespace ExtendedXmlSerialization.Write
         protected override void Execute(IWriting services)
         {
             var element = _provider.Get(services, services.Current.Instance);
-            /*var @namespace = services.Get(services.Current.Instance);
-            var element = new Element(@namespace, name);*/
             services.Begin(element);
             base.Execute(services);
             services.EndElement();
@@ -468,12 +467,12 @@ namespace ExtendedXmlSerialization.Write
         protected override void Execute(IWriting services) => services.Emit(services.Current.Instance);
     }
 
-    class EmitMemberAsPropertyInstruction : DecoratedWriteInstruction, IPropertyInstruction
+    class EmitMemberAsPropertyInstruction : DecoratedInstruction, IPropertyInstruction
     {
         public EmitMemberAsPropertyInstruction(IInstruction instruction) : base(instruction) {}
     }
 
-    class EmitMemberAsContentInstruction : DecoratedWriteInstruction, IContentInstruction
+    class EmitMemberAsContentInstruction : DecoratedInstruction, IContentInstruction
     {
         public EmitMemberAsContentInstruction(IInstruction instruction) : base(instruction) {}
     }

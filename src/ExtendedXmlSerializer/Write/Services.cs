@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
 
@@ -312,7 +313,6 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly ISerializationToolsFactory _tools;
         private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
-        private readonly INamespace _root;
         private readonly INamespaceLocator _locator;
         private readonly IServiceProvider _services;
         private readonly IExtension _extension;
@@ -351,6 +351,8 @@ namespace ExtendedXmlSerialization.Write
         void Execute(Type type);
     }
 
+    
+
     public class Namespaces : WeakCacheBase<Type, IImmutableList<INamespace>>, IParameterizedSource<Type, IImmutableList<INamespace>>
     {
         private readonly INamespaceLocator _locator;
@@ -366,9 +368,11 @@ namespace ExtendedXmlSerialization.Write
 
         private IEnumerable<INamespace> Yield(Type parameter)
         {
+            /*yield return new Namespace("list", _locator.Get(typeof(List<string>)).Identifier);
+            yield return new Namespace("comp", _locator.Get(typeof(XNodeDocumentOrderComparer)).Identifier);*/
             /*var root = _locator.Get(parameter);
             yield return new Namespace(string.Empty, root.Identifier);*/
-			yield break;
+            yield break;
         }
     }
 

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfileVersion20 : SerializationProfile // TODO: Extend.
     {
-        public static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
+        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
         private SerializationProfileVersion20() : this(new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2")) {}
         private SerializationProfileVersion20(Uri uri) : base(AutoAttributeSpecification.Default, uri) {}
         
@@ -65,7 +65,7 @@ namespace ExtendedXmlSerialization.Profiles
     /// </summary>
     public class SerializerFuturesProfile : SerializationProfile
     {
-        public static SerializerFuturesProfile Default { get; } = new SerializerFuturesProfile();
+        public new static SerializerFuturesProfile Default { get; } = new SerializerFuturesProfile();
 
         SerializerFuturesProfile()
             : base(

@@ -189,41 +189,6 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    /*public class EnableExtensionPlanAlteration : IAlteration<IWritePlan>
-    {
-        private readonly IWritingExtension _extension;
-
-        public EnableExtensionPlanAlteration(IWritingExtension extension)
-        {
-            _extension = extension;
-        }
-
-        public IWritePlan Get(IWritePlan parameter) => new ExtensionEnabledWritePlan(parameter, _extension);
-    }*/
-
-/*
-                public class ExtensionEnabledPlanSelector : IPlanSelector
-                {
-                    private readonly IPlanSelector _selector;
-                    private readonly IWritingExtension _extension;
-            
-                    public ExtensionEnabledPlanSelector(IPlanSelector selector, IWritingExtension extension)
-                    {
-                        _selector = selector;
-                        _extension = extension;
-                    }
-            
-                    public IEnumerable<IWritePlan> Get(IWritePlan parameter)
-                    {
-                        var items = _selector.Get(parameter);
-                        foreach (var plan in items)
-                        {
-                            yield return new ExtensionEnabledWritePlan(plan, _extension);
-                        }
-                    }
-                }
-            */
-
     public interface IPlanSelector : IParameterizedSource<IWritePlan, IEnumerable<IWritePlan>> {}
 
     public class DefaultPlanSelector : IPlanSelector
@@ -263,7 +228,7 @@ namespace ExtendedXmlSerialization.Write
             yield return PrimitiveWritePlan.Default;
             yield return new DictionaryWritePlan(parameter);
             yield return new EnumerableWritePlan(parameter, _enumerable);
-            yield return new ObjectWritePlan(new MembersBodyFactory(parameter, _specification, new MemberInstructionFactory(parameter, _specification)));
+            yield return new ObjectWritePlan(new EmitTypedMembersBodyFactory(new MembersBodyFactory(parameter, _specification, new MemberInstructionFactory(parameter, _specification))));
             yield return new GeneralObjectWritePlan(parameter);
         }
     }
@@ -431,6 +396,39 @@ namespace ExtendedXmlSerialization.Write
             => new EmitWithTypeInstruction(_inner.Create(type, members));
     }
 
+    class EmitTypedMembersBodyFactory : IMembersBodyFactory
+    {
+        private readonly IMembersBodyFactory _inner;
+
+        public EmitTypedMembersBodyFactory(IMembersBodyFactory inner)
+        {
+            _inner = inner;
+        }
+
+        public IInstruction Create(Type type, IImmutableList<MemberInfo> members)
+            => new Instruction(_inner.Create(type, members));
+
+        class Instruction : WriteInstructionBase
+        {
+            private readonly IInstruction _body;
+            private readonly IInstruction _wrapped;
+
+            public Instruction(IInstruction body) : this(body, new EmitInstanceInstruction(InstanceTypeNameProvider.Default, body)) {}
+
+            public Instruction(IInstruction body, IInstruction wrapped)
+            {
+                _body = body;
+                _wrapped = wrapped;
+            }
+
+            protected override void Execute(IWriting services)
+            {
+                var instruction = services.Current.Instance == services.Current.Root ? _body : _wrapped;
+                instruction.Execute(services);
+            }
+        }
+    }
+
     class MembersBodyFactory : IMembersBodyFactory
     {
         private readonly IWritePlan _primary;
@@ -531,7 +529,7 @@ namespace ExtendedXmlSerialization.Write
 
         IInstruction Content(MemberContext member) =>
             new EmitInstanceInstruction(
-                member.Metadata,
+                member,
                 new StartNewMemberValueContextInstruction(
                     new StartNewContextFromMemberValueInstruction(
                         new DeferredInstruction(
@@ -670,7 +668,7 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction Create(Type elementType, IInstruction instruction)
         {
             var template = new EmitInstanceInstruction(InstanceTypeNameProvider.Default, instruction);
-            var result = new EmitEnumerableInstruction(template);
+            var result = new EmitInstanceInstruction(InstanceTypeNameProvider.Default, new EmitEnumerableInstruction(template));
             return result;
         }
     }

@@ -87,12 +87,11 @@ namespace ExtendedXmlSerialization.Profiles
     class DefaultSerializationProfile : SerializationProfile
     {
         public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
-
         DefaultSerializationProfile()
             : base(
                 new WritePlanComposer(new DefaultPlanSelector(DefaultInstructionSpecification.Default,
                                                               DefaultEnumerableInstructionFactory.Default)),
-                () => new DefaultWritingContext(), EmitTypeInstruction.Default, new Namespaces(DefaultNamespaceLocator.Default), 
+                () => new DefaultWritingContext(), EmitTypeInstruction.Default, DefaultNamespaces.Default,
                 DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default, DefaultMemberValueAssignedExtension.Default) {}
 
         public override bool IsSatisfiedBy(Uri parameter) => true;
