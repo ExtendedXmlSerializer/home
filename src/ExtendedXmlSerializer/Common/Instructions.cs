@@ -133,7 +133,7 @@ namespace ExtendedXmlSerialization.Common
             return result;
         }
 
-        protected override INamespace Callback(Type key) => new Namespace(new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetType().Name}"));
+        protected override INamespace Callback(Type key) => new Namespace(new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
     }
 
     class DefaultNamespaceLocator : INamespaceLocator
@@ -156,6 +156,9 @@ namespace ExtendedXmlSerialization.Common
 
     public class Namespace : INamespace
     {
+        public static Namespace Default { get; } = new Namespace();
+        Namespace() {}
+
         public Namespace(Uri identifier) : this(null, identifier) {}
 
         public Namespace(string prefix, Uri identifier)

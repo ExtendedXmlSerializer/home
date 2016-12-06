@@ -21,10 +21,23 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Serialization;
 using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Cache
 {
+    class MemberNames : WeakCacheBase<MemberInfo, string>
+    {
+        public static MemberNames Default { get; } = new MemberNames();
+        MemberNames() {}
+        protected override string Callback(MemberInfo key)
+        {
+            var result = key.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
+                         key.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? key.Name;
+            return result;
+        }
+    }
+
     internal class PropertieDefinition
     {
         public PropertieDefinition(MemberInfo memberInfo, string name)

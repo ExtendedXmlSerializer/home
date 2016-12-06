@@ -14,14 +14,6 @@ namespace ExtendedXmlSerialization.Write
         IWritePlan Compose();
     }
 
-    class MemberInfoElementProvider : FixedNameProvider
-    {
-        public MemberInfoElementProvider(MemberInfo member)
-            : base(
-                member.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
-                member.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? member.Name) {}
-    }
-
     public interface IInstructionSpecification : ISpecification<object>
     {
         bool Defer(MemberInfo member);

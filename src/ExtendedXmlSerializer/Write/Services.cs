@@ -85,14 +85,12 @@ namespace ExtendedXmlSerialization.Write
             _writer = writer;
         }
 
-        public void Begin(IElement element) => _writer.WriteStartElement(element.Prefix, element.Name, element.Identifier?.ToString());
+        public void Begin(IElement element) => _writer.WriteStartElement(element.Name, element.Identifier?.ToString());
+
         public void EndElement() => _writer.WriteEndElement();
         public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
 
-        public void Emit(IProperty property)
-        {
-            _writer.WriteAttributeString(property.Prefix, property.Name, property.Identifier?.ToString(), _serializer.Serialize(property.Value));
-        }
+        public void Emit(IProperty property) => _writer.WriteAttributeString(property.Name, property.Identifier?.ToString(), _serializer.Serialize(property.Value));
 
         public void Dispose() => _writer.Dispose();
     }
@@ -137,17 +135,19 @@ namespace ExtendedXmlSerialization.Write
 
     public struct MemberContext
     {
-        public MemberContext(MemberInfo member, object value = null) : this(member, member.GetMemberType(), member.IsWritable(), value) {}
+        public MemberContext(MemberInfo member, object value = null) : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
 
-        public MemberContext(MemberInfo metadata, Type memberType, bool isWritable, object value)
+        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
         {
             Metadata = metadata;
+            DisplayName = displayName;
             MemberType = memberType;
             IsWritable = isWritable;
             Value = value;
         }
 
         public MemberInfo Metadata { get; }
+        public string DisplayName { get; }
         public Type MemberType { get; }
         public bool IsWritable { get; }
         public object Value { get; }
@@ -342,6 +342,49 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
+    public interface INamespaceEmitter
+    {
+        void Execute(Type type);
+    }
+
+    public class Namespaces : WeakCacheBase<Type, IImmutableList<INamespace>>, IParameterizedSource<Type, IImmutableList<INamespace>>
+    {
+        private readonly INamespaceLocator _locator;
+        public Namespaces(INamespaceLocator locator)
+        {
+            _locator = locator;
+        }
+
+        protected override IImmutableList<INamespace> Callback(Type key) => Yield(key).ToImmutableList();
+
+        private IEnumerable<INamespace> Yield(Type parameter)
+        {
+            var root = _locator.Get(parameter);
+            yield return new Namespace(string.Empty, root.Identifier);
+        }
+    }
+
+    class NamespaceEmitter : INamespaceEmitter
+    {
+        private const string Prefix = "xmlns";
+        private readonly XmlWriter _writer;
+        private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
+
+        public NamespaceEmitter(XmlWriter writer, IParameterizedSource<Type, IImmutableList<INamespace>> namespaces)
+        {
+            _writer = writer;
+            _namespaces = namespaces;
+        }
+
+        public void Execute(Type type)
+        {
+            foreach (var pair in _namespaces.Get(type))
+            {
+                _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
+            }
+        }
+    }
+
     class Writing : IWriting
     {
         private readonly IWriter _writer;
@@ -362,11 +405,7 @@ namespace ExtendedXmlSerialization.Write
             _services = services;
         }
 
-        public object GetService(Type serviceType)
-        {
-            var service = serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
-            return service;
-        }
+        public object GetService(Type serviceType) => serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
 
         public void Begin(IElement element) => _writer.Begin(element);
         public void EndElement() => _writer.EndElement();

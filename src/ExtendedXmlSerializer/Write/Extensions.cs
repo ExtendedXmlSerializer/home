@@ -326,7 +326,7 @@ namespace ExtendedXmlSerialization.Write
 
     class MemberProperty : PropertyBase
     {
-        public MemberProperty(INamespace @namespace, MemberContext member) : base(@namespace, member.Metadata.Name, member.Value) {}
+        public MemberProperty(INamespace @namespace, MemberContext member) : base(@namespace, member.DisplayName, member.Value) {}
     }
 
     class TypeProperty : PropertyBase
@@ -334,20 +334,20 @@ namespace ExtendedXmlSerialization.Write
         public TypeProperty(INamespace @namespace, string type) : base(@namespace, ExtendedXmlSerializer.Type, type) {}
     }
 
-	class DictionaryItemElement : Element
-	{
-		public DictionaryItemElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Item) {}
-	}
+    class DictionaryItemElement : Element
+    {
+        public DictionaryItemElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Item) {}
+    }
 
-	class DictionaryKeyElement : Element
-	{
-		public DictionaryKeyElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Key) {}
-	}
+    class DictionaryKeyElement : Element
+    {
+        public DictionaryKeyElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Key) {}
+    }
 
-	class DictionaryValueElement : Element
-	{
-		public DictionaryValueElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
-	}
+    class DictionaryValueElement : Element
+    {
+        public DictionaryValueElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
+    }
 
     class VersionProperty : PropertyBase
     {

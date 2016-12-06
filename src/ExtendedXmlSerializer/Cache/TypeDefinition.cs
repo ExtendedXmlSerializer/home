@@ -62,7 +62,7 @@ namespace ExtendedXmlSerialization.Cache
 
         public TypeDefinition(Type type)
         {
-	        Type = Nullable.GetUnderlyingType(type) ?? type;
+            Type = Nullable.GetUnderlyingType(type) ?? type;
             TypeCode = Type.GetTypeCode(Type);
             string name;
             IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name);
@@ -166,6 +166,7 @@ namespace ExtendedXmlSerialization.Cache
                     {
                         property.Order = order;
                     }
+                    MemberNames.Default.Add(propertyInfo, property.Name);
                     result.Add(property);
                 }
 
@@ -201,6 +202,7 @@ namespace ExtendedXmlSerialization.Cache
                     {
                         property.Order = order;
                     }
+                    MemberNames.Default.Add(field, property.Name);
                     result.Add(property);
                 }
             

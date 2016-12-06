@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Serialization;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
 
@@ -165,7 +166,9 @@ namespace ExtendedXmlSerialization.Write
             var member = services.Current.Member;
             if (member != null)
             {
-                var @namespace = services.Get(member.Value.Value);
+                var @namespace = services.Current.Root.GetType().IsAssignableFrom(member.Value.Metadata.DeclaringType)
+                    ? Namespace.Default
+                    : services.Get(member.Value.Metadata.DeclaringType);
                 services.Emit(new MemberProperty(@namespace, member.Value));
             }
             else
@@ -191,7 +194,7 @@ namespace ExtendedXmlSerialization.Write
         public TypeDefinitionElementProvider(Type type) : base(TypeDefinitionCache.GetDefinition(type).Name) {}
     }
 
-    class FixedElementProvider : IElementProvider
+    /*class FixedElementProvider : IElementProvider
     {
         private readonly IElement _element;
         public FixedElementProvider(IElement element)
@@ -201,7 +204,7 @@ namespace ExtendedXmlSerialization.Write
 
         public IElement Get(INamespaceLocator locator, object instance) => _element;
     }
-
+*/
     class DelegatedElementProvider : IElementProvider
     {
         private readonly Func<INamespace, object, IElement> _element;
@@ -228,6 +231,22 @@ namespace ExtendedXmlSerialization.Write
     class FixedNameProvider : ElementProviderBase
     {
         public FixedNameProvider(string name) : base(name.Accept) {}
+    }
+
+    class MemberInfoElementProvider : IElementProvider
+    {
+        private readonly MemberInfo _member;
+        private readonly string _name;
+
+        public MemberInfoElementProvider(MemberInfo member) : this(member, MemberNames.Default.Get(member)) {}
+
+        public MemberInfoElementProvider(MemberInfo member, string name)
+        {
+            _member = member;
+            _name = name;
+        }
+
+        public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(_member.DeclaringType), _name);
     }
 
     class EmitInstanceInstruction : DecoratedWriteInstruction
