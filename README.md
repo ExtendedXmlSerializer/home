@@ -426,6 +426,9 @@ public static void Register(HttpConfiguration config)
 ```
 
 ##History
+* 2016-12-06 - v1.5.0 - Support property without set accessor for collections.
+                        Support IDictionary, IList and ISet properties.
+                        Attribute type is added only when necessary.
 * 2016-11-18 - v1.4.1 - Support sorting parameters and fix serialization of Object property
 * 2016-11-15 - v1.4.0 - Support XmlElementAttribute and XmlRootAttribute
 * 2016-10-18 - v1.3.0 - Property encryption
