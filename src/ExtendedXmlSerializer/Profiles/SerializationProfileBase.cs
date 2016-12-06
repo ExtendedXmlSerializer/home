@@ -22,19 +22,15 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public abstract class SerializationProfileBase : ISerializationProfile
+	public abstract class SerializationProfileBase : Namespace, ISerializationProfile
 	{
-		protected SerializationProfileBase(Uri uri)
-		{
-			Identifier = uri;
-		}
+		protected SerializationProfileBase(INamespace root) : base(root?.Prefix, root?.Identifier) {}
 
 		public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
-
-		public Uri Identifier { get; }
 
 		public abstract ISerialization New();
 	}

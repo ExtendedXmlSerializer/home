@@ -110,13 +110,12 @@ namespace ExtendedXmlSerialization.Common
 
     class NamespaceLocator : WeakCacheBase<Type, INamespace>, INamespaceLocator
     {
-        private const string Prefix = "exs";
         private readonly INamespace _root;
         readonly private Assembly _assembly;
 
-        public NamespaceLocator(Uri root) : this(Prefix, root) {}
+        /*public NamespaceLocator(Uri root) : this(Prefix, root) {}
 
-        public NamespaceLocator(string prefix, Uri root) : this(new Namespace(prefix, root)) {}
+        public NamespaceLocator(string prefix, Uri root) : this(new Namespace(prefix, root)) {}*/
 
         public NamespaceLocator(INamespace root)
         {
@@ -152,6 +151,13 @@ namespace ExtendedXmlSerialization.Common
     public interface INamespace : IUniqueResource
     {
         string Prefix { get; }
+    }
+
+    public sealed class RootNamespace : Namespace
+    {
+        private new const string Prefix = "exs";
+
+        public RootNamespace(Uri identifier) : base(Prefix, identifier) {}
     }
 
     public class Namespace : INamespace

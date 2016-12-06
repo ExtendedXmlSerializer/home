@@ -311,6 +311,8 @@ namespace ExtendedXmlSerialization.Write
     public class WritingFactory : IWritingFactory
     {
         private readonly ISerializationToolsFactory _tools;
+        private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
+        private readonly INamespace _root;
         private readonly INamespaceLocator _locator;
         private readonly IServiceProvider _services;
         private readonly IExtension _extension;
@@ -318,11 +320,13 @@ namespace ExtendedXmlSerialization.Write
 
         public WritingFactory(
             ISerializationToolsFactory tools,
+            IParameterizedSource<Type, IImmutableList<INamespace>> namespaces,
             INamespaceLocator locator,
             IServiceProvider services,
             Func<IWritingContext> context, IExtension extension)
         {
             _tools = tools;
+            _namespaces = namespaces;
             _locator = locator;
             _services = services;
             _extension = extension;
@@ -336,8 +340,8 @@ namespace ExtendedXmlSerialization.Write
             var xmlWriter = XmlWriter.Create(parameter/*, settings*/);
             var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_tools, context), _tools);
             var writer = new Writer(serializer, xmlWriter);
-            var result = new Writing(writer, context, _locator
-                                        /*services:*/, serializer,_extension, _tools, _services, this, parameter, context, settings, xmlWriter, serializer, writer);
+            var result = new Writing(writer, context, _locator, new NamespaceEmitter(xmlWriter, _namespaces)
+                                        /*services:*/, serializer, _extension, _tools, _services, this, parameter, context, settings, xmlWriter, serializer, writer);
             return result;
         }
     }
@@ -350,17 +354,21 @@ namespace ExtendedXmlSerialization.Write
     public class Namespaces : WeakCacheBase<Type, IImmutableList<INamespace>>, IParameterizedSource<Type, IImmutableList<INamespace>>
     {
         private readonly INamespaceLocator _locator;
-        public Namespaces(INamespaceLocator locator)
+        private readonly INamespace[] _namespaces;
+
+        public Namespaces(INamespaceLocator locator, params INamespace[] namespaces)
         {
             _locator = locator;
+            _namespaces = namespaces;
         }
 
-        protected override IImmutableList<INamespace> Callback(Type key) => Yield(key).ToImmutableList();
+        protected override IImmutableList<INamespace> Callback(Type key) => _namespaces.Concat(Yield(key)).Distinct().ToImmutableList();
 
         private IEnumerable<INamespace> Yield(Type parameter)
         {
-            var root = _locator.Get(parameter);
-            yield return new Namespace(string.Empty, root.Identifier);
+            /*var root = _locator.Get(parameter);
+            yield return new Namespace(string.Empty, root.Identifier);*/
+			yield break;
         }
     }
 
@@ -390,24 +398,35 @@ namespace ExtendedXmlSerialization.Write
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
         private readonly INamespaceLocator _locator;
+        private readonly INamespaceEmitter _emitter;
         private readonly IWritingContext _context;
         private readonly IServiceProvider _services;
+        private readonly ConditionMonitor _monitor = new ConditionMonitor();
 
-        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, params object[] services)
-            : this(writer, context, AttachedProperties.Default, locator, new CompositeServiceProvider(services)) {}
+        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, INamespaceEmitter emitter, params object[] services)
+            : this(writer, context, AttachedProperties.Default, locator, emitter, new CompositeServiceProvider(services)) {}
 
-        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, INamespaceLocator locator, IServiceProvider services)
+        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, INamespaceLocator locator, INamespaceEmitter emitter, IServiceProvider services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
             _locator = locator;
+            _emitter = emitter;
             _services = services;
         }
 
         public object GetService(Type serviceType) => serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
 
-        public void Begin(IElement element) => _writer.Begin(element);
+        public void Begin(IElement element)
+        {
+            _writer.Begin(element);
+            if (_monitor.Apply())
+            {
+                _emitter.Execute(Current.Root.GetType());
+            }
+        }
+
         public void EndElement() => _writer.EndElement();
         public void Emit(object instance) => _writer.Emit(instance);
         public void Emit(IProperty property) => _writer.Emit(property);

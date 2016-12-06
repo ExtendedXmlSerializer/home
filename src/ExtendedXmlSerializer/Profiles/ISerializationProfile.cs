@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.Common;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public interface ISerializationProfile : ISpecification<Uri>,
-	                                         IUniqueResource
-	{
-		ISerialization New();
-	}
+    public interface ISerializationProfile : ISpecification<Uri>,
+                                             INamespace
+    {
+        ISerialization New();
+    }
 
     
 }
