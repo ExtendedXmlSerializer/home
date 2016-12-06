@@ -38,6 +38,7 @@ namespace ExtendedXmlSerialization.Write
     
     public static class Extensions
     {
+        readonly private static int Length = Enum.GetNames(typeof(WriteState)).Length;
         /*/// <summary>
         /// Attribution: http://stackoverflow.com/a/11221963/3602057
         /// </summary>
@@ -76,13 +77,22 @@ namespace ExtendedXmlSerialization.Write
             return result;
         }
 
-        public static WriteContext? GetContextWithMember(this IWritingContext @this)
+        public static WriteContext? GetDictionaryContext(this IWritingContext @this)
+        {
+            var parent = @this.Parent((int) @this.Current.State+1);
+
+            var instance = parent?.Instance;
+            var result = instance != null && TypeDefinitionCache.GetDefinition(instance.GetType()).IsDictionary ? parent : null;
+            return result;
+        }
+
+        public static WriteContext? GetMemberContext(this IWritingContext @this)
         {
             if (@this.Current.Member != null)
             {
                 return @this.Current;
             }
-            var parent = @this.Parent();
+            var parent = @this.Parent((int) @this.Current.State);
             var result = parent?.Member != null ? parent : null;
             return result;
         }
@@ -360,7 +370,7 @@ namespace ExtendedXmlSerialization.Write
             {
                 if (!elements.Contains(item))
                 {
-                    elements.Add(item, item);
+                    elements.Add(item);
                 }
             }
             return base.StartingInstance(services, instance);
@@ -391,10 +401,15 @@ namespace ExtendedXmlSerialization.Write
                 if (result)
                 {
                     services.Attach(property);
-                    references.Add(instance, instance);
+                    references.Add(instance);
                 }
                 else
                 {
+                    // TODO: Find a more elegant way to handle this:
+                    if (EmitMemberTypeSpecification.Default.IsSatisfiedBy(services))
+                    {
+                        EmitTypeInstruction.Default.Execute(services);
+                    }
                     services.Emit(property);
                 }
                 return result;
@@ -404,16 +419,16 @@ namespace ExtendedXmlSerialization.Write
 
         class Context
         {
-            public Context() : this(new ConcurrentDictionary<object, object>(), new ConcurrentDictionary<object, object>()) {}
+            public Context() : this(new HashSet<object>(), new HashSet<object>()) {}
 
-            public Context(IDictionary references, IDictionary elements)
+            public Context(ISet<object> references, ISet<object> elements)
             {
                 References = references;
                 Elements = elements;
             }
 
-            public IDictionary References { get; }
-            public IDictionary Elements { get; }
+            public ISet<object> References { get; }
+            public ISet<object> Elements { get; }
         }
     }
 }

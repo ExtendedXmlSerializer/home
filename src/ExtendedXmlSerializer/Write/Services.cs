@@ -431,7 +431,7 @@ namespace ExtendedXmlSerialization.Write
 
         public bool IsSatisfiedBy(object parameter)
         {
-            var context = _context.GetContextWithMember();
+            var context = _context.GetMemberContext();
             if (context != null)
             {
                 var configuration = _factory.GetConfiguration(context?.Instance.GetType());

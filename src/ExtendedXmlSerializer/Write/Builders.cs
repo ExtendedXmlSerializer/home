@@ -656,7 +656,7 @@ namespace ExtendedXmlSerialization.Write
         EmitMemberTypeSpecification() {}
         public bool IsSatisfiedBy(IWritingContext parameter)
         {
-            var context = parameter.GetContextWithMember().GetValueOrDefault();
+            var context = parameter.GetMemberContext().GetValueOrDefault();
             switch (context.State)
             {
                 case WriteState.MemberValue:
@@ -664,6 +664,21 @@ namespace ExtendedXmlSerialization.Write
                     var result = member.IsWritable && member.Value.GetType() != member.MemberType;
                     return result;
             }
+            var array = parameter.GetArrayContext();
+            if (array != null)
+            {
+                var elementType = ElementTypeLocator.Default.Locate(array.Value.Instance.GetType());
+                var result = parameter.Current.Instance.GetType() != elementType;
+                return result;
+            }
+
+	        var dictionary = parameter.GetDictionaryContext();
+	        if (dictionary != null)
+	        {
+		        var type = TypeDefinitionCache.GetDefinition(dictionary.Value.Instance.GetType()).GenericArguments[1];
+		        var result = parameter.Current.Instance.GetType() != type;
+		        return result;
+	        }
             return false;
         }
     }

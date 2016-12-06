@@ -31,11 +31,6 @@ namespace ExtendedXmlSerialization.Test
 {
 	public class FuturesTest
 	{
-		class TestClassPrimitiveTypes2
-		{
-			public TestEnum PropEnum { get; set; }
-		}
-
 		[Fact]
 		public void VerifyAutoAttributes()
 		{
@@ -78,5 +73,14 @@ namespace ExtendedXmlSerialization.Test
 
 		[Fact]
 		public void CustomWritePlanForListsWithInheritance() {}
+
+		[Fact]
+		public void DemonstrateExtensionSkippingElements() {}
+
+		[Fact]
+		public void DemonstrateProfileThatModifiesValues()
+		{
+			
+		}
 	}
 }
