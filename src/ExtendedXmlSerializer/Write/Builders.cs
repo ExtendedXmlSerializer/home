@@ -541,7 +541,7 @@ namespace ExtendedXmlSerialization.Write
         }
 
         IInstruction Content(MemberContext member) =>
-            new EmitObjectInstruction(
+            new EmitInstanceInstruction(
                 member.Metadata,
                     new StartNewMemberValueContextInstruction(
                         new StartNewContextFromMemberValueInstruction(
@@ -607,7 +607,7 @@ namespace ExtendedXmlSerialization.Write
             {
                 throw new InvalidOperationException($"Could not find instruction for type '{type}'");
             }
-            var result = new StartNewContextFromRootInstruction(new EmitObjectInstruction(type, content));
+            var result = new StartNewContextFromRootInstruction(new EmitInstanceInstruction(type, content));
             return result;
         }
     }
@@ -644,7 +644,7 @@ namespace ExtendedXmlSerialization.Write
             var provider = elementType.GetTypeInfo().IsInterface
                 ? (INameProvider) InstanceTypeNameProvider.Default
                     : new TypeDefinitionNameProvider(elementType);
-            var template = new EmitObjectInstruction(provider, _plan.For(elementType));
+            var template = new EmitInstanceInstruction(provider, _plan.For(elementType));
             var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(template));
             return result;
         }
@@ -672,13 +672,13 @@ namespace ExtendedXmlSerialization.Write
                 return result;
             }
 
-	        var dictionary = parameter.GetDictionaryContext();
-	        if (dictionary != null)
-	        {
-		        var type = TypeDefinitionCache.GetDefinition(dictionary.Value.Instance.GetType()).GenericArguments[1];
-		        var result = parameter.Current.Instance.GetType() != type;
-		        return result;
-	        }
+            var dictionary = parameter.GetDictionaryContext();
+            if (dictionary != null)
+            {
+                var type = TypeDefinitionCache.GetDefinition(dictionary.Value.Instance.GetType()).GenericArguments[1];
+                var result = parameter.Current.Instance.GetType() != type;
+                return result;
+            }
             return false;
         }
     }
@@ -743,8 +743,8 @@ namespace ExtendedXmlSerialization.Write
                 throw new InvalidOperationException(
                           $"Attempted to write type '{type}' as a dictionary, but it does not have enough generic arguments.");
             }
-            var keys = new EmitObjectInstruction(ExtendedXmlSerializer.Key, _builder.For(arguments[0]));
-            var values = new EmitObjectInstruction(ExtendedXmlSerializer.Value, _builder.For(arguments[1]));
+            var keys = new EmitInstanceInstruction(ExtendedXmlSerializer.Key, _builder.For(arguments[0]));
+            var values = new EmitInstanceInstruction(ExtendedXmlSerializer.Value, _builder.For(arguments[1]));
             var result = new EmitTypeForTemplateInstruction(new EmitDictionaryInstruction(keys, values));
             return result;
         }

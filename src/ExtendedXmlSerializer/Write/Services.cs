@@ -65,9 +65,9 @@ namespace ExtendedXmlSerialization.Write
 
     public interface IWriter : IDisposable
     {
-        void BeginContent(string name);
+        void Begin(IElement element);
 
-        void EndContent();
+        void EndElement();
 
         void Emit(object instance);
 
@@ -77,32 +77,27 @@ namespace ExtendedXmlSerialization.Write
     class Writer : IWriter
     {
         private readonly IObjectSerializer _serializer;
-        private readonly INamespaceLocator _locator;
         private readonly XmlWriter _writer;
 
-        //public Writer(XmlWriter writer) : this(ObjectSerializer.Default, DefaultNamespaceLocator.Default, writer) {}
-
-        public Writer(IObjectSerializer serializer, INamespaceLocator locator, XmlWriter writer)
+        public Writer(IObjectSerializer serializer, XmlWriter writer)
         {
             _serializer = serializer;
-            _locator = locator;
             _writer = writer;
         }
 
-        public void BeginContent(string name) => _writer.WriteStartElement(name);
-        public void EndContent() => _writer.WriteEndElement();
+        public void Begin(IElement element) => _writer.WriteStartElement(element.Prefix, element.Name, element.Identifier?.ToString());
+        public void EndElement() => _writer.WriteEndElement();
         public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
 
         public void Emit(IProperty property)
         {
-            var @namespace = _locator.Get(property);
-            _writer.WriteAttributeString(@namespace?.Prefix, property.Name, @namespace?.Identifier?.ToString(), _serializer.Serialize(property.Value));
+            _writer.WriteAttributeString(property.Prefix, property.Name, property.Identifier?.ToString(), _serializer.Serialize(property.Value));
         }
 
         public void Dispose() => _writer.Dispose();
     }
 
-    public interface IWriting : IWriter, IWritingContext, IServiceProvider
+    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
     {
         void Attach(IProperty property);
         IImmutableList<IProperty> GetProperties();
@@ -177,22 +172,27 @@ namespace ExtendedXmlSerialization.Write
         public MemberContext? Member { get; }
     }
 
-    public interface IProperty
+    public interface IProperty : IElement
     {
-        string Name { get; }
-
         object Value { get; }
     }
 
-    abstract class PropertyBase : IProperty
+    public class Element : Namespace, IElement
     {
-        protected PropertyBase(string name, object value)
+        public Element(INamespace @namespace, string name) : base(@namespace?.Prefix, @namespace?.Identifier)
         {
             Name = name;
-            Value = value;
         }
 
         public string Name { get; }
+    }
+
+    abstract class PropertyBase : Element, IProperty
+    {
+        protected PropertyBase(INamespace @namespace, string name, object value) : base(@namespace, name)
+        {
+            Value = value;
+        }
 
         public object Value { get; }
     }
@@ -208,25 +208,6 @@ namespace ExtendedXmlSerialization.Write
         IDisposable New(MemberInfo member);
         IDisposable ToMemberContext();
     }
-
-    /*class ExtensionAwareWritingContext : IWritingContext
-    {
-        private readonly IWritingContext _context;
-        public ExtensionAwareWritingContext(IWritingContext context, IWritingExtension extension, IAlteration<> )
-        {
-            _context = context;
-        }
-
-        public WriteContext Current => _context.Current;
-        public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
-        public IDisposable Start(object root) => _context.Start(root);
-        public IDisposable New(object instance) => _context.New(instance);
-        public IDisposable New(IImmutableList<MemberInfo> members) => _context.New(members);
-        public IDisposable New(MemberInfo member) => _context.New(member);
-        public IDisposable ToMemberContext() => _context.ToMemberContext();
-
-
-    }*/
 
     class DefaultWritingContext : IWritingContext
     {
@@ -354,9 +335,9 @@ namespace ExtendedXmlSerialization.Write
             var settings = new XmlWriterSettings { NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true };
             var xmlWriter = XmlWriter.Create(parameter/*, settings*/);
             var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_tools, context), _tools);
-            var writer = new Writer(serializer, _locator, xmlWriter);
-            var result = new Writing(writer, context
-                                        /*services:*/, serializer,_extension, _tools, _locator, _services, this, parameter, context, settings, xmlWriter, serializer, writer);
+            var writer = new Writer(serializer, xmlWriter);
+            var result = new Writing(writer, context, _locator
+                                        /*services:*/, serializer,_extension, _tools, _services, this, parameter, context, settings, xmlWriter, serializer, writer);
             return result;
         }
     }
@@ -365,17 +346,19 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
+        private readonly INamespaceLocator _locator;
         private readonly IWritingContext _context;
         private readonly IServiceProvider _services;
 
-        public Writing(IWriter writer, IWritingContext context, params object[] services)
-            : this(writer, context, AttachedProperties.Default, new CompositeServiceProvider(services)) {}
+        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, params object[] services)
+            : this(writer, context, AttachedProperties.Default, locator, new CompositeServiceProvider(services)) {}
 
-        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, IServiceProvider services)
+        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, INamespaceLocator locator, IServiceProvider services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
+            _locator = locator;
             _services = services;
         }
 
@@ -385,14 +368,12 @@ namespace ExtendedXmlSerialization.Write
             return service;
         }
 
-        public void BeginContent(string name) => _writer.BeginContent(name);
-
-        public void EndContent() => _writer.EndContent();
+        public void Begin(IElement element) => _writer.Begin(element);
+        public void EndElement() => _writer.EndElement();
         public void Emit(object instance) => _writer.Emit(instance);
         public void Emit(IProperty property) => _writer.Emit(property);
 
         public void Dispose() => _writer.Dispose();
-
 
         public void Attach(IProperty property) => _properties.Attach(_context.Current.Instance, property);
 
@@ -412,6 +393,7 @@ namespace ExtendedXmlSerialization.Write
 
         public WriteContext Current => _context.Current;
         public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
+        public INamespace Get(object parameter) => _locator.Get(parameter);
     }
 
     public interface IObjectSerializer

@@ -93,7 +93,7 @@ namespace ExtendedXmlSerialization.Write
         private readonly IInstruction _entry;
 
         public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
-            new EmitObjectInstruction(ExtendedXmlSerializer.Item,
+            new EmitInstanceInstruction(ExtendedXmlSerializer.Item,
                                            new EmitDictionaryPairInstruction(key, value))
         ) {}
 
@@ -150,7 +150,7 @@ namespace ExtendedXmlSerialization.Write
         {
             var type = services.Current.Instance.GetType();
             var format = services.Get<ITypeFormatter>().Format(type);
-            var property = new TypeProperty(format);
+            var property = new TypeProperty(services.Get(this), format);
             services.Emit(property);
         }
     }
@@ -165,7 +165,8 @@ namespace ExtendedXmlSerialization.Write
             var member = services.Current.Member;
             if (member != null)
             {
-                services.Emit(new MemberProperty(member.Value));
+                var @namespace = services.Get(member.Value.Value);
+                services.Emit(new MemberProperty(@namespace, member.Value));
             }
             else
             {
@@ -204,20 +205,20 @@ namespace ExtendedXmlSerialization.Write
         public string Get(IServiceProvider services) => _name;
     }
 
-    class EmitObjectInstruction : DecoratedWriteInstruction
+    class EmitInstanceInstruction : DecoratedWriteInstruction
     {
         private readonly INameProvider _provider;
 
-        public EmitObjectInstruction(string name, IInstruction instruction)
+        public EmitInstanceInstruction(string name, IInstruction instruction)
             : this(new FixedNameProvider(name), instruction) {}
 
-        public EmitObjectInstruction(MemberInfo member, IInstruction instruction)
+        public EmitInstanceInstruction(MemberInfo member, IInstruction instruction)
             : this(new MemberInfoNameProvider(member), instruction) {}
 
-        public EmitObjectInstruction(Type type, IInstruction instruction)
+        public EmitInstanceInstruction(Type type, IInstruction instruction)
             : this(new TypeDefinitionNameProvider(type), instruction) {}
 
-        public EmitObjectInstruction(INameProvider provider, IInstruction instruction) : base(instruction)
+        public EmitInstanceInstruction(INameProvider provider, IInstruction instruction) : base(instruction)
         {
             _provider = provider;
         }
@@ -225,9 +226,11 @@ namespace ExtendedXmlSerialization.Write
         protected override void Execute(IWriting services)
         {
             var name = _provider.Get(services);
-            services.BeginContent(name);
+            var @namespace = services.Get(services.Current.Instance);
+            var element = new Element(@namespace, name);
+            services.Begin(element);
             base.Execute(services);
-            services.EndContent();
+            services.EndElement();
         }
     }
 
@@ -305,7 +308,7 @@ namespace ExtendedXmlSerialization.Write
 
             foreach (var content in all.Except(properties))
             {
-                new EmitObjectInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
+                new EmitInstanceInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
             }
         }
 

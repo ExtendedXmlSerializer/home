@@ -120,7 +120,7 @@ namespace ExtendedXmlSerialization.Common
 
         private INamespace FromType(object parameter)
         {
-            var type = parameter.GetType();
+            var type = parameter as Type ?? parameter.GetType();
             var result = Equals(type.GetTypeInfo().Assembly, _assembly) ? _root : Get(type);
             return result;
         }
@@ -134,6 +134,11 @@ namespace ExtendedXmlSerialization.Common
         DefaultNamespaceLocator() {}
 
         public INamespace Get(object parameter) => null;
+    }
+
+    public interface IElement : INamespace
+    {
+        string Name { get; }
     }
 
     public interface INamespace : IUniqueResource

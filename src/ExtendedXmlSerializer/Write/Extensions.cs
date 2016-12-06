@@ -323,38 +323,35 @@ namespace ExtendedXmlSerialization.Write
             if (version > 0)
             {
                 _instruction.Execute(services);
-                services.Attach(new VersionProperty(version));
+                services.Attach(new VersionProperty(services.Get(this), version));
             }
             return base.StartingMembers(services, configuration, instance, members);
         }
     }
 
-    class MemberProperty : PropertyBase, INamespace
+    class MemberProperty : PropertyBase
     {
-        public MemberProperty(MemberContext member) : base(member.Metadata.Name, member.Value) {}
-
-        public Uri Identifier { get; } = null; // TODO: resolve from property value.
-        public string Prefix => null; // TODO: resolve from property value.
+        public MemberProperty(INamespace @namespace, MemberContext member) : base(@namespace, member.Metadata.Name, member.Value) {}
     }
 
     class TypeProperty : PropertyBase
     {
-        public TypeProperty(string type) : base(ExtendedXmlSerializer.Type, type) {}
+        public TypeProperty(INamespace @namespace, string type) : base(@namespace, ExtendedXmlSerializer.Type, type) {}
     }
 
     class VersionProperty : PropertyBase
     {
-        public VersionProperty(int version) : base(ExtendedXmlSerializer.Version, version) {}
+        public VersionProperty(INamespace @namespace, int version) : base(@namespace, ExtendedXmlSerializer.Version, version) {}
     }
 
     class ObjectReferenceProperty : PropertyBase
     {
-        public ObjectReferenceProperty(string value) : base(ExtendedXmlSerializer.Ref, value) {}
+        public ObjectReferenceProperty(INamespace @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Ref, value) {}
     }
 
     class ObjectIdProperty : PropertyBase
     {
-        public ObjectIdProperty(string value) : base(ExtendedXmlSerializer.Id, value) {}
+        public ObjectIdProperty(INamespace @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Id, value) {}
     }
 
     public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
@@ -396,7 +393,8 @@ namespace ExtendedXmlSerialization.Write
                 var objectId = configuration.GetObjectId(instance);
                 var contains = references.Contains(instance);
                 var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
-                var property = reference ? (IProperty) new ObjectReferenceProperty(objectId) : new ObjectIdProperty(objectId);
+                var @namespace = services.Get(this);
+                var property = reference ? (IProperty) new ObjectReferenceProperty(@namespace, objectId) : new ObjectIdProperty(@namespace, objectId);
                 var result = !reference;
                 if (result)
                 {
