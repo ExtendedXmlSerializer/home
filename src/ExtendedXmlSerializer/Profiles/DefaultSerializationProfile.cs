@@ -31,23 +31,29 @@ namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfile : SerializationProfileBase
     {
-        private readonly IInstructionSpecification _specification;
+        private readonly IWritePlanComposer _composer;
         private readonly INamespaceLocator _locator;
         private readonly Func<IWritingContext> _context;
+        private readonly IInstruction _instruction;
         private readonly object[] _services;
 
         public SerializationProfile(IInstructionSpecification specification, Uri identifier)
             : this(specification, () => new DefaultWritingContext(), identifier) {}
 
         public SerializationProfile(IInstructionSpecification specification, Func<IWritingContext> context, Uri identifier)
-            : this(specification, new NamespaceLocator(identifier), context, identifier, TypeFormatter.Default, MemberValueAssignedExtension.Default) {}
+            : this(
+                new WritePlanComposer(new PlanSelector(specification, EnumerableInstructionFactory.Default)),
+                new NamespaceLocator(identifier), context, identifier, EmptyInstruction.Default, TypeFormatter.Default,
+                MemberValueAssignedExtension.Default) {}
 
-        public SerializationProfile(IInstructionSpecification specification, INamespaceLocator locator, Func<IWritingContext> context, Uri identifier, params object[] services)
+        public SerializationProfile(IWritePlanComposer composer, INamespaceLocator locator, Func<IWritingContext> context,
+                                    Uri identifier, IInstruction instruction, params object[] services)
             : base(identifier)
         {
-            _specification = specification;
+            _composer = composer;
             _locator = locator;
             _context = context;
+            _instruction = instruction;
             _services = services;
         }
 
@@ -55,9 +61,10 @@ namespace ExtendedXmlSerialization.Profiles
         {
             var host = new SerializationToolsFactoryHost();
             var services = new ServiceRepository(_services);
-            var extensions = new OrderedSet<IExtension>(_services.OfType<IExtension>().Concat( new IExtension[] { new DefaultWritingExtensions(host) } ).ToArray());
-            var plan = new WritePlanComposer(new PlanSelector(_specification)).Compose();
+            var items = _services.OfType<IExtension>().Concat( new IExtension[] { new DefaultWritingExtensions(host, _instruction) } ).ToArray(); // Should probably move out to a factory.
+            var extensions = new OrderedSet<IExtension>(items);
             var factory = new WritingFactory(host, _locator, services, _context, new CompositeExtension(extensions));
+            var plan = _composer.Compose();
             var serializer = new Serializer(plan, factory);
             var result = new Serialization(host, serializer, services, extensions);
             return result;
@@ -70,8 +77,10 @@ namespace ExtendedXmlSerialization.Profiles
 
         DefaultSerializationProfile()
             : base(
-                InstructionSpecification.Default, DefaultNamespaceLocator.Default, () => new DefaultWritingContext(),
-                null, DefaultTypeFormatter.Default, DefaultMemberValueAssignedExtension.Default) {}
+                new WritePlanComposer(new DefaultPlanSelector(DefaultInstructionSpecification.Default,
+                                                              DefaultEnumerableInstructionFactory.Default)),
+                DefaultNamespaceLocator.Default, () => new DefaultWritingContext(),
+                null, EmitTypeInstruction.Default, DefaultTypeFormatter.Default, DefaultMemberValueAssignedExtension.Default) {}
 
         public override bool IsSatisfiedBy(Uri parameter) => true;
     }

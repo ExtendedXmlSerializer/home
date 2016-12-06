@@ -29,6 +29,14 @@ namespace ExtendedXmlSerialization.Common
         protected override void Execute(T services) => _instruction.Execute(services);
     }
 
+    public class EmptyInstruction : IInstruction
+    {
+        public static EmptyInstruction Default { get; } = new EmptyInstruction();
+        EmptyInstruction() {}
+
+        public void Execute(IServiceProvider services) {}
+    }
+
     public interface IInstruction
     {
         void Execute(IServiceProvider services);
@@ -121,7 +129,7 @@ namespace ExtendedXmlSerialization.Common
         private INamespace FromType(object parameter)
         {
             var type = parameter as Type ?? parameter.GetType();
-            var result = Equals(type.GetTypeInfo().Assembly, _assembly) ? _root : Get(type);
+            var result = Equals(type.GetTypeInfo().Assembly, _assembly) ? _root : base.Get(type);
             return result;
         }
 

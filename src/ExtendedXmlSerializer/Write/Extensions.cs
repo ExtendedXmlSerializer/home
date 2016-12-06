@@ -100,10 +100,10 @@ namespace ExtendedXmlSerialization.Write
 
     class DefaultWritingExtensions : CompositeExtension
     {
-        public DefaultWritingExtensions(ISerializationToolsFactory factory) : base(
-            new ObjectReferencesExtension(factory),
-            new VersionExtension(factory),
-            new CustomSerializationExtension(factory)
+        public DefaultWritingExtensions(ISerializationToolsFactory factory, IInstruction instruction) : base(
+            new ObjectReferencesExtension(factory, instruction),
+            new VersionExtension(factory, instruction),
+            new CustomSerializationExtension(factory, instruction)
         ) {}
     }
 
@@ -284,9 +284,6 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly IInstruction _instruction;
 
-        public CustomSerializationExtension(ISerializationToolsFactory factory) : this(factory, EmitTypeInstruction.Default)
-        {}
-
         public CustomSerializationExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
         {
             _instruction = instruction;
@@ -308,8 +305,6 @@ namespace ExtendedXmlSerialization.Write
     public class VersionExtension : ConfigurationWritingExtensionBase
     {
         private readonly IInstruction _instruction;
-
-        public VersionExtension(ISerializationToolsFactory factory) : this(factory, EmitTypeInstruction.Default) {}
 
         public VersionExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
         {
@@ -339,6 +334,21 @@ namespace ExtendedXmlSerialization.Write
         public TypeProperty(INamespace @namespace, string type) : base(@namespace, ExtendedXmlSerializer.Type, type) {}
     }
 
+	class DictionaryItemElement : Element
+	{
+		public DictionaryItemElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Item) {}
+	}
+
+	class DictionaryKeyElement : Element
+	{
+		public DictionaryKeyElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Key) {}
+	}
+
+	class DictionaryValueElement : Element
+	{
+		public DictionaryValueElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
+	}
+
     class VersionProperty : PropertyBase
     {
         public VersionProperty(INamespace @namespace, int version) : base(@namespace, ExtendedXmlSerializer.Version, version) {}
@@ -357,8 +367,12 @@ namespace ExtendedXmlSerialization.Write
     public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
     {
         private readonly WeakCache<IWriting, Context> _contexts = new WeakCache<IWriting, Context>(_ => new Context());
-        
-        public ObjectReferencesExtension(ISerializationToolsFactory factory) : base(factory) {}
+        private readonly IInstruction _instruction;
+
+        public ObjectReferencesExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
+        {
+            _instruction = instruction;
+        }
 
         protected override bool StartingInstance(IWriting services, object instance)
         {
@@ -406,7 +420,7 @@ namespace ExtendedXmlSerialization.Write
                     // TODO: Find a more elegant way to handle this:
                     if (EmitMemberTypeSpecification.Default.IsSatisfiedBy(services))
                     {
-                        EmitTypeInstruction.Default.Execute(services);
+                        _instruction.Execute(services);
                     }
                     services.Emit(property);
                 }

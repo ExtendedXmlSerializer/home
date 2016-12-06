@@ -93,8 +93,8 @@ namespace ExtendedXmlSerialization.Write
         private readonly IInstruction _entry;
 
         public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
-            new EmitInstanceInstruction(ExtendedXmlSerializer.Item,
-                                           new EmitDictionaryPairInstruction(key, value))
+            new EmitInstanceInstruction((ns, o) => new DictionaryItemElement(ns),
+                                        new EmitDictionaryPairInstruction(key, value))
         ) {}
 
         public EmitDictionaryInstruction(IInstruction entry)
@@ -175,59 +175,86 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    public interface INameProvider
+    public interface IElementProvider
     {
-        string Get(IServiceProvider services);
+        IElement Get(INamespaceLocator locator, object instance);
     }
 
-    class InstanceTypeNameProvider : INameProvider
+    class InstanceTypeNameProvider : ElementProviderBase
     {
         public static InstanceTypeNameProvider Default { get; } = new InstanceTypeNameProvider();
-        InstanceTypeNameProvider() {}
-
-        public string Get(IServiceProvider services) => services.AsValid<IWritingContext>().Current.Instance.GetType().Name;
+        InstanceTypeNameProvider() : base(o => TypeDefinitionCache.GetDefinition(o.GetType()).Name) {}
     }
 
-    class TypeDefinitionNameProvider : FixedNameProvider
+    class TypeDefinitionElementProvider : FixedNameProvider
     {
-        public TypeDefinitionNameProvider(Type type) : base(TypeDefinitionCache.GetDefinition(type).Name) {}
+        public TypeDefinitionElementProvider(Type type) : base(TypeDefinitionCache.GetDefinition(type).Name) {}
     }
 
-    class FixedNameProvider : INameProvider
+    class FixedElementProvider : IElementProvider
     {
-        private readonly string _name;
+        private readonly IElement _element;
+        public FixedElementProvider(IElement element)
+        {
+            _element = element;
+        }
 
-        public FixedNameProvider(string name)
+        public IElement Get(INamespaceLocator locator, object instance) => _element;
+    }
+
+    class DelegatedElementProvider : IElementProvider
+    {
+        private readonly Func<INamespace, object, IElement> _element;
+
+        public DelegatedElementProvider(Func<INamespace, object, IElement> element)
+        {
+            _element = element;
+        }
+
+        public IElement Get(INamespaceLocator locator, object instance) => _element(locator.Get(instance), instance);
+    }
+
+    abstract class ElementProviderBase : IElementProvider
+    {
+        private readonly Func<object, string> _name;
+        public ElementProviderBase(Func<object, string> name)
         {
             _name = name;
         }
 
-        public string Get(IServiceProvider services) => _name;
+        public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(instance), _name(instance));
+    }
+
+    class FixedNameProvider : ElementProviderBase
+    {
+        public FixedNameProvider(string name) : base(name.Accept) {}
     }
 
     class EmitInstanceInstruction : DecoratedWriteInstruction
     {
-        private readonly INameProvider _provider;
+        private readonly IElementProvider _provider;
 
         public EmitInstanceInstruction(string name, IInstruction instruction)
             : this(new FixedNameProvider(name), instruction) {}
 
         public EmitInstanceInstruction(MemberInfo member, IInstruction instruction)
-            : this(new MemberInfoNameProvider(member), instruction) {}
+            : this(new MemberInfoElementProvider(member), instruction) {}
 
         public EmitInstanceInstruction(Type type, IInstruction instruction)
-            : this(new TypeDefinitionNameProvider(type), instruction) {}
+            : this(new TypeDefinitionElementProvider(type), instruction) {}
 
-        public EmitInstanceInstruction(INameProvider provider, IInstruction instruction) : base(instruction)
+        public EmitInstanceInstruction(Func<INamespace, object, IElement> element, IInstruction instruction) : this(new DelegatedElementProvider(element), instruction) {}
+
+        public EmitInstanceInstruction(IElementProvider provider, IInstruction instruction) : base(instruction)
         {
             _provider = provider;
         }
 
         protected override void Execute(IWriting services)
         {
-            var name = _provider.Get(services);
-            var @namespace = services.Get(services.Current.Instance);
-            var element = new Element(@namespace, name);
+            var element = _provider.Get(services, services.Current.Instance);
+            /*var @namespace = services.Get(services.Current.Instance);
+            var element = new Element(@namespace, name);*/
             services.Begin(element);
             base.Execute(services);
             services.EndElement();

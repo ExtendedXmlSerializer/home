@@ -266,7 +266,7 @@ namespace ExtendedXmlSerialization.Common
         }
 
         
-        // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
+        public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
 
         // public static void Property(this IWriting @this, IProperty property) => @this.Property(property.Name, @this.Serialize(property.Value));
 
@@ -290,7 +290,7 @@ namespace ExtendedXmlSerialization.Common
 
         public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
 
-        public static T Get<T>(this IServiceProvider @this) => @this.GetService(typeof(T)).To<T>();
+        public static T Get<T>(this IServiceProvider @this) => @this is T ? (T)@this : @this.GetService(typeof(T)).To<T>();
         public static T GetValid<T>( this IServiceProvider @this ) => @this.GetService( typeof(T) ).AsValid<T>();
 
         public static T AsValid<T>( this object @this, string message = null )
