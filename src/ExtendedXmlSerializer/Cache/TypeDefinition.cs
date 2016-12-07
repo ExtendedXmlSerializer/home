@@ -105,7 +105,8 @@ namespace ExtendedXmlSerialization.Cache
                 }
                 else if (elementType != null && !IsArray)
                 {
-                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(Type, elementType);
+					MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
+					MethodAddToCollection = add != null ? ObjectAccessors.CreateMethodAddCollection(Type, elementType, add) : null;
                 }
             }
 

@@ -69,10 +69,10 @@ namespace ExtendedXmlSerialization.Test
 		[Fact]
 		public void VerifyComplexPropertyFromExternalAssembly()
 		{
-			/*var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+			var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
 			var instance = new SubjectWithPropertyFromExternalAssembly {};
 			var data = serializer.Serialize(instance);
-			Debugger.Break();*/
+			Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><SubjectWithPropertyFromExternalAssembly xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"" xmlns:ns2=""clr-namespace:System.Collections;assembly=System.Private.CoreLib"" xmlns:ns3=""clr-namespace:System.Xml.Linq;assembly=System.Xml.XDocument"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><List><ns1:ArrayOfString><string xmlns=""clr-namespace:System;assembly=System.Private.CoreLib"">Hello World!</string></ns1:ArrayOfString></List><Comparer><ns3:XNodeDocumentOrderComparer /></Comparer></SubjectWithPropertyFromExternalAssembly>", data);
 			
 		}
 

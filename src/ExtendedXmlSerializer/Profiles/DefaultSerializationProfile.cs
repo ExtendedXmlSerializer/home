@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Profiles
     public class SerializationProfile : SerializationProfileBase
     {
         private readonly IWritePlanComposer _composer;
-        private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
+        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
         private readonly INamespaceLocator _locator;
         private readonly Func<IWritingContext> _context;
         private readonly IInstruction _instruction;
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Profiles
 
         public SerializationProfile(IWritePlanComposer composer, Func<IWritingContext> context,
                                     IInstruction instruction,
-                                    IParameterizedSource<Type, IImmutableList<INamespace>> namespaces,
+                                    IParameterizedSource<object, IImmutableList<INamespace>> namespaces,
                                     INamespaceLocator locator, INamespace root, params object[] services)
             : base(root)
         {

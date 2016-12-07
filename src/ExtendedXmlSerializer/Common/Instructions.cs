@@ -140,7 +140,7 @@ namespace ExtendedXmlSerialization.Common
         protected override INamespace Callback(Type key) => new Namespace(new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
     }
 
-    class DefaultNamespaces : IParameterizedSource<Type, IImmutableList<INamespace>>
+    class DefaultNamespaces : IParameterizedSource<object, IImmutableList<INamespace>>
     {
         public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
         DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
@@ -153,7 +153,7 @@ namespace ExtendedXmlSerialization.Common
             _namespaces = namespaces;
         }
 
-        public IImmutableList<INamespace> Get(Type parameter) => _namespaces;
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
     }
 
     class DefaultNamespaceLocator : INamespaceLocator

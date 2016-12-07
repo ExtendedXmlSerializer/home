@@ -207,7 +207,11 @@ namespace ExtendedXmlSerialization.Write
             yield return PrimitiveWritePlan.Default;
             yield return new DefaultDictionaryWritePlan(parameter);
             yield return new EnumerableWritePlan(parameter, _enumerable);
-            yield return new ObjectWritePlan(new DefaultMembersBodyFactory(new MembersBodyFactory(parameter, _specification, new MemberInstructionFactory(parameter, _specification))));
+            yield return
+                new ObjectWritePlan(
+                    new DefaultMembersBodyFactory(new MembersBodyFactory(parameter, _specification,
+                                                                         new MemberInstructionFactory(parameter, _specification))))
+                ;
             yield return new DefaultGeneralObjectWritePlan(parameter);
         }
     }
@@ -228,7 +232,11 @@ namespace ExtendedXmlSerialization.Write
             yield return PrimitiveWritePlan.Default;
             yield return new DictionaryWritePlan(parameter);
             yield return new EnumerableWritePlan(parameter, _enumerable);
-            yield return new ObjectWritePlan(new EmitTypedMembersBodyFactory(new MembersBodyFactory(parameter, _specification, new MemberInstructionFactory(parameter, _specification))));
+            yield return
+                new ObjectWritePlan(
+                    new EmitTypedMembersBodyFactory(new MembersBodyFactory(parameter, _specification,
+                                                                           new MemberInstructionFactory(parameter, _specification))))
+                ;
             yield return new GeneralObjectWritePlan(parameter);
         }
     }
@@ -786,7 +794,21 @@ namespace ExtendedXmlSerialization.Write
             new FixedWritePlan(EmitInstanceAsTextInstruction.Default);
 
         public static PrimitiveWritePlan Default { get; } = new PrimitiveWritePlan();
-        PrimitiveWritePlan() : base(type => TypeDefinitionCache.GetDefinition(type).IsPrimitive, Emit) {}
+        PrimitiveWritePlan() : base(IsPrimitiveSpecification.Default.IsSatisfiedBy, Emit) {}
+    }
+
+    class CanSerializeSpecification : ISpecification<Type>
+    {
+        public static CanSerializeSpecification Default { get; } = new CanSerializeSpecification();
+        CanSerializeSpecification() {}
+
+        public bool IsSatisfiedBy(Type parameter)
+        {
+            var definition = TypeDefinitionCache.GetDefinition(parameter);
+            var result = definition.IsPrimitive || definition.IsArray || definition.IsEnumerable ||
+                         definition.IsObjectToSerialize;
+            return result;
+        }
     }
 
     class DefaultDictionaryWritePlan : DictionaryWritePlan

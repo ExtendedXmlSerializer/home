@@ -22,12 +22,14 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
@@ -312,7 +314,7 @@ namespace ExtendedXmlSerialization.Write
     public class WritingFactory : IWritingFactory
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
+        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
         private readonly INamespaceLocator _locator;
         private readonly IServiceProvider _services;
         private readonly IExtension _extension;
@@ -320,7 +322,7 @@ namespace ExtendedXmlSerialization.Write
 
         public WritingFactory(
             ISerializationToolsFactory tools,
-            IParameterizedSource<Type, IImmutableList<INamespace>> namespaces,
+            IParameterizedSource<object, IImmutableList<INamespace>> namespaces,
             INamespaceLocator locator,
             IServiceProvider services,
             Func<IWritingContext> context, IExtension extension)
@@ -348,12 +350,12 @@ namespace ExtendedXmlSerialization.Write
 
     public interface INamespaceEmitter
     {
-        void Execute(Type type);
+        void Execute(object instance);
     }
 
     
 
-    public class Namespaces : WeakCacheBase<Type, IImmutableList<INamespace>>, IParameterizedSource<Type, IImmutableList<INamespace>>
+    public class Namespaces : /*WeakCacheBase<Type, IImmutableList<INamespace>>,*/ IParameterizedSource<object, IImmutableList<INamespace>>
     {
         private readonly INamespaceLocator _locator;
         private readonly INamespace[] _namespaces;
@@ -364,15 +366,61 @@ namespace ExtendedXmlSerialization.Write
             _namespaces = namespaces;
         }
 
-        protected override IImmutableList<INamespace> Callback(Type key) => _namespaces.Concat(Yield(key)).Distinct().ToImmutableList();
+//        protected override IImmutableList<INamespace> Callback(Type key) => _namespaces.Concat(Yield(key)).Distinct().ToImmutableList();
 
-        private IEnumerable<INamespace> Yield(Type parameter)
+        private IEnumerable<INamespace> Yield(object parameter)
         {
-            /*yield return new Namespace("list", _locator.Get(typeof(List<string>)).Identifier);
-            yield return new Namespace("comp", _locator.Get(typeof(XNodeDocumentOrderComparer)).Identifier);*/
-            /*var root = _locator.Get(parameter);
-            yield return new Namespace(string.Empty, root.Identifier);*/
-            yield break;
+            int count = 1;
+            foreach (var identifier in new TypeDefinitionWalker(parameter, _locator).SelectMany(locations => locations).Distinct())
+            {
+                yield return new Namespace($"ns{count++.ToString()}", identifier);
+            }
+        }
+
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces.Concat(Yield(parameter)).Distinct().ToImmutableList();
+    }
+
+    class TypeDefinitionWalker : ObjectWalkerBase<object, IEnumerable<Uri>>
+    {
+        private readonly INamespaceLocator _locator;
+        public TypeDefinitionWalker(object root, INamespaceLocator locator) : base(root)
+        {
+            _locator = locator;
+        }
+
+        protected override IEnumerable<Uri> Select(object input)
+        {
+            if (Arrays.Default.Is(input))
+            {
+                var inputType = input.GetType();
+                var elementType = ElementTypeLocator.Default.Locate(inputType);
+                foreach (var element in Arrays.Default.AsArray(input))
+                {
+                    var type = element.GetType();
+                    if (type != elementType && First(type))
+                    {
+                        yield return _locator.Get(type).Identifier;
+                        Schedule(element);
+                        // yield return type;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var context in MemberContexts.Default.Get(input))
+                {
+                    if (!TypeDefinitionCache.GetDefinition(context.MemberType).IsPrimitive && context.IsWritable && context.Value != DefaultValues.Default.Get(context.MemberType))
+                    {
+                        yield return _locator.Get(context.MemberType).Identifier;
+                        var type = context.Value.GetType();
+                        if (type != context.MemberType)
+                        {
+                            yield return _locator.Get(type).Identifier;
+                            Schedule(context.Value);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -380,17 +428,17 @@ namespace ExtendedXmlSerialization.Write
     {
         private const string Prefix = "xmlns";
         private readonly XmlWriter _writer;
-        private readonly IParameterizedSource<Type, IImmutableList<INamespace>> _namespaces;
+        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
 
-        public NamespaceEmitter(XmlWriter writer, IParameterizedSource<Type, IImmutableList<INamespace>> namespaces)
+        public NamespaceEmitter(XmlWriter writer, IParameterizedSource<object, IImmutableList<INamespace>> namespaces)
         {
             _writer = writer;
             _namespaces = namespaces;
         }
 
-        public void Execute(Type type)
+        public void Execute(object instance)
         {
-            foreach (var pair in _namespaces.Get(type))
+            foreach (var pair in _namespaces.Get(instance))
             {
                 _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
             }
@@ -427,7 +475,7 @@ namespace ExtendedXmlSerialization.Write
             _writer.Begin(element);
             if (_monitor.Apply())
             {
-                _emitter.Execute(Current.Root.GetType());
+                _emitter.Execute(Current.Root);
             }
         }
 
