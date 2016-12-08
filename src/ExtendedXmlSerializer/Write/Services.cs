@@ -227,7 +227,7 @@ namespace ExtendedXmlSerialization.Write
         IDisposable ToMemberContext();
     }
 
-    class DefaultWritingContext : IWritingContext
+    public class DefaultWritingContext : IWritingContext
     {
         private readonly IAlteration<WriteContext> _alteration;
         readonly private Stack<WriteContext> _chain = new Stack<WriteContext>();

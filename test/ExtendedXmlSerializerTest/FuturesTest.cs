@@ -24,7 +24,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Profiles;
@@ -192,7 +194,31 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void DemonstrateProfileThatModifiesValues()
         {
-            
+            var subject = new List<int> {11, 12, 13, 14, 15};
+            var serializer = new LuckyProfile().New();
+            var data = serializer.Serialize(subject);
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32 xmlns=""clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures/lucky"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/primitives"">
+  <sys:int>11</sys:int>
+  <sys:int>12</sys:int>
+  <sys:int>7</sys:int>
+  <sys:int>14</sys:int>
+  <sys:int>15</sys:int>
+</ArrayOfInt32>", data);
+        }
+
+        class LuckyProfile : SerializationProfile
+        {
+            public LuckyProfile()
+                : base(AutoAttributeSpecification.Default, () => new DefaultWritingContext(ContextAlteration.Default), new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/futures/lucky")) {}
+        }
+
+        class ContextAlteration : IAlteration<WriteContext>
+        {
+            public static ContextAlteration Default { get; } = new ContextAlteration();
+            ContextAlteration() {}
+
+            public WriteContext Get(WriteContext parameter) => parameter.Instance?.Equals(13) ?? false ? new WriteContext(parameter.State, parameter.Root, 7, parameter.Members, parameter.Member) : parameter;
         }
 
 

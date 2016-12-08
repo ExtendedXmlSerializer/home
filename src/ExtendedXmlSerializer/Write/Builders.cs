@@ -14,7 +14,7 @@ namespace ExtendedXmlSerialization.Write
         bool Defer(MemberInfo member);
     }
 
-    abstract class InstructionSpecificationBase : IInstructionSpecification
+	public abstract class InstructionSpecificationBase : IInstructionSpecification
     {
         public abstract bool IsSatisfiedBy(object parameter);
 
@@ -78,7 +78,7 @@ namespace ExtendedXmlSerialization.Write
             base.Handles(candidate) && ((MemberContext) candidate).Value is T;
     }*/
 
-    abstract class InstructionCandidateSpecificationBase<T> : SpecificationAdapterBase<T>,
+	public abstract class InstructionCandidateSpecificationBase<T> : SpecificationAdapterBase<T>,
                                                               IInstructionCandidateSpecification
     {
         public virtual bool Handles(object candidate) => candidate is T;
@@ -99,7 +99,7 @@ namespace ExtendedXmlSerialization.Write
             : base(o => o is T, specification.Adapt().IsSatisfiedBy) {}
     }
 
-    class DefaultInstructionSpecification : InstructionSpecificationBase
+	public class DefaultInstructionSpecification : InstructionSpecificationBase
     {
         private readonly IParameterizedSource<object, IEnumerable<object>> _candidates;
         private readonly Func<MemberInfo, bool> _defer;
@@ -154,7 +154,7 @@ namespace ExtendedXmlSerialization.Write
         public bool IsSatisfiedBy(Type parameter) => TypeDefinitionCache.GetDefinition(parameter).IsPrimitive;
     }
 
-    class AutoAttributeSpecification : DefaultInstructionSpecification
+	public class AutoAttributeSpecification : DefaultInstructionSpecification
     {
         public new static AutoAttributeSpecification Default { get; } = new AutoAttributeSpecification();
 
@@ -167,7 +167,7 @@ namespace ExtendedXmlSerialization.Write
         ) {}
     }
 
-    class StringPropertySpecification : InstructionCandidateSpecificationBase<string>
+	public class StringPropertySpecification : InstructionCandidateSpecificationBase<string>
     {
         public static StringPropertySpecification Default { get; } = new StringPropertySpecification();
         StringPropertySpecification() : this(128) {}
