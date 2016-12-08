@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Profiles
 
         public SerializationProfile(IInstructionSpecification specification, IInstruction emitType, Func<IWritingContext> context, INamespace root)
             : this(
-                new PlanMaker(new Plans(specification, new EnumerableInstructions(emitType), emitType)),
+                new PlanMaker(new Plans(specification, FixedTemplateElementProvider.Default, emitType)),
                 new NamespaceLocator(root), context, root, emitType,
                 MemberValueAssignedExtension.Default) {}
 
@@ -86,13 +86,9 @@ namespace ExtendedXmlSerialization.Profiles
 
     class DefaultSerializationProfile : SerializationProfile
     {
-        readonly private static IPlanMaker Maker =
-            new PlanMaker(new DefaultPlans(DefaultInstructionSpecification.Default,
-                                                  DefaultEnumerableInstructions.Default));
-
         public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
         DefaultSerializationProfile()
-            : base(Maker.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default, DefaultNamespaces.Default,
+            : base(PlanMaker.Default.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default, DefaultNamespaces.Default,
                    DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default,
                    DefaultMemberValueAssignedExtension.Default) {}
 

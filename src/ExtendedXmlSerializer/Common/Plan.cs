@@ -129,19 +129,19 @@ class CachedPlan : WeakCache<Type, IInstruction>, IPlan
         IInstruction For(Type type);
     }
 
-    class ConditionalPlan : ConditionalPlanBase
+    public class ConditionalPlan : ConditionalPlanBase
     {
-        private readonly IPlan _builder;
+        private readonly IPlan _plan;
 
-        public ConditionalPlan(Func<Type, bool> specification, IPlan builder) : base(specification)
+        public ConditionalPlan(Func<Type, bool> specification, IPlan plan) : base(specification)
         {
-            _builder = builder;
+            _plan = plan;
         }
 
-        protected override IInstruction Plan(Type type) => _builder.For(type);
+        protected override IInstruction Plan(Type type) => _plan.For(type);
     }
 
-    abstract class ConditionalPlanBase : IPlan
+    public abstract class ConditionalPlanBase : IPlan
     {
         private readonly Func<Type, bool> _specification;
 

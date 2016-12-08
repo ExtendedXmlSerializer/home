@@ -89,18 +89,11 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class EmitDictionaryInstruction : WriteInstructionBase<IDictionary>
+    class EmitDictionaryItemsInstruction : WriteInstructionBase<IDictionary>
     {
         private readonly IInstruction _template;
 
-        public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
-            new EmitInstanceInstruction(
-                new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)), 
-                new ExtensionEnabledInstruction(new EmitDictionaryPairInstruction(key, value))
-            )
-        ) {}
-
-        public EmitDictionaryInstruction(IInstruction template)
+        public EmitDictionaryItemsInstruction(IInstruction template)
         {
             _template = template;
         }
@@ -445,21 +438,18 @@ namespace ExtendedXmlSerialization.Write
     }
     
 
-    class EmitTypeForTemplateInstruction : EmitWithTypeInstruction
+    /*class EmitTypeForTemplateInstruction : CompositeInstruction
     {
-        public EmitTypeForTemplateInstruction(IInstruction body)
-            : this(EmitTypeInstruction.Default, body) {}
+        public EmitTypeForTemplateInstruction(IInstruction emitType, params IInstruction[] body)
+            : base(new ConditionalInstruction<IWriting>(EmitMemberTypeSpecification.Default, emitType).Fixed(body)) {}
+    }*/
 
-        public EmitTypeForTemplateInstruction(IInstruction emitType, IInstruction body)
-            : base(new ConditionalInstruction<IWriting>(EmitMemberTypeSpecification.Default, emitType), body) {}
-    }
-
-    class EmitWithTypeInstruction : CompositeInstruction
+    /*class EmitWithTypeInstruction : CompositeInstruction
     {
         //public EmitWithTypeInstruction(IInstruction body) : this(EmitTypeInstruction.Default, body) {}
         
         public EmitWithTypeInstruction(IInstruction type, IInstruction body) : base(type, body) {}
-    }
+    }*/
 
     abstract class NewWriteContextInstructionBase : NewContextInstructionBase<IWriting>
     {

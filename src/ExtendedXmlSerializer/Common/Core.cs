@@ -713,6 +713,29 @@ public interface IAttachedProperties
 
     static class Extensions
     {
+        public static IEnumerable<T> Append<T>( this T @this, params T[] second ) => @this.Append( second.AsEnumerable() );
+        public static IEnumerable<T> Append<T>( this T @this, ImmutableArray<T> second ) => @this.Append_( second.ToArray() );
+        public static IEnumerable<T> Append<T>( this T @this, IEnumerable<T> second ) => @this.Append_( second );
+
+        static IEnumerable<T> Append_<T>( this T @this, IEnumerable<T> second )
+        {
+            yield return @this;
+            foreach ( var element1 in second )
+                yield return element1;
+        }
+
+
+        public static T[] Fixed<T>( this T @this, params T[] items ) => @this.Append( items ).ToArray();
+
+        // public static IEnumerable<T> Append<T>( this ImmutableArray<T> @this, params T[] items ) => @this.Concat( items );
+        public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, params T[] items ) => @this.Concat( items );
+        /*public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, T element )
+        {
+            foreach ( var element1 in @this )
+                yield return element1;
+            yield return element;
+        }*/
+
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
         // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057

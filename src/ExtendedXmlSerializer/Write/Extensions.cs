@@ -22,11 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -39,33 +36,6 @@ namespace ExtendedXmlSerialization.Write
     public static class Extensions
     {
         readonly private static int Length = Enum.GetNames(typeof(WriteState)).Length;
-        /*/// <summary>
-        /// Attribution: http://stackoverflow.com/a/11221963/3602057
-        /// </summary>
-        /// <param name="serializer"></param>
-        /// <param name="stream"></param>
-        /// <param name="data"></param>
-        /// <param name="namespaces"></param>
-        public static void WriteObject(
-            this XmlObjectSerializer serializer,
-            Stream stream, object data,
-            Dictionary<string, string> namespaces )
-        {
-            using ( var writer = XmlWriter.Create( stream, new XmlWriterSettings() ) )
-            {
-                serializer.WriteStartObject( writer, data );
-                foreach ( var pair in namespaces )
-                {
-                    writer.WriteAttributeString( "xmlns", pair.Key, null, pair.Value );
-                }
-                serializer.WriteObjectContent( writer, data );
-                serializer.WriteEndObject( writer );
-            }
-        }*/
-        // public static TResult Accept<TParameter, TResult>( this TResult @this, TParameter _ ) => @this;
-
-        /*public static void Property(this IWriting @this, IProperty property)
-            => @this.Property(property.Name, @this.Serialize(property.Value));*/
 
         public static WriteContext? Parent(this IWritingContext @this, int level = 1) => @this.Hierarchy.ElementAtOrDefault(level);
 
@@ -198,7 +168,6 @@ namespace ExtendedXmlSerialization.Write
         protected virtual bool StartingMembers(IWriting writing, object instance, IImmutableList<MemberInfo> members) => true;
         protected virtual bool StartingMember(IWriting writing, object instance, MemberContext context) => true;
         protected virtual bool StartingMemberValue(IWriting writing, object instance, MemberContext context) => true;
-        /*protected virtual bool StartingContent(IWriting services, object instance, MemberContext? context, string content) => true;*/
 
         void IExtension.Finished(IServiceProvider services) => Finished(services.AsValid<IWriting>());
 
@@ -289,8 +258,6 @@ namespace ExtendedXmlSerialization.Write
         protected virtual bool StartingMember(IWriting writing, IExtendedXmlSerializerConfig configuration, object instance, MemberContext member) => true;
         protected virtual bool StartingMemberValue(IWriting writing, IExtendedXmlSerializerConfig configuration,
                                               object instance, MemberContext member) => true;
-        /*protected virtual bool StartingContent(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                               object instance, MemberContext? member, string content) => true;*/
     }
 
     public class CustomSerializationExtension : ConfigurationWritingExtensionBase

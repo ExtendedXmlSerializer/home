@@ -221,8 +221,6 @@ namespace ExtendedXmlSerialization.Test
             public WriteContext Get(WriteContext parameter) => parameter.Instance?.Equals(13) ?? false ? new WriteContext(parameter.State, parameter.Root, 7, parameter.Members, parameter.Member) : parameter;
         }
 
-
-
         [Fact]
         public void CustomWritePlanForListsWithInheritance() {}
     }
