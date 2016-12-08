@@ -26,18 +26,18 @@ using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	class WellKnownExtendedSerializerProfiles : Collection<ISerializationProfile>
-	{
-		public static IImmutableList<ISerializationProfile> Default { get; } =
-			new WellKnownExtendedSerializerProfiles().ToImmutableList();
+    public class WellKnownExtendedSerializerProfiles : Collection<ISerializationProfile>
+    {
+        public static IImmutableList<ISerializationProfile> Default { get; } =
+            new WellKnownExtendedSerializerProfiles().ToImmutableList();
 
-		WellKnownExtendedSerializerProfiles() : this(
-			SerializationProfileVersion20.Default,
-			SerializerFuturesProfile.Default,
-			DefaultSerializationProfile.Default
-		) {}
+        WellKnownExtendedSerializerProfiles() : this(
+            SerializationProfileVersion20.Default,
+            SerializerFuturesProfile.Default,
+            DefaultSerializationProfile.Default
+        ) {}
 
-		WellKnownExtendedSerializerProfiles(params ISerializationProfile[] profiles)
-			: base(profiles.ToImmutableList()) {}
-	}
+        WellKnownExtendedSerializerProfiles(params ISerializationProfile[] profiles)
+            : base(profiles.ToImmutableList()) {}
+    }
 }

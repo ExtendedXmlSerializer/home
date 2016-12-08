@@ -22,7 +22,8 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Profiles
 {
@@ -31,6 +32,4 @@ namespace ExtendedXmlSerialization.Profiles
     {
         ISerialization New();
     }
-
-    
 }

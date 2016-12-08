@@ -27,30 +27,30 @@ using System.Linq;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public static class Extensions
-	{
-		readonly private static Uri
-			DefaultIdentifier = WellKnownExtendedSerializerProfiles.Default.First().Identifier;
+    public static class Extensions
+    {
+        readonly private static Uri
+            DefaultIdentifier = WellKnownExtendedSerializerProfiles.Default.First().Identifier;
 
-		/// <summary>
-		/// This will retrieve the latest well-known profile and load it.  This can be considered the
-		/// entry point for the latest and greatest profile.
-		/// </summary>
-		/// <param name="this"></param>
-		/// <returns></returns>
-		public static IExtendedXmlSerializer Create(this IExtendedSerializationRepository @this)
-			=> @this.Get(DefaultIdentifier);
+        /// <summary>
+        /// This will retrieve the latest well-known profile and load it.  This can be considered the
+        /// entry point for the latest and greatest profile.
+        /// </summary>
+        /// <param name="this"></param>
+        /// <returns></returns>
+        public static IExtendedXmlSerializer Create(this IExtendedSerializationRepository @this)
+            => @this.Get(DefaultIdentifier);
 
-		public static string Serialize(this ISerialization @this, object instance)
-		{
-			using (var stream = new MemoryStream())
-			{
-				@this.Serialize(stream, instance);
-				stream.Seek(0, SeekOrigin.Begin);
+        public static string Serialize(this ISerialization @this, object instance)
+        {
+            using (var stream = new MemoryStream())
+            {
+                @this.Serialize(stream, instance);
+                stream.Seek(0, SeekOrigin.Begin);
 
-				var result = new StreamReader(stream).ReadToEnd();
-				return result;
-			}
-		}
-	}
+                var result = new StreamReader(stream).ReadToEnd();
+                return result;
+            }
+        }
+    }
 }

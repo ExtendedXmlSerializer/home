@@ -29,6 +29,9 @@ using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Instructions;
 
 namespace ExtendedXmlSerialization.Write
 {

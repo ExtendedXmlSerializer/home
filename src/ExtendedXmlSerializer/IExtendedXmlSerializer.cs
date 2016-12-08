@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Extensibility;
 
 namespace ExtendedXmlSerialization
 {

@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
-namespace ExtendedXmlSerialization.Common
+namespace ExtendedXmlSerialization.Sources
 {
-	public interface IUniqueResource
-	{
-		Uri Identifier { get; }
-	}
+    public class Self<T> : IAlteration<T>
+    {
+        public static Self<T> Default { get; } = new Self<T>();
+        Self() {}
+
+        public T Get(T parameter) => parameter;
+    }
 }

@@ -22,16 +22,16 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Elements;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public abstract class SerializationProfileBase : Namespace, ISerializationProfile
-	{
-		protected SerializationProfileBase(INamespace root) : base(root?.Prefix, root?.Identifier) {}
+    public abstract class SerializationProfileBase : Namespace, ISerializationProfile
+    {
+        protected SerializationProfileBase(INamespace root) : base(root?.Prefix, root?.Identifier) {}
 
-		public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
+        public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
 
-		public abstract ISerialization New();
-	}
+        public abstract ISerialization New();
+    }
 }

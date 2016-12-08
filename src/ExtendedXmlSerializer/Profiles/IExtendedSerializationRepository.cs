@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.Profiles
 {
-	public interface IExtendedSerializationRepository : IParameterizedSource<Uri, IExtendedXmlSerializer> {}
+    public interface IExtendedSerializationRepository : IParameterizedSource<Uri, IExtendedXmlSerializer> {}
 }

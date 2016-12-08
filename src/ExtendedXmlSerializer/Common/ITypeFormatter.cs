@@ -22,14 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
-/*using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;*/
 
 namespace ExtendedXmlSerialization.Common
 {
@@ -37,101 +29,4 @@ namespace ExtendedXmlSerialization.Common
     {
         string Format(Type type);
     }
-
-    class DefaultTypeFormatter : ITypeFormatter
-    {
-        public static DefaultTypeFormatter Default { get; } = new DefaultTypeFormatter();
-        DefaultTypeFormatter() {}
-
-        public string Format(Type type) => type.FullName;
-    }
-
-/*
-    /// <summary>
-    /// https://github.com/JamesNK/Newtonsoft.Json/blob/master/Src/Newtonsoft.Json/Utilities/ReflectionUtils.cs
-    /// </summary>
-    class TypeFormatter : ITypeFormatter
-    {
-        public static TypeFormatter Default { get; } = new TypeFormatter();
-        TypeFormatter() : this(FormatterAssemblyStyle.Simple, new DefaultSerializationBinder()) {}
-
-        private readonly FormatterAssemblyStyle _style;
-        private readonly SerializationBinder _binder;
-
-        public TypeFormatter(FormatterAssemblyStyle style, SerializationBinder binder)
-        {
-            _style = style;
-            _binder = binder;
-        }
-
-        public string Format(Type type)
-        {
-            var name = FullyQualifiedTypeName(type);
-            switch (_style)
-            {
-                case FormatterAssemblyStyle.Simple:
-                    return RemoveAssemblyDetails(name);
-                default:
-                    return name;
-            }
-        }
-
-        private static string RemoveAssemblyDetails(string fullyQualifiedTypeName)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            bool flag1 = false;
-            bool flag2 = false;
-            for (int index = 0; index < fullyQualifiedTypeName.Length; ++index)
-            {
-                char ch = fullyQualifiedTypeName[index];
-                switch (ch)
-                {
-                    case ',':
-                        if (!flag1)
-                        {
-                            flag1 = true;
-                            stringBuilder.Append(ch);
-                            break;
-                        }
-                        flag2 = true;
-                        break;
-                    case '[':
-                        flag1 = false;
-                        flag2 = false;
-                        stringBuilder.Append(ch);
-                        break;
-                    case ']':
-                        flag1 = false;
-                        flag2 = false;
-                        stringBuilder.Append(ch);
-                        break;
-                    default:
-                        if (!flag2)
-                        {
-                            stringBuilder.Append(ch);
-                        }
-                        break;
-                }
-            }
-            return stringBuilder.ToString();
-        }
-
-
-        private string FullyQualifiedTypeName(Type type)
-        {
-            string typeName, assemblyName;
-            _binder.BindToName(type, out assemblyName, out typeName);
-            var result = $"{typeName}{(assemblyName != null ? $", {assemblyName}" : string.Empty)}";
-            return result;
-        }
-    }
-*/
-
-    /*class PackUriFormatter : ITypeFormatter
-    {
-        public string Format(Type type)
-        {
-            return string.Format("clr-namespace:{0};assembly={1}");
-        }
-    }*/
 }

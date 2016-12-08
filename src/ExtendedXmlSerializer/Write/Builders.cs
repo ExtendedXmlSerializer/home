@@ -7,6 +7,11 @@ using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Sources;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Write
 {

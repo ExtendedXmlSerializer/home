@@ -25,6 +25,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Profiles;
 
 namespace ExtendedXmlSerialization

@@ -34,6 +34,11 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Sources;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Write
 {
