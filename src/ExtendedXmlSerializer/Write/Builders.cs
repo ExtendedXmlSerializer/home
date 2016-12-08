@@ -28,7 +28,12 @@ namespace ExtendedXmlSerialization.Write
 
         public IEnumerable<object> Get(object parameter)
         {
-            yield return parameter;
+            var property = parameter as IProperty;
+            if (property != null)
+            {
+                yield return property.Value;
+            }
+
             var member = parameter as MemberInfo;
             if (member != null)
             {
@@ -38,9 +43,12 @@ namespace ExtendedXmlSerialization.Write
             if (parameter is MemberContext)
             {
                 var context = (MemberContext) parameter;
+                yield return context.Value;
                 yield return context.Metadata;
                 yield return context.MemberType;
             }
+
+            yield return parameter;
         }
     }
 
@@ -49,7 +57,7 @@ namespace ExtendedXmlSerialization.Write
         bool Handles(object candidate);
     }
 
-    class InstructionCandidateSpecification : DelegatedSpecification<object>, IInstructionCandidateSpecification
+    public class InstructionCandidateSpecification : DelegatedSpecification<object>, IInstructionCandidateSpecification
     {
         private readonly Func<object, bool> _handles;
 
@@ -64,16 +72,31 @@ namespace ExtendedXmlSerialization.Write
         public virtual bool Handles(object candidate) => _handles(candidate);
     }
 
-    abstract class MemberValueSpecificationBase<T> : InstructionCandidateSpecificationBase<MemberContext>
+    /*abstract class MemberValueSpecificationBase<T> : InstructionCandidateSpecificationBase<MemberContext>
     {
         public override bool Handles(object candidate) =>
             base.Handles(candidate) && ((MemberContext) candidate).Value is T;
-    }
+    }*/
 
     abstract class InstructionCandidateSpecificationBase<T> : SpecificationAdapterBase<T>,
                                                               IInstructionCandidateSpecification
     {
         public virtual bool Handles(object candidate) => candidate is T;
+    }
+
+    /*class IsPropertySpecification : InstructionCandidateSpecification<>
+    {
+        public static IsPropertySpecification Default { get; } = new IsPropertySpecification();
+        IsPropertySpecification() : base(IsTypeSpecification<IProperty>.Default.IsSatisfiedBy, ) {}
+    }*/
+
+    public class InstructionCandidateSpecification<T> : InstructionCandidateSpecification
+    {
+        public static InstructionCandidateSpecification<T> Default { get; } = new InstructionCandidateSpecification<T>();
+        InstructionCandidateSpecification() : this(AlwaysSpecification<T>.Default) {}
+
+        public InstructionCandidateSpecification(ISpecification<T> specification)
+            : base(o => o is T, specification.Adapt().IsSatisfiedBy) {}
     }
 
     class DefaultInstructionSpecification : InstructionSpecificationBase
@@ -82,11 +105,9 @@ namespace ExtendedXmlSerialization.Write
         private readonly Func<MemberInfo, bool> _defer;
         private readonly IImmutableList<IInstructionCandidateSpecification> _specifications;
         public static DefaultInstructionSpecification Default { get; } = new DefaultInstructionSpecification();
-
         DefaultInstructionSpecification()
             : this(
-                SpecificationCandidatesSelector.Default, context => false,
-                new InstructionCandidateSpecification(IsTypeSpecification<IProperty>.Default.IsSatisfiedBy)) {}
+                SpecificationCandidatesSelector.Default, context => false, InstructionCandidateSpecification<IProperty>.Default) {}
 
         public DefaultInstructionSpecification(IParameterizedSource<object, IEnumerable<object>> candidates,
                                                Func<MemberInfo, bool> defer,
@@ -117,7 +138,7 @@ namespace ExtendedXmlSerialization.Write
         public override bool Defer(MemberInfo member) => _defer(member);
     }
 
-    class IsPropertyMemberSpecification : ISpecification<MemberInfo>
+    public class IsPropertyMemberSpecification : ISpecification<MemberInfo>
     {
         public static IsPropertyMemberSpecification Default { get; } = new IsPropertyMemberSpecification();
         IsPropertyMemberSpecification() {}
@@ -125,7 +146,7 @@ namespace ExtendedXmlSerialization.Write
         public bool IsSatisfiedBy(MemberInfo member) => member.IsDefined(typeof(XmlAttributeAttribute));
     }
 
-    class IsPrimitiveSpecification : ISpecification<Type>
+    public class IsPrimitiveSpecification : ISpecification<Type>
     {
         public static IsPrimitiveSpecification Default { get; } = new IsPrimitiveSpecification();
         IsPrimitiveSpecification() {}
@@ -140,30 +161,25 @@ namespace ExtendedXmlSerialization.Write
         AutoAttributeSpecification() : base(
             SpecificationCandidatesSelector.Default,
             info => info.GetMemberType() == typeof(string),
-            AutoAttributeValueSpecification.Default,
+            StringPropertySpecification.Default,
             new InstructionCandidateSpecification(IsPrimitiveSpecification.Default.Adapt().IsSatisfiedBy),
             new InstructionCandidateSpecification(IsPropertyMemberSpecification.Default.Adapt().IsSatisfiedBy)
         ) {}
     }
 
-    class AutoAttributeValueSpecification : MemberValueSpecificationBase<string>
+    class StringPropertySpecification : InstructionCandidateSpecificationBase<string>
     {
-        public static AutoAttributeValueSpecification Default { get; } = new AutoAttributeValueSpecification();
-        AutoAttributeValueSpecification() : this(128) {}
+        public static StringPropertySpecification Default { get; } = new StringPropertySpecification();
+        StringPropertySpecification() : this(128) {}
 
         private readonly int _maxLength;
 
-        public AutoAttributeValueSpecification(int maxLength)
+        public StringPropertySpecification(int maxLength)
         {
             _maxLength = maxLength;
         }
 
-        protected override bool IsSatisfiedBy(MemberContext parameter)
-        {
-            var value = parameter.Value as string;
-            var result = value?.Length < _maxLength;
-            return result;
-        }
+        protected override bool IsSatisfiedBy(string parameter) => parameter?.Length < _maxLength;
     }
 
     public class DefaultPlans : Plans

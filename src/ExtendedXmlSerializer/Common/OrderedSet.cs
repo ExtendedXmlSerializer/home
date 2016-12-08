@@ -33,8 +33,12 @@ namespace ExtendedXmlSerialization.Common
 	/// <typeparam name="T"></typeparam>
 	public class OrderedSet<T> : IList<T>
 	{
+		readonly private static T[] Items = new T[0];
 		private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
 		private readonly LinkedList<T> _linkedList;
+
+		public OrderedSet()
+			: this(Items) {}
 
 		public OrderedSet(params T[] items)
 			: this(EqualityComparer<T>.Default, items) {}

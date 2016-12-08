@@ -128,7 +128,7 @@ namespace ExtendedXmlSerialization.Write
                     return;
                 }
             }
-            _writer.WriteAttributeString(property.Name, ns, _serializer.Serialize(property.Value));
+            _writer.WriteAttributeString(property.Prefix, property.Name, ns, _serializer.Serialize(property.Value));
         }
 
         public void Dispose()
@@ -213,31 +213,6 @@ namespace ExtendedXmlSerialization.Write
         public object Instance { get; }
         public IImmutableList<MemberInfo> Members { get; }
         public MemberContext? Member { get; }
-    }
-
-    public interface IProperty : IElement
-    {
-        object Value { get; }
-    }
-
-    public class Element : Namespace, IElement
-    {
-        public Element(INamespace @namespace, string name) : base(@namespace?.Prefix, @namespace?.Identifier)
-        {
-            Name = name;
-        }
-
-        public string Name { get; }
-    }
-
-    abstract class PropertyBase : Element, IProperty
-    {
-        protected PropertyBase(INamespace @namespace, string name, object value) : base(@namespace, name)
-        {
-            Value = value;
-        }
-
-        public object Value { get; }
     }
 
     public interface IWritingContext
@@ -326,24 +301,6 @@ namespace ExtendedXmlSerialization.Write
                 }
             }
         }
-    }
-
-    public interface IAttachedProperties
-    {
-        void Attach(object instance, IProperty property);
-        ICollection<IProperty> GetProperties(object instance);
-    }
-
-    class AttachedProperties : IAttachedProperties
-    {
-        public static AttachedProperties Default { get; } = new AttachedProperties();
-        AttachedProperties() {}
-
-        private readonly WeakCache<object, ICollection<IProperty>> 
-            _properties = new WeakCache<object, ICollection<IProperty>>(_ => new Collection<IProperty>());
-
-        public void Attach(object instance, IProperty property) => _properties.Get(instance).Add(property);
-        public ICollection<IProperty> GetProperties(object instance) => _properties.Get(instance);
     }
 
     public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
@@ -581,7 +538,7 @@ namespace ExtendedXmlSerialization.Write
         public IImmutableList<IProperty> GetProperties()
         {
             var list = _properties.GetProperties(_context.Current.Instance);
-            var result = list.ToImmutableList();
+            var result = list.ToArray().ToImmutableList();
             list.Clear();
             return result;
         }

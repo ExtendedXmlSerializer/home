@@ -21,12 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Profiles;
 using ExtendedXmlSerialization.Test.TestObject;
+using ExtendedXmlSerialization.Write;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
@@ -63,13 +66,6 @@ namespace ExtendedXmlSerialization.Test
             );
         }
 
-        public class SubjectWithPropertyFromExternalAssembly
-        {
-            public ICollection<string> List { get; set; } = new List<string> { "Hello World!" };
-
-            public IComparer Comparer { get; set; } = new XNodeDocumentOrderComparer();
-        }
-
         [Fact]
         public void BasicDictionary()
         {
@@ -98,6 +94,13 @@ namespace ExtendedXmlSerialization.Test
 </ArrayOfInt32String>", data);
         }
 
+        public class SubjectWithPropertyFromExternalAssembly
+        {
+            public ICollection<string> List { get; set; } = new List<string> { "Hello World!" };
+
+            public IComparer Comparer { get; set; } = new XNodeDocumentOrderComparer();
+        }
+
         [Fact]
         public void VerifyComplexPropertyFromExternalAssembly()
         {
@@ -117,15 +120,36 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void WriterExtensionForAttachedProperties()
         {
-            /*var instance = new TestClassPrimitiveTypes { PropDateTime = new DateTime(2000, 5, 6) };
             var serializer = ExtendedSerialization.Default.Get(SerializationProfileVersion20.Default.Identifier);
-            var temp = serializer.Serialize(instance);*/
-            /*Debugger.Break();*/
-            /*var host = new SerializationToolsFactoryHost();
-            var services = new List<object>();
-            var writings = new WritingFactory(host, services);
-            var plan = AutoAttributeWritePlanComposer.Default.Compose();
-            var serializer = new ExtendedXmlSerializer(host, services, new AssignmentFactory(host), writings, new Serializer(plan, writings));*/
+            serializer.Extensions.Add(AttachedPropertyExtension.Default);
+
+            var subject = new BasicSubject { BasicProperty = "This is a basic property" };
+            var data = serializer.Serialize(subject);
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<BasicSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" BasicProperty=""This is a basic property"" test:hello=""Hello World!  This is an attached property."" xmlns:test=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures/testing"" />", data);
+        }
+
+        class BasicSubject
+        {
+            public string BasicProperty { get; set; }
+        }
+
+        class AttachedPropertyExtension : WritingExtensionBase
+        {
+            public static AttachedPropertyExtension Default { get; } = new AttachedPropertyExtension();
+            AttachedPropertyExtension() {}
+
+            protected override bool StartingInstance(IWriting writing, object instance)
+            {
+                writing.Attach(new AttachedProperty("Hello World!  This is an attached property."));
+                return base.StartingInstance(writing, instance);
+            }
+        }
+
+        class AttachedProperty : PropertyBase
+        {
+            readonly private static Namespace Namespace = new Namespace("test", new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/futures/testing"));
+            public AttachedProperty(string value) : base(Namespace, "hello", value) {}
         }
 
         [Fact]
