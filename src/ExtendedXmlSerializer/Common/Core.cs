@@ -30,11 +30,13 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using System.Threading;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization.Common
 {
+
     /*public enum ConditionMonitorState
     {
         None,

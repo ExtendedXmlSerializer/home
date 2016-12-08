@@ -220,13 +220,16 @@ namespace ExtendedXmlSerialization.Write
 
     public class PlanMaker : IPlanMaker
     {
+        readonly private static CompositeAlteration<IPlan> Alteration =
+            new CompositeAlteration<IPlan>(ConcurrentPlanAlteration.Default, CachePlanAlteration.Default);
+
         public static PlanMaker Default { get; } = new PlanMaker();
         PlanMaker() : this(DefaultPlans.Default) {}
 
         private readonly IAlteration<IPlan> _alteration;
         private readonly IPlans _selector;
 
-        public PlanMaker(IPlans selector) : this(CachePlanAlteration.Default, selector) {}
+        public PlanMaker(IPlans selector) : this(Alteration, selector) {}
 
         public PlanMaker(IAlteration<IPlan> alteration, IPlans selector)
         {

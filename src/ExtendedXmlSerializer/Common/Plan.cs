@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.Common
@@ -14,6 +9,14 @@ namespace ExtendedXmlSerialization.Common
         IPlan Make();
     }
 
+    class ConcurrentPlanAlteration : IAlteration<IPlan>
+    {
+        public static ConcurrentPlanAlteration Default { get; } = new ConcurrentPlanAlteration();
+        ConcurrentPlanAlteration() {}
+
+        public IPlan Get(IPlan parameter) => new ConcurrentAwarePlan(parameter);
+    }
+
     class CachePlanAlteration : IAlteration<IPlan>
     {
         public static CachePlanAlteration Default { get; } = new CachePlanAlteration();
@@ -21,7 +24,21 @@ namespace ExtendedXmlSerialization.Common
 
         public IPlan Get(IPlan parameter) => new CachedPlan(parameter);
     }
-class CachedPlan : WeakCache<Type, IInstruction>, IPlan
+
+    class ConcurrentAwarePlan : DecoratedPlan
+    {
+        public ConcurrentAwarePlan(IPlan plan) : base(plan) {}
+
+        public override IInstruction For(Type type)
+        {
+            lock (type)
+            {
+                return base.For(type);
+            }
+        }
+    }
+
+    class CachedPlan : WeakCache<Type, IInstruction>, IPlan
     {
         public CachedPlan(IPlan inner) : base(inner.For) {}
 
