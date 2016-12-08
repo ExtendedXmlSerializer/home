@@ -32,8 +32,8 @@ namespace ExtendedXmlSerialization.Profiles
 			new WellKnownExtendedSerializerProfiles().ToImmutableList();
 
 		WellKnownExtendedSerializerProfiles() : this(
-			new SerializationProfileVersion20(),
-			new SerializerFuturesProfile(),
+			SerializationProfileVersion20.Default,
+			SerializerFuturesProfile.Default,
 			DefaultSerializationProfile.Default
 		) {}
 
