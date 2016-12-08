@@ -22,16 +22,20 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public interface IWriter : IDisposable
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        void Start(IRootElement root);
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        void Begin(IElement element);
+
+        void EndElement();
+
+        void Emit(object instance);
+
+        void Emit(IProperty property);
     }
 }

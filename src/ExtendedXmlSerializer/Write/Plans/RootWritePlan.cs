@@ -22,16 +22,30 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Write.Instructions;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class RootWritePlan : IPlan
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IPlan _selector;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public RootWritePlan(IPlan selector)
+        {
+            _selector = selector;
+        }
+
+        public IInstruction For(Type type)
+        {
+            var content = _selector.For(type);
+            if (content == null)
+            {
+                throw new InvalidOperationException($"Could not find instruction for type '{type}'");
+            }
+            var result = new StartNewContextFromRootInstruction(new EmitRootInstruction(content));
+            return result;
+        }
     }
 }

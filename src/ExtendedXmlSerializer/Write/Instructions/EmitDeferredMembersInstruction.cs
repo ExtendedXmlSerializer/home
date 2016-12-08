@@ -22,16 +22,35 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitDeferredMembersInstruction : EmitMembersInstructionBase
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IImmutableList<MemberInfo> _deferred;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EmitDeferredMembersInstruction(
+            IImmutableList<MemberInfo> deferred,
+            Func<MemberContext, IMemberInstruction> factory,
+            IInstruction instruction) : base(factory, instruction)
+        {
+            _deferred = deferred;
+        }
+
+        protected override IImmutableList<MemberContext> DetermineSet(IWriting services)
+            => Yield(services).ToImmutableList();
+
+        private IEnumerable<MemberContext> Yield(IWritingContext context)
+        {
+            foreach (var member in _deferred)
+            {
+                yield return MemberContexts.Default.Locate(context.Current.Instance, member);
+            }
+        }
     }
 }

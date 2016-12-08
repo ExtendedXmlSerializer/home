@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +22,42 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Common;
-using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Write;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Write.Plans
 {
-	public interface ISerialization : ISerializationToolsFactoryHost, ISerializer, IServiceRepository
-	{
-		IList<IExtension> Extensions { get; }
-	}
+    class SpecificationCandidatesSelector : IParameterizedSource<object, IEnumerable<object>>
+    {
+        public static SpecificationCandidatesSelector Default { get; } = new SpecificationCandidatesSelector();
+        SpecificationCandidatesSelector() {}
+
+        public IEnumerable<object> Get(object parameter)
+        {
+            var property = parameter as IProperty;
+            if (property != null)
+            {
+                yield return property.Value;
+            }
+
+            var member = parameter as MemberInfo;
+            if (member != null)
+            {
+                yield return member.GetMemberType();
+            }
+
+            if (parameter is MemberContext)
+            {
+                var context = (MemberContext) parameter;
+                yield return context.Value;
+                yield return context.Metadata;
+                yield return context.MemberType;
+            }
+
+            yield return parameter;
+        }
+    }
 }

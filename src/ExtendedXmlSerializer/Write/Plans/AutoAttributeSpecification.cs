@@ -21,17 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Common;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public class AutoAttributeSpecification : DefaultInstructionSpecification
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public new static AutoAttributeSpecification Default { get; } = new AutoAttributeSpecification();
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        AutoAttributeSpecification() : base(
+            SpecificationCandidatesSelector.Default,
+            info => info.GetMemberType() == typeof(string),
+            StringPropertySpecification.Default,
+            new InstructionCandidateSpecification(IsPrimitiveSpecification.Default.Adapt().IsSatisfiedBy),
+            new InstructionCandidateSpecification(IsPropertyMemberSpecification.Default.Adapt().IsSatisfiedBy)
+        ) {}
     }
 }

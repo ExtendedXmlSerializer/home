@@ -1,5 +1,6 @@
 ﻿using System;
 using ExtendedXmlSerialization.Write;
+using ExtendedXmlSerialization.Write.Plans;
 
 namespace ExtendedXmlSerialization.Profiles
 {

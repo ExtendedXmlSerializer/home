@@ -21,17 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public struct WriteContext
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
+                            MemberContext? member)
+        {
+            State = state;
+            Root = root;
+            Instance = instance;
+            Members = members;
+            Member = member;
+        }
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public WriteState State { get; }
+        public object Root { get; }
+        public object Instance { get; }
+        public IImmutableList<MemberInfo> Members { get; }
+        public MemberContext? Member { get; }
     }
 }

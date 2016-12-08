@@ -21,17 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Specifications;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitTypeForInstanceInstruction : ConditionalInstruction<IWriting>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static EmitTypeForInstanceInstruction Default { get; } = new EmitTypeForInstanceInstruction();
+        EmitTypeForInstanceInstruction() : this(EmitTypeSpecification.Default) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EmitTypeForInstanceInstruction(ISpecification<IWriting> specification) :
+            base(specification, EmitTypeInstruction.Default) {}
     }
 }

@@ -30,6 +30,10 @@ using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Specifications;
 using ExtendedXmlSerialization.Write;
+using ExtendedXmlSerialization.Write.Extensibility;
+using ExtendedXmlSerialization.Write.Instructions;
+using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Write.Services;
 
 namespace ExtendedXmlSerialization.Profiles
 {
@@ -61,7 +65,7 @@ namespace ExtendedXmlSerialization.Profiles
                                     ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType,
                                     Func<IWritingContext> context, INamespace root)
             : this(
-                new PlanMaker(new Write.Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification,
+                new PlanMaker(new Write.Plans.Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification,
                                               emitType)),
                 new NamespaceLocator(root.Identifier), context, root, emitType,
                 MemberValueAssignedExtension.Default) {}

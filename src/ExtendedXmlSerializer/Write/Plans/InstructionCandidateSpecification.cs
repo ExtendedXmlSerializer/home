@@ -22,16 +22,34 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Specifications;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public class InstructionCandidateSpecification : DelegatedSpecification<object>, IInstructionCandidateSpecification
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly Func<object, bool> _handles;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public InstructionCandidateSpecification(Func<object, bool> specification) : this(specification, o => true) {}
+
+        public InstructionCandidateSpecification(Func<object, bool> handles, Func<object, bool> specification)
+            : base(specification)
+        {
+            _handles = handles;
+        }
+
+        public virtual bool Handles(object candidate) => _handles(candidate);
+    }
+
+    public class InstructionCandidateSpecification<T> : InstructionCandidateSpecification
+    {
+        public static InstructionCandidateSpecification<T> Default { get; } = new InstructionCandidateSpecification<T>()
+            ;
+
+        InstructionCandidateSpecification() : this(AlwaysSpecification<T>.Default) {}
+
+        public InstructionCandidateSpecification(ISpecification<T> specification)
+            : base(o => o is T, specification.Adapt().IsSatisfiedBy) {}
     }
 }

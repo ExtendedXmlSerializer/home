@@ -22,16 +22,19 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Reflection;
+using ExtendedXmlSerialization.Write.Instructions;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class DefaultTemplateElementProvider : ITemplateElementProvider
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static DefaultTemplateElementProvider Default { get; } = new DefaultTemplateElementProvider();
+        DefaultTemplateElementProvider() {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public IElementProvider For(Type elementType) =>
+            elementType.GetTypeInfo().IsInterface
+                ? (IElementProvider) InstanceTypeNameProvider.Default
+                : new TypeDefinitionElementProvider(elementType);
     }
 }

@@ -22,16 +22,28 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Extensibility
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class MemberValueAssignedExtension : WritingExtensionBase
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static MemberValueAssignedExtension Default { get; } = new MemberValueAssignedExtension();
+        protected MemberValueAssignedExtension() : this(DefaultValues.Default.Get) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        private readonly Func<Type, object> _values;
+
+        public MemberValueAssignedExtension(Func<Type, object> values)
+        {
+            _values = values;
+        }
+
+        protected override bool StartingMember(IWriting services, object instance, MemberContext member)
+        {
+            var defaultValue = _values(member.MemberType);
+            var result = !Equals(member.Value, defaultValue);
+            return result;
+        }
     }
 }

@@ -21,27 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.Common;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Extensibility;
-using ExtendedXmlSerialization.Write.Instructions;
-using ExtendedXmlSerialization.Write.Plans;
-using ExtendedXmlSerialization.Write.Services;
+using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Sources;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    class DefaultSerializationProfile : SerializationProfile
+    public class PlanMaker : IPlanMaker
     {
-        public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
+        readonly private static CompositeAlteration<IPlan> Alteration =
+            new CompositeAlteration<IPlan>(ConcurrentPlanAlteration.Default, CachePlanAlteration.Default);
 
-        DefaultSerializationProfile()
-            : base(
-                PlanMaker.Default.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default,
-                DefaultNamespaces.Default,
-                DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default,
-                DefaultMemberValueAssignedExtension.Default) {}
+        public static PlanMaker Default { get; } = new PlanMaker();
+        PlanMaker() : this(DefaultPlans.Default) {}
 
-        public override bool IsSatisfiedBy(Uri parameter) => true;
+        private readonly IAlteration<IPlan> _alteration;
+        private readonly IPlans _selector;
+
+        public PlanMaker(IPlans selector) : this(Alteration, selector) {}
+
+        public PlanMaker(IAlteration<IPlan> alteration, IPlans selector)
+        {
+            _alteration = alteration;
+            _selector = selector;
+        }
+
+        public IPlan Make()
+        {
+            var plans = new OrderedSet<IPlan>();
+            var select = _alteration.Get(new PlanSelector(plans));
+            foreach (var plan in _selector.Get(select))
+            {
+                plans.Add(plan);
+            }
+
+            var result = _alteration.Get(new RootWritePlan(select));
+            return result;
+        }
     }
 }

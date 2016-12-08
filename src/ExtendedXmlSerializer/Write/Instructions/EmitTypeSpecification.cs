@@ -21,17 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Specifications;
+using ExtendedXmlSerialization.Write.Extensibility;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitTypeSpecification : ISpecification<IWritingContext>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
+        EmitTypeSpecification() {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public bool IsSatisfiedBy(IWritingContext parameter)
+        {
+            if (parameter.Current.Instance != parameter.Current.Root)
+            {
+                var context = parameter.GetMemberContext().GetValueOrDefault();
+                switch (context.State)
+                {
+                    case WriteState.MemberValue:
+                        var member = context.Member.GetValueOrDefault();
+                        var result = member.IsWritable && member.Value.GetType() != member.MemberType;
+                        return result;
+                }
+                var emit = parameter.GetArrayContext() == null && parameter.GetDictionaryContext() == null;
+                return emit;
+            }
+            return false;
+        }
     }
 }

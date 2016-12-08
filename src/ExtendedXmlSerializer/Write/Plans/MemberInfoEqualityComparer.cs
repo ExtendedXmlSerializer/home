@@ -21,17 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static MemberInfoEqualityComparer Default { get; } = new MemberInfoEqualityComparer();
+        MemberInfoEqualityComparer() {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public bool Equals(MemberInfo x, MemberInfo y) => x.Name == y.Name;
+
+        public int GetHashCode(MemberInfo obj) => obj.Name.GetHashCode();
     }
 }

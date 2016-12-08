@@ -22,16 +22,32 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class DifferentiatingMembers : WeakCacheBase<Type, IImmutableList<MemberContext>>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IImmutableList<MemberInfo> _definition;
+        public DifferentiatingMembers(Type definition) : this(SerializableMembers.Default.Get(definition)) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public DifferentiatingMembers(IImmutableList<MemberInfo> definition)
+        {
+            _definition = definition;
+        }
+
+        protected override IImmutableList<MemberContext> Callback(Type key)
+        {
+            var list = SerializableMembers.Default.Get(key);
+            var result =
+                list.Except(_definition, MemberInfoEqualityComparer.Default)
+                    .Select(info => new MemberContext(info))
+                    .ToImmutableList();
+            return result;
+        }
     }
 }

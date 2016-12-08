@@ -22,16 +22,36 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static SerializableMembers Default { get; } = new SerializableMembers();
+        SerializableMembers() : this(_ => true) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        private readonly Func<TypeDefinition, bool> _serializable;
+
+        public SerializableMembers(Func<TypeDefinition, bool> serializable)
+        {
+            _serializable = serializable;
+        }
+
+        protected override IImmutableList<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
+
+        IEnumerable<MemberInfo> GetWritableMembers(Type type)
+        {
+            foreach (var member in TypeDefinitionCache.GetDefinition(type).Properties)
+            {
+                if (_serializable(member.TypeDefinition))
+                {
+                    yield return member.MemberInfo;
+                }
+            }
+        }
     }
 }

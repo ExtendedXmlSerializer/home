@@ -21,17 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class NamespaceEmitter : INamespaceEmitter
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private const string Prefix = "xmlns";
+        private readonly XmlWriter _writer;
+        private readonly INamespaces _namespaces;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
+        {
+            _writer = writer;
+            _namespaces = namespaces;
+        }
+
+        public void Execute(object instance)
+        {
+            var list = _namespaces.Get(instance);
+            foreach (var pair in list)
+            {
+                _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
+            }
+        }
     }
 }

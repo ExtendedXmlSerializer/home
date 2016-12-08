@@ -22,16 +22,30 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitDifferentiatingMembersInstruction : EmitMembersInstructionBase
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly Func<Type, IImmutableList<MemberContext>> _differentiating;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EmitDifferentiatingMembersInstruction(Type type, Func<MemberContext, IMemberInstruction> factory,
+                                                     IInstruction instruction)
+            : this(DifferentiatingDefinitions.Default.Get(type), factory, instruction) {}
+
+        public EmitDifferentiatingMembersInstruction(
+            Func<Type, IImmutableList<MemberContext>> differentiating,
+            Func<MemberContext, IMemberInstruction> factory,
+            IInstruction instruction) : base(factory, instruction)
+        {
+            _differentiating = differentiating;
+        }
+
+        protected override IImmutableList<MemberContext> DetermineSet(IWriting services)
+            => _differentiating(services.Current.Instance.GetType());
     }
 }

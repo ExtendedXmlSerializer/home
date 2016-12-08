@@ -22,16 +22,35 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Extensibility
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public class ObjectSerializer : IObjectSerializer
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly ITypeFormatter _formatter;
+        public static ObjectSerializer Default { get; } = new ObjectSerializer();
+        ObjectSerializer() : this(DefaultTypeFormatter.Default) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public ObjectSerializer(ITypeFormatter formatter)
+        {
+            _formatter = formatter;
+        }
+
+        public string Serialize(object instance)
+        {
+            var result = instance as string ??
+                         (instance as Enum)?.ToString() ??
+                         FromType(instance) ?? PrimitiveValueTools.SetPrimitiveValue(instance);
+            return result;
+        }
+
+        private string FromType(object instance)
+        {
+            var type = instance as Type;
+            var result = type != null ? _formatter.Format(type) : null;
+            return result;
+        }
     }
 }

@@ -22,16 +22,29 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
-    {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+    public abstract class WriteInstructionBase : InstructionBase<IWriting> {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+    public abstract class WriteInstructionBase<T> : WriteInstructionBase, IWriteInstruction<T>
+    {
+        protected override void OnExecute(IWriting services)
+        {
+            var instance = services.Current.Instance;
+            if (instance is T)
+            {
+                Execute(services, (T) instance);
+                return;
+            }
+            throw new InvalidOperationException(
+                      $"Expected an instance of type '{typeof(T)}' but got an instance of '{instance.GetType()}'");
+        }
+
+        protected abstract void Execute(IWriting services, T instance);
+
+        void IWriteInstruction<T>.Execute(IWriting services, T instance) => Execute(services, instance);
     }
 }

@@ -22,16 +22,30 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Common;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public struct MemberContext
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public MemberContext(MemberInfo member, object value = null)
+            : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
+        {
+            Metadata = metadata;
+            DisplayName = displayName;
+            MemberType = memberType;
+            IsWritable = isWritable;
+            Value = value;
+        }
+
+        public MemberInfo Metadata { get; }
+        public string DisplayName { get; }
+        public Type MemberType { get; }
+        public bool IsWritable { get; }
+        public object Value { get; }
     }
 }

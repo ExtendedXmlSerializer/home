@@ -21,17 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Specifications;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Extensibility
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EncryptionSpecification : ISpecification<object>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly ISerializationToolsFactory _factory;
+        private readonly IWritingContext _context;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EncryptionSpecification(ISerializationToolsFactory factory, IWritingContext context)
+        {
+            _factory = factory;
+            _context = context;
+        }
+
+        public bool IsSatisfiedBy(object parameter)
+        {
+            var context = _context.GetMemberContext();
+            if (context != null)
+            {
+                var configuration = _factory.GetConfiguration(context?.Instance.GetType());
+                if (configuration != null)
+                {
+                    var member = context?.Member?.Metadata;
+                    if (member != null)
+                    {
+                        var result =
+                            configuration.CheckPropertyEncryption(member.Name);
+                        return result;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

@@ -21,17 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Extensibility
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public class VersionExtension : ConfigurationWritingExtensionBase
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IInstruction _instruction;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public VersionExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
+        {
+            _instruction = instruction;
+        }
+
+        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
+                                                object instance,
+                                                IImmutableList<MemberInfo> members)
+        {
+            var version = configuration.Version;
+            if (version > 0)
+            {
+                _instruction.Execute(services);
+                services.Attach(new VersionProperty(services.Get(this), version));
+            }
+            return base.StartingMembers(services, configuration, instance, members);
+        }
     }
 }

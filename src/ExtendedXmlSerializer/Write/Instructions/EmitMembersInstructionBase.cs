@@ -22,26 +22,44 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Extensibility;
-using ExtendedXmlSerialization.Write.Instructions;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    class DefaultSerializationProfile : SerializationProfile
+    abstract class EmitMembersInstructionBase : DecoratedWriteInstruction
     {
-        public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
+        private readonly Func<MemberContext, IMemberInstruction> _factory;
 
-        DefaultSerializationProfile()
-            : base(
-                PlanMaker.Default.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default,
-                DefaultNamespaces.Default,
-                DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default,
-                DefaultMemberValueAssignedExtension.Default) {}
+        protected EmitMembersInstructionBase(Func<MemberContext, IMemberInstruction> factory, IInstruction instruction)
+            : base(instruction)
+        {
+            _factory = factory;
+        }
 
-        public override bool IsSatisfiedBy(Uri parameter) => true;
+        protected override void OnExecute(IWriting services)
+        {
+            var all = DetermineSet(services);
+
+            var instructions = all.Select(_factory).ToArray();
+
+            var properties = instructions.OfType<IPropertyInstruction>().ToArray();
+
+            foreach (var instruction in properties)
+            {
+                instruction.Execute(services);
+            }
+
+            base.OnExecute(services);
+
+            foreach (var instruction in instructions.Except(properties))
+            {
+                instruction.Execute(services);
+            }
+        }
+
+        protected abstract IImmutableList<MemberContext> DetermineSet(IWriting services);
     }
 }

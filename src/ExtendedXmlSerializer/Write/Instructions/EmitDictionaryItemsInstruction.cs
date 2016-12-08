@@ -22,16 +22,32 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitDictionaryItemsInstruction : WriteInstructionBase<IDictionary>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IInstruction _template;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EmitDictionaryItemsInstruction(IInstruction template)
+        {
+            _template = template;
+        }
+
+        protected override void Execute(IWriting services, IDictionary instance)
+        {
+            foreach (DictionaryEntry item in instance)
+            {
+                using (New(services, item))
+                {
+                    _template.Execute(services);
+                }
+            }
+        }
+
+        private static IDisposable New<T>(IWritingContext services, T item) => services.New(item);
     }
 }

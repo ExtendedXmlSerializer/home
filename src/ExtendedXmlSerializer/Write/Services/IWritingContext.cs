@@ -22,16 +22,21 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    public interface IWritingContext
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        WriteContext Current { get; }
+        IEnumerable<WriteContext> Hierarchy { get; }
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        IDisposable Start(object root);
+        IDisposable New(object instance);
+        IDisposable New(IImmutableList<MemberInfo> members);
+        IDisposable New(MemberInfo member);
+        IDisposable ToMemberContext();
     }
 }

@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Write.Instructions;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Plans
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class GeneralObjectWritePlan : ConditionalPlan
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
-
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public GeneralObjectWritePlan(IPlan plan, IInstruction emitType) : base(
+            type => type == typeof(object),
+            new FixedPlan(new CompositeInstruction(emitType, new EmitGeneralObjectInstruction(plan)))) {}
     }
 }

@@ -22,16 +22,33 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Reflection;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Write.Extensibility;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitMemberAsTextInstruction : WriteInstructionBase
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static EmitMemberAsTextInstruction Default { get; } = new EmitMemberAsTextInstruction();
+        EmitMemberAsTextInstruction() {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        protected override void OnExecute(IWriting services)
+        {
+            var member = services.Current.Member;
+            if (member != null)
+            {
+                var @namespace = member.Value.Metadata.DeclaringType.IsInstanceOfType(services.Current.Instance)
+                    ? Namespace.Default.Identifier
+                    : services.Get(member.Value.Metadata.DeclaringType);
+                services.Emit(new MemberProperty(@namespace, member.Value));
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                          $"An attempt was made to emit a member of '{services.Current.Instance.GetType()}' but it is not available.");
+            }
+        }
     }
 }

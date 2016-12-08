@@ -21,17 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Services
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class DefaultNamespaces : INamespaces
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
+        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        private readonly IImmutableList<INamespace> _namespaces;
+
+
+        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
+        {
+            _namespaces = namespaces;
+        }
+
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
     }
 }

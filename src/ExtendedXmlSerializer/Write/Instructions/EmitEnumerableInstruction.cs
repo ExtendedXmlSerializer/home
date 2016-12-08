@@ -21,17 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using System.Collections;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Write.Services;
 
-namespace ExtendedXmlSerialization.Profiles
+namespace ExtendedXmlSerialization.Write.Instructions
 {
-    public class SerializationProfileVersion20 : SerializationProfile
+    class EmitEnumerableInstruction : WriteInstructionBase<IEnumerable>
     {
-        public static Uri Uri { get; } = new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/v2");
+        private readonly IInstruction _template;
 
-        public new static SerializationProfileVersion20 Default { get; } = new SerializationProfileVersion20();
-        SerializationProfileVersion20() : base(AutoAttributeSpecification.Default, Uri) {}
+        public EmitEnumerableInstruction(IInstruction template)
+        {
+            _template = template;
+        }
+
+        protected override void Execute(IWriting services, IEnumerable instance)
+        {
+            foreach (var item in Arrays.Default.AsArray(instance))
+            {
+                using (services.New(item))
+                {
+                    _template.Execute(services);
+                }
+            }
+        }
     }
 }
