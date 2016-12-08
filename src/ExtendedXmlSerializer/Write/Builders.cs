@@ -49,12 +49,6 @@ namespace ExtendedXmlSerialization.Write
         bool Handles(object candidate);
     }
 
-    class InstructionCandidateSpecification<T> : InstructionCandidateSpecification
-    {
-        public InstructionCandidateSpecification(ISpecification<T> specification)
-            : base(o => o is T, specification.Adapt().IsSatisfiedBy) {}
-    }
-
     class InstructionCandidateSpecification : DelegatedSpecification<object>, IInstructionCandidateSpecification
     {
         private readonly Func<object, bool> _handles;
@@ -74,12 +68,6 @@ namespace ExtendedXmlSerialization.Write
     {
         public override bool Handles(object candidate) =>
             base.Handles(candidate) && ((MemberContext) candidate).Value is T;
-    }
-
-    abstract class MemberContextSpecificationBase<T> : InstructionCandidateSpecificationBase<MemberContext>
-    {
-        public override bool Handles(object candidate) =>
-            base.Handles(candidate) && typeof(T).IsAssignableFrom(((MemberContext) candidate).MemberType);
     }
 
     abstract class InstructionCandidateSpecificationBase<T> : SpecificationAdapterBase<T>,
@@ -158,12 +146,6 @@ namespace ExtendedXmlSerialization.Write
         ) {}
     }
 
-    /*public class AutoAttributePlanSelector : PlanSelector
-    {
-        public new static AutoAttributePlanSelector Default { get; } = new AutoAttributePlanSelector();
-        AutoAttributePlanSelector() : base(AutoAttributeSpecification.Default) {}
-    }*/
-
     class AutoAttributeValueSpecification : MemberValueSpecificationBase<string>
     {
         public static AutoAttributeValueSpecification Default { get; } = new AutoAttributeValueSpecification();
@@ -186,31 +168,18 @@ namespace ExtendedXmlSerialization.Write
 
     public class DefaultPlanSelector : PlanSelector
     {
-        /*private readonly IInstructionSpecification _specification;
-        private readonly IEnumerableInstructionFactory _enumerable;*/
-
-        public DefaultPlanSelector(IInstructionSpecification specification, IEnumerableInstructionFactory enumerable)
+        public DefaultPlanSelector(IInstructionSpecification specification, IEnumerableInstructions enumerable)
             : base(specification, enumerable, EmitTypeInstruction.Default) {}
-
-        /*public IEnumerable<IPlan> Get(IPlan parameter)
-        {
-            yield return PrimitiveWritePlan.Default;
-            yield return new DictionaryWritePlan(parameter, EmitTypeInstruction.Default);
-            yield return new EnumerableWritePlan(parameter, _enumerable);
-            yield return new InstanceWritePlan(parameter, _specification, EmitTypeInstruction.Default, new MemberInstructionFactory(parameter, _specification))
-                ;
-            yield return new ObjectWritePlan(parameter, EmitTypeInstruction.Default);
-        }*/
     }
 
     public interface IPlanSelector : IParameterizedSource<IPlan, IEnumerable<IPlan>> {}
     public class PlanSelector : IPlanSelector
     {
         private readonly IInstructionSpecification _specification;
-        private readonly IEnumerableInstructionFactory _enumerable;
+        private readonly IEnumerableInstructions _enumerable;
         private readonly IInstruction _emitType;
 
-        public PlanSelector(IInstructionSpecification specification, IEnumerableInstructionFactory enumerable, IInstruction emitType)
+        public PlanSelector(IInstructionSpecification specification, IEnumerableInstructions enumerable, IInstruction emitType)
         {
             _specification = specification;
             _enumerable = enumerable;
@@ -251,7 +220,7 @@ namespace ExtendedXmlSerialization.Write
                 plans.Add(plan);
             }
 
-            var result = new RootWritePlan(select);
+            var result = _alteration.Get(new RootWritePlan(select));
             return result;
         }
     }
@@ -282,62 +251,6 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    /*public interface IMembersBodyFactory
-    {
-        IInstruction Create(Type type, IImmutableList<MemberInfo> members);
-    }*/
-
-    /*class DefaultMembersBodyFactory : IMembersBodyFactory
-    {
-        private readonly IMembersBodyFactory _inner;
-
-        public DefaultMembersBodyFactory(IMembersBodyFactory inner)
-        {
-            _inner = inner;
-        }
-
-        public IInstruction Create(Type type, IImmutableList<MemberInfo> members)
-            => new EmitWithTypeInstruction(_inner.Create(type, members));
-    }*/
-
-    /*class EmitTypedMembersBodyFactory : IMembersBodyFactory
-    {
-        private readonly IMembersBodyFactory _inner;
-
-        public EmitTypedMembersBodyFactory(IMembersBodyFactory inner)
-        {
-            _inner = inner;
-        }
-
-        public IInstruction Create(Type type, IImmutableList<MemberInfo> members)
-            => new Instruction(_inner.Create(type, members));
-
-        class Instruction : WriteInstructionBase
-        {
-            private readonly IInstruction _body;
-            private readonly IInstruction _wrapped;
-
-            public Instruction(IInstruction body) : this(body, new EmitInstanceInstruction(InstanceTypeNameProvider.Default, body)) {}
-
-            public Instruction(IInstruction body, IInstruction wrapped)
-            {
-                _body = body;
-                _wrapped = wrapped;
-            }
-
-            protected override void Execute(IWriting services)
-            {
-                var instruction = services.Current.Instance == services.Current.Root ? _body : _wrapped;
-                instruction.Execute(services);
-            }
-        }
-    }*/
-
-    /*class MembersBodyFactory : IMembersBodyFactory
-    {
-        
-    }*/
-
     class DifferentiatingMembers : WeakCacheBase<Type, IImmutableList<MemberContext>>
     {
         private readonly IImmutableList<MemberInfo> _definition;
@@ -361,9 +274,9 @@ namespace ExtendedXmlSerialization.Write
         public static MemberInfoEqualityComparer Default { get; } = new MemberInfoEqualityComparer();
         MemberInfoEqualityComparer() {}
 
-        public bool Equals(MemberInfo x, MemberInfo y) => /*x.DeclaringType == y.DeclaringType &&*/ x.Name == y.Name;
+        public bool Equals(MemberInfo x, MemberInfo y) => x.Name == y.Name;
 
-        public int GetHashCode(MemberInfo obj) => /*obj.DeclaringType.GetHashCode()*397 ^*/ obj.Name.GetHashCode();
+        public int GetHashCode(MemberInfo obj) => obj.Name.GetHashCode();
     }
 
     class DifferentiatingDefinitions : WeakCache<Type, Func<Type, IImmutableList<MemberContext>>>
@@ -422,15 +335,6 @@ namespace ExtendedXmlSerialization.Write
             type => type == typeof(object),
             new FixedPlan(new EmitWithTypeInstruction(emitType, new EmitGeneralObjectInstruction(plan)))) {}
     }
-
-    /*class DefaultGeneralObjectWritePlan : ConditionalWritePlan
-    {
-        public DefaultGeneralObjectWritePlan(IWritePlan plan) : base(
-            type => type == typeof(object),
-            new FixedWritePlan(
-                new EmitWithTypeInstruction(
-                    new EmitGeneralObjectInstruction(plan)))) {}
-    }*/
 
     class InstanceWritePlan : ConditionalPlanBase
     {
@@ -504,37 +408,6 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    
-
-    /*class DefaultEnumerableWritePlan : ConditionalWritePlanBase
-    {
-        readonly private static Func<Type, bool> Specification = IsSatisfiedBy;
-
-        private readonly IWritePlan _plan;
-
-        public DefaultEnumerableWritePlan(IWritePlan plan) : base(Specification)
-        {
-            _plan = plan;
-        }
-
-        private static bool IsSatisfiedBy(Type type)
-        {
-            var definition = TypeDefinitionCache.GetDefinition(type);
-            var result = definition.IsArray || definition.IsEnumerable;
-            return result;
-        }
-
-        protected override IInstruction Plan(Type type)
-        {
-            var elementType = ElementTypeLocator.Default.Locate(type);
-            var provider = elementType.GetTypeInfo().IsInterface
-                ? (IElementProvider) InstanceTypeNameProvider.Default
-                    : new TypeDefinitionElementProvider(elementType);
-            var template = new EmitInstanceInstruction(provider, _plan.For(elementType));
-            var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(template));
-            return result;
-        }
-    }*/
 
     class IsEnumerableTypeSpecification : ISpecification<Type>
     {
@@ -549,18 +422,16 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    public interface IEnumerableInstructionFactory
+    public interface IEnumerableInstructions
     {
         IInstruction Create(Type elementType, IInstruction instruction);
     }
 
-    class EnumerableInstructionFactory : IEnumerableInstructionFactory
+    class EnumerableInstructions : IEnumerableInstructions
     {
         private readonly IInstruction _emitType;
-        /*public static EnumerableInstructionFactory Default { get; } = new EnumerableInstructionFactory();
-        EnumerableInstructionFactory() {}*/
 
-        public EnumerableInstructionFactory(IInstruction emitType)
+        public EnumerableInstructions(IInstruction emitType)
         {
             _emitType = emitType;
         }
@@ -573,10 +444,10 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class DefaultEnumerableInstructionFactory : IEnumerableInstructionFactory
+    class DefaultEnumerableInstructions : IEnumerableInstructions
     {
-        public static DefaultEnumerableInstructionFactory Default { get; } = new DefaultEnumerableInstructionFactory();
-        DefaultEnumerableInstructionFactory() {}
+        public static DefaultEnumerableInstructions Default { get; } = new DefaultEnumerableInstructions();
+        DefaultEnumerableInstructions() {}
 
         public IInstruction Create(Type elementType, IInstruction instruction)
         {
@@ -592,11 +463,11 @@ namespace ExtendedXmlSerialization.Write
     class EnumerableWritePlan : ConditionalPlanBase
     {
         private readonly IPlan _plan;
-        private readonly IEnumerableInstructionFactory _factory;
+        private readonly IEnumerableInstructions _factory;
 
-        public EnumerableWritePlan(IPlan plan, IEnumerableInstructionFactory factory) : this(IsEnumerableTypeSpecification.Default.IsSatisfiedBy, plan, factory) {}
+        public EnumerableWritePlan(IPlan plan, IEnumerableInstructions factory) : this(IsEnumerableTypeSpecification.Default.IsSatisfiedBy, plan, factory) {}
 
-        public EnumerableWritePlan(Func<Type, bool> specification, IPlan plan, IEnumerableInstructionFactory factory) : base(specification)
+        public EnumerableWritePlan(Func<Type, bool> specification, IPlan plan, IEnumerableInstructions factory) : base(specification)
         {
             _plan = plan;
             _factory = factory;

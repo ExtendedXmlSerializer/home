@@ -6,12 +6,12 @@ using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.Common
 {
-	public interface IPlanMaker
+    public interface IPlanMaker
     {
         IPlan Make();
     }
 
-	class CachePlanAlteration : IAlteration<IPlan>
+    class CachePlanAlteration : IAlteration<IPlan>
     {
         public static CachePlanAlteration Default { get; } = new CachePlanAlteration();
         CachePlanAlteration() {}
@@ -25,7 +25,7 @@ class CachedPlan : WeakCache<Type, IInstruction>, IPlan
         public IInstruction For(Type type) => Get(type);
     }
 
-	class SelectFirstAssignedPlan : IPlan
+    class SelectFirstAssignedPlan : IPlan
     {
         readonly ICollection<IPlan> _providers;
 
