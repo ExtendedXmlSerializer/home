@@ -46,6 +46,7 @@ namespace ExtendedXmlSerialization.Common
         public string Format(Type type) => type.FullName;
     }
 
+/*
     /// <summary>
     /// https://github.com/JamesNK/Newtonsoft.Json/blob/master/Src/Newtonsoft.Json/Utilities/ReflectionUtils.cs
     /// </summary>
@@ -124,6 +125,7 @@ namespace ExtendedXmlSerialization.Common
             return result;
         }
     }
+*/
 
     /*class PackUriFormatter : ITypeFormatter
     {

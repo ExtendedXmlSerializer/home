@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Write;
@@ -32,41 +30,44 @@ namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfile : SerializationProfileBase
     {
-        private readonly IWritePlanComposer _composer;
-        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
+        private readonly IPlan _plan;
+        private readonly INamespaces _namespaces;
         private readonly INamespaceLocator _locator;
         private readonly Func<IWritingContext> _context;
-        private readonly IInstruction _instruction;
+        private readonly IInstruction _emitType;
         private readonly object[] _services;
 
         public SerializationProfile(IInstructionSpecification specification, Uri identifier)
             : this(specification, () => new DefaultWritingContext(), identifier) {}
 
         public SerializationProfile(IInstructionSpecification specification, Func<IWritingContext> context, Uri identifier)
-            : this(specification, context, new RootNamespace(identifier)) {}
+            : this(specification, EmitTypeForInstanceInstruction.Default, context, identifier) {}
 
-        public SerializationProfile(IInstructionSpecification specification, Func<IWritingContext> context, INamespace root)
+        public SerializationProfile(IInstructionSpecification specification, IInstruction emitType, Func<IWritingContext> context, Uri identifier)
+            : this(specification, emitType, context, new RootNamespace(identifier)) {}
+
+        public SerializationProfile(IInstructionSpecification specification, IInstruction emitType, Func<IWritingContext> context, INamespace root)
             : this(
-                new WritePlanComposer(new PlanSelector(specification, EnumerableInstructionFactory.Default)),
-                new NamespaceLocator(root), context, root, EmptyInstruction.Default, TypeFormatter.Default,
+                new PlanMaker(new PlanSelector(specification, new EnumerableInstructionFactory(emitType), emitType)),
+                new NamespaceLocator(root), context, root, emitType,
                 MemberValueAssignedExtension.Default) {}
 
-        public SerializationProfile(IWritePlanComposer composer, INamespaceLocator locator, Func<IWritingContext> context,
-                                    INamespace root, IInstruction instruction, params object[] services)
-            : this(composer, context, instruction, new Namespaces(locator, root), locator, root, services)
+        public SerializationProfile(IPlanMaker maker, INamespaceLocator locator, Func<IWritingContext> context,
+                                    INamespace root, IInstruction emitType, params object[] services)
+            : this(maker.Make(), context, emitType, new Namespaces(locator, root), locator, root, services)
         {}
 
-        public SerializationProfile(IWritePlanComposer composer, Func<IWritingContext> context,
-                                    IInstruction instruction,
-                                    IParameterizedSource<object, IImmutableList<INamespace>> namespaces,
+        public SerializationProfile(IPlan plan, Func<IWritingContext> context,
+                                    IInstruction emitType,
+                                    INamespaces namespaces,
                                     INamespaceLocator locator, INamespace root, params object[] services)
             : base(root)
         {
-            _composer = composer;
+            _plan = plan;
             _namespaces = namespaces;
             _locator = locator;
             _context = context;
-            _instruction = instruction;
+            _emitType = emitType;
             _services = services;
         }
 
@@ -74,11 +75,10 @@ namespace ExtendedXmlSerialization.Profiles
         {
             var host = new SerializationToolsFactoryHost();
             var services = new ServiceRepository(_services);
-            var items = _services.OfType<IExtension>().Concat( new IExtension[] { new DefaultWritingExtensions(host, _instruction) } ).ToArray(); // Should probably move out to a factory.
+            var items = _services.OfType<IExtension>().Concat( new IExtension[] { new DefaultWritingExtensions(host, _emitType) } ).ToArray(); // Should probably move out to a factory.
             var extensions = new OrderedSet<IExtension>(items);
             var factory = new WritingFactory(host, _namespaces,  _locator, services, _context, new CompositeExtension(extensions));
-            var plan = _composer.Compose();
-            var serializer = new Serializer(plan, factory);
+            var serializer = new Serializer(_plan, factory);
             var result = new Serialization(host, serializer, services, extensions);
             return result;
         }
@@ -86,13 +86,15 @@ namespace ExtendedXmlSerialization.Profiles
 
     class DefaultSerializationProfile : SerializationProfile
     {
+        readonly private static IPlanMaker Maker =
+            new PlanMaker(new DefaultPlanSelector(DefaultInstructionSpecification.Default,
+                                                  DefaultEnumerableInstructionFactory.Default));
+
         public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
         DefaultSerializationProfile()
-            : base(
-                new WritePlanComposer(new DefaultPlanSelector(DefaultInstructionSpecification.Default,
-                                                              DefaultEnumerableInstructionFactory.Default)),
-                () => new DefaultWritingContext(), EmitTypeInstruction.Default, DefaultNamespaces.Default,
-                DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default, DefaultMemberValueAssignedExtension.Default) {}
+            : base(Maker.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default, DefaultNamespaces.Default,
+                   DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default,
+                   DefaultMemberValueAssignedExtension.Default) {}
 
         public override bool IsSatisfiedBy(Uri parameter) => true;
     }

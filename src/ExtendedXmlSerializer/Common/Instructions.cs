@@ -17,6 +17,30 @@ namespace ExtendedXmlSerialization.Common
         protected abstract void Execute(T services);
     }
 
+    class ConditionalInstruction : ConditionalInstruction<IServiceProvider>
+    {
+        public ConditionalInstruction(ISpecification<IServiceProvider> specification, IInstruction instruction)
+            : base(specification, instruction) {}
+    }
+
+    class ConditionalInstruction<T> : DecoratedInstruction<T> where T : IServiceProvider
+    {
+        private readonly ISpecification<T> _specification;
+        
+        public ConditionalInstruction(ISpecification<T> specification, IInstruction instruction) : base(instruction)
+        {
+            _specification = specification;
+        }
+
+        protected override void Execute(T services)
+        {
+            if (_specification.IsSatisfiedBy(services))
+            {
+                base.Execute(services);
+            }
+        }
+    }
+
     public class DecoratedInstruction : DecoratedInstruction<IServiceProvider>
     {
         public DecoratedInstruction(IInstruction instruction) : base(instruction) {}
@@ -113,19 +137,41 @@ namespace ExtendedXmlSerialization.Common
         void Add(object service);
     }
 
+    public interface IPrefixGenerator
+    {
+        string Generate(Type type);
+    }
+
+    class PrefixGenerator : IPrefixGenerator
+    {
+        public static PrefixGenerator Default { get; } = new PrefixGenerator();
+        PrefixGenerator() {}
+
+        private int _count;
+
+        public string Generate(Type type) => string.Concat("ns", _count++.ToString());
+    }
+
     class NamespaceLocator : WeakCacheBase<Type, INamespace>, INamespaceLocator
     {
+        readonly private static Assembly Assembly = typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly;
+        private readonly IPrefixGenerator _generator;
+        private readonly ISpecification<Type> _primitiveSpecification;
         private readonly INamespace _root;
+        private readonly INamespace _primitive;
         readonly private Assembly _assembly;
 
-        /*public NamespaceLocator(Uri root) : this(Prefix, root) {}
-
-        public NamespaceLocator(string prefix, Uri root) : this(new Namespace(prefix, root)) {}*/
-
-        public NamespaceLocator(INamespace root)
+        public NamespaceLocator(INamespace root) : this(PrefixGenerator.Default, root) {}
+        public NamespaceLocator(IPrefixGenerator generator, INamespace root)
+            : this(generator, IsPrimitiveSpecification.Default, root, PrimitiveNamespace.Default) {}
+        public NamespaceLocator(IPrefixGenerator generator, ISpecification<Type> primitiveSpecification, INamespace root,
+                                INamespace primitive)
         {
+            _generator = generator;
+            _primitiveSpecification = primitiveSpecification;
             _root = root;
-            _assembly = GetType().GetTypeInfo().Assembly;
+            _primitive = primitive;
+            _assembly = Assembly;
         }
 
         public INamespace Get(object parameter) => parameter as INamespace ?? FromType(parameter);
@@ -137,10 +183,16 @@ namespace ExtendedXmlSerialization.Common
             return result;
         }
 
-        protected override INamespace Callback(Type key) => new Namespace(new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
+        protected override INamespace Callback(Type key)
+        {
+            var result = 
+                _primitiveSpecification.IsSatisfiedBy(key) ? _primitive :
+                new Namespace( _generator.Generate(key), new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
+            return result;
+        }
     }
 
-    class DefaultNamespaces : IParameterizedSource<object, IImmutableList<INamespace>>
+    class DefaultNamespaces : INamespaces
     {
         public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
         DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
@@ -164,6 +216,21 @@ namespace ExtendedXmlSerialization.Common
         public INamespace Get(object parameter) => null;
     }
 
+    public interface IRootElement : IElement
+    {
+        object Root { get; }
+    }
+
+    class RootElement : Element, IRootElement
+    {
+        public RootElement(INamespace @namespace, object root) : base(@namespace, TypeDefinitionCache.GetDefinition(root.GetType()).Name)
+        {
+            Root = root;
+        }
+
+        public object Root { get; }
+    }
+
     public interface IElement : INamespace
     {
         string Name { get; }
@@ -174,6 +241,14 @@ namespace ExtendedXmlSerialization.Common
         string Prefix { get; }
     }
 
+    public sealed class PrimitiveNamespace : Namespace
+    {
+        private new const string Prefix = "sys";
+
+        public new static PrimitiveNamespace Default { get; } = new PrimitiveNamespace();
+        PrimitiveNamespace() : base(Prefix, new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/primitives")) {}
+    }
+
     public sealed class RootNamespace : Namespace
     {
         private new const string Prefix = "exs";
@@ -181,7 +256,7 @@ namespace ExtendedXmlSerialization.Common
         public RootNamespace(Uri identifier) : base(Prefix, identifier) {}
     }
 
-    public class Namespace : INamespace
+    public class Namespace : INamespace, IEquatable<Namespace>
     {
         public static Namespace Default { get; } = new Namespace();
         Namespace() {}
@@ -196,6 +271,16 @@ namespace ExtendedXmlSerialization.Common
 
         public string Prefix { get; }
         public Uri Identifier { get; }
+
+        public bool Equals(Namespace other) => 
+            !ReferenceEquals(null, other) && (ReferenceEquals(this, other) || Equals(Identifier, other.Identifier));
+
+        public override bool Equals(object obj) => !ReferenceEquals(null, obj) &&
+                                                   (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((Namespace) obj));
+
+        public override int GetHashCode() => Identifier?.GetHashCode() ?? 0;
+        public static bool operator ==(Namespace left, Namespace right) => Equals(left, right);
+        public static bool operator !=(Namespace left, Namespace right) => !Equals(left, right);
     }
 
     public interface INamespaceLocator : IParameterizedSource<object, INamespace> {}

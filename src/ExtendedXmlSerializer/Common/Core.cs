@@ -243,46 +243,24 @@ namespace ExtendedXmlSerialization.Common
 
 		object IEnumerator.Current => Current;
 
-		protected void Schedule(TInput candidate)
+		protected bool Schedule(TInput candidate)
 		{
 			if (candidate != null)
 			{
 				// Ask the ObjectIDManager if this object has been examined before.
 				
 				// If this object has been examined before, do not look at it again just return.
-				if (First(candidate))
+				var result = First(candidate);
+				if (result)
 				{
-					/*var candidates = DetermineAdditionalFrom(candidate);
-					if (candidates != null)
-					{
-					    foreach (var c in candidates)
-					    {
-					        Schedule(c);
-					    }
-					}
-					else
-					{
-					    
-					}*/
 					OnSchedule(candidate);
-					/*if (candidate.GetType().IsArray)
-					{
-					    // The object is an array, schedule each element of the array to be looked at.
-					    foreach (var item in (Array) candidate)
-					    {
-					        Schedule(item);
-					    }
-					}
-					else
-					{
-					    // The object is not an array, schedule this object to be looked at.
-					    _remaining.Push(candidate);
-					}*/
 				}
+				return result;
 			}
+			return false;
 		}
 
-		protected bool First(object candidate)
+		bool First(object candidate)
 		{
 			bool firstOccurrence;
 			_generator.GetId(candidate, out firstOccurrence);

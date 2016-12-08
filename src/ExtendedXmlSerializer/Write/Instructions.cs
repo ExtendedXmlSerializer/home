@@ -142,6 +142,12 @@ namespace ExtendedXmlSerialization.Write
         EmitCurrentInstanceTypeInstruction() : base(context => context.Current.Instance.GetType()) {}
     }*/
 
+    class EmitTypeForInstanceInstruction : ConditionalInstruction<IWriting>
+    {
+        public static EmitTypeForInstanceInstruction Default { get; } = new EmitTypeForInstanceInstruction();
+        EmitTypeForInstanceInstruction() : base(new DelegatedSpecification<IWriting>(w => w.Current.Instance != w.Current.Root), EmitTypeInstruction.Default) {}
+    }
+
     class EmitTypeInstruction : WriteInstructionBase
     {
         public static EmitTypeInstruction Default { get; } = new EmitTypeInstruction();
@@ -150,8 +156,7 @@ namespace ExtendedXmlSerialization.Write
         protected override void Execute(IWriting services)
         {
             var type = services.Current.Instance.GetType();
-            var format = services.Get<ITypeFormatter>().Format(type);
-            var property = new TypeProperty(services.Get(this), format);
+            var property = new TypeProperty(services.Get(this), type);
             services.Emit(property);
         }
     }
@@ -250,6 +255,19 @@ namespace ExtendedXmlSerialization.Write
         public IElement Get(INamespaceLocator locator, object instance) => new Element(locator.Get(_member.Metadata.DeclaringType), _member.DisplayName);
     }
 
+    class EmitRootInstruction : DecoratedWriteInstruction
+    {
+        public EmitRootInstruction(IInstruction instruction) : base(instruction) {}
+
+        protected override void Execute(IWriting services)
+        {
+            var root = services.Current.Root;
+            var element = new RootElement(services.Get(root), root);
+            services.Start(element);
+            base.Execute(services);
+            services.EndElement();
+        }
+    }
     class EmitInstanceInstruction : DecoratedWriteInstruction
     {
         private readonly IElementProvider _provider;
@@ -334,9 +352,9 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitAttachedPropertiesInstruction : WriteInstructionBase
     {
-        private readonly IWritePlan _primary;
+        private readonly IPlan _primary;
         private readonly Func<object, bool> _specification;
-        public EmitAttachedPropertiesInstruction(IWritePlan primary, Func<object, bool> specification)
+        public EmitAttachedPropertiesInstruction(IPlan primary, Func<object, bool> specification)
         {
             _primary = primary;
             _specification = specification;
@@ -398,8 +416,8 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitGeneralObjectInstruction : WriteInstructionBase
     {
-        private readonly IWritePlan _plan;
-        public EmitGeneralObjectInstruction(IWritePlan plan)
+        private readonly IPlan _plan;
+        public EmitGeneralObjectInstruction(IPlan plan)
         {
             _plan = plan;
         }
@@ -411,35 +429,20 @@ namespace ExtendedXmlSerialization.Write
             selected?.Execute(services);
         }
     }
-    class ConditionalWriteInstruction : DecoratedWriteInstruction
-    {
-        private readonly ISpecification<IWritingContext> _specification;
-        
-        public ConditionalWriteInstruction(ISpecification<IWritingContext> specification, IInstruction instruction) : base(instruction)
-        {
-            _specification = specification;
-        }
-
-        protected override void Execute(IWriting services)
-        {
-            if (_specification.IsSatisfiedBy(services))
-            {
-                base.Execute(services);
-            }
-        }
-    }
-
+    
 
     class EmitTypeForTemplateInstruction : EmitWithTypeInstruction
     {
-        readonly private static IInstruction Specification =
-            new ConditionalWriteInstruction(EmitMemberTypeSpecification.Default, EmitTypeInstruction.Default);
-        public EmitTypeForTemplateInstruction(IInstruction body) : base(Specification, body) {}
+        public EmitTypeForTemplateInstruction(IInstruction body)
+            : this(EmitTypeInstruction.Default, body) {}
+
+        public EmitTypeForTemplateInstruction(IInstruction emitType, IInstruction body)
+            : base(new ConditionalInstruction<IWriting>(EmitMemberTypeSpecification.Default, emitType), body) {}
     }
 
     class EmitWithTypeInstruction : CompositeInstruction
     {
-        public EmitWithTypeInstruction(IInstruction body) : this(EmitTypeInstruction.Default, body) {}
+        //public EmitWithTypeInstruction(IInstruction body) : this(EmitTypeInstruction.Default, body) {}
         
         public EmitWithTypeInstruction(IInstruction type, IInstruction body) : base(type, body) {}
     }

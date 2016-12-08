@@ -44,10 +44,10 @@ namespace ExtendedXmlSerialization.Write
 
     public class Serializer : ISerializer
     {
-        private readonly IWritePlan _plan;
+        private readonly IPlan _plan;
         private readonly IWritingFactory _factory;
 
-        public Serializer(IWritePlan plan, IWritingFactory factory)
+        public Serializer(IPlan plan, IWritingFactory factory)
         {
             _plan = plan;
             _factory = factory;
@@ -68,6 +68,8 @@ namespace ExtendedXmlSerialization.Write
 
     public interface IWriter : IDisposable
     {
+        void Start(IRootElement root);
+
         void Begin(IElement element);
 
         void EndElement();
@@ -80,22 +82,60 @@ namespace ExtendedXmlSerialization.Write
     class Writer : IWriter
     {
         private readonly IObjectSerializer _serializer;
+        private readonly INamespaceLocator _locator;
+        private readonly INamespaceEmitter _emitter;
         private readonly XmlWriter _writer;
 
-        public Writer(IObjectSerializer serializer, XmlWriter writer)
+        public Writer(IObjectSerializer serializer, INamespaceLocator locator, INamespaceEmitter emitter, XmlWriter writer)
         {
             _serializer = serializer;
+            _locator = locator;
+            _emitter = emitter;
             _writer = writer;
         }
 
+        public void Start(IRootElement root)
+        {
+            _writer.WriteStartDocument();
+            Begin(root);
+            var identifier = root.Identifier?.ToString();
+            {
+                if (identifier != null)
+                {
+                    _writer.WriteAttributeString("xmlns", identifier);
+                    _emitter.Execute(root.Root);
+                }
+            }
+        }
         public void Begin(IElement element) => _writer.WriteStartElement(element.Name, element.Identifier?.ToString());
 
         public void EndElement() => _writer.WriteEndElement();
         public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
 
-        public void Emit(IProperty property) => _writer.WriteAttributeString(property.Name, property.Identifier?.ToString(), _serializer.Serialize(property.Value));
+        public void Emit(IProperty property)
+        {
+            var ns = property.Identifier?.ToString();
+            var type = property.Value as Type;
+            if (ns != null && type != null)
+            {
+                var identifier = _locator.Get(property.Value)?.Identifier?.ToString();
+                if (identifier != null)
+                {
+                    var name = TypeDefinitionCache.GetDefinition(type).Name;
+                    _writer.WriteStartAttribute(property.Name, ns);
+                    _writer.WriteQualifiedName(name, identifier);
+                    _writer.WriteEndAttribute();
+                    return;
+                }
+            }
+            _writer.WriteAttributeString(property.Name, ns, _serializer.Serialize(property.Value));
+        }
 
-        public void Dispose() => _writer.Dispose();
+        public void Dispose()
+        {
+            _writer.WriteEndDocument();
+            _writer.Dispose();
+        }
     }
 
     public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
@@ -125,7 +165,7 @@ namespace ExtendedXmlSerialization.Write
             throw new InvalidOperationException($"Could not find the member '{member}' for instance of type '{instance.GetType()}'");
         }
 
-        IEnumerable<MemberContext> Yield(object key)
+        static IEnumerable<MemberContext> Yield(object key)
         {
             var members = SerializableMembers.Default.Get(key.GetType());
             foreach (var member in members)
@@ -306,15 +346,12 @@ namespace ExtendedXmlSerialization.Write
         public ICollection<IProperty> GetProperties(object instance) => _properties.Get(instance);
     }
 
-    public interface IWritingFactory : IParameterizedSource<Stream, IWriting>
-    {
-        /*ICollection<IWritingExtension> Extensions { get; }*/
-    }
+    public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
 
     public class WritingFactory : IWritingFactory
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
+        private readonly INamespaces _namespaces;
         private readonly INamespaceLocator _locator;
         private readonly IServiceProvider _services;
         private readonly IExtension _extension;
@@ -322,7 +359,7 @@ namespace ExtendedXmlSerialization.Write
 
         public WritingFactory(
             ISerializationToolsFactory tools,
-            IParameterizedSource<object, IImmutableList<INamespace>> namespaces,
+            INamespaces namespaces,
             INamespaceLocator locator,
             IServiceProvider services,
             Func<IWritingContext> context, IExtension extension)
@@ -338,12 +375,13 @@ namespace ExtendedXmlSerialization.Write
         public IWriting Get(Stream parameter)
         {
             var context = _context();
-            var settings = new XmlWriterSettings { NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true };
-            var xmlWriter = XmlWriter.Create(parameter/*, settings*/);
+            var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
+            var xmlWriter = XmlWriter.Create(parameter, settings);
             var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_tools, context), _tools);
-            var writer = new Writer(serializer, xmlWriter);
-            var result = new Writing(writer, context, _locator, new NamespaceEmitter(xmlWriter, _namespaces)
-                                        /*services:*/, serializer, _extension, _tools, _services, this, parameter, context, settings, xmlWriter, serializer, writer);
+            var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
+            var result = new Writing(writer, context, _locator
+                                     /*services:*/, serializer, _extension, _tools, _services, this, parameter, context,
+                                     settings, xmlWriter, serializer, writer);
             return result;
         }
     }
@@ -353,9 +391,9 @@ namespace ExtendedXmlSerialization.Write
         void Execute(object instance);
     }
 
-    
+    public interface INamespaces : IParameterizedSource<object, IImmutableList<INamespace>> {}
 
-    public class Namespaces : /*WeakCacheBase<Type, IImmutableList<INamespace>>,*/ IParameterizedSource<object, IImmutableList<INamespace>>
+    public class Namespaces : INamespaces
     {
         private readonly INamespaceLocator _locator;
         private readonly INamespace[] _namespaces;
@@ -366,57 +404,125 @@ namespace ExtendedXmlSerialization.Write
             _namespaces = namespaces;
         }
 
-//        protected override IImmutableList<INamespace> Callback(Type key) => _namespaces.Concat(Yield(key)).Distinct().ToImmutableList();
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces.Concat(Yield(parameter)).Distinct().OrderBy(x => x.Prefix).ToImmutableList();
 
-        private IEnumerable<INamespace> Yield(object parameter)
-        {
-            int count = 1;
-            foreach (var identifier in new TypeDefinitionWalker(parameter, _locator).SelectMany(locations => locations).Distinct())
-            {
-                yield return new Namespace($"ns{count++.ToString()}", identifier);
-            }
-        }
-
-        public IImmutableList<INamespace> Get(object parameter) => _namespaces.Concat(Yield(parameter)).Distinct().ToImmutableList();
+        private IEnumerable<INamespace> Yield(object parameter) =>
+            new NamespaceWalker(parameter, _locator).SelectMany(locations => locations);
     }
 
-    class TypeDefinitionWalker : ObjectWalkerBase<object, IEnumerable<Uri>>
+    class NamespaceWalker : ObjectWalkerBase<object, IEnumerable<INamespace>>
     {
         private readonly INamespaceLocator _locator;
-        public TypeDefinitionWalker(object root, INamespaceLocator locator) : base(root)
+        private readonly ISpecification<Type> _primitive;
+
+        public NamespaceWalker(object root, INamespaceLocator locator)
+            : this(root, locator, IsPrimitiveSpecification.Default) {}
+
+        public NamespaceWalker(object root, INamespaceLocator locator, ISpecification<Type> primitive) : base(root)
         {
             _locator = locator;
+            _primitive = primitive;
         }
 
-        protected override IEnumerable<Uri> Select(object input)
+        protected override IEnumerable<INamespace> Select(object input)
         {
-            if (Arrays.Default.Is(input))
+            var type = input as Type;
+            if (type != null)
+            {
+                yield return _locator.Get(type);
+                
+                foreach (var info in SerializableMembers.Default.Get(type))
+                {
+                    var memberType = info.GetMemberType();
+                    if (info.IsWritable() && !_primitive.IsSatisfiedBy(memberType))
+                    {
+                        Schedule(memberType);
+                    }
+
+                    var elementType = ElementTypeLocator.Default.Locate(memberType);
+                    if (elementType != null)
+                    {
+                        Schedule(elementType);
+                    }
+                    else
+                    {
+                        var definition = TypeDefinitionCache.GetDefinition(memberType);
+                        if (definition.IsDictionary)
+                        {
+                            foreach (var argument in definition.GenericArguments)
+                            {
+                                if (!_primitive.IsSatisfiedBy(memberType))
+                                {
+                                    Schedule(argument);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (Arrays.Default.Is(input))
             {
                 var inputType = input.GetType();
                 var elementType = ElementTypeLocator.Default.Locate(inputType);
+
+                Schedule(elementType);
                 foreach (var element in Arrays.Default.AsArray(input))
                 {
-                    var type = element.GetType();
-                    if (type != elementType && First(type))
+                    var instanceType = element.GetType();
+                    if (instanceType != elementType)
                     {
-                        yield return _locator.Get(type).Identifier;
+                        // Schedule(instanceType);
                         Schedule(element);
-                        // yield return type;
                     }
                 }
             }
             else
             {
-                foreach (var context in MemberContexts.Default.Get(input))
+                var dictionary = input as IDictionary;
+                if (dictionary != null)
                 {
-                    if (!TypeDefinitionCache.GetDefinition(context.MemberType).IsPrimitive && context.IsWritable && context.Value != DefaultValues.Default.Get(context.MemberType))
+                    var arguments = TypeDefinitionCache.GetDefinition(dictionary.GetType()).GenericArguments;
+                    /*foreach (var argument in arguments)
                     {
-                        yield return _locator.Get(context.MemberType).Identifier;
-                        var type = context.Value.GetType();
-                        if (type != context.MemberType)
+                        Schedule(argument);
+                    }*/
+
+                    foreach (DictionaryEntry entry in dictionary)
+                    {
+                        var key = entry.Key.GetType();
+                        if (key != arguments[0])
                         {
-                            yield return _locator.Get(type).Identifier;
-                            Schedule(context.Value);
+                            Schedule(key);
+                            Schedule(entry.Key);
+                        }
+
+                        var value = entry.Value.GetType();
+                        if (value != arguments[1])
+                        {
+                            Schedule(value);
+                            Schedule(entry.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var context in MemberContexts.Default.Get(input))
+                    {
+                        if (context.IsWritable)
+                        {
+                            if (!_primitive.IsSatisfiedBy(context.MemberType))
+                            {
+                                Schedule(context.MemberType);
+                            }
+                            if (context.Value != DefaultValues.Default.Get(context.MemberType))
+                            {
+                                var instanceType = context.Value.GetType();
+                                if (instanceType != context.MemberType)
+                                {
+                                    Schedule(instanceType);
+                                    Schedule(context.Value);
+                                }
+                            }
                         }
                     }
                 }
@@ -450,35 +556,25 @@ namespace ExtendedXmlSerialization.Write
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
         private readonly INamespaceLocator _locator;
-        private readonly INamespaceEmitter _emitter;
         private readonly IWritingContext _context;
         private readonly IServiceProvider _services;
-        private readonly ConditionMonitor _monitor = new ConditionMonitor();
 
-        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, INamespaceEmitter emitter, params object[] services)
-            : this(writer, context, AttachedProperties.Default, locator, emitter, new CompositeServiceProvider(services)) {}
+        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, params object[] services)
+            : this(writer, context, AttachedProperties.Default, locator, new CompositeServiceProvider(services)) {}
 
-        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, INamespaceLocator locator, INamespaceEmitter emitter, IServiceProvider services)
+        public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties, INamespaceLocator locator, IServiceProvider services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
             _locator = locator;
-            _emitter = emitter;
             _services = services;
         }
 
         public object GetService(Type serviceType) => serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
 
-        public void Begin(IElement element)
-        {
-            _writer.Begin(element);
-            if (_monitor.Apply())
-            {
-                _emitter.Execute(Current.Root);
-            }
-        }
-
+        public void Start(IRootElement root) => _writer.Start(root);
+        public void Begin(IElement element) => _writer.Begin(element);
         public void EndElement() => _writer.EndElement();
         public void Emit(object instance) => _writer.Emit(instance);
         public void Emit(IProperty property) => _writer.Emit(property);
