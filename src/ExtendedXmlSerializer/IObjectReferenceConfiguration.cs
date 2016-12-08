@@ -22,8 +22,8 @@
 
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
-    {
-        void Assign(ISerializationToolsFactory factory);
-    }
+	public interface IObjectReferenceConfiguration<T>
+	{
+		void ExtractToList(string name);
+	}
 }

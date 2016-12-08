@@ -28,21 +28,6 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization
 {
-    public interface IMigrationConfiguration<T>
-    {
-        IMigrationConfiguration<T> AddMigration(Action<XElement> migration);
-    }
-
-    public interface IObjectReferenceConfiguration<T>
-    {
-        void ExtractToList(string name);
-    }
-
-    public class CustomExtendedXmlSerializerConfig<T> : ExtendedXmlSerializerConfig<T>
-    {
-        public CustomExtendedXmlSerializerConfig() : base(type => type == typeof(T)) {}
-    }
-
     public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
         IExtendedXmlSerializerConfig
     {

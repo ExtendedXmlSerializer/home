@@ -20,10 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Write;
+
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
-    {
-        void Assign(ISerializationToolsFactory factory);
-    }
+	public interface ISerialization : ISerializationToolsFactoryHost, ISerializer, IServiceRepository
+	{
+		IList<IExtension> Extensions { get; }
+	}
 }

@@ -19,11 +19,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+using System;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
-    {
-        void Assign(ISerializationToolsFactory factory);
-    }
+	public interface IMigrationConfiguration<T>
+	{
+		IMigrationConfiguration<T> AddMigration(Action<XElement> migration);
+	}
 }

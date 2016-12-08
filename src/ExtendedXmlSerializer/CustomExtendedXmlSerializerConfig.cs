@@ -22,8 +22,8 @@
 
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
-    {
-        void Assign(ISerializationToolsFactory factory);
-    }
+	public class CustomExtendedXmlSerializerConfig<T> : ExtendedXmlSerializerConfig<T>
+	{
+		public CustomExtendedXmlSerializerConfig() : base(type => type == typeof(T)) {}
+	}
 }

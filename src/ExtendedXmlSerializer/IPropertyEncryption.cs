@@ -22,8 +22,9 @@
 
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
+    public interface IPropertyEncryption
     {
-        void Assign(ISerializationToolsFactory factory);
+        string Encrypt(string value);
+        string Decrypt(string value);
     }
 }
