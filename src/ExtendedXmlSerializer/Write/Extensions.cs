@@ -306,42 +306,42 @@ namespace ExtendedXmlSerialization.Write
 
     class MemberProperty : PropertyBase
     {
-        public MemberProperty(INamespace @namespace, MemberContext member) : base(@namespace, member.DisplayName, member.Value) {}
+        public MemberProperty(Uri @namespace, MemberContext member) : base(@namespace, member.DisplayName, member.Value) {}
     }
 
     class TypeProperty : PropertyBase
     {
-        public TypeProperty(INamespace @namespace, Type type) : base(@namespace, ExtendedXmlSerializer.Type, type) {}
+        public TypeProperty(Uri @namespace, Type type) : base(@namespace, ExtendedXmlSerializer.Type, type) {}
     }
 
     class DictionaryItemElement : Element
     {
-        public DictionaryItemElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Item) {}
+        public DictionaryItemElement(Uri @namespace) : base(@namespace, ExtendedXmlSerializer.Item) {}
     }
 
     class DictionaryKeyElement : Element
     {
-        public DictionaryKeyElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Key) {}
+        public DictionaryKeyElement(Uri @namespace) : base(@namespace, ExtendedXmlSerializer.Key) {}
     }
 
     class DictionaryValueElement : Element
     {
-        public DictionaryValueElement(INamespace @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
+        public DictionaryValueElement(Uri @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
     }
 
     class VersionProperty : PropertyBase
     {
-        public VersionProperty(INamespace @namespace, int version) : base(@namespace, ExtendedXmlSerializer.Version, version) {}
+        public VersionProperty(Uri @namespace, int version) : base(@namespace, ExtendedXmlSerializer.Version, version) {}
     }
 
     class ObjectReferenceProperty : PropertyBase
     {
-        public ObjectReferenceProperty(INamespace @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Ref, value) {}
+        public ObjectReferenceProperty(Uri @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Ref, value) {}
     }
 
     class ObjectIdProperty : PropertyBase
     {
-        public ObjectIdProperty(INamespace @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Id, value) {}
+        public ObjectIdProperty(Uri @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Id, value) {}
     }
 
     public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
@@ -398,7 +398,7 @@ namespace ExtendedXmlSerialization.Write
                 else
                 {
                     // TODO: Find a more elegant way to handle this:
-                    if (EmitMemberTypeSpecification.Default.IsSatisfiedBy(services))
+                    if (DefaultEmitTypeSpecification.Default.IsSatisfiedBy(services))
                     {
                         _instruction.Execute(services);
                     }

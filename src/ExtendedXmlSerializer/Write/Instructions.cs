@@ -142,7 +142,49 @@ namespace ExtendedXmlSerialization.Write
     class EmitTypeForInstanceInstruction : ConditionalInstruction<IWriting>
     {
         public static EmitTypeForInstanceInstruction Default { get; } = new EmitTypeForInstanceInstruction();
-        EmitTypeForInstanceInstruction() : base(new DelegatedSpecification<IWriting>(w => w.Current.Instance != w.Current.Root), EmitTypeInstruction.Default) {}
+        EmitTypeForInstanceInstruction() : this(EmitTypeSpecification.Default) {}
+
+        public EmitTypeForInstanceInstruction(ISpecification<IWriting> specification) : 
+            base(specification, EmitTypeInstruction.Default) {}
+    }
+
+    class EmitTypeSpecification : ISpecification<IWritingContext>
+    {
+        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
+        EmitTypeSpecification() {}
+
+        public bool IsSatisfiedBy(IWritingContext parameter)
+        {
+            if (parameter.Current.Instance != parameter.Current.Root)
+            {
+                var context = parameter.GetMemberContext().GetValueOrDefault();
+                switch (context.State)
+                {
+                    case WriteState.MemberValue:
+                        var member = context.Member.GetValueOrDefault();
+                        var result = member.IsWritable && member.Value.GetType() != member.MemberType;
+                        return result;
+                }
+                /*var array = parameter.GetArrayContext();
+                if (array != null)
+                {
+                    var elementType = ElementTypeLocator.Default.Locate(array.Value.Instance.GetType());
+                    var result = parameter.Current.Instance.GetType() != elementType;
+                    return result;
+                }
+
+                var dictionary = parameter.GetDictionaryContext();
+                if (dictionary != null)
+                {
+                    var type = TypeDefinitionCache.GetDefinition(dictionary.Value.Instance.GetType()).GenericArguments[1];
+                    var result = parameter.Current.Instance.GetType() != type;
+                    return result;
+                }*/
+                var emit = parameter.GetArrayContext() == null && parameter.GetDictionaryContext() == null;
+                return emit;
+            }
+            return false;
+        }
     }
 
     class EmitTypeInstruction : WriteInstructionBase
@@ -168,8 +210,8 @@ namespace ExtendedXmlSerialization.Write
             var member = services.Current.Member;
             if (member != null)
             {
-                var @namespace = services.Current.Root.GetType().IsAssignableFrom(member.Value.Metadata.DeclaringType)
-                    ? Namespace.Default
+                var @namespace = member.Value.Metadata.DeclaringType.IsInstanceOfType(services.Current.Instance)
+                    ? Namespace.Default.Identifier
                     : services.Get(member.Value.Metadata.DeclaringType);
                 services.Emit(new MemberProperty(@namespace, member.Value));
             }
@@ -209,23 +251,23 @@ namespace ExtendedXmlSerialization.Write
 */
     class ApplicationElementProvider : DelegatedElementProvider
     {
-        public ApplicationElementProvider(Func<INamespace, object, IElement> element) : base(element) {}
+        public ApplicationElementProvider(Func<Uri, object, IElement> element) : base(element) {}
 
-        protected override INamespace DetermineNamespace(INamespaceLocator locator, object instance) => locator.Get(GetType());
+        protected override Uri DetermineNamespace(INamespaceLocator locator, object instance) => locator.Get(GetType());
     }
 
     class DelegatedElementProvider : IElementProvider
     {
-        private readonly Func<INamespace, object, IElement> _element;
+        private readonly Func<Uri, object, IElement> _element;
 
-        public DelegatedElementProvider(Func<INamespace, object, IElement> element)
+        public DelegatedElementProvider(Func<Uri, object, IElement> element)
         {
             _element = element;
         }
 
         public IElement Get(INamespaceLocator locator, object instance) => _element(DetermineNamespace(locator, instance), instance);
 
-        protected virtual INamespace DetermineNamespace(INamespaceLocator locator, object instance)
+        protected virtual Uri DetermineNamespace(INamespaceLocator locator, object instance)
             => locator.Get(instance);
     }
 

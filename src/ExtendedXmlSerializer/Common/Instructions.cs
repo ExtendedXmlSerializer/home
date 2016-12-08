@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Threading.Tasks;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Write;
@@ -144,78 +146,52 @@ namespace ExtendedXmlSerialization.Common
 
     public interface IPrefixGenerator
     {
-        string Generate(Type type);
+        string Generate(Uri identifier);
     }
 
     class PrefixGenerator : IPrefixGenerator
     {
-        private int _count;
-
-        public string Generate(Type type) => string.Concat("ns", _count++.ToString());
+        private int _count = 1;
+        public string Generate(Uri identifier)
+        {
+            var result = string.Concat("ns", _count++.ToString());
+            return result;
+        }
     }
 
-    class NamespaceLocator : WeakCacheBase<Type, INamespace>, INamespaceLocator
+    class NamespaceLocator : WeakCacheBase<Type, Uri>, INamespaceLocator
     {
         readonly private static Assembly Assembly = typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly;
-        private readonly IPrefixGenerator _generator;
         private readonly ISpecification<Type> _primitiveSpecification;
-        private readonly INamespace _root;
-        private readonly INamespace _primitive;
+        private readonly Uri _root, _primitive;
         readonly private Assembly _assembly;
 
-        public NamespaceLocator(INamespace root) : this(new PrefixGenerator(), root) {}
-        public NamespaceLocator(IPrefixGenerator generator, INamespace root)
-            : this(generator, IsPrimitiveSpecification.Default, root, PrimitiveNamespace.Default) {}
-        public NamespaceLocator(IPrefixGenerator generator, ISpecification<Type> primitiveSpecification, INamespace root,
-                                INamespace primitive)
+        public NamespaceLocator(Uri root) 
+            : this(IsPrimitiveSpecification.Default, root, PrimitiveNamespace.Default.Identifier) {}
+        public NamespaceLocator(ISpecification<Type> primitiveSpecification, Uri root,
+                                Uri primitive)
         {
-            _generator = generator;
             _primitiveSpecification = primitiveSpecification;
             _root = root;
             _primitive = primitive;
             _assembly = Assembly;
         }
 
-        public INamespace Get(object parameter) => parameter as INamespace ?? FromType(parameter);
+        public Uri Get(object parameter) => (parameter as INamespace)?.Identifier ?? FromType(parameter);
 
-        private INamespace FromType(object parameter)
+        private Uri FromType(object parameter)
         {
             var type = parameter as Type ?? parameter.GetType();
             var result = Equals(type.GetTypeInfo().Assembly, _assembly) ? _root : base.Get(type);
             return result;
         }
 
-        protected override INamespace Callback(Type key)
+        protected override Uri Callback(Type key)
         {
-            var result = 
-                _primitiveSpecification.IsSatisfiedBy(key) ? _primitive :
-                new Namespace( _generator.Generate(key), new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}"));
+            var result =
+                _primitiveSpecification.IsSatisfiedBy(key) ? _primitive : new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}");
             return result;
         }
-    }
-
-    class DefaultNamespaces : INamespaces
-    {
-        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
-        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
-
-        private readonly IImmutableList<INamespace> _namespaces;
-
-
-        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
-        {
-            _namespaces = namespaces;
-        }
-
-        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
-    }
-
-    class DefaultNamespaceLocator : INamespaceLocator
-    {
-        public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
-        DefaultNamespaceLocator() {}
-
-        public INamespace Get(object parameter) => null;
     }
 
     public interface IRootElement : IElement
@@ -225,7 +201,7 @@ namespace ExtendedXmlSerialization.Common
 
     class RootElement : Element, IRootElement
     {
-        public RootElement(INamespace @namespace, object root) : base(@namespace, TypeDefinitionCache.GetDefinition(root.GetType()).Name)
+        public RootElement(Uri @namespace, object root) : base(@namespace, TypeDefinitionCache.GetDefinition(root.GetType()).Name)
         {
             Root = root;
         }
@@ -285,7 +261,7 @@ namespace ExtendedXmlSerialization.Common
         public static bool operator !=(Namespace left, Namespace right) => !Equals(left, right);
     }
 
-    public interface INamespaceLocator : IParameterizedSource<object, INamespace> {}
+    public interface INamespaceLocator : IParameterizedSource<object, Uri> {}
 
     public class ServiceRepository : CompositeServiceProvider, IServiceRepository
     {

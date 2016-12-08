@@ -222,6 +222,32 @@ namespace ExtendedXmlSerialization.Test
         }
 
         [Fact]
-        public void CustomWritePlanForListsWithInheritance() {}
+        public void CustomWritePlanForListsWithInheritance()
+        {
+            var instance = new TestList { new SomeObject { Name =  "One" }, new SomeObject { Name = "Two" } };
+            instance.PropertyName = "HELLO WORLD!!";
+            var serializer = new SerializerFuturesProfile().New();
+            var data = serializer.Serialize(instance);
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestList xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"" Capacity=""4"" PropertyName=""HELLO WORLD!!"">
+  <SomeObject Name=""One"" />
+  <SomeObject Name=""Two"" />
+</TestList>", data);
+        }
+
+        public class TestList : List<ISomeObject>
+        {
+            public string PropertyName { get; set; }
+        }
+
+        public interface ISomeObject
+        {
+            string Name { get; set; }
+        }
+
+        public class SomeObject : ISomeObject
+        {
+            public string Name { get; set; }
+        }
     }
 }

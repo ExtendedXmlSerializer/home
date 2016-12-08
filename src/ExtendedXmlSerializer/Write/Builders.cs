@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -174,7 +175,9 @@ namespace ExtendedXmlSerialization.Write
     {
         public static DefaultPlans Default { get; } = new DefaultPlans();
         DefaultPlans()
-            : base(DefaultInstructionSpecification.Default, DefaultTemplateElementProvider.Default, EmitTypeInstruction.Default) {}
+            : base(
+                DefaultInstructionSpecification.Default, DefaultTemplateElementProvider.Default,
+                DefaultEmitTypeSpecification.Default, EmitTypeInstruction.Default) {}
     }
 
     public interface IPlans : IParameterizedSource<IPlan, IEnumerable<IPlan>> {}
@@ -182,19 +185,21 @@ namespace ExtendedXmlSerialization.Write
     {
         private readonly IInstructionSpecification _specification;
         private readonly ITemplateElementProvider _provider;
+        private readonly ISpecification<IWritingContext> _emitTypeSpecification;
         private readonly IInstruction _emitType;
 
-        public Plans(IInstructionSpecification specification, ITemplateElementProvider provider, IInstruction emitType)
+        public Plans(IInstructionSpecification specification, ITemplateElementProvider provider, ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType)
         {
             _specification = specification;
             _provider = provider;
+            _emitTypeSpecification = emitTypeSpecification;
             _emitType = emitType;
         }
 
         public IEnumerable<IPlan> Get(IPlan parameter)
         {
             var factory = new MemberInstructionFactory(parameter, _specification);
-            var emitType = new ConditionalInstruction<IWriting>(EmitMemberTypeSpecification.Default, _emitType);
+            var emitType = new ConditionalInstruction<IWriting>(_emitTypeSpecification, _emitType);
             var members = new InstanceMembersWritePlan(parameter, emitType, _specification, factory);
 
             yield return PrimitiveWritePlan.Default;
@@ -492,10 +497,10 @@ namespace ExtendedXmlSerialization.Write
         }
     }
 
-    class EmitMemberTypeSpecification : ISpecification<IWritingContext>
+    class DefaultEmitTypeSpecification : ISpecification<IWritingContext>
     {
-        public static EmitMemberTypeSpecification Default { get; } = new EmitMemberTypeSpecification();
-        EmitMemberTypeSpecification() {}
+        public static DefaultEmitTypeSpecification Default { get; } = new DefaultEmitTypeSpecification();
+        DefaultEmitTypeSpecification() {}
 
         public bool IsSatisfiedBy(IWritingContext parameter)
         {

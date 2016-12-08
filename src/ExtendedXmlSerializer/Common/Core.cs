@@ -564,17 +564,25 @@ public interface IAttachedProperties
 
     public class Element : Namespace, IElement
     {
-        public Element(INamespace @namespace, string name) : base(@namespace?.Prefix, @namespace?.Identifier)
+        public Element(Uri location, string name) : this(null, location, name) {}
+
+        public Element(string prefix, Uri location, string name) : base(prefix, location)
         {
             Name = name;
         }
 
+        public Element(INamespace @namespace, string name) : this(@namespace?.Prefix, @namespace?.Identifier, name) {}
+        
         public string Name { get; }
     }
 
     public abstract class PropertyBase : Element, IProperty
     {
-        protected PropertyBase(INamespace @namespace, string name, object value) : base(@namespace, name)
+        protected PropertyBase(INamespace @namespace, string name, object value) : this(@namespace.Prefix, @namespace.Identifier, name, value) {}
+
+        protected PropertyBase(Uri location, string name, object value) : this(null, location, name, value) {}
+
+        protected PropertyBase(string prefix, Uri location, string name, object value) : base(prefix, location, name)
         {
             Value = value;
         }

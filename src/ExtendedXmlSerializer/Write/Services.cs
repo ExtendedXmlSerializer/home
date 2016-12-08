@@ -99,12 +99,10 @@ namespace ExtendedXmlSerialization.Write
             _writer.WriteStartDocument();
             Begin(root);
             var identifier = root.Identifier?.ToString();
+            if (identifier != null)
             {
-                if (identifier != null)
-                {
-                    _writer.WriteAttributeString("xmlns", identifier);
-                    _emitter.Execute(root.Root);
-                }
+                _writer.WriteAttributeString("xmlns", identifier);
+                _emitter.Execute(root.Root);
             }
         }
         public void Begin(IElement element) => _writer.WriteStartElement(element.Name, element.Identifier?.ToString());
@@ -118,17 +116,18 @@ namespace ExtendedXmlSerialization.Write
             var type = property.Value as Type;
             if (ns != null && type != null)
             {
-                var identifier = _locator.Get(property.Value)?.Identifier?.ToString();
+                var identifier = _locator.Get(property.Value);
                 if (identifier != null)
                 {
                     var name = TypeDefinitionCache.GetDefinition(type).Name;
                     _writer.WriteStartAttribute(property.Name, ns);
-                    _writer.WriteQualifiedName(name, identifier);
+                    _writer.WriteQualifiedName(name, identifier.ToString());
                     _writer.WriteEndAttribute();
                     return;
                 }
             }
-            _writer.WriteAttributeString(property.Prefix, property.Name, ns, _serializer.Serialize(property.Value));
+            var serialized = _serializer.Serialize(property.Value);
+            _writer.WriteAttributeString(property.Prefix, property.Name, ns, serialized);
         }
 
         public void Dispose()
@@ -307,23 +306,23 @@ namespace ExtendedXmlSerialization.Write
 
     public class WritingFactory : IWritingFactory
     {
-        private readonly ISerializationToolsFactory _tools;
-        private readonly INamespaces _namespaces;
         private readonly INamespaceLocator _locator;
+        private readonly INamespaces _namespaces;
+        private readonly ISerializationToolsFactory _tools;
         private readonly IServiceProvider _services;
         private readonly IExtension _extension;
         private readonly Func<IWritingContext> _context;
 
         public WritingFactory(
-            ISerializationToolsFactory tools,
-            INamespaces namespaces,
             INamespaceLocator locator,
+            INamespaces namespaces,
+            ISerializationToolsFactory tools,
             IServiceProvider services,
             Func<IWritingContext> context, IExtension extension)
         {
-            _tools = tools;
-            _namespaces = namespaces;
             _locator = locator;
+            _namespaces = namespaces;
+            _tools = tools;
             _services = services;
             _extension = extension;
             _context = context;
@@ -353,21 +352,79 @@ namespace ExtendedXmlSerialization.Write
     public class Namespaces : INamespaces
     {
         private readonly INamespaceLocator _locator;
-        private readonly INamespace[] _namespaces;
+        private readonly Func<IPrefixGenerator> _generator;
+        private readonly INamespace _root;
+        private readonly IImmutableList<INamespace> _namespaces;
+        
+        public Namespaces(INamespaceLocator locator, INamespace root, params INamespace[] namespaces) : this(locator, () => new PrefixGenerator(), root, namespaces) {}
 
-        public Namespaces(INamespaceLocator locator, params INamespace[] namespaces)
+        public Namespaces(INamespaceLocator locator, Func<IPrefixGenerator> generator, INamespace root, params INamespace[] namespaces)
         {
             _locator = locator;
+            _generator = generator;
+            _root = root;
+            _namespaces = root.Append(namespaces).ToImmutableList();
+        }
+
+        public IImmutableList<INamespace> Get(object parameter)
+        {
+            var result = Yield(parameter).Distinct().OrderBy(x => x.Prefix).ToImmutableList();
+            return result;
+        }
+
+        INamespace Lookup(Uri candidate)
+        {
+            foreach (var ns in _namespaces)
+            {
+                if (ns.Identifier == candidate)
+                {
+                    return ns;
+                }
+            }
+            return null;
+        }
+
+        private IEnumerable<INamespace> Yield(object parameter)
+        {
+            yield return _root;
+            var generator = _generator();
+            var root = _locator.Get(parameter);
+            foreach (var candidate in new NamespaceWalker(parameter, _locator).SelectMany(locations => locations).Distinct())
+            {
+                if (candidate != root)
+                {
+                    yield return Lookup(candidate) ?? new Namespace(generator.Generate(candidate), candidate);
+                }
+            }
+        }
+            
+    }
+
+    class DefaultNamespaces : INamespaces
+    {
+        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
+        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
+
+        private readonly IImmutableList<INamespace> _namespaces;
+
+
+        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
+        {
             _namespaces = namespaces;
         }
 
-        public IImmutableList<INamespace> Get(object parameter) => _namespaces.Concat(Yield(parameter)).Distinct().OrderBy(x => x.Prefix).ToImmutableList();
-
-        private IEnumerable<INamespace> Yield(object parameter) =>
-            new NamespaceWalker(parameter, _locator).SelectMany(locations => locations);
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
     }
 
-    class NamespaceWalker : ObjectWalkerBase<object, IEnumerable<INamespace>>
+    class DefaultNamespaceLocator : INamespaceLocator
+    {
+        public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
+        DefaultNamespaceLocator() {}
+
+        public Uri Get(object parameter) => null;
+    }
+
+    class NamespaceWalker : ObjectWalkerBase<object, IEnumerable<Uri>>
     {
         private readonly INamespaceLocator _locator;
         private readonly ISpecification<Type> _primitive;
@@ -381,13 +438,11 @@ namespace ExtendedXmlSerialization.Write
             _primitive = primitive;
         }
 
-        protected override IEnumerable<INamespace> Select(object input)
+        protected override IEnumerable<Uri> Select(object input)
         {
             var type = input as Type;
             if (type != null)
             {
-                yield return _locator.Get(type);
-                
                 foreach (var info in SerializableMembers.Default.Get(type))
                 {
                     var memberType = info.GetMemberType();
@@ -407,7 +462,7 @@ namespace ExtendedXmlSerialization.Write
                             }
                         }
                     }
-                    else
+                    else if (definition.IsEnumerable)
                     {
                         var elementType = ElementTypeLocator.Default.Locate(memberType);
                         if (elementType != null)
@@ -416,6 +471,7 @@ namespace ExtendedXmlSerialization.Write
                         }
                     }
                 }
+                yield return _locator.Get(type);
             }
             else
             {
@@ -451,7 +507,7 @@ namespace ExtendedXmlSerialization.Write
                         var instanceType = element.GetType();
                         if (instanceType != elementType)
                         {
-                            // Schedule(instanceType);
+                            Schedule(instanceType);
                             Schedule(element);
                         }
                     }
@@ -486,9 +542,9 @@ namespace ExtendedXmlSerialization.Write
     {
         private const string Prefix = "xmlns";
         private readonly XmlWriter _writer;
-        private readonly IParameterizedSource<object, IImmutableList<INamespace>> _namespaces;
+        private readonly INamespaces _namespaces;
 
-        public NamespaceEmitter(XmlWriter writer, IParameterizedSource<object, IImmutableList<INamespace>> namespaces)
+        public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
         {
             _writer = writer;
             _namespaces = namespaces;
@@ -496,7 +552,8 @@ namespace ExtendedXmlSerialization.Write
 
         public void Execute(object instance)
         {
-            foreach (var pair in _namespaces.Get(instance))
+            var list = _namespaces.Get(instance);
+            foreach (var pair in list)
             {
                 _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
             }
@@ -551,7 +608,7 @@ namespace ExtendedXmlSerialization.Write
 
         public WriteContext Current => _context.Current;
         public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
-        public INamespace Get(object parameter) => _locator.Get(parameter);
+        public Uri Get(object parameter) => _locator.Get(parameter);
     }
 
     public interface IObjectSerializer

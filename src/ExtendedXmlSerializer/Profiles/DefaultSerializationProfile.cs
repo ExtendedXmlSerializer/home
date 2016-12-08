@@ -47,14 +47,17 @@ namespace ExtendedXmlSerialization.Profiles
             : this(specification, emitType, context, new RootNamespace(identifier)) {}
 
         public SerializationProfile(IInstructionSpecification specification, IInstruction emitType, Func<IWritingContext> context, INamespace root)
+            : this(specification, EmitTypeSpecification.Default, emitType, context, root) {}
+
+        public SerializationProfile(IInstructionSpecification specification, ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType, Func<IWritingContext> context, INamespace root)
             : this(
-                new PlanMaker(new Plans(specification, FixedTemplateElementProvider.Default, emitType)),
-                new NamespaceLocator(root), context, root, emitType,
+                new PlanMaker(new Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification, emitType)),
+                new NamespaceLocator(root.Identifier), context, root, emitType,
                 MemberValueAssignedExtension.Default) {}
 
         public SerializationProfile(IPlanMaker maker, INamespaceLocator locator, Func<IWritingContext> context,
                                     INamespace root, IInstruction emitType, params object[] services)
-            : this(maker.Make(), context, emitType, new Namespaces(locator, root), locator, root, services)
+            : this(maker.Make(), context, emitType, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, services)
         {}
 
         public SerializationProfile(IPlan plan, Func<IWritingContext> context,
@@ -77,7 +80,7 @@ namespace ExtendedXmlSerialization.Profiles
             var services = new ServiceRepository(_services);
             var items = _services.OfType<IExtension>().Concat( new IExtension[] { new DefaultWritingExtensions(host, _emitType) } ).ToArray(); // Should probably move out to a factory.
             var extensions = new OrderedSet<IExtension>(items);
-            var factory = new WritingFactory(host, _namespaces,  _locator, services, _context, new CompositeExtension(extensions));
+            var factory = new WritingFactory(_locator, _namespaces, host, services, _context, new CompositeExtension(extensions));
             var serializer = new Serializer(_plan, factory);
             var result = new Serialization(host, serializer, services, extensions);
             return result;
