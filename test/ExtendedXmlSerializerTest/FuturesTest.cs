@@ -73,7 +73,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void BasicDictionary()
         {
-            /*var instance = new Dictionary<int, string>
+            var instance = new Dictionary<int, string>
                            {
                                {1, "First"},
                                {2, "Second"},
@@ -81,7 +81,21 @@ namespace ExtendedXmlSerialization.Test
                            };
             var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
             var data = serializer.Serialize(instance);
-            Debugger.Break();*/
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32String xmlns=""clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"">
+  <exs:Item>
+    <exs:Key>1</exs:Key>
+    <exs:Value>First</exs:Value>
+  </exs:Item>
+  <exs:Item>
+    <exs:Key>2</exs:Key>
+    <exs:Value>Second</exs:Value>
+  </exs:Item>
+  <exs:Item>
+    <exs:Key>3</exs:Key>
+    <exs:Value>Other</exs:Value>
+  </exs:Item>
+</ArrayOfInt32String>", data);
         }
 
         [Fact]

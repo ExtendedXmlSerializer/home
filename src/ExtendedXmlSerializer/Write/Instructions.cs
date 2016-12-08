@@ -94,7 +94,7 @@ namespace ExtendedXmlSerialization.Write
         private readonly IInstruction _entry;
 
         public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
-            new EmitInstanceInstruction((ns, o) => new DictionaryItemElement(ns),
+            new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)), 
                                         new EmitDictionaryPairInstruction(key, value))
         ) {}
 
@@ -210,6 +210,13 @@ namespace ExtendedXmlSerialization.Write
         public IElement Get(INamespaceLocator locator, object instance) => _element;
     }
 */
+    class ApplicationElementProvider : DelegatedElementProvider
+    {
+        public ApplicationElementProvider(Func<INamespace, object, IElement> element) : base(element) {}
+
+        protected override INamespace DetermineNamespace(INamespaceLocator locator, object instance) => locator.Get(GetType());
+    }
+
     class DelegatedElementProvider : IElementProvider
     {
         private readonly Func<INamespace, object, IElement> _element;
@@ -219,7 +226,10 @@ namespace ExtendedXmlSerialization.Write
             _element = element;
         }
 
-        public IElement Get(INamespaceLocator locator, object instance) => _element(locator.Get(instance), instance);
+        public IElement Get(INamespaceLocator locator, object instance) => _element(DetermineNamespace(locator, instance), instance);
+
+        protected virtual INamespace DetermineNamespace(INamespaceLocator locator, object instance)
+            => locator.Get(instance);
     }
 
     abstract class ElementProviderBase : IElementProvider
@@ -278,10 +288,10 @@ namespace ExtendedXmlSerialization.Write
         public EmitInstanceInstruction(MemberContext member, IInstruction instruction)
             : this(new MemberInfoElementProvider(member), instruction) {}
 
-        public EmitInstanceInstruction(Type type, IInstruction instruction)
-            : this(new TypeDefinitionElementProvider(type), instruction) {}
+        /*public EmitInstanceInstruction(Type type, IInstruction instruction)
+            : this(new TypeDefinitionElementProvider(type), instruction) {}*/
 
-        public EmitInstanceInstruction(Func<INamespace, object, IElement> element, IInstruction instruction) : this(new DelegatedElementProvider(element), instruction) {}
+        //public EmitInstanceInstruction(Func<INamespace, object, IElement> element, IInstruction instruction) : this(new DelegatedElementProvider(element), instruction) {}
 
         public EmitInstanceInstruction(IElementProvider provider, IInstruction instruction) : base(instruction)
         {

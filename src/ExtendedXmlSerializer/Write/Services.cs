@@ -439,40 +439,24 @@ namespace ExtendedXmlSerialization.Write
                         Schedule(memberType);
                     }
 
-                    var elementType = ElementTypeLocator.Default.Locate(memberType);
-                    if (elementType != null)
+                    var definition = TypeDefinitionCache.GetDefinition(memberType);
+                    if (definition.IsDictionary)
                     {
-                        Schedule(elementType);
-                    }
-                    else
-                    {
-                        var definition = TypeDefinitionCache.GetDefinition(memberType);
-                        if (definition.IsDictionary)
+                        foreach (var argument in definition.GenericArguments)
                         {
-                            foreach (var argument in definition.GenericArguments)
+                            if (!_primitive.IsSatisfiedBy(argument))
                             {
-                                if (!_primitive.IsSatisfiedBy(memberType))
-                                {
-                                    Schedule(argument);
-                                }
+                                Schedule(argument);
                             }
                         }
                     }
-                }
-            }
-            else if (Arrays.Default.Is(input))
-            {
-                var inputType = input.GetType();
-                var elementType = ElementTypeLocator.Default.Locate(inputType);
-
-                Schedule(elementType);
-                foreach (var element in Arrays.Default.AsArray(input))
-                {
-                    var instanceType = element.GetType();
-                    if (instanceType != elementType)
+                    else
                     {
-                        // Schedule(instanceType);
-                        Schedule(element);
+                        var elementType = ElementTypeLocator.Default.Locate(memberType);
+                        if (elementType != null)
+                        {
+                            Schedule(elementType);
+                        }
                     }
                 }
             }
@@ -482,11 +466,6 @@ namespace ExtendedXmlSerialization.Write
                 if (dictionary != null)
                 {
                     var arguments = TypeDefinitionCache.GetDefinition(dictionary.GetType()).GenericArguments;
-                    /*foreach (var argument in arguments)
-                    {
-                        Schedule(argument);
-                    }*/
-
                     foreach (DictionaryEntry entry in dictionary)
                     {
                         var key = entry.Key.GetType();
@@ -501,6 +480,22 @@ namespace ExtendedXmlSerialization.Write
                         {
                             Schedule(value);
                             Schedule(entry.Value);
+                        }
+                    }
+                }
+                else if (Arrays.Default.Is(input))
+                {
+                    var inputType = input.GetType();
+                    var elementType = ElementTypeLocator.Default.Locate(inputType);
+
+                    Schedule(elementType);
+                    foreach (var element in Arrays.Default.AsArray(input))
+                    {
+                        var instanceType = element.GetType();
+                        if (instanceType != elementType)
+                        {
+                            // Schedule(instanceType);
+                            Schedule(element);
                         }
                     }
                 }

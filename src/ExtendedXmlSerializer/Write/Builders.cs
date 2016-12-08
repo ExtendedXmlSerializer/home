@@ -694,8 +694,8 @@ namespace ExtendedXmlSerialization.Write
                 throw new InvalidOperationException(
                           $"Attempted to write type '{type}' as a dictionary, but it does not have enough generic arguments.");
             }
-            var keys = new EmitInstanceInstruction((ns, o) => new DictionaryKeyElement(ns), _builder.For(arguments[0]));
-            var values = new EmitInstanceInstruction((ns, o) => new DictionaryValueElement(ns), _builder.For(arguments[1]));
+            var keys = new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryKeyElement(ns)), _builder.For(arguments[0]));
+            var values = new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryValueElement(ns)), _builder.For(arguments[1]));
             var result = new EmitTypeForTemplateInstruction(_emitType, new EmitDictionaryInstruction(keys, values));
             return result;
         }
