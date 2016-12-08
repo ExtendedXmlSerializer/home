@@ -454,7 +454,7 @@ namespace ExtendedXmlSerialization.Write
         public IInstruction Create(Type elementType, IInstruction instruction)
         {
             var template = new EmitInstanceInstruction(InstanceTypeNameProvider.Default, instruction);
-            var result = new EmitTypeForTemplateInstruction(_emitType, new EmitEnumerableInstruction(template));
+            var result = new EmitTypeForTemplateInstruction(_emitType, new EmitEnumerableInstruction(new ExtensionEnabledInstruction(template)));
             return result;
         }
     }
@@ -470,7 +470,7 @@ namespace ExtendedXmlSerialization.Write
                 ? (IElementProvider) InstanceTypeNameProvider.Default
                 : new TypeDefinitionElementProvider(elementType);
             var template = new EmitInstanceInstruction(provider, instruction);
-            var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(template));
+            var result = new EmitTypeForTemplateInstruction(new EmitEnumerableInstruction(new ExtensionEnabledInstruction(template)));
             return result;
         }
     }
@@ -582,7 +582,11 @@ namespace ExtendedXmlSerialization.Write
             }
             var keys = new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryKeyElement(ns)), _builder.For(arguments[0]));
             var values = new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryValueElement(ns)), _builder.For(arguments[1]));
-            var result = new EmitTypeForTemplateInstruction(_emitType, new EmitDictionaryInstruction(keys, values));
+            var result = new EmitTypeForTemplateInstruction(_emitType,
+                                                            new EmitDictionaryInstruction(
+                                                                new ExtensionEnabledInstruction(keys),
+                                                                new ExtensionEnabledInstruction(values))
+                                                                );
             return result;
         }
     }

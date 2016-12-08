@@ -12,9 +12,9 @@ namespace ExtendedXmlSerialization.Common
 {
     public abstract class InstructionBase<T> : IInstruction where T : IServiceProvider
     {
-        public virtual void Execute(IServiceProvider services) => Execute(services.AsValid<T>());
+        public virtual void Execute(IServiceProvider services) => OnExecute(services.AsValid<T>());
 
-        protected abstract void Execute(T services);
+        protected abstract void OnExecute(T services);
     }
 
     class ConditionalInstruction : ConditionalInstruction<IServiceProvider>
@@ -32,11 +32,11 @@ namespace ExtendedXmlSerialization.Common
             _specification = specification;
         }
 
-        protected override void Execute(T services)
+        protected override void OnExecute(T services)
         {
             if (_specification.IsSatisfiedBy(services))
             {
-                base.Execute(services);
+                base.OnExecute(services);
             }
         }
     }
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Common
             _instruction = instruction;
         }
 
-        protected override void Execute(T services) => _instruction.Execute(services);
+        protected override void OnExecute(T services) => _instruction.Execute(services);
     }
 
     public class EmptyInstruction : IInstruction
@@ -66,10 +66,10 @@ namespace ExtendedXmlSerialization.Common
         public void Execute(IServiceProvider services) {}
     }
 
-	public interface IAssignableInstruction : IInstruction
-	{
-		void Assign(IInstruction instruction);
-	}
+    public interface IAssignableInstruction : IInstruction
+    {
+        void Assign(IInstruction instruction);
+    }
 
     public interface IInstruction
     {
@@ -149,9 +149,6 @@ namespace ExtendedXmlSerialization.Common
 
     class PrefixGenerator : IPrefixGenerator
     {
-        public static PrefixGenerator Default { get; } = new PrefixGenerator();
-        PrefixGenerator() {}
-
         private int _count;
 
         public string Generate(Type type) => string.Concat("ns", _count++.ToString());
@@ -166,7 +163,7 @@ namespace ExtendedXmlSerialization.Common
         private readonly INamespace _primitive;
         readonly private Assembly _assembly;
 
-        public NamespaceLocator(INamespace root) : this(PrefixGenerator.Default, root) {}
+        public NamespaceLocator(INamespace root) : this(new PrefixGenerator(), root) {}
         public NamespaceLocator(IPrefixGenerator generator, INamespace root)
             : this(generator, IsPrimitiveSpecification.Default, root, PrimitiveNamespace.Default) {}
         public NamespaceLocator(IPrefixGenerator generator, ISpecification<Type> primitiveSpecification, INamespace root,
@@ -336,25 +333,13 @@ namespace ExtendedXmlSerialization.Common
 
     abstract class NewContextInstructionBase<T> : DecoratedInstruction<T> where T : IServiceProvider
     {
-        protected NewContextInstructionBase(IInstruction instruction) : base(instruction) {}
+        protected NewContextInstructionBase(IInstruction instruction) : base(new ExtensionEnabledInstruction(instruction)) {}
 
-        protected override void Execute(T services)
+        protected override void OnExecute(T services)
         {
             using (DetermineContext(services))
             {
-                var extension = services.Get<IExtension>();
-                if (extension != null)
-                {
-                    if (extension.Starting(services))
-                    {
-                        base.Execute(services);
-                    }
-                    extension.Finished(services);
-                }
-                else
-                {
-                    base.Execute(services);
-                }
+                base.OnExecute(services);
             }
         }
 

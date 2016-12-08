@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void VerifyAutoAttributes()
         {
-            var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+            var serializer = new SerializerFuturesProfile().New();
             var instance = new TestClassPrimitiveTypes().Init();
             var data = serializer.Serialize(instance);
             Assert.Equal(
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void VerifyAutoAttributesWithLongContent()
         {
-            var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+            var serializer = new SerializerFuturesProfile().New();
             var instance = new TestClassPrimitiveTypes().Init();
             instance.PropString =
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed urna sapien, pulvinar et consequat sit amet, fermentum in volutpat. This sentence should break the property out into content.";
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerialization.Test
                                {2, "Second"},
                                {3, "Other"}
                            };
-            var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+            var serializer = new SerializerFuturesProfile().New();
             var data = serializer.Serialize(instance);
             Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <ArrayOfInt32String xmlns=""clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"">
@@ -94,17 +94,10 @@ namespace ExtendedXmlSerialization.Test
 </ArrayOfInt32String>", data);
         }
 
-        public class SubjectWithPropertyFromExternalAssembly
-        {
-            public ICollection<string> List { get; set; } = new List<string> { "Hello World!" };
-
-            public IComparer Comparer { get; set; } = new XNodeDocumentOrderComparer();
-        }
-
         [Fact]
         public void VerifyComplexPropertyFromExternalAssembly()
         {
-            var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Default.Identifier);
+            var serializer = new SerializerFuturesProfile().New();
             var instance = new SubjectWithPropertyFromExternalAssembly {};
             var data = serializer.Serialize(instance);
             Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -117,16 +110,23 @@ namespace ExtendedXmlSerialization.Test
             
         }
 
+        public class SubjectWithPropertyFromExternalAssembly
+        {
+            public ICollection<string> List { get; set; } = new List<string> { "Hello World!" };
+
+            public IComparer Comparer { get; set; } = new XNodeDocumentOrderComparer();
+        }
+
         [Fact]
         public void WriterExtensionForAttachedProperties()
         {
-            var serializer = ExtendedSerialization.Default.Get(SerializationProfileVersion20.Default.Identifier);
+            var serializer = new SerializerFuturesProfile().New();
             serializer.Extensions.Add(AttachedPropertyExtension.Default);
 
             var subject = new BasicSubject { BasicProperty = "This is a basic property" };
             var data = serializer.Serialize(subject);
             Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
-<BasicSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" BasicProperty=""This is a basic property"" test:hello=""Hello World!  This is an attached property."" xmlns:test=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures/testing"" />", data);
+<BasicSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"" BasicProperty=""This is a basic property"" test:hello=""Hello World!  This is an attached property."" xmlns:test=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures/testing"" />", data);
         }
 
         class BasicSubject
@@ -153,15 +153,51 @@ namespace ExtendedXmlSerialization.Test
         }
 
         [Fact]
-        public void CustomWritePlanForListsWithInheritance() {}
+        public void DemonstrateExtensionSkippingElements()
+        {
+            var subject = new List<int> {1, 2, 3, 10, 11, 12, 13, 14};
+            var serializer = new SerializerFuturesProfile().New();
+            serializer.Extensions.Add(SkipUnluckyNumberExtension.Default);
 
-        [Fact]
-        public void DemonstrateExtensionSkippingElements() {}
+            var data = serializer.Serialize(subject);
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<ArrayOfInt32 xmlns=""clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/futures"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/primitives"">
+  <sys:int>1</sys:int>
+  <sys:int>2</sys:int>
+  <sys:int>3</sys:int>
+  <sys:int>10</sys:int>
+  <sys:int>11</sys:int>
+  <sys:int>12</sys:int>
+  <sys:int>14</sys:int>
+</ArrayOfInt32>", data);
+        }
+
+        class SkipUnluckyNumberExtension : WritingExtensionBase
+        {
+            public static SkipUnluckyNumberExtension Default { get; } = new SkipUnluckyNumberExtension();
+            SkipUnluckyNumberExtension() {}
+
+            protected override bool StartingInstance(IWriting writing, object instance)
+            {
+                if (instance is int)
+                {
+                    var integer = (int)instance;
+                    var result = integer != 13;
+                    return result;
+                }
+                return base.StartingInstance(writing, instance);
+            }
+        }
 
         [Fact]
         public void DemonstrateProfileThatModifiesValues()
         {
             
         }
+
+
+
+        [Fact]
+        public void CustomWritePlanForListsWithInheritance() {}
     }
 }

@@ -31,10 +31,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Write;
 
 namespace ExtendedXmlSerialization.Common
 {
-    public enum ConditionMonitorState
+    /*public enum ConditionMonitorState
     {
         None,
         Applying,
@@ -67,6 +68,20 @@ namespace ExtendedXmlSerialization.Common
                     return updated;
             }
             return false;
+        }
+    }*/
+    public class ExtensionEnabledInstruction : DecoratedInstruction
+    {
+        public ExtensionEnabledInstruction(IInstruction instruction) : base(instruction) {}
+
+        protected override void OnExecute(IServiceProvider services)
+        {
+            var extension = services.Get<IExtension>();
+            if (extension?.Starting(services) ?? true)
+            {
+                base.OnExecute(services);
+            }
+            extension?.Finished(services);
         }
     }
     /*public class AnySpecification<T> : ISpecification<T>

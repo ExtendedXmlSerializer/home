@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Write
 
     public abstract class WriteInstructionBase<T> : WriteInstructionBase, IWriteInstruction<T>
     {
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var instance = services.Current.Instance;
             if (instance is T)
@@ -91,28 +91,32 @@ namespace ExtendedXmlSerialization.Write
 
     class EmitDictionaryInstruction : WriteInstructionBase<IDictionary>
     {
-        private readonly IInstruction _entry;
+        private readonly IInstruction _template;
 
         public EmitDictionaryInstruction(IInstruction key, IInstruction value) : this(
-            new EmitInstanceInstruction(new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)), 
-                                        new EmitDictionaryPairInstruction(key, value))
+            new EmitInstanceInstruction(
+                new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)), 
+                new ExtensionEnabledInstruction(new EmitDictionaryPairInstruction(key, value))
+            )
         ) {}
 
-        public EmitDictionaryInstruction(IInstruction entry)
+        public EmitDictionaryInstruction(IInstruction template)
         {
-            _entry = entry;
+            _template = template;
         }
 
         protected override void Execute(IWriting services, IDictionary instance)
         {
             foreach (DictionaryEntry item in instance)
             {
-                using (services.New(item))
+                using (New(services, item))
                 {
-                    _entry.Execute(services);
+                    _template.Execute(services);
                 }
             }
         }
+
+        private static IDisposable New<T>(IWritingContext services, T item) => services.New(item);
     }
 
     class EmitEnumerableInstruction : WriteInstructionBase<IEnumerable>
@@ -153,7 +157,7 @@ namespace ExtendedXmlSerialization.Write
         public static EmitTypeInstruction Default { get; } = new EmitTypeInstruction();
         EmitTypeInstruction() {}
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var type = services.Current.Instance.GetType();
             var property = new TypeProperty(services.Get(this), type);
@@ -166,7 +170,7 @@ namespace ExtendedXmlSerialization.Write
         public static EmitMemberAsTextInstruction Default { get; } = new EmitMemberAsTextInstruction();
         EmitMemberAsTextInstruction() {}
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var member = services.Current.Member;
             if (member != null)
@@ -269,12 +273,12 @@ namespace ExtendedXmlSerialization.Write
     {
         public EmitRootInstruction(IInstruction instruction) : base(instruction) {}
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var root = services.Current.Root;
             var element = new RootElement(services.Get(root), root);
             services.Start(element);
-            base.Execute(services);
+            base.OnExecute(services);
             services.EndElement();
         }
     }
@@ -298,11 +302,11 @@ namespace ExtendedXmlSerialization.Write
             _provider = provider;
         }
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var element = _provider.Get(services, services.Current.Instance);
             services.Begin(element);
-            base.Execute(services);
+            base.OnExecute(services);
             services.EndElement();
         }
     }
@@ -316,7 +320,7 @@ namespace ExtendedXmlSerialization.Write
             _factory = factory;
         }
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var all = DetermineSet(services);
 
@@ -329,7 +333,7 @@ namespace ExtendedXmlSerialization.Write
                 instruction.Execute(services);
             }
 
-            base.Execute(services);
+            base.OnExecute(services);
 
             foreach (var instruction in instructions.Except(properties))
             {
@@ -370,7 +374,7 @@ namespace ExtendedXmlSerialization.Write
             _specification = specification;
         }
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var all = services.GetProperties();
             var properties = Properties(all).ToArray();
@@ -432,7 +436,7 @@ namespace ExtendedXmlSerialization.Write
             _plan = plan;
         }
 
-        protected override void Execute(IWriting services)
+        protected override void OnExecute(IWriting services)
         {
             var type = services.Current.Instance.GetType();
             var selected = _plan.For(type);
@@ -477,7 +481,7 @@ namespace ExtendedXmlSerialization.Write
         public static EmitInstanceAsTextInstruction Default { get; } = new EmitInstanceAsTextInstruction();
         EmitInstanceAsTextInstruction() {}
 
-        protected override void Execute(IWriting services) => services.Emit(services.Current.Instance);
+        protected override void OnExecute(IWriting services) => services.Emit(services.Current.Instance);
     }
 
     class EmitMemberAsPropertyInstruction : DecoratedInstruction, IPropertyInstruction
@@ -522,26 +526,6 @@ namespace ExtendedXmlSerialization.Write
 
         protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.Root);
     }
-
-    /*class ExtensionEnabledInstruction : DecoratedWriteInstruction
-    {
-        private readonly IWritingExtension _extension;
-
-        public ExtensionEnabledInstruction(IWritingExtension extension, IInstruction instruction) : base(instruction)
-        {
-            _extension = extension;
-        }
-
-        protected override void Execute(IWriting services)
-        {
-            base.Execute(services);
-            /*if (_extension.Starting(writing))
-            {
-                base.Execute(writing);
-            }
-            _extension.Finished(writing);#1#
-        }
-    }*/
 
     /*class EnableExtensionInstructionAlteration : IAlteration<IInstruction>
     {
