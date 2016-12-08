@@ -66,6 +66,11 @@ namespace ExtendedXmlSerialization.Common
         public void Execute(IServiceProvider services) {}
     }
 
+	public interface IAssignableInstruction : IInstruction
+	{
+		void Assign(IInstruction instruction);
+	}
+
     public interface IInstruction
     {
         void Execute(IServiceProvider services);

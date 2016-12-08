@@ -574,7 +574,7 @@ namespace ExtendedXmlSerialization.Common
 		public object GetService(Type serviceType) => null;
 	}
 
-	class DeferredInstruction : IInstruction
+	/*class DeferredInstruction : IInstruction
 	{
 		private readonly Lazy<IInstruction> _source;
 
@@ -586,7 +586,7 @@ namespace ExtendedXmlSerialization.Common
 		}
 
 		public void Execute(IServiceProvider services) => _source.Value?.Execute(services);
-	}
+	}*/
 
 	public class DefaultValues
 	{

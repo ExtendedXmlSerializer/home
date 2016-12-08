@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using ExtendedXmlSerialization.Cache;
 
@@ -25,28 +28,60 @@ class CachedPlan : WeakCache<Type, IInstruction>, IPlan
         public IInstruction For(Type type) => Get(type);
     }
 
-    class SelectFirstAssignedPlan : IPlan
+    class PlanSelector : IPlan
     {
         readonly ICollection<IPlan> _providers;
+        readonly WeakCache<Type, ICollection<IAssignableInstruction>> _placeholders =
+            new WeakCache<Type, ICollection<IAssignableInstruction>>(key => new HashSet<IAssignableInstruction>());
 
-        public SelectFirstAssignedPlan(ICollection<IPlan> providers)
+        public PlanSelector(ICollection<IPlan> providers)
         {
             _providers = providers;
         }
 
         public IInstruction For(Type type)
         {
-            foreach (var provider in _providers)
+            var contains = _placeholders.Contains(type);
+            var placeholders = _placeholders.Get(type);
+            if (contains)
             {
-                var instruction = provider.For(type);
-                if (instruction != null)
+                var result = new PlaceholderInstruction();
+                placeholders.Add(result);
+                return result;
+            }
+
+            try
+            {
+                foreach (var provider in _providers)
                 {
-                    return instruction;
+                    var result = provider.For(type);
+                    if (result != null)
+                    {
+                        foreach (var instruction in placeholders)
+                        {
+                            instruction.Assign(result);
+                        }
+                        return result;
+                    }
                 }
+            }
+            finally
+            {
+                placeholders.Clear();
             }
             return null;
         }
+
+        class PlaceholderInstruction : IAssignableInstruction
+        {
+            private IInstruction _instruction;
+            public void Execute(IServiceProvider services) => _instruction?.Execute(services);
+
+            public void Assign(IInstruction instruction) => _instruction = instruction;
+        }
     }
+
+
 
     class FixedPlan : IPlan
     {
@@ -72,7 +107,7 @@ class CachedPlan : WeakCache<Type, IInstruction>, IPlan
         public virtual IInstruction For(Type type) => _plan.For(type);
     }
 
-    class FixedDecoratedPlan : IPlan
+    /*class FixedDecoratedPlan : IPlan
     {
         private readonly IPlan _plan;
         private readonly Type _type;
@@ -86,7 +121,7 @@ class CachedPlan : WeakCache<Type, IInstruction>, IPlan
         public IInstruction For(Type type) => Get();
 
         public IInstruction Get() => _plan.For(_type);
-    }
+    }*/
 
 
     public interface IPlan
