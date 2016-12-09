@@ -25,7 +25,6 @@ using System;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans.Write;
-using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Services.Services;
 
 namespace ExtendedXmlSerialization.Profiles
@@ -33,12 +32,11 @@ namespace ExtendedXmlSerialization.Profiles
     class DefaultSerializationProfile : SerializationProfile
     {
         public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
-
         DefaultSerializationProfile()
             : base(
                 PlanMaker.Default.Make(), () => new DefaultWritingContext(), EmitTypeInstruction.Default,
                 DefaultNamespaces.Default,
-                DefaultNamespaceLocator.Default, null, DefaultTypeFormatter.Default,
+                DefaultNamespaceLocator.Default, null,
                 DefaultMemberValueAssignedExtension.Default) {}
 
         public override bool IsSatisfiedBy(Uri parameter) => true;

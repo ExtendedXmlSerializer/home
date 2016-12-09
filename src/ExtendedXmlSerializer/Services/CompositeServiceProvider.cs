@@ -26,22 +26,23 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.Services
 {
-    public class CompositeServiceProvider : IServiceProvider
+    public class CompositeServiceProvider : WeakCacheBase<Type, object>, IServiceProvider
     {
         private readonly IEnumerable<IServiceProvider> _providers;
         private readonly IEnumerable<object> _services;
 
         public CompositeServiceProvider(params object[] services)
-            : this((IEnumerable<IServiceProvider>) services.OfType<IServiceProvider>().ToImmutableList(), services) {}
+            : this(services.OfType<IServiceProvider>().ToImmutableList(), services) {}
 
         public CompositeServiceProvider(IEnumerable<IServiceProvider> providers, params object[] services)
-            : this(providers, (IEnumerable<object>) services.AsEnumerable()) {}
+            : this(providers, services.AsEnumerable()) {}
 
         public CompositeServiceProvider(IEnumerable<object> services)
-            : this((IEnumerable<IServiceProvider>) Enumerable.Empty<IServiceProvider>(), services) {}
+            : this(Enumerable.Empty<IServiceProvider>(), services) {}
 
         public CompositeServiceProvider(IEnumerable<IServiceProvider> providers, IEnumerable<object> services)
         {
@@ -49,8 +50,10 @@ namespace ExtendedXmlSerialization.Services
             _services = services;
         }
 
-        public object GetService(Type serviceType)
-            => _services.FirstOrDefault(serviceType.GetTypeInfo().IsInstanceOfType) ?? FromServices(serviceType);
+        public object GetService(Type serviceType) => Get(serviceType);
+
+        protected override object Callback(Type key)
+            => _services.FirstOrDefault(key.GetTypeInfo().IsInstanceOfType) ?? FromServices(key);
 
         private object FromServices(Type serviceType)
         {

@@ -27,20 +27,32 @@ using ExtendedXmlSerialization.Services.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    public class VersionExtension : ConfigurationWritingExtensionBase
+    public class VersionExtension : WritingExtensionBase
     {
-        public VersionExtension(ISerializationToolsFactory factory) : base(factory) {}
-
-        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                                object instance,
-                                                IImmutableList<MemberInfo> members)
+        private readonly ISerializationToolsFactory _factory;
+        public VersionExtension(ISerializationToolsFactory factory)
         {
-            var version = configuration.Version;
-            if (version > 0)
+            _factory = factory;
+        }
+
+        public override bool Starting(IWriting services)
+        {
+            switch (services.Current.State)
             {
-                services.Attach(new VersionProperty(services.Get(this), version));
+                case WriteState.Members:
+                    var instance = services.Current.Instance;
+                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    if (configuration != null)
+                    {
+                        var version = configuration.Version;
+                        if (version > 0)
+                        {
+                            services.Attach(new VersionProperty(services.Get(this), version));
+                        }
+                    }
+                   break;
             }
-            return base.StartingMembers(services, configuration, instance, members);
+            return true;
         }
     }
 }

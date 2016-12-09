@@ -27,30 +27,37 @@ using System.Xml;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Services.Services;
+using WriteState = ExtendedXmlSerialization.Services.Services.WriteState;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    public class CustomSerializationExtension : ConfigurationWritingExtensionBase
+    public class CustomSerializationExtension : WritingExtensionBase
     {
+        private readonly ISerializationToolsFactory _factory;
         private readonly IInstruction _instruction;
 
         public CustomSerializationExtension(ISerializationToolsFactory factory, IInstruction instruction)
-            : base(factory)
         {
+            _factory = factory;
             _instruction = instruction;
         }
 
-        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                                object instance,
-                                                IImmutableList<MemberInfo> members)
+        public override bool Starting(IWriting services)
         {
-            if (configuration.IsCustomSerializer)
+            switch (services.Current.State)
             {
-                _instruction.Execute(services);
-                configuration.WriteObject(services.Get<XmlWriter>(), instance);
-                return false;
+                case WriteState.Members:
+                    var instance = services.Current.Instance;
+                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    if (configuration?.IsCustomSerializer ?? false)
+                    {
+                        _instruction.Execute(services);
+                        configuration.WriteObject(services.Get<XmlWriter>(), instance);
+                        return false;
+                    }
+                   break;
             }
-            return base.StartingMembers(services, configuration, instance, members);
+            return true;
         }
     }
 }

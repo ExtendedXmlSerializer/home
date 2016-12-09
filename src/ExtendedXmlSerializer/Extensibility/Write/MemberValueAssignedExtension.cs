@@ -39,7 +39,17 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _values = values;
         }
 
-        protected override bool StartingMember(IWriting services, object instance, MemberContext member)
+        public override bool Starting(IWriting services)
+        {
+            switch (services.Current.State)
+            {
+                case WriteState.Member:
+                    return services.Current.Member != null && FromMember(services.Current.Member.Value);
+            }
+            return true;
+        }
+
+        protected virtual bool FromMember(MemberContext member)
         {
             var defaultValue = _values(member.MemberType);
             var result = !Equals(member.Value, defaultValue);

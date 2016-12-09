@@ -30,10 +30,8 @@ namespace ExtendedXmlSerialization.Extensibility.Write
     {
         public new static DefaultMemberValueAssignedExtension Default { get; } =
             new DefaultMemberValueAssignedExtension();
-
         DefaultMemberValueAssignedExtension() {}
 
-        protected override bool StartingMember(IWriting writing, object instance, MemberContext context) =>
-            context.Value is Enum || base.StartingMember(writing, instance, context);
+        protected override bool FromMember(MemberContext member) => member.Value is Enum || base.FromMember(member);
     }
 }

@@ -141,10 +141,15 @@ namespace ExtendedXmlSerialization.Test
             public static AttachedPropertyExtension Default { get; } = new AttachedPropertyExtension();
             AttachedPropertyExtension() {}
 
-            protected override bool StartingInstance(IWriting writing, object instance)
+            public override bool Starting(IWriting services)
             {
-                writing.Attach(new AttachedProperty("Hello World!  This is an attached property."));
-                return base.StartingInstance(writing, instance);
+                switch (services.Current.State)
+                {
+                    case WriteState.Instance:
+                        services.Attach(new AttachedProperty("Hello World!  This is an attached property."));
+                        break;
+                }
+                return true;
             }
         }
 
@@ -182,15 +187,21 @@ namespace ExtendedXmlSerialization.Test
             public static SkipUnluckyNumberExtension Default { get; } = new SkipUnluckyNumberExtension();
             SkipUnluckyNumberExtension() {}
 
-            protected override bool StartingInstance(IWriting writing, object instance)
+            public override bool Starting(IWriting services)
             {
-                if (instance is int)
+                switch (services.Current.State)
                 {
-                    var integer = (int) instance;
-                    var result = integer != 13;
-                    return result;
+                    case WriteState.Instance:
+                        var instance = services.Current.Instance;
+                        if (instance is int)
+                        {
+                            var integer = (int) instance;
+                            var result = integer != 13;
+                            return result;
+                        }
+                        break;
                 }
-                return base.StartingInstance(writing, instance);
+                return true;
             }
         }
 

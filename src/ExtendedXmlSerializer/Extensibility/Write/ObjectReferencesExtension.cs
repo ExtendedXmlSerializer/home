@@ -24,80 +24,93 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using System.Xml;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Services.Services;
+using WriteState = ExtendedXmlSerialization.Services.Services.WriteState;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    public class ObjectReferencesExtension : ConfigurationWritingExtensionBase
+    public class ObjectReferencesExtension : WritingExtensionBase
     {
         private readonly WeakCache<IWriting, Context> _contexts = new WeakCache<IWriting, Context>(_ => new Context());
+        private readonly ISerializationToolsFactory _factory;
         private readonly IInstruction _instruction;
 
-        public ObjectReferencesExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
+        public ObjectReferencesExtension(ISerializationToolsFactory factory, IInstruction instruction)
         {
+            _factory = factory;
             _instruction = instruction;
         }
 
-        protected override bool StartingInstance(IWriting services, object instance)
+        public override bool Starting(IWriting services)
         {
-            var elements = _contexts.Get(services).Elements;
-            foreach (var item in Arrays.Default.AsArray(instance))
+            switch (services.Current.State)
             {
-                if (!elements.Contains(item))
-                {
-                    elements.Add(item);
-                }
-            }
-            return base.StartingInstance(services, instance);
-        }
-
-        protected override void FinishedInstance(IWriting writing, object instance)
-        {
-            if (Arrays.Default.Is(instance))
-            {
-                _contexts.Get(writing).Elements.Clear();
-            }
-            base.FinishedInstance(writing, instance);
-        }
-
-        protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
-                                                object instance,
-                                                IImmutableList<MemberInfo> members)
-        {
-            if (configuration?.IsObjectReference ?? false)
-            {
-                var context = _contexts.Get(services);
-                var elements = context.Elements;
-                var references = context.References;
-                var objectId = configuration.GetObjectId(instance);
-                var contains = references.Contains(instance);
-                var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
-                var @namespace = services.Get(this);
-                var property = reference
-                    ? (IProperty) new ObjectReferenceProperty(@namespace, objectId)
-                    : new ObjectIdProperty(@namespace, objectId);
-                var result = !reference;
-                if (result)
-                {
-                    services.Attach(property);
-                    references.Add(instance);
-                }
-                else
-                {
-                    // TODO: Find a more elegant way to handle this:
-                    if (DefaultEmitTypeSpecification.Default.IsSatisfiedBy(services))
+                case WriteState.Instance:
+                    var set = _contexts.Get(services).Elements;
+                    foreach (var item in Arrays.Default.AsArray(services.Current.Instance))
                     {
-                        _instruction.Execute(services);
+                        if (!set.Contains(item))
+                        {
+                            set.Add(item);
+                        }
                     }
-                    services.Emit(property);
-                }
-                return result;
+                    break;
+                case WriteState.Members:
+                    var instance = services.Current.Instance;
+                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    if (configuration?.IsObjectReference ?? false)
+                    {
+                        var context = _contexts.Get(services);
+                        var elements = context.Elements;
+                        var references = context.References;
+                        var objectId = configuration.GetObjectId(instance);
+                        var contains = references.Contains(instance);
+                        var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
+                        var @namespace = services.Get(this);
+                        var property = reference
+                            ? (IProperty) new ObjectReferenceProperty(@namespace, objectId)
+                            : new ObjectIdProperty(@namespace, objectId);
+                        var result = !reference;
+                        if (result)
+                        {
+                            services.Attach(property);
+                            references.Add(instance);
+                        }
+                        else
+                        {
+                            // TODO: Find a more elegant way to handle this:
+                            if (DefaultEmitTypeSpecification.Default.IsSatisfiedBy(services))
+                            {
+                                _instruction.Execute(services);
+                            }
+                            services.Emit(property);
+                        }
+                        return result;
+                    }
+                    break;
             }
             return true;
+        }
+
+        public override void Finished(IWriting services)
+        {
+            switch (services.Current.State)
+            {
+                case WriteState.Instance:
+                    var instance = services.Current.Instance;
+                    if (Arrays.Default.Is(instance))
+                    {
+                        _contexts.Get(services).Elements.Clear();
+                    }
+                   break;
+            }
+            base.Finished(services);
         }
 
         class Context
