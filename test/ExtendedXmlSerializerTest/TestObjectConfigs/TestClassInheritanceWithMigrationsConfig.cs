@@ -24,7 +24,7 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassInheritanceWithMigrationsBaseConfig : CustomExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsBase>
+    public class TestClassInheritanceWithMigrationsBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsBase>
     {
         public TestClassInheritanceWithMigrationsBaseConfig()
         {
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
             xElement.Element("Property").Name = "ChangedProperty";
         }
     }
-    public class TestClassInheritanceWithMigrationsAConfig : CustomExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsA>
+    public class TestClassInheritanceWithMigrationsAConfig : ExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsA>
     {
         public TestClassInheritanceWithMigrationsAConfig()
         {
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
             xElement.Element("OtherProperty").Name = "OtherChangedProperty";
         }
     }
-    public class TestClassInheritanceWithMigrationsBConfig : CustomExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsB>
+    public class TestClassInheritanceWithMigrationsBConfig : ExtendedXmlSerializerConfig<TestClassInheritanceWithMigrationsB>
     {
         public TestClassInheritanceWithMigrationsBConfig()
         {

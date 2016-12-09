@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
         IExtendedXmlSerializerConfig
     {
-        private static readonly Func<Type, bool> Specification = typeof(T).IsAssignableFrom;
+        private static readonly Func<Type, bool> Specification = type => typeof(T) == type;
 
         public ExtendedXmlSerializerConfig() : this(Specification) {}
 
