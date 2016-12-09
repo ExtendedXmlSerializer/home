@@ -21,15 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.Elements;
+using System.IO;
+using ExtendedXmlSerialization.Plans;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
+    public class Serializer : ISerializer
     {
-        void Attach(IProperty property);
-        IImmutableList<IProperty> GetProperties();
+        private readonly IPlan _plan;
+        private readonly IWritingFactory _factory;
+
+        public Serializer(IPlan plan, IWritingFactory factory)
+        {
+            _plan = plan;
+            _factory = factory;
+        }
+
+        public void Serialize(Stream stream, object instance)
+        {
+            using (var writing = _factory.Get(stream))
+            {
+                using (writing.Start(instance))
+                {
+                    var instruction = _plan.For(instance.GetType());
+                    instruction.Execute(writing);
+                }
+            }
+        }
     }
 }

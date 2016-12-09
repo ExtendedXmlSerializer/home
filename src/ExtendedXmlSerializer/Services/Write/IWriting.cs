@@ -21,12 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface ISerializer
+    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
     {
-        void Serialize(Stream stream, object instance);
+        void Attach(IProperty property);
+        IImmutableList<IProperty> GetProperties();
     }
 }

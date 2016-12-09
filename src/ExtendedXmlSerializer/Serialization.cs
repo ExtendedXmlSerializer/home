@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.IO;
 using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Services;
+using ExtendedXmlSerialization.Services.Write;
 
 namespace ExtendedXmlSerialization
 {

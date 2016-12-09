@@ -21,10 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Services.Services
+using System;
+using ExtendedXmlSerialization.Elements;
+
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface INamespaceEmitter
+    class DefaultNamespaceLocator : INamespaceLocator
     {
-        void Execute(object instance);
+        public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
+        DefaultNamespaceLocator() {}
+
+        public Uri Get(object parameter) => null;
     }
 }

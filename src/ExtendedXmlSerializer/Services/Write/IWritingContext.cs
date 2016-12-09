@@ -25,39 +25,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.Plans.Write;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public class MemberContexts : WeakCacheBase<object, IImmutableList<MemberContext>>
+    public interface IWritingContext
     {
-        public static MemberContexts Default { get; } = new MemberContexts();
-        MemberContexts() {}
+        WriteContext Current { get; }
+        IEnumerable<WriteContext> Hierarchy { get; }
 
-        protected override IImmutableList<MemberContext> Callback(object key) => Yield(key).ToImmutableList();
-
-        public MemberContext Locate(object instance, MemberInfo member)
-        {
-            foreach (var memberContext in Get(instance))
-            {
-                if (MemberInfoEqualityComparer.Default.Equals(memberContext.Metadata, member))
-                {
-                    return memberContext;
-                }
-            }
-            throw new InvalidOperationException(
-                      $"Could not find the member '{member}' for instance of type '{instance.GetType()}'");
-        }
-
-        static IEnumerable<MemberContext> Yield(object key)
-        {
-            var members = SerializableMembers.Default.Get(key.GetType());
-            foreach (var member in members)
-            {
-                var getter = Getters.Default.Get(member);
-                yield return new MemberContext(member, getter(key));
-            }
-        }
+        IDisposable Start(object root);
+        IDisposable New(object instance);
+        IDisposable New(IImmutableList<MemberInfo> members);
+        IDisposable New(MemberInfo member);
+        IDisposable ToMemberContext();
     }
 }

@@ -21,27 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public struct WriteContext
+    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
     {
-        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
-                            MemberContext? member)
+        public static SerializableMembers Default { get; } = new SerializableMembers();
+        SerializableMembers() : this(_ => true) {}
+
+        private readonly Func<TypeDefinition, bool> _serializable;
+
+        public SerializableMembers(Func<TypeDefinition, bool> serializable)
         {
-            State = state;
-            Root = root;
-            Instance = instance;
-            Members = members;
-            Member = member;
+            _serializable = serializable;
         }
 
-        public WriteState State { get; }
-        public object Root { get; }
-        public object Instance { get; }
-        public IImmutableList<MemberInfo> Members { get; }
-        public MemberContext? Member { get; }
+        protected override IImmutableList<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
+
+        IEnumerable<MemberInfo> GetWritableMembers(Type type)
+        {
+            foreach (var member in TypeDefinitionCache.GetDefinition(type).Properties)
+            {
+                if (_serializable(member.TypeDefinition))
+                {
+                    yield return member.MemberInfo;
+                }
+            }
+        }
     }
 }

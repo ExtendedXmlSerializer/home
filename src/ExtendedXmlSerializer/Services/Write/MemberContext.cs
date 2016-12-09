@@ -21,24 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.Elements;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    class DefaultNamespaces : INamespaces
+    public struct MemberContext
     {
-        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
-        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
+        public MemberContext(MemberInfo member, object value = null)
+            : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
 
-        private readonly IImmutableList<INamespace> _namespaces;
-
-
-        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
+        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
         {
-            _namespaces = namespaces;
+            Metadata = metadata;
+            DisplayName = displayName;
+            MemberType = memberType;
+            IsWritable = isWritable;
+            Value = value;
         }
 
-        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
+        public MemberInfo Metadata { get; }
+        public string DisplayName { get; }
+        public Type MemberType { get; }
+        public bool IsWritable { get; }
+        public object Value { get; }
     }
 }

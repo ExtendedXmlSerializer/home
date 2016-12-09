@@ -27,7 +27,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
     public class Namespaces : INamespaces
     {

@@ -26,8 +26,8 @@ using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Services;
-using WriteState = ExtendedXmlSerialization.Services.Services.WriteState;
+using ExtendedXmlSerialization.Services.Write;
+using WriteState = ExtendedXmlSerialization.Services.Write.WriteState;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {

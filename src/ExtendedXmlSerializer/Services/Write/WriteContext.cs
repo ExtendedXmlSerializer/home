@@ -21,29 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    class NamespaceEmitter : INamespaceEmitter
+    public struct WriteContext
     {
-        private const string Prefix = "xmlns";
-        private readonly XmlWriter _writer;
-        private readonly INamespaces _namespaces;
-
-        public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
+        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
+                            MemberContext? member)
         {
-            _writer = writer;
-            _namespaces = namespaces;
+            State = state;
+            Root = root;
+            Instance = instance;
+            Members = members;
+            Member = member;
         }
 
-        public void Execute(object instance)
-        {
-            var list = _namespaces.Get(instance);
-            foreach (var pair in list)
-            {
-                _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
-            }
-        }
+        public WriteState State { get; }
+        public object Root { get; }
+        public object Instance { get; }
+        public IImmutableList<MemberInfo> Members { get; }
+        public MemberContext? Member { get; }
     }
 }

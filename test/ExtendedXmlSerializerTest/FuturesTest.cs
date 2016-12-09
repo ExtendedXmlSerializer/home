@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Profiles;
-using ExtendedXmlSerialization.Services.Services;
+using ExtendedXmlSerialization.Services.Write;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;

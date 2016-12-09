@@ -21,30 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Cache;
+using System.IO;
+using ExtendedXmlSerialization.Sources;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public struct MemberContext
-    {
-        public MemberContext(MemberInfo member, object value = null)
-            : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
-
-        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
-        {
-            Metadata = metadata;
-            DisplayName = displayName;
-            MemberType = memberType;
-            IsWritable = isWritable;
-            Value = value;
-        }
-
-        public MemberInfo Metadata { get; }
-        public string DisplayName { get; }
-        public Type MemberType { get; }
-        public bool IsWritable { get; }
-        public object Value { get; }
-    }
+    public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
 }

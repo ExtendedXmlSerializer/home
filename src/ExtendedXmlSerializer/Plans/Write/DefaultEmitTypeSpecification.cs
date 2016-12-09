@@ -23,7 +23,7 @@
 
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Services.Services;
+using ExtendedXmlSerialization.Services.Write;
 using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Plans.Write

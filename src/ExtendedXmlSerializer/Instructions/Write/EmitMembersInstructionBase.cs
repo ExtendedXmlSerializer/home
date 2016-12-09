@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using ExtendedXmlSerialization.Services.Services;
+using ExtendedXmlSerialization.Services.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {

@@ -28,7 +28,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
     public class Writing : IWriting
     {

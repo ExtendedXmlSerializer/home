@@ -21,10 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface IObjectSerializer
+    public enum WriteState
     {
-        string Serialize(object instance);
+        Root,
+        Instance,
+        Members,
+        Member,
+        MemberValue
     }
 }

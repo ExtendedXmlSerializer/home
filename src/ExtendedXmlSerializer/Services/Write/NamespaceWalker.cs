@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Specifications;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
     class NamespaceWalker : ObjectWalkerBase<object, IEnumerable<Uri>>
     {

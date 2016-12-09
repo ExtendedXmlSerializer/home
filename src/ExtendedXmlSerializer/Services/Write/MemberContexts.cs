@@ -26,31 +26,37 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Plans.Write;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
+    public class MemberContexts : WeakCacheBase<object, IImmutableList<MemberContext>>
     {
-        public static SerializableMembers Default { get; } = new SerializableMembers();
-        SerializableMembers() : this(_ => true) {}
+        public static MemberContexts Default { get; } = new MemberContexts();
+        MemberContexts() {}
 
-        private readonly Func<TypeDefinition, bool> _serializable;
+        protected override IImmutableList<MemberContext> Callback(object key) => Yield(key).ToImmutableList();
 
-        public SerializableMembers(Func<TypeDefinition, bool> serializable)
+        public MemberContext Locate(object instance, MemberInfo member)
         {
-            _serializable = serializable;
+            foreach (var memberContext in Get(instance))
+            {
+                if (MemberInfoEqualityComparer.Default.Equals(memberContext.Metadata, member))
+                {
+                    return memberContext;
+                }
+            }
+            throw new InvalidOperationException(
+                      $"Could not find the member '{member}' for instance of type '{instance.GetType()}'");
         }
 
-        protected override IImmutableList<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
-
-        IEnumerable<MemberInfo> GetWritableMembers(Type type)
+        static IEnumerable<MemberContext> Yield(object key)
         {
-            foreach (var member in TypeDefinitionCache.GetDefinition(type).Properties)
+            var members = SerializableMembers.Default.Get(key.GetType());
+            foreach (var member in members)
             {
-                if (_serializable(member.TypeDefinition))
-                {
-                    yield return member.MemberInfo;
-                }
+                var getter = Getters.Default.Get(member);
+                yield return new MemberContext(member, getter(key));
             }
         }
     }

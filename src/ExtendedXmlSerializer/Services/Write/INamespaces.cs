@@ -21,22 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Reflection;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Sources;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface IWritingContext
-    {
-        WriteContext Current { get; }
-        IEnumerable<WriteContext> Hierarchy { get; }
-
-        IDisposable Start(object root);
-        IDisposable New(object instance);
-        IDisposable New(IImmutableList<MemberInfo> members);
-        IDisposable New(MemberInfo member);
-        IDisposable ToMemberContext();
-    }
+    public interface INamespaces : IParameterizedSource<object, IImmutableList<INamespace>> {}
 }

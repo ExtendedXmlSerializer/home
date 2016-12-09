@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using ExtendedXmlSerialization.Sources;
-
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
+    public interface INamespaceEmitter
+    {
+        void Execute(object instance);
+    }
 }

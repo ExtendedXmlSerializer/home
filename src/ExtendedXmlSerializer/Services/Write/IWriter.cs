@@ -24,7 +24,7 @@
 using System;
 using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
     public interface IWriter : IDisposable
     {

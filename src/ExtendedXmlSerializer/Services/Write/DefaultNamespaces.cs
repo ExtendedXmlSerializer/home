@@ -21,32 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using ExtendedXmlSerialization.Plans;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Services
+namespace ExtendedXmlSerialization.Services.Write
 {
-    public class Serializer : ISerializer
+    class DefaultNamespaces : INamespaces
     {
-        private readonly IPlan _plan;
-        private readonly IWritingFactory _factory;
+        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
+        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
 
-        public Serializer(IPlan plan, IWritingFactory factory)
+        private readonly IImmutableList<INamespace> _namespaces;
+
+
+        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
         {
-            _plan = plan;
-            _factory = factory;
+            _namespaces = namespaces;
         }
 
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writing = _factory.Get(stream))
-            {
-                using (writing.Start(instance))
-                {
-                    var instruction = _plan.For(instance.GetType());
-                    instruction.Execute(writing);
-                }
-            }
-        }
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
     }
 }
