@@ -30,12 +30,7 @@ namespace ExtendedXmlSerialization.Write.Extensibility
 {
     public class VersionExtension : ConfigurationWritingExtensionBase
     {
-        private readonly IInstruction _instruction;
-
-        public VersionExtension(ISerializationToolsFactory factory, IInstruction instruction) : base(factory)
-        {
-            _instruction = instruction;
-        }
+        public VersionExtension(ISerializationToolsFactory factory) : base(factory) {}
 
         protected override bool StartingMembers(IWriting services, IExtendedXmlSerializerConfig configuration,
                                                 object instance,
@@ -44,7 +39,6 @@ namespace ExtendedXmlSerialization.Write.Extensibility
             var version = configuration.Version;
             if (version > 0)
             {
-                _instruction.Execute(services);
                 services.Attach(new VersionProperty(services.Get(this), version));
             }
             return base.StartingMembers(services, configuration, instance, members);

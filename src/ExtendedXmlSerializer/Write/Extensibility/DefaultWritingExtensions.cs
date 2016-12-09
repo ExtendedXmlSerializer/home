@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Write.Extensibility
     {
         public DefaultWritingExtensions(ISerializationToolsFactory factory, IInstruction instruction) : base(
             new ObjectReferencesExtension(factory, instruction),
-            new VersionExtension(factory, instruction),
+            new VersionExtension(factory),
             new CustomSerializationExtension(factory, instruction)
         ) {}
     }
