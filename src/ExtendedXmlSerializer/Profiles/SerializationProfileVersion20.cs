@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
+using ExtendedXmlSerialization.Plans.Write;
 
 namespace ExtendedXmlSerialization.Profiles
 {

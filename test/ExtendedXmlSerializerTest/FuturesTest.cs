@@ -25,15 +25,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility.Write;
+using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Profiles;
+using ExtendedXmlSerialization.Services.Services;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Extensibility;
-using ExtendedXmlSerialization.Write.Plans;
-using ExtendedXmlSerialization.Write.Services;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test

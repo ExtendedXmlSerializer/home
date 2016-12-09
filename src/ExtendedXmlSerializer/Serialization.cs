@@ -24,10 +24,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Services;
+using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Services.Services;
 
 namespace ExtendedXmlSerialization
 {

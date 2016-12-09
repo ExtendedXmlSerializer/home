@@ -23,17 +23,16 @@
 
 using System;
 using System.Linq;
-using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans;
+using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Services.Services;
 using ExtendedXmlSerialization.Specifications;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Extensibility;
-using ExtendedXmlSerialization.Write.Instructions;
-using ExtendedXmlSerialization.Write.Plans;
-using ExtendedXmlSerialization.Write.Services;
 
 namespace ExtendedXmlSerialization.Profiles
 {
@@ -65,7 +64,7 @@ namespace ExtendedXmlSerialization.Profiles
                                     ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType,
                                     Func<IWritingContext> context, INamespace root)
             : this(
-                new PlanMaker(new Write.Plans.Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification,
+                new PlanMaker(new Plans.Write.Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification,
                                               emitType)),
                 new NamespaceLocator(root.Identifier), context, root, emitType,
                 MemberValueAssignedExtension.Default) {}

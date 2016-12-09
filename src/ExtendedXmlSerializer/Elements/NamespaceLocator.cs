@@ -24,9 +24,8 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Specifications;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Plans;
 
 namespace ExtendedXmlSerialization.Elements
 {

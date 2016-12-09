@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Common;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility
 {

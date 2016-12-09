@@ -22,12 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
-using ExtendedXmlSerialization.Write;
-using ExtendedXmlSerialization.Write.Extensibility;
-using ExtendedXmlSerialization.Write.Instructions;
-using ExtendedXmlSerialization.Write.Plans;
-using ExtendedXmlSerialization.Write.Services;
+using ExtendedXmlSerialization.Extensibility.Write;
+using ExtendedXmlSerialization.Instructions.Write;
+using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Services.Services;
 
 namespace ExtendedXmlSerialization.Profiles
 {

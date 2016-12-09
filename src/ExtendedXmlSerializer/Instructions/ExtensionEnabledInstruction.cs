@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions
 {

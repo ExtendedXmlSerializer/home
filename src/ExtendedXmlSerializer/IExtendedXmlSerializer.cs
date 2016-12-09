@@ -21,8 +21,8 @@
 // SOFTWARE.
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Common;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization
 {
