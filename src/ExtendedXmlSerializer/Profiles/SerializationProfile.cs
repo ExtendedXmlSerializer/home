@@ -32,7 +32,6 @@ using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Services.Services;
-using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Profiles
 {
@@ -46,34 +45,20 @@ namespace ExtendedXmlSerialization.Profiles
         private readonly object[] _services;
 
         public SerializationProfile(IInstructionSpecification specification, Uri identifier)
-            : this(specification, () => new DefaultWritingContext(), identifier) {}
+            : this(specification, () => new DefaultWritingContext(), identifier, MemberValueAssignedExtension.Default) {}
 
         public SerializationProfile(IInstructionSpecification specification, Func<IWritingContext> context,
-                                    Uri identifier)
-            : this(specification, EmitTypeForInstanceInstruction.Default, context, identifier) {}
-
-        public SerializationProfile(IInstructionSpecification specification, IInstruction emitType,
-                                    Func<IWritingContext> context, Uri identifier)
-            : this(specification, emitType, context, new RootNamespace(identifier)) {}
-
-        public SerializationProfile(IInstructionSpecification specification, IInstruction emitType,
-                                    Func<IWritingContext> context, INamespace root)
-            : this(specification, EmitTypeSpecification.Default, emitType, context, root) {}
-
-        public SerializationProfile(IInstructionSpecification specification,
-                                    ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType,
-                                    Func<IWritingContext> context, INamespace root)
+                                    Uri identifier, params object[] services)
             : this(
-                new PlanMaker(new Plans.Write.Plans(specification, FixedTemplateElementProvider.Default, emitTypeSpecification,
-                                              emitType)),
-                new NamespaceLocator(root.Identifier), context, root, emitType,
-                MemberValueAssignedExtension.Default) {}
+                new PlanMaker(new Plans.Write.Plans(specification)).Make(), context, EmitTypeForInstanceInstruction.Default,
+                new NamespaceLocator(identifier),
+                new RootNamespace(identifier), services) {}
 
-        public SerializationProfile(IPlanMaker maker, INamespaceLocator locator, Func<IWritingContext> context,
-                                    INamespace root, IInstruction emitType, params object[] services)
+        SerializationProfile(IPlan plan, Func<IWritingContext> context, IInstruction emitType, INamespaceLocator locator,
+                             INamespace root, params object[] services)
             : this(
-                maker.Make(), context, emitType, new Namespaces(locator, root, PrimitiveNamespace.Default), locator,
-                root, services) {}
+                plan, context, emitType, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root,
+                services) {}
 
         public SerializationProfile(IPlan plan, Func<IWritingContext> context,
                                     IInstruction emitType,

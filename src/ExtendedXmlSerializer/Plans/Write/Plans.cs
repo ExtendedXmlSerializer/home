@@ -23,6 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Services.Services;
 using ExtendedXmlSerialization.Specifications;
 
@@ -34,6 +35,9 @@ namespace ExtendedXmlSerialization.Plans.Write
         private readonly ITemplateElementProvider _provider;
         private readonly ISpecification<IWritingContext> _emitTypeSpecification;
         private readonly IInstruction _emitType;
+
+        public Plans(IInstructionSpecification specification)
+            : this(specification, FixedTemplateElementProvider.Default, EmitTypeSpecification.Default, EmitTypeForInstanceInstruction.Default) {}
 
         public Plans(IInstructionSpecification specification, ITemplateElementProvider provider,
                      ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType)
