@@ -47,16 +47,19 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 
         public IWriting Get(Stream parameter)
         {
-            var context = _services.New();
             var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
             var xmlWriter = XmlWriter.Create(parameter, settings);
-            var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
-            var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
+
             var extensions = new ExtensionRegistry();
             foreach (var extension in _services.Extensions)
             {
                 extension.Accept(extensions);
             }
+            var context = _services.New();
+
+            var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
+            var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
+            
             
             var result = new Writing(writer, context, _locator, extensions
                                      /*services:*/, _services, context, settings, writer, xmlWriter);

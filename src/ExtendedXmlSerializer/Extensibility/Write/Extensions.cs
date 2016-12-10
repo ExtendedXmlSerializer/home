@@ -21,14 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Linq;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
     public static class Extensions
     {
+        /// <summary>
+        /// TODO: Should put this in an instruction.
+        /// </summary>
+        /// <param name="this"></param>
+        /// <param name="instruction"></param>
+        public static void ApplyExtensions(this IWriting @this, IInstruction instruction) => ApplyExtensions(@this, @this, instruction);
+        public static void ApplyExtensions(this IExtensions @this, IServiceProvider services, IInstruction instruction)
+        {
+            if (@this.IsSatisfiedBy(services))
+            {
+                instruction.Execute(services);
+            }
+            @this.Complete(services);
+        }
+
         public static WriteContext? Parent(this IWritingContext @this, int level = 1)
             => @this.Hierarchy.ElementAtOrDefault(level);
 

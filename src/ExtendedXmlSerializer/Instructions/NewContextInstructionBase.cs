@@ -25,18 +25,17 @@ using System;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public abstract class NewContextInstructionBase<T> : DecoratedInstruction<T> where T : IServiceProvider
+    public abstract class NewContextInstructionBase<T> : InstructionBase<T> where T : IServiceProvider
     {
-        protected NewContextInstructionBase(IInstruction instruction)
-            : base(new ExtensionEnabledInstruction(instruction)) {}
-
         protected override void OnExecute(T services)
         {
             using (DetermineContext(services))
             {
-                base.OnExecute(services);
+                ExecuteContext(services);
             }
         }
+
+        protected abstract void ExecuteContext(T services);
 
         protected abstract IDisposable DetermineContext(T writing);
     }

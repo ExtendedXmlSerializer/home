@@ -26,11 +26,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization
 {
@@ -122,30 +120,6 @@ namespace ExtendedXmlSerialization
             }
             return true;
         }
-
-        /*public void Executing(IServiceProvider services)
-        {
-            var state = DetermineState(services);
-            if (_executing.ContainsKey(state))
-            {
-                foreach (var extension in _executing[state])
-                {
-                    extension.Executing(services);
-                }
-            }
-        }
-
-        public void Executed(IServiceProvider services)
-        {
-            var state = DetermineState(services);
-            if (_executed.ContainsKey(state))
-            {
-                foreach (var extension in _executed[state])
-                {
-                    extension.Executed(services);
-                }
-            }
-        }*/
 
         public void Complete(IServiceProvider services)
         {

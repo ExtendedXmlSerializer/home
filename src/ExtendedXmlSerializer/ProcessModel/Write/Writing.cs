@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class Writing : CompositeServiceProvider, IExtensions, IWriting
+    public class Writing : CompositeServiceProvider, IWriting, IExtensions
     {
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
@@ -60,7 +60,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public void Emit(IProperty property) => _writer.Emit(property);
 
         public void Attach(IProperty property) => _properties.Attach(_context.Current.Instance, property);
-
         public IImmutableList<IProperty> GetProperties()
         {
             var list = _properties.GetProperties(_context.Current.Instance);
@@ -80,8 +79,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public Uri Get(object parameter) => _locator.Get(parameter);
 
         public bool IsSatisfiedBy(IServiceProvider parameter) => _extensions.IsSatisfiedBy(parameter);
-        /*public void Executing(IServiceProvider services) => _extensions.Executing(services);
-        public void Executed(IServiceProvider services) => _extensions.Executed(services);*/
         public void Complete(IServiceProvider services) => _extensions.Complete(services);
     }
 }

@@ -21,12 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
     abstract class NewWriteContextInstructionBase : NewContextInstructionBase<IWriting>
     {
-        protected NewWriteContextInstructionBase(IInstruction instruction) : base(instruction) {}
+        private readonly IInstruction _instruction;
+
+        protected NewWriteContextInstructionBase(IInstruction instruction)
+        {
+            _instruction = instruction;
+        }
+
+        protected override void ExecuteContext(IWriting services) => services.ApplyExtensions(_instruction);
     }
 }

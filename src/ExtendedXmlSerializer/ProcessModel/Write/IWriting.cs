@@ -24,10 +24,11 @@
 using System;
 using System.Collections.Immutable;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
+    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IExtensions, IServiceProvider
     {
         void Attach(IProperty property);
         IImmutableList<IProperty> GetProperties();

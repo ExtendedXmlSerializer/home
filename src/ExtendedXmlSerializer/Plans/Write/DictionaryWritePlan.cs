@@ -57,9 +57,7 @@ namespace ExtendedXmlSerialization.Plans.Write
 
             var template = new EmitInstanceInstruction(
                                new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)),
-                               new ExtensionEnabledInstruction(new EmitDictionaryPairInstruction(
-                                                                   new ExtensionEnabledInstruction(key),
-                                                                   new ExtensionEnabledInstruction(value)))
+                               new EmitDictionaryPairInstruction(key, value)
                            );
 
             var result = new CompositeInstruction(_members.For(type), new EmitDictionaryItemsInstruction(template));

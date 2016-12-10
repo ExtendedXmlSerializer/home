@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
@@ -41,12 +43,12 @@ namespace ExtendedXmlSerialization.Instructions.Write
         {
             using (services.New(instance.Key))
             {
-                _key.Execute(services);
+                services.ApplyExtensions(_key);
             }
 
             using (services.New(instance.Value))
             {
-                _value.Execute(services);
+                services.ApplyExtensions(_value);
             }
         }
     }

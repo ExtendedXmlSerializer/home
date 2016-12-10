@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Plans.Write
 
             var result = new CompositeInstruction(
                              _members.For(type),
-                             new EmitEnumerableInstruction(new ExtensionEnabledInstruction(template))
+                             new EmitEnumerableInstruction(template)
                          );
             return result;
         }
