@@ -23,6 +23,7 @@
 
 using System;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
@@ -43,7 +44,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         {
             switch (services.Current.State)
             {
-                case WriteState.Member:
+                case ProcessState.Member:
                     return services.Current.Member != null && FromMember(services.Current.Member.Value);
             }
             return true;

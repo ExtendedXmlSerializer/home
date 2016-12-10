@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Extensibility.Write;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Specifications;
 
@@ -39,7 +40,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
                 var context = parameter.GetMemberContext().GetValueOrDefault();
                 switch (context.State)
                 {
-                    case WriteState.MemberValue:
+                    case ProcessState.MemberValue:
                         var member = context.Member.GetValueOrDefault();
                         var result = member.IsWritable && member.Value.GetType() != member.MemberType;
                         return result;

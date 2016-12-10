@@ -29,9 +29,9 @@ using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using WriteState = ExtendedXmlSerialization.ProcessModel.Write.WriteState;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         {
             switch (services.Current.State)
             {
-                case WriteState.Instance:
+                case ProcessState.Instance:
                     var set = _contexts.Get(services).Elements;
                     foreach (var item in Arrays.Default.AsArray(services.Current.Instance))
                     {
@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                         }
                     }
                     break;
-                case WriteState.Members:
+                case ProcessState.Members:
                     var instance = services.Current.Instance;
                     var configuration = _factory.GetConfiguration(instance.GetType());
                     if (configuration?.IsObjectReference ?? false)
@@ -102,7 +102,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         {
             switch (services.Current.State)
             {
-                case WriteState.Instance:
+                case ProcessState.Instance:
                     var instance = services.Current.Instance;
                     if (Arrays.Default.Is(instance))
                     {

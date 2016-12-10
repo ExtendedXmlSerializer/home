@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public struct WriteContext
     {
-        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
+        public WriteContext(ProcessState state, object root, object instance, IImmutableList<MemberInfo> members,
                             MemberContext? member)
         {
             State = state;
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             Member = member;
         }
 
-        public WriteState State { get; }
+        public ProcessState State { get; }
         public object Root { get; }
         public object Instance { get; }
         public IImmutableList<MemberInfo> Members { get; }

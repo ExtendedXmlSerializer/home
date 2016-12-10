@@ -28,6 +28,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Profiles;
 using ExtendedXmlSerialization.Sources;
@@ -145,7 +146,7 @@ namespace ExtendedXmlSerialization.Test
             {
                 switch (services.Current.State)
                 {
-                    case WriteState.Instance:
+                    case ProcessState.Instance:
                         services.Attach(new AttachedProperty("Hello World!  This is an attached property."));
                         break;
                 }
@@ -191,7 +192,7 @@ namespace ExtendedXmlSerialization.Test
             {
                 switch (services.Current.State)
                 {
-                    case WriteState.Instance:
+                    case ProcessState.Instance:
                         var instance = services.Current.Instance;
                         if (instance is int)
                         {

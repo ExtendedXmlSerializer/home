@@ -23,6 +23,7 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
@@ -39,7 +40,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         {
             switch (services.Current.State)
             {
-                case WriteState.Members:
+                case ProcessState.Members:
                     var instance = services.Current.Instance;
                     var configuration = _factory.GetConfiguration(instance.GetType());
                     if (configuration != null)

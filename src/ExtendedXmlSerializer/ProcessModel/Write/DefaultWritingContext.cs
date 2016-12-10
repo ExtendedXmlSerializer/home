@@ -62,20 +62,20 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 throw new InvalidOperationException(
                           "A request to start a new writing context was made, but it has already started.");
             }
-            return New(new WriteContext(WriteState.Root, root, null, null, null));
+            return New(new WriteContext(ProcessState.Root, root, null, null, null));
         }
 
         public IDisposable New(object instance)
         {
             var previous = _chain.Peek();
-            var result = New(new WriteContext(WriteState.Instance, previous.Root, instance, null, null));
+            var result = New(new WriteContext(ProcessState.Instance, previous.Root, instance, null, null));
             return result;
         }
 
         public IDisposable New(IImmutableList<MemberInfo> members)
         {
             var previous = _chain.Peek();
-            var result = New(new WriteContext(WriteState.Members, previous.Root, previous.Instance, members, null));
+            var result = New(new WriteContext(ProcessState.Members, previous.Root, previous.Instance, members, null));
             return result;
         }
 
@@ -83,7 +83,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         {
             var previous = _chain.Peek();
             var found = MemberContexts.Default.Locate(previous.Instance, member);
-            var context = new WriteContext(WriteState.Member, previous.Root, previous.Instance, previous.Members,
+            var context = new WriteContext(ProcessState.Member, previous.Root, previous.Instance, previous.Members,
                                            found);
             var result = New(context);
             return result;
@@ -92,7 +92,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public IDisposable ToMemberContext()
         {
             var previous = _chain.Peek();
-            var context = new WriteContext(WriteState.MemberValue, previous.Root, previous.Instance, previous.Members,
+            var context = new WriteContext(ProcessState.MemberValue, previous.Root, previous.Instance, previous.Members,
                                            previous.Member);
             var result = New(context);
             return result;

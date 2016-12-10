@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ProcessModel.Write
+namespace ExtendedXmlSerialization.ProcessModel
 {
-    public enum WriteState
+    public enum ProcessState
     {
         Root,
         Instance,
