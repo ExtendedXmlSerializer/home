@@ -56,8 +56,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public void Emit(object instance) => _writer.Emit(instance);
         public void Emit(IProperty property) => _writer.Emit(property);
 
-        public void Dispose() => _writer.Dispose();
-
         public void Attach(IProperty property) => _properties.Attach(_context.Current.Instance, property);
 
         public IImmutableList<IProperty> GetProperties()

@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.Services
 {
-    public class CompositeServiceProvider : WeakCacheBase<Type, object>, IServiceProvider
+    public class CompositeServiceProvider : WeakCacheBase<Type, object>, IDisposable, IServiceProvider
     {
         private readonly IEnumerable<IServiceProvider> _providers;
         private readonly IEnumerable<object> _services;
@@ -66,6 +66,25 @@ namespace ExtendedXmlSerialization.Services
                 }
             }
             return null;
+        }
+
+        ~CompositeServiceProvider()
+        {
+            OnDispose(false);
+        }
+
+        public void Dispose()
+        {
+            OnDispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void OnDispose(bool disposing)
+        {
+            foreach (var result in _services.OfType<IDisposable>())
+            {
+                result.Dispose();
+            }
         }
     }
 }

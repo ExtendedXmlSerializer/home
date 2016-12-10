@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
             var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
             var result = new Writing(writer, context, _locator
-                                     /*services:*/, _services, context, parameter, settings, xmlWriter, writer);
+                                     /*services:*/, _services, context, settings, writer, xmlWriter);
             return result;
         }
     }

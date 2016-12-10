@@ -84,7 +84,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public void Dispose()
         {
             _writer.WriteEndDocument();
-            _writer.Dispose();
+            // _writer.Dispose();
         }
     }
 }
