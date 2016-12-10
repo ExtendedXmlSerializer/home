@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Extensibility
         public virtual bool IsSatisfiedBy(T services) => true;
 
 
-        void IExtension.Executing(IServiceProvider services)
+        /*void IExtension.Executing(IServiceProvider services)
         {
             if (services is T)
             {
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Extensibility
             {
                 Executed((T) services);
             }
-        }
+        }*/
 
         void IExtension.Complete(IServiceProvider services)
         {
@@ -57,8 +57,8 @@ namespace ExtendedXmlSerialization.Extensibility
             }
         }
 
-        public virtual void Executing(T services) {}
-        public virtual void Executed(T services) {}
+        /*public virtual void Executing(T services) {}
+        public virtual void Executed(T services) {}*/
         public virtual void Completed(T services) {}
     }
 }

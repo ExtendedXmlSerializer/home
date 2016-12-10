@@ -32,8 +32,8 @@ namespace ExtendedXmlSerialization.Extensibility
 
     public interface IExtension
     {
-        void Executing(IServiceProvider services);
-        void Executed(IServiceProvider services);
+        /*void Executing(IServiceProvider services);
+        void Executed(IServiceProvider services);*/
 
         void Complete(IServiceProvider services);
     }

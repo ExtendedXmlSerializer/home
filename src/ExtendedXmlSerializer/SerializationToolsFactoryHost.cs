@@ -70,15 +70,8 @@ namespace ExtendedXmlSerialization
 
     public interface IExtensionRegistry
     {
-        void Register(ProcessState state, IExtensionSpecification specification);
-        void Register(ProcessState state, ProcessStage stage, IExtension extension);
-    }
-
-    public enum ProcessStage
-    {
-        Executing,
-        Executed,
-        Complete
+        void RegisterSpecification(ProcessState state, IExtensionSpecification specification);
+        void Register(ProcessState state, IExtension extension);
     }
 
     public interface IExtensionDefinition : IExtension
@@ -91,21 +84,8 @@ namespace ExtendedXmlSerialization
         readonly IDictionary<ProcessState, ICollection<IExtensionSpecification>> _specifications =
             new Dictionary<ProcessState, ICollection<IExtensionSpecification>>();
 
-        readonly IDictionary<ProcessState, ICollection<IExtension>> _executing =
-            new Dictionary<ProcessState, ICollection<IExtension>>();
-
-        readonly IDictionary<ProcessState, ICollection<IExtension>> _executed =
-            new Dictionary<ProcessState, ICollection<IExtension>>();
-
         readonly IDictionary<ProcessState, ICollection<IExtension>> _complete =
             new Dictionary<ProcessState, ICollection<IExtension>>();
-
-        readonly ImmutableArray<IDictionary<ProcessState, ICollection<IExtension>>> _extensions;
-
-        public ExtensionRegistry()
-        {
-            _extensions = new[] {_executing, _executed, _complete}.ToImmutableArray();
-        }
 
         public void RegisterSpecification(ProcessState state, IExtensionSpecification specification)
         {
@@ -116,23 +96,13 @@ namespace ExtendedXmlSerialization
             _specifications[state].Add(specification);
         }
 
-        public void Register(ProcessState state, IExtensionSpecification specification)
+        public void Register(ProcessState state, IExtension extension)
         {
-            if (!_specifications.ContainsKey(state))
+            if (!_complete.ContainsKey(state))
             {
-                _specifications[state] = new OrderedSet<IExtensionSpecification>();
+                _complete[state] = new OrderedSet<IExtension>();
             }
-            _specifications[state].Add(specification);
-        }
-
-        public void Register(ProcessState state, ProcessStage stage, IExtension extension)
-        {
-            var dictionary = _extensions[(int) stage];
-            if (!dictionary.ContainsKey(state))
-            {
-                dictionary[state] = new OrderedSet<IExtension>();
-            }
-            dictionary[state].Add(extension);
+            _complete[state].Add(extension);
         }
 
         ProcessState DetermineState(IServiceProvider services) => ((IWriting) services).Current.State;
@@ -153,7 +123,7 @@ namespace ExtendedXmlSerialization
             return true;
         }
 
-        public void Executing(IServiceProvider services)
+        /*public void Executing(IServiceProvider services)
         {
             var state = DetermineState(services);
             if (_executing.ContainsKey(state))
@@ -175,7 +145,7 @@ namespace ExtendedXmlSerialization
                     extension.Executed(services);
                 }
             }
-        }
+        }*/
 
         public void Complete(IServiceProvider services)
         {

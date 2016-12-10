@@ -36,9 +36,7 @@ namespace ExtendedXmlSerialization.Instructions
             var extension = services.Get<IExtensions>();
             if (extension?.IsSatisfiedBy(services) ?? true)
             {
-                extension?.Executing(services);
                 base.OnExecute(services);
-                extension?.Executed(services);
             }
             extension?.Complete(services);
         }

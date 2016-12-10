@@ -33,9 +33,9 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         VersionExtension() {}
 
         public override void Accept(IExtensionRegistry registry)
-            => registry.Register(ProcessState.Members, ProcessStage.Executing, this);
+            => registry.RegisterSpecification(ProcessState.Members, this);
 
-        public override void Executing(IWriting services)
+        public override bool IsSatisfiedBy(IWriting services)
         {
             var instance = services.Current.Instance;
             var configuration =
@@ -48,6 +48,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                     services.Attach(new VersionProperty(services.Get(this), version));
                 }
             }
+            return base.IsSatisfiedBy(services);
         }
     }
 }

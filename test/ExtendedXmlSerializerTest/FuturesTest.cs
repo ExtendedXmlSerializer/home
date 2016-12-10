@@ -145,12 +145,13 @@ namespace ExtendedXmlSerialization.Test
             public static AttachedPropertyExtension Default { get; } = new AttachedPropertyExtension();
             AttachedPropertyExtension() {}
 
-            public override void Executing(IWriting services)
+            public override bool IsSatisfiedBy(IWriting services)
             {
                 services.Attach(new AttachedProperty("Hello World!  This is an attached property."));
+                return base.IsSatisfiedBy(services);
             }
 
-            public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Instance, ProcessStage.Executing, this);
+            public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Instance, this);
         }
 
         class AttachedProperty : PropertyBase
@@ -199,7 +200,7 @@ namespace ExtendedXmlSerialization.Test
                 return true;
             }
 
-            public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Instance, this);
+            public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Instance, this);
         }
 
         [Fact]

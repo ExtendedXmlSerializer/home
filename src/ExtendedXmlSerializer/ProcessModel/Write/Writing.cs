@@ -80,8 +80,8 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public Uri Get(object parameter) => _locator.Get(parameter);
 
         public bool IsSatisfiedBy(IServiceProvider parameter) => _extensions.IsSatisfiedBy(parameter);
-        public void Executing(IServiceProvider services) => _extensions.Executing(services);
-        public void Executed(IServiceProvider services) => _extensions.Executed(services);
+        /*public void Executing(IServiceProvider services) => _extensions.Executing(services);
+        public void Executed(IServiceProvider services) => _extensions.Executed(services);*/
         public void Complete(IServiceProvider services) => _extensions.Complete(services);
     }
 }

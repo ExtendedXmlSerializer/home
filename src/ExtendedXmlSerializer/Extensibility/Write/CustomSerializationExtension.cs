@@ -51,6 +51,6 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             return true;
         }
 
-        public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Members, this);
+        public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Members, this);
     }
 }
