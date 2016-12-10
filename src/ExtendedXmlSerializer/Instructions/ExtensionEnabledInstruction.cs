@@ -33,12 +33,14 @@ namespace ExtendedXmlSerialization.Instructions
 
         protected override void OnExecute(IServiceProvider services)
         {
-            var extension = services.Get<IExtension>();
-            if (extension?.Starting(services) ?? true)
+            var extension = services.Get<IExtensions>();
+            if (extension?.IsSatisfiedBy(services) ?? true)
             {
+                extension?.Executing(services);
                 base.OnExecute(services);
+                extension?.Executed(services);
             }
-            extension?.Finished(services);
+            extension?.Complete(services);
         }
     }
 }

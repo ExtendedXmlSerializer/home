@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization
@@ -41,7 +40,7 @@ namespace ExtendedXmlSerialization
         }
 
         public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
-        public IList<IExtension> Extensions => _host.Extensions;
+        public IList<IExtensionDefinition> Extensions => _host.Extensions;
         public IExtendedXmlSerializerConfig GetConfiguration(Type type) => _host.GetConfiguration(type);
         public IPropertyEncryption EncryptionAlgorithm => _host.EncryptionAlgorithm;
         public IWritingContext New() => _host.New();

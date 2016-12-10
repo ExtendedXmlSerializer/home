@@ -23,9 +23,8 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
@@ -34,8 +33,7 @@ namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfile : SerializationProfileBase
     {
-        readonly private static DefaultWritingExtensions DefaultWritingExtensions =
-            new DefaultWritingExtensions(EmitTypeForInstanceInstruction.Default);
+        readonly private static object[] Services = Profiles.Services.Default.ToArray();
 
         private readonly IPlan _plan;
         private readonly INamespaces _namespaces;
@@ -48,9 +46,8 @@ namespace ExtendedXmlSerialization.Profiles
                 new NamespaceLocator(identifier),
                 new RootNamespace(identifier)) {}
 
-        SerializationProfile(IPlan plan, INamespaceLocator locator,
-                             INamespace root)
-            : this(plan, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, MemberValueAssignedExtension.Default, DefaultWritingExtensions) {}
+        SerializationProfile(IPlan plan, INamespaceLocator locator, INamespace root)
+            : this(plan, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, Services) {}
 
         public SerializationProfile(IPlan plan,
                                     INamespaces namespaces,

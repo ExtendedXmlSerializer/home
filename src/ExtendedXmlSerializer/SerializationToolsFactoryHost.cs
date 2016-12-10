@@ -26,32 +26,29 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.Extensibility.Write;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization
 {
-    public class SerializationToolsFactoryHost : ServiceRepository, IExtension, ISerializationToolsFactoryHost
+    public class SerializationToolsFactoryHost : ServiceRepository, ISerializationToolsFactoryHost
     {
         private readonly Func<IWritingContext> _context;
-        private readonly IExtension _extension;
 
         public SerializationToolsFactoryHost(IImmutableList<object> services)
             : this(() => new DefaultWritingContext(), services) {}
 
         public SerializationToolsFactoryHost(Func<IWritingContext> context,
                                              IImmutableList<object> services)
-            : this(context, new OrderedSet<IExtension>(services.OfType<IExtension>()), services) {}
+            : this(context, new OrderedSet<IExtensionDefinition>(services.OfType<IExtensionDefinition>()), services) {}
 
-        public SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtension> extensions,
-                                             IEnumerable<object> services) : this(context, extensions, new CompositeExtension(extensions), services)
-        {}
-
-        SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtension> extensions, IExtension extension,
+        public SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtensionDefinition> extensions,
                                              IEnumerable<object> services) : base(services)
         {
             _context = context;
-            _extension = extension;
             Extensions = extensions;
         }
 
@@ -61,13 +58,135 @@ namespace ExtendedXmlSerialization
 
         public void Assign(ISerializationToolsFactory factory) => Factory = factory;
 
-        public IList<IExtension> Extensions { get; }
+        public IList<IExtensionDefinition> Extensions { get; }
 
         public IExtendedXmlSerializerConfig GetConfiguration(Type type) => Factory?.GetConfiguration(type);
 
         public IPropertyEncryption EncryptionAlgorithm => Factory?.EncryptionAlgorithm;
-        public bool Starting(IServiceProvider services) => _extension.Starting(services);
 
-        public void Finished(IServiceProvider services) => _extension.Finished(services);
+        /*public bool Starting(IServiceProvider services) => _extension.Starting(services);
+        public void Completed(IServiceProvider services) => _extension.Completed(services);*/
+    }
+
+    public interface IExtensionRegistry
+    {
+        void Register(ProcessState state, IExtensionSpecification specification);
+        void Register(ProcessState state, ProcessStage stage, IExtension extension);
+    }
+
+    public enum ProcessStage
+    {
+        Executing,
+        Executed,
+        Complete
+    }
+
+    public interface IExtensionDefinition : IExtension
+    {
+        void Accept(IExtensionRegistry registry);
+    }
+
+    class ExtensionRegistry : IExtensionRegistry, IExtensions
+    {
+        readonly IDictionary<ProcessState, ICollection<IExtensionSpecification>> _specifications =
+            new Dictionary<ProcessState, ICollection<IExtensionSpecification>>();
+
+        readonly IDictionary<ProcessState, ICollection<IExtension>> _executing =
+            new Dictionary<ProcessState, ICollection<IExtension>>();
+
+        readonly IDictionary<ProcessState, ICollection<IExtension>> _executed =
+            new Dictionary<ProcessState, ICollection<IExtension>>();
+
+        readonly IDictionary<ProcessState, ICollection<IExtension>> _complete =
+            new Dictionary<ProcessState, ICollection<IExtension>>();
+
+        readonly ImmutableArray<IDictionary<ProcessState, ICollection<IExtension>>> _extensions;
+
+        public ExtensionRegistry()
+        {
+            _extensions = new[] {_executing, _executed, _complete}.ToImmutableArray();
+        }
+
+        public void RegisterSpecification(ProcessState state, IExtensionSpecification specification)
+        {
+            if (!_specifications.ContainsKey(state))
+            {
+                _specifications[state] = new OrderedSet<IExtensionSpecification>();
+            }
+            _specifications[state].Add(specification);
+        }
+
+        public void Register(ProcessState state, IExtensionSpecification specification)
+        {
+            if (!_specifications.ContainsKey(state))
+            {
+                _specifications[state] = new OrderedSet<IExtensionSpecification>();
+            }
+            _specifications[state].Add(specification);
+        }
+
+        public void Register(ProcessState state, ProcessStage stage, IExtension extension)
+        {
+            var dictionary = _extensions[(int) stage];
+            if (!dictionary.ContainsKey(state))
+            {
+                dictionary[state] = new OrderedSet<IExtension>();
+            }
+            dictionary[state].Add(extension);
+        }
+
+        ProcessState DetermineState(IServiceProvider services) => ((IWriting) services).Current.State;
+
+        public bool IsSatisfiedBy(IServiceProvider services)
+        {
+            var state = DetermineState(services);
+            if (_specifications.ContainsKey(state))
+            {
+                foreach (var specification in _specifications[state])
+                {
+                    if (!specification.IsSatisfiedBy(services))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public void Executing(IServiceProvider services)
+        {
+            var state = DetermineState(services);
+            if (_executing.ContainsKey(state))
+            {
+                foreach (var extension in _executing[state])
+                {
+                    extension.Executing(services);
+                }
+            }
+        }
+
+        public void Executed(IServiceProvider services)
+        {
+            var state = DetermineState(services);
+            if (_executed.ContainsKey(state))
+            {
+                foreach (var extension in _executed[state])
+                {
+                    extension.Executed(services);
+                }
+            }
+        }
+
+        public void Complete(IServiceProvider services)
+        {
+            var state = DetermineState(services);
+            if (_complete.ContainsKey(state))
+            {
+                foreach (var extension in _complete[state])
+                {
+                    extension.Complete(services);
+                }
+            }
+        }
     }
 }

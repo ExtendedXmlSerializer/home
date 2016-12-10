@@ -25,20 +25,40 @@ using System;
 
 namespace ExtendedXmlSerialization.Extensibility
 {
-    public abstract class ExtensionBase<T> : IExtension<T> where T : IServiceProvider
+    public abstract class ExtensionBase<T> : IExtensionSpecification, IExtensionDefinition where T : IServiceProvider
     {
-        bool IExtension.Starting(IServiceProvider services) => !(services is T) || Starting((T) services);
+        public abstract void Accept(IExtensionRegistry registry);
 
-        public abstract bool Starting(T services);
+        public bool IsSatisfiedBy(IServiceProvider parameter) => !(parameter is T) || IsSatisfiedBy((T) parameter);
+        public virtual bool IsSatisfiedBy(T services) => true;
 
-        void IExtension.Finished(IServiceProvider services)
+
+        void IExtension.Executing(IServiceProvider services)
         {
             if (services is T)
             {
-                Finished((T) services);
+                Executing((T) services);
             }
         }
 
-        public abstract void Finished(T services);
+        void IExtension.Executed(IServiceProvider services)
+        {
+            if (services is T)
+            {
+                Executed((T) services);
+            }
+        }
+
+        void IExtension.Complete(IServiceProvider services)
+        {
+            if (services is T)
+            {
+                Completed((T) services);
+            }
+        }
+
+        public virtual void Executing(T services) {}
+        public virtual void Executed(T services) {}
+        public virtual void Completed(T services) {}
     }
 }

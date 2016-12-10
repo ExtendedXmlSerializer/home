@@ -38,22 +38,19 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _instruction = instruction;
         }
 
-        public override bool Starting(IWriting services)
+        public override bool IsSatisfiedBy(IWriting services)
         {
-            switch (services.Current.State)
+            var instance = services.Current.Instance;
+            var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
+            if (configuration?.IsCustomSerializer ?? false)
             {
-                case ProcessState.Members:
-                    var instance = services.Current.Instance;
-                    var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
-                    if (configuration?.IsCustomSerializer ?? false)
-                    {
-                        _instruction.Execute(services);
-                        configuration.WriteObject(services.GetValid<XmlWriter>(), instance);
-                        return false;
-                    }
-                    break;
+                _instruction.Execute(services);
+                configuration.WriteObject(services.GetValid<XmlWriter>(), instance);
+                return false;
             }
             return true;
         }
+
+        public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Members, this);
     }
 }

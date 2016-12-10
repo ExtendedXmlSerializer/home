@@ -22,18 +22,19 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Extensibility
 {
-    public interface IExtension<in T> : IExtension where T : IServiceProvider
-    {
-        bool Starting(T services);
-        void Finished(T services);
-    }
+    public interface IExtensionSpecification : ISpecification<IServiceProvider> {}
+
+    public interface IExtensions : IExtensionSpecification, IExtension {}
 
     public interface IExtension
     {
-        bool Starting(IServiceProvider services);
-        void Finished(IServiceProvider services);
+        void Executing(IServiceProvider services);
+        void Executed(IServiceProvider services);
+
+        void Complete(IServiceProvider services);
     }
 }

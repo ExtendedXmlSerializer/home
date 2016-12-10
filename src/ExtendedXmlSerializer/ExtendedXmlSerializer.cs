@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization
             set { _serialization.Assign(value); }
         }
 
-        public IList<IExtension> Extensions => _serialization.Extensions;
+        public IList<IExtensionDefinition> Extensions => _serialization.Extensions;
         
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string

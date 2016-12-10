@@ -21,19 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    public abstract class WritingExtensionBase : ExtensionBase<IWriting>, IWritingExtension
-    {
-        public override bool Starting(IWriting services) => true;
-        bool IExtension.Starting(IServiceProvider services) => Starting(services.AsValid<IWriting>());
-
-        void IExtension.Finished(IServiceProvider services) => Finished(services.AsValid<IWriting>());
-
-        public override void Finished(IWriting services) {}
-    }
+    public abstract class WritingExtensionBase : ExtensionBase<IWriting> {}
 }

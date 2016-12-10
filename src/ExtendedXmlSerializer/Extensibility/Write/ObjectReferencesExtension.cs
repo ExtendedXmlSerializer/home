@@ -22,13 +22,9 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection;
-using System.Xml;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Instructions;
-using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
@@ -45,70 +41,64 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _instruction = instruction;
         }
 
-        public override bool Starting(IWriting services)
+        public override void Accept(IExtensionRegistry registry)
         {
-            switch (services.Current.State)
+            registry.Register(ProcessState.Members, this);
+            registry.Register(ProcessState.Instance, ProcessStage.Executing, this);
+            registry.Register(ProcessState.Instance, ProcessStage.Executed, this);
+        }
+
+        public override bool IsSatisfiedBy(IWriting services)
+        {
+            var instance = services.Current.Instance;
+            var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
+            if (configuration?.IsObjectReference ?? false)
             {
-                case ProcessState.Instance:
-                    var set = _contexts.Get(services).Elements;
-                    foreach (var item in Arrays.Default.AsArray(services.Current.Instance))
-                    {
-                        if (!set.Contains(item))
-                        {
-                            set.Add(item);
-                        }
-                    }
-                    break;
-                case ProcessState.Members:
-                    var instance = services.Current.Instance;
-                    var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
-                    if (configuration?.IsObjectReference ?? false)
-                    {
-                        var context = _contexts.Get(services);
-                        var elements = context.Elements;
-                        var references = context.References;
-                        var objectId = configuration.GetObjectId(instance);
-                        var contains = references.Contains(instance);
-                        var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
-                        var @namespace = services.Get(this);
-                        var property = reference
-                            ? (IProperty) new ObjectReferenceProperty(@namespace, objectId)
-                            : new ObjectIdProperty(@namespace, objectId);
-                        var result = !reference;
-                        if (result)
-                        {
-                            services.Attach(property);
-                            references.Add(instance);
-                        }
-                        else
-                        {
-                            // TODO: Find a more elegant way to handle this:
-                            if (DefaultEmitTypeSpecification.Default.IsSatisfiedBy(services))
-                            {
-                                _instruction.Execute(services);
-                            }
-                            services.Emit(property);
-                        }
-                        return result;
-                    }
-                    break;
+                var context = _contexts.Get(services);
+                var elements = context.Elements;
+                var references = context.References;
+                var objectId = configuration.GetObjectId(instance);
+                var contains = references.Contains(instance);
+                var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
+                var @namespace = services.Get(this);
+                var property = reference
+                    ? (IProperty) new ObjectReferenceProperty(@namespace, objectId)
+                    : new ObjectIdProperty(@namespace, objectId);
+                var result = !reference;
+                if (result)
+                {
+                    services.Attach(property);
+                    references.Add(instance);
+                }
+                else
+                {
+                    _instruction.Execute(services);
+                    services.Emit(property);
+                }
+                return result;
             }
             return true;
         }
 
-        public override void Finished(IWriting services)
+        public override void Executing(IWriting services)
         {
-            switch (services.Current.State)
+            var set = _contexts.Get(services).Elements;
+            foreach (var item in Arrays.Default.AsArray(services.Current.Instance))
             {
-                case ProcessState.Instance:
-                    var instance = services.Current.Instance;
-                    if (Arrays.Default.Is(instance))
-                    {
-                        _contexts.Get(services).Elements.Clear();
-                    }
-                   break;
+                if (!set.Contains(item))
+                {
+                    set.Add(item);
+                }
             }
-            base.Finished(services);
+        }
+
+        public override void Executed(IWriting services)
+        {
+            var instance = services.Current.Instance;
+            if (Arrays.Default.Is(instance))
+            {
+                _contexts.Get(services).Elements.Clear();
+            }
         }
 
         class Context

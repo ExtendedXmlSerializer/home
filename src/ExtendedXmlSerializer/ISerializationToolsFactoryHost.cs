@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
 
@@ -33,6 +33,6 @@ namespace ExtendedXmlSerialization
 
         void Assign(ISerializationToolsFactory factory);
 
-        IList<IExtension> Extensions { get; }
+        IList<IExtensionDefinition> Extensions { get; }
     }
 }

@@ -32,25 +32,22 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         public static VersionExtension Default { get; } = new VersionExtension();
         VersionExtension() {}
 
-        public override bool Starting(IWriting services)
+        public override void Accept(IExtensionRegistry registry)
+            => registry.Register(ProcessState.Members, ProcessStage.Executing, this);
+
+        public override void Executing(IWriting services)
         {
-            switch (services.Current.State)
+            var instance = services.Current.Instance;
+            var configuration =
+                services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
+            if (configuration != null)
             {
-                case ProcessState.Members:
-                    var instance = services.Current.Instance;
-                    var configuration =
-                        services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
-                    if (configuration != null)
-                    {
-                        var version = configuration.Version;
-                        if (version > 0)
-                        {
-                            services.Attach(new VersionProperty(services.Get(this), version));
-                        }
-                    }
-                    break;
+                var version = configuration.Version;
+                if (version > 0)
+                {
+                    services.Attach(new VersionProperty(services.Get(this), version));
+                }
             }
-            return true;
         }
     }
 }

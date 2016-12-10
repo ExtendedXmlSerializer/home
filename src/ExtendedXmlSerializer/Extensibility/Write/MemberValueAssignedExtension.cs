@@ -40,15 +40,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _values = values;
         }
 
-        public override bool Starting(IWriting services)
-        {
-            switch (services.Current.State)
-            {
-                case ProcessState.Member:
-                    return services.Current.Member != null && FromMember(services.Current.Member.Value);
-            }
-            return true;
-        }
+        public override bool IsSatisfiedBy(IWriting services) => services.Current.Member != null && FromMember(services.Current.Member.Value);
 
         protected virtual bool FromMember(MemberContext member)
         {
@@ -56,5 +48,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             var result = !Equals(member.Value, defaultValue);
             return result;
         }
+
+        public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Member, this);
     }
 }

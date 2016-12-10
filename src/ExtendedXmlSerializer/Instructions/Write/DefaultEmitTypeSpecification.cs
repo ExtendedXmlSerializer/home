@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Specifications;
 
-namespace ExtendedXmlSerialization.Plans.Write
+namespace ExtendedXmlSerialization.Instructions.Write
 {
     class DefaultEmitTypeSpecification : ISpecification<IWritingContext>
     {

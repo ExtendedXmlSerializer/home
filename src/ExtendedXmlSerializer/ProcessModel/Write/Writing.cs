@@ -27,27 +27,30 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class Writing : CompositeServiceProvider, IWriting
+    public class Writing : CompositeServiceProvider, IExtensions, IWriting
     {
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
         private readonly INamespaceLocator _locator;
+        private readonly IExtensions _extensions;
         private readonly IWritingContext _context;
         
-        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, params object[] services)
-            : this(writer, context, AttachedProperties.Default, locator, services) {}
+        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, IExtensions extensions, params object[] services)
+            : this(writer, context, AttachedProperties.Default, locator, extensions, services) {}
 
         public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties,
-                       INamespaceLocator locator, params object[] services) : base(services)
+                       INamespaceLocator locator, IExtensions extensions, params object[] services) : base(services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
             _locator = locator;
+            _extensions = extensions;
         }
 
         public void Start(IRootElement root) => _writer.Start(root);
@@ -75,5 +78,10 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public WriteContext Current => _context.Current;
         public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
         public Uri Get(object parameter) => _locator.Get(parameter);
+
+        public bool IsSatisfiedBy(IServiceProvider parameter) => _extensions.IsSatisfiedBy(parameter);
+        public void Executing(IServiceProvider services) => _extensions.Executing(services);
+        public void Executed(IServiceProvider services) => _extensions.Executed(services);
+        public void Complete(IServiceProvider services) => _extensions.Complete(services);
     }
 }

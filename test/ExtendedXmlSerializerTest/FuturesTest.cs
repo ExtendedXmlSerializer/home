@@ -145,16 +145,12 @@ namespace ExtendedXmlSerialization.Test
             public static AttachedPropertyExtension Default { get; } = new AttachedPropertyExtension();
             AttachedPropertyExtension() {}
 
-            public override bool Starting(IWriting services)
+            public override void Executing(IWriting services)
             {
-                switch (services.Current.State)
-                {
-                    case ProcessState.Instance:
-                        services.Attach(new AttachedProperty("Hello World!  This is an attached property."));
-                        break;
-                }
-                return true;
+                services.Attach(new AttachedProperty("Hello World!  This is an attached property."));
             }
+
+            public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Instance, ProcessStage.Executing, this);
         }
 
         class AttachedProperty : PropertyBase
@@ -191,22 +187,19 @@ namespace ExtendedXmlSerialization.Test
             public static SkipUnluckyNumberExtension Default { get; } = new SkipUnluckyNumberExtension();
             SkipUnluckyNumberExtension() {}
 
-            public override bool Starting(IWriting services)
+            public override bool IsSatisfiedBy(IWriting services)
             {
-                switch (services.Current.State)
+                var instance = services.Current.Instance;
+                if (instance is int)
                 {
-                    case ProcessState.Instance:
-                        var instance = services.Current.Instance;
-                        if (instance is int)
-                        {
-                            var integer = (int) instance;
-                            var result = integer != 13;
-                            return result;
-                        }
-                        break;
+                    var integer = (int) instance;
+                    var result = integer != 13;
+                    return result;
                 }
                 return true;
             }
+
+            public override void Accept(IExtensionRegistry registry) => registry.Register(ProcessState.Instance, this);
         }
 
         [Fact]
