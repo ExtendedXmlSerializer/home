@@ -22,46 +22,37 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfile : SerializationProfileBase
     {
+        readonly private static DefaultWritingExtensions DefaultWritingExtensions =
+            new DefaultWritingExtensions(EmitTypeForInstanceInstruction.Default);
+
         private readonly IPlan _plan;
         private readonly INamespaces _namespaces;
         private readonly INamespaceLocator _locator;
-        private readonly Func<IWritingContext> _context;
-        private readonly IInstruction _emitType;
-        private readonly object[] _services;
+        private readonly IImmutableList<object> _services;
 
         public SerializationProfile(IInstructionSpecification specification, Uri identifier)
-            : this(specification, () => new DefaultWritingContext(), identifier, MemberValueAssignedExtension.Default) {}
-
-        public SerializationProfile(IInstructionSpecification specification, Func<IWritingContext> context,
-                                    Uri identifier, params object[] services)
             : this(
-                new PlanMaker(new Plans.Write.Plans(specification)).Make(), context, EmitTypeForInstanceInstruction.Default,
+                new PlanMaker(new Plans.Write.Plans(specification)).Make(),
                 new NamespaceLocator(identifier),
-                new RootNamespace(identifier), services) {}
+                new RootNamespace(identifier)) {}
 
-        SerializationProfile(IPlan plan, Func<IWritingContext> context, IInstruction emitType, INamespaceLocator locator,
-                             INamespace root, params object[] services)
-            : this(
-                plan, context, emitType, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root,
-                services) {}
+        SerializationProfile(IPlan plan, INamespaceLocator locator,
+                             INamespace root)
+            : this(plan, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, MemberValueAssignedExtension.Default, DefaultWritingExtensions) {}
 
-        public SerializationProfile(IPlan plan, Func<IWritingContext> context,
-                                    IInstruction emitType,
+        public SerializationProfile(IPlan plan,
                                     INamespaces namespaces,
                                     INamespaceLocator locator, INamespace root, params object[] services)
             : base(root)
@@ -69,25 +60,19 @@ namespace ExtendedXmlSerialization.Profiles
             _plan = plan;
             _namespaces = namespaces;
             _locator = locator;
-            _context = context;
-            _emitType = emitType;
-            _services = services;
+            _services = services.ToImmutableList();
         }
 
         public override ISerialization New()
         {
-            var host = new SerializationToolsFactoryHost();
-            var services = new ServiceRepository(_services);
-            var items =
-                _services.OfType<IExtension>()
-                         .Concat(new IExtension[] {new DefaultWritingExtensions(host, _emitType)})
-                         .ToArray(); // Should probably move out to a factory.
-            var extensions = new OrderedSet<IExtension>(items);
-            var factory = new WritingFactory(_locator, _namespaces, host, services, _context,
-                                             new CompositeExtension(extensions));
+            var host = CreateHost(_services);
+            var factory = new WritingFactory(host, _locator, _namespaces);
             var serializer = new Serializer(_plan, factory);
-            var result = new Serialization(host, serializer, services, extensions);
+            var result = new Serialization(host, serializer);
             return result;
         }
+
+        protected virtual ISerializationToolsFactoryHost CreateHost(IImmutableList<object> services) =>
+            new SerializationToolsFactoryHost(services);
     }
 }

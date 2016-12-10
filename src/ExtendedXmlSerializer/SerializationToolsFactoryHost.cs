@@ -22,23 +22,52 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization
 {
-	public class SerializationToolsFactoryHost : ISerializationToolsFactoryHost
-	{
-		public SerializationToolsFactoryHost() {}
+    public class SerializationToolsFactoryHost : ServiceRepository, IExtension, ISerializationToolsFactoryHost
+    {
+        private readonly Func<IWritingContext> _context;
+        private readonly IExtension _extension;
 
-		public SerializationToolsFactoryHost(ISerializationToolsFactory factory)
-		{
-			Factory = factory;
-		}
+        public SerializationToolsFactoryHost(IImmutableList<object> services)
+            : this(() => new DefaultWritingContext(), services) {}
 
-		ISerializationToolsFactory Factory { get; set; }
+        public SerializationToolsFactoryHost(Func<IWritingContext> context,
+                                             IImmutableList<object> services)
+            : this(context, new OrderedSet<IExtension>(services.OfType<IExtension>()), services) {}
 
-		public void Assign(ISerializationToolsFactory factory) => Factory = factory;
-		public IExtendedXmlSerializerConfig GetConfiguration(Type type) => Factory?.GetConfiguration(type);
+        public SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtension> extensions,
+                                             IEnumerable<object> services) : this(context, extensions, new CompositeExtension(extensions), services)
+        {}
 
-		public IPropertyEncryption EncryptionAlgorithm => Factory?.EncryptionAlgorithm;
-	}
+        SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtension> extensions, IExtension extension,
+                                             IEnumerable<object> services) : base(services)
+        {
+            _context = context;
+            _extension = extension;
+            Extensions = extensions;
+        }
+
+        ISerializationToolsFactory Factory { get; set; }
+
+        public IWritingContext New() => _context();
+
+        public void Assign(ISerializationToolsFactory factory) => Factory = factory;
+
+        public IList<IExtension> Extensions { get; }
+
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => Factory?.GetConfiguration(type);
+
+        public IPropertyEncryption EncryptionAlgorithm => Factory?.EncryptionAlgorithm;
+        public bool Starting(IServiceProvider services) => _extension.Starting(services);
+
+        public void Finished(IServiceProvider services) => _extension.Finished(services);
+    }
 }

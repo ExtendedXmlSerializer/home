@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization
         {
             _serialization = serialization;
             SerializationToolsFactory = tools;
-            serialization.Add(this);
+            Add(this);
         }
 
         /// <summary>

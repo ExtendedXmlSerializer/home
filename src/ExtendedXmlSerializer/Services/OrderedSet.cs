@@ -37,13 +37,10 @@ namespace ExtendedXmlSerialization.Services
         private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
         private readonly LinkedList<T> _linkedList;
 
-        public OrderedSet()
-            : this(Items) {}
-
-        public OrderedSet(params T[] items)
-            : this(EqualityComparer<T>.Default, items) {}
-
-        public OrderedSet(IEqualityComparer<T> comparer, params T[] items)
+        public OrderedSet() : this(Items) {}
+        public OrderedSet(params T[] items) : this(EqualityComparer<T>.Default, items) {}
+        public OrderedSet(IEnumerable<T> items) : this(EqualityComparer<T>.Default, items) {}
+        public OrderedSet(IEqualityComparer<T> comparer, IEnumerable<T> items)
         {
             _dictionary = new Dictionary<T, LinkedListNode<T>>(comparer);
             _linkedList = new LinkedList<T>();

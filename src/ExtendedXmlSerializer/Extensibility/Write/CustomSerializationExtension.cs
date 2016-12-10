@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.ProcessModel;
@@ -33,12 +31,10 @@ namespace ExtendedXmlSerialization.Extensibility.Write
 {
     public class CustomSerializationExtension : WritingExtensionBase
     {
-        private readonly ISerializationToolsFactory _factory;
         private readonly IInstruction _instruction;
 
-        public CustomSerializationExtension(ISerializationToolsFactory factory, IInstruction instruction)
+        public CustomSerializationExtension(IInstruction instruction)
         {
-            _factory = factory;
             _instruction = instruction;
         }
 
@@ -48,14 +44,14 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             {
                 case ProcessState.Members:
                     var instance = services.Current.Instance;
-                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
                     if (configuration?.IsCustomSerializer ?? false)
                     {
                         _instruction.Execute(services);
-                        configuration.WriteObject(services.Get<XmlWriter>(), instance);
+                        configuration.WriteObject(services.GetValid<XmlWriter>(), instance);
                         return false;
                     }
-                   break;
+                    break;
             }
             return true;
         }

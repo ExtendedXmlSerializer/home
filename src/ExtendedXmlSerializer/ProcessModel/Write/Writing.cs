@@ -31,29 +31,24 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class Writing : IWriting
+    public class Writing : CompositeServiceProvider, IWriting
     {
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
         private readonly INamespaceLocator _locator;
         private readonly IWritingContext _context;
-        private readonly IServiceProvider _services;
-
+        
         public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, params object[] services)
-            : this(writer, context, AttachedProperties.Default, locator, new CompositeServiceProvider(services)) {}
+            : this(writer, context, AttachedProperties.Default, locator, services) {}
 
         public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties,
-                       INamespaceLocator locator, IServiceProvider services)
+                       INamespaceLocator locator, params object[] services) : base(services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
             _locator = locator;
-            _services = services;
         }
-
-        public object GetService(Type serviceType)
-            => serviceType.GetTypeInfo().IsInstanceOfType(this) ? this : _services.GetService(serviceType);
 
         public void Start(IRootElement root) => _writer.Start(root);
         public void Begin(IElement element) => _writer.Begin(element);

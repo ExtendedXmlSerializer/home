@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.IO;
 using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization
 {
@@ -34,28 +33,20 @@ namespace ExtendedXmlSerialization
     {
         private readonly ISerializationToolsFactoryHost _host;
         private readonly ISerializer _serializer;
-        private readonly IServiceRepository _services;
 
-        public Serialization(
-            ISerializationToolsFactoryHost host,
-            ISerializer serializer,
-            IServiceRepository services,
-            IList<IExtension> extensions
-        )
+        public Serialization(ISerializationToolsFactoryHost host, ISerializer serializer)
         {
             _host = host;
             _serializer = serializer;
-            _services = services;
-            Extensions = extensions;
         }
 
         public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
-        public IList<IExtension> Extensions { get; }
-
+        public IList<IExtension> Extensions => _host.Extensions;
         public IExtendedXmlSerializerConfig GetConfiguration(Type type) => _host.GetConfiguration(type);
         public IPropertyEncryption EncryptionAlgorithm => _host.EncryptionAlgorithm;
+        public IWritingContext New() => _host.New();
         public void Assign(ISerializationToolsFactory factory) => _host.Assign(factory);
-        public object GetService(Type serviceType) => _services.GetService(serviceType);
-        public void Add(object service) => _services.Add(service);
+        public object GetService(Type serviceType) => _host.GetService(serviceType);
+        public void Add(object service) => _host.Add(service);
     }
 }

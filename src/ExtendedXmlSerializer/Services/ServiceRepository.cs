@@ -27,9 +27,11 @@ namespace ExtendedXmlSerialization.Services
 {
     public class ServiceRepository : CompositeServiceProvider, IServiceRepository
     {
+        protected static object[] Services { get; } = {};
+
         private readonly ICollection<object> _services;
 
-        public ServiceRepository(params object[] services) : this(new OrderedSet<object>(services)) {}
+        public ServiceRepository(IEnumerable<object> services) : this(new OrderedSet<object>(services)) {}
 
         public ServiceRepository(ICollection<object> services) : base(services)
         {

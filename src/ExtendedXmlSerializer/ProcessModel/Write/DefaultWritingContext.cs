@@ -108,5 +108,10 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 }
             }
         }
+
+        public string Serialize(object instance)
+        {
+            return null;
+        }
     }
 }

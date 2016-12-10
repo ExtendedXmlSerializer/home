@@ -21,49 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.IO;
 using System.Xml;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class WritingFactory : IWritingFactory
     {
+        private readonly ISerializationToolsFactoryHost _services;
         private readonly INamespaceLocator _locator;
         private readonly INamespaces _namespaces;
-        private readonly ISerializationToolsFactory _tools;
-        private readonly IServiceProvider _services;
-        private readonly IExtension _extension;
-        private readonly Func<IWritingContext> _context;
 
         public WritingFactory(
+            ISerializationToolsFactoryHost services,
             INamespaceLocator locator,
-            INamespaces namespaces,
-            ISerializationToolsFactory tools,
-            IServiceProvider services,
-            Func<IWritingContext> context, IExtension extension)
+            INamespaces namespaces
+        )
         {
             _locator = locator;
             _namespaces = namespaces;
-            _tools = tools;
             _services = services;
-            _extension = extension;
-            _context = context;
         }
 
         public IWriting Get(Stream parameter)
         {
-            var context = _context();
+            var context = _services.New();
             var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
             var xmlWriter = XmlWriter.Create(parameter, settings);
-            var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_tools, context), _tools);
+            var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
             var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
             var result = new Writing(writer, context, _locator
-                                     /*services:*/, serializer, _extension, _tools, _services, this, parameter, context,
-                                     settings, xmlWriter, serializer, writer);
+                                     /*services:*/, _services, context, parameter, settings, xmlWriter, writer);
             return result;
         }
     }

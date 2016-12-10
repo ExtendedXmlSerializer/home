@@ -24,13 +24,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Profiles;
+using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -226,8 +229,11 @@ namespace ExtendedXmlSerialization.Test
         {
             public LuckyProfile()
                 : base(
-                    AutoAttributeSpecification.Default, () => new DefaultWritingContext(ContextAlteration.Default),
+                    AutoAttributeSpecification.Default,
                     new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/futures/lucky")) {}
+
+            protected override ISerializationToolsFactoryHost CreateHost(IImmutableList<object> services) 
+                => new SerializationToolsFactoryHost(() => new DefaultWritingContext(ContextAlteration.Default), services);
         }
 
         class ContextAlteration : IAlteration<WriteContext>

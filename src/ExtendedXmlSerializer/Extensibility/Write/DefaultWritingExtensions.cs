@@ -22,15 +22,19 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Instructions.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
     class DefaultWritingExtensions : CompositeExtension
     {
-        public DefaultWritingExtensions(ISerializationToolsFactory factory, IInstruction instruction) : base(
-            new ObjectReferencesExtension(factory, instruction),
-            new VersionExtension(factory),
-            new CustomSerializationExtension(factory, instruction)
+        public static DefaultWritingExtensions Default { get; } = new DefaultWritingExtensions();
+        DefaultWritingExtensions() : this(EmitTypeInstruction.Default) {}
+
+        public DefaultWritingExtensions(IInstruction instruction) : base(
+            new ObjectReferencesExtension(instruction),
+            VersionExtension.Default,
+            new CustomSerializationExtension(instruction)
         ) {}
     }
 }

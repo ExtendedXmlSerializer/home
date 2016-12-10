@@ -21,20 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
     public class VersionExtension : WritingExtensionBase
     {
-        private readonly ISerializationToolsFactory _factory;
-        public VersionExtension(ISerializationToolsFactory factory)
-        {
-            _factory = factory;
-        }
+        public static VersionExtension Default { get; } = new VersionExtension();
+        VersionExtension() {}
 
         public override bool Starting(IWriting services)
         {
@@ -42,7 +38,8 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             {
                 case ProcessState.Members:
                     var instance = services.Current.Instance;
-                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    var configuration =
+                        services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
                     if (configuration != null)
                     {
                         var version = configuration.Version;
@@ -51,7 +48,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                             services.Attach(new VersionProperty(services.Get(this), version));
                         }
                     }
-                   break;
+                    break;
             }
             return true;
         }

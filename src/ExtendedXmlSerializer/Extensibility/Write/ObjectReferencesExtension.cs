@@ -38,12 +38,10 @@ namespace ExtendedXmlSerialization.Extensibility.Write
     public class ObjectReferencesExtension : WritingExtensionBase
     {
         private readonly WeakCache<IWriting, Context> _contexts = new WeakCache<IWriting, Context>(_ => new Context());
-        private readonly ISerializationToolsFactory _factory;
         private readonly IInstruction _instruction;
 
-        public ObjectReferencesExtension(ISerializationToolsFactory factory, IInstruction instruction)
+        public ObjectReferencesExtension(IInstruction instruction)
         {
-            _factory = factory;
             _instruction = instruction;
         }
 
@@ -63,7 +61,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                     break;
                 case ProcessState.Members:
                     var instance = services.Current.Instance;
-                    var configuration = _factory.GetConfiguration(instance.GetType());
+                    var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
                     if (configuration?.IsObjectReference ?? false)
                     {
                         var context = _contexts.Get(services);
