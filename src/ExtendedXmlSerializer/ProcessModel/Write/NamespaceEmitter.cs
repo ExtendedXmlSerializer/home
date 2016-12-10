@@ -21,30 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Cache;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public struct MemberContext
+    class NamespaceEmitter : INamespaceEmitter
     {
-        public MemberContext(MemberInfo member, object value = null)
-            : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
+        private const string Prefix = "xmlns";
+        private readonly XmlWriter _writer;
+        private readonly INamespaces _namespaces;
 
-        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
+        public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
         {
-            Metadata = metadata;
-            DisplayName = displayName;
-            MemberType = memberType;
-            IsWritable = isWritable;
-            Value = value;
+            _writer = writer;
+            _namespaces = namespaces;
         }
 
-        public MemberInfo Metadata { get; }
-        public string DisplayName { get; }
-        public Type MemberType { get; }
-        public bool IsWritable { get; }
-        public object Value { get; }
+        public void Execute(object instance)
+        {
+            var list = _namespaces.Get(instance);
+            foreach (var pair in list)
+            {
+                _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
+            }
+        }
     }
 }

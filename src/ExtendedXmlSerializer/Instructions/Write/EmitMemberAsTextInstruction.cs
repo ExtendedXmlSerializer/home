@@ -25,7 +25,7 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Services.Write;
+using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {

@@ -26,9 +26,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Sources;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class DefaultWritingContext : IWritingContext
     {

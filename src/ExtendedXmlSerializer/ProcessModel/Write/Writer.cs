@@ -26,7 +26,7 @@ using System.Xml;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Writer : IWriter
     {

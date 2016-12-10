@@ -27,7 +27,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
     {

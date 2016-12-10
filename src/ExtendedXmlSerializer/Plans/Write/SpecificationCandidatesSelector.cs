@@ -24,8 +24,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Write;
 using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.Plans.Write

@@ -28,7 +28,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Plans.Write;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class MemberContexts : WeakCacheBase<object, IImmutableList<MemberContext>>
     {

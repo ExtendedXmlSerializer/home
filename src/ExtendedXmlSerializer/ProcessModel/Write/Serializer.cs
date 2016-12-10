@@ -24,7 +24,7 @@
 using System.IO;
 using ExtendedXmlSerialization.Plans;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Serializer : ISerializer
     {

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class WritingFactory : IWritingFactory
     {

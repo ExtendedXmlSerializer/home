@@ -22,14 +22,15 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
 using ExtendedXmlSerialization.Elements;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IServiceProvider
+    class DefaultNamespaceLocator : INamespaceLocator
     {
-        void Attach(IProperty property);
-        IImmutableList<IProperty> GetProperties();
+        public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
+        DefaultNamespaceLocator() {}
+
+        public Uri Get(object parameter) => null;
     }
 }

@@ -27,8 +27,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Services;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Writing : IWriting
     {

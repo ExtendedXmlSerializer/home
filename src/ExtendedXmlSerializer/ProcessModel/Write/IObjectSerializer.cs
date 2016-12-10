@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface INamespaceEmitter
+    public interface IObjectSerializer
     {
-        void Execute(object instance);
+        string Serialize(object instance);
     }
 }

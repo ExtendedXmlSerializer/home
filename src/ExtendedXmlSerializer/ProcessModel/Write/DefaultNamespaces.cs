@@ -21,14 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Services.Write
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Elements;
+
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public enum WriteState
+    class DefaultNamespaces : INamespaces
     {
-        Root,
-        Instance,
-        Members,
-        Member,
-        MemberValue
+        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
+        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
+
+        private readonly IImmutableList<INamespace> _namespaces;
+
+
+        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
+        {
+            _namespaces = namespaces;
+        }
+
+        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
     }
 }

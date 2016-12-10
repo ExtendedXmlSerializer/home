@@ -21,29 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    class NamespaceEmitter : INamespaceEmitter
+    public enum WriteState
     {
-        private const string Prefix = "xmlns";
-        private readonly XmlWriter _writer;
-        private readonly INamespaces _namespaces;
-
-        public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
-        {
-            _writer = writer;
-            _namespaces = namespaces;
-        }
-
-        public void Execute(object instance)
-        {
-            var list = _namespaces.Get(instance);
-            foreach (var pair in list)
-            {
-                _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
-            }
-        }
+        Root,
+        Instance,
+        Members,
+        Member,
+        MemberValue
     }
 }

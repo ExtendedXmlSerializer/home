@@ -21,27 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
-
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public struct WriteContext
+    public interface INamespaceEmitter
     {
-        public WriteContext(WriteState state, object root, object instance, IImmutableList<MemberInfo> members,
-                            MemberContext? member)
-        {
-            State = state;
-            Root = root;
-            Instance = instance;
-            Members = members;
-            Member = member;
-        }
-
-        public WriteState State { get; }
-        public object Root { get; }
-        public object Instance { get; }
-        public IImmutableList<MemberInfo> Members { get; }
-        public MemberContext? Member { get; }
+        void Execute(object instance);
     }
 }

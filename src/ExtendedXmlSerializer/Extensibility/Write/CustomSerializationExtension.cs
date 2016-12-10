@@ -25,9 +25,9 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Write;
-using WriteState = ExtendedXmlSerialization.Services.Write.WriteState;
+using WriteState = ExtendedXmlSerialization.ProcessModel.Write.WriteState;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {

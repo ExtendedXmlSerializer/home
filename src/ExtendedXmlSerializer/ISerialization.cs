@@ -22,8 +22,8 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Write;
 
 namespace ExtendedXmlSerialization
 {

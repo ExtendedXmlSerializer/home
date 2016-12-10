@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using System.IO;
+using ExtendedXmlSerialization.Sources;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface ISerializer
-    {
-        void Serialize(Stream stream, object instance);
-    }
+    public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
 }

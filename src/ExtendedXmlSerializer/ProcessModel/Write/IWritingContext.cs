@@ -21,24 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Elements;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    class DefaultNamespaces : INamespaces
+    public interface IWritingContext
     {
-        public static DefaultNamespaces Default { get; } = new DefaultNamespaces();
-        DefaultNamespaces() : this(new INamespace[0].ToImmutableList()) {}
+        WriteContext Current { get; }
+        IEnumerable<WriteContext> Hierarchy { get; }
 
-        private readonly IImmutableList<INamespace> _namespaces;
-
-
-        public DefaultNamespaces(IImmutableList<INamespace> namespaces)
-        {
-            _namespaces = namespaces;
-        }
-
-        public IImmutableList<INamespace> Get(object parameter) => _namespaces;
+        IDisposable Start(object root);
+        IDisposable New(object instance);
+        IDisposable New(IImmutableList<MemberInfo> members);
+        IDisposable New(MemberInfo member);
+        IDisposable ToMemberContext();
     }
 }

@@ -25,7 +25,7 @@ using System;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans.Write;
-using ExtendedXmlSerialization.Services.Write;
+using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Profiles
 {

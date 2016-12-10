@@ -30,8 +30,8 @@ using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Services.Write;
 
 namespace ExtendedXmlSerialization.Profiles
 {

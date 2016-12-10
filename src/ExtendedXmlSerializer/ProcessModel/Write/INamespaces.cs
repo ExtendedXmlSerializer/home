@@ -21,10 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Services.Write
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Sources;
+
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IObjectSerializer
-    {
-        string Serialize(object instance);
-    }
+    public interface INamespaces : IParameterizedSource<object, IImmutableList<INamespace>> {}
 }

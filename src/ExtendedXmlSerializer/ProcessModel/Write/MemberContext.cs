@@ -22,15 +22,30 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Elements;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Services;
 
-namespace ExtendedXmlSerialization.Services.Write
+namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    class DefaultNamespaceLocator : INamespaceLocator
+    public struct MemberContext
     {
-        public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
-        DefaultNamespaceLocator() {}
+        public MemberContext(MemberInfo member, object value = null)
+            : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), value) {}
 
-        public Uri Get(object parameter) => null;
+        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable, object value)
+        {
+            Metadata = metadata;
+            DisplayName = displayName;
+            MemberType = memberType;
+            IsWritable = isWritable;
+            Value = value;
+        }
+
+        public MemberInfo Metadata { get; }
+        public string DisplayName { get; }
+        public Type MemberType { get; }
+        public bool IsWritable { get; }
+        public object Value { get; }
     }
 }

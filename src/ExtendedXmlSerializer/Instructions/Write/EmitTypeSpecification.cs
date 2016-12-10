@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Services.Write;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Instructions.Write
