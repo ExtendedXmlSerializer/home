@@ -44,9 +44,7 @@ namespace ExtendedXmlSerialization.Plans.Write
 
     public class InstructionCandidateSpecification<T> : InstructionCandidateSpecification
     {
-        public static InstructionCandidateSpecification<T> Default { get; } = new InstructionCandidateSpecification<T>()
-            ;
-
+        public static InstructionCandidateSpecification<T> Default { get; } = new InstructionCandidateSpecification<T>();
         InstructionCandidateSpecification() : this(AlwaysSpecification<T>.Default) {}
 
         public InstructionCandidateSpecification(ISpecification<T> specification)

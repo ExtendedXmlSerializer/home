@@ -37,6 +37,14 @@ namespace ExtendedXmlSerialization.Plans.Write
 
         public IEnumerable<object> Get(object parameter)
         {
+            if (parameter is MemberContext)
+            {
+                var context = (MemberContext) parameter;
+                yield return context.Value;
+                yield return context.Metadata;
+                yield return context.MemberType;
+            }
+
             var property = parameter as IProperty;
             if (property != null)
             {
@@ -47,14 +55,6 @@ namespace ExtendedXmlSerialization.Plans.Write
             if (member != null)
             {
                 yield return member.GetMemberType();
-            }
-
-            if (parameter is MemberContext)
-            {
-                var context = (MemberContext) parameter;
-                yield return context.Value;
-                yield return context.Metadata;
-                yield return context.MemberType;
             }
 
             yield return parameter;

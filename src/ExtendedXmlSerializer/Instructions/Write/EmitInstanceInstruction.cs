@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
             : this(new FixedNameProvider(name), instruction) {}
 
         public EmitInstanceInstruction(MemberContext member, IInstruction instruction)
-            : this(new MemberInfoElementProvider(member), instruction) {}
+            : this(new MemberElementProvider(member), instruction) {}
 
         public EmitInstanceInstruction(IElementProvider provider, IInstruction instruction) : base(instruction)
         {

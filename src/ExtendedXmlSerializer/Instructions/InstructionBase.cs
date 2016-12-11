@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public abstract class InstructionBase<T> : IInstruction where T : IServiceProvider
+    public abstract class InstructionBase<T> : IInstruction
     {
         public virtual void Execute(IServiceProvider services) => OnExecute(services.AsValid<T>());
 

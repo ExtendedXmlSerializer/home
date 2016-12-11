@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    class MemberInfoElementProvider : IElementProvider
+    class MemberElementProvider : IElementProvider
     {
         private readonly MemberContext _member;
 
-        public MemberInfoElementProvider(MemberContext member)
+        public MemberElementProvider(MemberContext member)
         {
             _member = member;
         }

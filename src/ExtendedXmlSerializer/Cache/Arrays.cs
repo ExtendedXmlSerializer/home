@@ -24,15 +24,23 @@
 using System;
 using System.Collections;
 using System.Linq;
+using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Cache
 {
     class Arrays : WeakCache<object, Array>
     {
+        private readonly ISpecification<Type> _specification;
         readonly static Array Array = (object[]) Enumerable.Empty<object>();
 
         public static Arrays Default { get; } = new Arrays();
-        Arrays() : base(key => null) {}
+        private Arrays() : this(IsEnumerableTypeSpecification.Default) {}
+
+        Arrays(ISpecification<Type> specification) : base(key => null)
+        {
+            _specification = specification;
+        }
 
         public Array AsArray(object instance)
         {
@@ -48,6 +56,6 @@ namespace ExtendedXmlSerialization.Cache
             return result;
         }
 
-        public bool Is(object instance) => TypeDefinitionCache.GetDefinition(instance.GetType()).IsEnumerable;
+        public bool Is(object instance) => _specification.IsSatisfiedBy(instance.GetType());
     }
 }
