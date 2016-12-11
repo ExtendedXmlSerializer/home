@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    /*class DefaultEmitTypeForInstanceInstruction : EmitTypeForInstanceInstruction
+    class DefaultEmitTypeForInstanceInstruction : EmitTypeForInstanceInstruction
     {
         public new static DefaultEmitTypeForInstanceInstruction Default { get; } = new DefaultEmitTypeForInstanceInstruction();
         DefaultEmitTypeForInstanceInstruction() : base(DefaultEmitTypeSpecification.Default) {}
-    }*/
+    }
 
     class EmitTypeForInstanceInstruction : ConditionalInstruction<IWriting>
     {

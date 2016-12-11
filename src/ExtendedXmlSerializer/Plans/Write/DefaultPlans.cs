@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Plans.Write
         DefaultPlans()
             : base(
                 DefaultInstructionSpecification.Default, DefaultTemplateElementProvider.Default,
-                DefaultEmitTypeSpecification.Default, EmitTypeInstruction.Default) {}
+                DefaultEmitTypeForInstanceInstruction.Default, EmitTypeInstruction.Default) {}
     }
 }

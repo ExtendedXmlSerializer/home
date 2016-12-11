@@ -46,6 +46,14 @@ namespace ExtendedXmlSerialization.Services
                 yield return element1;
         }
 
+		public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, params T[] items ) => @this.Concat( items );
+		public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, T element )
+		{
+			foreach ( var element1 in @this )
+				yield return element1;
+			yield return element;
+		}
+
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
         // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057

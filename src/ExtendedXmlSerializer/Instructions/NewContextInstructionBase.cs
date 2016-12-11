@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.Instructions
         {
             using (DetermineContext(services))
             {
-                ExecuteContext(services);
+                ApplyContext(services);
             }
         }
 
-        protected abstract void ExecuteContext(T services);
+        protected abstract void ApplyContext(T services);
 
-        protected abstract IDisposable DetermineContext(T writing);
+        protected abstract IDisposable DetermineContext(T services);
     }
 }

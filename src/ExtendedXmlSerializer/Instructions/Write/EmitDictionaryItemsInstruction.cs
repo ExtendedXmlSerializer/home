@@ -23,7 +23,6 @@
 
 using System;
 using System.Collections;
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
@@ -44,7 +43,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
             {
                 using (New(services, item))
                 {
-                    services.ApplyExtensions(_template);
+                    _template.ExecuteWithExtensions(services);
                 }
             }
         }

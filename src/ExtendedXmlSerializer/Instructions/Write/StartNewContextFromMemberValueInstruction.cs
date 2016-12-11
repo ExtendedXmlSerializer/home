@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
     class StartNewContextFromMemberValueInstruction : NewWriteContextInstructionBase
     {
         public StartNewContextFromMemberValueInstruction(IInstruction instruction) : base(instruction) {}
-        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.Member?.Value);
+        protected override IDisposable DetermineContext(IWriting services) => services.New(services.Current.Member?.Value);
     }
 }

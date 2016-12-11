@@ -34,16 +34,16 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         /// <summary>
         /// TODO: Should put this in an instruction.
         /// </summary>
+        /// <param name="services"></param>
         /// <param name="this"></param>
-        /// <param name="instruction"></param>
-        public static void ApplyExtensions(this IWriting @this, IInstruction instruction) => ApplyExtensions(@this, @this, instruction);
-        public static void ApplyExtensions(this IExtensions @this, IServiceProvider services, IInstruction instruction)
+        public static void ExecuteWithExtensions(this IInstruction @this, IWriting services) => ExecuteWithExtensions(@this, services, services);
+        public static void ExecuteWithExtensions(this IInstruction @this, IExtensions extensions, IServiceProvider services)
         {
-            if (@this.IsSatisfiedBy(services))
+            if (extensions.IsSatisfiedBy(services))
             {
-                instruction.Execute(services);
+                @this.Execute(services);
             }
-            @this.Complete(services);
+            extensions.Complete(services);
         }
 
         public static WriteContext? Parent(this IWritingContext @this, int level = 1)

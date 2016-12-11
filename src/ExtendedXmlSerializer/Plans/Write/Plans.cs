@@ -24,8 +24,6 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Instructions.Write;
-using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Plans.Write
 {
@@ -33,26 +31,27 @@ namespace ExtendedXmlSerialization.Plans.Write
     {
         private readonly IInstructionSpecification _specification;
         private readonly ITemplateElementProvider _provider;
-        private readonly ISpecification<IWritingContext> _emitTypeSpecification;
-        private readonly IInstruction _emitType;
+        private readonly IInstruction _emitMemberType, _emitType;
 
         public Plans(IInstructionSpecification specification)
-            : this(specification, FixedTemplateElementProvider.Default, EmitTypeSpecification.Default, EmitTypeForInstanceInstruction.Default) {}
+            : this(specification, FixedTemplateElementProvider.Default, EmitTypeForInstanceInstruction.Default) {}
+
+        public Plans(IInstructionSpecification specification, ITemplateElementProvider provider, IInstruction emitType)
+            : this(specification, provider, emitType, emitType) {}
 
         public Plans(IInstructionSpecification specification, ITemplateElementProvider provider,
-                     ISpecification<IWritingContext> emitTypeSpecification, IInstruction emitType)
+                     IInstruction emitMemberType, IInstruction emitType)
         {
             _specification = specification;
             _provider = provider;
-            _emitTypeSpecification = emitTypeSpecification;
+            _emitMemberType = emitMemberType;
             _emitType = emitType;
         }
 
         public IEnumerable<IPlan> Get(IPlan parameter)
         {
             var factory = new MemberInstructionFactory(parameter, _specification);
-            var emitType = new ConditionalInstruction<IWriting>(_emitTypeSpecification, _emitType);
-            var members = new InstanceMembersWritePlan(parameter, emitType, _specification, factory);
+            var members = new InstanceMembersWritePlan(parameter, _emitMemberType, _specification, factory);
 
             yield return PrimitiveWritePlan.Default;
             yield return new DictionaryWritePlan(parameter, members);

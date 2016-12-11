@@ -25,10 +25,10 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    class EmitInstanceAsTextInstruction : WriteInstructionBase
+    class EmitCurrentInstanceInstruction : WriteInstructionBase
     {
-        public static EmitInstanceAsTextInstruction Default { get; } = new EmitInstanceAsTextInstruction();
-        EmitInstanceAsTextInstruction() {}
+        public static EmitCurrentInstanceInstruction Default { get; } = new EmitCurrentInstanceInstruction();
+        EmitCurrentInstanceInstruction() {}
 
         protected override void OnExecute(IWriting services) => services.Emit(services.Current.Instance);
     }

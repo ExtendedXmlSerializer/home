@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
@@ -36,6 +35,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
             _instruction = instruction;
         }
 
-        protected override void ExecuteContext(IWriting services) => services.ApplyExtensions(_instruction);
+        protected override void ApplyContext(IWriting services) => _instruction.ExecuteWithExtensions(services);
     }
 }

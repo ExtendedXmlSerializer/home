@@ -30,12 +30,12 @@ namespace ExtendedXmlSerialization.Plans
 {
     public class PlanSelector : IPlan
     {
-        readonly ICollection<IPlan> _providers;
+        readonly IEnumerable<IPlan> _providers;
 
         readonly WeakCache<Type, ICollection<IAssignableInstruction>> _placeholders =
             new WeakCache<Type, ICollection<IAssignableInstruction>>(key => new HashSet<IAssignableInstruction>());
 
-        public PlanSelector(ICollection<IPlan> providers)
+        public PlanSelector(IEnumerable<IPlan> providers)
         {
             _providers = providers;
         }
@@ -70,10 +70,10 @@ namespace ExtendedXmlSerialization.Plans
             {
                 placeholders.Clear();
             }
-            return null;
+            throw new InvalidOperationException($"Could not find instructions for type '{type}'");
         }
 
-        class PlaceholderInstruction : IAssignableInstruction
+        sealed class PlaceholderInstruction : IAssignableInstruction
         {
             private IInstruction _instruction;
             public void Execute(IServiceProvider services) => _instruction?.Execute(services);

@@ -43,12 +43,12 @@ namespace ExtendedXmlSerialization.Instructions.Write
         {
             using (services.New(instance.Key))
             {
-                services.ApplyExtensions(_key);
+                _key.ExecuteWithExtensions(services);
             }
 
             using (services.New(instance.Value))
             {
-                services.ApplyExtensions(_value);
+                _value.ExecuteWithExtensions(services);
             }
         }
     }

@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
     {
         public StartNewContextFromRootInstruction(IInstruction instruction) : base(instruction) {}
 
-        protected override IDisposable DetermineContext(IWriting writing) => writing.New(writing.Current.Root);
+        protected override IDisposable DetermineContext(IWriting services) => services.New(services.Current.Root);
     }
 }

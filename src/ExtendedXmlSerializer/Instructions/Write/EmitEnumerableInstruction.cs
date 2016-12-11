@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
             {
                 using (services.New(item))
                 {
-                    services.ApplyExtensions(_template);
+                    _template.ExecuteWithExtensions(services);
                 }
             }
         }

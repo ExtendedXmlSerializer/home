@@ -35,26 +35,26 @@ namespace ExtendedXmlSerialization.Plans.Write
         PlanMaker() : this(DefaultPlans.Default) {}
 
         private readonly IAlteration<IPlan> _alteration;
-        private readonly IPlans _selector;
+        private readonly IPlans _source;
 
         public PlanMaker(IPlans selector) : this(Alteration, selector) {}
 
-        public PlanMaker(IAlteration<IPlan> alteration, IPlans selector)
+        public PlanMaker(IAlteration<IPlan> alteration, IPlans source)
         {
             _alteration = alteration;
-            _selector = selector;
+            _source = source;
         }
 
         public IPlan Make()
         {
             var plans = new OrderedSet<IPlan>();
-            var select = _alteration.Get(new PlanSelector(plans));
-            foreach (var plan in _selector.Get(select))
+            var selector = _alteration.Get(new PlanSelector(plans));
+            foreach (var plan in _source.Get(selector))
             {
                 plans.Add(plan);
             }
 
-            var result = _alteration.Get(new RootWritePlan(select));
+            var result = _alteration.Get(new RootWritePlan(selector));
             return result;
         }
     }

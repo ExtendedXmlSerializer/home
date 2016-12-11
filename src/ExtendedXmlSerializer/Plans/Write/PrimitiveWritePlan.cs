@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Plans.Write
     class PrimitiveWritePlan : ConditionalPlan
     {
         readonly private static IPlan Emit =
-            new FixedPlan(EmitInstanceAsTextInstruction.Default);
+            new FixedPlan(EmitCurrentInstanceInstruction.Default);
 
         public static PrimitiveWritePlan Default { get; } = new PrimitiveWritePlan();
         PrimitiveWritePlan() : base(IsPrimitiveSpecification.Default.IsSatisfiedBy, Emit) {}

@@ -29,22 +29,16 @@ namespace ExtendedXmlSerialization.Plans.Write
 {
     class RootWritePlan : IPlan
     {
-        private readonly IPlan _selector;
+        private readonly IPlan _content;
 
-        public RootWritePlan(IPlan selector)
+        public RootWritePlan(IPlan content)
         {
-            _selector = selector;
+            _content = content;
         }
 
-        public IInstruction For(Type type)
-        {
-            var content = _selector.For(type);
-            if (content == null)
-            {
-                throw new InvalidOperationException($"Could not find instruction for type '{type}'");
-            }
-            var result = new StartNewContextFromRootInstruction(new EmitRootInstruction(content));
-            return result;
-        }
+        public IInstruction For(Type type) =>
+            new StartNewContextFromRootInstruction(
+                new EmitRootInstruction(_content.For(type))
+            );
     }
 }

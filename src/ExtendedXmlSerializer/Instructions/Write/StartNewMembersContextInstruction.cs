@@ -38,6 +38,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
             _members = members;
         }
 
-        protected override IDisposable DetermineContext(IWriting writing) => writing.New(_members);
+        protected override IDisposable DetermineContext(IWriting services) => services.New(_members);
     }
 }
