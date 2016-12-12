@@ -32,25 +32,25 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class Writing : CompositeServiceProvider, IWriting, IExtensions
+    public class Writing : CompositeServiceProvider, IWriting
     {
         private readonly IWriter _writer;
         private readonly IAttachedProperties _properties;
         private readonly INamespaceLocator _locator;
-        private readonly IExtensions _extensions;
+        //private readonly IExtensions _extensions;
         private readonly IWritingContext _context;
         
-        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, IExtensions extensions, params object[] services)
-            : this(writer, context, AttachedProperties.Default, locator, extensions, services) {}
+        public Writing(IWriter writer, IWritingContext context, INamespaceLocator locator, /*IExtensions extensions,*/ params object[] services)
+            : this(writer, context, AttachedProperties.Default, locator, /*extensions,*/ services) {}
 
         public Writing(IWriter writer, IWritingContext context, IAttachedProperties properties,
-                       INamespaceLocator locator, IExtensions extensions, params object[] services) : base(services)
+                       INamespaceLocator locator, /*IExtensions extensions,*/ params object[] services) : base(services)
         {
             _writer = writer;
             _context = context;
             _properties = properties;
             _locator = locator;
-            _extensions = extensions;
+            //_extensions = extensions;
         }
 
         public void Start(IRootElement root) => _writer.Start(root);
@@ -70,15 +70,15 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 
         public IDisposable Start(object root) => _context.Start(root);
         public IDisposable New(object instance) => _context.New(instance);
-        public IDisposable New(IImmutableList<MemberInfo> members) => _context.New(members);
-        public IDisposable New(MemberInfo member) => _context.New(member);
-        public IDisposable ToMemberContext() => _context.ToMemberContext();
+        public IDisposable New(IImmutableList<MemberContext> members) => _context.New(members);
+        public IDisposable New(MemberContext member) => _context.New(member);
+        // public IDisposable ToMemberContext() => _context.ToMemberContext();
 
         public WriteContext Current => _context.Current;
         public IEnumerable<WriteContext> Hierarchy => _context.Hierarchy;
         public Uri Get(object parameter) => _locator.Get(parameter);
 
-        public bool IsSatisfiedBy(IServiceProvider parameter) => _extensions.IsSatisfiedBy(parameter);
-        public void Complete(IServiceProvider services) => _extensions.Complete(services);
+        public bool IsSatisfiedBy(IServiceProvider parameter) => /*_extensions.IsSatisfiedBy(parameter)*/true;
+        public void Complete(IServiceProvider services) /*=> _extensions.Complete(services);*/ { }
     }
 }

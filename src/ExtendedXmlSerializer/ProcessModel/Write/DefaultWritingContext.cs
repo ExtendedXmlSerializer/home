@@ -72,31 +72,31 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             return result;
         }
 
-        public IDisposable New(IImmutableList<MemberInfo> members)
+        public IDisposable New(IImmutableList<MemberContext> members)
         {
             var previous = _chain.Peek();
             var result = New(new WriteContext(ProcessState.Members, previous.Root, previous.Instance, members, null));
             return result;
         }
 
-        public IDisposable New(MemberInfo member)
+        public IDisposable New(MemberContext member)
         {
             var previous = _chain.Peek();
-            var found = MemberContexts.Default.Locate(previous.Instance, member);
+            // var found = MemberContexts.Default.Locate(previous.Instance, member);
             var context = new WriteContext(ProcessState.Member, previous.Root, previous.Instance, previous.Members,
-                                           found);
+                                           member);
             var result = New(context);
             return result;
         }
 
-        public IDisposable ToMemberContext()
+        /*public IDisposable ToMemberContext()
         {
             var previous = _chain.Peek();
             var context = new WriteContext(ProcessState.MemberValue, previous.Root, previous.Instance, previous.Members,
                                            previous.Member);
             var result = New(context);
             return result;
-        }
+        }*/
 
         public IEnumerable<WriteContext> Hierarchy
         {

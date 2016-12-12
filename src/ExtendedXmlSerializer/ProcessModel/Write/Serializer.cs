@@ -24,9 +24,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
@@ -34,6 +34,7 @@ using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Instructions.Write;
 using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Specifications;
 
@@ -56,261 +57,322 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 using (writing.Start(instance))
                 {
-                    /*var instruction = Instructions.Default.Get(instance);
-                    instruction.Execute(writing);*/
-                    var instructions = Instructions.Default.Get(instance);// _plan.For(instance.GetType());
-                    foreach (var instruction in instructions)
+                    EmitRootInstruction.Default.Execute(writing);
+                }
+            }
+        }
+    }
+
+    class InstanceBodySelector : IParameterizedSource<IWriting, IInstruction>
+    {
+        public static InstanceBodySelector Default { get; } = new InstanceBodySelector();
+        InstanceBodySelector()
+            : this(
+                EmitCurrentInstanceInstruction.Default, EmitDictionaryInstruction.Default,
+                EmitEnumerableInstruction.Default, EmitInstanceMembersInstruction.Default) {}
+
+        private readonly IInstruction _primitive, _dictionary, _enumerable, _members;
+        
+        public InstanceBodySelector(IInstruction primitive, IInstruction dictionary, IInstruction enumerable,
+                                    IInstruction members)
+        {
+            _primitive = primitive;
+            _dictionary = dictionary;
+            _enumerable = enumerable;
+            _members = members;
+        }
+
+        public IInstruction Get(IWriting parameter)
+        {
+            var instance = parameter.Current.Instance;
+            var type = instance.GetType();
+            var definition = TypeDefinitionCache.GetDefinition(type);
+            if (definition.IsPrimitive)
+            {
+                return _primitive;
+            }
+
+            if (instance is IDictionary)
+            {
+                return _dictionary;
+            }
+
+            if (Arrays.Default.Is(instance))
+            {
+                return _enumerable;
+            }
+
+            if (definition.IsObjectToSerialize)
+            {
+                return _members;
+            }
+
+            throw new InvalidOperationException($"Could not find instructions for type '{type}'");
+        }
+    }
+
+    class EmitInstanceBodyInstruction : WriteInstructionBase
+    {
+        public static EmitInstanceBodyInstruction Default { get; } = new EmitInstanceBodyInstruction();
+        EmitInstanceBodyInstruction() : this(InstanceBodySelector.Default) {}
+
+        private readonly IParameterizedSource<IWriting, IInstruction> _selector;
+
+        public EmitInstanceBodyInstruction(IParameterizedSource<IWriting, IInstruction> selector)
+        {
+            _selector = selector;
+        }
+
+        protected override void OnExecute(IWriting services) => _selector.Get(services).Execute(services);
+    }
+
+    class EmitInstanceMembersInstruction : WriteInstructionBase
+    {
+        public static EmitInstanceMembersInstruction Default { get; } = new EmitInstanceMembersInstruction();
+        EmitInstanceMembersInstruction() : this(EmitTypeInstruction.Default) {}
+
+        private readonly Func<MemberContext, bool> _specification;
+        private readonly IInstruction _type, _property, _content;
+
+        public EmitInstanceMembersInstruction(IInstruction type)
+            : this(NeverSpecification<MemberContext>.Default.IsSatisfiedBy, type, EmitMemberAsTextInstruction.Default, EmitMemberInstruction.Default) {}
+
+        public EmitInstanceMembersInstruction(
+            Func<MemberContext, bool> specification,
+            IInstruction type,
+            IInstruction property, IInstruction content)
+        {
+            _specification = specification;
+            _type = type;
+            _property = property;
+            _content = content;
+        }
+
+        protected override void OnExecute(IWriting services)
+        {
+            var contexts = MemberContexts.Default.Get(services.Current.Instance);
+            using (services.New(contexts))
+            {
+                _type.Execute(services);
+
+                var categories = contexts.GroupBy(_specification).ToArray();
+                for (int index = 0; index < categories.Length; index++)
+                {
+                    var category = categories[index];
+                    var instruction = category.Key ? _property : _content;
+                    var array = category.ToArray();
+                    for (int i = 0; i < array.Length; i++)
                     {
-                        instruction.Execute(writing);
+                        using (services.New(array[i]))
+                        {
+                            instruction.Execute(services);
+                        }
                     }
                 }
             }
         }
     }
 
-    public interface IInstructions : IParameterizedSource<object, IImmutableList<IInstruction>> {}
-
-    class Instructions : /*WeakCacheBase<object, IImmutableList<IInstruction>>,*/ IInstructions
+    class DeferredInstruction : IInstruction
     {
-        private readonly Stack<IDisposable> _contexts = new Stack<IDisposable>();
-        private readonly Func<MemberContext, bool> _specification;
-        private readonly IInstruction _emitType, _membersType, _endContext;
-        private readonly ITemplateElementProvider _provider;
+        private readonly Lazy<IInstruction> _source;
 
-        public static Instructions Default { get; } = new Instructions();
-        Instructions()
-            : this(
-                NeverSpecification<MemberContext>.Default.IsSatisfiedBy, EmitTypeInstruction.Default,
-                DefaultEmitTypeForInstanceInstruction.Default,
-                DefaultTemplateElementProvider.Default) {}
+        public DeferredInstruction(Func<IInstruction> source) : this(new Lazy<IInstruction>(source)) {}
 
-        public Instructions(Func<MemberContext, bool> specification, IInstruction emitType,
-                            IInstruction membersType,
-                            ITemplateElementProvider provider)
+        public DeferredInstruction(Lazy<IInstruction> source)
         {
-            _specification = specification;
-            _emitType = emitType;
-            _membersType = membersType;
-            _provider = provider;
-            _endContext = new EndContextInstruction(_contexts);
+            _source = source;
         }
 
-        public IImmutableList<IInstruction> Get(object key) => Yield(key).ToImmutableList();
-
-        IEnumerable<IInstruction> Yield(object instance)
-        {
-            yield return new StartContextInstruction(_contexts, context => context.New(context.Current.Root));
-            yield return StartRootInstruction.Default;
-            foreach (var instruction in SelectBody(instance))
-            {
-                yield return instruction;
-            }
-            yield return EndCurrentElementInstruction.Default;
-            yield return _endContext;
-        }
-
-        IEnumerable<IInstruction> InstanceMembers(object instance)
-        {
-            yield return new StartContextInstruction(_contexts, context => context.New(SerializableMembers.Default.Get(context.Current.Instance.GetType())));
-            foreach (var instruction in YieldMembers(instance))
-            {
-                yield return instruction;
-            }
-            yield return _endContext;
-        }
-
-        IEnumerable<IInstruction> SelectBody(object instance)
-        {
-            var type = instance.GetType();
-            var definition = TypeDefinitionCache.GetDefinition(type);
-            if (definition.IsPrimitive)
-            {
-                return Primitive;
-            }
-
-            var dictionary = instance as IDictionary;
-            if (dictionary != null)
-            {
-                if (definition.GenericArguments.Length != 2)
-                {
-                    throw new InvalidOperationException(
-                              $"Attempted to write type '{type}' as a dictionary, but it does not have enough generic arguments.");
-                }
-                return Dictionary(dictionary);
-            }
-
-            if (Arrays.Default.Is(instance))
-            {
-                return Enumerable(Arrays.Default.AsArray(instance));
-            }
-
-            if (definition.IsObjectToSerialize)
-            {
-                return InstanceMembers(instance);
-            }
-
-            throw new InvalidOperationException($"Could not find instructions for type '{type}'");
-        }
-
-        /*private IInstruction GetEnumerableBody(IEnumerable instance)
-        {
-            var result = new CompositeInstruction(NewEnumerableBody(instance).ToArray());
-            return result;
-        }*/
-
-        private IEnumerable<IInstruction> Enumerable(IEnumerable instance)
-        {
-            foreach (var instruction in YieldMembers(instance, _membersType))
-            {
-                yield return instruction;
-            }
-
-            var type = instance.GetType();
-            var elementType = ElementTypeLocator.Default.Locate(type);
-            var provider = _provider.For(elementType);
-
-            foreach (var item in Arrays.Default.AsArray(instance))
-            {
-                foreach (var instruction in YieldInstance(item, provider))
-                {
-                    yield return instruction;
-                }
-            }
-        }
-
-        private IEnumerable<IInstruction> YieldInstance(object instance, IElementProvider provider) => 
-            YieldInstance(instance, provider, SelectBody(instance));
-
-        private IEnumerable<IInstruction> YieldInstance<T>(T instance, IElementProvider provider, IEnumerable<IInstruction> body)
-        {
-            yield return new StartContextInstruction(_contexts, context => context.New(instance));
-            yield return new StartInstanceInstruction(provider);
-            foreach (var instruction in body)
-            {
-                yield return instruction;
-            }
-            yield return EndCurrentElementInstruction.Default;
-            yield return _endContext;
-        }
-
-        class StartContextInstruction : InstructionBase<IWritingContext>
-        {
-            private readonly Stack<IDisposable> _stack;
-            private readonly Func<IWritingContext, IDisposable> _source;
-
-            public StartContextInstruction(Stack<IDisposable> stack, Func<IWritingContext, IDisposable> source)
-            {
-                _stack = stack;
-                _source = source;
-            }
-
-            protected override void OnExecute(IWritingContext services) => _stack.Push(_source(services));
-        }
-
-        class EndContextInstruction : IInstruction
-        {
-            private readonly Stack<IDisposable> _stack;
-            public EndContextInstruction(Stack<IDisposable> stack)
-            {
-                _stack = stack;
-            }
-
-            public void Execute(IServiceProvider services) => _stack.Pop().Dispose();
-        }
-
-        IEnumerable<IInstruction> Dictionary(IEnumerable dictionary)
-        {
-            foreach (var instruction in YieldMembers(dictionary, _membersType))
-            {
-                yield return instruction;
-            }
-
-            foreach (DictionaryEntry item in dictionary)
-            {
-                var body = YieldInstance(item.Key, new ApplicationElementProvider((ns, o) => new DictionaryKeyElement(ns)))
-                    .Concat(
-                        YieldInstance(item.Value, new ApplicationElementProvider((ns, o) => new DictionaryValueElement(ns)))
-                    );
-                foreach (var instruction in YieldInstance(item, new ApplicationElementProvider((ns, o) => new DictionaryItemElement(ns)), body))
-                {
-                    yield return instruction;
-                }
-            }
-        }
-
-        readonly private static EmitCurrentInstanceInstruction[] Primitive = {EmitCurrentInstanceInstruction.Default};
-
-        private IEnumerable<IInstruction> YieldMembers(object instance) => YieldMembers(instance, _emitType);
-
-        private IEnumerable<IInstruction> YieldMembers(object instance, IInstruction type)
-        {
-            var contexts = MemberContexts.Default.Get(instance);
-            var properties = contexts.Where(_specification).ToArray();
-
-            yield return type;
-
-            foreach (var member in properties)
-            {
-                yield return new StartContextInstruction(_contexts, context => context.New(member.Metadata));
-                yield return new StartContextInstruction(_contexts, context => context.ToMemberContext());
-                yield return EmitMemberAsTextInstruction.Default;
-                yield return _endContext;
-                yield return _endContext;
-            }
-
-            foreach (var member in contexts.Except(properties))
-            {
-                yield return new StartContextInstruction(_contexts, context => context.New(member.Metadata));
-                yield return new StartInstanceInstruction(new MemberElementProvider(member));
-                yield return new StartContextInstruction(_contexts, context => context.ToMemberContext());
-                yield return new StartContextInstruction(_contexts, context => context.New(context.Current.Member?.Value));
-
-                foreach (var instruction in SelectBody(member.Value))
-                {
-                    yield return instruction;
-                }
-
-                yield return _endContext;
-                yield return _endContext;
-                yield return EndCurrentElementInstruction.Default;
-                yield return _endContext;
-            }
-        }
+        public void Execute(IServiceProvider services) => _source.Value.Execute(services);
     }
 
-    class StartInstanceInstruction : WriteInstructionBase
+    class EmitInstanceBodyInstructionInstance : DeferredInstruction
     {
-        private readonly IElementProvider _provider;
-        public StartInstanceInstruction(IElementProvider provider)
+        public static EmitInstanceBodyInstructionInstance Default { get; } = new EmitInstanceBodyInstructionInstance();
+        EmitInstanceBodyInstructionInstance() : base(() => EmitInstanceBodyInstruction.Default) {}
+    }
+
+    class StartNewContextFromMemberValueInstruction : WriteInstructionBase
+    {
+        public static StartNewContextFromMemberValueInstruction Default { get; } = new StartNewContextFromMemberValueInstruction();
+        StartNewContextFromMemberValueInstruction() : this(EmitInstanceBodyInstructionInstance.Default) {}
+
+        private readonly IInstruction _instruction;
+        
+        public StartNewContextFromMemberValueInstruction(IInstruction instruction)
         {
-            _provider = provider;
+            _instruction = instruction;
         }
 
         protected override void OnExecute(IWriting services)
         {
-            var element = _provider.Get(services, services.Current.Instance);
-            services.Begin(element);
+            using (services.New(services.Current.Member?.Value))
+            {
+                _instruction.Execute(services);
+            }
         }
     }
 
-    class StartRootInstruction : InstructionBase<IWriting>
+    class EmitMemberInstruction : EmitInstanceInstruction
     {
-        public static StartRootInstruction Default { get; } = new StartRootInstruction();
-        StartRootInstruction() {}
+        public static EmitMemberInstruction Default { get; } = new EmitMemberInstruction();
+        EmitMemberInstruction() : this(StartNewContextFromMemberValueInstruction.Default) {}
+
+        public EmitMemberInstruction(IInstruction body) : base(Source.Instance.Get, body) {}
+
+        class Source : IParameterizedSource<IWriting, IElement>
+        {
+            public static Source Instance { get; } = new Source();
+            Source() {}
+
+            public IElement Get(IWriting parameter)
+            {
+                var context = parameter.Current.Member.Value;
+                var result = new Element(parameter.Get(context.Metadata.DeclaringType), context.DisplayName);
+                return result;
+            }
+        }
+    }
+
+    class EmitInstanceInstruction : WriteInstructionBase
+    {
+        private readonly Func<IWriting, IElement> _element;
+        private readonly IInstruction _body;
+
+        public EmitInstanceInstruction(Func<IWriting, IElement> element) : this(element, EmitInstanceBodyInstructionInstance.Default) {}
+
+        public EmitInstanceInstruction(Func<IWriting, IElement> element, IInstruction body)
+        {
+            _element = element;
+            _body = body;
+        }
+
+        protected override void OnExecute(IWriting services)
+        {
+            var element = _element(services);
+            services.Begin(element);
+            _body.Execute(services);
+            services.EndElement();
+        }
+    }
+
+    class EmitDictionaryInstruction : WriteInstructionBase<IDictionary>
+    {
+        readonly private static Type Key = typeof(EmitDictionaryInstruction);
+        public static EmitDictionaryInstruction Default { get; } = new EmitDictionaryInstruction();
+        EmitDictionaryInstruction()
+            : this(new EmitInstanceMembersInstruction(DefaultEmitTypeForInstanceInstruction.Default)) {}
+
+        private readonly IInstruction _members;
+
+        public EmitDictionaryInstruction(IInstruction members)
+        {
+            _members = members;
+        }
+        
+        protected override void Execute(IWriting services, IDictionary instance)
+        {
+            _members.Execute(services);
+
+            var key = new EmitInstanceInstruction(new DictionaryKeyElement(services.Get(Key)).Accept);
+            var value = new EmitInstanceInstruction(new DictionaryValueElement(services.Get(Key)).Accept);
+            foreach (DictionaryEntry item in instance)
+            {
+                using (services.NewInstance(item))
+                {
+                    services.Begin(new DictionaryItemElement(services.Get(Key)));
+                    using (services.New(item.Key))
+                    {
+                        key.Execute(services);
+                    }
+
+                    using (services.New(item.Value))
+                    {
+                        value.Execute(services);
+                    }
+                    services.EndElement();
+                }
+            }
+        }
+    }
+
+    class EmitEnumerableInstruction : WriteInstructionBase
+    {
+        readonly private static EmitInstanceInstruction Instance = new EmitInstanceInstruction(Source.DefaultInstance.Get);
+        public static EmitEnumerableInstruction Default { get; } = new EmitEnumerableInstruction();
+        EmitEnumerableInstruction()
+            : this(new EmitInstanceMembersInstruction(DefaultEmitTypeForInstanceInstruction.Default)) {}
+
+        private readonly IInstruction _members;
+        private readonly IInstruction _instance;
+
+        public EmitEnumerableInstruction(IInstruction members) : this(members, Instance) {}
+
+        public EmitEnumerableInstruction(IInstruction members, IInstruction instance)
+        {
+            _members = members;
+            _instance = instance;
+        }
+
+        protected override void OnExecute(IWriting services)
+        {
+            _members.Execute(services);
+
+            var instance = services.Current.Instance;
+            foreach (var item in Arrays.Default.AsArray(instance))
+            {
+                using (services.New(item))
+                {
+                    _instance.Execute(services);
+                }
+            }
+        }
+
+        sealed class Source : IParameterizedSource<IWriting, IElement>
+        {
+            public static Source DefaultInstance { get; } = new Source();
+            Source() {}
+
+            public IElement Get(IWriting parameter)
+            {
+                var instance = parameter.GetArrayContext()?.Instance;
+                var type = instance.GetType();
+                var elementType = ElementTypeLocator.Default.Locate(type);
+
+                var target = elementType.GetTypeInfo().IsInterface
+                    ? instance.GetType()
+                    : elementType;
+                
+                var result = new Element(parameter.Get(instance), TypeDefinitionCache.GetDefinition(target).Name);
+                return result;
+
+            }
+        }
+    }
+
+    class EmitRootInstruction : WriteInstructionBase
+    {
+        private readonly IInstruction _body;
+
+        public static EmitRootInstruction Default { get; } = new EmitRootInstruction();
+        EmitRootInstruction() : this(EmitInstanceBodyInstruction.Default) {}
+
+        public EmitRootInstruction(IInstruction body)
+        {
+            _body = body;
+        }
 
         protected override void OnExecute(IWriting services)
         {
             var root = services.Current.Root;
-            var element = new RootElement(services.Get(root), root);
-            services.Start(element);
+            using (services.New(root))
+            {
+                var element = new RootElement(services.Get(root), root);
+                services.Start(element);
+                _body.Execute(services);
+                services.EndElement();
+            }
         }
-    }
-
-    class EndCurrentElementInstruction : InstructionBase<IWriting>
-    {
-        public static EndCurrentElementInstruction Default { get; } = new EndCurrentElementInstruction();
-        EndCurrentElementInstruction() {}
-
-        protected override void OnExecute(IWriting services) => services.EndElement();
     }
 }

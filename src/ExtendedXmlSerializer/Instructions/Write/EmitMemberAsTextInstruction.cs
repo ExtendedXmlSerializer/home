@@ -39,9 +39,9 @@ namespace ExtendedXmlSerialization.Instructions.Write
             var member = services.Current.Member;
             if (member != null)
             {
-                var @namespace = member.Value.Metadata.DeclaringType.IsInstanceOfType(services.Current.Instance)
-                    ? Namespace.Default.Identifier
-                    : services.Get(member.Value.Metadata.DeclaringType);
+                var @namespace = !member.Value.Metadata.DeclaringType.IsInstanceOfType(services.Current.Instance)
+                    ? services.Get(member.Value.Metadata.DeclaringType)
+                    : null;
                 services.Emit(new MemberProperty(@namespace, member.Value));
             }
             else

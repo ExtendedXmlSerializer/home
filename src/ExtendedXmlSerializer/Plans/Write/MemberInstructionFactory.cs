@@ -49,12 +49,12 @@ namespace ExtendedXmlSerialization.Plans.Write
         bool Specification<T>(T parameter) => _specification.IsSatisfiedBy(parameter);
 
         IInstruction Content(MemberContext member) =>
-            new EmitInstanceInstruction(
+            /*new EmitInstanceInstruction(
                 member,
                 new StartNewMemberValueContextInstruction(
                     new StartNewContextFromMemberValueInstruction(_plan.For(member.MemberType))
                 )
-            );
+            )*/null;
 
         public IMemberInstruction Get(MemberContext parameter)
         {

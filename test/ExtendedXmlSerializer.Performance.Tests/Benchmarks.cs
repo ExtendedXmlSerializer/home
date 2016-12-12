@@ -64,29 +64,28 @@ namespace ExtendedXmlSerialization.Performance.Tests
         public XmlSerializerTest()
         {
             _obj.Init();
-            using (StringWriter textWriter = new StringWriter())
-            {
-                _serializer.Serialize(textWriter, _obj);
-                _xml = textWriter.ToString();
-            }
+            _xml = SerializationClassWithPrimitive();
         }
 
         [Benchmark]
         public string SerializationClassWithPrimitive()
         {
-            using (StringWriter textWriter = new StringWriter())
+            using (var stream = new MemoryStream())
             {
-                _serializer.Serialize(textWriter, _obj);
-                return textWriter.ToString();
+                _serializer.Serialize(stream, _obj);
+                stream.Seek(0, SeekOrigin.Begin);
+                var result = new StreamReader(stream).ReadToEnd();
+                return result;
             }
         }
 
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClassOtherClass));
-            StringReader textReader = new StringReader(_xml);
-            return (TestClassOtherClass)xmlSerializer.Deserialize(textReader);
+            using (StringReader textReader = new StringReader(_xml))
+            {
+                return (TestClassOtherClass)_serializer.Deserialize(textReader);
+            }
         }
     }
 }

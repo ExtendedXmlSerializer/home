@@ -52,10 +52,11 @@ namespace ExtendedXmlSerialization.Cache
             var result = Is(instance)
                 ? (instance as Array ?? ((IEnumerable) instance).Cast<object>().ToArray())
                 : Array;
-            Default.Add(instance, result);
+            Add(instance, result);
             return result;
         }
 
-        public bool Is(object instance) => _specification.IsSatisfiedBy(instance.GetType());
+        public bool Is(object instance) => Is(instance.GetType());
+        public bool Is(Type type) => _specification.IsSatisfiedBy(type);
     }
 }

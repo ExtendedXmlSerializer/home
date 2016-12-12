@@ -21,6 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
@@ -28,14 +31,22 @@ namespace ExtendedXmlSerialization.Instructions.Write
 {
     class MemberElementProvider : IElementProvider
     {
-        private readonly MemberContext _member;
+        private readonly Type _declaringType;
+        private readonly string _displayName;
 
         public MemberElementProvider(MemberContext member)
+            : this(member.MemberType.DeclaringType, member.DisplayName) {}
+
+        public MemberElementProvider(MemberInfo member)
+            : this(member.DeclaringType, MemberNames.Default.Get(member)) {}
+
+        public MemberElementProvider(Type declaringType, string displayName)
         {
-            _member = member;
+            _declaringType = declaringType;
+            _displayName = displayName;
         }
 
         public IElement Get(INamespaceLocator locator, object instance)
-            => new Element(locator.Get(_member.Metadata.DeclaringType), _member.DisplayName);
+            => new Element(locator.Get(_declaringType), _displayName);
     }
 }

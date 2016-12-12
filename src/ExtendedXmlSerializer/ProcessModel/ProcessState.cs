@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.ProcessModel
         Root,
         Instance,
         Members,
-        Member,
-        MemberValue
+        Member/*,
+        MemberValue*/
     }
 }

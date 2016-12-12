@@ -30,6 +30,8 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class WritingFactory : IWritingFactory
     {
+        readonly private static XmlWriterSettings XmlWriterSettings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
+
         private readonly ISerializationToolsFactoryHost _services;
         private readonly INamespaceLocator _locator;
         private readonly INamespaces _namespaces;
@@ -40,28 +42,28 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             INamespaces namespaces
         )
         {
+            _services = services;
             _locator = locator;
             _namespaces = namespaces;
-            _services = services;
         }
 
         public IWriting Get(Stream parameter)
         {
-            var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
+            var settings = XmlWriterSettings;
             var xmlWriter = XmlWriter.Create(parameter, settings);
 
-            var extensions = new ExtensionRegistry();
-            foreach (var extension in _services.Extensions)
+            // var extensions = new ExtensionRegistry();
+            /*foreach (var extension in _services.Extensions)
             {
                 extension.Accept(extensions);
-            }
+            }*/
             var context = _services.New();
 
-            var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
-            var writer = new Writer(serializer, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
+            // var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
+            var writer = new Writer(ObjectSerializer.Default, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
             
             
-            var result = new Writing(writer, context, _locator, extensions
+            var result = new Writing(writer, context, _locator/*, extensions*/
                                      /*services:*/, _services, context, settings, writer, xmlWriter);
             return result;
         }

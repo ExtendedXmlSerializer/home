@@ -35,8 +35,13 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 
         IDisposable Start(object root);
         IDisposable New(object instance);
-        IDisposable New(IImmutableList<MemberInfo> members);
-        IDisposable New(MemberInfo member);
-        IDisposable ToMemberContext();
+        IDisposable New(IImmutableList<MemberContext> members);
+        IDisposable New(MemberContext member);
+        //IDisposable ToMemberContext();
+    }
+
+    public static class Extensions
+    {
+        public static IDisposable NewInstance<T>(this IWritingContext @this, T instance) => @this.New(instance);
     }
 }
