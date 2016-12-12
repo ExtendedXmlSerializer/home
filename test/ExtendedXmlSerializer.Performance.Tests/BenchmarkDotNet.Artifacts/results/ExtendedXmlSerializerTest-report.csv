@@ -1,0 +1,3 @@
+Type;Method;Mode;Platform;Jit;Toolchain;Runtime;GcMode;LaunchCount;WarmupCount;TargetCount;Affinity;Median;StdDev
+ExtendedXmlSerializerTest;SerializationClassWithPrimitive;Throughput;Host;Host;Host;Host;Host;Auto;Auto;Auto;Auto;2,671.8025 us;46.6631 us
+ExtendedXmlSerializerTest;DeserializationClassWithPrimitive;Throughput;Host;Host;Host;Host;Host;Auto;Auto;Auto;Auto;132.6964 us;1.1534 us

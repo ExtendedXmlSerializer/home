@@ -61,16 +61,16 @@ namespace ExtendedXmlSerialization.Cache
             return null;
         }
         
-        internal static PropertyGetter CreatePropertyGetter(Type type, string propertyName)
+        internal static PropertyGetter CreatePropertyGetter(MemberInfo member)
         {
             // Object (type object) from witch the data are retrieved
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
+            UnaryExpression itemCasted = Expression.Convert(itemObject, member.DeclaringType);
 
             // Property from casted object
-            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
+            MemberExpression property = Expression.PropertyOrField(itemCasted, member.Name);
 
             // Because we use this function also for value type we need to add conversion to object
             Expression conversion = Expression.Convert(property, typeof(object));
@@ -111,7 +111,7 @@ namespace ExtendedXmlSerialization.Cache
             return compiled;
         }
 
-        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType)
+        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type parameterType, MethodInfo add)
         {
             // Object (type object) from witch the data are retrieved
             ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
@@ -119,15 +119,13 @@ namespace ExtendedXmlSerialization.Cache
             // Object casted to specific type using the operator "as".
             UnaryExpression itemCasted = Expression.Convert(itemObject, type);
 
-            var parameterType = elementType ?? type.GetGenericArguments()[0];
+            /*var parameterType = elementType ?? type.GetGenericArguments()[0];*/
 
             ParameterExpression value = Expression.Parameter(typeof(object), "value");
 
             Expression castedParam = Expression.Convert(value, parameterType);
 
-            MethodInfo method = AddMethodLocator.Default.Locate(type, parameterType);
-            
-            Expression conversion = Expression.Call(itemCasted, method, castedParam);
+            Expression conversion = Expression.Call(itemCasted, add, castedParam);
 
             LambdaExpression lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
 

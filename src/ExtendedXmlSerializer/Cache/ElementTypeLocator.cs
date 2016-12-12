@@ -33,36 +33,32 @@ namespace ExtendedXmlSerialization.Cache
         Type Locate( Type type );
     }
 
-    public class ElementTypeLocator : ConcurrentDictionary<Type, Type>, IElementTypeLocator
+    public class ElementTypeLocator : WeakCacheBase<Type, Type>, IElementTypeLocator
     {
-        readonly static Func<Type, Type> PerformLocationDelegate = PerformLocation;
         readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
         public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
         ElementTypeLocator() {}
 
-        public Type Locate( Type type )
-        {
-            return GetOrAdd( type, PerformLocationDelegate );
-        }
+        public Type Locate( Type type ) => Get(type);
 
         // Attribution: http://stackoverflow.com/a/17713382/3602057
-        static Type PerformLocation( Type type )
+        protected override Type Callback(Type key)
         {
-             // Type is Array
+            // Type is Array
             // short-circuit if you expect lots of arrays 
-            if ( ArrayInfo.IsAssignableFrom( type ) )
-                return type.GetElementType();
+            if (ArrayInfo.IsAssignableFrom(key))
+                return key.GetElementType();
 
             // type is IEnumerable<T>;
-            if ( type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) )
-                return type.GetGenericArguments()[0];
+            if (key.GetTypeInfo().IsGenericType && key.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return key.GetGenericArguments()[0];
 
             // type implements/extends IEnumerable<T>;
-            var result = type.GetInterfaces()
-                             .Where( t => t.GetTypeInfo().IsGenericType &&
-                                          t.GetGenericTypeDefinition() == typeof(IEnumerable<>) )
-                             .Select( t => t.GenericTypeArguments[0] ).FirstOrDefault();
-            
+            var result = key.GetInterfaces()
+                            .Where(t => t.GetTypeInfo().IsGenericType &&
+                                        t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                            .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
+
             return result;
         }
     }

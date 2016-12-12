@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,14 +20,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization
 {
     /// <summary>
     /// Interface Extended Xml Serializer
     /// </summary>
-    public interface IExtendedXmlSerializer
+    public interface IExtendedXmlSerializer : IServiceRepository
     {
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
@@ -55,5 +59,10 @@ namespace ExtendedXmlSerialization
         /// Gets or sets <see cref="ISerializationToolsFactory"/>
         /// </summary>
         ISerializationToolsFactory SerializationToolsFactory { get; set; }
+
+        /// <summary>
+        /// Extensions for this instance.
+        /// </summary>
+        IList<IExtensionDefinition> Extensions { get; }
     }
 }

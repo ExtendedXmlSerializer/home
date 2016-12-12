@@ -19,48 +19,45 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
+
 using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    internal class PropertieDefinition
+    class MemberNames : WeakCacheBase<MemberInfo, string>
     {
-        public PropertieDefinition(Type type, PropertyInfo propertyInfo, string name)
+        public static MemberNames Default { get; } = new MemberNames();
+        MemberNames() {}
+        protected override string Callback(MemberInfo key)
         {
-            Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(propertyInfo.PropertyType);
-	        IsWritable = propertyInfo.CanWrite;
-            _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
-            _propertySetter = CreateSetter( type, propertyInfo.Name );
-        }
-
-        public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
-        {
-            Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
-	        IsWritable = !fieldInfo.IsInitOnly;
-            _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
-            _propertySetter = CreateSetter( type, fieldInfo.Name );
-        }
-
-        ObjectAccessors.PropertySetter CreateSetter( Type type, string name )
-        {
-            if ( IsWritable )
-            {
-                return ObjectAccessors.CreatePropertySetter(type, name);
-            }
-
-            var result = TypeDefinition.MethodAddToCollection != null ? new ObjectAccessors.PropertySetter( TypeDefinition.MethodAddToCollection ) : null;
+            var result = key.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
+                         key.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? key.Name;
             return result;
         }
+    }
+
+    internal class PropertieDefinition
+    {
+        public PropertieDefinition(MemberInfo memberInfo, string name)
+        {
+            MemberInfo = memberInfo;
+            Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
+            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            IsWritable = memberInfo.IsWritable();
+            _getter = Getters.Default.Get(memberInfo);
+            _propertySetter = Setters.Default.Get(memberInfo);
+        }
+
 
         private readonly ObjectAccessors.PropertyGetter _getter;
         private readonly ObjectAccessors.PropertySetter _propertySetter;
-        
+
         public string Name { get; private set; }
         public TypeDefinition TypeDefinition { get; }
-		public bool IsWritable { get; }
+        public MemberInfo MemberInfo { get; }
+        public bool IsWritable { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }
         public object GetValue(object obj)
