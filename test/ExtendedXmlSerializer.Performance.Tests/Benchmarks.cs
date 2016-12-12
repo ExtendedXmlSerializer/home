@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
 using ExtendedXmlSerialization.Performance.Tests.Model;
+using ExtendedXmlSerialization.Profiles;
 
 namespace ExtendedXmlSerialization.Performance.Tests
 {
@@ -9,9 +10,34 @@ namespace ExtendedXmlSerialization.Performance.Tests
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly ExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 
         public ExtendedXmlSerializerTest()
+        {
+            _obj.Init();
+            _xml = _serializer.Serialize(_obj);
+        }
+
+        [Benchmark]
+        public string SerializationClassWithPrimitive()
+        {
+            return _serializer.Serialize(_obj);
+        }
+        [Benchmark]
+        public TestClassOtherClass DeserializationClassWithPrimitive()
+        {
+            return _serializer.Deserialize<TestClassOtherClass>(_xml);
+        }
+    }
+
+
+    public class ExtendedXmlSerializerV2Test
+    {
+        private readonly TestClassOtherClass _obj = new TestClassOtherClass();
+        private readonly string _xml;
+        private readonly IExtendedXmlSerializer _serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Uri);
+
+        public ExtendedXmlSerializerV2Test()
         {
             _obj.Init();
             _xml = _serializer.Serialize(_obj);

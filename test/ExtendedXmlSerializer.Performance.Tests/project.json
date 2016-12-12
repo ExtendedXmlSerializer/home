@@ -34,6 +34,7 @@
         "System.Reflection": "4.0.0.0"
       },
       "dependencies": {
+        "BenchmarkDotNet": "0.10.1",
         "BenchmarkDotNet.Diagnostics.Windows": "0.9.9"
       }
     },
