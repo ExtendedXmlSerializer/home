@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Instructions;
@@ -31,7 +32,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
 {
     public static class Extensions
     {
-        /// <summary>
+       /* /// <summary>
         /// TODO: Should put this in an instruction.
         /// </summary>
         /// <param name="services"></param>
@@ -44,23 +45,33 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                 @this.Execute(services);
             }
             extensions.Complete(services);
+        }*/
+
+        public static IEnumerable<IWriteContext> Hierarchy(this IWriteContext @this)
+        {
+            while (true)
+            {
+                yield return @this;
+                if (@this.Parent != null)
+                {
+                    @this = @this.Parent;
+                    continue;
+                }
+                break;
+            }
         }
 
-        public static WriteContext? Parent(this IWritingContext @this, int level = 1)
-            => @this.Hierarchy.ElementAtOrDefault(level);
-
-        public static WriteContext? GetArrayContext(this IWritingContext @this)
+        public static IWriteContext GetArrayContext(this IWriteContext @this)
         {
-            var parent = @this.Parent((int) @this.Current.State);
+            var parent = @this.Parent?.Parent;
             var instance = parent?.Instance;
             var result = instance != null && Arrays.Default.Is(instance) ? parent : null;
             return result;
         }
 
-        public static WriteContext? GetDictionaryContext(this IWritingContext @this)
+        public static IWriteContext GetDictionaryContext(this IWriteContext @this)
         {
-            var parent = @this.Parent((int) @this.Current.State + 1);
-
+            var parent = @this.Parent?.Parent;
             var instance = parent?.Instance;
             var result = instance != null && TypeDefinitionCache.GetDefinition(instance.GetType()).IsDictionary
                 ? parent
@@ -68,13 +79,13 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             return result;
         }
 
-        public static WriteContext? GetMemberContext(this IWritingContext @this)
+        public static IWriteContext GetMemberContext(this IWriteContext @this)
         {
-            if (@this.Current.Member != null)
+            if (@this.Member != null)
             {
-                return @this.Current;
+                return @this;
             }
-            var parent = @this.Parent((int) @this.Current.State);
+            var parent = @this.Parent;
             var result = parent?.Member != null ? parent : null;
             return result;
         }

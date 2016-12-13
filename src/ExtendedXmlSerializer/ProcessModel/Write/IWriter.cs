@@ -28,14 +28,26 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public interface IWriter : IDisposable
     {
-        void Start(IRootElement root);
-
-        void Begin(IElement element);
+        void Begin(string elementName, Uri identifier = null);
 
         void EndElement();
 
-        void Emit(object instance);
+        void Emit(string text);
 
-        void Emit(IProperty property);
+        void Emit(string attribute, string value, Uri identifier = null, string prefix = null);
+
+        void Emit(string attribute, Uri identity, string name, string value);
+    }
+
+    public struct Element
+    {
+        public Element(string name, Uri identifier = null)
+        {
+            Name = name;
+            Identifier = identifier;
+        }
+
+        public string Name { get; }
+        public Uri Identifier { get; }
     }
 }

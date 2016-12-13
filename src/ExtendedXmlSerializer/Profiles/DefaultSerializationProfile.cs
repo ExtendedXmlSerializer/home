@@ -23,7 +23,6 @@
 
 using System;
 using System.Linq;
-using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Profiles
@@ -33,7 +32,6 @@ namespace ExtendedXmlSerialization.Profiles
         public new static DefaultSerializationProfile Default { get; } = new DefaultSerializationProfile();
         DefaultSerializationProfile()
             : base(
-                PlanMaker.Default.Make(),
                 DefaultNamespaces.Default,
                 DefaultNamespaceLocator.Default, null,
                 DefaultServices.Default.ToArray()

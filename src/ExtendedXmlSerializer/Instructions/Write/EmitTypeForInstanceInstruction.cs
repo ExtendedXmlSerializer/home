@@ -32,12 +32,12 @@ namespace ExtendedXmlSerialization.Instructions.Write
         DefaultEmitTypeForInstanceInstruction() : base(DefaultEmitTypeSpecification.Default) {}
     }
 
-    class EmitTypeForInstanceInstruction : ConditionalInstruction<IWriting>
+    class EmitTypeForInstanceInstruction : ConditionalInstruction<ISerialization>
     {
         public static EmitTypeForInstanceInstruction Default { get; } = new EmitTypeForInstanceInstruction();
         EmitTypeForInstanceInstruction() : this(EmitTypeSpecification.Default) {}
 
-        public EmitTypeForInstanceInstruction(ISpecification<IWriting> specification) :
+        public EmitTypeForInstanceInstruction(ISpecification<ISerialization> specification) :
             base(specification, EmitTypeInstruction.Default) {}
     }
 }

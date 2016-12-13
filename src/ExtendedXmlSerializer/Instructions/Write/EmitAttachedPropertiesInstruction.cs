@@ -25,23 +25,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Plans;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
     class EmitAttachedPropertiesInstruction : WriteInstructionBase
     {
-        private readonly IPlan _primary;
         private readonly Func<object, bool> _specification;
 
-        public EmitAttachedPropertiesInstruction(IPlan primary, Func<object, bool> specification)
+        public EmitAttachedPropertiesInstruction(Func<object, bool> specification)
         {
-            _primary = primary;
             _specification = specification;
         }
 
-        protected override void OnExecute(IWriting services)
+        protected override void OnExecute(ISerialization services)
         {
             var all = services.GetProperties();
             var properties = Properties(all).ToArray();
@@ -52,7 +49,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
             foreach (var content in all.Except(properties))
             {
-                new EmitInstanceInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
+                // new EmitInstanceInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
             }
         }
 

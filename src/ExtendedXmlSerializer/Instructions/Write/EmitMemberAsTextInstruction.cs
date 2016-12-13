@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
@@ -34,15 +33,16 @@ namespace ExtendedXmlSerialization.Instructions.Write
         public static EmitMemberAsTextInstruction Default { get; } = new EmitMemberAsTextInstruction();
         EmitMemberAsTextInstruction() {}
 
-        protected override void OnExecute(IWriting services)
+        protected override void OnExecute(ISerialization services)
         {
             var member = services.Current.Member;
-            if (member != null)
+            if (member.HasValue)
             {
-                var @namespace = !member.Value.Metadata.DeclaringType.IsInstanceOfType(services.Current.Instance)
-                    ? services.Get(member.Value.Metadata.DeclaringType)
-                    : null;
-                services.Emit(new MemberProperty(@namespace, member.Value));
+                /*var declaringType = member.Value.Metadata.DeclaringType;
+                var @namespace = !declaringType.IsInstanceOfType(services.Current.Instance)
+                    ? services.Locate(declaringType)
+                    : null;*/
+                services.Emit(new MemberProperty(member.Value, services.Current.Value()));
             }
             else
             {

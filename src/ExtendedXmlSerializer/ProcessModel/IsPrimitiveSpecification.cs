@@ -22,43 +22,16 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
-using System.Linq;
-using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Specifications;
 
-namespace ExtendedXmlSerialization.Instructions.Write
+namespace ExtendedXmlSerialization.ProcessModel
 {
-    abstract class EmitMembersInstructionBase : DecoratedWriteInstruction
+    public class IsPrimitiveSpecification : ISpecification<Type>
     {
-        private readonly Func<MemberContext, IMemberInstruction> _factory;
+        public static IsPrimitiveSpecification Default { get; } = new IsPrimitiveSpecification();
+        IsPrimitiveSpecification() {}
 
-        protected EmitMembersInstructionBase(Func<MemberContext, IMemberInstruction> factory, IInstruction instruction)
-            : base(instruction)
-        {
-            _factory = factory;
-        }
-
-        protected override void OnExecute(IWriting services)
-        {
-            var all = DetermineSet(services);
-
-            var instructions = all.Select(_factory).ToArray();
-
-            var properties = instructions.OfType<IPropertyInstruction>().ToArray();
-
-            foreach (var instruction in properties)
-            {
-                instruction.Execute(services);
-            }
-
-            base.OnExecute(services);
-
-            foreach (var instruction in instructions.Except(properties))
-            {
-                instruction.Execute(services);
-            }
-        }
-
-        protected abstract IImmutableList<MemberContext> DetermineSet(IWriting services);
+        public bool IsSatisfiedBy(Type parameter) => TypeDefinitionCache.GetDefinition(parameter).IsPrimitive;
     }
 }

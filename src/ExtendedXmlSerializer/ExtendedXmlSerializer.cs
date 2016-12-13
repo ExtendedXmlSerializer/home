@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization
         public const string Value = "Value";
         public const string Underscore = "_";
         public const string Item = "Item";
-        private readonly ISerialization _serialization;
+        private readonly ISerializationServices _services;
         
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
@@ -53,13 +53,13 @@ namespace ExtendedXmlSerialization
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
             : this(DefaultSerializationProfile.Default.New(), toolsFactory) {}
 
-        public ExtendedXmlSerializer(ISerialization serialization) : this(serialization, DefaultSerializationToolsFactory.Default) {}
+        public ExtendedXmlSerializer(ISerializationServices services) : this(services, DefaultSerializationToolsFactory.Default) {}
 
-        public ExtendedXmlSerializer(ISerialization serialization, ISerializationToolsFactory tools)
+        public ExtendedXmlSerializer(ISerializationServices services, ISerializationToolsFactory tools)
         {
-            _serialization = serialization;
+            _services = services;
             SerializationToolsFactory = tools;
-            Add(this);
+            // Add(this);
         }
 
         /// <summary>
@@ -67,18 +67,18 @@ namespace ExtendedXmlSerialization
         /// </summary>
         public ISerializationToolsFactory SerializationToolsFactory
         {
-            get { return _serialization; }
-            set { _serialization.Assign(value); }
+            get { return _services; }
+            set { _services.Assign(value); }
         }
 
-        public IList<IExtensionDefinition> Extensions => _serialization.Extensions;
+        //public IList<IExtensionDefinition> Extensions => _serialization.Extensions;
         
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => _serialization.Serialize(o);
+        public string Serialize(object o) => _services.Serialize(o);
 
        /* private void WriteXmlDictionary(object o, XmlWriter writer, TypeDefinition def, string name, bool forceSaveType)
         {
@@ -207,7 +207,7 @@ namespace ExtendedXmlSerialization
             var currentNodeDef = GetElementTypeDefinition(currentNode) ?? type;
            
             // Get configuration for type
-            var configuration = _serialization.GetConfiguration(currentNodeDef.Type);
+            var configuration = _services.GetConfiguration(currentNodeDef.Type);
             if (configuration != null)
             {
                 // Run migrator if exists
@@ -300,9 +300,9 @@ namespace ExtendedXmlSerialization
                     {
                         if (configuration.CheckPropertyEncryption(propertyInfo.Name))
                         {
-                            if (_serialization.EncryptionAlgorithm != null)
+                            if (_services.EncryptionAlgorithm != null)
                             {
-                                value = _serialization.EncryptionAlgorithm.Decrypt(value);
+                                value = _services.EncryptionAlgorithm.Decrypt(value);
                             }
                         }
                     }
@@ -517,7 +517,7 @@ namespace ExtendedXmlSerialization
             writer.WriteEndElement();
         }*/
 
-        public object GetService(Type serviceType) => _serialization.GetService(serviceType);
-        public void Add(object service) => _serialization.Add(service);
+        // public object GetService(Type serviceType) => _serialization.GetService(serviceType);
+        //public void Add(object service) => _serialization.Add(service);
     }
 }

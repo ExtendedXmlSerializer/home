@@ -31,10 +31,10 @@ namespace ExtendedXmlSerialization.Instructions.Write
         public static EmitTypeInstruction Default { get; } = new EmitTypeInstruction();
         EmitTypeInstruction() {}
 
-        protected override void OnExecute(IWriting services)
+        protected override void OnExecute(ISerialization services)
         {
             var type = services.Current.Instance.GetType();
-            var property = new TypeProperty(services.Get(this), type);
+            var property = new TypeProperty(services.Locate(this), type);
             services.Emit(property);
         }
     }

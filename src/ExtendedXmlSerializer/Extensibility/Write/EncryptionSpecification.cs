@@ -29,9 +29,9 @@ namespace ExtendedXmlSerialization.Extensibility.Write
     class EncryptionSpecification : ISpecification<object>
     {
         private readonly ISerializationToolsFactory _factory;
-        private readonly IWritingContext _context;
+        private readonly ISerialization _context;
 
-        public EncryptionSpecification(ISerializationToolsFactory factory, IWritingContext context)
+        public EncryptionSpecification(ISerializationToolsFactory factory, ISerialization context)
         {
             _factory = factory;
             _context = context;
@@ -39,19 +39,16 @@ namespace ExtendedXmlSerialization.Extensibility.Write
 
         public bool IsSatisfiedBy(object parameter)
         {
-            var context = _context.GetMemberContext();
-            if (context != null)
+            var context = _context.Current.GetMemberContext();
+            if (context?.Member != null)
             {
-                var configuration = _factory.GetConfiguration(context?.Instance.GetType());
+                var configuration = _factory.GetConfiguration(context.Definition.Type);
                 if (configuration != null)
                 {
-                    var member = context?.Member?.Metadata;
-                    if (member != null)
-                    {
-                        var result =
-                            configuration.CheckPropertyEncryption(member.Name);
-                        return result;
-                    }
+                    var member = context.Member.Value;
+                    var result =
+                        configuration.CheckPropertyEncryption(member.Metadata.Name);
+                    return result;
                 }
             }
             return false;

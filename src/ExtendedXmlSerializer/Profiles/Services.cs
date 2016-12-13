@@ -43,13 +43,13 @@ namespace ExtendedXmlSerialization.Profiles
         public static Services Default { get; } = new Services();
         Services() : this(EmitTypeSpecification.Default, MemberValueAssignedExtension.Default) {}
 
-        private readonly ISpecification<IWritingContext> _specification;
+        private readonly ISpecification<ISerialization> _specification;
         private readonly IInstruction _instruction;
         private readonly IExtension _extension;
 
-        public Services(ISpecification<IWritingContext> specification, IExtension extension) : this(specification, EmitTypeInstruction.Default, extension) {}
+        public Services(ISpecification<ISerialization> specification, IExtension extension) : this(specification, EmitTypeInstruction.Default, extension) {}
 
-        public Services(ISpecification<IWritingContext> specification, IInstruction instruction, IExtension extension)
+        public Services(ISpecification<ISerialization> specification, IInstruction instruction, IExtension extension)
         {
             _specification = specification;
             _instruction = instruction;
@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.Profiles
         public IEnumerator<object> GetEnumerator()
         {
             yield return _extension;
-            yield return new ObjectReferencesExtension(new ConditionalInstruction<IWriting>(_specification, _instruction));
+            yield return new ObjectReferencesExtension(new ConditionalInstruction<ISerialization>(_specification, _instruction));
             yield return VersionExtension.Default;
             yield return new CustomSerializationExtension(_instruction);
         }

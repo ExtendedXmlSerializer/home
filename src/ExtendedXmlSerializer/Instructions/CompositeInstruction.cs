@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExtendedXmlSerialization.ProcessModel;
 
 namespace ExtendedXmlSerialization.Instructions
 {
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.Instructions
             _instructions = instructions;
         }
 
-        public virtual void Execute(IServiceProvider services)
+        public virtual void Execute(IProcess services)
         {
             foreach (var instruction in _instructions)
             {

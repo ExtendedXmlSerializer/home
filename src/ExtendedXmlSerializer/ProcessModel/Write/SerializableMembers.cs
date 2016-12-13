@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberInfo>>
+    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberContext>>
     {
         public static SerializableMembers Default { get; } = new SerializableMembers();
         SerializableMembers() : this(_ => true) {}
@@ -41,15 +41,15 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _serializable = serializable;
         }
 
-        protected override IImmutableList<MemberInfo> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
+        protected override IImmutableList<MemberContext> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
 
-        IEnumerable<MemberInfo> GetWritableMembers(Type type)
+        IEnumerable<MemberContext> GetWritableMembers(Type type)
         {
             foreach (var member in TypeDefinitionCache.GetDefinition(type).Properties)
             {
                 if (_serializable(member.TypeDefinition))
                 {
-                    yield return member.MemberInfo;
+                    yield return new MemberContext(member.MemberInfo, member.Name, member.TypeDefinition.Type, member.IsWritable, member.GetValue);
                 }
             }
         }

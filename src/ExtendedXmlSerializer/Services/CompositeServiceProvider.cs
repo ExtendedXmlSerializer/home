@@ -32,19 +32,19 @@ namespace ExtendedXmlSerialization.Services
 {
     public class CompositeServiceProvider : WeakCacheBase<Type, object>, IDisposable, IServiceProvider
     {
-        private readonly IEnumerable<IServiceProvider> _providers;
-        private readonly IEnumerable<object> _services;
+        private readonly IImmutableList<IServiceProvider> _providers;
+        private readonly IImmutableList<object> _services;
 
         public CompositeServiceProvider(params object[] services)
-            : this(services.OfType<IServiceProvider>().ToImmutableList(), services) {}
+            : this(services.OfType<IServiceProvider>().ToImmutableList(), services.ToImmutableList()) {}
 
-        public CompositeServiceProvider(IEnumerable<IServiceProvider> providers, params object[] services)
-            : this(providers, services.AsEnumerable()) {}
+        /*public CompositeServiceProvider(IEnumerable<IServiceProvider> providers, params object[] services)
+            : this(providers.ToImmutableList(), services.ToImmutableList()) {}*/
 
-        public CompositeServiceProvider(IEnumerable<object> services)
-            : this(Enumerable.Empty<IServiceProvider>(), services) {}
+        /*public CompositeServiceProvider(IEnumerable<object> services)
+            : this(Enumerable.Empty<IServiceProvider>(), services) {}*/
 
-        public CompositeServiceProvider(IEnumerable<IServiceProvider> providers, IEnumerable<object> services)
+        public CompositeServiceProvider(IImmutableList<IServiceProvider> providers, IImmutableList<object> services)
         {
             _providers = providers;
             _services = services;
@@ -52,10 +52,25 @@ namespace ExtendedXmlSerialization.Services
 
         public object GetService(Type serviceType) => Get(serviceType);
 
-        protected override object Callback(Type key)
-            => _services.FirstOrDefault(key.GetTypeInfo().IsInstanceOfType) ?? FromServices(key);
+        protected override object Callback(Type key) => FromServices(key) ?? FromProviders(key);
 
-        private object FromServices(Type serviceType)
+        private object FromServices(Type key)
+        {
+            var typeInfo = key.GetTypeInfo();
+            var count = _services.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var service = _services[i];
+                if (typeInfo.IsInstanceOfType(service))
+                {
+                    return service;
+                }
+            }
+            
+            return null;
+        }
+
+        private object FromProviders(Type serviceType)
         {
             foreach (var service in _providers)
             {
@@ -81,9 +96,11 @@ namespace ExtendedXmlSerialization.Services
 
         protected virtual void OnDispose(bool disposing)
         {
-            foreach (var result in _services.OfType<IDisposable>())
+            var count = _services.Count;
+            for (var i = 0; i < count; i++)
             {
-                result.Dispose();
+                var disposable = _services[i] as IDisposable;
+                disposable?.Dispose();
             }
         }
     }

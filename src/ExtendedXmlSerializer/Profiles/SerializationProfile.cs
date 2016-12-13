@@ -25,51 +25,42 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Plans;
-using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Profiles
 {
     public class SerializationProfile : SerializationProfileBase
     {
-        readonly private static object[] Services = Profiles.Services.Default.ToArray();
+        //readonly private static object[] Services = Profiles.Services.Default.ToArray();
 
-        private readonly IPlan _plan;
         private readonly INamespaces _namespaces;
         private readonly INamespaceLocator _locator;
         private readonly IImmutableList<object> _services;
 
-        public SerializationProfile(IInstructionSpecification specification, Uri identifier)
+       /* public SerializationProfile(Uri identifier)
             : this(
-                new PlanMaker(new Plans.Write.Plans(specification)).Make(),
                 new NamespaceLocator(identifier),
                 new RootNamespace(identifier)) {}
 
-        SerializationProfile(IPlan plan, INamespaceLocator locator, INamespace root)
-            : this(plan, new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, Services) {}
+        SerializationProfile(INamespaceLocator locator, INamespace root)
+            : this(new Namespaces(locator, root, PrimitiveNamespace.Default), locator, root, Services) {}*/
 
-        public SerializationProfile(IPlan plan,
-                                    INamespaces namespaces,
+        public SerializationProfile(INamespaces namespaces,
                                     INamespaceLocator locator, INamespace root, params object[] services)
             : base(root)
         {
-            _plan = plan;
             _namespaces = namespaces;
             _locator = locator;
             _services = services.ToImmutableList();
         }
 
-        public override ISerialization New()
+        public override ISerializationServices New()
         {
-            var host = CreateHost(_services);
-            var factory = new WritingFactory(host, _locator, _namespaces);
-            var serializer = new Serializer(_plan, factory);
-            var result = new Serialization(host, serializer);
+            var host = new SerializationToolsFactoryHost(_services);
+            var factory = new SerializationFactory(host, _locator, _namespaces);
+            var serializer = new Serializer(factory);
+            var result = new SerializationServices(host, serializer);
             return result;
         }
-
-        protected virtual ISerializationToolsFactoryHost CreateHost(IImmutableList<object> services) =>
-            new SerializationToolsFactoryHost(services);
     }
 }

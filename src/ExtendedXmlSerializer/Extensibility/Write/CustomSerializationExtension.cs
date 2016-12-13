@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _instruction = instruction;
         }
 
-        public override bool IsSatisfiedBy(IWriting services)
+        public override bool IsSatisfiedBy(ISerialization services)
         {
             var instance = services.Current.Instance;
             var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());

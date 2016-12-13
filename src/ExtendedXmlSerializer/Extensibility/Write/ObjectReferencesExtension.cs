@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
 {
     public class ObjectReferencesExtension : WritingExtensionBase
     {
-        private readonly WeakCache<IWriting, Context> _contexts = new WeakCache<IWriting, Context>(_ => new Context());
+        private readonly WeakCache<ISerialization, Context> _contexts = new WeakCache<ISerialization, Context>(_ => new Context());
         private readonly IInstruction _instruction;
 
         public ObjectReferencesExtension(IInstruction instruction)
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             registry.Register(ProcessState.Instance, this);
         }
 
-        public override bool IsSatisfiedBy(IWriting services)
+        public override bool IsSatisfiedBy(ISerialization services)
         {
             switch (services.Current.State)
             {
@@ -73,8 +73,8 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                         var references = context.References;
                         var objectId = configuration.GetObjectId(instance);
                         var contains = references.Contains(instance);
-                        var reference = contains || (services.GetArrayContext() == null && elements.Contains(instance));
-                        var @namespace = services.Get(this);
+                        var reference = contains || (services.Current.GetArrayContext() == null && elements.Contains(instance));
+                        var @namespace = services.Locate(this);
                         var property = reference
                             ? (IProperty) new ObjectReferenceProperty(@namespace, objectId)
                             : new ObjectIdProperty(@namespace, objectId);
@@ -97,7 +97,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             return true;
         }
 
-        public override void Completed(IWriting services)
+        public override void Completed(ISerialization services)
         {
             var instance = services.Current.Instance;
             if (Arrays.Default.Is(instance))

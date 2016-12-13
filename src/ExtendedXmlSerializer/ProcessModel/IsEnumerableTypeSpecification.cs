@@ -22,13 +22,16 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Specifications;
 
-namespace ExtendedXmlSerialization.Instructions.Write
+namespace ExtendedXmlSerialization.ProcessModel
 {
-    class StartNewContextFromMemberValueInstruction : NewWriteContextInstructionBase
+    public class IsEnumerableTypeSpecification : ISpecification<ITypeDefinition>
     {
-        public StartNewContextFromMemberValueInstruction(IInstruction instruction) : base(instruction) {}
-        protected override IDisposable DetermineContext(IWriting services) => services.New(services.Current.Member?.Value);
+        public static IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
+        IsEnumerableTypeSpecification() {}
+
+        public bool IsSatisfiedBy(ITypeDefinition parameter) => parameter.IsArray || parameter.IsEnumerable;
     }
 }

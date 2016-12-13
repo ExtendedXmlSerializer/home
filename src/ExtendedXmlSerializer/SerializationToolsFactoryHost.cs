@@ -32,27 +32,18 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization
 {
-    public class SerializationToolsFactoryHost : ServiceRepository, ISerializationToolsFactoryHost
+    public class SerializationToolsFactoryHost : CompositeServiceProvider, ISerializationToolsFactoryHost
     {
-        private readonly Func<IWritingContext> _context;
-
         public SerializationToolsFactoryHost(IImmutableList<object> services)
-            : this(() => new DefaultWritingContext(), services) {}
+            : this(new OrderedSet<IExtensionDefinition>(services.OfType<IExtensionDefinition>()), services) {}
 
-        public SerializationToolsFactoryHost(Func<IWritingContext> context,
-                                             IImmutableList<object> services)
-            : this(context, new OrderedSet<IExtensionDefinition>(services.OfType<IExtensionDefinition>()), services) {}
-
-        public SerializationToolsFactoryHost(Func<IWritingContext> context, IList<IExtensionDefinition> extensions,
+        public SerializationToolsFactoryHost(/*Func<IWriting> context, */IList<IExtensionDefinition> extensions,
                                              IEnumerable<object> services) : base(services)
         {
-            _context = context;
             Extensions = extensions;
         }
 
         ISerializationToolsFactory Factory { get; set; }
-
-        public IWritingContext New() => _context();
 
         public void Assign(ISerializationToolsFactory factory) => Factory = factory;
 
@@ -103,16 +94,18 @@ namespace ExtendedXmlSerialization
             _complete[state].Add(extension);
         }
 
-        ProcessState DetermineState(IServiceProvider services) => ((IWriting) services).Current.State;
+        static ProcessState DetermineState(IServiceProvider services) => ((ISerialization) services).Current.State;
 
         public bool IsSatisfiedBy(IServiceProvider services)
         {
             var state = DetermineState(services);
             if (_specifications.ContainsKey(state))
             {
-                foreach (var specification in _specifications[state])
+                var array = _specifications[state].ToArray();
+                var length = array.Length;
+                for (var i = 0; i < length; i++)
                 {
-                    if (!specification.IsSatisfiedBy(services))
+                    if (!array[i].IsSatisfiedBy(services))
                     {
                         return false;
                     }
@@ -126,9 +119,11 @@ namespace ExtendedXmlSerialization
             var state = DetermineState(services);
             if (_complete.ContainsKey(state))
             {
-                foreach (var extension in _complete[state])
+                var array = _complete[state].ToArray();
+                var length = array.Length;
+                for (var i = 0; i < length; i++)
                 {
-                    extension.Complete(services);
+                    array[i].Complete(services);
                 }
             }
         }

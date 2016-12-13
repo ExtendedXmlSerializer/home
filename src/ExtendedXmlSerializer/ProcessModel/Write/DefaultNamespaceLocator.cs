@@ -31,6 +31,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public static DefaultNamespaceLocator Default { get; } = new DefaultNamespaceLocator();
         DefaultNamespaceLocator() {}
 
-        public Uri Get(object parameter) => null;
+        public Uri Locate(object parameter) => null;
     }
 }

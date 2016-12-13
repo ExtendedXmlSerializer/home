@@ -22,26 +22,20 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Reflection;
+using ExtendedXmlSerialization.Elements;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWritingContext
+    public interface ISerialization : INamespaceLocator, IProcess
     {
-        WriteContext Current { get; }
-        IEnumerable<WriteContext> Hierarchy { get; }
+        IWriteContext Current { get; }
 
-        IDisposable Start(object root);
-        IDisposable New(object instance);
+        IDisposable New(object instance, IElementInformation information);
         IDisposable New(IImmutableList<MemberContext> members);
         IDisposable New(MemberContext member);
-        //IDisposable ToMemberContext();
-    }
 
-    public static class Extensions
-    {
-        public static IDisposable NewInstance<T>(this IWritingContext @this, T instance) => @this.New(instance);
+        void Emit(object instance);
+        void Emit(IProperty property);
     }
 }

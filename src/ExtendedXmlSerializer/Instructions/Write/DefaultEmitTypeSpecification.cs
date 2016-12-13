@@ -29,34 +29,36 @@ using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    class DefaultEmitTypeSpecification : ISpecification<IWritingContext>
+    class DefaultEmitTypeSpecification : ISpecification<ISerialization>
     {
         public static DefaultEmitTypeSpecification Default { get; } = new DefaultEmitTypeSpecification();
         DefaultEmitTypeSpecification() {}
 
-        public bool IsSatisfiedBy(IWritingContext parameter)
+        public bool IsSatisfiedBy(ISerialization parameter)
         {
-            var context = parameter.GetMemberContext().GetValueOrDefault();
-            switch (context.State)
+            var current = parameter.Current;
+            var context = current.GetMemberContext();
+            if (context?.Member != null)
             {
-                case ProcessState.Instance:
-                    var member = context.Member.GetValueOrDefault();
-                    var result = member.IsWritable && member.Value.GetType() != member.MemberType;
-                    return result;
-            }
-            var array = parameter.GetArrayContext();
-            if (array != null)
-            {
-                var elementType = ElementTypeLocator.Default.Locate(array.Value.Instance.GetType());
-                var result = parameter.Current.Instance.GetType() != elementType;
+                var member = context.Member.Value;
+                var result = current.State == ProcessState.Instance && member.IsWritable &&
+                             current.Value().GetType() != member.MemberType;
                 return result;
             }
 
-            var dictionary = parameter.GetDictionaryContext();
+            var array = current.GetArrayContext();
+            if (array != null)
+            {
+                var type = array.Instance.GetType();
+                var elementType = ElementTypeLocator.Default.Locate(type);
+                var result = type != elementType;
+                return result;
+            }
+
+            var dictionary = current.GetDictionaryContext();
             if (dictionary != null)
             {
-                var type = TypeDefinitionCache.GetDefinition(dictionary.Value.Instance.GetType()).GenericArguments[1];
-                var result = parameter.Current.Instance.GetType() != type;
+                var result = dictionary.Instance.GetType() != dictionary.Definition.GenericArguments[1];
                 return result;
             }
             return false;

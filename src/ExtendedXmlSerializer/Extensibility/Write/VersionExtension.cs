@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         public override void Accept(IExtensionRegistry registry)
             => registry.RegisterSpecification(ProcessState.Members, this);
 
-        public override bool IsSatisfiedBy(IWriting services)
+        public override bool IsSatisfiedBy(ISerialization services)
         {
             var instance = services.Current.Instance;
             var configuration =
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
                 var version = configuration.Version;
                 if (version > 0)
                 {
-                    services.Attach(new VersionProperty(services.Get(this), version));
+                    services.Attach(new VersionProperty(services.Locate(this), version));
                 }
             }
             return base.IsSatisfiedBy(services);

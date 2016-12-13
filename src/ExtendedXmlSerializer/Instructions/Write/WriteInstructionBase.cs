@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    public abstract class WriteInstructionBase : InstructionBase<IWriting> {}
+    public abstract class WriteInstructionBase : InstructionBase<ISerialization> {}
 
     public abstract class WriteInstructionBase<T> : WriteInstructionBase, IWriteInstruction<T>
     {
-        protected override void OnExecute(IWriting services)
+        protected override void OnExecute(ISerialization services)
         {
             var instance = services.Current.Instance;
             if (instance is T)
@@ -42,8 +42,8 @@ namespace ExtendedXmlSerialization.Instructions.Write
                       $"Expected an instance of type '{typeof(T)}' but got an instance of '{instance.GetType()}'");
         }
 
-        protected abstract void Execute(IWriting services, T instance);
+        protected abstract void Execute(ISerialization services, T instance);
 
-        void IWriteInstruction<T>.Execute(IWriting services, T instance) => Execute(services, instance);
+        void IWriteInstruction<T>.Execute(ISerialization services, T instance) => Execute(services, instance);
     }
 }

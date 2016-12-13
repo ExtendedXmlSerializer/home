@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    public class DecoratedWriteInstruction : DecoratedInstruction<IWriting>
+    public class DecoratedWriteInstruction : DecoratedInstruction<ISerialization>
     {
         public DecoratedWriteInstruction(IInstruction instruction) : base(instruction) {}
     }

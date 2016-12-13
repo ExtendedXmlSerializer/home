@@ -26,7 +26,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Plans.Write;
 using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Specifications;
 
@@ -53,8 +52,8 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 foreach (var info in SerializableMembers.Default.Get(type))
                 {
-                    var memberType = info.GetMemberType();
-                    if (info.IsWritable() && !_primitive.IsSatisfiedBy(memberType))
+                    var memberType = info.MemberType;
+                    if (info.IsWritable && !_primitive.IsSatisfiedBy(memberType))
                     {
                         Schedule(memberType);
                     }
@@ -79,7 +78,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                         }
                     }
                 }
-                yield return _locator.Get(type);
+                yield return _locator.Locate(type);
             }
             else
             {
@@ -122,7 +121,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 }
                 else
                 {
-                    foreach (var context in MemberContexts.Default.Get(input))
+                    foreach (var context in SerializableMembers.Default.Get(input.GetType()))
                     {
                         if (context.IsWritable)
                         {
@@ -130,13 +129,14 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                             {
                                 Schedule(context.MemberType);
                             }
-                            if (context.Value != DefaultValues.Default.Get(context.MemberType))
+                            var value = context.Value(input);
+                            if (value != DefaultValues.Default.Get(context.MemberType))
                             {
-                                var instanceType = context.Value.GetType();
+                                var instanceType = value.GetType();
                                 if (instanceType != context.MemberType)
                                 {
                                     Schedule(instanceType);
-                                    Schedule(context.Value);
+                                    Schedule(value);
                                 }
                             }
                         }

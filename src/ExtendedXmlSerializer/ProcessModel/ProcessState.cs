@@ -21,14 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using ExtendedXmlSerialization.Instructions;
+
 namespace ExtendedXmlSerialization.ProcessModel
 {
     public enum ProcessState
     {
-        Root,
+        // Root,
         Instance,
         Members,
         Member/*,
         MemberValue*/
+    }
+
+    public interface IProcess : IDisposable, ICommand<IInstruction>, IServiceProvider {
+    }
+
+    public interface ICommand<in T>
+    {
+        void Execute(T parameter);
     }
 }

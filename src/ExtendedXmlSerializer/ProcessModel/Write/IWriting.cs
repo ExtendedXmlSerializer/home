@@ -28,9 +28,9 @@ using ExtendedXmlSerialization.Extensibility;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWriting : IWriter, IWritingContext, INamespaceLocator, IExtensions, IServiceProvider
+/*    public interface IWriting : /*IWriter,#1# IWritingContext, INamespaceLocator, IExtensions, IServiceProvider
     {
         void Attach(IProperty property);
         IImmutableList<IProperty> GetProperties();
-    }
+    }*/
 }

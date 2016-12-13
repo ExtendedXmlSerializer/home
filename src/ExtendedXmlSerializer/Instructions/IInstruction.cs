@@ -22,11 +22,14 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ProcessModel;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public interface IInstruction
+    public interface IInstruction : ICommand<IProcess> {}
+
+    /*public interface IInstruction<in T> : ICommand<T> where T : IProcess
     {
-        void Execute(IServiceProvider services);
-    }
+        void Execute(T services);
+    }*/
 }

@@ -21,16 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.ProcessModel.Write;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Plans.Write
+namespace ExtendedXmlSerialization.Services
 {
-    class DifferentiatingDefinitions : WeakCache<Type, Func<Type, IImmutableList<MemberContext>>>
+    public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     {
-        public static DifferentiatingDefinitions Default { get; } = new DifferentiatingDefinitions();
-        DifferentiatingDefinitions() : base(type => new DifferentiatingMembers(type).Get) {}
+        public static MemberInfoEqualityComparer Default { get; } = new MemberInfoEqualityComparer();
+        MemberInfoEqualityComparer() {}
+
+        public bool Equals(MemberInfo x, MemberInfo y) => x.Name == y.Name;
+
+        public int GetHashCode(MemberInfo obj) => obj.Name.GetHashCode();
     }
 }

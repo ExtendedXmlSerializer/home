@@ -23,24 +23,52 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public struct WriteContext
+    public interface IWriteContext {
+        IWriteContext Parent { get; }
+        ProcessState State { get; }
+        object Root { get; }
+        object Instance { get; }
+        ITypeDefinition Definition { get; }
+        IImmutableList<MemberContext> Members { get; }
+        MemberContext? Member { get; }
+    }
+
+    public class WriteContext : IWriteContext
     {
-        public WriteContext(ProcessState state, object root, object instance, IImmutableList<MemberContext> members,
+        public WriteContext(object root, ITypeDefinition definition)
+            : this(null, ProcessState.Instance, root, root, definition, null, null) {}
+
+        public WriteContext(IWriteContext parent, object instance, ITypeDefinition definition)
+            : this(parent, ProcessState.Instance, parent.Root, instance, definition, null, null) {}
+
+        public WriteContext(IWriteContext parent, IImmutableList<MemberContext> members)
+            : this(parent, ProcessState.Members, parent.Root, parent.Instance, parent.Definition, members, null) {}
+
+        public WriteContext(IWriteContext parent, MemberContext member)
+            : this(parent, ProcessState.Member, parent.Root, parent.Instance, parent.Definition, parent.Members, member) {}
+
+        public WriteContext(IWriteContext parent, ProcessState state, object root, object instance,
+                            ITypeDefinition definition, IImmutableList<MemberContext> members,
                             MemberContext? member)
         {
+            Parent = parent;
             State = state;
             Root = root;
             Instance = instance;
+            Definition = definition;
             Members = members;
             Member = member;
         }
 
+        public IWriteContext Parent { get; }
         public ProcessState State { get; }
         public object Root { get; }
         public object Instance { get; }
+        public ITypeDefinition Definition { get; }
         public IImmutableList<MemberContext> Members { get; }
         public MemberContext? Member { get; }
     }

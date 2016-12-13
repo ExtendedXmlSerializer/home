@@ -28,15 +28,13 @@ using ExtendedXmlSerialization.Extensibility.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class WritingFactory : IWritingFactory
+    public class SerializationFactory : IWritingFactory
     {
-        readonly private static XmlWriterSettings XmlWriterSettings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
-
         private readonly ISerializationToolsFactoryHost _services;
         private readonly INamespaceLocator _locator;
         private readonly INamespaces _namespaces;
 
-        public WritingFactory(
+        public SerializationFactory(
             ISerializationToolsFactoryHost services,
             INamespaceLocator locator,
             INamespaces namespaces
@@ -47,9 +45,9 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _namespaces = namespaces;
         }
 
-        public IWriting Get(Stream parameter)
+        public ISerialization Get(Stream parameter)
         {
-            var settings = XmlWriterSettings;
+            var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
             var xmlWriter = XmlWriter.Create(parameter, settings);
 
             // var extensions = new ExtensionRegistry();
@@ -57,14 +55,14 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 extension.Accept(extensions);
             }*/
-            var context = _services.New();
+            // var context = _services.New();
 
             // var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
-            var writer = new Writer(ObjectSerializer.Default, _locator, new NamespaceEmitter(xmlWriter, _namespaces), xmlWriter);
+            var writer = new Writer(xmlWriter);
             
             
-            var result = new Writing(writer, context, _locator/*, extensions*/
-                                     /*services:*/, _services, context, settings, writer, xmlWriter);
+            var result = new Serialization(writer, _locator, ObjectSerializer.Default, new NamespaceEmitter(xmlWriter, _namespaces)/*, extensions*/
+                                     /*services:*/, _services, writer, xmlWriter);
             return result;
         }
     }

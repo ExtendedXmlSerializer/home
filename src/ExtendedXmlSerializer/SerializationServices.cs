@@ -21,35 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Extensibility.Write;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
-namespace ExtendedXmlSerialization.Instructions.Write
+namespace ExtendedXmlSerialization
 {
-    class EmitDictionaryPairInstruction : WriteInstructionBase<DictionaryEntry>
+    class SerializationServices : ISerializationServices
     {
-        private readonly IInstruction _key;
-        private readonly IInstruction _value;
+        private readonly ISerializationToolsFactoryHost _host;
+        private readonly ISerializer _serializer;
 
-        public EmitDictionaryPairInstruction(IInstruction key, IInstruction value)
+        public SerializationServices(ISerializationToolsFactoryHost host, ISerializer serializer)
         {
-            _key = key;
-            _value = value;
+            _host = host;
+            _serializer = serializer;
         }
 
-        protected override void Execute(IWriting services, DictionaryEntry instance)
-        {
-            using (services.New(instance.Key))
-            {
-                _key.ExecuteWithExtensions(services);
-            }
-
-            using (services.New(instance.Value))
-            {
-                _value.ExecuteWithExtensions(services);
-            }
-        }
+        public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
+        // public IList<IExtensionDefinition> Extensions => _host.Extensions;
+        public IExtendedXmlSerializerConfig GetConfiguration(Type type) => _host.GetConfiguration(type);
+        public IPropertyEncryption EncryptionAlgorithm => _host.EncryptionAlgorithm;
+        // public IWriting New() => _host.New();
+        public void Assign(ISerializationToolsFactory factory) => _host.Assign(factory);
+        /*public object GetService(Type serviceType) => _host.GetService(serviceType);
+        public void Add(object service) => _host.Add(service);*/
     }
 }

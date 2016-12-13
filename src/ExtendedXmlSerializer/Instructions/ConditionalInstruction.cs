@@ -22,17 +22,18 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public class ConditionalInstruction : ConditionalInstruction<IServiceProvider>
+    public class ConditionalInstruction : ConditionalInstruction<IProcess>
     {
         public ConditionalInstruction(ISpecification<IServiceProvider> specification, IInstruction instruction)
             : base(specification, instruction) {}
     }
 
-    public class ConditionalInstruction<T> : DecoratedInstruction<T> where T : IServiceProvider
+    public class ConditionalInstruction<T> : DecoratedInstruction<T> where T : IProcess
     {
         private readonly ISpecification<T> _specification;
 

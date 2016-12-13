@@ -21,27 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.IO;
-using System.Linq;
 
 namespace ExtendedXmlSerialization.Profiles
 {
     public static class Extensions
     {
-        readonly private static Uri
-            DefaultIdentifier = WellKnownExtendedSerializerProfiles.Default.First().Identifier;
-
-        /// <summary>
-        /// This will retrieve the latest well-known profile and load it.  This can be considered the
-        /// entry point for the latest and greatest profile.
-        /// </summary>
-        /// <param name="this"></param>
-        /// <returns></returns>
-        public static IExtendedXmlSerializer Create(this IExtendedSerializationRepository @this)
-            => @this.Get(DefaultIdentifier);
-
-        public static string Serialize(this ISerialization @this, object instance)
+        public static string Serialize(this ISerializationServices @this, object instance)
         {
             using (var stream = new MemoryStream())
             {

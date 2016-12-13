@@ -46,13 +46,13 @@ namespace ExtendedXmlSerialization.Services
                 yield return element1;
         }
 
-		public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, params T[] items ) => @this.Concat( items );
-		public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, T element )
-		{
-			foreach ( var element1 in @this )
-				yield return element1;
-			yield return element;
-		}
+        public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, params T[] items ) => @this.Concat( items );
+        public static IEnumerable<T> Append<T>( this IEnumerable<T> @this, T element )
+        {
+            foreach ( var element1 in @this )
+                yield return element1;
+            yield return element;
+        }
 
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
@@ -103,13 +103,13 @@ namespace ExtendedXmlSerialization.Services
 
         public static T AsValid<T>(this object @this, string message = null)
         {
-            if (!(@this is T))
+            if (@this is T)
             {
-                throw new InvalidOperationException(message ??
-                                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
+                return (T) @this;
             }
 
-            return (T) @this;
+            throw new InvalidOperationException(message ??
+                                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
         }
     }
 }

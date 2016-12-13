@@ -40,12 +40,12 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             _values = values;
         }
 
-        public override bool IsSatisfiedBy(IWriting services) => services.Current.Member != null && FromMember(services.Current.Member.Value);
+        public override bool IsSatisfiedBy(ISerialization services) => services.Current.Member != null && IsAssigned(services.Current);
 
-        protected virtual bool FromMember(MemberContext member)
+        protected virtual bool IsAssigned(IWriteContext context)
         {
-            var defaultValue = _values(member.MemberType);
-            var result = !Equals(member.Value, defaultValue);
+            var defaultValue = _values(context.Member?.MemberType);
+            var result = !Equals(context.Value(), defaultValue);
             return result;
         }
 

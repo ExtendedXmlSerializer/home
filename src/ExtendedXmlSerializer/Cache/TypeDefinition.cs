@@ -30,7 +30,18 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    internal class TypeDefinition
+    public interface ITypeDefinition {
+        bool IsPrimitive { get; }
+        bool IsArray { get; }
+        bool IsEnumerable { get; }
+        bool IsDictionary { get; }
+        bool IsObjectToSerialize { get; }
+        Type[] GenericArguments { get; }
+        Type Type { get; }
+        string Name { get; }
+    }
+
+    internal class TypeDefinition : ITypeDefinition
     {
         readonly static IDictionary<TypeCode, string> Codes = new Dictionary<TypeCode, string>
                                                               {
@@ -105,8 +116,8 @@ namespace ExtendedXmlSerialization.Cache
                 }
                 else if (elementType != null && !IsArray)
                 {
-					MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
-					MethodAddToCollection = add != null ? ObjectAccessors.CreateMethodAddCollection(Type, elementType, add) : null;
+                    MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
+                    MethodAddToCollection = add != null ? ObjectAccessors.CreateMethodAddCollection(Type, elementType, add) : null;
                 }
             }
 

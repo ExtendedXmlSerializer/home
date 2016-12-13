@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
         public static EmitCurrentInstanceInstruction Default { get; } = new EmitCurrentInstanceInstruction();
         EmitCurrentInstanceInstruction() {}
 
-        protected override void OnExecute(IWriting services) => services.Emit(services.Current.Instance);
+        protected override void OnExecute(ISerialization services) => services.Emit(services.Current.Instance);
     }
 }

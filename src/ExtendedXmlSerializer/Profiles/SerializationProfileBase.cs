@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Profiles
 
         public virtual bool IsSatisfiedBy(Uri parameter) => parameter == Identifier;
 
-        public abstract ISerialization New();
+        public abstract ISerializationServices New();
     }
 }

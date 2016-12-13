@@ -26,5 +26,8 @@ using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.Elements
 {
-    public interface INamespaceLocator : IParameterizedSource<object, Uri> {}
+    public interface INamespaceLocator
+    {
+        Uri Locate(object candidate);
+    }
 }

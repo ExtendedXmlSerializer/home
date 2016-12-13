@@ -30,61 +30,42 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Writer : IWriter
     {
-        private readonly IObjectSerializer _serializer;
-        private readonly INamespaceLocator _locator;
-        private readonly INamespaceEmitter _emitter;
         private readonly XmlWriter _writer;
 
-        public Writer(IObjectSerializer serializer, INamespaceLocator locator, INamespaceEmitter emitter,
-                      XmlWriter writer)
+        public Writer(XmlWriter writer)
         {
-            _serializer = serializer;
-            _locator = locator;
-            _emitter = emitter;
             _writer = writer;
         }
 
-        public void Start(IRootElement root)
+        public void Begin(string elementName, Uri identifier = null)
         {
-            _writer.WriteStartDocument();
-            Begin(root);
-            var identifier = root.Identifier?.ToString();
-            if (identifier != null)
+            var id = identifier?.ToString();
+            switch (_writer.WriteState)
             {
-                _writer.WriteAttributeString("xmlns", identifier);
-                _emitter.Execute(root.Root);
+                case WriteState.Start:
+                    _writer.WriteStartDocument();
+                    break;
             }
+
+            _writer.WriteStartElement(elementName, id);
         }
 
-        public void Begin(IElement element) => _writer.WriteStartElement(element.Name, element.Identifier?.ToString());
-
         public void EndElement() => _writer.WriteEndElement();
-        public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
+        public void Emit(string text) => _writer.WriteString(text);
+        public void Emit(string attribute, string value, Uri identifier = null, string prefix = null)
+            => _writer.WriteAttributeString(prefix, attribute, identifier?.ToString(), value);
 
-        public void Emit(IProperty property)
+        public void Emit(string attribute, Uri identity, string name, string value)
         {
-            var ns = property.Identifier?.ToString();
-            var type = property.Value as Type;
-            if (ns != null && type != null)
-            {
-                var identifier = _locator.Get(property.Value);
-                if (identifier != null)
-                {
-                    var name = TypeDefinitionCache.GetDefinition(type).Name;
-                    _writer.WriteStartAttribute(property.Name, ns);
-                    _writer.WriteQualifiedName(name, identifier.ToString());
-                    _writer.WriteEndAttribute();
-                    return;
-                }
-            }
-            var serialized = _serializer.Serialize(property.Value);
-            _writer.WriteAttributeString(property.Prefix, property.Name, ns, serialized);
+            _writer.WriteStartAttribute(attribute, identity.ToString());
+            _writer.WriteQualifiedName(name, value);
+            _writer.WriteEndAttribute();
         }
 
         public void Dispose()
         {
             _writer.WriteEndDocument();
-            // _writer.Dispose();
+            _writer.Dispose();
         }
     }
 }

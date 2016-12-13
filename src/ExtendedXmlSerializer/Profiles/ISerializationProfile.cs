@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Profiles
     public interface ISerializationProfile : ISpecification<Uri>,
                                              INamespace
     {
-        ISerialization New();
+        ISerializationServices New();
     }
 }

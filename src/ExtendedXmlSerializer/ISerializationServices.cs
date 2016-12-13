@@ -1,7 +1,6 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
-//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,17 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Instructions.Write;
+using ExtendedXmlSerialization.ProcessModel.Write;
 
-namespace ExtendedXmlSerialization.Plans.Write
+namespace ExtendedXmlSerialization
 {
-    public class DefaultPlans : Plans
-    {
-        public static DefaultPlans Default { get; } = new DefaultPlans();
-
-        DefaultPlans()
-            : base(
-                DefaultInstructionSpecification.Default, DefaultTemplateElementProvider.Default,
-                DefaultEmitTypeForInstanceInstruction.Default, EmitTypeInstruction.Default) {}
-    }
+	public interface ISerializationServices : ISerializationToolsFactoryHost, ISerializer {}
 }

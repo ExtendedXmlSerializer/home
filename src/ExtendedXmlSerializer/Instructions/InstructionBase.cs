@@ -22,13 +22,14 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public abstract class InstructionBase<T> : IInstruction
+    public abstract class InstructionBase<T> : IInstruction where T : IProcess
     {
-        public virtual void Execute(IServiceProvider services) => OnExecute(services.AsValid<T>());
+        public virtual void Execute(IProcess services) => OnExecute(services.AsValid<T>());
 
         protected abstract void OnExecute(T services);
     }

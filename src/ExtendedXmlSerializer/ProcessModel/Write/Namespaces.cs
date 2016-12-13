@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         {
             yield return _root;
             var generator = _generator();
-            var root = _locator.Get(parameter);
+            var root = _locator.Locate(parameter);
             foreach (
                 var candidate in new NamespaceWalker(parameter, _locator).SelectMany(locations => locations).Distinct())
             {

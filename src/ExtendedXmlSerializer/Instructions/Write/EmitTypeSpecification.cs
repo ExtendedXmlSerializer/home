@@ -28,24 +28,26 @@ using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    class EmitTypeSpecification : ISpecification<IWritingContext>
+    class EmitTypeSpecification : ISpecification<ISerialization>
     {
         public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
         EmitTypeSpecification() {}
 
-        public bool IsSatisfiedBy(IWritingContext parameter)
+        public bool IsSatisfiedBy(ISerialization parameter)
         {
-            if (parameter.Current.Instance != parameter.Current.Root)
+            var current = parameter.Current;
+            if (current.Instance != current.Root)
             {
-                var context = parameter.GetMemberContext().GetValueOrDefault();
-                switch (context.State)
+                var context = current.GetMemberContext();
+                if (context?.Member != null)
                 {
-                    case ProcessState.Instance:
-                        var member = context.Member.GetValueOrDefault();
-                        var result = member.IsWritable && member.Value.GetType() != member.MemberType;
-                        return result;
+                    var member = context.Member.Value;
+                    var result = current.State == ProcessState.Instance && member.IsWritable &&
+                                 current.Value().GetType() != member.MemberType;
+                    return result;
                 }
-                var emit = parameter.GetArrayContext() == null && parameter.GetDictionaryContext() == null;
+                
+                var emit = current.GetArrayContext() == null && current.GetDictionaryContext() == null;
                 return emit;
             }
             return false;

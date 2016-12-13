@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization
     /// <summary>
     /// Interface Extended Xml Serializer
     /// </summary>
-    public interface IExtendedXmlSerializer : IServiceRepository
+    public interface IExtendedXmlSerializer //: IServiceRepository
     {
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
@@ -60,9 +60,9 @@ namespace ExtendedXmlSerialization
         /// </summary>
         ISerializationToolsFactory SerializationToolsFactory { get; set; }
 
-        /// <summary>
+        /*/// <summary>
         /// Extensions for this instance.
         /// </summary>
-        IList<IExtensionDefinition> Extensions { get; }
+        IList<IExtensionDefinition> Extensions { get; }*/
     }
 }

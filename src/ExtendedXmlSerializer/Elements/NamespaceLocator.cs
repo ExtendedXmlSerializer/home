@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.Plans.Write;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Elements
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Elements
             _assembly = Assembly;
         }
 
-        public Uri Get(object parameter) => (parameter as INamespace)?.Identifier ?? FromType(parameter);
+        public Uri Locate(object parameter) => (parameter as INamespace)?.Identifier ?? FromType(parameter);
 
         private Uri FromType(object parameter)
         {

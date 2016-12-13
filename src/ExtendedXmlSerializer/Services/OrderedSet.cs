@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ExtendedXmlSerialization.Services
 {
@@ -45,9 +46,10 @@ namespace ExtendedXmlSerialization.Services
             _dictionary = new Dictionary<T, LinkedListNode<T>>(comparer);
             _linkedList = new LinkedList<T>();
 
-            foreach (var item in items)
+            var array = items.ToArray();
+            for (var i = 0; i < array.Length; i++)
             {
-                Add(item);
+                Add(array[i]);
             }
         }
 

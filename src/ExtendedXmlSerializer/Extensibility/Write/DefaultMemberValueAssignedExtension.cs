@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
@@ -32,6 +33,6 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             new DefaultMemberValueAssignedExtension();
         DefaultMemberValueAssignedExtension() {}
 
-        protected override bool FromMember(MemberContext member) => member.Value is Enum || base.FromMember(member);
+        protected override bool IsAssigned(IWriteContext context) => typeof(Enum).IsAssignableFrom(context.Member?.MemberType) || base.IsAssigned(context);
     }
 }

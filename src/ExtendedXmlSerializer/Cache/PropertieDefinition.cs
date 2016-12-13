@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Cache
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
             TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
-            _getter = Getters.Default.Get(memberInfo);
+            _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
         }
 

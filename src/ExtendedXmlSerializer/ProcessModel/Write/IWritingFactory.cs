@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWritingFactory : IParameterizedSource<Stream, IWriting> {}
+    public interface IWritingFactory : IParameterizedSource<Stream, ISerialization> {}
 }

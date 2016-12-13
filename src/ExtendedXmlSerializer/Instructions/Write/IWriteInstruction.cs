@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
 {
     public interface IWriteInstruction<in T>
     {
-        void Execute(IWriting services, T instance);
+        void Execute(ISerialization services, T instance);
     }
 }

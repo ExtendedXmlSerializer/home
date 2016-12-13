@@ -22,10 +22,11 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ProcessModel;
 
 namespace ExtendedXmlSerialization.Instructions
 {
-    public class DecoratedInstruction<T> : InstructionBase<T> where T : IServiceProvider
+    public class DecoratedInstruction<T> : InstructionBase<T> where T : IProcess
     {
         private readonly IInstruction _instruction;
 
@@ -37,7 +38,7 @@ namespace ExtendedXmlSerialization.Instructions
         protected override void OnExecute(T services) => _instruction.Execute(services);
     }
 
-    public class DecoratedInstruction : DecoratedInstruction<IServiceProvider>
+    public class DecoratedInstruction : DecoratedInstruction<IProcess>
     {
         public DecoratedInstruction(IInstruction instruction) : base(instruction) {}
     }

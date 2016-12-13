@@ -21,18 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Services;
-
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory, IServiceRepository
+    public interface ISerializationToolsFactoryHost : ISerializationToolsFactory
     {
-        IWritingContext New();
-
         void Assign(ISerializationToolsFactory factory);
-
-        IList<IExtensionDefinition> Extensions { get; }
     }
 }

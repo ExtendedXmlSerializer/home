@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Extensibility.Write
 {
     class MemberProperty : PropertyBase
     {
-        public MemberProperty(Uri @namespace, MemberContext member) : base(@namespace, member.DisplayName, member.Value) {}
+        public MemberProperty(MemberContext member, object value) : base((Uri)null, member.DisplayName, value) {}
     }
 }
