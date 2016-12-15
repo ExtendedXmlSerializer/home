@@ -32,6 +32,7 @@ using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Profiles
 {
+/*
     class DefaultServices : Services
     {
         public new static DefaultServices Default { get; } = new DefaultServices();
@@ -66,4 +67,5 @@ namespace ExtendedXmlSerialization.Profiles
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
+*/
 }

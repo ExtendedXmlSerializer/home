@@ -37,12 +37,12 @@ namespace ExtendedXmlSerialization.Instructions.Write
         public bool IsSatisfiedBy(ISerialization parameter)
         {
             var current = parameter.Current;
-            var context = current.GetMemberContext();
-            if (context?.Member != null)
+            var context = current.GetMemberScope();
+            if (context != null)
             {
-                var member = context.Member.Value;
-                var result = current.State == ProcessState.Instance && member.IsWritable &&
-                             current.Value().GetType() != member.MemberType;
+                var member = context.Instance;
+                var result = current is IInstanceScope && current.Parent != null && member.IsWritable &&
+                             current.Definition.Type != member.MemberType;
                 return result;
             }
 

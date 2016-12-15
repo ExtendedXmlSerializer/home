@@ -31,6 +31,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
+/*
     public class ObjectReferencesExtension : WritingExtensionBase
     {
         private readonly WeakCache<ISerialization, Context> _contexts = new WeakCache<ISerialization, Context>(_ => new Context());
@@ -120,4 +121,5 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             public ISet<object> Elements { get; }
         }
     }
+*/
 }

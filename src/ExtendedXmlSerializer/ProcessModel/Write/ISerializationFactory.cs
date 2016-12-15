@@ -21,32 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using System.IO;
+using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public struct MemberContext
-    {
-        private readonly Func<object, object> _getter;
-
-        // public MemberContext(MemberInfo member, Func<object, object> getter) : this(member, MemberNames.Default.Get(member), member.GetMemberType(), member.IsWritable(), getter) {}
-
-        public MemberContext(MemberInfo metadata, string displayName, Type memberType, bool isWritable,
-                             Func<object, object> getter)
-        {
-            _getter = getter;
-            Metadata = metadata;
-            DisplayName = displayName;
-            MemberType = memberType;
-            IsWritable = isWritable;
-        }
-
-        public MemberInfo Metadata { get; }
-        public string DisplayName { get; }
-        public Type MemberType { get; }
-        public bool IsWritable { get; }
-
-        public object Value(object instance) => _getter(instance);
-    }
+    public interface ISerializationFactory : IParameterizedSource<Stream, ISerialization> {}
 }

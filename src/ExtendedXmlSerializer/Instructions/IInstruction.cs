@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ProcessModel;
 
 namespace ExtendedXmlSerialization.Instructions
 {
     public interface IInstruction : ICommand<IProcess> {}
-
-    /*public interface IInstruction<in T> : ICommand<T> where T : IProcess
-    {
-        void Execute(T services);
-    }*/
 }

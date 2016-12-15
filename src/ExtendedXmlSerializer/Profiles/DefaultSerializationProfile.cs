@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.Profiles
         DefaultSerializationProfile()
             : base(
                 DefaultNamespaces.Default,
-                DefaultNamespaceLocator.Default, null,
-                DefaultServices.Default.ToArray()
+                DefaultNamespaceLocator.Default, null/*,
+                DefaultServices.Default.ToArray()*/
             ) {}
 
         public override bool IsSatisfiedBy(Uri parameter) => true;

@@ -25,6 +25,7 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
@@ -35,14 +36,14 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         protected override void OnExecute(ISerialization services)
         {
-            var member = services.Current.Member;
-            if (member.HasValue)
+            var member = services.Current as IMemberScope;
+            if (member != null)
             {
                 /*var declaringType = member.Value.Metadata.DeclaringType;
                 var @namespace = !declaringType.IsInstanceOfType(services.Current.Instance)
                     ? services.Locate(declaringType)
                     : null;*/
-                services.Emit(new MemberProperty(member.Value, services.Current.Value()));
+                services.Get<IEmitter>().Execute(new MemberProperty(member.Instance, member.Value()));
             }
             else
             {

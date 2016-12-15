@@ -26,34 +26,38 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
     class EmitAttachedPropertiesInstruction : WriteInstructionBase
     {
-        private readonly Func<object, bool> _specification;
+        /*private readonly Func<object, bool> _specification;
 
         public EmitAttachedPropertiesInstruction(Func<object, bool> specification)
         {
             _specification = specification;
-        }
+        }*/
 
         protected override void OnExecute(ISerialization services)
         {
+/*
             var all = services.GetProperties();
             var properties = Properties(all).ToArray();
+            var emitter = services.Get<IEmitter>();
             foreach (var property in properties)
             {
-                services.Emit(property);
+                emitter.Execute(property);
             }
 
             foreach (var content in all.Except(properties))
             {
                 // new EmitInstanceInstruction(content.Name, _primary.For(content.Value.GetType())).Execute(services);
             }
+*/
         }
 
-        IEnumerable<IProperty> Properties(IEnumerable<IProperty> source)
+        /*IEnumerable<IProperty> Properties(IEnumerable<IProperty> source)
         {
             foreach (var property in source)
             {
@@ -62,6 +66,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
                     yield return property;
                 }
             }
-        }
+        }*/
     }
 }

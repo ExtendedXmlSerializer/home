@@ -21,30 +21,18 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    class MemberNames : WeakCacheBase<MemberInfo, string>
-    {
-        public static MemberNames Default { get; } = new MemberNames();
-        MemberNames() {}
-        protected override string Callback(MemberInfo key)
-        {
-            var result = key.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
-                         key.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? key.Name;
-            return result;
-        }
-    }
-
-    internal class PropertieDefinition
+    class PropertieDefinition : IMemberDefinition
     {
         public PropertieDefinition(MemberInfo memberInfo, string name)
         {
-            MemberInfo = memberInfo;
+            Metadata = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            MemberType = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
@@ -55,8 +43,8 @@ namespace ExtendedXmlSerialization.Cache
         private readonly ObjectAccessors.PropertySetter _propertySetter;
 
         public string Name { get; private set; }
-        public TypeDefinition TypeDefinition { get; }
-        public MemberInfo MemberInfo { get; }
+        public ITypeDefinition MemberType { get; }
+        public MemberInfo Metadata { get; }
         public bool IsWritable { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }

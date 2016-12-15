@@ -21,37 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Cache;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Services;
 
-namespace ExtendedXmlSerialization.ProcessModel.Write
+namespace ExtendedXmlSerialization.Cache
 {
-    class SerializableMembers : WeakCacheBase<Type, IImmutableList<MemberContext>>
+    class MemberNames : WeakCacheBase<MemberInfo, string>
     {
-        public static SerializableMembers Default { get; } = new SerializableMembers();
-        SerializableMembers() : this(_ => true) {}
+        public static MemberNames Default { get; } = new MemberNames();
+        MemberNames() {}
 
-        private readonly Func<TypeDefinition, bool> _serializable;
-
-        public SerializableMembers(Func<TypeDefinition, bool> serializable)
+        protected override string Callback(MemberInfo key)
         {
-            _serializable = serializable;
-        }
-
-        protected override IImmutableList<MemberContext> Callback(Type key) => GetWritableMembers(key).ToImmutableList();
-
-        IEnumerable<MemberContext> GetWritableMembers(Type type)
-        {
-            foreach (var member in TypeDefinitionCache.GetDefinition(type).Properties)
-            {
-                if (_serializable(member.TypeDefinition))
-                {
-                    yield return new MemberContext(member.MemberInfo, member.Name, member.TypeDefinition.Type, member.IsWritable, member.GetValue);
-                }
-            }
+            var result = key.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
+                         key.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? key.Name;
+            return result;
         }
     }
 }

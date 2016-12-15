@@ -21,55 +21,145 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.Instructions.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IWriteContext {
-        IWriteContext Parent { get; }
-        ProcessState State { get; }
-        object Root { get; }
-        object Instance { get; }
-        ITypeDefinition Definition { get; }
-        IImmutableList<MemberContext> Members { get; }
-        MemberContext? Member { get; }
-    }
-
-    public class WriteContext : IWriteContext
+    public class MembersScope : ScopeBase<IImmutableList<IMemberDefinition>>
     {
-        public WriteContext(object root, ITypeDefinition definition)
-            : this(null, ProcessState.Instance, root, root, definition, null, null) {}
+        private readonly IInstruction _type /*= DefaultEmitTypeForInstanceInstruction.Default*/;
 
-        public WriteContext(IWriteContext parent, object instance, ITypeDefinition definition)
-            : this(parent, ProcessState.Instance, parent.Root, instance, definition, null, null) {}
+        public MembersScope(IScopeFactory factory, IContext parent, IImmutableList<IMemberDefinition> instance,
+                            ITypeDefinition definition)
+            : this(factory, parent, instance, definition, EmitTypeInstruction.Default) {}
 
-        public WriteContext(IWriteContext parent, IImmutableList<MemberContext> members)
-            : this(parent, ProcessState.Members, parent.Root, parent.Instance, parent.Definition, members, null) {}
-
-        public WriteContext(IWriteContext parent, MemberContext member)
-            : this(parent, ProcessState.Member, parent.Root, parent.Instance, parent.Definition, parent.Members, member) {}
-
-        public WriteContext(IWriteContext parent, ProcessState state, object root, object instance,
-                            ITypeDefinition definition, IImmutableList<MemberContext> members,
-                            MemberContext? member)
+        public MembersScope(IScopeFactory factory, IContext parent, IImmutableList<IMemberDefinition> instance,
+                            ITypeDefinition definition,
+                            IInstruction type) : base(factory, parent, instance, definition)
         {
-            Parent = parent;
-            State = state;
-            Root = root;
-            Instance = instance;
-            Definition = definition;
-            Members = members;
-            Member = member;
+            _type = type;
         }
 
-        public IWriteContext Parent { get; }
-        public ProcessState State { get; }
-        public object Root { get; }
-        public object Instance { get; }
-        public ITypeDefinition Definition { get; }
-        public IImmutableList<MemberContext> Members { get; }
-        public MemberContext? Member { get; }
+        public override void Execute(IProcess parameter) {}
+    }
+
+    public interface IInstanceScope : IScope {}
+
+    /*public class InstanceScope : InstanceScope<object>, IInstanceScope
+    {
+        public InstanceScope(IInstanceServices services, IElementInformation information, IScope parent, object instance)
+            : base(services, information, parent, instance) {}
+
+        public InstanceScope(IInstanceServices services, IElementInformation information, IInstruction body,
+                             IScope parent, object instance) : base(services, information, body, parent, instance) {}
+
+        public InstanceScope(IInstanceServices services, IElementInformation information, IInstruction body,
+                             IScope parent, object instance, ITypeDefinition definition)
+            : base(services, information, body, parent, instance, definition) {}
+    }*/
+
+    public class InstanceScope<T> : ScopeBase<T>, IInstanceScope
+    {
+        private readonly IElementInformation _information;
+        private readonly IInstruction _body;
+        readonly private IInstanceServices _services;
+
+        public InstanceScope(IInstanceServices services, IScope parent, T instance)
+            : this(services, ElementInformation.Default, parent, instance) {}
+
+        public InstanceScope(
+            IInstanceServices services,
+            IElementInformation information,
+            IScope parent, T instance)
+            : this(services, information, EmitInstanceBodyInstruction.Default, parent, instance) {}
+
+        protected InstanceScope(
+            IInstanceServices services, IElementInformation information,
+            IInstruction body,
+            IScope parent, T instance)
+            : this(services, information, body, parent, instance, TypeDefinitionCache.GetDefinition(instance.GetType())) {}
+
+        protected InstanceScope(
+            IInstanceServices services, IElementInformation information,
+            IInstruction body,
+            IScope parent, T instance, ITypeDefinition definition)
+            : base(parent, instance, definition)
+        {
+            _services = services;
+            _information = information;
+            _body = body;
+        }
+
+        public override void Execute(IProcess services)
+        {
+            var type = _information.GetType(this);
+            var identifier = type != null ? _services.Locate(type) : null;
+            Start(_services, identifier);
+            services.Execute(_body);
+        }
+
+        protected virtual void Start(IInstanceServices services, Uri identifier)
+            => services.Begin(_information.GetName(this), identifier);
+
+        protected override void OnDispose(bool disposing) => _services.EndElement();
+    }
+
+    public interface IMemberScope : IScope<IMemberDefinition> {}
+
+    public class MemberScope : InstanceScope<IMemberDefinition>, IMemberScope
+    {
+        public MemberScope(IInstanceServices services, IInstruction body,
+                              IScope parent, IMemberDefinition instance)
+            : base(services, MemberElementInformation.Instance, body, parent, instance, instance.MemberType) {}
+
+        /*private readonly IInstruction _body;
+
+        public MemberScope(IScopeFactory factory, IContext parent, MemberContext instance, ITypeDefinition definition,
+                           IInstruction body)
+            : base(factory, parent, instance, definition)
+        {
+            _body = body;
+        }
+
+        public override void Execute(IProcess services) => services.Execute(_body);*/
+    }
+
+    public class EnumerableScope : InstanceScope<IEnumerable>
+    {
+
+        // public EnumerableScope(IScope parent, IEnumerable instance) : base(factory, writer, locator, parent, instance) {}
+
+        /*public EnumerableScope(IWriter writer, INamespaceLocator locator, IContext parent, IEnumerable instance)
+            : base(writer, locator, parent, instance) {}
+
+        public EnumerableScope(IWriter writer, INamespaceLocator locator, IInstruction body, IContext parent,
+                               IEnumerable instance, ITypeDefinition definition, Func<IContext, Type> type,
+                               Func<IContext, string> name)
+            : base(writer, locator, body, parent, instance, definition, type, name) {}
+
+        public override void Execute(IProcess parameter) => parameter.Execute(_body);*/
+        public EnumerableScope(IInstanceServices services, IScope parent, IEnumerable instance) : base(services, parent, instance) {}
+    }
+
+    public class RootScope : InstanceScope<object>
+    {
+        public RootScope(IInstanceServices services, object instance) : base(services, null, instance) {}
+
+        protected override void Start(IInstanceServices services, Uri identifier)
+        {
+            base.Start(services, identifier);
+            if (identifier != null)
+            {
+                services.Execute(Instance);
+            }
+        }
     }
 }

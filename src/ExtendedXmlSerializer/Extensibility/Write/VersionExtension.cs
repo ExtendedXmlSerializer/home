@@ -27,6 +27,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
+/*
     public class VersionExtension : WritingExtensionBase
     {
         public static VersionExtension Default { get; } = new VersionExtension();
@@ -51,4 +52,5 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             return base.IsSatisfiedBy(services);
         }
     }
+*/
 }

@@ -22,24 +22,102 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel
 {
-    public enum ProcessState
+    /*public enum ProcessState
     {
         // Root,
         Instance,
         Members,
         Member/*,
-        MemberValue*/
-    }
+        MemberValue#1#
+    }*/
 
-    public interface IProcess : IDisposable, ICommand<IInstruction>, IServiceProvider {
-    }
+    public interface IProcess : IDisposable, ICommand<IInstruction>, IServiceProvider {}
 
     public interface ICommand<in T>
     {
         void Execute(T parameter);
+    }
+
+    public interface IScope : IScopeFactory, IContext, IInstruction, IDisposable
+    {
+        // IScope Create(object instance);
+    }
+
+    public interface IContext
+    {
+        IContext Parent { get; }
+        object Instance { get; }
+        ITypeDefinition Definition { get; }
+    }
+
+    public static class Extensions
+    {
+        public static IScope CreateScope<T>(this IScopeFactory @this, T instance) => @this.Create(instance);
+        public static IScope CreateScope<T>(this IScope @this, T instance) => @this.Create(instance);
+
+        /*public static Context Current(this ISerializationContext @this, IContext context) => new Context(@this, context);
+
+        public class Context :  IDisposable
+        {
+            private readonly ISerializationContext _serialization;
+            
+            public Context(ISerializationContext serialization, IContext context)
+            {
+                _serialization = serialization;
+                _serialization.MakeCurrent(context);
+            }
+
+            public void Dispose() => _serialization.Undo();
+        }*/
+    }
+
+    public abstract class ScopeBase<T> : IScope<T>
+    {
+        private readonly IScopeFactory _factory;
+
+        protected ScopeBase(IScope parent, T instance, ITypeDefinition definition) : this(parent, parent, instance, definition) {}
+
+        protected ScopeBase(IScopeFactory factory, IContext parent, T instance, ITypeDefinition definition)
+        {
+            _factory = factory;
+            Parent = parent;
+            Instance = instance;
+            Definition = definition;
+        }
+
+        public IContext Parent { get; }
+
+        public T Instance { get; }
+        object IContext.Instance => Instance;
+
+        public ITypeDefinition Definition { get; }
+
+        public virtual IScope Create(object instance) => _factory.Create(instance);
+
+        public abstract void Execute(IProcess parameter);
+
+        ~ScopeBase()
+        {
+            OnDispose(false);
+        }
+
+        public void Dispose()
+        {
+            OnDispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void OnDispose(bool disposing) {}
+    }
+
+    public interface IScope<out T> : IScope
+    {
+        new T Instance { get; }
     }
 }

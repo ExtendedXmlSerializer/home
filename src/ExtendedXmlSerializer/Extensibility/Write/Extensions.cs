@@ -22,10 +22,12 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Instructions;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
@@ -47,46 +49,26 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             extensions.Complete(services);
         }*/
 
-        public static IEnumerable<IWriteContext> Hierarchy(this IWriteContext @this)
-        {
-            while (true)
-            {
-                yield return @this;
-                if (@this.Parent != null)
-                {
-                    @this = @this.Parent;
-                    continue;
-                }
-                break;
-            }
-        }
-
-        public static IWriteContext GetArrayContext(this IWriteContext @this)
+        public static IContext GetArrayContext(this IContext @this)
         {
             var parent = @this.Parent?.Parent;
-            var instance = parent?.Instance;
-            var result = instance != null && Arrays.Default.Is(instance) ? parent : null;
+            var result = parent is EnumerableScope ? parent : null;
             return result;
         }
 
-        public static IWriteContext GetDictionaryContext(this IWriteContext @this)
+        public static IContext GetDictionaryContext(this IContext @this)
         {
             var parent = @this.Parent?.Parent;
             var instance = parent?.Instance;
-            var result = instance != null && TypeDefinitionCache.GetDefinition(instance.GetType()).IsDictionary
+            var result = instance is IDictionary
                 ? parent
                 : null;
             return result;
         }
 
-        public static IWriteContext GetMemberContext(this IWriteContext @this)
+        public static IMemberScope GetMemberScope(this IContext @this)
         {
-            if (@this.Member != null)
-            {
-                return @this;
-            }
-            var parent = @this.Parent;
-            var result = parent?.Member != null ? parent : null;
+            var result = @this as IMemberScope ?? @this.Parent as IMemberScope;
             return result;
         }
     }

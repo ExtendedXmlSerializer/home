@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
@@ -30,6 +31,6 @@ namespace ExtendedXmlSerialization.Instructions.Write
         public static EmitCurrentInstanceInstruction Default { get; } = new EmitCurrentInstanceInstruction();
         EmitCurrentInstanceInstruction() {}
 
-        protected override void OnExecute(ISerialization services) => services.Emit(services.Current.Instance);
+        protected override void OnExecute(ISerialization services) => services.Get<IEmitter>().Execute(services.Current.Instance);
     }
 }

@@ -23,12 +23,13 @@
 
 using System;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
     class MemberProperty : PropertyBase
     {
-        public MemberProperty(MemberContext member, object value) : base((Uri)null, member.DisplayName, value) {}
+        public MemberProperty(IMemberDefinition member, object value) : base((Uri)null, member.Name, value) {}
     }
 }

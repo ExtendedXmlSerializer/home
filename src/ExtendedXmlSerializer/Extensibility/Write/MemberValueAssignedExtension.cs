@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    class MemberValueAssignedExtension : WritingExtensionBase
+    /*class MemberValueAssignedExtension : WritingExtensionBase
     {
         public static MemberValueAssignedExtension Default { get; } = new MemberValueAssignedExtension();
         protected MemberValueAssignedExtension() : this(DefaultValues.Default.Get) {}
@@ -50,5 +50,5 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         }
 
         public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Member, this);
-    }
+    }*/
 }

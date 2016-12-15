@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
@@ -34,8 +36,8 @@ namespace ExtendedXmlSerialization.Instructions.Write
         protected override void OnExecute(ISerialization services)
         {
             var type = services.Current.Instance.GetType();
-            var property = new TypeProperty(services.Locate(this), type);
-            services.Emit(property);
+            var property = new TypeProperty(services.GetValid<INamespaceLocator>().Locate(this), type);
+            services.GetValid<IEmitter>().Execute(property);
         }
     }
 }

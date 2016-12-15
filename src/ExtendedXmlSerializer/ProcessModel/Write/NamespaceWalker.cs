@@ -50,9 +50,9 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             var type = input as Type;
             if (type != null)
             {
-                foreach (var info in SerializableMembers.Default.Get(type))
+                foreach (var info in TypeDefinitionCache.GetDefinition(type).Members)
                 {
-                    var memberType = info.MemberType;
+                    var memberType = info.MemberType.Type;
                     if (info.IsWritable && !_primitive.IsSatisfiedBy(memberType))
                     {
                         Schedule(memberType);
@@ -121,19 +121,20 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 }
                 else
                 {
-                    foreach (var context in SerializableMembers.Default.Get(input.GetType()))
+                    foreach (var context in TypeDefinitionCache.GetDefinition(input.GetType()).Members)
                     {
                         if (context.IsWritable)
                         {
-                            if (!_primitive.IsSatisfiedBy(context.MemberType))
+                            var candidate = context.MemberType.Type;
+                            if (!_primitive.IsSatisfiedBy(candidate))
                             {
-                                Schedule(context.MemberType);
+                                Schedule(candidate);
                             }
-                            var value = context.Value(input);
-                            if (value != DefaultValues.Default.Get(context.MemberType))
+                            var value = context.GetValue(input);
+                            if (value != DefaultValues.Default.Get(candidate))
                             {
                                 var instanceType = value.GetType();
-                                if (instanceType != context.MemberType)
+                                if (instanceType != candidate)
                                 {
                                     Schedule(instanceType);
                                     Schedule(value);

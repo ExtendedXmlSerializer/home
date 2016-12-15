@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    class EncryptionSpecification : ISpecification<object>
+    /*class EncryptionSpecification : ISpecification<object>
     {
         private readonly ISerializationToolsFactory _factory;
         private readonly ISerialization _context;
@@ -53,5 +53,5 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             }
             return false;
         }
-    }
+    }*/
 }

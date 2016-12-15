@@ -25,6 +25,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Extensibility;
+using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Profiles;
 
 namespace ExtendedXmlSerialization
@@ -184,7 +185,7 @@ namespace ExtendedXmlSerialization
             return (T)Deserialize(xml, typeof(T));
         }
 
-        private object ReadXml(XElement currentNode, TypeDefinition type, object instance = null)
+        private object ReadXml(XElement currentNode, ITypeDefinition type, object instance = null)
         {
             if (type.IsPrimitive)
             {
@@ -223,7 +224,7 @@ namespace ExtendedXmlSerialization
             }
             
             // Create new instance if not exists
-            var currentObject = instance ?? currentNodeDef.ObjectActivator();
+            var currentObject = instance ?? currentNodeDef.Activate();
 
             if (configuration != null)
             {
@@ -260,12 +261,12 @@ namespace ExtendedXmlSerialization
             {
                 var localName = xElement.Name.LocalName;
                 var value = xElement.Value;
-                var propertyInfo = type.GetProperty(localName);
+                var propertyInfo = type[localName];
                 if (propertyInfo == null)
                 {
                     throw new InvalidOperationException("Missing property " + currentNode.Name.LocalName + "\\" + localName);
                 }
-                var propertyDef = propertyInfo.TypeDefinition;
+                var propertyDef = propertyInfo.MemberType;
                 if (xElement.HasAttributes && xElement.Attribute(Type) != null)
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
@@ -314,13 +315,13 @@ namespace ExtendedXmlSerialization
             return currentObject;
         }
 
-        private object ReadXmlDictionary(XElement currentNode, TypeDefinition type, object instance = null)
+        private object ReadXmlDictionary(XElement currentNode, ITypeDefinition type, object instance = null)
         {
             int arrayCount = currentNode.Elements().Count();
             var elements = currentNode.Elements().ToArray();
 
             var definition = GetElementTypeDefinition(currentNode) ?? type;
-            object dict = instance ?? definition.ObjectActivator();
+            object dict = instance ?? definition.Activate();
 
             for (int i = 0; i < arrayCount; i++)
             {
@@ -332,12 +333,12 @@ namespace ExtendedXmlSerialization
                 var keyDef = GetElementTypeDefinition(key, type.GenericArguments[0]);
                 var valuDef = GetElementTypeDefinition(value, type.GenericArguments[1]);
 
-                type.MethodAddToDictionary(dict, ReadXml(key, keyDef), ReadXml(value, valuDef));
+                type.Add(dict, ReadXml(key, keyDef), ReadXml(value, valuDef));
             }
             return dict;
         }
 
-        private object ReadXmlArray(XElement currentNode, TypeDefinition type, object instance = null)
+        private object ReadXmlArray(XElement currentNode, ITypeDefinition type, object instance = null)
         {
             var elements = currentNode.Elements().ToArray();
             int arrayCount = elements.Length;
@@ -350,7 +351,7 @@ namespace ExtendedXmlSerialization
             else
             {
                 var definition = GetElementTypeDefinition(currentNode) ?? type;
-                list = instance ?? definition.ObjectActivator();
+                list = instance ?? definition.Activate();
             }
 
             var elementType = ElementTypeLocator.Default.Locate( type.Type );
@@ -366,7 +367,7 @@ namespace ExtendedXmlSerialization
                 }
                 else
                 {
-                    type.MethodAddToCollection(list, xml);
+                    type.Add(list, xml);
                 }
             }
             if (type.IsArray)

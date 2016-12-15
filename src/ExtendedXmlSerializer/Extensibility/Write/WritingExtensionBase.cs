@@ -25,5 +25,7 @@ using ExtendedXmlSerialization.ProcessModel.Write;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
+/*
     public abstract class WritingExtensionBase : ExtensionBase<ISerialization> {}
+*/
 }

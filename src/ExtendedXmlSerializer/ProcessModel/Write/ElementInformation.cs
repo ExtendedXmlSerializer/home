@@ -69,9 +69,9 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _isInterface = isInterface;
         }
 
-        public override Type GetType(IWriteContext context) => context.Instance.GetType();
+        public override Type GetType(IContext context) => context.Instance.GetType();
 
-        public override string GetName(IWriteContext context)
+        public override string GetName(IContext context)
         {
             var type = _isInterface ? context.Definition : _definition;
             var result = type.Name;
@@ -79,25 +79,24 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         }
     }
 
-    class RootElementInformation : ElementInformation
+    /*class RootElementInformation : ElementInformation
     {
         public static RootElementInformation Default { get; } = new RootElementInformation();
         RootElementInformation() : base(context => context.Root.GetType()) {}
-    }
+    }*/
 
-    class MemberElementInformation : ElementInformation
+    class MemberElementInformation : ElementInformation<IMemberScope>
     {
         public static MemberElementInformation Instance { get; } = new MemberElementInformation();
-
         MemberElementInformation()
-            : base(context => context.Member?.Metadata.DeclaringType, context => context.Member?.DisplayName) {}
+            : base(context => context.Instance.Metadata.DeclaringType, context => context.Instance.Name) {}
     }
 
 
     public interface IElementInformation
     {
-        Type GetType(IWriteContext context);
-        string GetName(IWriteContext context);
+        Type GetType(IContext context);
+        string GetName(IContext context);
     }
 
     abstract class ApplicationElementInformationBase : FixedElementInformation
@@ -117,32 +116,38 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _name = name;
         }
 
-        public override Type GetType(IWriteContext context) => _type;
+        public override Type GetType(IContext context) => _type;
 
-        public override string GetName(IWriteContext context) => _name;
+        public override string GetName(IContext context) => _name;
     }
 
     abstract class ElementInformationBase : IElementInformation
     {
-        public abstract Type GetType(IWriteContext context);
-        public abstract string GetName(IWriteContext context);
+        public abstract Type GetType(IContext context);
+        public abstract string GetName(IContext context);
     }
 
-    class ElementInformation : ElementInformationBase
+    class ElementInformation : ElementInformation<IContext>
     {
-        private readonly Func<IWriteContext, Type> _type;
-        private readonly Func<IWriteContext, string> _name;
+        public static ElementInformation Default { get; } = new ElementInformation();
+        ElementInformation() : base(context => context.Instance.GetType()) {}
+    }
 
-        public ElementInformation(Func<IWriteContext, Type> type) : this(type, context => context.Definition.Name) {}
+    class ElementInformation<T> : ElementInformationBase where T : IContext
+    {
+        private readonly Func<T, Type> _type;
+        private readonly Func<T, string> _name;
 
-        public ElementInformation(Func<IWriteContext, Type> type, Func<IWriteContext, string> name)
+        public ElementInformation(Func<T, Type> type) : this(type, context => context.Definition.Name) {}
+
+        public ElementInformation(Func<T, Type> type, Func<T, string> name)
         {
             _type = type;
             _name = name;
         }
 
-        public override Type GetType(IWriteContext context) => _type(context);
+        public override Type GetType(IContext context) => _type((T)context);
 
-        public override string GetName(IWriteContext context) => _name(context);
+        public override string GetName(IContext context) => _name((T)context);
     }
 }

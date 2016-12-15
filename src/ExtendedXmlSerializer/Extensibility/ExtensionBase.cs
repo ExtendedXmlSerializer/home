@@ -25,6 +25,7 @@ using System;
 
 namespace ExtendedXmlSerialization.Extensibility
 {
+/*
     public abstract class ExtensionBase<T> : IExtensionSpecification, IExtensionDefinition where T : IServiceProvider
     {
         public abstract void Accept(IExtensionRegistry registry);
@@ -47,7 +48,7 @@ namespace ExtendedXmlSerialization.Extensibility
             {
                 Executed((T) services);
             }
-        }*/
+        }#1#
 
         void IExtension.Complete(IServiceProvider services)
         {
@@ -58,7 +59,8 @@ namespace ExtendedXmlSerialization.Extensibility
         }
 
         /*public virtual void Executing(T services) {}
-        public virtual void Executed(T services) {}*/
+        public virtual void Executed(T services) {}#1#
         public virtual void Completed(T services) {}
     }
+*/
 }

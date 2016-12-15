@@ -22,20 +22,69 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface ISerialization : INamespaceLocator, IProcess
+    public interface ISerialization : IProcess, IScopeFactory, IWriteContextAware
     {
-        IWriteContext Current { get; }
-
-        IDisposable New(object instance, IElementInformation information);
-        IDisposable New(IImmutableList<MemberContext> members);
-        IDisposable New(MemberContext member);
-
-        void Emit(object instance);
+        /*void Emit(object instance);
         void Emit(IProperty property);
+        void Emit(Type type);*/
+    }
+
+    public interface IWriteContextAware
+    {
+        IContext Current { get; }
+    }
+
+    public interface IContextMonitor : IWriteContextAware, IEnumerable<IContext>
+    {
+        void MakeCurrent(IContext current);
+        void Undo();
+    }
+
+    class ContextMonitor : IContextMonitor
+    {
+        public IContext Current { get; private set; }
+        public void MakeCurrent(IContext current) => Current = current;
+        public void Undo() => Current = Current?.Parent;
+
+        public IEnumerator<IContext> GetEnumerator()
+        {
+            var current = Current;
+            while (true)
+            {
+                yield return current;
+                if (current.Parent != null)
+                {
+                    current = current.Parent;
+                    continue;
+                }
+                break;
+            }
+            // return _stack.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /*public IWriteContext Parent => Current.Parent;
+
+        public object Instance => Current.Instance;
+
+        public ITypeDefinition Definition => Current.Definition;*/
+
+        /*public IImmutableList<MemberContext> Members => _current.Members;
+
+        public MemberContext? Member => _current.Member;*/
+
+        /*public void Dispose()
+        {
+            
+        }*/
     }
 }

@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Extensibility.Write
 {
-    public class CustomSerializationExtension : WritingExtensionBase
+    /*public class CustomSerializationExtension : WritingExtensionBase
     {
         private readonly IInstruction _instruction;
 
@@ -52,5 +52,5 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         }
 
         public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Members, this);
-    }
+    }*/
 }
