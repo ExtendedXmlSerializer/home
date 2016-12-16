@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.ProcessModel;
-using ExtendedXmlSerialization.Specifications;
-
-namespace ExtendedXmlSerialization.Elements
+namespace ExtendedXmlSerialization.NodeModel.Write
 {
-    public class NamespaceLocator : WeakCacheBase<Type, Uri>, INamespaceLocator
+    /*public class NamespaceLocator : WeakCacheBase<Type, Uri>, INamespaceLocator
     {
         readonly private static Assembly Assembly = typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly;
         private readonly ISpecification<Type> _primitiveSpecification;
@@ -65,5 +59,5 @@ namespace ExtendedXmlSerialization.Elements
                     : new Uri($"clr-namespace:{key.Namespace};assembly={key.GetTypeInfo().Assembly.GetName().Name}");
             return result;
         }
-    }
+    }*/
 }

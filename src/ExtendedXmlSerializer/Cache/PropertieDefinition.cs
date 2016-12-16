@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Cache
         {
             Metadata = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            MemberType = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            Definition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Cache
         private readonly ObjectAccessors.PropertySetter _propertySetter;
 
         public string Name { get; private set; }
-        public ITypeDefinition MemberType { get; }
+        public ITypeDefinition Definition { get; }
         public MemberInfo Metadata { get; }
         public bool IsWritable { get; }
         public int Order { get; set; } = -1;

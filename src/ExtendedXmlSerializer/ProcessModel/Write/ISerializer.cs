@@ -21,7 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using System.IO;
+using ExtendedXmlSerialization.NodeModel;
+using ExtendedXmlSerialization.NodeModel.Write;
+using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Sources;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
@@ -29,4 +36,180 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
     {
         void Serialize(Stream stream, object instance);
     }
+
+    /*class Selector : FirstConditionalCommand<IObjectNode>
+    {
+        public Selector(IWriter writer) : base(
+            new RootEmitter(writer)
+        ) {}
+    }*/
+
+    /*class SelectorFactory : IParameterizedSource<IWriter, ICommand<IObjectNode>>
+    {
+        public static SelectorFactory Default { get; } = new SelectorFactory();
+        SelectorFactory() {}
+
+        public ICommand<IObjectNode> Get(IWriter parameter)
+        {
+            var collection = new List<IConditionalCommand<IObjectNode>>(8);
+            var result = new FirstConditionalCommand<IObjectNode>(collection);
+
+            collection.Add(new PrimitiveEmitter(parameter));
+            collection.Add(new PropertyEmitter(parameter));
+            collection.Add(new ContentEmitter(parameter, result));
+            collection.Add(new MembersEmitter(result));
+            collection.Add(new InstanceEmitter(parameter, result));
+            collection.Add(new RootEmitter(result));
+            return result;
+        }
+    }*/
+
+    class Selector : INodeEmitter
+    {
+        readonly private INodeEmitter _primitive, _property, _content, _members, _instance, _root;
+        public Selector(IWriter writer)
+        {
+            _primitive = new PrimitiveEmitter(writer);
+            _property = new PropertyEmitter(writer);
+            _content = new ContentEmitter(writer, this);
+            _members = new MembersEmitter(this);
+            _instance = new InstanceEmitter(writer, this);
+            _root = new RootEmitter(this);
+        }
+
+        INodeEmitter Select(IObjectNode parameter)
+        {
+            if (parameter is IPrimitive)
+            {
+                return _primitive;
+            }
+            if (parameter is IProperty)
+            {
+                return _property;
+            }
+            if (parameter is IContent)
+            {
+                return _content;
+            }
+            if (parameter is IMembers)
+            {
+                return _members;
+            }
+            if (parameter is IInstance)
+            {
+                return _instance;
+            }
+            if (parameter is IRoot)
+            {
+                return _root;
+            }
+            throw new InvalidOperationException($"Could not find emmiter for {parameter.GetType()}");
+        }
+
+        public void Execute(IObjectNode parameter) => Select(parameter).Execute(parameter);
+    }
+
+    class PrimitiveEmitter : NodeEmitterBase<IPrimitive>
+    {
+        private readonly IWriter _writer;
+
+        public PrimitiveEmitter(IWriter writer)
+        {
+            _writer = writer;
+        }
+
+        protected override void Execute(IPrimitive parameter) => _writer.Emit(parameter);
+    }
+
+    class PropertyEmitter : NodeEmitterBase<IProperty>
+    {
+        private readonly IWriter _writer;
+
+        public PropertyEmitter(IWriter writer)
+        {
+            _writer = writer;
+        }
+
+        protected override void Execute(IProperty parameter) => _writer.Emit(parameter.Instance);
+    }
+
+    class ContentEmitter : NodeEmitterBase<IContent>
+    {
+        private readonly IWriter _writer;
+        private readonly ICommand<IObjectNode> _emit;
+
+        public ContentEmitter(IWriter writer, ICommand<IObjectNode> emit)
+        {
+            _writer = writer;
+            _emit = emit;
+        }
+
+        protected override void Execute(IContent parameter)
+        {
+            using (_writer.Begin(parameter))
+            {
+                _emit.Execute(parameter.Instance);
+            }
+        }
+    }
+
+    class MembersEmitter : NodeEmitterBase<IMembers>
+    {
+        private readonly ICommand<IObjectNode> _emit;
+        public MembersEmitter(ICommand<IObjectNode> emit)
+        {
+            _emit = emit;
+        }
+
+        protected override void Execute(IMembers parameter)
+        {
+            foreach (var member in parameter)
+            {
+                _emit.Execute(member);
+            }
+        }
+    }
+
+
+    class RootEmitter : NodeEmitterBase<IRoot>
+    {
+        private readonly ICommand<IObjectNode> _emit;
+
+        public RootEmitter(ICommand<IObjectNode> emit)
+        {
+            _emit = emit;
+        }
+
+        protected override void Execute(IRoot parameter) => _emit.Execute(parameter.Instance);
+    }
+
+    class InstanceEmitter : NodeEmitterBase<IInstance>
+    {
+        private readonly IWriter _writer;
+        private readonly ICommand<IObjectNode> _emit;
+
+        public InstanceEmitter(IWriter writer, ICommand<IObjectNode> emit)
+        {
+            _writer = writer;
+            _emit = emit;
+        }
+
+        protected override void Execute(IInstance parameter)
+        {
+            using (_writer.Begin(parameter))
+            {
+                _emit.Execute(parameter.Members);
+            }
+        }
+    }
+
+    abstract class NodeEmitterBase<T> : ConditionalCommandBase<IObjectNode>, INodeEmitter where T : IObjectNode
+    {
+        public override void Execute(IObjectNode parameter) => Execute(parameter.AsValid<T>());
+        protected abstract void Execute(T parameter);
+
+        public override bool IsSatisfiedBy(IObjectNode parameter) => parameter is T;
+    }
+
+    public interface INodeEmitter : ICommand<IObjectNode> {}
 }

@@ -24,17 +24,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public interface IEmitter : ICommand<object> {}
+    /*public interface IEmitter : ICommand<object> {}
 
     public class Emitter : IEmitter
     {
@@ -42,68 +40,53 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         private readonly IObjectSerializer _serializer;
         private readonly INamespaceLocator _locator;
 
+        public Emitter(IWriter writer) : this(writer, ObjectSerializer.Default, DefaultNamespaceLocator.Default) {}
+
         public Emitter(IWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
         {
             _writer = writer;
             _serializer = serializer;
             _locator = locator;
         }
+
         public void Execute(object parameter) {}
 
-public void Emit(object instance) => _writer.Emit(_serializer.Serialize(instance));
+        
+    }*/
 
-        public void Emit(IProperty property)
-        {
-            var type = property.Value as Type;
-            if (property.Identifier != null && type != null)
-            {
-                var identifier = _locator.Locate(type)?.ToString();
-                if (identifier != null)
-                {
-                    var name = TypeDefinitionCache.GetDefinition(type).Name;
-                    _writer.Emit(property.Name, property.Identifier, name, identifier);
-                    return;
-                }
-            }
-            var serialized = _serializer.Serialize(property.Value);
-            _writer.Emit(property.Name, serialized, property.Identifier, property.Prefix);
-        }
-
-        public void Emit(Type type) {}
-    }
-
-    public class Serialization : CompositeServiceProvider, ISerialization, IContextMonitor, IScopeFactory, IEmitter
+    /*public class Serialization : CompositeServiceProvider, ISerialization/*, IContextController#1#//, IEmitter
     {
-        private readonly IContextMonitor _contextMonitor;
-        private readonly IScopeFactory _factory;
+        /*private readonly IContextController _controller;
+        private readonly IScopeFactory _factory;#1#
         private readonly IEmitter _emitter;
 
         /*public Serialization(IWriter writer, INamespaceEmitter emitter, params object[] services)
             : this(writer, DefaultNamespaceLocator.Default, ObjectSerializer.Default, emitter, new SerializationContext(), services)
-        {}*/
+        {}#1#
 
         public Serialization(
-            IContextMonitor contextMonitor, 
-            IScopeFactory factory, 
+            /*IContextController controller,
+            IScopeFactory factory,#1#
             IEmitter emitter,
-            params object[] services)
+            params object[] services
+        ) 
             : base(services)
         {
-            _contextMonitor = contextMonitor;
-            _factory = factory;
+            /*_controller = controller;
+            _factory = factory;#1#
             _emitter = emitter;
         }
 
         public void Execute(IInstruction parameter) => parameter.Execute(this);
-       
+
         void ICommand<object>.Execute(object parameter) => _emitter.Execute(parameter);
 
-        IScope IScopeFactory.Create(object instance) => _factory.Create(instance);
+        /*IScope IScopeFactory.Create(object instance) => _factory.Create(instance);
 
-        IContext IWriteContextAware.Current => _contextMonitor.Current;
-        IEnumerator<IContext> IEnumerable<IContext>.GetEnumerator() => _contextMonitor.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _contextMonitor.GetEnumerator();
-        void IContextMonitor.MakeCurrent(IContext context) => _contextMonitor.MakeCurrent(context);
-        void IContextMonitor.Undo() => _contextMonitor.Undo();
-    }
+        IContext IContextAware.Current => _controller.Current;#1#
+        /*IEnumerator<IContext> IEnumerable<IContext>.GetEnumerator() => _controller.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _controller.GetEnumerator();
+        void IContextController.MakeCurrent(IContext context) => _controller.MakeCurrent(context);
+        void IContextController.Undo() => _controller.Undo();#1#
+    }*/
 }

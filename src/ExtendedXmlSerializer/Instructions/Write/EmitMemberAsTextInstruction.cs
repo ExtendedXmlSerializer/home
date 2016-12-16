@@ -36,20 +36,20 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         protected override void OnExecute(ISerialization services)
         {
-            var member = services.Current as IMemberScope;
+            /*var member = services.Current as IMemberScope;
             if (member != null)
             {
                 /*var declaringType = member.Value.Metadata.DeclaringType;
                 var @namespace = !declaringType.IsInstanceOfType(services.Current.Instance)
                     ? services.Locate(declaringType)
-                    : null;*/
+                    : null;#1#
                 services.Get<IEmitter>().Execute(new MemberProperty(member.Instance, member.Value()));
             }
             else
             {
                 throw new InvalidOperationException(
                           $"An attempt was made to emit a member of '{services.Current.Instance.GetType()}' but it is not available.");
-            }
+            }*/
         }
     }
 }

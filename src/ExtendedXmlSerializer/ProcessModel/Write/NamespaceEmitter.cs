@@ -22,14 +22,17 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.NodeModel.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     class NamespaceEmitter : INamespaceEmitter
     {
-        private const string Prefix = "xmlns";
+        /*private const string Prefix = "xmlns";
         private readonly XmlWriter _writer;
         private readonly INamespaces _namespaces;
+
+        public NamespaceEmitter(XmlWriter writer) : this(writer, DefaultNamespaces.Default) {}
 
         public NamespaceEmitter(XmlWriter writer, INamespaces namespaces)
         {
@@ -44,6 +47,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 _writer.WriteAttributeString(Prefix, pair.Prefix ?? string.Empty, null, pair.Identifier?.ToString());
             }
-        }
+        }*/
+        public void Execute(IRoot root) {}
     }
 }

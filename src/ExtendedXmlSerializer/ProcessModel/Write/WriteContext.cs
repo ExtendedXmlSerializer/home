@@ -33,9 +33,23 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
+    /*public class RootScope : InstanceScope<object>
+    {
+        public RootScope(IInstanceServices services, object instance) : base(services, null, instance) {}
+
+        protected override void Start(IInstanceServices services, Uri identifier)
+        {
+            base.Start(services, identifier);
+            if (identifier != null)
+            {
+                services.Execute(Instance);
+            }
+        }
+    }
+
     public class MembersScope : ScopeBase<IImmutableList<IMemberDefinition>>
     {
-        private readonly IInstruction _type /*= DefaultEmitTypeForInstanceInstruction.Default*/;
+        private readonly IInstruction _type /*= DefaultEmitTypeForInstanceInstruction.Default#1#;
 
         public MembersScope(IScopeFactory factory, IContext parent, IImmutableList<IMemberDefinition> instance,
                             ITypeDefinition definition)
@@ -64,7 +78,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public InstanceScope(IInstanceServices services, IElementInformation information, IInstruction body,
                              IScope parent, object instance, ITypeDefinition definition)
             : base(services, information, body, parent, instance, definition) {}
-    }*/
+    }#1#
 
     public class InstanceScope<T> : ScopeBase<T>, IInstanceScope
     {
@@ -129,7 +143,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _body = body;
         }
 
-        public override void Execute(IProcess services) => services.Execute(_body);*/
+        public override void Execute(IProcess services) => services.Execute(_body);#1#
     }
 
     public class EnumerableScope : InstanceScope<IEnumerable>
@@ -145,21 +159,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                                Func<IContext, string> name)
             : base(writer, locator, body, parent, instance, definition, type, name) {}
 
-        public override void Execute(IProcess parameter) => parameter.Execute(_body);*/
+        public override void Execute(IProcess parameter) => parameter.Execute(_body);#1#
         public EnumerableScope(IInstanceServices services, IScope parent, IEnumerable instance) : base(services, parent, instance) {}
-    }
-
-    public class RootScope : InstanceScope<object>
-    {
-        public RootScope(IInstanceServices services, object instance) : base(services, null, instance) {}
-
-        protected override void Start(IInstanceServices services, Uri identifier)
-        {
-            base.Start(services, identifier);
-            if (identifier != null)
-            {
-                services.Execute(Instance);
-            }
-        }
-    }
+    }*/
 }

@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Extensibility.Write
             extensions.Complete(services);
         }*/
 
-        public static IContext GetArrayContext(this IContext @this)
+        /*public static IContext GetArrayContext(this IContext @this)
         {
             var parent = @this.Parent?.Parent;
             var result = parent is EnumerableScope ? parent : null;
@@ -70,6 +70,6 @@ namespace ExtendedXmlSerialization.Extensibility.Write
         {
             var result = @this as IMemberScope ?? @this.Parent as IMemberScope;
             return result;
-        }
+        }*/
     }
 }

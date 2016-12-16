@@ -21,32 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.IO;
-using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Instructions.Write;
-using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Sources;
+using System.Xml;
+using ExtendedXmlSerialization.NodeModel.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Serializer : ISerializer
     {
-        private readonly ISerializationFactory _factory;
-
-        public Serializer(ISerializationFactory factory)
-        {
-            _factory = factory;
-        }
+        public static Serializer Default { get; } = new Serializer();
+        Serializer() {}
 
         public void Serialize(Stream stream, object instance)
         {
-            using (var serialization = _factory.Get(stream))
+            var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
+            var xmlWriter = XmlWriter.Create(stream, settings);
+            using (var writer = new Writer(xmlWriter))
             {
-                using (var scope = serialization.GetValid<IScopeFactory>().Create(instance))
-                {
-                    serialization.Execute(scope);
-                }
+                var node = RootNodeBuilder.Default.Get(instance);
+                new Selector(writer).Execute(node);
             }
         }
     }

@@ -7,6 +7,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
+/*
     class EmitInstanceMembersInstruction : WriteInstructionBase
     {
         public static EmitInstanceMembersInstruction Default { get; } = new EmitInstanceMembersInstruction();
@@ -22,7 +23,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
         protected override void OnExecute(ISerialization services)
         {
             //var factory = services.GetValid<IScopeFactory>();
-            var templates = _templates.Get(services.Current.Definition.Type);
+            /*var templates = _templates.Get(services.Current.Definition.Type);
             using (var scope = services.Create(templates.Source))
             {
                 services.Execute(scope);
@@ -37,9 +38,10 @@ namespace ExtendedXmlSerialization.Instructions.Write
                         services.Execute(child);
                     }
                 }
-            }
+            }#1#
         }
     }
+*/
 
     /*abstract class EmitInstanceInstructionBase : WriteInstructionBase
     {
@@ -64,20 +66,21 @@ namespace ExtendedXmlSerialization.Instructions.Write
         }
     }*/
 
+/*
     class EmitDictionaryInstruction : WriteInstructionBase<IDictionary>
     {
         public static EmitDictionaryInstruction Default { get; } = new EmitDictionaryInstruction();
 
         EmitDictionaryInstruction()
-            : this(EmitInstanceMembersInstruction.Default/*, EmitInstanceBodyInstructionInstance.Default*/) {}
+            : this(EmitInstanceMembersInstruction.Default/*, EmitInstanceBodyInstructionInstance.Default#1#) {}
 
         private readonly IInstruction _members;
         private readonly IInstruction _body;
 
-        public EmitDictionaryInstruction(IInstruction members/*, IInstruction body*/)
+        public EmitDictionaryInstruction(IInstruction members/*, IInstruction body#1#)
         {
             _members = members;
-            /*_body = body;*/
+            /*_body = body;#1#
         }
 
         protected override void Execute(ISerialization services, IDictionary instance)
@@ -86,7 +89,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
             foreach (DictionaryEntry item in instance)
             {
-                using (var scope = services.CreateScope(item))
+                /*using (var scope = services.CreateScope(item))
                 {
                     /*using (services.New(item.Key, DictionaryKeyElementInformation.Default))
                     {
@@ -96,12 +99,14 @@ namespace ExtendedXmlSerialization.Instructions.Write
                     using (services.New(item.Value, DictionaryValueElementInformation.Default))
                     {
                         _body.Execute(services);
-                    }*/
-                }
+                    }#2#
+                }#1#
             }
         }
     }
+*/
 
+/*
     class EmitEnumerableInstruction : WriteInstructionBase
     {
         public static EmitEnumerableInstruction Default { get; } = new EmitEnumerableInstruction();
@@ -109,25 +114,25 @@ namespace ExtendedXmlSerialization.Instructions.Write
         EmitEnumerableInstruction()
             : this(
                 EmitInstanceMembersInstruction.Default/*,
-                EmitInstanceBodyInstructionInstance.Default, ItemElements.DefaultElement.Get*/) {}
+                EmitInstanceBodyInstructionInstance.Default, ItemElements.DefaultElement.Get#1#) {}
 
         private readonly IInstruction _members;
         /*private readonly IInstruction _body;
-        private readonly Func<ITypeDefinition, IElementInformation> _elements;*/
+        private readonly Func<ITypeDefinition, IElementInformation> _elements;#1#
 
         public EmitEnumerableInstruction(IInstruction members/*, IInstruction body,
-                                         Func<ITypeDefinition, IElementInformation> elements*/)
+                                         Func<ITypeDefinition, IElementInformation> elements#1#)
         {
             _members = members;
             /*_body = body;
-            _elements = elements;*/
+            _elements = elements;#1#
         }
 
         protected override void OnExecute(ISerialization services)
         {
             _members.Execute(services);
 
-            var array = Arrays.Default.AsArray(services.Current.Instance);
+            /*var array = Arrays.Default.AsArray(services.Current.Instance);
             var length = array.Length;
             for (var i = 0; i < length; i++)
             {
@@ -136,9 +141,10 @@ namespace ExtendedXmlSerialization.Instructions.Write
                     services.Execute(scope);
                     // _body.Execute(services);
                 }
-            }
+            }#1#
         }
     }
+*/
 
     class EmitMemberInstruction : WriteInstructionBase
     {

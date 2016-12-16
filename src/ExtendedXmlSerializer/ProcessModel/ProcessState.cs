@@ -22,44 +22,122 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Instructions;
 using ExtendedXmlSerialization.ProcessModel.Write;
+using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.ProcessModel
 {
-    /*public enum ProcessState
+    /*public interface IContextAware
     {
-        // Root,
-        Instance,
-        Members,
-        Member/*,
-        MemberValue#1#
+        IContext Current { get; }
+    }
+
+    public interface IContextController : IContextAware, IEnumerable<IContext>
+    {
+        void MakeCurrent(IContext current);
+        void Undo();
+    }
+
+    class ContextController : IContextController
+    {
+        public IContext Current { get; private set; }
+        public void MakeCurrent(IContext current) => Current = current;
+        public void Undo() => Current = Current?.Parent;
+
+        public IEnumerator<IContext> GetEnumerator()
+        {
+            var current = Current;
+            while (true)
+            {
+                yield return current;
+                if (current.Parent != null)
+                {
+                    current = current.Parent;
+                    continue;
+                }
+                break;
+            }
+            // return _stack.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        /*public void Dispose()
+        {
+            
+        }#1#
     }*/
 
-    public interface IProcess : IDisposable, ICommand<IInstruction>, IServiceProvider {}
+    public interface IProcess : /*IContextAware,*/ IDisposable, ICommand<IInstruction>, IServiceProvider {}
 
     public interface ICommand<in T>
     {
         void Execute(T parameter);
     }
 
-    public interface IScope : IScopeFactory, IContext, IInstruction, IDisposable
+    public class FirstConditionalCommand<T> : ICommand<T>
     {
-        // IScope Create(object instance);
+        private readonly IEnumerable<IConditionalCommand<T>> _commands;
+        private readonly Lazy<IConditionalCommand<T>[]> _deferred;
+        public FirstConditionalCommand(IEnumerable<IConditionalCommand<T>> commands)
+        {
+            _commands = commands;
+            _deferred = new Lazy<IConditionalCommand<T>[]>(Commands);
+        }
+
+        private IConditionalCommand<T>[] Commands() => _commands.ToArray();
+
+        public void Execute(T parameter)
+        {
+            var commands = _deferred.Value;
+            var length = commands.Length;
+            for (var i = 0; i < length; i++)
+            {
+                var command = commands[i];
+                if (command.IsSatisfiedBy(parameter))
+                {
+                    command.Execute(parameter);
+                    return;
+                }
+            }
+        }
     }
 
-    public interface IContext
+    public class ConditionalCommand<T> : ConditionalCommandBase<T>
     {
-        IContext Parent { get; }
-        object Instance { get; }
-        ITypeDefinition Definition { get; }
+        private readonly ISpecification<T> _specification;
+        private readonly ICommand<T> _command;
+
+        public ConditionalCommand(ISpecification<T> specification, ICommand<T> command)
+        {
+            _specification = specification;
+            _command = command;
+        }
+
+        public override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+
+        public override void Execute(T parameter) => _command.Execute(parameter);
     }
+
+    public interface IConditionalCommand<in T> : ISpecification<T>, ICommand<T> { }
+    public abstract class ConditionalCommandBase<T> : IConditionalCommand<T>
+    {
+        public abstract bool IsSatisfiedBy(T parameter);
+        public abstract void Execute(T parameter);
+    }
+
 
     public static class Extensions
     {
-        public static IScope CreateScope<T>(this IScopeFactory @this, T instance) => @this.Create(instance);
-        public static IScope CreateScope<T>(this IScope @this, T instance) => @this.Create(instance);
+        // public static IScope CreateScope<T>(this IScopeFactory @this, T instance) => @this.Create(instance);
+        // public static IScope CreateScope<T>(this IScope @this, T instance) => @this.Create(instance);
 
         /*public static Context Current(this ISerializationContext @this, IContext context) => new Context(@this, context);
 
@@ -77,15 +155,11 @@ namespace ExtendedXmlSerialization.ProcessModel
         }*/
     }
 
+/*
     public abstract class ScopeBase<T> : IScope<T>
     {
-        private readonly IScopeFactory _factory;
-
-        protected ScopeBase(IScope parent, T instance, ITypeDefinition definition) : this(parent, parent, instance, definition) {}
-
-        protected ScopeBase(IScopeFactory factory, IContext parent, T instance, ITypeDefinition definition)
+        protected ScopeBase(IContext parent, T instance, ITypeDefinition definition)
         {
-            _factory = factory;
             Parent = parent;
             Instance = instance;
             Definition = definition;
@@ -97,8 +171,6 @@ namespace ExtendedXmlSerialization.ProcessModel
         object IContext.Instance => Instance;
 
         public ITypeDefinition Definition { get; }
-
-        public virtual IScope Create(object instance) => _factory.Create(instance);
 
         public abstract void Execute(IProcess parameter);
 
@@ -115,9 +187,10 @@ namespace ExtendedXmlSerialization.ProcessModel
 
         protected virtual void OnDispose(bool disposing) {}
     }
+*/
 
-    public interface IScope<out T> : IScope
+    /*public interface IScope<out T> : IScope
     {
         new T Instance { get; }
-    }
+    }*/
 }

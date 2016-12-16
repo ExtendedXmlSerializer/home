@@ -23,22 +23,33 @@
 
 using System;
 using System.Xml;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.Extensibility.Write;
+using ExtendedXmlSerialization.NodeModel.Write;
+using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public class Writer : IWriter
     {
         private readonly XmlWriter _writer;
+        private readonly IObjectSerializer _serializer;
+        private readonly INamespaceLocator _locator;
+        private readonly IDisposable _end;
 
-        public Writer(XmlWriter writer)
+        public Writer(XmlWriter writer) : this(writer, ObjectSerializer.Default, DefaultNamespaceLocator.Default) {}
+
+        public Writer(XmlWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
         {
             _writer = writer;
+            _serializer = serializer;
+            _locator = locator;
+            _end = new DelegatedDisposable(End);
         }
 
-        public void Begin(string elementName, Uri identifier = null)
+        public IDisposable Begin(IObjectNode instance)
         {
+            var identifier = _locator.Locate(instance.Instance);
             var id = identifier?.ToString();
             switch (_writer.WriteState)
             {
@@ -47,20 +58,51 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                     break;
             }
 
-            _writer.WriteStartElement(elementName, id);
+            _writer.WriteStartElement(instance.Name, id);
+            return _end;
         }
 
-        public void EndElement() => _writer.WriteEndElement();
-        public void Emit(string text) => _writer.WriteString(text);
-        public void Emit(string attribute, string value, Uri identifier = null, string prefix = null)
-            => _writer.WriteAttributeString(prefix, attribute, identifier?.ToString(), value);
+        private void End() => _writer.WriteEndElement();
 
+        public void Emit(IObjectNode node) => _writer.WriteString(_serializer.Serialize(node.Instance));
+
+        /*var property = node as IProperty;
+            if (property != null)
+            {
+                var instance = property.Instance;
+                var identifier = _locator.Locate(instance) ?? _locator.Locate(property.Type);
+                var text = _serializer.Serialize(instance);
+                _writer.WriteAttributeString(node.Name, identifier?.ToString(), text);
+                return;
+            }*/
+
+        /*
+        public void Emit(IProperty property)
+        {
+            var type = property.Value as Type;
+            if (property.Identifier != null && type != null)
+            {
+                var identifier = _locator.Locate(type)?.ToString();
+                if (identifier != null)
+                {
+                    var name = TypeDefinitionCache.GetDefinition(type).Name;
+                    _writer.Emit(property.Name, property.Identifier, name, identifier);
+                    return;
+                }
+            }
+            var serialized = _serializer.Serialize(property.Value);
+            _writer.Emit(property.Name, serialized, property.Identifier, property.Prefix);
+        }
+
+        public void Emit(Type type) {}*/
+
+        /*
         public void Emit(string attribute, Uri identity, string name, string value)
         {
             _writer.WriteStartAttribute(attribute, identity.ToString());
             _writer.WriteQualifiedName(name, value);
             _writer.WriteEndAttribute();
-        }
+        }*/
 
         public void Dispose()
         {

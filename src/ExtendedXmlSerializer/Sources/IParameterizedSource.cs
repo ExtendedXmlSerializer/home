@@ -21,10 +21,64 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Specifications;
+
 namespace ExtendedXmlSerialization.Sources
 {
     public interface IParameterizedSource<in TParameter, out TResult>
     {
         TResult Get(TParameter parameter);
+    }
+
+    public class ConditionalParameterizedSource<TParameter, TResult> : ConditionalParameterizedSourceBase<TParameter, TResult>
+    {
+        private readonly Func<TParameter, TResult> _source;
+
+        public ConditionalParameterizedSource(ISpecification<TParameter> specification, Func<TParameter, TResult> source) : base(specification)
+        {
+            _source = source;
+        }
+        protected override TResult GetResult(TParameter parameter) => _source(parameter);
+    }
+
+    public abstract class ConditionalParameterizedSourceBase<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+    {
+        private readonly ISpecification<TParameter> _specification;
+
+        protected ConditionalParameterizedSourceBase(ISpecification<TParameter> specification)
+        {
+            _specification = specification;
+        }
+
+        public TResult Get(TParameter parameter)
+        {
+            return _specification.IsSatisfiedBy(parameter) ? GetResult(parameter) : default(TResult);
+        }
+
+        protected abstract TResult GetResult(TParameter parameter);
+    }
+
+    public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+    {
+        private readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;
+        public FirstAssignedSource(params IParameterizedSource<TParameter, TResult>[] sources )
+        {
+            _sources = sources.ToImmutableArray();
+        }
+
+        public TResult Get(TParameter parameter)
+        {
+            foreach (var source in _sources)
+            {
+                var result = source.Get(parameter);
+                if (!Equals(result, default(TResult)))
+                {
+                    return result;
+                }
+            }
+            return default(TResult);
+        }
     }
 }

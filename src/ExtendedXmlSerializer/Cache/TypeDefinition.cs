@@ -34,30 +34,30 @@ namespace ExtendedXmlSerialization.Cache
 {
     internal class TypeDefinition : ITypeDefinition
     {
-        readonly static IDictionary<TypeCode, string> Codes = new Dictionary<TypeCode, string>
-                                                              {
-                                                                  {TypeCode.Boolean, "boolean"},
-                                                                  {TypeCode.Char, "char"},
-                                                                  {TypeCode.SByte, "byte"},
-                                                                  {TypeCode.Byte, "unsignedByte"},
-                                                                  {TypeCode.Int16, "short"},
-                                                                  {TypeCode.UInt16, "unsignedShort"},
-                                                                  {TypeCode.Int32, "int"},
-                                                                  {TypeCode.UInt32, "unsignedInt"},
-                                                                  {TypeCode.Int64, "long"},
-                                                                  {TypeCode.UInt64, "unsignedLong"},
-                                                                  {TypeCode.Single, "float"},
-                                                                  {TypeCode.Double, "double"},
-                                                                  {TypeCode.Decimal, "decimal"},
-                                                                  {TypeCode.DateTime, "dateTime"},
-                                                                  {TypeCode.String, "string"},
-                                                              }.ToImmutableDictionary();
+        readonly private static IDictionary<TypeCode, string> Codes = new Dictionary<TypeCode, string>
+                                                                      {
+                                                                          {TypeCode.Boolean, "boolean"},
+                                                                          {TypeCode.Char, "char"},
+                                                                          {TypeCode.SByte, "byte"},
+                                                                          {TypeCode.Byte, "unsignedByte"},
+                                                                          {TypeCode.Int16, "short"},
+                                                                          {TypeCode.UInt16, "unsignedShort"},
+                                                                          {TypeCode.Int32, "int"},
+                                                                          {TypeCode.UInt32, "unsignedInt"},
+                                                                          {TypeCode.Int64, "long"},
+                                                                          {TypeCode.UInt64, "unsignedLong"},
+                                                                          {TypeCode.Single, "float"},
+                                                                          {TypeCode.Double, "double"},
+                                                                          {TypeCode.Decimal, "decimal"},
+                                                                          {TypeCode.DateTime, "dateTime"},
+                                                                          {TypeCode.String, "string"},
+                                                                      };
 
         readonly private static IDictionary<Type, string> Other = new Dictionary<Type, string>
                                                                   {
                                                                       {typeof(Guid), "guid"},
                                                                       {typeof(TimeSpan), "TimeSpan"},
-                                                                  }.ToImmutableDictionary();
+                                                                  };
 
         readonly Lazy<IImmutableList<IMemberDefinition>> _properties;
         readonly private static Type TypeObject = typeof(object);
@@ -132,6 +132,7 @@ namespace ExtendedXmlSerialization.Cache
             _properties = new Lazy<IImmutableList<IMemberDefinition>>(GetPropertieToSerialze);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
+            DefaultValue = DefaultValues.Default.Get(Type);
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
@@ -242,6 +243,9 @@ namespace ExtendedXmlSerialization.Cache
         }
 
         public bool IsPrimitive { get; }
+
+        public object DefaultValue { get; }
+
         public void Add(object item, object value) => MethodAddToCollection(item, value);
         public void Add(object item, object key, object value) => MethodAddToDictionary(item, key, value);
 

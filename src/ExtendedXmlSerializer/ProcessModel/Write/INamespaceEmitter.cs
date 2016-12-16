@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.NodeModel.Write;
+
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public interface INamespaceEmitter
     {
-        void Execute(object instance);
+        void Execute(IRoot root);
     }
 }

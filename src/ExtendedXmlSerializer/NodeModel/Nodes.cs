@@ -21,13 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Elements;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Extensibility.Write
+namespace ExtendedXmlSerialization.NodeModel
 {
-    class DictionaryValueElement : Element
+    public interface INodeContainer<out T> : INode, IEnumerable<T> where T : INode {}
+    // public interface INodeContainer : INodeContainer<INode> {}
+
+    public interface INode
     {
-        public DictionaryValueElement(Uri @namespace) : base(@namespace, ExtendedXmlSerializer.Value) {}
+        string Name { get; }
+    }
+
+
+    public abstract class NodeBase : INode
+    {
+        protected NodeBase(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
     }
 }

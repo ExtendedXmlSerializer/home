@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.Services
 {
@@ -32,8 +33,9 @@ namespace ExtendedXmlSerialization.Services
     /// </summary>
     public abstract class ObjectWalkerBase<TInput, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
     {
-        readonly private Stack<TInput> _remaining = new Stack<TInput>();
+        readonly private static TInput DefaultValue = default(TInput);
 
+        readonly private Stack<TInput> _remaining = new Stack<TInput>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
         protected ObjectWalkerBase(TInput root)
@@ -56,10 +58,9 @@ namespace ExtendedXmlSerialization.Services
 
         protected bool Schedule(TInput candidate)
         {
-            if (candidate != null)
+            if (!Equals(candidate, DefaultValue))
             {
                 // Ask the ObjectIDManager if this object has been examined before.
-
                 // If this object has been examined before, do not look at it again just return.
                 var result = First(candidate);
                 if (result)
@@ -73,54 +74,26 @@ namespace ExtendedXmlSerialization.Services
 
         bool First(object candidate)
         {
-            bool firstOccurrence;
-            _generator.GetId(candidate, out firstOccurrence);
-            return firstOccurrence;
+            bool result;
+            _generator.GetId(candidate, out result);
+            return result;
         }
 
         protected abstract TResult Select(TInput input);
 
         private void OnSchedule(TInput candidate) => _remaining.Push(candidate);
 
-        // protected abstract bool ContainsAdditional(TResult parameter);
-        /*protected abstract IEnumerable<TResult> Yield(TInput input);
-        protected abstract IEnumerable<TResult> Next(TInput input);*/
-
         // Advance to the next item in the enumeration.
         public bool MoveNext()
         {
             // If there are no more items to enumerate, return false.
-            if (_remaining.Count != 0)
+            var result = _remaining.Count != 0;
+            if (result)
             {
                 var input = _remaining.Pop();
                 Current = Select(input);
-
-
-                /*foreach (var result in Yield(input))
-                {
-                    
-                }*/
-
-                /*var @continue = ContainsAdditional(current);
-                
-                if (@continue)
-                {
-                    foreach (var item in Yield(input))
-                    {
-                        Schedule(item);
-                    }
-                    // The object does have field, schedule the object's instance fields to be enumerated.
-                    /*foreach (
-                        FieldInfo fi in Current.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    )
-                    {
-                        Schedule(fi.GetValue(Current));
-                    }#1#
-                }*/
-                return true;
             }
-
-            return false;
+            return result;
         }
 
         public virtual void Dispose() {}

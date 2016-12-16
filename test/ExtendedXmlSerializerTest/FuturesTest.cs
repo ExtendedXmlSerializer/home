@@ -31,7 +31,6 @@ using ExtendedXmlSerialization.Extensibility;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Profiles;
 using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;

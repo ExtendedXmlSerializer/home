@@ -31,21 +31,21 @@ using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class SerializationFactory : ISerializationFactory
+    /*public class SerializationFactory : ISerializationFactory
     {
         private readonly ISerializationToolsFactoryHost _services;
-        private readonly INamespaceLocator _locator;
-        private readonly INamespaces _namespaces;
+        /*private readonly INamespaceLocator _locator;
+        private readonly INamespaces _namespaces;#1#
 
         public SerializationFactory(
-            ISerializationToolsFactoryHost services,
+            ISerializationToolsFactoryHost services/*,
             INamespaceLocator locator,
-            INamespaces namespaces
+            INamespaces namespaces#1#
         )
         {
             _services = services;
-            _locator = locator;
-            _namespaces = namespaces;
+            /*_locator = locator;
+            _namespaces = namespaces;#1#
         }
 
         public ISerialization Get(Stream parameter)
@@ -53,58 +53,51 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
             var xmlWriter = XmlWriter.Create(parameter, settings);
 
-            // var extensions = new ExtensionRegistry();
-            /*foreach (var extension in _services.Extensions)
-            {
-                extension.Accept(extensions);
-            }*/
-            // var context = _services.New();
-
-            // var serializer = new EncryptedObjectSerializer(new EncryptionSpecification(_services, context), _services);
             var writer = new Writer(xmlWriter);
 
-            var emitter = new NamespaceEmitter(xmlWriter, _namespaces);
-            var services = new InstanceServices(writer, _locator, emitter);
-            var root = new RootContextFactory(services);
-            var monitor = new ContextMonitor();
-            var factory = new ScopeFactory(monitor/*, root, root, root, root*/);
-            var result = new Serialization(monitor, factory, new Emitter(writer, ObjectSerializer.Default, _locator), 
-                                           /*services:*/ _services, writer, xmlWriter);
-            return result;
+            /*var emitter = new NamespaceEmitter(xmlWriter);
+            var services = new InstanceServices(writer, emitter);#1#
+            //var root = new RootContextFactory(services);
+            /*var controller = new ContextController();
+            var factory = new ScopeFactory(controller);
+            var result = new Serialization(controller, factory, new Emitter(writer), 
+                                           /*services:#2# _services, writer, xmlWriter);
+            return result;#1#
+            return null;
         }
-    }
+    }*/
 
-    public interface IScopeFactory
+    /*public interface IScopeFactory
     {
         IScope Create(object instance);
     }
 
     class ScopeFactory : IScopeFactory
     {
-        private readonly IContextMonitor _monitor;
+        private readonly IContextController _controller;
         /*private readonly IParameterizedSource<object, IScope> _root;
         private readonly IParameterizedSource<object, IScope> _instance;
         private readonly IParameterizedSource<object, IScope> _members;
-        private readonly IParameterizedSource<object, IScope> _member;*/
+        private readonly IParameterizedSource<object, IScope> _member;#1#
 
         public ScopeFactory(
-            IContextMonitor monitor/*,
+            IContextController controller/*,
             IParameterizedSource<object, IScope> root,
             IParameterizedSource<object, IScope> instance,
             IParameterizedSource<object, IScope> members,
-            IParameterizedSource<object, IScope> member*/
+            IParameterizedSource<object, IScope> member#1#
         )
         {
-            _monitor = monitor;
+            _controller = controller;
             /*_root = root;
             _instance = instance;
             _members = members;
-            _member = member;*/
+            _member = member;#1#
         }
 
         public IScope Create(object instance)
         {
-            var definition = instance as IMemberDefinition;
+            /*var definition = instance as IMemberDefinition;
             if (definition != null)
             {
                 // return new MemberScope(this, _monitor.Current, definition); // _member.Get(instance);
@@ -116,8 +109,8 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             }
             var factory = _monitor.Current.Parent == null ? _root : _instance;
             var result = factory.Get(instance);
-            return result;*/
-            return null;
+            return result;#2#
+            return null;#1#
         }
     }
 
@@ -129,11 +122,13 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         private readonly INamespaceLocator _locator;
         private readonly INamespaceEmitter _emitter;
 
-        public InstanceServices(IWriter writer, INamespaceLocator locator, INamespaceEmitter emitter)
+        public InstanceServices(IWriter writer, INamespaceEmitter emitter) : this(writer, emitter, DefaultNamespaceLocator.Default) {}
+
+        public InstanceServices(IWriter writer, INamespaceEmitter emitter, INamespaceLocator locator)
         {
             _writer = writer;
-            _locator = locator;
             _emitter = emitter;
+            _locator = locator;
         }
 
         public void Dispose() => _writer.Dispose();
@@ -162,5 +157,5 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         }
 
         public IScope Get(object parameter) => new RootScope(_services, parameter);
-    }
+    }*/
 }

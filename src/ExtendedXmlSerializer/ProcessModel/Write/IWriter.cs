@@ -22,32 +22,14 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Elements;
+using ExtendedXmlSerialization.NodeModel.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public interface IWriter : IDisposable
     {
-        void Begin(string elementName, Uri identifier = null);
+        IDisposable Begin(IObjectNode instance);
 
-        void EndElement();
-
-        void Emit(string text);
-
-        void Emit(string attribute, string value, Uri identifier = null, string prefix = null);
-
-        void Emit(string attribute, Uri identity, string name, string value);
-    }
-
-    public struct Element
-    {
-        public Element(string name, Uri identifier = null)
-        {
-            Name = name;
-            Identifier = identifier;
-        }
-
-        public string Name { get; }
-        public Uri Identifier { get; }
+        void Emit(IObjectNode node);
     }
 }

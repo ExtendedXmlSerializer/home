@@ -32,14 +32,14 @@ namespace ExtendedXmlSerialization.Instructions.Write
     {
         protected override void OnExecute(ISerialization services)
         {
-            var instance = services.Current.Instance;
+            /*var instance = services.Current.Instance;
             if (instance is T)
             {
                 Execute(services, (T) instance);
                 return;
             }
             throw new InvalidOperationException(
-                      $"Expected an instance of type '{typeof(T)}' but got an instance of '{instance.GetType()}'");
+                      $"Expected an instance of type '{typeof(T)}' but got an instance of '{instance.GetType()}'");*/
         }
 
         protected abstract void Execute(ISerialization services, T instance);

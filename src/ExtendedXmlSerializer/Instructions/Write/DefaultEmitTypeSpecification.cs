@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         public bool IsSatisfiedBy(ISerialization parameter)
         {
-            var current = parameter.Current;
+            /*var current = parameter.Current;
             var context = current.GetMemberScope();
             if (context != null)
             {
@@ -44,9 +44,9 @@ namespace ExtendedXmlSerialization.Instructions.Write
                 var result = current is IInstanceScope && current.Parent != null && member.IsWritable &&
                              current.Definition.Type != member.MemberType;
                 return result;
-            }
+            }*/
 
-            var array = current.GetArrayContext();
+            /*var array = current.GetArrayContext();
             if (array != null)
             {
                 var type = array.Instance.GetType();
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
             {
                 var result = dictionary.Instance.GetType() != dictionary.Definition.GenericArguments[1];
                 return result;
-            }
+            }*/
             return false;
         }
     }

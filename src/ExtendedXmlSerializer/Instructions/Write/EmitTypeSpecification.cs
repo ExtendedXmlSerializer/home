@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         public bool IsSatisfiedBy(ISerialization parameter)
         {
-            var current = parameter.Current;
+            /*var current = parameter.Current;
             if (current is IInstanceScope && current.Parent != null)
             {
                 var context = current.GetMemberScope();
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
                 var emit = current.GetArrayContext() == null && current.GetDictionaryContext() == null;
                 return emit;
-            }
+            }*/
             return false;
         }
     }

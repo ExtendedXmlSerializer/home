@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.NodeModel;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
@@ -33,7 +34,7 @@ using ExtendedXmlSerialization.Sources;
 
 namespace ExtendedXmlSerialization.Instructions.Write
 {
-    class InstanceBodySelector : IParameterizedSource<IContext, IInstruction>
+    /*class InstanceBodySelector : IParameterizedSource<INode, IInstruction>
     {
         readonly private static Func<ITypeDefinition, bool> Enumerable =
             IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
@@ -57,7 +58,7 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         public IInstruction Get(IContext parameter)
         {
-            var instance = parameter.Instance;
+            /*var instance = parameter.Instance;
             var type = instance.GetType();
             var definition = parameter.Definition;
             if (definition.IsPrimitive)
@@ -78,9 +79,9 @@ namespace ExtendedXmlSerialization.Instructions.Write
             if (definition.IsObjectToSerialize)
             {
                 return _members;
-            }
+            }#1#
 
-            throw new InvalidOperationException($"Could not find instructions for type '{type}'");
+            throw new InvalidOperationException($"Could not find instructions for type ''");
         }
     }
 
@@ -96,7 +97,10 @@ namespace ExtendedXmlSerialization.Instructions.Write
             _selector = selector;
         }
 
-        protected override void OnExecute(ISerialization services) => _selector.Get(services.Current).Execute(services);
+        protected override void OnExecute(ISerialization services)
+        {
+            // _selector.Get(services.Current).Execute(services);
+        }
     }
 
     class EmitInstanceBodyInstructionInstance : DeferredInstruction
@@ -153,5 +157,5 @@ namespace ExtendedXmlSerialization.Instructions.Write
             var result = new MemberTemplate(source, templates);
             return result;
         }
-    }
+    }*/
 }

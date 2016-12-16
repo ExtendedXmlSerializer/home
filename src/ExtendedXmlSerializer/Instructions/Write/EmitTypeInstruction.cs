@@ -35,9 +35,9 @@ namespace ExtendedXmlSerialization.Instructions.Write
 
         protected override void OnExecute(ISerialization services)
         {
-            var type = services.Current.Instance.GetType();
+            /*var type = services.Current.Instance.GetType();
             var property = new TypeProperty(services.GetValid<INamespaceLocator>().Locate(this), type);
-            services.GetValid<IEmitter>().Execute(property);
+            services.GetValid<IEmitter>().Execute(property);*/
         }
     }
 }

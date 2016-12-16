@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Services;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
-    public class Namespaces : INamespaces
+    /*public class Namespaces : INamespaces
     {
         private readonly INamespaceLocator _locator;
         private readonly Func<IPrefixGenerator> _generator;
@@ -81,5 +81,5 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 }
             }
         }
-    }
+    }*/
 }
