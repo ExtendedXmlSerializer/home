@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.ProcessModel;
+using ExtendedXmlSerialization.ProcessModel.Write;
 using ExtendedXmlSerialization.Services;
 using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Specifications;
@@ -22,7 +23,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         public Members(Type type, string name, object instance, IEnumerable<IObjectNode> members) : base(instance, type, name, members) {}
     }
 
-    public interface IMember : IObjectNode<IObjectNode>
+    /*public interface IMember : IObjectNode<IObjectNode>
     {
         IMemberDefinition MemberDefinition { get; }
     }
@@ -49,7 +50,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     {
         public Content(IObjectNode instance, IMemberDefinition definition)
             : base(instance, definition) {}
-    }
+    }*/
 
     public interface IInstance : IObjectNode
     {
@@ -60,6 +61,9 @@ namespace ExtendedXmlSerialization.NodeModel.Write
 
     public class Instance : Instance<object>
     {
+        public Instance(long id, object instance, Type type, string name, IEnumerable<IObjectNode> members)
+            : this(id, instance, type, name, new Members(type, name, instance, members)) {}
+
         public Instance(long id, object instance, Type type, string name, IMembers members)
             : base(id, instance, type, name, members) {}
     }
@@ -91,6 +95,21 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    public interface IProperty : IObjectNode {}
+    public class Property : PropertyBase<object>
+    {
+        public Property(object instance, Type type, string name) : base(instance, type, name) {}
+    }
+
+    public abstract class PropertyBase<T> : ObjectNodeBase<T>, IProperty
+    {
+        protected PropertyBase(T instance, Type type, string name) : base(instance, type, name) {}
+    }
+
+    public class TypeProperty : PropertyBase<Type>
+    {
+        public TypeProperty(Type type) : base(type, typeof(IExtendedXmlSerializer), ExtendedXmlSerializer.Type) {}
+    }
 
     public interface IPrimitive : IObjectNode {}
     public class Primitive : ObjectNodeBase<object>, IPrimitive
@@ -115,15 +134,15 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     public class EnumerableInstance : EnumerableInstanceBase<IEnumerable>, IEnumerableInstance
     {
         public EnumerableInstance(long id, Type elementType,
-                                  IEnumerable instance, Type type, string name, IEnumerable<IMember> members, IEnumerable<IObjectNode> elements)
-            : base(id, elementType, instance, type, name, members, elements) {}
+                                  IEnumerable instance, Type type, string name, IEnumerable<IObjectNode> nodes)
+            : base(id, elementType, instance, type, name, nodes) {}
     }
 
     public abstract class EnumerableInstanceBase<T> : Instance<T> where T : IEnumerable
     {
         protected EnumerableInstanceBase(long id, Type elementType,
-                                         T instance, Type type, string name, IEnumerable<IMember> members, IEnumerable<IObjectNode> entries)
-            : base(id, instance, type, name, new Members(type, name, instance, members.Concat(entries).ToArray()))
+                                         T instance, Type type, string name, IEnumerable<IObjectNode> nodes)
+            : base(id, instance, type, name, new Members(type, name, instance, nodes))
         {
             ElementType = elementType;
         }
@@ -135,9 +154,8 @@ namespace ExtendedXmlSerialization.NodeModel.Write
 
     public class DictionaryInstance : EnumerableInstanceBase<IDictionary>, IDictionaryInstance
     {
-        public DictionaryInstance(long id, IDictionary instance, Type type, string name, IEnumerable<IMember> members,
-                                  IEnumerable<IDictionaryEntry> entries)
-            : base(id, DictionaryEntryInstance.DefaultElementType, instance, type, name, members, entries) {}
+        public DictionaryInstance(long id, IDictionary instance, Type type, string name, IEnumerable<IObjectNode> nodes)
+            : base(id, DictionaryEntryInstance.DefaultElementType, instance, type, name, nodes) {}
     }
 
     public interface IDictionaryEntry : IObjectNodeContainer<DictionaryEntry> {}
@@ -198,53 +216,41 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         new T Instance { get; }
     }
 
-    public interface INodeBuilder
-    {
-        IObjectNode Create();
-    }
+    public interface IRootNodeBuilder : IParameterizedSource<object, IObjectNode> {}
 
-/*
-    class NodeBuilder : INodeBuilder
+    class DefaultRootNodeBuilder : IRootNodeBuilder
     {
-        readonly private static Func<IObjectNode, bool> Property = NeverSpecification<IObjectNode>.Default.IsSatisfiedBy;
+        readonly private static Func<ITypeDefinition, bool> IsEnumerable =
+            IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
+
+        readonly private static Func<Type, TypeDefinition> Definition = TypeDefinitionCache.GetDefinition;
 
         readonly private IDictionary<long, IInstance> _instances = new Dictionary<long, IInstance>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
-        private readonly Func<IObjectNode, bool> _property;
-        private readonly object _instance;
-        private readonly ITypeDefinition _definition;
-        readonly private Func<DictionaryEntry, IDictionaryEntry> _createEntry;
 
-        public NodeBuilder(object instance) : this(Property, instance) {}
-
-        public NodeBuilder(Func<IObjectNode, bool> property, object instance)
-            : this(property, instance, TypeDefinitionCache.GetDefinition(instance.GetType())) {}
-
-        public NodeBuilder(Func<IObjectNode, bool> property, object instance, ITypeDefinition definition)
+        public IObjectNode Get(object parameter)
         {
-            _property = property;
-            _instance = instance;
-            _definition = definition;
-            _createEntry = CreateEntry;
+            var type = parameter.GetType();
+            var definition = Definition(type);
+            var result = Select(parameter, definition);
+            return result;
         }
 
-        public IObjectNode Create() => Select(_instance, _definition);
+        IObjectNode Select(object instance, IMemberDefinition member) => Select(instance, member, member.TypeDefinition);
+        private IObjectNode Select(object instance, ITypeDefinition type) => Select(instance, type, type);
 
-        private IObjectNode Select(object instance) =>
-            Select(instance, TypeDefinitionCache.GetDefinition(instance.GetType()));
-
-        IObjectNode Select(object instance, ITypeDefinition definition)
+        IObjectNode Select(object instance, IDefinition source, ITypeDefinition type)
         {
-            if (definition.IsPrimitive)
+            if (type.IsPrimitive)
             {
-                return new Primitive(instance, definition.Type, definition.Name);
+                return new Primitive(instance, source.Type, source.Name);
             }
 
             bool first;
             var id = _generator.GetId(instance, out first);
             if (first)
             {
-                var @select = _instances[id] = GetInstance(id, instance, definition);
+                var @select = _instances[id] = GetInstance(id, instance, source, type);
                 return @select;
             }
 
@@ -253,82 +259,61 @@ namespace ExtendedXmlSerialization.NodeModel.Write
                 return new Reference(_instances[id]);
             }
             throw new InvalidOperationException(
-                      $"Could not create a context for instance '{instance}' of type '{definition.Type}'.");
+                      $"Could not create a context for instance '{instance}' of type '{type.Type}'.");
         }
 
-        private IInstance GetInstance(long id, object instance, ITypeDefinition definition)
+        private IInstance GetInstance(long id, object instance, IDefinition source, ITypeDefinition type)
         {
-            var ensured = EnsureDefinition(definition, instance);
-            var members = CreateMembers(instance, ensured).ToArray();
-            
+            var ensured = type.For(instance);
+            var members = CreateMembers(instance, ensured) /*.OrderBy(x => x is IProperty)*/;
+
             var dictionary = instance as IDictionary;
             if (dictionary != null)
             {
-                return new DictionaryInstance(id, dictionary, definition.Type, definition.Name, members,
-                                              dictionary.OfType<DictionaryEntry>().Select(_createEntry));
+                var key = Definition(type.GenericArguments[0]);
+                var value = Definition(type.GenericArguments[1]);
+                var entries = CreateEntries(dictionary, key, value);
+                return new DictionaryInstance(id, dictionary, source.Type, source.Name, members.Concat(entries));
             }
-            if (IsEnumerableTypeSpecification.Default.IsSatisfiedBy(ensured))
+
+            if (IsEnumerable(ensured))
             {
-                return new EnumerableInstance(id, definition.GenericArguments[0], (IEnumerable) instance, definition.Type, definition.Name,
-                                              members,
-                                              CreateElements(instance));
+                var elementType = Definition(type.GenericArguments[0]);
+                var elements = CreateElements(instance, elementType);
+                return new EnumerableInstance(id, elementType.Type, (IEnumerable) instance, source.Type,
+                                              source.Name,
+                                              members.Concat(elements));
             }
-            var result = new Instance(id, instance, definition.Type, definition.Name, new Members(definition.Type, definition.Name instance, members));
+            var result = new Instance(id, instance, source.Type, source.Name, members);
             return result;
         }
 
-        IEnumerable<IMember> CreateMembers(object instance, ITypeDefinition definition)
+        IEnumerable<IObjectNode> CreateMembers(object instance, ITypeDefinition definition)
         {
             foreach (var member in definition.Members)
             {
-                var node = Select(member.GetValue(instance), member.TypeDefinition);
-                var item = _property(node) ? (IMember) new Property(node, member) : new Content(node, member);
-                yield return item;
+                yield return Select(member.GetValue(instance), member);
             }
         }
 
-        private IEnumerable<IObjectNode> CreateElements(object instance)
+        private IEnumerable<IObjectNode> CreateElements(object instance, ITypeDefinition elementType)
         {
             foreach (var element in Arrays.Default.AsArray(instance))
             {
-                yield return Select(element);
+                yield return Select(element, elementType);
             }
         }
 
-        private IDictionaryEntry CreateEntry(DictionaryEntry entry)
+        private IEnumerable<IDictionaryEntry> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
+                                                            ITypeDefinition valueDefinition)
         {
-            var key = new DictionaryKey(Select(entry.Key));
-            var value = new DictionaryValue(Select(entry.Value));
-            var result = new DictionaryEntryInstance(entry, key, value);
-            return result;
-        }
-
-        private static ITypeDefinition EnsureDefinition(ITypeDefinition definition, object value)
-        {
-            if (!Equals(value, definition.DefaultValue))
+            foreach (DictionaryEntry entry in dictionary)
             {
-                var type = value.GetType();
-                if (type != definition.Type)
-                {
-                    return TypeDefinitionCache.GetDefinition(type);
-                }
+                var key = new DictionaryKey(Select(entry.Key, keyDefinition));
+                var value = new DictionaryValue(Select(entry.Value, valueDefinition));
+                var result = new DictionaryEntryInstance(entry, key, value);
+                yield return result;
             }
-            return definition;
         }
     }
-*/
-
-    /*class RootNodeBuilder : IParameterizedSource<object, IRoot>
-    {
-        public static RootNodeBuilder Default { get; } = new RootNodeBuilder();
-        RootNodeBuilder() {}
-
-        public IRoot Get(object parameter)
-        {
-            var type = parameter.GetType();
-            var definition = TypeDefinitionCache.GetDefinition(type);
-            var result = new Root(new NodeBuilder(parameter).Create(), type, definition.Name);
-            return result;
-        }
-    }*/
 }

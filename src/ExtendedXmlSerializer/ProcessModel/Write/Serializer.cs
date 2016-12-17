@@ -23,7 +23,6 @@
 
 using System.IO;
 using System.Xml;
-using ExtendedXmlSerialization.NodeModel.Write;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
@@ -34,13 +33,11 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 
         public void Serialize(Stream stream, object instance)
         {
-            /*var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};*/
-            var writer = new Writer(XmlWriter.Create(stream));
-            using (var serialization = new Serialization(writer))
+            using (var writer = new Writer(XmlWriter.Create(stream)))
             {
+                var emitter = new DefaultEmitter(writer);
+                var serialization = new Serialization(emitter);
                 serialization.Execute(instance);
-                /*var node = RootNodeBuilder.Default.Get(instance);
-                new Selector(serialization).Execute(node);*/
             }
         }
     }

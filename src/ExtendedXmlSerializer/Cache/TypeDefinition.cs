@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.Cache
                                                                       {typeof(TimeSpan), "TimeSpan"},
                                                                   };
 
-        readonly Lazy<IImmutableList<IMemberDefinition>> _properties;
+        readonly Lazy<ImmutableArray<IMemberDefinition>> _properties;
         readonly private static Type TypeObject = typeof(object);
 
         public TypeDefinition(Type type)
@@ -129,7 +129,7 @@ namespace ExtendedXmlSerialization.Cache
                 !typeInfo.IsEnum && Type != TypeObject &&
                 //not generic or generic but not List<> and Set<>
                 (!isGenericType || !IsEnumerable);
-            _properties = new Lazy<IImmutableList<IMemberDefinition>>(GetPropertieToSerialze);
+            _properties = new Lazy<ImmutableArray<IMemberDefinition>>(GetPropertieToSerialze);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
             DefaultValue = DefaultValues.Default.Get(Type);
@@ -138,7 +138,7 @@ namespace ExtendedXmlSerialization.Cache
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
         public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
 
-        private IImmutableList<IMemberDefinition> GetPropertieToSerialze()
+        private ImmutableArray<IMemberDefinition> GetPropertieToSerialze()
         {
             var result = new List<IMemberDefinition>();
             if (IsObjectToSerialize)
@@ -256,7 +256,7 @@ namespace ExtendedXmlSerialization.Cache
         public bool IsDictionary { get; }
         public ImmutableArray<Type> GenericArguments { get; }
 
-        public IImmutableList<IMemberDefinition> Members => _properties.Value;
+        public ImmutableArray<IMemberDefinition> Members => _properties.Value;
 
         public Type Type { get; }
         public string Name { get; }
@@ -271,7 +271,7 @@ namespace ExtendedXmlSerialization.Cache
             get
             {
                 var members = Members;
-                for (int i = 0; i < members.Count; i++)
+                for (int i = 0; i < members.Length; i++)
                 {
                     var item = members[i];
                     if (item.Name == memberName)

@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ProcessModel
         object Activate();
 
         
-        IImmutableList<IMemberDefinition> Members { get; }
+        ImmutableArray<IMemberDefinition> Members { get; }
         
         TypeCode TypeCode { get; }
 

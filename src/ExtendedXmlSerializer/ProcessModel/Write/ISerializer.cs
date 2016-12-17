@@ -209,5 +209,59 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         public override bool IsSatisfiedBy(IObjectNode parameter) => parameter is T;
     }*/
 
-    public interface INodeEmitter : ICommand<IObjectNode> {}
+    public interface IEmitter : ICommand<IObjectNode> {}
+
+    class DefaultEmitter : IEmitter
+    {
+        private readonly IWriter _writer;
+        public DefaultEmitter(IWriter writer)
+        {
+            _writer = writer;
+        }
+
+        public void Execute(IObjectNode parameter)
+        {
+            var reference = parameter as IReference;
+            if (reference != null)
+            {
+                return;
+            }
+
+            var instance = parameter as IInstance;
+            if (instance != null)
+            {
+                using (_writer.Begin(instance))
+                {
+                    if (instance is Instance)
+                    {
+                        _writer.Emit(new TypeProperty(instance.Instance.GetType()));
+                    }
+                    
+                    foreach (var member in instance.Members)
+                    {
+                        var primitive = member as IPrimitive;
+                        if (primitive != null)
+                        {
+                            using (_writer.Begin(primitive))
+                            {
+                                _writer.Emit(primitive.Instance);
+                            }
+                        }
+                        else
+                        {
+                            Execute(member);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var decorated = parameter as IObjectNode<IObjectNode>;
+                if (decorated != null)
+                {
+                    Execute(decorated.Instance);
+                }
+            }
+        }
+    }
 }

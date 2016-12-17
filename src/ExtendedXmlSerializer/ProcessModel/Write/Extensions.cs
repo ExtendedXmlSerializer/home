@@ -21,12 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.IO;
+using ExtendedXmlSerialization.Cache;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public static class Extensions
     {
+        readonly private static Func<Type, TypeDefinition> Definition = TypeDefinitionCache.GetDefinition;
+
+        public static ITypeDefinition For(this ITypeDefinition @this, object value)
+        {
+            /*if (!Equals(@this.DefaultValue, value))
+            {
+                
+            }*/
+            var type = value?.GetType();
+                if (type != null && type != @this.Type)
+                {
+                    return Definition(type);
+                }
+            return @this;
+        }
+
         public static string Serialize(this ISerializer @this, object instance)
         {
             using (var stream = new MemoryStream())
