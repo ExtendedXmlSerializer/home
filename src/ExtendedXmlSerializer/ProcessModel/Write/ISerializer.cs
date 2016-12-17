@@ -22,13 +22,9 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using ExtendedXmlSerialization.NodeModel;
 using ExtendedXmlSerialization.NodeModel.Write;
 using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Sources;
-using ExtendedXmlSerialization.Specifications;
 
 namespace ExtendedXmlSerialization.ProcessModel.Write
 {
@@ -64,9 +60,10 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         }
     }*/
 
-    class Selector : INodeEmitter
+    /*class Selector : INodeEmitter
     {
         readonly private INodeEmitter _primitive, _property, _content, _members, _instance, _root;
+
         public Selector(IWriter writer)
         {
             _primitive = new PrimitiveEmitter(writer);
@@ -156,6 +153,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
     class MembersEmitter : NodeEmitterBase<IMembers>
     {
         private readonly ICommand<IObjectNode> _emit;
+
         public MembersEmitter(ICommand<IObjectNode> emit)
         {
             _emit = emit;
@@ -209,7 +207,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         protected abstract void Execute(T parameter);
 
         public override bool IsSatisfiedBy(IObjectNode parameter) => parameter is T;
-    }
+    }*/
 
     public interface INodeEmitter : ICommand<IObjectNode> {}
 }

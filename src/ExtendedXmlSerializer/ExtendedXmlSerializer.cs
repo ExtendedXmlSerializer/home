@@ -186,7 +186,7 @@ namespace ExtendedXmlSerialization
                     throw new InvalidOperationException("Missing property " + currentNode.Name.LocalName + "\\" +
                                                         localName);
                 }
-                var propertyDef = propertyInfo.Definition;
+                var propertyDef = propertyInfo.TypeDefinition;
                 if (xElement.HasAttributes && xElement.Attribute(Type) != null)
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 

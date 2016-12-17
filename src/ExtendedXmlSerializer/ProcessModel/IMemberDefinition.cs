@@ -21,18 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.ProcessModel
 {
-    public interface IMemberDefinition
+    public interface IMemberDefinition : IDefinition
     {
         bool IsWritable { get; }
-        MemberInfo Metadata { get; }
-        int MetadataToken { get; set; }
-        string Name { get; }
-        int Order { get; set; }
-        ITypeDefinition Definition { get; }
+        int MetadataToken { get; }
+        int Order { get; }
+
+        ITypeDefinition TypeDefinition { get; }
 
         object GetValue(object obj);
         void SetValue(object obj, object value);

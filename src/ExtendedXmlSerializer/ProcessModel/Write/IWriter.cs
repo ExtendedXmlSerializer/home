@@ -28,8 +28,10 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 {
     public interface IWriter : IDisposable
     {
-        IDisposable Begin(IObjectNode instance);
+        IDisposable Begin(IQualifiedNode definition);
 
         void Emit(IObjectNode node);
+
+        void Emit(object instance);
     }
 }

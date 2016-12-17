@@ -19,28 +19,36 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     public interface IMembers : IObjectNodeContainer<object> {}
     public class Members : ObjectNodeContainerBase<object>, IMembers
     {
-        public Members(object instance, params IObjectNode[] members) : base(instance, typeof(Members), nameof(Members), members) {}
+        public Members(object instance, IEnumerable<IObjectNode> members) : base(instance, typeof(Members), nameof(Members), members) {}
     }
 
-    public interface IMember : IObjectNode<IObjectNode> {}
+    public interface IMember : IObjectNode<IObjectNode>
+    {
+        IMemberDefinition MemberDefinition { get; }
+    }
     public abstract class MemberBase : ObjectNodeBase<IObjectNode>
     {
-        protected MemberBase(IObjectNode instance, Type type, string name)
-            : base(instance, type, name) {}
+        protected MemberBase(IObjectNode instance, IMemberDefinition definition)
+            : base(instance, definition.Type, definition.Name)
+        {
+            MemberDefinition = definition;
+        }
+
+        public IMemberDefinition MemberDefinition { get; }
     }
 
     public interface IProperty : IMember {}
     public class Property : MemberBase, IProperty
     {
-        public Property(IObjectNode instance, Type type, string name)
-            : base(instance, type, name) {}
+        public Property(IObjectNode instance, IMemberDefinition definition)
+            : base(instance, definition) {}
     }
 
     public interface IContent : IMember {}
     public class Content : MemberBase, IContent
     {
-        public Content(IObjectNode instance, Type type, string name)
-            : base(instance, type, name) {}
+        public Content(IObjectNode instance, IMemberDefinition definition)
+            : base(instance, definition) {}
     }
 
     public interface IInstance : IObjectNode
@@ -73,10 +81,10 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     {
         private readonly IEnumerable<IObjectNode> _nodes;
 
-        protected ObjectNodeContainerBase(T instance, Type type, string name, params IObjectNode[] nodes)
+        protected ObjectNodeContainerBase(T instance, Type type, string name, IEnumerable<IObjectNode> nodes)
             : base(instance, type, name)
         {
-            _nodes = nodes.ToArray();
+            _nodes = nodes;
         }
 
         public IEnumerator<IObjectNode> GetEnumerator() => _nodes.GetEnumerator();
@@ -140,7 +148,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
 
         public DictionaryEntryInstance(DictionaryEntry instance,
                                        IDictionaryKey key, IDictionaryValue value)
-            : base(instance, DefaultElementType, ExtendedXmlSerializer.Item, key, value) {}
+            : base(instance, DefaultElementType, ExtendedXmlSerializer.Item, key.Append<IObjectNode>(value)) {}
     }
 
     public interface IDictionaryKey : IObjectNode<IObjectNode> {}
@@ -175,10 +183,14 @@ namespace ExtendedXmlSerialization.NodeModel.Write
 
     public interface IObjectNodeContainer<out T> : IObjectNode<T>, INodeContainer<IObjectNode> {}
 
-    public interface IObjectNode : INode
+    public interface IQualifiedNode : INode
+    {
+        Type Type { get; }
+    }
+
+    public interface IObjectNode : IQualifiedNode
     {
         object Instance { get; }
-        Type Type { get; }
     }
 
     public interface IObjectNode<out T> : IObjectNode
@@ -268,8 +280,8 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         {
             foreach (var member in definition.Members)
             {
-                var node = Select(member.GetValue(instance), member.Definition);
-                var item = _property(node) ? (IMember) new Property(node, member.Definition.Type, member.Name) : new Content(node, member.Definition.Type, member.Name);
+                var node = Select(member.GetValue(instance), member.TypeDefinition);
+                var item = _property(node) ? (IMember) new Property(node, member) : new Content(node, member);
                 yield return item;
             }
         }
@@ -304,7 +316,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         }
     }
 
-    class RootNodeBuilder : IParameterizedSource<object, IRoot>
+    /*class RootNodeBuilder : IParameterizedSource<object, IRoot>
     {
         public static RootNodeBuilder Default { get; } = new RootNodeBuilder();
         RootNodeBuilder() {}
@@ -316,5 +328,5 @@ namespace ExtendedXmlSerialization.NodeModel.Write
             var result = new Root(new NodeBuilder(parameter).Create(), type, definition.Name);
             return result;
         }
-    }
+    }*/
 }

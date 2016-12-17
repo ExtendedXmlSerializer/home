@@ -3,7 +3,13 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.ProcessModel
 {
-    public interface ITypeDefinition
+    public interface IDefinition
+    {
+        string Name { get; }
+        Type Type { get; }
+    }
+
+    public interface ITypeDefinition : IDefinition
     {
         string FullName { get; }
         ImmutableArray<Type> GenericArguments { get; }
@@ -22,9 +28,9 @@ namespace ExtendedXmlSerialization.ProcessModel
 
         object Activate();
 
-        string Name { get; }
+        
         IImmutableList<IMemberDefinition> Members { get; }
-        Type Type { get; }
+        
         TypeCode TypeCode { get; }
 
         IMemberDefinition this[string memberName] { get; }

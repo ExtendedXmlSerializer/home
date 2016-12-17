@@ -75,13 +75,14 @@ namespace ExtendedXmlSerialization.ProcessModel
         }#1#
     }*/
 
-    public interface IProcess : /*IContextAware,*/ IDisposable, ICommand<IInstruction>, IServiceProvider {}
+    public interface IProcess : /*IContextAware,*/ IDisposable/*, ICommand<IInstruction>*/, IServiceProvider {}
 
     public interface ICommand<in T>
     {
         void Execute(T parameter);
     }
 
+/*
     public class FirstConditionalCommand<T> : ICommand<T>
     {
         private readonly IEnumerable<IConditionalCommand<T>> _commands;
@@ -109,6 +110,7 @@ namespace ExtendedXmlSerialization.ProcessModel
             }
         }
     }
+*/
 
     public class ConditionalCommand<T> : ConditionalCommandBase<T>
     {

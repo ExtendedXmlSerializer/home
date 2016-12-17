@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 foreach (var info in TypeDefinitionCache.GetDefinition(type).Members)
                 {
-                    var memberType = info.Definition.Type;
+                    var memberType = info.Type;
                     if (info.IsWritable && !_primitive.IsSatisfiedBy(memberType))
                     {
                         Schedule(memberType);
@@ -125,7 +125,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                     {
                         if (context.IsWritable)
                         {
-                            var candidate = context.Definition.Type;
+                            var candidate = context.Type;
                             if (!_primitive.IsSatisfiedBy(candidate))
                             {
                                 Schedule(candidate);

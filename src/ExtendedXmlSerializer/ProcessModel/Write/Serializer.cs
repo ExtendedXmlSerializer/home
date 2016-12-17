@@ -36,10 +36,11 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
         {
             var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
             var xmlWriter = XmlWriter.Create(stream, settings);
-            using (var writer = new Writer(xmlWriter))
+            using (var serialization = new Serialization(new Writer(xmlWriter)))
             {
-                var node = RootNodeBuilder.Default.Get(instance);
-                new Selector(writer).Execute(node);
+                serialization.Execute(instance);
+                /*var node = RootNodeBuilder.Default.Get(instance);
+                new Selector(serialization).Execute(node);*/
             }
         }
     }

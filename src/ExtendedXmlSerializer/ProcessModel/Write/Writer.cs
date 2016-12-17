@@ -23,6 +23,7 @@
 
 using System;
 using System.Xml;
+using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Elements;
 using ExtendedXmlSerialization.Extensibility.Write;
 using ExtendedXmlSerialization.NodeModel.Write;
@@ -47,9 +48,13 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             _end = new DelegatedDisposable(End);
         }
 
-        public IDisposable Begin(IObjectNode instance)
+        private void End() => _writer.WriteEndElement();
+
+        public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
+
+        public IDisposable Begin(IQualifiedNode definition)
         {
-            var identifier = _locator.Locate(instance.Instance);
+            var identifier = _locator.Locate(definition.Type);
             var id = identifier?.ToString();
             switch (_writer.WriteState)
             {
@@ -58,51 +63,30 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                     break;
             }
 
-            _writer.WriteStartElement(instance.Name, id);
+            _writer.WriteStartElement(definition.Name, id);
             return _end;
         }
 
-        private void End() => _writer.WriteEndElement();
-
-        public void Emit(IObjectNode node) => _writer.WriteString(_serializer.Serialize(node.Instance));
-
-        /*var property = node as IProperty;
-            if (property != null)
-            {
-                var instance = property.Instance;
-                var identifier = _locator.Locate(instance) ?? _locator.Locate(property.Type);
-                var text = _serializer.Serialize(instance);
-                _writer.WriteAttributeString(node.Name, identifier?.ToString(), text);
-                return;
-            }*/
-
-        /*
-        public void Emit(IProperty property)
+        public void Emit(IObjectNode node)
         {
-            var type = property.Value as Type;
-            if (property.Identifier != null && type != null)
+            var instance = node.Instance;
+            var identifier = _locator.Locate(node.Type)?.ToString();
+            var text = _serializer.Serialize(instance);
+            var type = instance as Type;
+            if (identifier != null && type != null)
             {
-                var identifier = _locator.Locate(type)?.ToString();
-                if (identifier != null)
+                var identity = _locator.Locate(type)?.ToString();
+                if (identity != null)
                 {
+                    _writer.WriteStartAttribute(node.Name, identifier);
                     var name = TypeDefinitionCache.GetDefinition(type).Name;
-                    _writer.Emit(property.Name, property.Identifier, name, identifier);
+                    _writer.WriteQualifiedName(name, identity);
+                    _writer.WriteEndAttribute();
                     return;
                 }
             }
-            var serialized = _serializer.Serialize(property.Value);
-            _writer.Emit(property.Name, serialized, property.Identifier, property.Prefix);
+            _writer.WriteAttributeString(node.Name, identifier, text);
         }
-
-        public void Emit(Type type) {}*/
-
-        /*
-        public void Emit(string attribute, Uri identity, string name, string value)
-        {
-            _writer.WriteStartAttribute(attribute, identity.ToString());
-            _writer.WriteQualifiedName(name, value);
-            _writer.WriteEndAttribute();
-        }*/
 
         public void Dispose()
         {

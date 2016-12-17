@@ -2,9 +2,9 @@
 
 namespace ExtendedXmlSerialization.NodeModel.Write
 {
-    public class TypeProperty : Property
+    public class TypeProperty : ObjectNodeBase<Type>
     {
-        public TypeProperty(Type type) : base(new Primitive(type), typeof(IExtendedXmlSerializer), ExtendedXmlSerializer.Type) {}
+        public TypeProperty(Type type) : base(type, typeof(IExtendedXmlSerializer), ExtendedXmlSerializer.Type) {}
     }
 
     /*

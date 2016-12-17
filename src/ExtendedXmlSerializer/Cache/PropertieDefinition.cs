@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ProcessModel;
 using ExtendedXmlSerialization.Services;
@@ -30,9 +31,8 @@ namespace ExtendedXmlSerialization.Cache
     {
         public PropertieDefinition(MemberInfo memberInfo, string name)
         {
-            Metadata = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            Definition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
@@ -42,9 +42,9 @@ namespace ExtendedXmlSerialization.Cache
         private readonly ObjectAccessors.PropertyGetter _getter;
         private readonly ObjectAccessors.PropertySetter _propertySetter;
 
-        public string Name { get; private set; }
-        public ITypeDefinition Definition { get; }
-        public MemberInfo Metadata { get; }
+        public string Name { get; }
+        public ITypeDefinition TypeDefinition { get; }
+        public Type Type => TypeDefinition.Type;
         public bool IsWritable { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }
