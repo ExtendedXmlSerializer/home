@@ -24,8 +24,9 @@
 using System;
 using System.Collections;
 using System.Linq;
-using ExtendedXmlSerialization.ProcessModel;
-using ExtendedXmlSerialization.Specifications;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Cache
 {

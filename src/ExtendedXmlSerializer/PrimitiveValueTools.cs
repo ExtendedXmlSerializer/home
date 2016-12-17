@@ -24,7 +24,8 @@ using System;
 using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Cache;
-using ExtendedXmlSerialization.ProcessModel;
+using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization
 {

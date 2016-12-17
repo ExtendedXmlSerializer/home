@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Cache
 {

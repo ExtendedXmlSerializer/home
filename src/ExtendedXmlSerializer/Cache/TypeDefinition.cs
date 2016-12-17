@@ -27,8 +27,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.ProcessModel;
-using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Cache
 {

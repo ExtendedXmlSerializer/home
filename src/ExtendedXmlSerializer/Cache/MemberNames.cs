@@ -23,7 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Services;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Cache
 {

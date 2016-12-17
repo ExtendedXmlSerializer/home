@@ -26,13 +26,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.ProcessModel;
-using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
