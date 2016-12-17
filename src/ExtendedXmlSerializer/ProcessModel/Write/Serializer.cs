@@ -34,9 +34,9 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
 
         public void Serialize(Stream stream, object instance)
         {
-            var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};
-            var xmlWriter = XmlWriter.Create(stream, settings);
-            using (var serialization = new Serialization(new Writer(xmlWriter)))
+            /*var settings = new XmlWriterSettings {NamespaceHandling = NamespaceHandling.OmitDuplicates, Indent = true};*/
+            var writer = new Writer(XmlWriter.Create(stream));
+            using (var serialization = new Serialization(writer))
             {
                 serialization.Execute(instance);
                 /*var node = RootNodeBuilder.Default.Get(instance);

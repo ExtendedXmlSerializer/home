@@ -19,7 +19,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     public interface IMembers : IObjectNodeContainer<object> {}
     public class Members : ObjectNodeContainerBase<object>, IMembers
     {
-        public Members(object instance, IEnumerable<IObjectNode> members) : base(instance, typeof(Members), nameof(Members), members) {}
+        public Members(Type type, string name, object instance, IEnumerable<IObjectNode> members) : base(instance, type, name, members) {}
     }
 
     public interface IMember : IObjectNode<IObjectNode>
@@ -123,7 +123,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
     {
         protected EnumerableInstanceBase(long id, Type elementType,
                                          T instance, Type type, string name, IEnumerable<IMember> members, IEnumerable<IObjectNode> entries)
-            : base(id, instance, type, name, new Members(instance, members.Concat(entries).ToArray()))
+            : base(id, instance, type, name, new Members(type, name, instance, members.Concat(entries).ToArray()))
         {
             ElementType = elementType;
         }
@@ -203,6 +203,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
         IObjectNode Create();
     }
 
+/*
     class NodeBuilder : INodeBuilder
     {
         readonly private static Func<IObjectNode, bool> Property = NeverSpecification<IObjectNode>.Default.IsSatisfiedBy;
@@ -272,7 +273,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
                                               members,
                                               CreateElements(instance));
             }
-            var result = new Instance(id, instance, definition.Type, definition.Name, new Members(instance, members));
+            var result = new Instance(id, instance, definition.Type, definition.Name, new Members(definition.Type, definition.Name instance, members));
             return result;
         }
 
@@ -315,6 +316,7 @@ namespace ExtendedXmlSerialization.NodeModel.Write
             return definition;
         }
     }
+*/
 
     /*class RootNodeBuilder : IParameterizedSource<object, IRoot>
     {

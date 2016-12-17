@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
     public interface ISerialization : ICommand<object>, IDisposable // : IWriter, INodeEmitter //  IProcess
     {}
 
-    class Serialization : ISerialization
+    public class Serialization : ISerialization
     {
         readonly private static Func<IObjectNode, bool> Property = NeverSpecification<IObjectNode>.Default.IsSatisfiedBy;
 
@@ -72,16 +72,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 return;
             }
 
-            var container = node as IEnumerable<IObjectNode>;
-            if (container != null)
-            {
-                foreach (var item in container)
-                {
-                    Process(item);
-                }
-                return;
-            }
-
             var property = node as IProperty;
             if (property != null)
             {
@@ -108,6 +98,30 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 return;
             }
 
+            /*var decorated = node as IObjectNode<IObjectNode>;
+            if (decorated != null)
+            {
+                Process(decorated.Instance);
+                return;
+            }*/
+
+            var container = node as IMembers;
+            if (container != null)
+            {
+                var o = container.Instance;
+                if (!(o is IEnumerable))
+                {
+                    _writer.Emit(new TypeProperty(o.GetType()));
+                }
+                
+                foreach (var item in container)
+                {
+                    Process(item);
+                }
+                return;
+            }
+
+
             var enumerable = node as IEnumerableInstance;
             if (enumerable != null)
             {
@@ -123,7 +137,6 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
             {
                 using (_writer.Begin(instance))
                 {
-                    _writer.Emit(new TypeProperty(instance.Instance.GetType()));
                     Process(instance.Members);
                 }
                 return;
@@ -180,7 +193,7 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                                               members,
                                               CreateElements(instance, elementType));
             }
-            var result = new Instance(id, instance, definition.Type, definition.Name, new Members(instance, members));
+            var result = new Instance(id, instance, definition.Type, definition.Name, new Members(definition.Type, definition.Name, instance, members));
             return result;
         }
 
@@ -199,7 +212,9 @@ namespace ExtendedXmlSerialization.ProcessModel.Write
                 {
                     contents.Add(new Content(node, member));
                 }*/
-                yield return _property(node) ? (IMember) new Property(node, member) : new Content(node, member);
+                var item = node as IInstance;
+                var body = item?.Members ?? node;
+                yield return _property(node) ? (IMember) new Property(body, member) : new Content(body, member);
             }
             /*var result = properties.Concat(contents);
             return result;*/
