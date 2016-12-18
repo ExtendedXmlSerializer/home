@@ -22,14 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization
 {
     /// <summary>
     /// Interface Extended Xml Serializer
     /// </summary>
-    public interface IExtendedXmlSerializer //: IServiceRepository
+    public interface IExtendedXmlSerializer
     {
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
@@ -58,10 +57,5 @@ namespace ExtendedXmlSerialization
         /// Gets or sets <see cref="ISerializationToolsFactory"/>
         /// </summary>
         ISerializationToolsFactory SerializationToolsFactory { get; set; }
-
-        /*/// <summary>
-        /// Extensions for this instance.
-        /// </summary>
-        IList<IExtensionDefinition> Extensions { get; }*/
     }
 }

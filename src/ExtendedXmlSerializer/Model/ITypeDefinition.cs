@@ -43,6 +43,7 @@ namespace ExtendedXmlSerialization.Model
 
         void Add(object item, object key, object value);
 
+        bool CanActivate { get; }
         object Activate();
 
 

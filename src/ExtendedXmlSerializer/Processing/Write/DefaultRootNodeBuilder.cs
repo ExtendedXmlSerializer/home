@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         readonly private static Func<ITypeDefinition, bool> IsEnumerable =
             IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
 
-        readonly private static Func<Type, TypeDefinition> Definition = TypeDefinitionCache.GetDefinition;
+        readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
         readonly private IDictionary<long, IInstance> _instances = new Dictionary<long, IInstance>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();

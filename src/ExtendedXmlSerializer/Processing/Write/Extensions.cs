@@ -30,14 +30,10 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public static class Extensions
     {
-        readonly private static Func<Type, TypeDefinition> Definition = TypeDefinitionCache.GetDefinition;
+        readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
         public static ITypeDefinition For(this ITypeDefinition @this, object value)
         {
-            /*if (!Equals(@this.DefaultValue, value))
-            {
-                
-            }*/
             var type = value?.GetType();
             if (type != null && type != @this.Type)
             {

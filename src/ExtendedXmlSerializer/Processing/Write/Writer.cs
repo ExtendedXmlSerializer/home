@@ -78,7 +78,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 if (identity != null)
                 {
                     _writer.WriteStartAttribute(node.Name, identifier);
-                    var name = TypeDefinitionCache.GetDefinition(type).Name;
+                    var name = TypeDefinitions.Default.Get(type).Name;
                     _writer.WriteQualifiedName(name, identity);
                     _writer.WriteEndAttribute();
                     return;

@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
         {
-            var def = TypeDefinitionCache.GetDefinition(type);
+            var def = TypeDefinitions.Default.Get(type);
             XDocument doc = XDocument.Parse(xml);
             var result = ReadXml(doc.Root, def);
             _referencesObjects.Clear();
@@ -102,7 +102,7 @@ namespace ExtendedXmlSerialization
         {
             if (type.IsPrimitive)
             {
-                return PrimitiveValueTools.GetPrimitiveValue(currentNode.Value, type, currentNode.Name.LocalName);
+                return GetPrimitiveValue(type, currentNode);
             }
             if (type.IsDictionary)
             {
@@ -184,12 +184,12 @@ namespace ExtendedXmlSerialization
                 if (xElement.HasAttributes && xElement.Attribute(Type) != null)
                 {
                     // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
-                    Type targetType = TypeDefinitionCache.GetType(xElement.Attribute(Type).Value);
-                    var targetTypeDef = TypeDefinitionCache.GetDefinition(targetType);
+                    Type targetType = Types.Default.Get(xElement.Attribute(Type).Value);
+                    var targetTypeDef = TypeDefinitions.Default.Get(targetType);
                     var obj = propertyInfo.GetValue(currentObject);
-                    if ((obj == null || obj.GetType() != targetType) && targetTypeDef.ObjectActivator != null)
+                    if ((obj == null || obj.GetType() != targetType) && targetTypeDef.CanActivate)
                     {
-                        obj = targetTypeDef.ObjectActivator();
+                        obj = targetTypeDef.Activate();
                     }
                     var obj2 = ReadXml(xElement, targetTypeDef, obj);
                     propertyInfo.SetValue(currentObject, obj2);
@@ -223,11 +223,26 @@ namespace ExtendedXmlSerialization
                         }
                     }
 
-                    object primitive = PrimitiveValueTools.GetPrimitiveValue(value, propertyDef, xElement.Name.LocalName);
+                    object primitive = GetPrimitiveValue(propertyDef, value, xElement.Name.LocalName);
                     propertyInfo.SetValue(currentObject, primitive);
                 }
             }
             return currentObject;
+        }
+
+        private static object GetPrimitiveValue(ITypeDefinition type, XElement currentNode) => GetPrimitiveValue(type, currentNode.Value, currentNode.Name.LocalName);
+
+        private static object GetPrimitiveValue(ITypeDefinition type, string value, string name)
+        {
+            try
+            {
+                return PrimitiveValueTools.GetPrimitiveValue(value, type);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                          $"Unsuccessful conversion node {name} for type {type.Name} - value {value}", ex);
+            }
         }
 
         private object ReadXmlDictionary(XElement currentNode, ITypeDefinition type, object instance = null)
@@ -292,14 +307,14 @@ namespace ExtendedXmlSerialization
             return list;
         }
 
-        private static TypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)
+        private static ITypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)
         {
             var typeAttribute = element.Attribute(Type);
             if (typeAttribute != null)
             {
-                return TypeDefinitionCache.GetDefinition(TypeDefinitionCache.GetType(typeAttribute.Value));
+                return TypeDefinitions.Default.Get(Types.Default.Get(typeAttribute.Value));
             }
-            return defuaultType == null ? null : TypeDefinitionCache.GetDefinition(defuaultType);
+            return defuaultType == null ? null : TypeDefinitions.Default.Get(defuaultType);
         }
 
         interface ISerializationServices : ISerializationToolsFactory, ISerializer {}

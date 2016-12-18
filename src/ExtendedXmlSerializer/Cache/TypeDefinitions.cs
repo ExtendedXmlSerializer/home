@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +20,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
-using System.Runtime.CompilerServices;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model;
 
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
@@ -30,21 +33,14 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace ExtendedXmlSerialization.Cache
 {
-    internal static class TypeDefinitionCache
+    public class Types : ConcurrentDictionary<string, Type>, IParameterizedSource<string, Type>
     {
-        private static readonly WeakCache<Type, TypeDefinition> TypeDefinitions = new WeakCache<Type, TypeDefinition>( t => new TypeDefinition( t ) );
-        private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
+        public static Types Default { get; } = new Types();
+        Types() {}
+
         private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 
-        public static TypeDefinition GetDefinition(Type type)
-        {
-            return TypeDefinitions.Get( type );
-        }
-
-        public static Type GetType(string typeName)
-        {
-            return TypeCache.GetOrAdd( typeName, GetTypeFromNameDelegate );
-        }
+        public Type Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
 
         private static Type GetTypeFromName(string typeName)
         {
@@ -52,9 +48,9 @@ namespace ExtendedXmlSerialization.Cache
             if (type != null)
                 return type;
 #if NETSTANDARD1_6 || NETSTANDARD2_0
-            // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
-            // https://github.com/dotnet/corefx/issues/8806
-            // https://github.com/dotnet/corefx/issues/8910
+// TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
+// https://github.com/dotnet/corefx/issues/8806
+// https://github.com/dotnet/corefx/issues/8910
             foreach (RuntimeLibrary runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
             {
                 try
@@ -81,8 +77,13 @@ namespace ExtendedXmlSerialization.Cache
             }
 #endif
 
-            throw new Exception("Unknown type "+ typeName);
+            throw new Exception("Unknown type " + typeName);
         }
+    }
 
+    public class TypeDefinitions : WeakCache<Type, ITypeDefinition>
+    {
+        public static IParameterizedSource<Type, ITypeDefinition> Default { get; } = new TypeDefinitions();
+        TypeDefinitions() : base(key => new TypeDefinition(key)) {}
     }
 }

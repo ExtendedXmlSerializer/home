@@ -20,11 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Runtime.CompilerServices;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model;
 
 namespace ExtendedXmlSerialization.Cache
 {
-	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue> where TKey : class where TValue : class
+	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>, IParameterizedSource<TKey, TValue> where TKey : class where TValue : class
 	{
 		private readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)

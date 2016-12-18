@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Processing
         public static IsPrimitiveSpecification Default { get; } = new IsPrimitiveSpecification();
         IsPrimitiveSpecification() {}
 
-        public bool IsSatisfiedBy(Type parameter) => TypeDefinitionCache.GetDefinition(parameter).IsPrimitive;
+        public bool IsSatisfiedBy(Type parameter) => TypeDefinitions.Default.Get(parameter).IsPrimitive;
     }
 }

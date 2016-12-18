@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Cache
         }
 
         public bool Is(object instance) => Is(instance.GetType());
-        public bool Is(Type type) => Is(TypeDefinitionCache.GetDefinition(type));
+        public bool Is(Type type) => Is(TypeDefinitions.Default.Get(type));
         public bool Is(ITypeDefinition definition) => _specification.IsSatisfiedBy(definition);
     }
 }

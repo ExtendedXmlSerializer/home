@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var type = input as Type;
             if (type != null)
             {
-                foreach (var info in TypeDefinitionCache.GetDefinition(type).Members)
+                foreach (var info in TypeDefinitions.Default.Get(type).Members)
                 {
                     var memberType = info.Type;
                     if (info.IsWritable && !_primitive.IsSatisfiedBy(memberType))
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                         Schedule(memberType);
                     }
 
-                    var definition = TypeDefinitionCache.GetDefinition(memberType);
+                    var definition = TypeDefinitions.Default.Get(memberType);
                     if (definition.IsDictionary)
                     {
                         foreach (var argument in definition.GenericArguments)
@@ -84,7 +84,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var dictionary = input as IDictionary;
                 if (dictionary != null)
                 {
-                    var arguments = TypeDefinitionCache.GetDefinition(dictionary.GetType()).GenericArguments;
+                    var arguments = TypeDefinitions.Default.Get(dictionary.GetType()).GenericArguments;
                     foreach (DictionaryEntry entry in dictionary)
                     {
                         var key = entry.Key.GetType();
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 }
                 else
                 {
-                    foreach (var context in TypeDefinitionCache.GetDefinition(input.GetType()).Members)
+                    foreach (var context in TypeDefinitions.Default.Get(input.GetType()).Members)
                     {
                         if (context.IsWritable)
                         {

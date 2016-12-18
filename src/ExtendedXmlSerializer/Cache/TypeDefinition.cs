@@ -247,8 +247,10 @@ namespace ExtendedXmlSerialization.Cache
 
         public object DefaultValue { get; }
 
-        public void Add(object item, object value) => MethodAddToCollection(item, value);
-        public void Add(object item, object key, object value) => MethodAddToDictionary(item, key, value);
+        public void Add(object item, object value) => MethodAddToCollection?.Invoke(item, value);
+        public void Add(object item, object key, object value) => MethodAddToDictionary?.Invoke(item, key, value);
+
+        public bool CanActivate => ObjectActivator != null;
 
         public object Activate() => ObjectActivator();
 

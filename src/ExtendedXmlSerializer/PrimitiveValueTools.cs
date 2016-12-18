@@ -80,11 +80,9 @@ namespace ExtendedXmlSerialization
             }
         }
 
-        public static object GetPrimitiveValue(string value, ITypeDefinition type, string nodeName)
+        public static object GetPrimitiveValue(string value, ITypeDefinition type)
         {
-            try
-            {
-                if (type.IsEnum)
+            if (type.IsEnum)
                 {
                     return Enum.Parse(type.Type, value);
                 }
@@ -132,12 +130,6 @@ namespace ExtendedXmlSerialization
                         }
                         throw new NotSupportedException("Unknown primitive type " + type.Name + " - value: " + value);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException(
-                          $"Unsuccessful conversion node {nodeName} for type {type.Name} - value {value}", ex);
-            }
         }
 
         private static string DecimalSeparator(string value)

@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Cache
         public PropertieDefinition(MemberInfo memberInfo, string name)
         {
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(memberInfo.GetMemberType());
+            TypeDefinition = TypeDefinitions.Default.Get(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
