@@ -23,13 +23,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Cache;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
-using ExtendedXmlSerialization.Processing;
 using ExtendedXmlSerialization.Processing.Write;
-
 
 namespace ExtendedXmlSerialization
 {
@@ -38,6 +39,8 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
+        readonly private static ISerializationServices Services = SerializationServices.Default;
+        
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -46,12 +49,11 @@ namespace ExtendedXmlSerialization
         public const string Value = "Value";
         public const string Underscore = "_";
         public const string Item = "Item";
-        
+
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
-        private readonly Dictionary<string, object> _reservedReferencesObjects = new Dictionary<string, object>();
-
-
-        public ExtendedXmlSerializer() : this(DefaultSerializationToolsFactory.Default) {}
+        
+        
+        public ExtendedXmlSerializer() : this(Services) {}
 
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
         {
@@ -68,7 +70,7 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => Serializer.Default.Serialize(o);
+        public string Serialize(object o) => Services.Serialize(o);
 
         /// <summary>
         /// Deserializes the XML document
@@ -119,7 +121,7 @@ namespace ExtendedXmlSerialization
             var currentNodeDef = GetElementTypeDefinition(currentNode) ?? type;
 
             // Get configuration for type
-            var configuration = SerializationToolsFactory?.GetConfiguration(currentNodeDef.Type);
+            var configuration = SerializationToolsFactory.GetConfiguration(currentNodeDef.Type);
             if (configuration != null)
             {
                 // Run migrator if exists
@@ -298,6 +300,24 @@ namespace ExtendedXmlSerialization
                 return TypeDefinitionCache.GetDefinition(TypeDefinitionCache.GetType(typeAttribute.Value));
             }
             return defuaultType == null ? null : TypeDefinitionCache.GetDefinition(defuaultType);
+        }
+
+        interface ISerializationServices : ISerializationToolsFactory, ISerializer {}
+        sealed class SerializationServices : CompositeServiceProvider, ISerializationServices
+        {
+            private readonly ISerializer _serializer;
+            public static ISerializationServices Default { get; } = new SerializationServices();
+            private SerializationServices() : this(Serializer.Default) {}
+
+            SerializationServices(ISerializer serializer) : base(Enumerable.Empty<object>().ToImmutableList())
+            {
+                _serializer = serializer;
+            }
+
+            public IExtendedXmlSerializerConfig GetConfiguration(Type type) => null;
+
+            public IPropertyEncryption EncryptionAlgorithm => null;
+            public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
         }
     }
 }
