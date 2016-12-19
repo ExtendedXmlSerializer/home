@@ -28,10 +28,9 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Model
 {
     internal class TypeDefinition : ITypeDefinition
     {

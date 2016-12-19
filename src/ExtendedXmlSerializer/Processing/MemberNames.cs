@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +25,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Processing
 {
     class MemberNames : WeakCacheBase<MemberInfo, string>
     {

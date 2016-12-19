@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,34 +20,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Processing
 {
-	public abstract class WeakCacheBase<TKey, TValue> where TKey : class where TValue : class
+	sealed class Setters : WeakCacheBase<MemberInfo, ObjectAccessors.PropertySetter>
 	{
-		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
-		readonly private ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+		public static Setters Default { get; } = new Setters();
+		Setters() {}
 
-		protected WeakCacheBase()
+		protected override ObjectAccessors.PropertySetter Callback(MemberInfo key)
 		{
-			_callback = Callback;
+			if (key.IsWritable())
+			{
+				return ObjectAccessors.CreatePropertySetter(key.DeclaringType, key.Name);
+			}
+
+			var definition = TypeDefinitions.Default.Get(key.GetMemberType());
+			var result = definition != null ? new ObjectAccessors.PropertySetter(definition.Add) : null;
+			return result;
 		}
-
-		protected abstract TValue Callback(TKey key);
-
-		public bool Contains(TKey key)
-		{
-			TValue temp;
-			return _cache.TryGetValue(key, out temp);
-		}
-
-		public void Add(TKey key, TValue value)
-		{
-			_cache.Remove(key);
-			_cache.Add(key, value);
-		}
-
-		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }

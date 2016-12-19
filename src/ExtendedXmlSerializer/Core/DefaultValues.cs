@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +22,26 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Core
 {
-    public sealed class AllInterfaces
+    public class DefaultValues
     {
-        readonly Func<Type, IEnumerable<Type>> selector;
+        readonly ConditionalWeakTable<Type, object> _cache = new ConditionalWeakTable<Type, object>();
+        readonly private ConditionalWeakTable<Type, object>.CreateValueCallback _callback;
 
-        public static AllInterfaces Instance { get; } = new AllInterfaces();
-        AllInterfaces()
+        public static DefaultValues Default { get; } = new DefaultValues();
+
+        DefaultValues()
         {
-            selector = Yield;
+            _callback = Callback;
         }
 
-        public IEnumerable<Type> Yield( Type parameter ) =>
-            new[] { parameter }
-                .Concat( parameter.GetTypeInfo().ImplementedInterfaces.SelectMany( selector ) )
-                .Where( x => x.GetTypeInfo().IsInterface )
-                .Distinct();
+        public object Get(Type type) => _cache.GetValue(type, _callback);
+
+        private static object Callback(Type type)
+            => type.GetTypeInfo().IsValueType ? Activator.CreateInstance(type) : null;
     }
 }

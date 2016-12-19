@@ -24,7 +24,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 

@@ -23,8 +23,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Processing
 {
 	public interface IAddMethodLocator
 	{

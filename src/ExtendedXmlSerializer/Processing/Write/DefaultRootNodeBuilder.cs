@@ -25,7 +25,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;

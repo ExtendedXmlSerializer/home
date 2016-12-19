@@ -27,9 +27,9 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Processing;
 using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization

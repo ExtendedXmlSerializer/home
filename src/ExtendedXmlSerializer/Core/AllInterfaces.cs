@@ -20,26 +20,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Core
 {
-	sealed class Setters : WeakCacheBase<MemberInfo, ObjectAccessors.PropertySetter>
-	{
-		public static Setters Default { get; } = new Setters();
-		Setters() {}
+    public sealed class AllInterfaces
+    {
+        readonly Func<Type, IEnumerable<Type>> selector;
 
-		protected override ObjectAccessors.PropertySetter Callback(MemberInfo key)
-		{
-			if (key.IsWritable())
-			{
-				return ObjectAccessors.CreatePropertySetter(key.DeclaringType, key.Name);
-			}
+        public static AllInterfaces Instance { get; } = new AllInterfaces();
+        AllInterfaces()
+        {
+            selector = Yield;
+        }
 
-			var definition = TypeDefinitions.Default.Get(key.GetMemberType());
-			var result = definition != null ? new ObjectAccessors.PropertySetter(definition.Add) : null;
-			return result;
-		}
-	}
+        public IEnumerable<Type> Yield( Type parameter ) =>
+            new[] { parameter }
+                .Concat( parameter.GetTypeInfo().ImplementedInterfaces.SelectMany( selector ) )
+                .Where( x => x.GetTypeInfo().IsInterface )
+                .Distinct();
+    }
 }

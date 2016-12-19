@@ -20,21 +20,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Runtime.CompilerServices;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Model;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Core
 {
-	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>, IParameterizedSource<TKey, TValue> where TKey : class where TValue : class
+	public abstract class WeakCacheBase<TKey, TValue> where TKey : class where TValue : class
 	{
-		private readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
-		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
+		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+		readonly private ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+
+		protected WeakCacheBase()
 		{
-			_callback = callback;
+			_callback = Callback;
 		}
 
-		protected override TValue Callback(TKey key) => _callback(key);
+		protected abstract TValue Callback(TKey key);
+
+		public bool Contains(TKey key)
+		{
+			TValue temp;
+			return _cache.TryGetValue(key, out temp);
+		}
+
+		public void Add(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, value);
+		}
+
+		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }

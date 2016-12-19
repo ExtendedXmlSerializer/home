@@ -21,13 +21,10 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Model;
-using ExtendedXmlSerialization.Processing;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Processing
 {
     internal static class PrimitiveValueTools
     {

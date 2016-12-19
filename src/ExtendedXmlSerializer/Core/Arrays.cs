@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,42 +22,43 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using System.Collections;
+using System.Linq;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Core
 {
-    class PropertieDefinition : IMemberDefinition
+    class Arrays : WeakCache<object, Array>
     {
-        public PropertieDefinition(MemberInfo memberInfo, string name)
+        private readonly ISpecification<ITypeDefinition> _specification;
+        readonly static Array Array = (object[]) Enumerable.Empty<object>();
+
+        public static Arrays Default { get; } = new Arrays();
+        private Arrays() : this(IsEnumerableTypeSpecification.Default) {}
+
+        Arrays(ISpecification<ITypeDefinition> specification) : base(key => null)
         {
-            Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
-            TypeDefinition = TypeDefinitions.Default.Get(memberInfo.GetMemberType());
-            IsWritable = memberInfo.IsWritable();
-            _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
-            _propertySetter = Setters.Default.Get(memberInfo);
+            _specification = specification;
         }
 
-
-        private readonly ObjectAccessors.PropertyGetter _getter;
-        private readonly ObjectAccessors.PropertySetter _propertySetter;
-
-        public string Name { get; }
-        public ITypeDefinition TypeDefinition { get; }
-        public Type Type => TypeDefinition.Type;
-        public bool IsWritable { get; }
-        public int Order { get; set; } = -1;
-        public int MetadataToken { get; set; }
-        public object GetValue(object obj)
+        public Array AsArray(object instance)
         {
-            return _getter(obj);
+            var items = Get(instance);
+            if (items != null)
+            {
+                return items;
+            }
+            var result = Is(instance)
+                ? (instance as Array ?? ((IEnumerable) instance).Cast<object>().ToArray())
+                : Array;
+            Add(instance, result);
+            return result;
         }
 
-        public void SetValue(object obj, object value)
-        {
-            _propertySetter?.Invoke(obj, value);
-        }
+        public bool Is(object instance) => Is(instance.GetType());
+        public bool Is(Type type) => Is(TypeDefinitions.Default.Get(type));
+        public bool Is(ITypeDefinition definition) => _specification.IsSatisfiedBy(definition);
     }
 }

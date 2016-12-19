@@ -1,7 +1,6 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
-//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Core
 {
-    public class DefaultValues
-    {
-        readonly ConditionalWeakTable<Type, object> _cache = new ConditionalWeakTable<Type, object>();
-        readonly private ConditionalWeakTable<Type, object>.CreateValueCallback _callback;
+	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>, IParameterizedSource<TKey, TValue> where TKey : class where TValue : class
+	{
+		private readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
+		{
+			_callback = callback;
+		}
 
-        public static DefaultValues Default { get; } = new DefaultValues();
-
-        DefaultValues()
-        {
-            _callback = Callback;
-        }
-
-        public object Get(Type type) => _cache.GetValue(type, _callback);
-
-        private static object Callback(Type type)
-            => type.GetTypeInfo().IsValueType ? Activator.CreateInstance(type) : null;
-    }
+		protected override TValue Callback(TKey key) => _callback(key);
+	}
 }

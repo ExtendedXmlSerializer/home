@@ -1,6 +1,6 @@
 ﻿using ExtendedXmlSerialization.Model;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Processing
 {
     public static class ValueServices
     {

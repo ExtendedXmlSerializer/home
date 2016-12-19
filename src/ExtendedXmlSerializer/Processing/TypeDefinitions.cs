@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model;
 
@@ -31,7 +32,7 @@ using ExtendedXmlSerialization.Model;
 using Microsoft.Extensions.DependencyModel;
 #endif
 
-namespace ExtendedXmlSerialization.Cache
+namespace ExtendedXmlSerialization.Processing
 {
     public class Types : ConcurrentDictionary<string, Type>, IParameterizedSource<string, Type>
     {

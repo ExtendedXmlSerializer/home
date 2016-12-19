@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Cache;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Processing
