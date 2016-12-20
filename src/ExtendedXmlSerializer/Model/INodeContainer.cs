@@ -27,5 +27,6 @@ using System.Collections.Generic;
 namespace ExtendedXmlSerialization.Model
 {
     public interface INodeContainer : INode, IEnumerable {}
+
     public interface INodeContainer<out T> : INodeContainer, IEnumerable<T> where T : INode {}
 }

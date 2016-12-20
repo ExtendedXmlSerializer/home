@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,18 +28,13 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public interface IElementTypeLocator
-    {
-        Type Locate( Type type );
-    }
-
     public class ElementTypeLocator : WeakCacheBase<Type, Type>, IElementTypeLocator
     {
         readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
         public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
         ElementTypeLocator() {}
 
-        public Type Locate( Type type ) => Get(type);
+        public Type Locate(Type type) => Get(type);
 
         // Attribution: http://stackoverflow.com/a/17713382/3602057
         protected override Type Callback(Type key)

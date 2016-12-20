@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        readonly private IDictionary<long, IReference> _instances = new Dictionary<long, IReference>();
+        // readonly private IDictionary<long, IReference> _instances = new Dictionary<long, IReference>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
         public IEntity Get(object parameter)
@@ -50,7 +50,10 @@ namespace ExtendedXmlSerialization.Processing.Write
         }
 
         private IEntity Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
-        private IEntity Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
+
+        private IEntity Select(object instance, ITypeDefinition declared, string name)
+            => Select(instance, declared, declared.For(instance), name);
+
         private IEntity Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
         {
             if (actual.IsPrimitive)
@@ -62,19 +65,23 @@ namespace ExtendedXmlSerialization.Processing.Write
             var id = _generator.GetId(instance, out first);
             if (first)
             {
-                var @select = _instances[id] = new Reference(id, GetInstance(instance, declared, actual, name));
-                return @select;
+                var o = GetInstance(instance, declared, actual, name);
+                // _instances[id] = new Reference(id, o);
+                return o;
             }
 
-            if (_instances.ContainsKey(id))
+            /*if (_instances.ContainsKey(id))
             {
                 return new ReferenceLookup(_instances[id], name);
             }
+            */
+
             throw new InvalidOperationException(
-                      $"Could not create a context for instance '{instance}' of type '{declared.Type}'.");
+                      $"Recursion detected on '{instance}' of type '{declared.Type}'. This builder does not support recursion.  Please configure your serializer with a builder that does support recursion such as TODO.");
         }
 
-        private IObject GetInstance(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+        private IObject GetInstance(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                    string name)
         {
             var members = CreateMembers(instance, actualType);
 
@@ -91,7 +98,8 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 var elementType = Definition(declaredType.GenericArguments[0]);
                 var elements = CreateElements(instance, elementType);
-                return new EnumerableObject((IEnumerable)instance, declaredType, actualType, name, members.Concat(elements));
+                return new EnumerableObject((IEnumerable) instance, declaredType, actualType, name,
+                                            members.Concat(elements));
             }
             var result = new Object<object>(instance, declaredType, actualType, name, members);
             return result;
@@ -118,7 +126,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         }
 
         private IEnumerable<IEntity> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
-                                                            ITypeDefinition valueDefinition)
+                                                   ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)
             {

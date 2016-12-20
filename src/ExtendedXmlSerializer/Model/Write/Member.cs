@@ -23,5 +23,13 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public class Member : ContentBase<IEntity>, IMember
+    {
+        public Member(IEntity @object, IMemberDefinition member) : base(@object)
+        {
+            Definition = member;
+        }
+
+        public IMemberDefinition Definition { get; }
+    }
 }

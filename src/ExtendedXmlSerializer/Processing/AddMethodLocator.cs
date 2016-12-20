@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
+using System;
+using System.Collections.Concurrent;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+
+namespace ExtendedXmlSerialization.Processing
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
+    {
+        const string Add = "Add";
+
+        public static AddMethodLocator Default { get; } = new AddMethodLocator();
+        AddMethodLocator() {}
+
+        public MethodInfo Locate(Type type, Type elementType)
+        {
+            return GetOrAdd(type, t => Get(type, elementType));
+        }
+
+        static MethodInfo Get(Type type, Type elementType)
+        {
+            foreach (var candidate in AllInterfaces.Instance.Yield(type))
+            {
+                var method = candidate.GetMethod(Add);
+                var parameters = method?.GetParameters();
+                if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
+                {
+                    return method;
+                }
+            }
+            return null;
+        }
+    }
 }

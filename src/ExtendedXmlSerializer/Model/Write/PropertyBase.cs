@@ -21,23 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Processing;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
     public abstract class PropertyBase<T> : InstanceBase<T>, IProperty
     {
-        protected PropertyBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
-    }
-
-    static class Defaults
-    {
-        public static ITypeDefinition Definition { get; } = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
-    }
-    
-    abstract class NativeSystemPropertyBase<T> : PropertyBase<T>
-    {
-        protected NativeSystemPropertyBase(T @object, string name) : base(@object, Defaults.Definition, Defaults.Definition, name) {}
+        protected PropertyBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+            : base(@object, declaredType, actualType, name) {}
     }
 }

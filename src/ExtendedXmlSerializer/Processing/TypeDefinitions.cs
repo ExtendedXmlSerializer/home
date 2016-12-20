@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
-using System.Reflection;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model;
@@ -34,54 +32,6 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace ExtendedXmlSerialization.Processing
 {
-    public class Types : ConcurrentDictionary<string, Type>, IParameterizedSource<string, Type>
-    {
-        public static Types Default { get; } = new Types();
-        Types() {}
-
-        private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
-
-        public Type Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
-
-        private static Type GetTypeFromName(string typeName)
-        {
-            Type type = Type.GetType(typeName);
-            if (type != null)
-                return type;
-#if NETSTANDARD1_6 || NETSTANDARD2_0
-// TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
-// https://github.com/dotnet/corefx/issues/8806
-// https://github.com/dotnet/corefx/issues/8910
-            foreach (RuntimeLibrary runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
-            {
-                try
-                {
-                    var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
-                
-                    type = assembly.GetType(typeName);
-                    if (type != null)
-                        return type;
-                }
-                catch
-                {  
-                    continue;
-                }
-            }
-#else
-            foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = c.GetType(typeName);
-                if (type != null)
-                {
-                    return type;
-                }
-            }
-#endif
-
-            throw new Exception("Unknown type " + typeName);
-        }
-    }
-
     public class TypeDefinitions : WeakCache<Type, ITypeDefinition>
     {
         public static IParameterizedSource<Type, ITypeDefinition> Default { get; } = new TypeDefinitions();

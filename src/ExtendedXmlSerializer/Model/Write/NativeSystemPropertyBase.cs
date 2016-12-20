@@ -23,5 +23,9 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    abstract class NativeSystemPropertyBase<T> : PropertyBase<T>
+    {
+        protected NativeSystemPropertyBase(T @object, string name)
+            : base(@object, Defaults.Definition, Defaults.Definition, name) {}
+    }
 }

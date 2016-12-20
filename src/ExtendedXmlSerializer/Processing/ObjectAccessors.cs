@@ -1,6 +1,7 @@
 // MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,15 +35,17 @@ namespace ExtendedXmlSerialization.Processing
         internal delegate object PropertyGetter(object item);
 
         internal delegate void PropertySetter(object item, object value);
-        
+
         internal delegate void AddItemToCollection(object item, object value);
+
         internal delegate void AddItemToDictionary(object item, object key, object value);
 
         internal static ObjectActivator CreateObjectActivator(Type type, bool isPrimitive)
         {
             var typeInfo = type.GetTypeInfo();
             //if isClass or struct but not abstract, enum or primitive
-            if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum && !typeInfo.IsPrimitive)
+            if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum &&
+                !typeInfo.IsPrimitive)
             {
                 if (typeInfo.IsClass)
                 {
@@ -58,10 +61,10 @@ namespace ExtendedXmlSerialization.Processing
 
                 return lambda.Compile();
             }
-                
+
             return null;
         }
-        
+
         internal static PropertyGetter CreatePropertyGetter(MemberInfo member)
         {
             // Object (type object) from witch the data are retrieved
@@ -78,7 +81,7 @@ namespace ExtendedXmlSerialization.Processing
 
             LambdaExpression lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
 
-            PropertyGetter compiled = (PropertyGetter)lambda.Compile();
+            PropertyGetter compiled = (PropertyGetter) lambda.Compile();
             return compiled;
         }
 
@@ -108,7 +111,7 @@ namespace ExtendedXmlSerialization.Processing
 
             LambdaExpression lambda = Expression.Lambda(typeof(AddItemToDictionary), conversion, objParams);
 
-            AddItemToDictionary compiled = (AddItemToDictionary)lambda.Compile();
+            AddItemToDictionary compiled = (AddItemToDictionary) lambda.Compile();
             return compiled;
         }
 
@@ -130,7 +133,7 @@ namespace ExtendedXmlSerialization.Processing
 
             LambdaExpression lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
 
-            AddItemToCollection compiled = (AddItemToCollection)lambda.Compile();
+            AddItemToCollection compiled = (AddItemToCollection) lambda.Compile();
             return compiled;
         }
 
@@ -157,7 +160,7 @@ namespace ExtendedXmlSerialization.Processing
 
             LambdaExpression lambda = Expression.Lambda(typeof(PropertySetter), assign, itemObject, value);
 
-            PropertySetter compiled = (PropertySetter)lambda.Compile();
+            PropertySetter compiled = (PropertySetter) lambda.Compile();
             return compiled;
         }
     }

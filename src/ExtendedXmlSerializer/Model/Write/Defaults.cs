@@ -21,7 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Processing;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    static class Defaults
+    {
+        public static ITypeDefinition Definition { get; } = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
+    }
 }

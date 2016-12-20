@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Processing;
@@ -34,6 +33,6 @@ namespace ExtendedXmlSerialization.Model.Write
 
         public DictionaryEntryInstance(DictionaryEntry @object, IDictionaryKey key, IDictionaryValue value)
             : base(@object, Type, Type, ExtendedXmlSerializer.Item, key.Append<IEntity>(value)
-        ) {}
+            ) {}
     }
 }

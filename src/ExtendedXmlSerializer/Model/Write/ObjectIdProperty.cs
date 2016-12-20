@@ -23,5 +23,8 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    sealed class ObjectIdProperty : NativeSystemPropertyBase<object>
+    {
+        public ObjectIdProperty(object id) : base(id, ExtendedXmlSerializer.Id) {}
+    }
 }

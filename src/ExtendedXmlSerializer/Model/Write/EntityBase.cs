@@ -23,5 +23,14 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public abstract class EntityBase : NodeBase, IEntity
+    {
+        protected EntityBase(ITypeDefinition declaredType, string name)
+            : base(name)
+        {
+            DeclaredType = declaredType;
+        }
+
+        public ITypeDefinition DeclaredType { get; }
+    }
 }

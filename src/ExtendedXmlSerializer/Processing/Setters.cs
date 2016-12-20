@@ -1,6 +1,7 @@
 // MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,21 +26,21 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Processing
 {
-	sealed class Setters : WeakCacheBase<MemberInfo, ObjectAccessors.PropertySetter>
-	{
-		public static Setters Default { get; } = new Setters();
-		Setters() {}
+    sealed class Setters : WeakCacheBase<MemberInfo, ObjectAccessors.PropertySetter>
+    {
+        public static Setters Default { get; } = new Setters();
+        Setters() {}
 
-		protected override ObjectAccessors.PropertySetter Callback(MemberInfo key)
-		{
-			if (key.IsWritable())
-			{
-				return ObjectAccessors.CreatePropertySetter(key.DeclaringType, key.Name);
-			}
+        protected override ObjectAccessors.PropertySetter Callback(MemberInfo key)
+        {
+            if (key.IsWritable())
+            {
+                return ObjectAccessors.CreatePropertySetter(key.DeclaringType, key.Name);
+            }
 
-			var definition = TypeDefinitions.Default.Get(key.GetMemberType());
-			var result = definition != null ? new ObjectAccessors.PropertySetter(definition.Add) : null;
-			return result;
-		}
-	}
+            var definition = TypeDefinitions.Default.Get(key.GetMemberType());
+            var result = definition != null ? new ObjectAccessors.PropertySetter(definition.Add) : null;
+            return result;
+        }
+    }
 }

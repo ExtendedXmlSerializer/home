@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +22,12 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Processing
 {
-	public interface IAddMethodLocator
-	{
-		MethodInfo Locate(Type type, Type elementType);
-	}
-
-	public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
-	{
-		const string Add = "Add";
-		
-		public static AddMethodLocator Default { get; } = new AddMethodLocator();
-		AddMethodLocator() {}
-
-		public MethodInfo Locate(Type type, Type elementType)
-		{
-			return GetOrAdd(type, t => Get(type, elementType));
-		}
-
-		static MethodInfo Get(Type type, Type elementType)
-		{
-			foreach (var candidate in AllInterfaces.Instance.Yield(type))
-			{
-				var method = candidate.GetMethod(Add);
-				var parameters = method?.GetParameters();
-				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
-				{
-					return method;						
-				}
-			}
-			return null;
-		}
-	}
+    public interface IAddMethodLocator
+    {
+        MethodInfo Locate(Type type, Type elementType);
+    }
 }

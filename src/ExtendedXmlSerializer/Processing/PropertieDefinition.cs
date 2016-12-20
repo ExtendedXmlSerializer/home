@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -48,6 +49,7 @@ namespace ExtendedXmlSerialization.Processing
         public bool IsWritable { get; }
         public int Order { get; set; } = -1;
         public int MetadataToken { get; set; }
+
         public object GetValue(object obj)
         {
             return _getter(obj);

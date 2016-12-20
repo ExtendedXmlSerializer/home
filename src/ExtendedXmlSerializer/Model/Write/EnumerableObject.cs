@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Model.Write
     public class EnumerableObject : EnumerableObjectBase<IEnumerable>, IEnumerableObject
     {
         public EnumerableObject(IEnumerable @object, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                   string name, IEnumerable<IEntity> nodes)
+                                string name, IEnumerable<IEntity> nodes)
             : base(@object, declaredType, actualType, name, nodes) {}
     }
 }

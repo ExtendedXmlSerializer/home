@@ -23,5 +23,9 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public interface IInstance : IEntity
+    {
+        object Instance { get; }
+        ITypeDefinition ActualType { get; }
+    }
 }

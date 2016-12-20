@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -51,24 +49,6 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var lookup = parameter as IReferenceLookup;
-            if (lookup != null)
-            {
-                using (_writer.Begin(context ?? lookup))
-                {
-                    ApplyType(lookup.Content.Content);
-                    _writer.Emit(new ObjectReferenceProperty(lookup.Content.Id));
-                }
-                return;
-            }
-
-            var container = parameter as IContent;
-            if (container != null)
-            {
-                Execute(container.Content, context ?? container);
-                return;
-            }
-
             var instance = parameter as IObject;
             if (instance != null)
             {
@@ -79,11 +59,29 @@ namespace ExtendedXmlSerialization.Processing.Write
 
                     foreach (var o in instance)
                     {
-                        Execute(o);
+                        Execute(o, o);
                     }
                 }
                 return;
             }
+
+            /*var lookup = parameter as IReferenceLookup;
+            if (lookup != null)
+            {
+                using (_writer.Begin(context ?? lookup))
+                {
+                    ApplyType(lookup.Content.Content);
+                    _writer.Emit(new ObjectReferenceProperty(lookup.Content.Id));
+                }
+                return;
+            }*/
+
+            var container = parameter as IContent;
+            if (container != null)
+            {
+                Execute(container.Content, context ?? container);
+            }
+
         }
 
         private static bool Apply(IInstance instance, IEntity context)

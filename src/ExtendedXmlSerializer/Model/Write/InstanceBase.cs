@@ -21,9 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
     public abstract class InstanceBase<T> : EntityBase, IInstance
@@ -38,30 +35,5 @@ namespace ExtendedXmlSerialization.Model.Write
         public T Instance { get; }
         object IInstance.Instance => Instance;
         public ITypeDefinition ActualType { get; }
-    }
-
-    public class Object<T> : InstanceBase<T>, IObject
-    {
-        private readonly IEnumerable<IEntity> _entities;
-
-        public Object(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IEntity> entities)
-            : base(instance, declaredType, actualType, name)
-        {
-            _entities = entities;
-        }
-
-        public IEnumerator<IEntity> GetEnumerator() => _entities.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
-    public abstract class EntityBase : NodeBase, IEntity
-    {
-        protected EntityBase(ITypeDefinition declaredType, string name)
-            : base(name)
-        {
-            DeclaredType = declaredType;
-        }
-
-        public ITypeDefinition DeclaredType { get; }
     }
 }

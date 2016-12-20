@@ -26,23 +26,4 @@ namespace ExtendedXmlSerialization.Model.Write
     public interface IReferenceLookup : IContent<IReference> {}
 
     // public interface IReference<out T> : IObject<T>, IReference {}
-    public interface IReference : IContent<IObject>
-    {
-        object Id { get; }
-    }
-
-    public interface IMember : IContent
-    {
-        IMemberDefinition Definition { get; }
-    }
-
-    public class Member : ContentBase<IEntity>, IMember
-    {
-        public Member(IEntity @object, IMemberDefinition member) : base(@object)
-        {
-            Definition = member;
-        }
-
-        public IMemberDefinition Definition { get; }
-    }
 }

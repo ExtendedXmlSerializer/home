@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Model.Write
     public class DictionaryObject : EnumerableObjectBase<IDictionary>, IDictionaryObject
     {
         public DictionaryObject(IDictionary @object, ITypeDefinition declaredType,
-                                   ITypeDefinition actualType, string name, IEnumerable<IEntity> nodes)
+                                ITypeDefinition actualType, string name, IEnumerable<IEntity> nodes)
             : base(@object, declaredType, actualType, name, nodes) {}
     }
 }

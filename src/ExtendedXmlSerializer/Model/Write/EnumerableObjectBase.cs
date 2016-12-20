@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Model.Write
     public abstract class EnumerableObjectBase<T> : Object<T> where T : IEnumerable
     {
         protected EnumerableObjectBase(T @object, ITypeDefinition declared, ITypeDefinition actual,
-                                          string name, IEnumerable<IEntity> nodes)
+                                       string name, IEnumerable<IEntity> nodes)
             : base(@object, declared, actual, name, nodes) {}
     }
 }

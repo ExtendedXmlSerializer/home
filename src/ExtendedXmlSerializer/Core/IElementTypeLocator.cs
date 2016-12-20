@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
+using System;
+
+namespace ExtendedXmlSerialization.Core
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public interface IElementTypeLocator
+    {
+        Type Locate(Type type);
+    }
 }

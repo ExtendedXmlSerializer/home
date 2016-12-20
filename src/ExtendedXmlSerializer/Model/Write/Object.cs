@@ -21,7 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryObject : IEnumerableObject {}
+    public class Object<T> : InstanceBase<T>, IObject
+    {
+        private readonly IEnumerable<IEntity> _entities;
+
+        public Object(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name,
+                      IEnumerable<IEntity> entities)
+            : base(instance, declaredType, actualType, name)
+        {
+            _entities = entities;
+        }
+
+        public IEnumerator<IEntity> GetEnumerator() => _entities.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

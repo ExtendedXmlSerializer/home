@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -80,53 +81,53 @@ namespace ExtendedXmlSerialization.Processing
         public static object GetPrimitiveValue(string value, ITypeDefinition type)
         {
             if (type.IsEnum)
-                {
-                    return Enum.Parse(type.Type, value);
-                }
+            {
+                return Enum.Parse(type.Type, value);
+            }
 
-                switch (type.TypeCode)
-                {
-                    case TypeCode.Boolean:
-                        return Convert.ToBoolean(value);
-                    case TypeCode.Char:
-                        return (char) XmlConvert.ToUInt16(value);
-                    case TypeCode.SByte:
-                        return XmlConvert.ToSByte(value);
-                    case TypeCode.Byte:
-                        return XmlConvert.ToByte(value);
-                    case TypeCode.Int16:
-                        return XmlConvert.ToInt16(value);
-                    case TypeCode.UInt16:
-                        return XmlConvert.ToUInt16(value);
-                    case TypeCode.Int32:
-                        return XmlConvert.ToInt32(value);
-                    case TypeCode.UInt32:
-                        return XmlConvert.ToUInt32(value);
-                    case TypeCode.Int64:
-                        return XmlConvert.ToInt64(value);
-                    case TypeCode.UInt64:
-                        return XmlConvert.ToUInt64(value);
-                    case TypeCode.Single:
-                        return XmlConvert.ToSingle(DecimalSeparator(value));
-                    case TypeCode.Double:
-                        return XmlConvert.ToDouble(DecimalSeparator(value));
-                    case TypeCode.Decimal:
-                        return XmlConvert.ToDecimal(DecimalSeparator(value));
-                    case TypeCode.DateTime:
-                        return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.RoundtripKind);
-                    case TypeCode.String:
-                        return value;
-                    default:
-                        if (type.Type == typeof(Guid))
-                        {
-                            return XmlConvert.ToGuid(value);
-                        }
-                        if (type.Type == typeof(TimeSpan))
-                        {
-                            return XmlConvert.ToTimeSpan(value);
-                        }
-                        throw new NotSupportedException("Unknown primitive type " + type.Name + " - value: " + value);
-                }
+            switch (type.TypeCode)
+            {
+                case TypeCode.Boolean:
+                    return Convert.ToBoolean(value);
+                case TypeCode.Char:
+                    return (char) XmlConvert.ToUInt16(value);
+                case TypeCode.SByte:
+                    return XmlConvert.ToSByte(value);
+                case TypeCode.Byte:
+                    return XmlConvert.ToByte(value);
+                case TypeCode.Int16:
+                    return XmlConvert.ToInt16(value);
+                case TypeCode.UInt16:
+                    return XmlConvert.ToUInt16(value);
+                case TypeCode.Int32:
+                    return XmlConvert.ToInt32(value);
+                case TypeCode.UInt32:
+                    return XmlConvert.ToUInt32(value);
+                case TypeCode.Int64:
+                    return XmlConvert.ToInt64(value);
+                case TypeCode.UInt64:
+                    return XmlConvert.ToUInt64(value);
+                case TypeCode.Single:
+                    return XmlConvert.ToSingle(DecimalSeparator(value));
+                case TypeCode.Double:
+                    return XmlConvert.ToDouble(DecimalSeparator(value));
+                case TypeCode.Decimal:
+                    return XmlConvert.ToDecimal(DecimalSeparator(value));
+                case TypeCode.DateTime:
+                    return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.RoundtripKind);
+                case TypeCode.String:
+                    return value;
+                default:
+                    if (type.Type == typeof(Guid))
+                    {
+                        return XmlConvert.ToGuid(value);
+                    }
+                    if (type.Type == typeof(TimeSpan))
+                    {
+                        return XmlConvert.ToTimeSpan(value);
+                    }
+                    throw new NotSupportedException("Unknown primitive type " + type.Name + " - value: " + value);
+            }
         }
 
         private static string DecimalSeparator(string value)
