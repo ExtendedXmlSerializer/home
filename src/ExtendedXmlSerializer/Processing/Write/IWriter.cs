@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Processing.Write
     {
         IDisposable Begin(IQualifiedNode definition);
 
-        void Emit(IObject node);
+        void Emit(IInstance node);
 
         void Emit(object instance);
     }

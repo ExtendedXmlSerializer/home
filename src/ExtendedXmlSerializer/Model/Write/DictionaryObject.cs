@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryObject : EnumerableObjectBase<IDictionary>, IDictionaryReference
+    public class DictionaryObject : EnumerableObjectBase<IDictionary>, IDictionaryObject
     {
         public DictionaryObject(IDictionary @object, ITypeDefinition declaredType,
                                    ITypeDefinition actualType, string name, IEnumerable<IEntity> nodes)

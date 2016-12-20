@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class EnumerableObject : EnumerableObjectBase<IEnumerable>, IEnumerableReference
+    public class EnumerableObject : EnumerableObjectBase<IEnumerable>, IEnumerableObject
     {
         public EnumerableObject(IEnumerable @object, ITypeDefinition declaredType, ITypeDefinition actualType,
                                    string name, IEnumerable<IEntity> nodes)

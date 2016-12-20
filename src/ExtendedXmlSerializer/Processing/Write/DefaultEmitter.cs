@@ -65,7 +65,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var container = parameter as IContent;
             if (container != null)
             {
-                Execute(container.Content, container);
+                Execute(container.Content, context ?? container);
                 return;
             }
 
@@ -88,7 +88,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         private static bool Apply(IInstance instance, IEntity context)
         {
-            var ignore = context is IEnumerableReference || context is IDictionaryEntry;
+            var ignore = instance is IEnumerableObject || instance is IDictionaryEntry;
             if (!ignore)
             {
                 return true;

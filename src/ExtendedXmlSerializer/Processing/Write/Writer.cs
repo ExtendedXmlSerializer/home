@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             return _end;
         }
 
-        public void Emit(IObject node)
+        public void Emit(IInstance node)
         {
             var instance = node.Instance;
             var identifier = _locator.Locate(node.DeclaredType)?.ToString();
