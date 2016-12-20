@@ -21,28 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class ObjectContent : ObjectBase<IObject>, IObjectContent
+    public class ObjectContent : ContentBase<IObject>
     {
-        public ObjectContent(IObject @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
-    }
+        public ObjectContent(IObject @object) : base(@object) {}
 
-    public abstract class ObjectContainerBase<T> : ObjectBase<T>, IObjectContainer<T>
-    {
-        private readonly IEnumerable<IObject> _nodes;
-
-        protected ObjectContainerBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                          string name, IEnumerable<IObject> nodes)
-            : base(@object, declaredType, actualType, name)
-        {
-            _nodes = nodes;
-        }
-
-        public IEnumerator<IObject> GetEnumerator() => _nodes.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public ObjectContent(IObject content, string name) : base(content, name) {}
     }
 }

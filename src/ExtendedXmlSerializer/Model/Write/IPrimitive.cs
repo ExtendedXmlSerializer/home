@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IPrimitive : IObject {}
+    public interface IPrimitive : IInstance {}
 }

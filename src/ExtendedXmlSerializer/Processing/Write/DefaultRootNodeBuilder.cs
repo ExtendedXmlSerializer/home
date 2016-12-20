@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         readonly private IDictionary<long, IReference> _instances = new Dictionary<long, IReference>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public IObject Get(object parameter)
+        public IEntity Get(object parameter)
         {
             var type = parameter.GetType();
             var definition = Definition(type);
@@ -49,9 +49,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        private IObject Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
-        private IObject Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
-        private IObject Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
+        private IEntity Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
+        private IEntity Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
+        private IEntity Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
         {
             if (actual.IsPrimitive)
             {
@@ -62,19 +62,19 @@ namespace ExtendedXmlSerialization.Processing.Write
             var id = _generator.GetId(instance, out first);
             if (first)
             {
-                var @select = _instances[id] = GetInstance(id, instance, declared, actual, name);
+                var @select = _instances[id] = new Reference(id, GetInstance(instance, declared, actual, name));
                 return @select;
             }
 
             if (_instances.ContainsKey(id))
             {
-                return new ReferenceLookup(_instances[id], declared, actual, name);
+                return new ReferenceLookup(_instances[id], name);
             }
             throw new InvalidOperationException(
                       $"Could not create a context for instance '{instance}' of type '{declared.Type}'.");
         }
 
-        private IReference GetInstance(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+        private IObject GetInstance(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
         {
             var members = CreateMembers(instance, actualType);
 
@@ -84,20 +84,20 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var key = Definition(declaredType.GenericArguments[0]);
                 var value = Definition(declaredType.GenericArguments[1]);
                 var entries = CreateEntries(dictionary, key, value);
-                return new DictionaryReference(id, dictionary, declaredType, actualType, name, members.Concat(entries));
+                return new DictionaryObject(dictionary, declaredType, actualType, name, members.Concat(entries));
             }
 
             if (IsEnumerable(actualType))
             {
                 var elementType = Definition(declaredType.GenericArguments[0]);
                 var elements = CreateElements(instance, elementType);
-                return new EnumerableReference(id, (IEnumerable)instance, declaredType, actualType, name, members.Concat(elements));
+                return new EnumerableObject((IEnumerable)instance, declaredType, actualType, name, members.Concat(elements));
             }
-            var result = new Reference(id, instance, declaredType, actualType, name, members);
+            var result = new Object<object>(instance, declaredType, actualType, name, members);
             return result;
         }
 
-        IEnumerable<IObject> CreateMembers(object instance, ITypeDefinition definition)
+        IEnumerable<IEntity> CreateMembers(object instance, ITypeDefinition definition)
         {
             foreach (var member in definition.Members)
             {
@@ -109,7 +109,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private IEnumerable<IObject> CreateElements(object instance, ITypeDefinition elementType)
+        private IEnumerable<IEntity> CreateElements(object instance, ITypeDefinition elementType)
         {
             foreach (var element in Arrays.Default.AsArray(instance))
             {
@@ -117,7 +117,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private IEnumerable<IObject> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
+        private IEnumerable<IEntity> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
                                                             ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)

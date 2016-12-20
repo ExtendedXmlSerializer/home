@@ -26,10 +26,42 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryReference : EnumerableReferenceBase<IDictionary>, IDictionaryReference
+    public abstract class InstanceBase<T> : EntityBase, IInstance
     {
-        public DictionaryReference(long id, IDictionary @object, ITypeDefinition declaredType,
-                                   ITypeDefinition actualType, string name, IEnumerable<IObject> nodes)
-            : base(id, @object, declaredType, actualType, name, nodes) {}
+        protected InstanceBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+            : base(declaredType, name)
+        {
+            Instance = instance;
+            ActualType = actualType;
+        }
+
+        public T Instance { get; }
+        object IInstance.Instance => Instance;
+        public ITypeDefinition ActualType { get; }
+    }
+
+    public class Object<T> : InstanceBase<T>, IObject
+    {
+        private readonly IEnumerable<IEntity> _entities;
+
+        public Object(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IEntity> entities)
+            : base(instance, declaredType, actualType, name)
+        {
+            _entities = entities;
+        }
+
+        public IEnumerator<IEntity> GetEnumerator() => _entities.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public abstract class EntityBase : NodeBase, IEntity
+    {
+        protected EntityBase(ITypeDefinition declaredType, string name)
+            : base(name)
+        {
+            DeclaredType = declaredType;
+        }
+
+        public ITypeDefinition DeclaredType { get; }
     }
 }

@@ -26,16 +26,18 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class PropertyBase<T> : ObjectBase<T>, IProperty
+    public abstract class PropertyBase<T> : InstanceBase<T>, IProperty
     {
         protected PropertyBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 
+    static class Defaults
+    {
+        public static ITypeDefinition Definition { get; } = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
+    }
     
     abstract class NativeSystemPropertyBase<T> : PropertyBase<T>
     {
-        readonly static private ITypeDefinition Definition = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
-
-        protected NativeSystemPropertyBase(T @object, string name) : base(@object, Definition, Definition, name) {}
+        protected NativeSystemPropertyBase(T @object, string name) : base(@object, Defaults.Definition, Defaults.Definition, name) {}
     }
 }

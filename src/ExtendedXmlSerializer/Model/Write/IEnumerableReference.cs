@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IEnumerableReference : IReference {}
+    public interface IEnumerableReference : IObject {}
 }

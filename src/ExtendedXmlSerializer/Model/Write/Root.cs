@@ -25,8 +25,8 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Root : ObjectBase<IObject>, IRoot
+    public class Root : ContentBase<IInstance>, IRoot
     {
-        public Root(IObject body, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(body, declaredType, actualType, name) {}
+        public Root(IInstance body, string name) : base(body, name) {}
     }
 }

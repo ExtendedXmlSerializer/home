@@ -21,28 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : Reference<object>
+    public class Reference : ContentBase<IObject>, IReference
     {
-        /*public Reference(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
-            : this(id, instance, declaredType, actualType, name, new Members(instance, declaredType, actualType, name, members)) {}*/
-
-        public Reference(long id, object @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObject> members)
-            : base(id, @object, declaredType, actualType, name, members) {}
-    }
-
-    public class Reference<T> : ObjectContainerBase<T>, IReference
-    {
-        public Reference(long id, T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObject> members)
-            : base(@object, declaredType, actualType, name, members)
+        public Reference(object id, IObject @object)
+            : base(@object, @object.Name)
         {
             Id = id;
         }
 
-        public long Id { get; }
+        public object Id { get; }
     }
 }

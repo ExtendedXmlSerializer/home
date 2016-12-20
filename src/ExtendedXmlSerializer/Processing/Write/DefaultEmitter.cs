@@ -36,9 +36,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             _writer = writer;
         }
 
-        public void Execute(IObject parameter) => Execute(parameter, null);
+        public void Execute(IEntity parameter) => Execute(parameter, null);
 
-        private void Execute(IObject parameter, IObject context)
+        private void Execute(IEntity parameter, IEntity context)
         {
             var primitive = parameter as IPrimitive;
             if (primitive != null)
@@ -46,19 +46,30 @@ namespace ExtendedXmlSerialization.Processing.Write
                 using (_writer.Begin(context ?? primitive))
                 {
                     ApplyType(primitive);
-                    _writer.Emit(primitive.Object);
+                    _writer.Emit(primitive.Instance);
                 }
                 return;
             }
 
-            var container = parameter as IObjectContent;
-            if (container != null)
+            var lookup = parameter as IReferenceLookup;
+            if (lookup != null)
             {
-                Execute(container.Object, container);
+                using (_writer.Begin(context ?? lookup))
+                {
+                    ApplyType(lookup.Content.Content);
+                    _writer.Emit(new ObjectReferenceProperty(lookup.Content.Id));
+                }
                 return;
             }
 
-            var instance = parameter as IInstance;
+            var container = parameter as IContent;
+            if (container != null)
+            {
+                Execute(container.Content, container);
+                return;
+            }
+
+            var instance = parameter as IObject;
             if (instance != null)
             {
                 using (_writer.Begin(context ?? instance))
@@ -73,22 +84,11 @@ namespace ExtendedXmlSerialization.Processing.Write
                 }
                 return;
             }
-
-            var lookup = parameter as IReferenceLookup;
-            if (lookup != null)
-            {
-                using (_writer.Begin(context ?? lookup))
-                {
-                    ApplyType(lookup);
-                    _writer.Emit(new ObjectReferenceProperty(lookup.Object.Id));
-                }
-                return;
-            }
         }
 
-        private static bool Apply(IObject instance, IObject context)
+        private static bool Apply(IInstance instance, IEntity context)
         {
-            var ignore = instance is IEnumerableReference || instance is IDictionaryEntry;
+            var ignore = context is IEnumerableReference || context is IDictionaryEntry;
             if (!ignore)
             {
                 return true;
@@ -98,11 +98,11 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        private void ApplyType(IObject node) => ApplyType(node, Different(node));
+        private void ApplyType(IInstance node) => ApplyType(node, Different(node));
 
-        private static bool Different(IObject node) => node.ActualType.Type != node.DeclaredType.Type;
+        private static bool Different(IInstance node) => node.ActualType.Type != node.DeclaredType.Type;
 
-        private void ApplyType(IObject node, bool force)
+        private void ApplyType(IInstance node, bool force)
         {
             if (force)
             {

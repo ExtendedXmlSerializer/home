@@ -23,5 +23,37 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IObjectContent : IObject<IObject> {}
+    public interface IInstance : IEntity
+    {
+        object Instance { get; }
+        ITypeDefinition ActualType { get; }
+    }
+
+    public interface IObject : IInstance, INodeContainer<IEntity> {}
+
+    public interface IEntity : IQualifiedNode {}
+
+    public interface IContent : IEntity
+    {
+        IEntity Content { get; }
+    }
+
+    public interface IContent<out T> : IEntity where T : IEntity
+    {
+        T Content { get; }
+    }
+
+    public abstract class ContentBase<T> : EntityBase, IContent<T>, IContent where T : IEntity
+    {
+        protected ContentBase(T content) : this(content, content.Name) {}
+
+        protected ContentBase(T content, string name) : base(content.DeclaredType, name)
+        {
+            Content = content;
+        }
+
+        public T Content { get; }
+
+        IEntity IContent.Content => Content;
+    }
 }

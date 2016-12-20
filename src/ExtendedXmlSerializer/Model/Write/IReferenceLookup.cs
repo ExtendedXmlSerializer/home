@@ -23,24 +23,22 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IReferenceLookup : IObject<IReference> {}
+    public interface IReferenceLookup : IContent<IReference> {}
 
-    public interface IReference<out T> : IObject<T>, IReference {}
-    public interface IReference : IInstance
+    // public interface IReference<out T> : IObject<T>, IReference {}
+    public interface IReference : IContent<IObject>
     {
-        long Id { get; }
+        object Id { get; }
     }
 
-    public interface IInstance : IObject, IObjectContainer {}
-
-    public interface IMember : IObjectContent
+    public interface IMember : IContent
     {
         IMemberDefinition Definition { get; }
     }
 
-    public class Member : ObjectContent, IMember
+    public class Member : ContentBase<IEntity>, IMember
     {
-        public Member(IObject @object, IMemberDefinition member) : base(@object, @object.DeclaredType, @object.ActualType, @object.Name)
+        public Member(IEntity @object, IMemberDefinition member) : base(@object)
         {
             Definition = member;
         }

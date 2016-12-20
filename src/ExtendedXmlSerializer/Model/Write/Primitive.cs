@@ -25,7 +25,7 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Primitive : ObjectBase<object>, IPrimitive
+    public class Primitive : InstanceBase<object>, IPrimitive
     {
         public Primitive(object @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }

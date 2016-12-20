@@ -21,22 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ObjectBase<T> : NodeBase, IObject
+    public class DictionaryObject : EnumerableObjectBase<IDictionary>, IDictionaryReference
     {
-        protected ObjectBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-            : base(name)
-        {
-            Object = @object;
-            ActualType = actualType;
-            DeclaredType = declaredType;
-        }
-
-        public T Object { get; }
-        public ITypeDefinition ActualType { get; }
-        object IObject.Object => Object;
-
-        public ITypeDefinition DeclaredType { get; }
+        public DictionaryObject(IDictionary @object, ITypeDefinition declaredType,
+                                   ITypeDefinition actualType, string name, IEnumerable<IEntity> nodes)
+            : base(@object, declaredType, actualType, name, nodes) {}
     }
 }

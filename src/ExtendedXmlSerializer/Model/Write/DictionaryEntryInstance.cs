@@ -28,12 +28,12 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryEntryInstance : ObjectContainerBase<DictionaryEntry>, IDictionaryEntry
+    public class DictionaryEntryInstance : Object<DictionaryEntry>, IDictionaryEntry
     {
         readonly private static ITypeDefinition Type = TypeDefinitions.Default.Get(typeof(DictionaryEntryInstance));
 
-        public DictionaryEntryInstance(DictionaryEntry @object, IObject key, IObject value)
-            : base(@object, Type, Type, ExtendedXmlSerializer.Item, key.Append(value)
+        public DictionaryEntryInstance(DictionaryEntry @object, IDictionaryKey key, IDictionaryValue value)
+            : base(@object, Type, Type, ExtendedXmlSerializer.Item, key.Append<IEntity>(value)
         ) {}
     }
 }

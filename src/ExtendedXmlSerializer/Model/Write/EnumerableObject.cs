@@ -26,11 +26,10 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class EnumerableReference : EnumerableReferenceBase<IEnumerable>, IEnumerableReference
+    public class EnumerableObject : EnumerableObjectBase<IEnumerable>, IEnumerableReference
     {
-        public EnumerableReference(long id,
-                                   IEnumerable @object, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                   string name, IEnumerable<IObject> nodes)
-            : base(id, @object, declaredType, actualType, name, nodes) {}
+        public EnumerableObject(IEnumerable @object, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                   string name, IEnumerable<IEntity> nodes)
+            : base(@object, declaredType, actualType, name, nodes) {}
     }
 }
