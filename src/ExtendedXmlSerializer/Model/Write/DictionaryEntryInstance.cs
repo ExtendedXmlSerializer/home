@@ -32,8 +32,8 @@ namespace ExtendedXmlSerialization.Model.Write
     {
         readonly private static ITypeDefinition Type = TypeDefinitions.Default.Get(typeof(DictionaryEntryInstance));
 
-        public DictionaryEntryInstance(DictionaryEntry instance, IObjectNode key, IObjectNode value)
-            : base(instance, Type, Type, ExtendedXmlSerializer.Item, key.Append(value)
+        public DictionaryEntryInstance(DictionaryEntry @object, IObject key, IObject value)
+            : base(@object, Type, Type, ExtendedXmlSerializer.Item, key.Append(value)
         ) {}
     }
 }

@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IProperty : IObjectNode {}
+    public interface IProperty : IObject {}
 }

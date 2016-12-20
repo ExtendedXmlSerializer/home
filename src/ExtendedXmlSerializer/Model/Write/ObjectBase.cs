@@ -23,8 +23,20 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IQualifiedNode : INode
+    public abstract class ObjectBase<T> : NodeBase, IObject
     {
-        ITypeDefinition DeclaredType { get; }
+        protected ObjectBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+            : base(name)
+        {
+            Object = @object;
+            ActualType = actualType;
+            DeclaredType = declaredType;
+        }
+
+        public T Object { get; }
+        public ITypeDefinition ActualType { get; }
+        object IObject.Object => Object;
+
+        public ITypeDefinition DeclaredType { get; }
     }
 }

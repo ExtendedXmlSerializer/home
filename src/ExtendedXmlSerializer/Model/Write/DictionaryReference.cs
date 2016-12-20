@@ -28,8 +28,8 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class DictionaryReference : EnumerableReferenceBase<IDictionary>, IDictionaryReference
     {
-        public DictionaryReference(long id, IDictionary instance, ITypeDefinition declaredType,
-                                   ITypeDefinition actualType, string name, IEnumerable<IObjectNode> nodes)
-            : base(id, instance, declaredType, actualType, name, nodes) {}
+        public DictionaryReference(long id, IDictionary @object, ITypeDefinition declaredType,
+                                   ITypeDefinition actualType, string name, IEnumerable<IObject> nodes)
+            : base(id, @object, declaredType, actualType, name, nodes) {}
     }
 }

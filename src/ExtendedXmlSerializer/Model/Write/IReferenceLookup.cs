@@ -23,15 +23,15 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IReferenceLookup : IObjectNode<IReference> {}
+    public interface IReferenceLookup : IObject<IReference> {}
 
-    public interface IReference<out T> : IObjectNode<T>, IReference {}
+    public interface IReference<out T> : IObject<T>, IReference {}
     public interface IReference : IInstance
     {
         long Id { get; }
     }
 
-    public interface IInstance : IObjectNode, IObjects {}
+    public interface IInstance : IObject, IObjects {}
 
     public interface IMember : IObjectContentContainer
     {
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Model.Write
 
     public class Member : ObjectContentContainer, IMember
     {
-        public Member(IObjectNode instance, IMemberDefinition member) : base(instance, instance.DeclaredType, instance.ActualType, instance.Name)
+        public Member(IObject @object, IMemberDefinition member) : base(@object, @object.DeclaredType, @object.ActualType, @object.Name)
         {
             Definition = member;
         }

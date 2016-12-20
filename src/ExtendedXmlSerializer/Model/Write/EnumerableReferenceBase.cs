@@ -28,8 +28,8 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public abstract class EnumerableReferenceBase<T> : Reference<T> where T : IEnumerable
     {
-        protected EnumerableReferenceBase(long id, T instance, ITypeDefinition declared, ITypeDefinition actual,
-                                          string name, IEnumerable<IObjectNode> nodes)
-            : base(id, instance, declared, actual, name, nodes) {}
+        protected EnumerableReferenceBase(long id, T @object, ITypeDefinition declared, ITypeDefinition actual,
+                                          string name, IEnumerable<IObject> nodes)
+            : base(id, @object, declared, actual, name, nodes) {}
     }
 }

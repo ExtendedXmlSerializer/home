@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class Property : PropertyBase<object>
     {
-        public Property(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
+        public Property(object @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 }

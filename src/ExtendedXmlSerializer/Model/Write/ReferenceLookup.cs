@@ -25,9 +25,9 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class ReferenceLookup : ObjectNodeBase<IReference>, IReferenceLookup
+    public class ReferenceLookup : ObjectBase<IReference>, IReferenceLookup
     {
         // public Reference(IInstance instance) : this(instance, instance.DeclaredType, instance.Name) {}
-        public ReferenceLookup(IReference instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
+        public ReferenceLookup(IReference @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 }

@@ -26,23 +26,23 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class ObjectContentContainer : ObjectNodeBase<IObjectNode>, IObjectContentContainer
+    public class ObjectContentContainer : ObjectBase<IObject>, IObjectContentContainer
     {
-        public ObjectContentContainer(IObjectNode instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
+        public ObjectContentContainer(IObject @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 
-    public abstract class ObjectsBase<T> : ObjectNodeBase<T>, IObjects<T>
+    public abstract class ObjectsBase<T> : ObjectBase<T>, IObjects<T>
     {
-        private readonly IEnumerable<IObjectNode> _nodes;
+        private readonly IEnumerable<IObject> _nodes;
 
-        protected ObjectsBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                          string name, IEnumerable<IObjectNode> nodes)
-            : base(instance, declaredType, actualType, name)
+        protected ObjectsBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                          string name, IEnumerable<IObject> nodes)
+            : base(@object, declaredType, actualType, name)
         {
             _nodes = nodes;
         }
 
-        public IEnumerator<IObjectNode> GetEnumerator() => _nodes.GetEnumerator();
+        public IEnumerator<IObject> GetEnumerator() => _nodes.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

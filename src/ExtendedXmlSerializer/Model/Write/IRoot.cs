@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IRoot : IObjectNode<IObjectNode> {}
+    public interface IRoot : IObject<IObject> {}
 }

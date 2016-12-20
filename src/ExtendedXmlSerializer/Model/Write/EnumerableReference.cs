@@ -29,8 +29,8 @@ namespace ExtendedXmlSerialization.Model.Write
     public class EnumerableReference : EnumerableReferenceBase<IEnumerable>, IEnumerableReference
     {
         public EnumerableReference(long id,
-                                   IEnumerable instance, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                   string name, IEnumerable<IObjectNode> nodes)
-            : base(id, instance, declaredType, actualType, name, nodes) {}
+                                   IEnumerable @object, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                   string name, IEnumerable<IObject> nodes)
+            : base(id, @object, declaredType, actualType, name, nodes) {}
     }
 }

@@ -25,6 +25,7 @@ using System;
 using System.Xml;
 using ExtendedXmlSerialization.Configuration.Write;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -65,9 +66,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             return _end;
         }
 
-        public void Emit(IObjectNode node)
+        public void Emit(IObject node)
         {
-            var instance = node.Instance;
+            var instance = node.Object;
             var identifier = _locator.Locate(node.DeclaredType)?.ToString();
             var text = _serializer.Serialize(instance);
             var type = instance as Type;

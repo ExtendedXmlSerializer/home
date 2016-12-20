@@ -21,17 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
+namespace ExtendedXmlSerialization.Model
 {
-    public interface IObjectNode : IQualifiedNode
+    public interface IQualifiedNode : INode
     {
-        object Instance { get; }
-
-        ITypeDefinition ActualType { get; }
-    }
-
-    public interface IObjectNode<out T> : IObjectNode
-    {
-        new T Instance { get; }
+        ITypeDefinition DeclaredType { get; }
     }
 }

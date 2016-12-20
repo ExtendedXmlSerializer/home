@@ -36,9 +36,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             _writer = writer;
         }
 
-        public void Execute(IObjectNode parameter) => Execute(parameter, null);
+        public void Execute(IObject parameter) => Execute(parameter, null);
 
-        private void Execute(IObjectNode parameter, IObjectNode context)
+        private void Execute(IObject parameter, IObject context)
         {
             var primitive = parameter as IPrimitive;
             if (primitive != null)
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 using (_writer.Begin(context ?? primitive))
                 {
                     ApplyType(primitive);
-                    _writer.Emit(primitive.Instance);
+                    _writer.Emit(primitive.Object);
                 }
                 return;
             }
@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var container = parameter as IObjectContentContainer;
             if (container != null)
             {
-                Execute(container.Instance, container);
+                Execute(container.Object, container);
                 return;
             }
 
@@ -80,13 +80,13 @@ namespace ExtendedXmlSerialization.Processing.Write
                 using (_writer.Begin(context ?? lookup))
                 {
                     ApplyType(lookup);
-                    _writer.Emit(new ObjectReferenceProperty(lookup.Instance.Id));
+                    _writer.Emit(new ObjectReferenceProperty(lookup.Object.Id));
                 }
                 return;
             }
         }
 
-        private static bool Apply(IObjectNode instance, IObjectNode context)
+        private static bool Apply(IObject instance, IObject context)
         {
             var ignore = instance is IEnumerableReference || instance is IDictionaryEntry;
             if (!ignore)
@@ -98,11 +98,11 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        private void ApplyType(IObjectNode node) => ApplyType(node, Different(node));
+        private void ApplyType(IObject node) => ApplyType(node, Different(node));
 
-        private static bool Different(IObjectNode node) => node.ActualType.Type != node.DeclaredType.Type;
+        private static bool Different(IObject node) => node.ActualType.Type != node.DeclaredType.Type;
 
-        private void ApplyType(IObjectNode node, bool force)
+        private void ApplyType(IObject node, bool force)
         {
             if (force)
             {

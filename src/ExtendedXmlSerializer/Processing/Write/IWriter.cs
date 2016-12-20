@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -30,7 +31,7 @@ namespace ExtendedXmlSerialization.Processing.Write
     {
         IDisposable Begin(IQualifiedNode definition);
 
-        void Emit(IObjectNode node);
+        void Emit(IObject node);
 
         void Emit(object instance);
     }

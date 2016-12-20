@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class PropertyBase<T> : ObjectNodeBase<T>, IProperty
+    public abstract class PropertyBase<T> : ObjectBase<T>, IProperty
     {
-        protected PropertyBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
+        protected PropertyBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 
     
@@ -36,6 +36,6 @@ namespace ExtendedXmlSerialization.Model.Write
     {
         readonly static private ITypeDefinition Definition = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
 
-        protected NativeSystemPropertyBase(T instance, string name) : base(instance, Definition, Definition, name) {}
+        protected NativeSystemPropertyBase(T @object, string name) : base(@object, Definition, Definition, name) {}
     }
 }

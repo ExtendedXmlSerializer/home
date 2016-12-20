@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         readonly private IDictionary<long, IReference> _instances = new Dictionary<long, IReference>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public IObjectNode Get(object parameter)
+        public IObject Get(object parameter)
         {
             var type = parameter.GetType();
             var definition = Definition(type);
@@ -49,9 +49,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        private IObjectNode Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
-        private IObjectNode Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
-        private IObjectNode Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
+        private IObject Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
+        private IObject Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
+        private IObject Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
         {
             if (actual.IsPrimitive)
             {
@@ -97,7 +97,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        IEnumerable<IObjectNode> CreateMembers(object instance, ITypeDefinition definition)
+        IEnumerable<IObject> CreateMembers(object instance, ITypeDefinition definition)
         {
             foreach (var member in definition.Members)
             {
@@ -109,7 +109,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private IEnumerable<IObjectNode> CreateElements(object instance, ITypeDefinition elementType)
+        private IEnumerable<IObject> CreateElements(object instance, ITypeDefinition elementType)
         {
             foreach (var element in Arrays.Default.AsArray(instance))
             {
@@ -117,7 +117,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private IEnumerable<IObjectNode> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
+        private IEnumerable<IObject> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
                                                             ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)

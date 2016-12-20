@@ -23,38 +23,15 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ObjectNodeBase<T> : NodeBase, IObjectNode
+    public interface IObject : IQualifiedNode
     {
-        // protected ObjectNodeBase(ObjectDescriptor descriptor) : this((T)descriptor.Instance, descriptor.DeclaredType, descriptor.ActualType, descriptor.Name) {}
+        object Object { get; }
 
-        protected ObjectNodeBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-            : base(name)
-        {
-            Instance = instance;
-            ActualType = actualType;
-            DeclaredType = declaredType;
-        }
-
-        public T Instance { get; }
-        public ITypeDefinition ActualType { get; }
-        object IObjectNode.Instance => Instance;
-
-        public ITypeDefinition DeclaredType { get; }
+        ITypeDefinition ActualType { get; }
     }
 
-    /*public struct ObjectDescriptor
+    public interface IObject<out T> : IObject
     {
-        public ObjectDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-        {
-            Instance = instance;
-            DeclaredType = declaredType;
-            ActualType = actualType;
-            Name = name;
-        }
-
-        public object Instance { get; }
-        public ITypeDefinition DeclaredType { get; }
-        public ITypeDefinition ActualType { get; }
-        public string Name { get; }
-    }*/
+        new T Object { get; }
+    }
 }

@@ -25,8 +25,8 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class DictionaryKey : ObjectContentContainer, IDictionaryKey
     {
-        public DictionaryKey(IObjectNode instance)
+        public DictionaryKey(IObject @object)
             : base(
-                instance, instance.DeclaredType, instance.ActualType, ExtendedXmlSerializer.Key) {}
+                @object, @object.DeclaredType, @object.ActualType, ExtendedXmlSerializer.Key) {}
     }
 }

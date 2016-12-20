@@ -31,14 +31,14 @@ namespace ExtendedXmlSerialization.Model.Write
         /*public Reference(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
             : this(id, instance, declaredType, actualType, name, new Members(instance, declaredType, actualType, name, members)) {}*/
 
-        public Reference(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
-            : base(id, instance, declaredType, actualType, name, members) {}
+        public Reference(long id, object @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObject> members)
+            : base(id, @object, declaredType, actualType, name, members) {}
     }
 
     public class Reference<T> : ObjectsBase<T>, IReference
     {
-        public Reference(long id, T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
-            : base(instance, declaredType, actualType, name, members)
+        public Reference(long id, T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObject> members)
+            : base(@object, declaredType, actualType, name, members)
         {
             Id = id;
         }
