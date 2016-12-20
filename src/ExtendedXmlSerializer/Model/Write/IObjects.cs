@@ -21,21 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class EnumerableInstanceBase<T> : Instance<T> where T : IEnumerable
-    {
-        protected EnumerableInstanceBase(long id, Type elementType,
-                                         T instance, Type type, string name, IEnumerable<IObjectNode> nodes)
-            : base(id, instance, type, name, new Members(type, name, instance, nodes))
-        {
-            ElementType = elementType;
-        }
-
-        public Type ElementType { get; }
-    }
+    public interface IObjects : INodeContainer<IObjectNode> {}
+    public interface IObjects<out T> : IObjectNode<T>, IObjects {}
 }

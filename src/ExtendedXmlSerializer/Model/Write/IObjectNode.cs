@@ -26,6 +26,8 @@ namespace ExtendedXmlSerialization.Model.Write
     public interface IObjectNode : IQualifiedNode
     {
         object Instance { get; }
+
+        ITypeDefinition ActualType { get; }
     }
 
     public interface IObjectNode<out T> : IObjectNode

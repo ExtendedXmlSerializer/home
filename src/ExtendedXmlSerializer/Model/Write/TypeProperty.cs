@@ -25,8 +25,18 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class TypeProperty : PropertyBase<Type>
+    sealed class TypeProperty : NativeSystemPropertyBase<Type>
     {
-        public TypeProperty(Type type) : base(type, typeof(IExtendedXmlSerializer), ExtendedXmlSerializer.Type) {}
+        public TypeProperty(Type type) : base(type, ExtendedXmlSerializer.Type) {}
+    }
+
+    sealed class ObjectIdProperty : NativeSystemPropertyBase<object>
+    {
+        public ObjectIdProperty(object id) : base(id, ExtendedXmlSerializer.Id) {}
+    }
+
+    sealed class ObjectReferenceProperty : NativeSystemPropertyBase<object>
+    {
+        public ObjectReferenceProperty(object id) : base(id, ExtendedXmlSerializer.Ref) {}
     }
 }

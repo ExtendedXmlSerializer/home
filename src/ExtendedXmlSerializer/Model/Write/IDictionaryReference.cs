@@ -21,27 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IInstance : IObjectNode
-    {
-        long Id { get; }
-
-        IMembers Members { get; }
-    }
-
-    public class Instance<T> : ObjectNodeBase<T>, IInstance
-    {
-        public Instance(long id, T instance, Type type, string name, IMembers members)
-            : base(instance, type, name)
-        {
-            Id = id;
-            Members = members;
-        }
-
-        public long Id { get; }
-        public IMembers Members { get; }
-    }
+    public interface IDictionaryReference : IEnumerableReference {}
 }

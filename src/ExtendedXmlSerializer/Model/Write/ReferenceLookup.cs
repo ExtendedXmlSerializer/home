@@ -22,15 +22,12 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class EnumerableInstance : EnumerableInstanceBase<IEnumerable>, IEnumerableInstance
+    public class ReferenceLookup : ObjectNodeBase<IReference>, IReferenceLookup
     {
-        public EnumerableInstance(long id, Type elementType,
-                                  IEnumerable instance, Type type, string name, IEnumerable<IObjectNode> nodes)
-            : base(id, elementType, instance, type, name, nodes) {}
+        // public Reference(IInstance instance) : this(instance, instance.DeclaredType, instance.Name) {}
+        public ReferenceLookup(IReference instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
     }
 }

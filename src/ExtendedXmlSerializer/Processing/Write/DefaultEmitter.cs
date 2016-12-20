@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -34,48 +36,77 @@ namespace ExtendedXmlSerialization.Processing.Write
             _writer = writer;
         }
 
-        public void Execute(IObjectNode parameter)
+        public void Execute(IObjectNode parameter) => Execute(parameter, null);
+
+        private void Execute(IObjectNode parameter, IObjectNode context)
         {
-            var reference = parameter as IReference;
-            if (reference != null)
+            var primitive = parameter as IPrimitive;
+            if (primitive != null)
             {
+                using (_writer.Begin(context ?? primitive))
+                {
+                    ApplyType(primitive);
+                    _writer.Emit(primitive.Instance);
+                }
+                return;
+            }
+
+            var container = parameter as IObjectContentContainer;
+            if (container != null)
+            {
+                Execute(container.Instance, container);
                 return;
             }
 
             var instance = parameter as IInstance;
             if (instance != null)
             {
-                using (_writer.Begin(instance))
+                using (_writer.Begin(context ?? instance))
                 {
-                    if (instance is Instance)
-                    {
-                        _writer.Emit(new TypeProperty(instance.Instance.GetType()));
-                    }
+                    var force = Apply(instance, context);
+                    ApplyType(instance, force);
 
-                    foreach (var member in instance.Members)
+                    foreach (var o in instance)
                     {
-                        var primitive = member as IPrimitive;
-                        if (primitive != null)
-                        {
-                            using (_writer.Begin(primitive))
-                            {
-                                _writer.Emit(primitive.Instance);
-                            }
-                        }
-                        else
-                        {
-                            Execute(member);
-                        }
+                        Execute(o);
                     }
                 }
+                return;
             }
-            else
+
+            var lookup = parameter as IReferenceLookup;
+            if (lookup != null)
             {
-                var decorated = parameter as IObjectNode<IObjectNode>;
-                if (decorated != null)
+                using (_writer.Begin(context ?? lookup))
                 {
-                    Execute(decorated.Instance);
+                    ApplyType(lookup);
+                    _writer.Emit(new ObjectReferenceProperty(lookup.Instance.Id));
                 }
+                return;
+            }
+        }
+
+        private static bool Apply(IObjectNode instance, IObjectNode context)
+        {
+            var ignore = instance is IEnumerableReference || instance is IDictionaryEntry;
+            if (!ignore)
+            {
+                return true;
+            }
+
+            var result = ((context as IMember)?.Definition.IsWritable ?? false) && Different(instance);
+            return result;
+        }
+
+        private void ApplyType(IObjectNode node) => ApplyType(node, Different(node));
+
+        private static bool Different(IObjectNode node) => node.ActualType.Type != node.DeclaredType.Type;
+
+        private void ApplyType(IObjectNode node, bool force)
+        {
+            if (force)
+            {
+                _writer.Emit(new TypeProperty(node.ActualType.Type));
             }
         }
     }

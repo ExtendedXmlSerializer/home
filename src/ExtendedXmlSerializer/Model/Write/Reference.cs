@@ -22,12 +22,27 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : ObjectNodeBase<IInstance>, IReference
+    public class Reference : Reference<object>
     {
-        public Reference(IInstance instance) : this(instance, instance.Type, instance.Name) {}
-        public Reference(IInstance instance, Type type, string name) : base(instance, type, name) {}
+        /*public Reference(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
+            : this(id, instance, declaredType, actualType, name, new Members(instance, declaredType, actualType, name, members)) {}*/
+
+        public Reference(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
+            : base(id, instance, declaredType, actualType, name, members) {}
+    }
+
+    public class Reference<T> : ObjectsBase<T>, IReference
+    {
+        public Reference(long id, T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObjectNode> members)
+            : base(instance, declaredType, actualType, name, members)
+        {
+            Id = id;
+        }
+
+        public long Id { get; }
     }
 }

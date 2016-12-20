@@ -22,11 +22,20 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
     public abstract class PropertyBase<T> : ObjectNodeBase<T>, IProperty
     {
-        protected PropertyBase(T instance, Type type, string name) : base(instance, type, name) {}
+        protected PropertyBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
+    }
+
+    
+    abstract class NativeSystemPropertyBase<T> : PropertyBase<T>
+    {
+        readonly static private ITypeDefinition Definition = TypeDefinitions.Default.Get(typeof(IExtendedXmlSerializer));
+
+        protected NativeSystemPropertyBase(T instance, string name) : base(instance, Definition, Definition, name) {}
     }
 }

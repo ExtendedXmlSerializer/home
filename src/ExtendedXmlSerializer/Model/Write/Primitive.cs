@@ -27,8 +27,6 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class Primitive : ObjectNodeBase<object>, IPrimitive
     {
-        public Primitive(object instance) : this(instance, instance.GetType()) {}
-        public Primitive(object instance, Type type) : this(instance, type, type.Name) {}
-        public Primitive(object instance, Type type, string name) : base(instance, type, name) {}
+        public Primitive(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(instance, declaredType, actualType, name) {}
     }
 }

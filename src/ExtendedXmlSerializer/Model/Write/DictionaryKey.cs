@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryKey : ObjectNodeBase<IObjectNode>, IDictionaryKey
+    public class DictionaryKey : ObjectContentContainer, IDictionaryKey
     {
-        public DictionaryKey(IObjectNode instance) : this(instance, instance.Type) {}
-        public DictionaryKey(IObjectNode instance, Type type) : base(instance, type, ExtendedXmlSerializer.Key) {}
+        public DictionaryKey(IObjectNode instance)
+            : base(
+                instance, instance.DeclaredType, instance.ActualType, ExtendedXmlSerializer.Key) {}
     }
 }

@@ -21,14 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Members : ObjectNodeContainerBase<object>, IMembers
-    {
-        public Members(Type type, string name, object instance, IEnumerable<IObjectNode> members)
-            : base(instance, type, name, members) {}
-    }
+    public interface IObjectContentContainer : IObjectNode<IObjectNode> {}
 }

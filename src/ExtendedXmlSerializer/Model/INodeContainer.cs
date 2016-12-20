@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface INodeContainer<out T> : INode, IEnumerable<T> where T : INode {}
+    public interface INodeContainer : INode, IEnumerable {}
+    public interface INodeContainer<out T> : INodeContainer, IEnumerable<T> where T : INode {}
 }

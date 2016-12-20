@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public IDisposable Begin(IQualifiedNode definition)
         {
-            var identifier = _locator.Locate(definition.Type);
+            var identifier = _locator.Locate(definition.DeclaredType);
             var id = identifier?.ToString();
             switch (_writer.WriteState)
             {
@@ -68,7 +68,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         public void Emit(IObjectNode node)
         {
             var instance = node.Instance;
-            var identifier = _locator.Locate(node.Type)?.ToString();
+            var identifier = _locator.Locate(node.DeclaredType)?.ToString();
             var text = _serializer.Serialize(instance);
             var type = instance as Type;
             if (identifier != null && type != null)

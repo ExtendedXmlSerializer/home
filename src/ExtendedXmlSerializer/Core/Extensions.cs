@@ -55,6 +55,11 @@ namespace ExtendedXmlSerialization.Core
             yield return element;
         }
 
+        public static IEnumerable<T> Yield<T>(this T @this)
+        {
+            yield return @this;
+        }
+
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
         // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057

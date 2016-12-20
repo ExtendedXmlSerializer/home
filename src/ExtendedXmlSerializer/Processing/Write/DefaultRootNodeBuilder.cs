@@ -38,66 +38,62 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        readonly private IDictionary<long, IInstance> _instances = new Dictionary<long, IInstance>();
+        readonly private IDictionary<long, IReference> _instances = new Dictionary<long, IReference>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
         public IObjectNode Get(object parameter)
         {
             var type = parameter.GetType();
             var definition = Definition(type);
-            var result = Select(parameter, definition);
+            var result = Select(parameter, definition, definition, definition.Name);
             return result;
         }
 
-        IObjectNode Select(object instance, IMemberDefinition member) => Select(instance, member, member.TypeDefinition);
-        private IObjectNode Select(object instance, ITypeDefinition type) => Select(instance, type, type);
-
-        IObjectNode Select(object instance, IDefinition source, ITypeDefinition type)
+        private IObjectNode Select(object instance, ITypeDefinition declared) => Select(instance, declared, declared.Name);
+        private IObjectNode Select(object instance, ITypeDefinition declared, string name) => Select(instance, declared, declared.For(instance), name);
+        private IObjectNode Select(object instance, ITypeDefinition declared, ITypeDefinition actual, string name)
         {
-            if (type.IsPrimitive)
+            if (actual.IsPrimitive)
             {
-                return new Primitive(instance, source.Type, source.Name);
+                return new Primitive(instance, declared, actual, name);
             }
 
             bool first;
             var id = _generator.GetId(instance, out first);
             if (first)
             {
-                var @select = _instances[id] = GetInstance(id, instance, source, type);
+                var @select = _instances[id] = GetInstance(id, instance, declared, actual, name);
                 return @select;
             }
 
             if (_instances.ContainsKey(id))
             {
-                return new Reference(_instances[id]);
+                return new ReferenceLookup(_instances[id], declared, actual, name);
             }
             throw new InvalidOperationException(
-                      $"Could not create a context for instance '{instance}' of type '{type.Type}'.");
+                      $"Could not create a context for instance '{instance}' of type '{declared.Type}'.");
         }
 
-        private IInstance GetInstance(long id, object instance, IDefinition source, ITypeDefinition type)
+        private IReference GetInstance(long id, object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
         {
-            var ensured = type.For(instance);
-            var members = CreateMembers(instance, ensured) /*.OrderBy(x => x is IProperty)*/;
+            var members = CreateMembers(instance, actualType);
 
             var dictionary = instance as IDictionary;
             if (dictionary != null)
             {
-                var key = Definition(type.GenericArguments[0]);
-                var value = Definition(type.GenericArguments[1]);
+                var key = Definition(declaredType.GenericArguments[0]);
+                var value = Definition(declaredType.GenericArguments[1]);
                 var entries = CreateEntries(dictionary, key, value);
-                return new DictionaryInstance(id, dictionary, source.Type, source.Name, members.Concat(entries));
+                return new DictionaryReference(id, dictionary, declaredType, actualType, name, members.Concat(entries));
             }
 
-            if (IsEnumerable(ensured))
+            if (IsEnumerable(actualType))
             {
-                var elementType = Definition(type.GenericArguments[0]);
+                var elementType = Definition(declaredType.GenericArguments[0]);
                 var elements = CreateElements(instance, elementType);
-                return new EnumerableInstance(id, elementType.Type, (IEnumerable) instance, source.Type,
-                                              source.Name,
-                                              members.Concat(elements));
+                return new EnumerableReference(id, (IEnumerable)instance, declaredType, actualType, name, members.Concat(elements));
             }
-            var result = new Instance(id, instance, source.Type, source.Name, members);
+            var result = new Reference(id, instance, declaredType, actualType, name, members);
             return result;
         }
 
@@ -105,7 +101,11 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (var member in definition.Members)
             {
-                yield return Select(member.GetValue(instance), member);
+                var value = member.GetValue(instance);
+                if (value != null || definition.IsEnum)
+                {
+                    yield return new Member(Select(value, member.TypeDefinition, member.Name), member);
+                }
             }
         }
 
@@ -117,7 +117,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private IEnumerable<IDictionaryEntry> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
+        private IEnumerable<IObjectNode> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
                                                             ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)

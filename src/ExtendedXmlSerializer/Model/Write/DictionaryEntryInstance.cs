@@ -24,15 +24,16 @@
 using System;
 using System.Collections;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryEntryInstance : ObjectNodeContainerBase<DictionaryEntry>, IDictionaryEntry
+    public class DictionaryEntryInstance : ObjectsBase<DictionaryEntry>, IDictionaryEntry
     {
-        public static Type DefaultElementType { get; } = typeof(DictionaryEntry);
+        readonly private static ITypeDefinition Type = TypeDefinitions.Default.Get(typeof(DictionaryEntryInstance));
 
-        public DictionaryEntryInstance(DictionaryEntry instance,
-                                       IDictionaryKey key, IDictionaryValue value)
-            : base(instance, DefaultElementType, ExtendedXmlSerializer.Item, key.Append<IObjectNode>(value)) {}
+        public DictionaryEntryInstance(DictionaryEntry instance, IObjectNode key, IObjectNode value)
+            : base(instance, Type, Type, ExtendedXmlSerializer.Item, key.Append(value)
+        ) {}
     }
 }

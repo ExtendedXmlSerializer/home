@@ -21,21 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ObjectNodeBase<T> : NodeBase, IObjectNode<T>
+    public abstract class ObjectNodeBase<T> : NodeBase, IObjectNode
     {
-        protected ObjectNodeBase(T instance, Type type, string name) : base(name)
+        // protected ObjectNodeBase(ObjectDescriptor descriptor) : this((T)descriptor.Instance, descriptor.DeclaredType, descriptor.ActualType, descriptor.Name) {}
+
+        protected ObjectNodeBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+            : base(name)
         {
             Instance = instance;
-            Type = type;
+            ActualType = actualType;
+            DeclaredType = declaredType;
         }
 
         public T Instance { get; }
+        public ITypeDefinition ActualType { get; }
         object IObjectNode.Instance => Instance;
 
-        public Type Type { get; }
+        public ITypeDefinition DeclaredType { get; }
     }
+
+    /*public struct ObjectDescriptor
+    {
+        public ObjectDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
+        {
+            Instance = instance;
+            DeclaredType = declaredType;
+            ActualType = actualType;
+            Name = name;
+        }
+
+        public object Instance { get; }
+        public ITypeDefinition DeclaredType { get; }
+        public ITypeDefinition ActualType { get; }
+        public string Name { get; }
+    }*/
 }
