@@ -23,6 +23,6 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IObjects : INodeContainer<IObject> {}
-    public interface IObjects<out T> : IObject<T>, IObjects {}
+    public interface IObjectContainer : INodeContainer<IObject> {}
+    public interface IObjectContainer<out T> : IObject<T>, IObjectContainer {}
 }

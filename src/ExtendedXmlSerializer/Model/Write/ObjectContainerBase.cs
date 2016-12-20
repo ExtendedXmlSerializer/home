@@ -31,11 +31,11 @@ namespace ExtendedXmlSerialization.Model.Write
         public ObjectContent(IObject @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 
-    public abstract class ObjectsBase<T> : ObjectBase<T>, IObjects<T>
+    public abstract class ObjectContainerBase<T> : ObjectBase<T>, IObjectContainer<T>
     {
         private readonly IEnumerable<IObject> _nodes;
 
-        protected ObjectsBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType,
+        protected ObjectContainerBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType,
                                           string name, IEnumerable<IObject> nodes)
             : base(@object, declaredType, actualType, name)
         {

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryEntryInstance : ObjectsBase<DictionaryEntry>, IDictionaryEntry
+    public class DictionaryEntryInstance : ObjectContainerBase<DictionaryEntry>, IDictionaryEntry
     {
         readonly private static ITypeDefinition Type = TypeDefinitions.Default.Get(typeof(DictionaryEntryInstance));
 

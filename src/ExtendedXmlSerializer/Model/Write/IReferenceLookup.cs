@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Model.Write
         long Id { get; }
     }
 
-    public interface IInstance : IObject, IObjects {}
+    public interface IInstance : IObject, IObjectContainer {}
 
     public interface IMember : IObjectContent
     {

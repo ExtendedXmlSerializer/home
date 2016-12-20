@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Model.Write
             : base(id, @object, declaredType, actualType, name, members) {}
     }
 
-    public class Reference<T> : ObjectsBase<T>, IReference
+    public class Reference<T> : ObjectContainerBase<T>, IReference
     {
         public Reference(long id, T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name, IEnumerable<IObject> members)
             : base(@object, declaredType, actualType, name, members)
