@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IObjectContentContainer : IObject<IObject> {}
+    public interface IObjectContent : IObject<IObject> {}
 }

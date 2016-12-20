@@ -33,12 +33,12 @@ namespace ExtendedXmlSerialization.Model.Write
 
     public interface IInstance : IObject, IObjects {}
 
-    public interface IMember : IObjectContentContainer
+    public interface IMember : IObjectContent
     {
         IMemberDefinition Definition { get; }
     }
 
-    public class Member : ObjectContentContainer, IMember
+    public class Member : ObjectContent, IMember
     {
         public Member(IObject @object, IMemberDefinition member) : base(@object, @object.DeclaredType, @object.ActualType, @object.Name)
         {

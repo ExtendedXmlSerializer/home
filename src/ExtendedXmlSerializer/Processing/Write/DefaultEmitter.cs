@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var container = parameter as IObjectContentContainer;
+            var container = parameter as IObjectContent;
             if (container != null)
             {
                 Execute(container.Object, container);

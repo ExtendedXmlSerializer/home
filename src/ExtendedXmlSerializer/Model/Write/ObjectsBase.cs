@@ -26,9 +26,9 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class ObjectContentContainer : ObjectBase<IObject>, IObjectContentContainer
+    public class ObjectContent : ObjectBase<IObject>, IObjectContent
     {
-        public ObjectContentContainer(IObject @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
+        public ObjectContent(IObject @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name) : base(@object, declaredType, actualType, name) {}
     }
 
     public abstract class ObjectsBase<T> : ObjectBase<T>, IObjects<T>
