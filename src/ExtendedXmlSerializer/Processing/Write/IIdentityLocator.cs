@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IIdentityLocator : IParameterizedSource<InstanceDescriptor, InstanceIdentity?> {}
+    public interface IIdentityLocator : IParameterizedSource<InstanceDescriptor, object> {}
 }

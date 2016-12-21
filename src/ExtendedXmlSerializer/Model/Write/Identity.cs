@@ -25,8 +25,8 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class Identity : ContentBase<IObject>, IIdentity
     {
-        public Identity(object id, IObject @object)
-            : base(@object, @object.Name)
+        public Identity(object id, IObject @object, ITypeDefinition declaredType, string name)
+            : base(@object, declaredType, name)
         {
             Id = id;
         }

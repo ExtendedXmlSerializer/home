@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         public ISerialization Get(IWriter parameter)
         {
             var selector = new MutableEntitySelector();
-            selector.Selector = new EntitySelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector)));
+            selector.Selector = new EntitySelector(new EntityBuilder(selector));
             var result = new Serialization(new DefaultRootBuilder(selector.Selector), new DefaultEmitter(parameter));
             return result;
         }

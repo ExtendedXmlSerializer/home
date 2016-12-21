@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         readonly private IDictionary<long, IReference> _references = new Dictionary<long, IReference>();
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public ReferenceAwareEntityBuilder(IEntityBuilder builder) : this(builder, DefaultIdentityLocator.Default) {}
+        // public ReferenceAwareEntityBuilder(IEntityBuilder builder) : this(builder, DefaultIdentityLocator.Default) {}
 
         public ReferenceAwareEntityBuilder(IEntityBuilder builder, IIdentityLocator locator)
         {
@@ -53,9 +53,9 @@ namespace ExtendedXmlSerialization.Processing.Write
                 if (@object != null)
                 {
                     var identity = _locator.Get(parameter);
-                    if (identity.HasValue)
+                    if (identity != null)
                     {
-                        var item = new Identity(identity.Value.Value, @object);
+                        var item = new Identity(identity, @object, parameter.DeclaredType, parameter.Name);
                         _references.Add(id, new Reference(item));
                         return item;
                     }

@@ -27,7 +27,10 @@ namespace ExtendedXmlSerialization.Model.Write
     {
         protected ContentBase(T content) : this(content, content.Name) {}
 
-        protected ContentBase(T content, string name) : base(content.DeclaredType, name)
+        protected ContentBase(T content, string name) : this(content, content.DeclaredType, name)
+        {}
+
+        protected ContentBase(T content, ITypeDefinition declaredType, string name) : base(declaredType, name)
         {
             Content = content;
         }

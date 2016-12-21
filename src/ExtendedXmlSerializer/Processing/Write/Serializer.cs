@@ -26,14 +26,17 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
+    public class DefaultSerializer : Serializer
+    {
+        public new static DefaultSerializer Default { get; } = new DefaultSerializer();
+        DefaultSerializer() : base(DefaultSerializationFactory.Default) {}
+    }
+
     public class Serializer : ISerializer
     {
         private readonly ISerializationFactory _factory;
-        public static Serializer Default { get; } = new Serializer();
 
-        private Serializer() : this(DefaultSerializationFactory.Default) {}
-
-        Serializer(ISerializationFactory factory)
+        public Serializer(ISerializationFactory factory)
         {
             _factory = factory;
         }

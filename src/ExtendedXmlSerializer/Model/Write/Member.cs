@@ -25,7 +25,7 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class Member : ContentBase<IEntity>, IMember
     {
-        public Member(IEntity @object, IMemberDefinition member) : base(@object)
+        public Member(IEntity @object, IMemberDefinition member) : base(@object, member.TypeDefinition, member.Name)
         {
             Definition = member;
         }

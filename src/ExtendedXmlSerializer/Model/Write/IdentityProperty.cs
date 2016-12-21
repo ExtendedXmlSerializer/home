@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    sealed class ObjectIdProperty : NativeSystemPropertyBase<object>
+    sealed class IdentityProperty : NativeSystemPropertyBase<object>
     {
-        public ObjectIdProperty(object id) : base(id, ExtendedXmlSerializer.Id) {}
+        public IdentityProperty(object id) : base(id, ExtendedXmlSerializer.Id) {}
     }
 }

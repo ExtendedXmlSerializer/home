@@ -25,14 +25,20 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     class SerializationFactory : ISerializationFactory
     {
-        public static SerializationFactory Default { get; } = new SerializationFactory();
-        SerializationFactory() {}
+        private readonly IIdentityLocator _locator;
+        /*public static SerializationFactory Default { get; } = new SerializationFactory();
+        SerializationFactory() {}*/
+
+        public SerializationFactory(IIdentityLocator locator)
+        {
+            _locator = locator;
+        }
 
         public ISerialization Get(IWriter parameter)
         {
             var selector = new MutableEntitySelector();
-            selector.Selector = new EntitySelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector)));
-            var result = new Serialization(new RootBuilder(selector.Selector), new DefaultEmitter(parameter));
+            selector.Selector = new EntitySelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector), _locator));
+            var result = new Serialization(new RootBuilder(selector.Selector), new ReferenceAwareEmitter(parameter));
             return result;
         }
     }

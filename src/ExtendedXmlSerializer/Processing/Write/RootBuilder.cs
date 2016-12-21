@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public IEntity Get(object parameter)
         {
-            var body = (IInstance) _builder.Get(new InstanceDescriptor(parameter));
+            var body = _builder.Get(new InstanceDescriptor(parameter));
             var result = new Root(body);
             return result;
         }

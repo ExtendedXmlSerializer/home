@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        readonly private static ISerializationServices Services = SerializationServices.Default;
+        //readonly private static ISerializationServices Services = SerializationServices.Default;
         
         public const string Type = "type";
         public const string Ref = "ref";
@@ -51,9 +51,10 @@ namespace ExtendedXmlSerialization
         public const string Item = "Item";
 
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
-        
-        
-        public ExtendedXmlSerializer() : this(Services) {}
+        private ISerializationToolsFactory _tools;
+
+
+        public ExtendedXmlSerializer() {}
 
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
         {
@@ -63,29 +64,28 @@ namespace ExtendedXmlSerialization
         /// <summary>
         /// Gets or sets <see cref="ISerializationToolsFactory"/>
         /// </summary>
-        public ISerializationToolsFactory SerializationToolsFactory { get; set; }
+        public ISerializationToolsFactory SerializationToolsFactory
+        {
+            get { return _tools; }
+            set
+            {
+                _tools = value;
+                Serializer = _tools != null
+                    ? new Serializer(new SerializationFactory(new IdentityLocator(Locate)))
+                    : DefaultSerializer.Default;
+            }
+        }
+
+        private object Locate(object arg) => SerializationToolsFactory?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
+
+        private ISerializer Serializer { get; set; } = DefaultSerializer.Default;
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o)
-        {
-            try
-            {
-                return Services.Serialize(o);
-            }
-            catch (SerializationException)
-            {
-                throw;
-            }
-            catch(Exception error)
-            {
-                throw new SerializationException(
-                          $"An exception was encountered during serialization of an object of type '{o.GetType()}'.", error);
-            }
-        }
+        public string Serialize(object o) => Serializer.Serialize(o);
 
         /// <summary>
         /// Deserializes the XML document
@@ -136,7 +136,7 @@ namespace ExtendedXmlSerialization
             var currentNodeDef = GetElementTypeDefinition(currentNode) ?? type;
 
             // Get configuration for type
-            var configuration = SerializationToolsFactory.GetConfiguration(currentNodeDef.Type);
+            var configuration = SerializationToolsFactory?.GetConfiguration(currentNodeDef.Type);
             if (configuration != null)
             {
                 // Run migrator if exists
@@ -231,9 +231,10 @@ namespace ExtendedXmlSerialization
                     {
                         if (configuration.CheckPropertyEncryption(propertyInfo.Name))
                         {
-                            if (SerializationToolsFactory.EncryptionAlgorithm != null)
+                            var algorithm = SerializationToolsFactory?.EncryptionAlgorithm;
+                            if (algorithm != null)
                             {
-                                value = SerializationToolsFactory.EncryptionAlgorithm.Decrypt(value);
+                                value = algorithm.Decrypt(value);
                             }
                         }
                     }
@@ -332,7 +333,7 @@ namespace ExtendedXmlSerialization
             return defuaultType == null ? null : TypeDefinitions.Default.Get(defuaultType);
         }
 
-        interface ISerializationServices : ISerializationToolsFactory, ISerializer {}
+        /*interface ISerializationServices : ISerializationToolsFactory, ISerializer {}
         sealed class SerializationServices : CompositeServiceProvider, ISerializationServices
         {
             private readonly ISerializer _serializer;
@@ -348,6 +349,6 @@ namespace ExtendedXmlSerialization
 
             public IPropertyEncryption EncryptionAlgorithm => null;
             public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
-        }
+        }*/
     }
 }

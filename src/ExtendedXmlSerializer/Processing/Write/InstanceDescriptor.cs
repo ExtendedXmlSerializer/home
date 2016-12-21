@@ -39,6 +39,8 @@ namespace ExtendedXmlSerialization.Processing.Write
         public InstanceDescriptor(object instance, ITypeDefinition declaredType,
                                   string name) : this(instance, declaredType, declaredType.For(instance), name) {}
 
+        public InstanceDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType) : this(instance, declaredType, actualType, actualType.Name) {}
+
         public InstanceDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
                                   string name)
         {

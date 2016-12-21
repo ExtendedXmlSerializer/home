@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Root : ContentBase<IInstance>, IRoot
+    public class Root : ContentBase<IEntity>, IRoot
     {
-        public Root(IInstance body) : base(body) {}
+        public Root(IEntity body) : base(body) {}
     }
 }

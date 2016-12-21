@@ -94,7 +94,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (var element in Arrays.Default.AsArray(instance))
             {
-                yield return _selector.Get(new InstanceDescriptor(element, elementType));
+                yield return _selector.Get(new InstanceDescriptor(element, elementType, elementType.For(element)));
             }
         }
 
