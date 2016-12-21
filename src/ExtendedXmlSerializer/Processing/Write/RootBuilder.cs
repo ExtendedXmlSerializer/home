@@ -21,9 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
-{
-    public interface IReferenceLookup : IContent<IReference> {}
+using ExtendedXmlSerialization.Model.Write;
 
-    // public interface IReference<out T> : IObject<T>, IReference {}
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    public class RootBuilder : IRootBuilder
+    {
+        private readonly IEntitySelector _builder;
+
+        public RootBuilder(IEntitySelector builder)
+        {
+            _builder = builder;
+        }
+
+        public IEntity Get(object parameter)
+        {
+            var body = (IInstance) _builder.Get(new InstanceDescriptor(parameter));
+            var result = new Root(body);
+            return result;
+        }
+    }
 }

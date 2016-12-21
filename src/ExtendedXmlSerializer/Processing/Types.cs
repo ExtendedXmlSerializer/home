@@ -27,6 +27,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
+
 #endif
 
 namespace ExtendedXmlSerialization.Processing
@@ -54,13 +55,13 @@ namespace ExtendedXmlSerialization.Processing
                 try
                 {
                     var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
-                
+
                     type = assembly.GetType(typeName);
                     if (type != null)
                         return type;
                 }
                 catch
-                {  
+                {
                     continue;
                 }
             }

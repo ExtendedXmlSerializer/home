@@ -21,30 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class Serializer : ISerializer
+    class DefaultSerializationFactory : ISerializationFactory
     {
-        private readonly ISerializationFactory _factory;
-        public static Serializer Default { get; } = new Serializer();
+        public static DefaultSerializationFactory Default { get; } = new DefaultSerializationFactory();
+        DefaultSerializationFactory() {}
 
-        private Serializer() : this(DefaultSerializationFactory.Default) {}
-
-        Serializer(ISerializationFactory factory)
+        public ISerialization Get(IWriter parameter)
         {
-            _factory = factory;
-        }
-
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writer = new Writer(XmlWriter.Create(stream)))
-            {
-                var serialization = _factory.Get(writer);
-                serialization.Execute(instance);
-            }
+            var selector = new MutableEntitySelector();
+            selector.Selector = new EntitySelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector)));
+            var result = new Serialization(new DefaultRootBuilder(selector.Selector), new DefaultEmitter(parameter));
+            return result;
         }
     }
 }

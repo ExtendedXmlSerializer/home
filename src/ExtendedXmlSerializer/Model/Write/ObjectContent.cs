@@ -26,7 +26,5 @@ namespace ExtendedXmlSerialization.Model.Write
     public class ObjectContent : ContentBase<IObject>
     {
         public ObjectContent(IObject @object) : base(@object) {}
-
-        public ObjectContent(IObject content, string name) : base(content, name) {}
     }
 }

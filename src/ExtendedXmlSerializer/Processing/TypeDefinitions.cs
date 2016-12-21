@@ -25,9 +25,8 @@ using System;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model;
-
 #if NETSTANDARD1_6 || NETSTANDARD2_0
-using Microsoft.Extensions.DependencyModel;
+
 #endif
 
 namespace ExtendedXmlSerialization.Processing

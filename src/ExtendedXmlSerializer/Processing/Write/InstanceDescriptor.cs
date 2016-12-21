@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
+using System;
+using ExtendedXmlSerialization.Model;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class Serializer : ISerializer
+    public struct InstanceDescriptor
     {
-        private readonly ISerializationFactory _factory;
-        public static Serializer Default { get; } = new Serializer();
+        readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        private Serializer() : this(DefaultSerializationFactory.Default) {}
+        public InstanceDescriptor(object instance)
+            : this(instance, Definition(instance.GetType())) {}
 
-        Serializer(ISerializationFactory factory)
+        public InstanceDescriptor(object instance, ITypeDefinition declaredType)
+            : this(instance, declaredType, declaredType.Name) {}
+
+        public InstanceDescriptor(object instance, ITypeDefinition declaredType,
+                                  string name) : this(instance, declaredType, declaredType.For(instance), name) {}
+
+        public InstanceDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                  string name)
         {
-            _factory = factory;
+            Instance = instance;
+            DeclaredType = declaredType;
+            ActualType = actualType;
+            Name = name;
         }
 
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writer = new Writer(XmlWriter.Create(stream)))
-            {
-                var serialization = _factory.Get(writer);
-                serialization.Execute(instance);
-            }
-        }
+        public object Instance { get; }
+        public ITypeDefinition DeclaredType { get; }
+        public ITypeDefinition ActualType { get; }
+        public string Name { get; }
     }
 }

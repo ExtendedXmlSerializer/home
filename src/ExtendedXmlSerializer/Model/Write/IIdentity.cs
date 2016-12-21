@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
-
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Serializer : ISerializer
-    {
-        private readonly ISerializationFactory _factory;
-        public static Serializer Default { get; } = new Serializer();
-
-        private Serializer() : this(DefaultSerializationFactory.Default) {}
-
-        Serializer(ISerializationFactory factory)
-        {
-            _factory = factory;
-        }
-
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writer = new Writer(XmlWriter.Create(stream)))
-            {
-                var serialization = _factory.Get(writer);
-                serialization.Execute(instance);
-            }
-        }
-    }
+    public interface IIdentity : IContent<IObject> {}
 }

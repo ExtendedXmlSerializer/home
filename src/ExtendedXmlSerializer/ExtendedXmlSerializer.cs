@@ -70,7 +70,22 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => Services.Serialize(o);
+        public string Serialize(object o)
+        {
+            try
+            {
+                return Services.Serialize(o);
+            }
+            catch (SerializationException)
+            {
+                throw;
+            }
+            catch(Exception error)
+            {
+                throw new SerializationException(
+                          $"An exception was encountered during serialization of an object of type '{o.GetType()}'.", error);
+            }
+        }
 
         /// <summary>
         /// Deserializes the XML document

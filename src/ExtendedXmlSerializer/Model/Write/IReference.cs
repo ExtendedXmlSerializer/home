@@ -23,8 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IReference : IContent<IObject>
-    {
-        object Id { get; }
-    }
+    public interface IReference : IContent<IIdentity> {}
 }

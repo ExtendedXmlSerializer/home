@@ -25,11 +25,11 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public class Serialization : ISerialization
     {
-        private readonly IRootNodeBuilder _builder;
+        private readonly IRootBuilder _builder;
         private readonly IEmitter _emitter;
-        public Serialization(IEmitter emitter) : this(new DefaultRootNodeBuilder(), emitter) {}
+        // public Serialization(IEmitter emitter) : this(new DefaultRootBuilder(), emitter) {}
 
-        public Serialization(IRootNodeBuilder builder, IEmitter emitter)
+        public Serialization(IRootBuilder builder, IEmitter emitter)
         {
             _builder = builder;
             _emitter = emitter;

@@ -133,7 +133,7 @@ namespace ExtendedXmlSerialization.Model
             _properties = new Lazy<ImmutableArray<IMemberDefinition>>(GetPropertieToSerialze);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
-            DefaultValue = DefaultValues.Default.Get(Type);
+            DefaultValue = DefaultValues.Default.Get(type);
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }

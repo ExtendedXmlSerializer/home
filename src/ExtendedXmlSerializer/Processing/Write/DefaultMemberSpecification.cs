@@ -21,10 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Model.Write;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IRootNodeBuilder : IParameterizedSource<object, IEntity> {}
+    public class DefaultMemberSpecification : ISpecification<InstanceDescriptor>
+    {
+        public static DefaultMemberSpecification Default { get; } = new DefaultMemberSpecification();
+        DefaultMemberSpecification() {}
+
+        public bool IsSatisfiedBy(InstanceDescriptor parameter) => parameter.Instance != null;
+    }
 }

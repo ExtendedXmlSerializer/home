@@ -25,6 +25,6 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class Root : ContentBase<IInstance>, IRoot
     {
-        public Root(IInstance body, string name) : base(body, name) {}
+        public Root(IInstance body) : base(body) {}
     }
 }

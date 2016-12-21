@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 using (_writer.Begin(context ?? primitive))
                 {
                     ApplyType(primitive);
-                    _writer.Emit(primitive.Instance);
+                    _writer.Emit(primitive.Instance ?? primitive.DeclaredType.DefaultValue);
                 }
                 return;
             }
@@ -81,7 +81,6 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 Execute(container.Content, context ?? container);
             }
-
         }
 
         private static bool Apply(IInstance instance, IEntity context)
