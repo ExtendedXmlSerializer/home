@@ -27,7 +27,6 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-/*
     public class ReferenceAwareEntityBuilder : IEntityBuilder
     {
         private readonly IEntityBuilder _builder;
@@ -57,7 +56,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                     if (identity != null)
                     {
                         var item = new UniqueObject(identity, @object);
-                        _references.Add(id, new Reference(item, parameter.Name));
+                        _references.Add(id, new Reference(item));
                         return item;
                     }
                 }
@@ -74,5 +73,4 @@ namespace ExtendedXmlSerialization.Processing.Write
                       $"Recursion detected while building entity '{parameter.Instance}' of type '{parameter.DeclaredType}'.");
         }
     }
-*/
 }

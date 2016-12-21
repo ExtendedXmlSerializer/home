@@ -23,20 +23,27 @@
 
 using System;
 using System.Collections;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IItem : IContext {}
+    public interface IItem : IContext
+    {
+        Type ElementType { get; }
+    }
 
     public class ItemBase<T> : ContextBase<T>, IItem where T : IEntity
     {
-        public ItemBase(T entity, string name) : base(entity, name) {}
+        public ItemBase(T entity, Type elementType, string name) : base(entity, name)
+        {
+            ElementType = elementType;
+        }
+
+        public Type ElementType { get; }
     }
 
     public class Item : ItemBase<IEntity>
     {
-        public Item(IEntity entity, string name) : base(entity, name) {}
+        public Item(IEntity entity, Type elementType, string name) : base(entity, elementType, name) {}
     }
 
     /*public class DictionaryEntryObject : EntityBase
@@ -57,6 +64,8 @@ namespace ExtendedXmlSerialization.Model.Write
     public class DictionaryEntryItem : ItemBase<CompositeEntity>
     {
         readonly private static Type Type = typeof(DictionaryEntry);
-        public DictionaryEntryItem(IDictionaryKey key, IDictionaryValue value) : base(new CompositeEntity(Type, key, value), ExtendedXmlSerializer.Item) {}
+
+        public DictionaryEntryItem(IDictionaryKey key, IDictionaryValue value)
+            : base(new CompositeEntity(Type, key, value), Type, ExtendedXmlSerializer.Item) {}
     }
 }

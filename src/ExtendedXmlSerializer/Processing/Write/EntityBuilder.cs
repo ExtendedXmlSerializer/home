@@ -94,7 +94,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             foreach (var item in Arrays.Default.AsArray(instance))
             {
                 var descriptor = new ContextDescriptor(item, definition, definition.For(item));
-                yield return new Item(_selector.Get(descriptor), descriptor.Name);
+                yield return new Item(_selector.Get(descriptor), definition.Type, descriptor.Name);
                 
             }
         }

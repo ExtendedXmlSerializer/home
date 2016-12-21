@@ -25,7 +25,6 @@ using System;
 using System.Xml;
 using ExtendedXmlSerialization.Configuration.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -70,8 +69,9 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             var entity = context.Entity;
             var identifier = _locator.Locate(entity.Type)?.ToString();
-            var text = _serializer.Serialize(entity);
-            var type = entity as Type;
+            var instance = (entity as IPrimitive)?.Value ?? (entity as IObject)?.Instance;
+            var text = _serializer.Serialize(instance);
+            var type = instance as Type;
             if (identifier != null && type != null)
             {
                 var identity = _locator.Locate(type)?.ToString();

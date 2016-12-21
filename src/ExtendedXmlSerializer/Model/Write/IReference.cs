@@ -23,5 +23,8 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IReference : IContext<IUniqueObject> {}
+    public interface IReference : IEntity
+    {
+        IUniqueObject Object { get; }
+    }
 }

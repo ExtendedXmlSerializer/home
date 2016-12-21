@@ -23,8 +23,13 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : ContextBase<IUniqueObject>, IReference
+    public class Reference : EntityBase, IReference
     {
-        public Reference(IUniqueObject entity, string name) : base(entity, name) {}
+        public Reference(IUniqueObject entity) : base(entity.Type)
+        {
+            Object = entity;
+        }
+
+        public IUniqueObject Object { get; }
     }
 }

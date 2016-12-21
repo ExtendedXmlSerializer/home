@@ -70,9 +70,9 @@ namespace ExtendedXmlSerialization
             set
             {
                 _tools = value;
-                Serializer = /*_tools != null
+                Serializer = _tools != null
                     ? new Serializer(new SerializationFactory(new IdentityLocator(Locate)))
-                    :*/ DefaultSerializer.Default;
+                    : DefaultSerializer.Default;
             }
         }
 
