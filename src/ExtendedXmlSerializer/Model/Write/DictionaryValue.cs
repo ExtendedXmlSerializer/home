@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryValue : ContentBase<IEntity>, IDictionaryValue
+    public class DictionaryValue : ContextBase<IEntity>, IDictionaryValue
     {
         public DictionaryValue(IEntity @object)
             : base(

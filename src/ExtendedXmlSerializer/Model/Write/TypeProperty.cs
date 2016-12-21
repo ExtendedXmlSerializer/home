@@ -25,7 +25,7 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    sealed class TypeProperty : NativeSystemPropertyBase<Type>
+    sealed class TypeProperty : PropertyBase<Type>
     {
         public TypeProperty(Type type) : base(type, ExtendedXmlSerializer.Type) {}
     }

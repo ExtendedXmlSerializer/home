@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : ContentBase<IIdentity>, IReference
+    public class Reference : ContextBase<IUniqueObject>, IReference
     {
-        public Reference(IIdentity identity) : base(identity) {}
+        public Reference(IUniqueObject entity, string name) : base(entity, name) {}
     }
 }

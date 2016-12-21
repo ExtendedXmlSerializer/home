@@ -23,5 +23,7 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IRoot : IContent {}
+    public interface IRoot : IContext {}
+
+    
 }

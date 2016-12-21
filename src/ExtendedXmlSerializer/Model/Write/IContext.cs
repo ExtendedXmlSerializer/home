@@ -23,8 +23,13 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IIdentity : IContent<IObject>
+    public interface IContext : INode
     {
-        object Id { get; }
+        IEntity Entity { get; }
+    }
+
+    public interface IContext<out T> : IContext where T : IEntity
+    {
+        new T Entity { get; }
     }
 }

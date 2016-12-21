@@ -23,11 +23,11 @@
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class SerializationFactory : ISerializationFactory
+    /*class SerializationFactory : ISerializationFactory
     {
         private readonly IIdentityLocator _locator;
         /*public static SerializationFactory Default { get; } = new SerializationFactory();
-        SerializationFactory() {}*/
+        SerializationFactory() {}#1#
 
         public SerializationFactory(IIdentityLocator locator)
         {
@@ -36,10 +36,10 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public ISerialization Get(IWriter parameter)
         {
-            var selector = new MutableEntitySelector();
-            selector.Selector = new EntitySelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector), _locator));
+            var selector = new MutableContextSelector();
+            selector.Selector = new ContextSelector(new ReferenceAwareEntityBuilder(new EntityBuilder(selector), _locator));
             var result = new Serialization(new RootBuilder(selector.Selector), new ReferenceAwareEmitter(parameter));
             return result;
         }
-    }
+    }*/
 }

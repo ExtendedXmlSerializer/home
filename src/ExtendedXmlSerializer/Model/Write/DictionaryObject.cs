@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryObject : EnumerableObjectBase<IDictionary>, IDictionaryObject
+    public class DictionaryObject : EnumerableObjectBase<IDictionary, DictionaryEntryItem>, IDictionaryObject
     {
-        public DictionaryObject(IDictionary @object, ITypeDefinition declaredType,
-                                ITypeDefinition actualType, string name, IEnumerable<IEntity> nodes)
-            : base(@object, declaredType, actualType, name, nodes) {}
+        public DictionaryObject(IDictionary instance, Type type, IEnumerable<IMember> members,
+                                IEnumerable<DictionaryEntryItem> items) : base(instance, type, members, items) {}
     }
 }

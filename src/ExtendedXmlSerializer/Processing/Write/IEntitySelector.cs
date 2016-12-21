@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IEntitySelector : IParameterizedSource<InstanceDescriptor, IEntity> {}
+    public interface IEntitySelector : IParameterizedSource<ContextDescriptor, IEntity> {}
 }

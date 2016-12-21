@@ -21,11 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Primitive : InstanceBase<object>, IPrimitive
+    public class Primitive<T> : Primitive
     {
-        public Primitive(object @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-            : base(@object, declaredType, actualType, name) {}
+        public Primitive(T value) : base(value, typeof(T)) {}
+    }
+
+    public class Primitive : EntityBase, IPrimitive
+    {
+        public Primitive(object value, Type type) : base(type)
+        {
+            Value = value;
+        }
+
+        public object Value { get; }
     }
 }

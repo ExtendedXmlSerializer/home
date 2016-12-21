@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Processing.Write
     {
         public IEntitySelector Selector { get; set; }
 
-        public IEntity Get(InstanceDescriptor parameter) => Selector?.Get(parameter);
+        public IEntity Get(ContextDescriptor parameter) => Selector?.Get(parameter);
     }
 }

@@ -27,6 +27,7 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
+/*
     public class ReferenceAwareEntityBuilder : IEntityBuilder
     {
         private readonly IEntityBuilder _builder;
@@ -42,7 +43,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             _locator = locator;
         }
 
-        public IEntity Get(InstanceDescriptor parameter)
+        public IEntity Get(ContextDescriptor parameter)
         {
             bool first;
             var id = _generator.GetId(parameter.Instance, out first);
@@ -55,8 +56,8 @@ namespace ExtendedXmlSerialization.Processing.Write
                     var identity = _locator.Get(parameter);
                     if (identity != null)
                     {
-                        var item = new Identity(identity, @object, parameter.DeclaredType, parameter.Name);
-                        _references.Add(id, new Reference(item));
+                        var item = new UniqueObject(identity, @object);
+                        _references.Add(id, new Reference(item, parameter.Name));
                         return item;
                     }
                 }
@@ -73,4 +74,5 @@ namespace ExtendedXmlSerialization.Processing.Write
                       $"Recursion detected while building entity '{parameter.Instance}' of type '{parameter.DeclaredType}'.");
         }
     }
+*/
 }

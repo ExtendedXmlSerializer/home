@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    sealed class ObjectReferenceProperty : NativeSystemPropertyBase<object>
+    sealed class ObjectReferenceProperty : PropertyBase<object>
     {
         public ObjectReferenceProperty(object id) : base(id, ExtendedXmlSerializer.Ref) {}
     }

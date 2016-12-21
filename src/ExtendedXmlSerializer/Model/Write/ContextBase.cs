@@ -21,22 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Model.Write;
-
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Write
 {
-    /*public interface IInstanceSelector : IParameterizedSource<InstanceDescriptor, IInstance> {}*/
-
-
-    public class DefaultRootBuilder : IRootBuilder
+    public abstract class ContextBase<T> : NodeBase, IContext<T> where T : IEntity
     {
-        private readonly IEntitySelector _selector;
-
-        public DefaultRootBuilder(IEntitySelector selector)
+        protected ContextBase(T entity, string name) : base(name)
         {
-            _selector = selector;
+            Entity = entity;
         }
 
-        public IEntity Get(object parameter) => _selector.Get(new InstanceDescriptor(parameter));
+        public T Entity { get; }
+
+        IEntity IContext.Entity => Entity;
     }
 }

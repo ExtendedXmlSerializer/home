@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             var selector = new MutableEntitySelector();
             selector.Selector = new EntitySelector(new EntityBuilder(selector));
-            var result = new Serialization(new DefaultRootBuilder(selector.Selector), new DefaultEmitter(parameter));
+            var result = new Serialization(new RootBuilder(selector.Selector), new DefaultEmitter(parameter));
             return result;
         }
     }

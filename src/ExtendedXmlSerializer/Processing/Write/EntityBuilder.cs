@@ -29,13 +29,14 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
+using Object = ExtendedXmlSerialization.Model.Write.Object;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
     public class EntityBuilder : IEntityBuilder
     {
         private readonly IEntitySelector _selector;
-        private readonly ISpecification<InstanceDescriptor> _member;
+        private readonly ISpecification<ContextDescriptor> _member;
 
         readonly private static Func<ITypeDefinition, bool> IsEnumerable =
             IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
@@ -44,13 +45,13 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public EntityBuilder(IEntitySelector selector) : this(selector, DefaultMemberSpecification.Default) {}
 
-        public EntityBuilder(IEntitySelector selector, ISpecification<InstanceDescriptor> member)
+        public EntityBuilder(IEntitySelector selector, ISpecification<ContextDescriptor> member)
         {
             _selector = selector;
             _member = member;
         }
 
-        public IEntity Get(InstanceDescriptor parameter)
+        public IEntity Get(ContextDescriptor parameter)
         {
             var members = CreateMembers(parameter.Instance, parameter.ActualType);
 
@@ -61,51 +62,51 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var key = Definition(arguments[0]);
                 var value = Definition(arguments[1]);
                 var entries = CreateEntries(dictionary, key, value);
-                return new DictionaryObject(dictionary, parameter.DeclaredType, parameter.ActualType, parameter.Name,
-                                            members.Concat(entries));
+                return new DictionaryObject(dictionary, parameter.ActualType.Type, members, entries);
             }
 
             if (IsEnumerable(parameter.ActualType))
             {
-                var elementType = Definition(parameter.DeclaredType.GenericArguments[0]);
-                var elements = CreateElements(parameter.Instance, elementType);
-                return new EnumerableObject((IEnumerable) parameter.Instance, parameter.DeclaredType,
-                                            parameter.ActualType, parameter.Name,
-                                            members.Concat(elements));
+                var definition = Definition(parameter.DeclaredType.GenericArguments[0]);
+                var items = CreateItems(parameter.Instance, definition);
+                return new EnumerableObject((IEnumerable) parameter.Instance, 
+                                            parameter.ActualType.Type,
+                                            members, items);
             }
-            var result = new Object<object>(parameter.Instance, parameter.DeclaredType, parameter.ActualType,
-                                            parameter.Name, members);
+            var result = new Object(parameter.Instance, parameter.ActualType.Type, members);
             return result;
         }
 
-        IEnumerable<IEntity> CreateMembers(object instance, ITypeDefinition definition)
+        IEnumerable<IMember> CreateMembers(object instance, ITypeDefinition definition)
         {
             foreach (var member in definition.Members)
             {
-                var descriptor = new InstanceDescriptor(member.GetValue(instance), member.TypeDefinition, member.Name);
+                var descriptor = new ContextDescriptor(member.GetValue(instance), member.TypeDefinition, member.Name);
                 if (_member.IsSatisfiedBy(descriptor))
                 {
-                    yield return new Member(_selector.Get(descriptor), member);
+                    yield return new Member(_selector.Get(descriptor), member.Name, member);
                 }
             }
         }
 
-        private IEnumerable<IEntity> CreateElements(object instance, ITypeDefinition elementType)
+        private IEnumerable<IItem> CreateItems(object instance, ITypeDefinition definition)
         {
-            foreach (var element in Arrays.Default.AsArray(instance))
+            foreach (var item in Arrays.Default.AsArray(instance))
             {
-                yield return _selector.Get(new InstanceDescriptor(element, elementType, elementType.For(element)));
+                var descriptor = new ContextDescriptor(item, definition, definition.For(item));
+                yield return new Item(_selector.Get(descriptor), descriptor.Name);
+                
             }
         }
 
-        private IEnumerable<IEntity> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
+        private IEnumerable<DictionaryEntryItem> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
                                                    ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                var key = new DictionaryKey(_selector.Get(new InstanceDescriptor(entry.Key, keyDefinition)));
-                var value = new DictionaryValue(_selector.Get(new InstanceDescriptor(entry.Value, valueDefinition)));
-                var result = new DictionaryEntryInstance(entry, key, value);
+                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)));
+                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)));
+                var result = new DictionaryEntryItem(key, value);
                 yield return result;
             }
         }

@@ -21,19 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
+using System;
+using ExtendedXmlSerialization.Model;
+
+namespace ExtendedXmlSerialization.Processing.Write
 {
-    public abstract class InstanceBase<T> : EntityBase, IInstance
+    public struct ContextDescriptor
     {
-        protected InstanceBase(T instance, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-            : base(declaredType, name)
+        readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
+
+        public ContextDescriptor(object instance)
+            : this(instance, Definition(instance.GetType())) {}
+
+        public ContextDescriptor(object instance, ITypeDefinition declaredType)
+            : this(instance, declaredType, declaredType.Name) {}
+
+        public ContextDescriptor(object instance, ITypeDefinition declaredType,
+                                  string name) : this(instance, declaredType, declaredType.For(instance), name) {}
+
+        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType) : this(instance, declaredType, actualType, actualType.Name) {}
+
+        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
+                                  string name)
         {
             Instance = instance;
+            DeclaredType = declaredType;
             ActualType = actualType;
+            Name = name;
         }
 
-        public T Instance { get; }
-        object IInstance.Instance => Instance;
+        public object Instance { get; }
+        public ITypeDefinition DeclaredType { get; }
         public ITypeDefinition ActualType { get; }
+        public string Name { get; }
     }
 }

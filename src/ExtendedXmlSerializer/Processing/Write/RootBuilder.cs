@@ -34,10 +34,11 @@ namespace ExtendedXmlSerialization.Processing.Write
             _builder = builder;
         }
 
-        public IEntity Get(object parameter)
+        public IContext Get(object parameter)
         {
-            var body = _builder.Get(new InstanceDescriptor(parameter));
-            var result = new Root(body);
+            var descriptor = new ContextDescriptor(parameter);
+            var body = _builder.Get(descriptor);
+            var result = new Root(body, descriptor.Name);
             return result;
         }
     }

@@ -23,9 +23,13 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class PropertyBase<T> : InstanceBase<T>, IProperty
+    public abstract class PropertyBase<T> : PropertyBase
     {
-        protected PropertyBase(T @object, ITypeDefinition declaredType, ITypeDefinition actualType, string name)
-            : base(@object, declaredType, actualType, name) {}
+        protected PropertyBase(T instance, string name) : base(new Primitive<T>(instance), name) {}
+    }
+
+    public abstract class PropertyBase : ContextBase<IEntity>, IProperty
+    {
+        protected PropertyBase(IEntity entity, string name) : base(entity, name) {}
     }
 }

@@ -21,7 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IEnumerableObject : IObject {}
+    public interface IEnumerableObject : IObject<IEnumerable>
+    {
+        IEnumerable<IItem> Items { get; }
+    }
 }

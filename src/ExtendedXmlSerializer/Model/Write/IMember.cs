@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IMember : IContent
+    public interface IMember : IContext
     {
         IMemberDefinition Definition { get; }
     }

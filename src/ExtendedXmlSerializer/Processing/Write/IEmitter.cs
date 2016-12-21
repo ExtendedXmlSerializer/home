@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IEmitter : ICommand<IEntity> {}
+    public interface IEmitter : ICommand<IContext> {}
 }

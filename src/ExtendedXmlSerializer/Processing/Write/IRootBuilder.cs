@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IRootBuilder : IParameterizedSource<object, IEntity> {}
+    public interface IRootBuilder : IParameterizedSource<object, IContext> {}
 }

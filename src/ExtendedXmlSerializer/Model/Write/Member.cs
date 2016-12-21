@@ -23,11 +23,11 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Member : ContentBase<IEntity>, IMember
+    public class Member : ContextBase<IEntity>, IMember
     {
-        public Member(IEntity @object, IMemberDefinition member) : base(@object, member.TypeDefinition, member.Name)
+        public Member(IEntity entity, string name, IMemberDefinition definition) : base(entity, name)
         {
-            Definition = member;
+            Definition = definition;
         }
 
         public IMemberDefinition Definition { get; }

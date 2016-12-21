@@ -51,9 +51,9 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
 
-        public IDisposable Begin(IQualifiedNode definition)
+        public IDisposable Begin(IContext context)
         {
-            var identifier = _locator.Locate(definition.DeclaredType);
+            var identifier = _locator.Locate(context.Entity.Type);
             var id = identifier?.ToString();
             switch (_writer.WriteState)
             {
@@ -62,29 +62,29 @@ namespace ExtendedXmlSerialization.Processing.Write
                     break;
             }
 
-            _writer.WriteStartElement(definition.Name, id);
+            _writer.WriteStartElement(context.Name, id);
             return _end;
         }
 
-        public void Emit(IInstance node)
+        public void Emit(IContext context)
         {
-            var instance = node.Instance;
-            var identifier = _locator.Locate(node.DeclaredType)?.ToString();
-            var text = _serializer.Serialize(instance);
-            var type = instance as Type;
+            var entity = context.Entity;
+            var identifier = _locator.Locate(entity.Type)?.ToString();
+            var text = _serializer.Serialize(entity);
+            var type = entity as Type;
             if (identifier != null && type != null)
             {
                 var identity = _locator.Locate(type)?.ToString();
                 if (identity != null)
                 {
-                    _writer.WriteStartAttribute(node.Name, identifier);
+                    _writer.WriteStartAttribute(context.Name, identifier);
                     var name = TypeDefinitions.Default.Get(type).Name;
                     _writer.WriteQualifiedName(name, identity);
                     _writer.WriteEndAttribute();
                     return;
                 }
             }
-            _writer.WriteAttributeString(node.Name, identifier, text);
+            _writer.WriteAttributeString(context.Name, identifier, text);
         }
 
         public void Dispose()

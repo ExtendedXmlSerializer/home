@@ -21,22 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ContentBase<T> : EntityBase, IContent<T>, IContent where T : IEntity
+    public class UniqueObject : Object, IUniqueObject
     {
-        protected ContentBase(T content) : this(content, content.Name) {}
-
-        protected ContentBase(T content, string name) : this(content, content.DeclaredType, name)
-        {}
-
-        protected ContentBase(T content, ITypeDefinition declaredType, string name) : base(declaredType, name)
+        public UniqueObject(object id, IObject @object) : base(@object.Instance, @object.Type, @object.Members)
         {
-            Content = content;
+            Id = id;
         }
 
-        public T Content { get; }
-
-        IEntity IContent.Content => Content;
+        public object Id { get; }
     }
 }

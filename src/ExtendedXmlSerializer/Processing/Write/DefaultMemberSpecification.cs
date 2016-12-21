@@ -25,11 +25,11 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class DefaultMemberSpecification : ISpecification<InstanceDescriptor>
+    public class DefaultMemberSpecification : ISpecification<ContextDescriptor>
     {
         public static DefaultMemberSpecification Default { get; } = new DefaultMemberSpecification();
         DefaultMemberSpecification() {}
 
-        public bool IsSatisfiedBy(InstanceDescriptor parameter) => parameter.Instance != null;
+        public bool IsSatisfiedBy(ContextDescriptor parameter) => parameter.Instance != null;
     }
 }

@@ -25,113 +25,115 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class ReferenceAwareEmitter : IEmitter
-    {
-        private readonly IWriter _writer;
-
-        public ReferenceAwareEmitter(IWriter writer)
+/*
+        class ReferenceAwareEmitter : IEmitter
         {
-            _writer = writer;
-        }
-
-        public void Execute(IEntity parameter) => Execute(parameter, null);
-
-        private void Execute(IEntity parameter, IEntity context)
-        {
-            var primitive = parameter as IPrimitive;
-            if (primitive != null)
+            private readonly IWriter _writer;
+    
+            public ReferenceAwareEmitter(IWriter writer)
             {
-                using (_writer.Begin(context ?? primitive))
+                _writer = writer;
+            }
+    
+            public void Execute(IEntity parameter) => Execute(parameter, null);
+    
+            private void Execute(IEntity parameter, IEntity context)
+            {
+                var primitive = parameter as IPrimitive;
+                if (primitive != null)
                 {
-                    ApplyType(primitive);
-                    _writer.Emit(primitive.Instance);
+                    using (_writer.Begin(context ?? primitive))
+                    {
+                        ApplyType(primitive);
+                        _writer.Emit(primitive.Instance);
+                    }
+                    return;
                 }
-                return;
-            }
-
-            var instance = parameter as IObject;
-            if (instance != null)
-            {
-                EmitObject(context, instance);
-                return;
-            }
-
-            var identity = parameter as IIdentity;
-            if (identity != null)
-            {
-                var content = identity.Content;
-                using (_writer.Begin(context ?? content))
+    
+                var instance = parameter as IObject;
+                if (instance != null)
                 {
-                    var force = Apply(content, context);
-                    ApplyType(content, force);
-                    _writer.Emit(new IdentityProperty(identity.Id));
-
-                    foreach (var o in content)
+                    EmitObject(context, instance);
+                    return;
+                }
+    
+                var identity = parameter as IUniqueObject;
+                if (identity != null)
+                {
+                    var content = identity.Content;
+                    using (_writer.Begin(context ?? content))
+                    {
+                        var force = Apply(content, context);
+                        ApplyType(content, force);
+                        _writer.Emit(new IdentityProperty(identity.Id));
+    
+                        foreach (var o in content)
+                        {
+                            Execute(o, o);
+                        }
+                    }
+                    return;
+                }
+    
+                var reference = parameter as IReference;
+                if (reference != null)
+                {
+                    using (_writer.Begin(context ?? reference))
+                    {
+                        var content = reference.Entity;
+                        var o = content.Content;
+                        ApplyType(o, o.ActualType.Type != context.DeclaredType.Type);
+                        _writer.Emit(new ObjectReferenceProperty(content.Id));
+                    }
+                    return;
+                }
+    
+                var container = parameter as IContext;
+                if (container != null)
+                {
+                    Execute(container.Entity, context ?? container);
+                }
+            }
+    
+            private void EmitObject(IEntity context, IObject instance)
+            {
+                using (_writer.Begin(context ?? instance))
+                {
+                    var force = Apply(instance, context);
+                    ApplyType(instance, force);
+    
+                    foreach (var o in instance)
                     {
                         Execute(o, o);
                     }
                 }
-                return;
             }
-
-            var reference = parameter as IReference;
-            if (reference != null)
+    
+            private static bool Apply(IInstance instance, IEntity context)
             {
-                using (_writer.Begin(context ?? reference))
+                var ignore = instance is IEnumerableObject || instance is IDictionaryEntry;
+                if (!ignore)
                 {
-                    var content = reference.Content;
-                    var o = content.Content;
-                    ApplyType(o, o.ActualType.Type != context.DeclaredType.Type);
-                    _writer.Emit(new ObjectReferenceProperty(content.Id));
+                    return true;
                 }
-                return;
+    
+                var result = ((context as IMember)?.Definition.IsWritable ?? false) && Different(instance);
+                return result;
             }
-
-            var container = parameter as IContent;
-            if (container != null)
+    
+            private void ApplyType(IInstance node) => ApplyType(node, Different(node));
+    
+            private static bool Different(IInstance node) => node.ActualType.Type != node.DeclaredType.Type;
+    
+            private void ApplyType(IInstance node, bool force)
             {
-                Execute(container.Content, context ?? container);
-            }
-        }
-
-        private void EmitObject(IEntity context, IObject instance)
-        {
-            using (_writer.Begin(context ?? instance))
-            {
-                var force = Apply(instance, context);
-                ApplyType(instance, force);
-
-                foreach (var o in instance)
+                if (force)
                 {
-                    Execute(o, o);
+                    _writer.Emit(new TypeProperty(node.ActualType.Type));
                 }
             }
         }
-
-        private static bool Apply(IInstance instance, IEntity context)
-        {
-            var ignore = instance is IEnumerableObject || instance is IDictionaryEntry;
-            if (!ignore)
-            {
-                return true;
-            }
-
-            var result = ((context as IMember)?.Definition.IsWritable ?? false) && Different(instance);
-            return result;
-        }
-
-        private void ApplyType(IInstance node) => ApplyType(node, Different(node));
-
-        private static bool Different(IInstance node) => node.ActualType.Type != node.DeclaredType.Type;
-
-        private void ApplyType(IInstance node, bool force)
-        {
-            if (force)
-            {
-                _writer.Emit(new TypeProperty(node.ActualType.Type));
-            }
-        }
-    }
+    */
 
     class DefaultEmitter : IEmitter
     {
@@ -142,76 +144,62 @@ namespace ExtendedXmlSerialization.Processing.Write
             _writer = writer;
         }
 
-        public void Execute(IEntity parameter) => Execute(parameter, null);
-
-        private void Execute(IEntity parameter, IEntity context)
+        public void Execute(IContext parameter)
         {
-            var primitive = parameter as IPrimitive;
+            var primitive = parameter.Entity as IPrimitive;
             if (primitive != null)
             {
-                using (_writer.Begin(context ?? primitive))
+                using (_writer.Begin(parameter))
                 {
-                    ApplyType(primitive);
-                    _writer.Emit(primitive.Instance);
+                    ApplyType(parameter);
+                    _writer.Emit(primitive.Value);
                 }
                 return;
             }
 
-            var instance = parameter as IObject;
+            var instance = parameter.Entity as IObject;
             if (instance != null)
             {
-                using (_writer.Begin(context ?? instance))
+                using (_writer.Begin(parameter))
                 {
-                    var force = Apply(instance, context);
-                    ApplyType(instance, force);
+                    ApplyType(parameter);
 
-                    foreach (var o in instance)
+                    foreach (var o in instance.Members)
                     {
-                        Execute(o, o);
+                        Execute(o);
+                    }
+
+                    var enumerable = instance as IEnumerableObject;
+                    if (enumerable != null)
+                    {
+                        foreach (var item in enumerable.Items)
+                        {
+                            Execute(item);
+                        }
                     }
                 }
                 return;
             }
-
-            /*var lookup = parameter as IReference;
-            if (lookup != null)
-            {
-                using (_writer.Begin(context ?? lookup))
-                {
-                    ApplyType(lookup.Content.Content);
-                    _writer.Emit(new ObjectReferenceProperty(lookup.Content.Id));
-                }
-                return;
-            }*/
-
-            var container = parameter as IContent;
-            if (container != null)
-            {
-                Execute(container.Content, context ?? container);
-            }
         }
 
-        private static bool Apply(IInstance instance, IEntity context)
+        private static bool Apply(IContext context)
         {
-            var ignore = instance is IEnumerableObject || instance is IDictionaryEntry;
+            var ignore = context.Entity is IEnumerableObject || context is IItem;
             if (!ignore)
             {
                 return true;
             }
 
-            var result = ((context as IMember)?.Definition.IsWritable ?? false) && Different(instance);
+            var member = context as IMember;
+            var result = member != null && member.Definition.IsWritable && context.Entity.Type != member.Definition.Type;
             return result;
         }
 
-        private void ApplyType(IInstance node) => ApplyType(node, Different(node));
-
-        private static bool Different(IInstance node) => node.ActualType.Type != node.DeclaredType.Type;
-
-        private void ApplyType(IInstance node, bool force)
+        private void ApplyType(IContext context)
         {
-            if (force)
+            if (Apply(context))
             {
-                _writer.Emit(new TypeProperty(node.ActualType.Type));
+                _writer.Emit(new TypeProperty(context.Entity.Type));
             }
         }
     }

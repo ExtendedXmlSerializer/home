@@ -34,11 +34,12 @@ namespace ExtendedXmlSerialization.Processing.Write
             _builder = builder;
         }
 
-        public IEntity Get(InstanceDescriptor parameter)
+        public IEntity Get(ContextDescriptor parameter)
         {
-            if (parameter.ActualType.IsPrimitive)
+            var type = parameter.ActualType;
+            if (type.IsPrimitive)
             {
-                return new Primitive(parameter.Instance, parameter.DeclaredType, parameter.ActualType, parameter.Name);
+                return new Primitive(parameter.Instance, type.Type);
             }
 
             var instance = _builder.Get(parameter);
@@ -48,7 +49,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
 
             throw new SerializationException(
-                      $"Could not locate an entity for '{parameter.Instance}' of type '{parameter.DeclaredType.Type}'.");
+                      $"Could not locate an entity for '{parameter.Instance}' of type '{type.Type}'.");
         }
     }
 }
