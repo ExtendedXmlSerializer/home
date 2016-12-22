@@ -40,13 +40,7 @@ namespace ExtendedXmlSerialization.Model.Write
         public void Attach(object instance, IProperty property) => _properties.Get(instance).Add(property);
         public ICollection<IProperty> GetProperties(object instance) => _properties.Get(instance);
     }
-
-    class ObjectReferenceProperty : PropertyBase
-    {
-        public ObjectReferenceProperty(Uri @namespace, string value)
-            : base(@namespace, ExtendedXmlSerializer.Ref, value) {}
-    }
-        public sealed class PrimitiveNamespace : Namespace
+    public sealed class PrimitiveNamespace : Namespace
     {
         private new const string Prefix = "sys";
 
@@ -59,12 +53,5 @@ namespace ExtendedXmlSerialization.Model.Write
 
         public RootNamespace(Uri identifier) : base(Prefix, identifier) {}
     }
-    class VersionProperty : PropertyBase
-    {
-        public VersionProperty(Uri @namespace, int version) : base(@namespace, ExtendedXmlSerializer.Version, version) {}
-    }
-    class ObjectIdProperty : PropertyBase
-    {
-        public ObjectIdProperty(Uri @namespace, string value) : base(@namespace, ExtendedXmlSerializer.Id, value) {}
-    }*/
+    */
 }

@@ -27,4 +27,9 @@ namespace ExtendedXmlSerialization.Model.Write
     {
         public IdentityProperty(object id) : base(id, ExtendedXmlSerializer.Id) {}
     }
+
+    sealed class VersionProperty : PropertyBase<object>
+    {
+        public VersionProperty(int version) : base(version, ExtendedXmlSerializer.Version) {}
+    }
 }

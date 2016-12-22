@@ -44,24 +44,23 @@ namespace ExtendedXmlSerialization.Processing.Write
         }
     }
 
-    public class LegacySerializer : ISerializer
+    class LegacySerializer : ISerializer
     {
         private readonly ISerializationToolsFactory _tools;
         private readonly IIdentityLocator _locator;
         private readonly IEncryptionFactory _encryption;
+        private readonly IVersionLocator _version;
 
         public LegacySerializer(ISerializationToolsFactory tools)
-            : this(tools, new IdentityLocator(tools.Locate)) {}
-
-        public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator)
-            : this(tools, locator, new EncryptionFactory(tools)) {}
+            : this(tools, new IdentityLocator(tools.Locate), new EncryptionFactory(tools), new VersionLocator(tools)) {}
 
         public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
-                                                   IEncryptionFactory encryption)
+                                                   IEncryptionFactory encryption, IVersionLocator version)
         {
             _tools = tools;
             _locator = locator;
             _encryption = encryption;
+            _version = version;
         }
 
         public void Serialize(Stream stream, object instance)
@@ -74,7 +73,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var selector = new MutableEntitySelector();
                 selector.Selector = new EntitySelector(new EntityBuilder(selector));
                 var serialization = new Serialization(new RootBuilder(selector.Selector),
-                                                      new LegacyEmitter(writer, monitor, _locator));
+                                                      new LegacyEmitter(writer, monitor, _locator, _version));
                 serialization.Execute(instance);
             }
         }

@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Model.Write;
-using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization.Configuration.Write
 {
     public interface IEncryptionFactory : IParameterizedSource<IContext, IPropertyEncryption> {}
+
     class EncryptionFactory : IEncryptionFactory
     {
         private readonly ISerializationToolsFactory _factory;

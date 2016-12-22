@@ -31,6 +31,8 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     class LegacyCustomWriter : IWriter
     {
+        private readonly static IDisposable Empty = new DelegatedDisposable(() => {});
+
         private readonly ISerializationToolsFactory _tools;
         private readonly IWriter _inner;
         private readonly XmlWriter _writer;
@@ -46,24 +48,39 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         void Enable() => Enabled = true;
 
-        bool Enabled { get; set; }
+        private bool Enabled { get; set; } = true;
 
         public IDisposable New(IContext context)
         {
-            var result = _inner.New(context);
-            var configuration = _tools.GetConfiguration(context.Entity.Type);
-            if (configuration?.IsCustomSerializer ?? false)
+            if (Enabled)
             {
-                Enabled = false;
-                return new Context(configuration, _writer, context.Instance(), result, _complete);
+                var result = _inner.New(context);
+                var configuration = _tools.GetConfiguration(context.Entity.Type);
+                if (configuration?.IsCustomSerializer ?? false)
+                {
+                    Enabled = false;
+                    return new Context(configuration, _writer, context.Instance(), result, _complete);
+                }
+                return result;
             }
-            return result;
+            return Empty;
         }
 
-        public void Emit(IContext context) => _inner.Emit(context);
+        public void Emit(IContext context)
+        {
+            if (Enabled || context is IProperty)
+            {
+                _inner.Emit(context);
+            }
+        }
 
-
-        public void Emit(object instance) => _inner.Emit(instance);
+        public void Emit(object instance)
+        {
+            if (Enabled)
+            {
+                _inner.Emit(instance);
+            }
+        }
 
         public void Dispose() => _inner.Dispose();
 
@@ -75,7 +92,8 @@ namespace ExtendedXmlSerialization.Processing.Write
             private readonly IDisposable _inner;
             private readonly IDisposable _complete;
 
-            public Context(IExtendedXmlSerializerConfig configuration, XmlWriter writer, object instance, IDisposable inner, Action complete) : this(inner, new DelegatedDisposable(complete))
+            public Context(IExtendedXmlSerializerConfig configuration, XmlWriter writer, object instance,
+                           IDisposable inner, Action complete) : this(inner, new DelegatedDisposable(complete))
             {
                 _configuration = configuration;
                 _writer = writer;
@@ -106,7 +124,8 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public LegacyWriter(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
 
-        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer) : this(writer, serializer, DefaultNamespaceLocator.Default) {}
+        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer)
+            : this(writer, serializer, DefaultNamespaceLocator.Default) {}
 
         public LegacyWriter(XmlWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
         {
