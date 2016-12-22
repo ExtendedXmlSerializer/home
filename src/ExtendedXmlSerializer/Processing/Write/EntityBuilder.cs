@@ -24,7 +24,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Model;
@@ -69,7 +68,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 var definition = Definition(parameter.DeclaredType.GenericArguments[0]);
                 var items = CreateItems(parameter.Instance, definition);
-                return new EnumerableObject((IEnumerable) parameter.Instance, 
+                return new EnumerableObject((IEnumerable) parameter.Instance,
                                             parameter.ActualType.Type,
                                             members, items);
             }
@@ -95,17 +94,16 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 var descriptor = new ContextDescriptor(item, definition, definition.For(item));
                 yield return new Item(_selector.Get(descriptor), definition.Type, descriptor.Name);
-                
             }
         }
 
         private IEnumerable<DictionaryEntryItem> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
-                                                   ITypeDefinition valueDefinition)
+                                                               ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)));
-                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)));
+                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)), keyDefinition.Type);
+                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)), valueDefinition.Type);
                 var result = new DictionaryEntryItem(key, value);
                 yield return result;
             }

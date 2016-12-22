@@ -24,6 +24,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization.Core
 {
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization.Core
             _objs = new object[_currentSize*4];
         }
 
-        private int FindElement(object obj, out bool found)
+        private int FindIndex(object obj, out bool found)
         {
             int hashCode = RuntimeHelpers.GetHashCode(obj);
             int num1 = 1 + (hashCode & int.MaxValue)%(_currentSize - 2);
@@ -62,12 +63,13 @@ namespace ExtendedXmlSerialization.Core
                 int num2 = (hashCode & int.MaxValue)%_currentSize*4;
                 for (int index = num2; index < num2 + 4; ++index)
                 {
-                    if (_objs[index] == null)
+                    var o = _objs[index];
+                    if (o == null)
                     {
                         found = false;
                         return index;
                     }
-                    if (_objs[index] == obj)
+                    if (o == obj)
                     {
                         found = true;
                         return index;
@@ -78,55 +80,54 @@ namespace ExtendedXmlSerialization.Core
         }
 
         /// <summary>Returns the ID for the specified object, generating a new ID if the specified object has not already been identified by the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />.</summary>
-        /// <returns>The object's ID is used for serialization. <paramref name="firstTime" /> is set to true if this is the first time the object has been identified; otherwise, it is set to false.</returns>
+        /// <returns>The object's identity context, which can be used for serialization. FirstEncounter is set to true if this is the first time the object has been identified; otherwise, it is set to false.</returns>
         /// <param name="obj">The object you want an ID for. </param>
-        /// <param name="firstTime">true if <paramref name="obj" /> was not previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, false. </param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">The <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> has been asked to keep track of too many objects. </exception>
-        public virtual long GetId(object obj, out bool firstTime)
+        public virtual IdentityGenerationContext For(object obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("obj", ("ArgumentNull_Obj"));
             bool found;
-            int element = FindElement(obj, out found);
+            int index = FindIndex(obj, out found);
             long id;
             if (!found)
             {
-                _objs[element] = obj;
+                _objs[index] = obj;
                 long[] ids = _ids;
-                int index = element;
                 int currentCount = _currentCount;
                 _currentCount = currentCount + 1;
                 long num = (long) currentCount;
                 ids[index] = num;
-                id = _ids[element];
+                id = _ids[index];
                 if (_currentCount > _currentSize*4/2)
                     Rehash();
             }
             else
-                id = _ids[element];
-            firstTime = !found;
-            return id;
+                id = _ids[index];
+            var result = new IdentityGenerationContext(id, obj, !found);
+            return result;
         }
 
-        /// <summary>Determines whether an object has already been assigned an ID.</summary>
-        /// <returns>The object ID of <paramref name="obj" /> if previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, zero.</returns>
+        /*/// <summary>Determines whether an object has already been assigned an ID.</summary>
+        /// <returns>The object ID of <paramref name="obj" /> if previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, null.</returns>
         /// <param name="obj">The object you are asking for. </param>
-        /// <param name="firstTime">true if <paramref name="obj" /> was not previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, false. </param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
-        public virtual long HasId(object obj, out bool firstTime)
+        public virtual long? Locate(object obj)
         {
             if (obj == null)
                 throw new ArgumentNullException("obj", ("ArgumentNull_Obj"));
             bool found;
-            int element = FindElement(obj, out found);
-            if (found)
-            {
-                firstTime = false;
-                return _ids[element];
-            }
-            firstTime = true;
-            return 0;
+            var index = FindIndex(obj, out found);
+            var result = found ? (long?) _ids[index] : null;
+            return result;
+        }*/
+
+        public virtual bool Contains(object obj)
+        {
+            bool result;
+            FindIndex(obj, out result);
+            return result;
         }
 
         private void Rehash()
@@ -149,7 +150,7 @@ namespace ExtendedXmlSerialization.Core
                 if (objs[index2] != null)
                 {
                     bool found;
-                    int element = FindElement(objs[index2], out found);
+                    int element = FindIndex(objs[index2], out found);
                     _objs[element] = objs[index2];
                     _ids[element] = ids[index2];
                 }

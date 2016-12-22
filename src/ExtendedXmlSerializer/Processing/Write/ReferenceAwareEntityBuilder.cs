@@ -21,6 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model.Write;
@@ -31,10 +34,10 @@ namespace ExtendedXmlSerialization.Processing.Write
     {
         private readonly IEntityBuilder _builder;
         private readonly IIdentityLocator _locator;
-        readonly private IDictionary<long, IReference> _references = new Dictionary<long, IReference>();
-        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
+        readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
+        readonly ISet<object> _scanned = new HashSet<object>();
 
-        // public ReferenceAwareEntityBuilder(IEntityBuilder builder) : this(builder, DefaultIdentityLocator.Default) {}
+        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
         public ReferenceAwareEntityBuilder(IEntityBuilder builder, IIdentityLocator locator)
         {
@@ -44,33 +47,72 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public IEntity Get(ContextDescriptor parameter)
         {
-            bool first;
-            var id = _generator.GetId(parameter.Instance, out first);
-            if (first)
+            // Scan ahead:
+            var instance = parameter.Instance;
+            var scanned = Arrays.Default.Is(instance) ? Arrays.Default.AsArray(instance) : null;
+            if (scanned != null)
             {
-                var instance = _builder.Get(parameter);
-                var @object = instance as IObject;
-                if (@object != null)
+                foreach (var item in scanned)
                 {
-                    var identity = _locator.Get(parameter);
+                    var identity = _locator.Get(item);
                     if (identity != null)
                     {
-                        var item = new UniqueObject(identity, @object);
-                        _references.Add(id, new Reference(item));
-                        return item;
+                        _references.Add(item, new Reference(identity, item.GetType()));
+                        _scanned.Add(item);
                     }
                 }
-                return instance;
             }
 
-            if (_references.ContainsKey(id))
+            try
             {
-                return _references[id];
+                var entity = For(parameter);
+                if (entity != null)
+                {
+                    return entity;
+                }
+
+                if (_references.ContainsKey(instance))
+                {
+                    return _references[instance];
+                }
+            }
+            finally 
+            {
+                if (scanned != null)
+                {
+                    foreach (var item in scanned)
+                    {
+                        _scanned.Remove(item);
+                    }
+                }
             }
 
             // TODO: Make optional?
             throw new SerializationException(
-                      $"Recursion detected while building entity '{parameter.Instance}' of type '{parameter.DeclaredType}'.");
+                      $"Recursion detected while building entity '{instance}' of type '{parameter.DeclaredType}'.");
+        }
+
+        private IEntity For(ContextDescriptor descriptor)
+        {
+            var key = descriptor.Instance;
+            var context = _generator.For(key);
+            if (context.FirstEncounter)
+            {
+                var result = _builder.Get(descriptor);
+                var o = result as IObject;
+                if (o != null)
+                {
+                    var identity = _locator.Get(context);
+                    if (identity != null)
+                    {
+                        var unique = new UniqueObject(identity, o);
+                        _references.Add(key, new Reference(unique));
+                        return unique;
+                    }
+                }
+                return result;
+            }
+            return null;
         }
     }
 }

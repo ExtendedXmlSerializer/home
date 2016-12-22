@@ -22,8 +22,23 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IIdentityLocator : IParameterizedSource<ContextDescriptor, object> {}
+    public interface IIdentityLocator : IParameterizedSource<object, object> {}
+
+    public struct IdentityGenerationContext
+    {
+        public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
+        {
+            UniqueId = uniqueId;
+            Instance = instance;
+            FirstEncounter = firstEncounter;
+        }
+
+        public long UniqueId { get; }
+        public object Instance { get; }
+        public bool FirstEncounter { get; }
+    }
 }

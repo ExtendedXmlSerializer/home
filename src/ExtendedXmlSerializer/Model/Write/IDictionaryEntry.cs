@@ -26,22 +26,24 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IItem : IContext
+    public interface ITypeAwareContext : IContext
     {
-        Type ElementType { get; }
+        Type ReferencedType { get; }
     }
 
-    public class ItemBase<T> : ContextBase<T>, IItem where T : IEntity
+    public interface IItem : ITypeAwareContext {}
+
+    public abstract class TypeAwareContextBase<T> : ContextBase<T>, ITypeAwareContext where T : IEntity
     {
-        public ItemBase(T entity, Type elementType, string name) : base(entity, name)
+        protected TypeAwareContextBase(T entity, Type referencedType, string name) : base(entity, name)
         {
-            ElementType = elementType;
+            ReferencedType = referencedType;
         }
 
-        public Type ElementType { get; }
+        public Type ReferencedType { get; }
     }
 
-    public class Item : ItemBase<IEntity>
+    public class Item : TypeAwareContextBase<IEntity>, IItem
     {
         public Item(IEntity entity, Type elementType, string name) : base(entity, elementType, name) {}
     }
@@ -61,7 +63,7 @@ namespace ExtendedXmlSerialization.Model.Write
         public object Value { get; }
     }*/
 
-    public class DictionaryEntryItem : ItemBase<CompositeEntity>
+    public class DictionaryEntryItem : Item
     {
         readonly private static Type Type = typeof(DictionaryEntry);
 

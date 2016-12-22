@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         public static DefaultIdentityLocator Default { get; } = new DefaultIdentityLocator();
         DefaultIdentityLocator() {}
 
-        public object Get(ContextDescriptor parameter) => null;
+        public object Get(object parameter) => null;
     }
 
     public class IdentityLocator : IIdentityLocator
@@ -45,6 +45,6 @@ namespace ExtendedXmlSerialization.Processing.Write
             _locator = locator;
         }
 
-        public object Get(ContextDescriptor parameter) => _locator(parameter.Instance);
+        public object Get(object parameter) => _locator(parameter);
     }
 }

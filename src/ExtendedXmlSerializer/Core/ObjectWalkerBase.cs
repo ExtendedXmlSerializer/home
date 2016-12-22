@@ -71,12 +71,7 @@ namespace ExtendedXmlSerialization.Core
             return false;
         }
 
-        bool First(object candidate)
-        {
-            bool result;
-            _generator.GetId(candidate, out result);
-            return result;
-        }
+        bool First(object candidate) => _generator.For(candidate).FirstEncounter;
 
         protected abstract TResult Select(TInput input);
 

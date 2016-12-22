@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -28,10 +30,17 @@ namespace ExtendedXmlSerialization.Processing.Write
     class ReferenceAwareEmitter : IEmitter
     {
         private readonly IWriter _writer;
+        private readonly IIdentityLocator _locator;
 
-        public ReferenceAwareEmitter(IWriter writer)
+        readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
+        readonly ISet<object> _scanned = new HashSet<object>();
+
+        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
+
+        public ReferenceAwareEmitter(IWriter writer, IIdentityLocator locator)
         {
             _writer = writer;
+            _locator = locator;
         }
 
         public void Execute(IContext parameter)
@@ -48,43 +57,64 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var instance = entity as IObject;
-            if (instance != null)
-            {
-                using (_writer.Begin(parameter))
-                {
-                    ApplyType(parameter);
-
-                    var identity = entity as IUniqueObject;
-                    if (identity != null)
-                    {
-                        _writer.Emit(new IdentityProperty(identity.Id));
-                    }
-
-                    foreach (var o in instance.Members)
-                    {
-                        Execute(o);
-                    }
-
-                    var enumerable = instance as IEnumerableObject;
-                    if (enumerable != null)
-                    {
-                        foreach (var item in enumerable.Items)
-                        {
-                            Execute(item);
-                        }
-                    }
-                }
-                return;
-            }
-
-            var reference = entity as IReference;
+            /*var reference = entity as IReference;
             if (reference != null)
             {
                 using (_writer.Begin(parameter))
                 {
                     ApplyType(parameter);
-                    _writer.Emit(new ObjectReferenceProperty(reference.Object.Id));
+                    _writer.Emit(new ObjectReferenceProperty(reference.ReferencedId));
+                }
+                return;
+            }*/
+
+            var @object = entity as IObject;
+            if (@object != null)
+            {
+                var instance = @object.Instance;
+                using (_writer.Begin(parameter))
+                {
+                    var identity = _scanned.Contains(instance) ? parameter is IItem : _generator.For(instance).FirstEncounter;
+                    var id = _locator.Get(instance);
+                    ApplyType(parameter, id != null && identity);
+
+                    
+                    if (id != null)
+                    {
+                        var property = identity ? (IProperty) new IdentityProperty(id) : new ObjectReferenceProperty(id);
+                        _writer.Emit(property);
+                        if (!identity)
+                        {
+                            return;
+                        }
+                    }
+
+                    foreach (var o in @object.Members)
+                    {
+                        Execute(o);
+                    }
+
+                    var enumerable = @object as IEnumerableObject;
+                    if (enumerable != null)
+                    {
+                        foreach (var item in enumerable.Instance)
+                        {
+                            if (!_generator.Contains(item))
+                            {
+                                _scanned.Add(item);
+                            }
+                        }
+
+                        foreach (var item in enumerable.Items)
+                        {
+                            Execute(item);
+                        }
+
+                        foreach (var item in enumerable.Instance)
+                        {
+                            _scanned.Remove(item);
+                        }
+                    }
                 }
                 return;
             }
@@ -103,33 +133,32 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private static bool ShouldApply(IContext context)
+        private static bool ShouldApply(IContext context, bool? identity)
         {
             var entity = context.Entity;
-            var enumerable = entity is IEnumerableObject;
             if (context is IRoot)
             {
-                return !enumerable && !(entity is IPrimitive);
-            }
-
-            var apply = entity is IObject;
-            if (apply && !enumerable)
-            {
-                return true;
+                return !(entity is IEnumerableObject) && !(entity is IPrimitive);
             }
 
             var member = context as IMember;
             if (member != null)
             {
-                return member.Definition.IsWritable && entity.Type != member.Definition.Type;
+                return identity.GetValueOrDefault() || (member.Definition.IsWritable && entity.Type != member.Definition.Type);
+            }
+
+            var item = context as ITypeAwareContext;
+            if (item != null)
+            {
+                return identity.GetValueOrDefault() || item.ReferencedType != entity.Type;
             }
 
             return false;
         }
 
-        private void ApplyType(IContext context)
+        private void ApplyType(IContext context, bool? tag = null)
         {
-            if (ShouldApply(context))
+            if (ShouldApply(context, tag))
             {
                 _writer.Emit(new TypeProperty(context.Entity.Type));
             }

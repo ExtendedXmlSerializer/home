@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IDictionaryKey : IContext {}
+    public interface IDictionaryKey : ITypeAwareContext {}
 }
