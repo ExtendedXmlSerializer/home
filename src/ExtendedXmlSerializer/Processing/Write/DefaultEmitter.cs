@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class ReferenceAwareEmitter : IEmitter
+    class LegacyEmitter : IEmitter
     {
         private readonly IWriter _writer;
         private readonly IContextMonitor _monitor;
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public ReferenceAwareEmitter(IWriter writer, IContextMonitor monitor, IIdentityLocator locator)
+        public LegacyEmitter(IWriter writer, IContextMonitor monitor, IIdentityLocator locator)
         {
             _writer = writer;
             _monitor = monitor;
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var primitive = entity as IPrimitive;
             if (primitive != null)
             {
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     ApplyType(parameter);
                     _writer.Emit(primitive.Value);
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             if (@object != null)
             {
                 var instance = @object.Instance;
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     var identity = _scanned.Contains(instance) ? parameter is IItem : _generator.For(instance).FirstEncounter;
                     var id = _locator.Get(instance);
@@ -114,7 +114,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var composite = entity as CompositeEntity;
             if (composite != null)
             {
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     foreach (var context in composite)
                     {
@@ -171,7 +171,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var primitive = parameter.Entity as IPrimitive;
             if (primitive != null)
             {
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     ApplyType(parameter);
                     _writer.Emit(primitive.Value);
@@ -182,7 +182,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var instance = parameter.Entity as IObject;
             if (instance != null)
             {
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     ApplyType(parameter);
 
@@ -206,7 +206,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var composite = parameter.Entity as CompositeEntity;
             if (composite != null)
             {
-                using (_writer.Begin(parameter))
+                using (_writer.New(parameter))
                 {
                     foreach (var context in composite)
                     {

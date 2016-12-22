@@ -27,14 +27,14 @@ using ExtendedXmlSerialization.Configuration.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class DefaultSerializer : ISerializer
+    public class SimpleSerializer : ISerializer
     {
-        public static DefaultSerializer Default { get; } = new DefaultSerializer();
-        DefaultSerializer() {}
+        public static SimpleSerializer Default { get; } = new SimpleSerializer();
+        SimpleSerializer() {}
 
         public void Serialize(Stream stream, object instance)
         {
-            using (var writer = new Writer(XmlWriter.Create(stream)))
+            using (var writer = new LegacyWriter(XmlWriter.Create(stream)))
             {
                 var selector = new MutableEntitySelector();
                 selector.Selector = new EntitySelector(new EntityBuilder(selector));
@@ -44,13 +44,22 @@ namespace ExtendedXmlSerialization.Processing.Write
         }
     }
 
-    public class SerializationToolsFactorySerializer : ISerializer
+    public class LegacySerializer : ISerializer
     {
+        private readonly ISerializationToolsFactory _tools;
         private readonly IIdentityLocator _locator;
         private readonly IEncryptionFactory _encryption;
-        
-        public SerializationToolsFactorySerializer(IIdentityLocator locator, IEncryptionFactory encryption)
+
+        public LegacySerializer(ISerializationToolsFactory tools)
+            : this(tools, new IdentityLocator(tools.Locate)) {}
+
+        public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator)
+            : this(tools, locator, new EncryptionFactory(tools)) {}
+
+        public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
+                                                   IEncryptionFactory encryption)
         {
+            _tools = tools;
             _locator = locator;
             _encryption = encryption;
         }
@@ -58,12 +67,14 @@ namespace ExtendedXmlSerialization.Processing.Write
         public void Serialize(Stream stream, object instance)
         {
             var monitor = new ContextMonitor();
-            using (var writer = new Writer(XmlWriter.Create(stream), new EncryptedObjectSerializer(monitor, _encryption)))
+            var xmlWriter = XmlWriter.Create(stream);
+            var inner = new LegacyWriter(xmlWriter, new EncryptedObjectSerializer(monitor, _encryption));
+            using (var writer = new LegacyCustomWriter(_tools, inner, xmlWriter))
             {
                 var selector = new MutableEntitySelector();
                 selector.Selector = new EntitySelector(new EntityBuilder(selector));
                 var serialization = new Serialization(new RootBuilder(selector.Selector),
-                                                      new ReferenceAwareEmitter(writer, monitor, _locator));
+                                                      new LegacyEmitter(writer, monitor, _locator));
                 serialization.Execute(instance);
             }
         }

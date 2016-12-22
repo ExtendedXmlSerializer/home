@@ -23,8 +23,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration.Write;
@@ -71,15 +69,12 @@ namespace ExtendedXmlSerialization
             {
                 _tools = value;
                 Serializer = _tools != null
-                    ? new SerializationToolsFactorySerializer(new IdentityLocator(Locate), new EncryptionFactory(_tools))
-                    : (ISerializer) DefaultSerializer.Default;
+                    ? new LegacySerializer(_tools)
+                    : (ISerializer) SimpleSerializer.Default;
             }
         }
-
-        private object Locate(object arg)
-            => SerializationToolsFactory?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
-
-        private ISerializer Serializer { get; set; } = DefaultSerializer.Default;
+        
+        private ISerializer Serializer { get; set; } = SimpleSerializer.Default;
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string

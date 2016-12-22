@@ -27,7 +27,6 @@ namespace ExtendedXmlSerialization.Processing.Write
     {
         private readonly IRootBuilder _builder;
         private readonly IEmitter _emitter;
-        // public Serialization(IEmitter emitter) : this(new DefaultRootBuilder(), emitter) {}
 
         public Serialization(IRootBuilder builder, IEmitter emitter)
         {

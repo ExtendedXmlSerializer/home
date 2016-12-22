@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public interface IWriter : IDisposable
     {
-        IDisposable Begin(IContext context);
+        IDisposable New(IContext context);
 
         void Emit(IContext context);
 

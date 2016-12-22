@@ -24,6 +24,7 @@
 using System;
 using System.IO;
 using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
@@ -40,6 +41,12 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
             return @this;
         }
+
+        public static object Locate(this ISerializationToolsFactory @this, object arg)
+            => @this?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
+
+        public static object Instance(this IContext @this) => @this.Entity.Instance();
+        public static object Instance(this IEntity @this) => (@this as IPrimitive)?.Value ?? (@this as IObject)?.Instance;
 
         public static string Serialize(this ISerializer @this, object instance)
         {

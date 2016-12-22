@@ -29,18 +29,86 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class Writer : IWriter
+    class LegacyCustomWriter : IWriter
+    {
+        private readonly ISerializationToolsFactory _tools;
+        private readonly IWriter _inner;
+        private readonly XmlWriter _writer;
+        readonly private Action _complete;
+
+        public LegacyCustomWriter(ISerializationToolsFactory tools, IWriter inner, XmlWriter writer)
+        {
+            _tools = tools;
+            _inner = inner;
+            _writer = writer;
+            _complete = Enable;
+        }
+
+        void Enable() => Enabled = true;
+
+        bool Enabled { get; set; }
+
+        public IDisposable New(IContext context)
+        {
+            var result = _inner.New(context);
+            var configuration = _tools.GetConfiguration(context.Entity.Type);
+            if (configuration?.IsCustomSerializer ?? false)
+            {
+                Enabled = false;
+                return new Context(configuration, _writer, context.Instance(), result, _complete);
+            }
+            return result;
+        }
+
+        public void Emit(IContext context) => _inner.Emit(context);
+
+
+        public void Emit(object instance) => _inner.Emit(instance);
+
+        public void Dispose() => _inner.Dispose();
+
+        sealed class Context : IDisposable
+        {
+            private readonly IExtendedXmlSerializerConfig _configuration;
+            private readonly XmlWriter _writer;
+            private readonly object _instance;
+            private readonly IDisposable _inner;
+            private readonly IDisposable _complete;
+
+            public Context(IExtendedXmlSerializerConfig configuration, XmlWriter writer, object instance, IDisposable inner, Action complete) : this(inner, new DelegatedDisposable(complete))
+            {
+                _configuration = configuration;
+                _writer = writer;
+                _instance = instance;
+            }
+
+            public Context(IDisposable inner, IDisposable complete)
+            {
+                _inner = inner;
+                _complete = complete;
+            }
+
+            public void Dispose()
+            {
+                _configuration.WriteObject(_writer, _instance);
+                _inner.Dispose();
+                _complete.Dispose();
+            }
+        }
+    }
+
+    public class LegacyWriter : IWriter
     {
         private readonly XmlWriter _writer;
         private readonly IObjectSerializer _serializer;
         private readonly INamespaceLocator _locator;
         private readonly IDisposable _end;
 
-        public Writer(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
+        public LegacyWriter(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
 
-        public Writer(XmlWriter writer, IObjectSerializer serializer) : this(writer, serializer, DefaultNamespaceLocator.Default) {}
+        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer) : this(writer, serializer, DefaultNamespaceLocator.Default) {}
 
-        public Writer(XmlWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
+        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
         {
             _writer = writer;
             _serializer = serializer;
@@ -52,7 +120,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
 
-        public IDisposable Begin(IContext context)
+        public IDisposable New(IContext context)
         {
             var identifier = _locator.Locate(context.Entity.Type);
             var id = identifier?.ToString();
@@ -71,7 +139,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             var entity = context.Entity;
             var identifier = _locator.Locate(entity.Type)?.ToString();
-            var instance = (entity as IPrimitive)?.Value ?? (entity as IObject)?.Instance;
+            var instance = context.Instance();
             var text = _serializer.Serialize(instance);
             var type = instance as Type;
             if (identifier != null && type != null)
