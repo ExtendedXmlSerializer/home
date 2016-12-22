@@ -21,42 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization.Configuration.Write
 {
     class EncryptedObjectSerializer : IObjectSerializer
     {
-        private readonly ISpecification<object> _specification;
-        private readonly ISerializationToolsFactory _factory;
+        private readonly IEncryptionFactory _encryption;
+        private readonly IContextMonitor _monitor;
         private readonly IObjectSerializer _inner;
 
 
-        public EncryptedObjectSerializer(ISpecification<object> specification, ISerializationToolsFactory factory)
-            : this(specification, factory, ObjectSerializer.Default)
-        {
-            _specification = specification;
-        }
+        public EncryptedObjectSerializer(
+            IContextMonitor monitor,
+            IEncryptionFactory encryption) : this(monitor, encryption, ObjectSerializer.Default) {}
 
-        public EncryptedObjectSerializer(ISpecification<object> specification, ISerializationToolsFactory factory,
-                                         IObjectSerializer inner)
+        public EncryptedObjectSerializer(
+            IContextMonitor monitor,
+            IEncryptionFactory encryption,
+            IObjectSerializer inner)
         {
-            _specification = specification;
-            _factory = factory;
+            _monitor = monitor;
+            _encryption = encryption;
             _inner = inner;
         }
 
         public string Serialize(object instance)
         {
             var text = _inner.Serialize(instance);
-            var algorithm = _factory.EncryptionAlgorithm;
-            if (algorithm != null && _specification.IsSatisfiedBy(instance))
-            {
-                var result = algorithm.Encrypt(text);
-                return result;
-            }
-            return text;
+            var encryption = _encryption.Get(_monitor.Current);
+            var result = encryption?.Encrypt(text) ?? text;
+            return result;
         }
     }
 }

@@ -36,7 +36,9 @@ namespace ExtendedXmlSerialization.Processing.Write
         private readonly INamespaceLocator _locator;
         private readonly IDisposable _end;
 
-        public Writer(XmlWriter writer) : this(writer, ObjectSerializer.Default, DefaultNamespaceLocator.Default) {}
+        public Writer(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
+
+        public Writer(XmlWriter writer, IObjectSerializer serializer) : this(writer, serializer, DefaultNamespaceLocator.Default) {}
 
         public Writer(XmlWriter writer, IObjectSerializer serializer, INamespaceLocator locator)
         {
@@ -87,9 +89,6 @@ namespace ExtendedXmlSerialization.Processing.Write
             _writer.WriteAttributeString(context.Name, identifier, text);
         }
 
-        public void Dispose()
-        {
-            _writer.Dispose();
-        }
+        public void Dispose() => _writer.Dispose();
     }
 }

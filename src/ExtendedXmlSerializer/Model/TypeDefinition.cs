@@ -175,7 +175,6 @@ namespace ExtendedXmlSerialization.Model
                         order = xmlElement.Order;
                     }
                     var property = new PropertieDefinition(propertyInfo, name);
-                    property.MetadataToken = propertyInfo.MetadataToken;
                     if (order != -1)
                     {
                         property.Order = order;
@@ -212,7 +211,6 @@ namespace ExtendedXmlSerialization.Model
                     }
 
                     var property = new PropertieDefinition(field, name);
-                    property.MetadataToken = field.MetadataToken;
                     if (order != -1)
                     {
                         property.Order = order;
@@ -233,7 +231,7 @@ namespace ExtendedXmlSerialization.Model
                                     {
                                         return 1;
                                     }
-                                    return p1.MetadataToken.CompareTo(p2.MetadataToken);
+                                    return p1.Metadata.MetadataToken.CompareTo(p2.Metadata.MetadataToken);
                                 }
 
                                 return p1.Order.CompareTo(p2.Order);

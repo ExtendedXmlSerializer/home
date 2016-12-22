@@ -30,21 +30,24 @@ namespace ExtendedXmlSerialization.Processing.Write
     class ReferenceAwareEmitter : IEmitter
     {
         private readonly IWriter _writer;
+        private readonly IContextMonitor _monitor;
         private readonly IIdentityLocator _locator;
 
-        readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
         readonly ISet<object> _scanned = new HashSet<object>();
 
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public ReferenceAwareEmitter(IWriter writer, IIdentityLocator locator)
+        public ReferenceAwareEmitter(IWriter writer, IContextMonitor monitor, IIdentityLocator locator)
         {
             _writer = writer;
+            _monitor = monitor;
             _locator = locator;
         }
 
         public void Execute(IContext parameter)
         {
+            _monitor.Update(parameter);
+
             var entity = parameter.Entity;
             var primitive = entity as IPrimitive;
             if (primitive != null)
@@ -56,17 +59,6 @@ namespace ExtendedXmlSerialization.Processing.Write
                 }
                 return;
             }
-
-            /*var reference = entity as IReference;
-            if (reference != null)
-            {
-                using (_writer.Begin(parameter))
-                {
-                    ApplyType(parameter);
-                    _writer.Emit(new ObjectReferenceProperty(reference.ReferencedId));
-                }
-                return;
-            }*/
 
             var @object = entity as IObject;
             if (@object != null)
@@ -163,104 +155,6 @@ namespace ExtendedXmlSerialization.Processing.Write
                 _writer.Emit(new TypeProperty(context.Entity.Type));
             }
         }
-
-        /*public void Execute(IEntity parameter) => Execute(parameter, null);
-
-        private void Execute(IEntity parameter, IEntity context)
-        {
-            var primitive = parameter as IPrimitive;
-            if (primitive != null)
-            {
-                using (_writer.Begin(context ?? primitive))
-                {
-                    ApplyType(primitive);
-                    _writer.Emit(primitive.Instance);
-                }
-                return;
-            }
-
-            var instance = parameter as IObject;
-            if (instance != null)
-            {
-                EmitObject(context, instance);
-                return;
-            }
-
-            var identity = parameter as IUniqueObject;
-            if (identity != null)
-            {
-                var content = identity.Content;
-                using (_writer.Begin(context ?? content))
-                {
-                    var force = Apply(content, context);
-                    ApplyType(content, force);
-                    _writer.Emit(new IdentityProperty(identity.Id));
-
-                    foreach (var o in content)
-                    {
-                        Execute(o, o);
-                    }
-                }
-                return;
-            }
-
-            var reference = parameter as IReference;
-            if (reference != null)
-            {
-                using (_writer.Begin(context ?? reference))
-                {
-                    var content = reference.Entity;
-                    var o = content.Content;
-                    ApplyType(o, o.ActualType.Type != context.DeclaredType.Type);
-                    _writer.Emit(new ObjectReferenceProperty(content.Id));
-                }
-                return;
-            }
-
-            var container = parameter as IContext;
-            if (container != null)
-            {
-                Execute(container.Entity, context ?? container);
-            }
-        }
-
-        private void EmitObject(IEntity context, IObject instance)
-        {
-            using (_writer.Begin(context ?? instance))
-            {
-                var force = Apply(instance, context);
-                ApplyType(instance, force);
-
-                foreach (var o in instance)
-                {
-                    Execute(o, o);
-                }
-            }
-        }
-
-        private static bool Apply(IInstance instance, IEntity context)
-        {
-            var ignore = instance is IEnumerableObject || instance is IDictionaryEntry;
-            if (!ignore)
-            {
-                return true;
-            }
-
-            var result = ((context as IMember)?.Definition.IsWritable ?? false) && Different(instance);
-            return result;
-        }
-
-        private void ApplyType(IInstance node) => ApplyType(node, Different(node));
-
-        private static bool Different(IInstance node) => node.ActualType.Type != node.DeclaredType.Type;
-
-        private void ApplyType(IInstance node, bool force)
-        {
-            if (force)
-            {
-                _writer.Emit(new TypeProperty(node.ActualType.Type));
-            }
-        }*/
     }
 
     class DefaultEmitter : IEmitter

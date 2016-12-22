@@ -21,12 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.Model
 {
     public interface IMemberDefinition : IDefinition
     {
         bool IsWritable { get; }
-        int MetadataToken { get; }
+        MemberInfo Metadata { get; }
+
         int Order { get; }
 
         ITypeDefinition TypeDefinition { get; }

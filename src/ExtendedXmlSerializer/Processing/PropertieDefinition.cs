@@ -37,6 +37,7 @@ namespace ExtendedXmlSerialization.Processing
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
             _propertySetter = Setters.Default.Get(memberInfo);
+            Metadata = memberInfo;
         }
 
 
@@ -46,18 +47,12 @@ namespace ExtendedXmlSerialization.Processing
         public string Name { get; }
         public ITypeDefinition TypeDefinition { get; }
         public Type Type => TypeDefinition.Type;
+        public MemberInfo Metadata { get; }
         public bool IsWritable { get; }
         public int Order { get; set; } = -1;
-        public int MetadataToken { get; set; }
 
-        public object GetValue(object obj)
-        {
-            return _getter(obj);
-        }
+        public object GetValue(object obj) => _getter(obj);
 
-        public void SetValue(object obj, object value)
-        {
-            _propertySetter?.Invoke(obj, value);
-        }
+        public void SetValue(object obj, object value) => _propertySetter?.Invoke(obj, value);
     }
 }

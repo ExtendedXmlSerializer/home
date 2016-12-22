@@ -27,6 +27,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Configuration.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
@@ -40,7 +41,7 @@ namespace ExtendedXmlSerialization
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
         //readonly private static ISerializationServices Services = SerializationServices.Default;
-        
+
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -53,8 +54,7 @@ namespace ExtendedXmlSerialization
         private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
         private ISerializationToolsFactory _tools;
 
-
-        public ExtendedXmlSerializer() {}
+        public ExtendedXmlSerializer() : this(null) {}
 
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
         {
@@ -71,12 +71,13 @@ namespace ExtendedXmlSerialization
             {
                 _tools = value;
                 Serializer = _tools != null
-                    ? new Serializer(new SerializationFactory(new IdentityLocator(Locate)))
-                    : DefaultSerializer.Default;
+                    ? new SerializationToolsFactorySerializer(new IdentityLocator(Locate), new EncryptionFactory(_tools))
+                    : (ISerializer) DefaultSerializer.Default;
             }
         }
 
-        private object Locate(object arg) => SerializationToolsFactory?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
+        private object Locate(object arg)
+            => SerializationToolsFactory?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
 
         private ISerializer Serializer { get; set; } = DefaultSerializer.Default;
 
@@ -246,7 +247,8 @@ namespace ExtendedXmlSerialization
             return currentObject;
         }
 
-        private static object GetPrimitiveValue(ITypeDefinition type, XElement currentNode) => GetPrimitiveValue(type, currentNode.Value, currentNode.Name.LocalName);
+        private static object GetPrimitiveValue(ITypeDefinition type, XElement currentNode)
+            => GetPrimitiveValue(type, currentNode.Value, currentNode.Name.LocalName);
 
         private static object GetPrimitiveValue(ITypeDefinition type, string value, string name)
         {

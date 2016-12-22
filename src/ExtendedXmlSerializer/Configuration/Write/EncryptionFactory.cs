@@ -21,34 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Model.Write;
+using ExtendedXmlSerialization.Processing.Write;
+
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    /*class EncryptionSpecification : ISpecification<object>
+    public interface IEncryptionFactory : IParameterizedSource<IContext, IPropertyEncryption> {}
+    class EncryptionFactory : IEncryptionFactory
     {
         private readonly ISerializationToolsFactory _factory;
-        private readonly ISerialization _context;
 
-        public EncryptionSpecification(ISerializationToolsFactory factory, ISerialization context)
+        public EncryptionFactory(ISerializationToolsFactory factory)
         {
             _factory = factory;
-            _context = context;
         }
 
-        public bool IsSatisfiedBy(object parameter)
+        public IPropertyEncryption Get(IContext parameter)
         {
-            var context = _context.Current.GetMemberContext();
-            if (context?.Member != null)
+            var member = parameter as IMember;
+            if (member != null)
             {
-                var configuration = _factory.GetConfiguration(context.Definition.Type);
+                var definition = member.Definition;
+                var configuration = _factory.GetConfiguration(definition.Metadata.DeclaringType);
                 if (configuration != null)
                 {
-                    var member = context.Member.Value;
-                    var result =
-                        configuration.CheckPropertyEncryption(member.Metadata.Name);
+                    var allow =
+                        configuration.CheckPropertyEncryption(definition.Name);
+                    var result = allow ? _factory.EncryptionAlgorithm : null;
                     return result;
                 }
             }
-            return false;
+            return null;
         }
-    }*/
+    }
 }
