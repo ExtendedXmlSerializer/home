@@ -26,16 +26,16 @@ namespace ExtendedXmlSerialization.Test
 {
     public class SerializationTypTest : BaseTest
     {
-	    class TestClassPrimitiveTypes2
-	    {
-		    public TestEnum PropEnum { get; set; }
-	    }
+        class TestClassPrimitiveTypes2
+        {
+            public TestEnum PropEnum { get; set; }
+        }
 
-	    [Fact]
-	    public void Simple()
-	    {
-		    var instance = new TestClassPrimitiveTypes2() { PropEnum = TestEnum.EnumValue1 };
-	    }
+        [Fact]
+        public void Simple()
+        {
+            var instance = new TestClassPrimitiveTypes2() { PropEnum = TestEnum.EnumValue1 };
+        }
 
         [Fact]
         public void ClassPrimitiveTypes()

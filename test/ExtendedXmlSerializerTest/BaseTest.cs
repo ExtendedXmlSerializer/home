@@ -57,7 +57,8 @@ namespace ExtendedXmlSerialization.Test
         {
             var xml = EmbeddedResources.Get(xmlPath);
             xml = ReplaceVariable(xml);
-            XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
+            var serialize = Serializer.Serialize(obj);
+            XmlAssert.AreEqual(xml, serialize);
             var obj2 = Serializer.Deserialize(xml, obj.GetType());
             XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
         }
