@@ -26,20 +26,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Elements;
-using ExtendedXmlSerialization.Extensibility;
-using ExtendedXmlSerialization.Extensibility.Write;
-using ExtendedXmlSerialization.Plans.Write;
-using ExtendedXmlSerialization.ProcessModel;
-using ExtendedXmlSerialization.ProcessModel.Write;
-using ExtendedXmlSerialization.Profiles;
-using ExtendedXmlSerialization.Services;
-using ExtendedXmlSerialization.Sources;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
+/*
     public class FuturesTest
     {
         [Fact]
@@ -126,7 +118,7 @@ namespace ExtendedXmlSerialization.Test
         public void WriterExtensionForAttachedProperties()
         {
             var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Uri);
-            serializer.Extensions.Add(AttachedPropertyExtension.Default);
+            // serializer.Extensions.Add(AttachedPropertyExtension.Default);
 
             var subject = new BasicSubject {BasicProperty = "This is a basic property"};
             var data = serializer.Serialize(subject);
@@ -168,7 +160,7 @@ namespace ExtendedXmlSerialization.Test
         {
             var subject = new List<int> {1, 2, 3, 10, 11, 12, 13, 14};
             var serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Uri);
-            serializer.Extensions.Add(SkipUnluckyNumberExtension.Default);
+            // serializer.Extensions.Add(SkipUnluckyNumberExtension.Default);
 
             var data = serializer.Serialize(subject);
             Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?>
@@ -203,7 +195,7 @@ namespace ExtendedXmlSerialization.Test
             public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Instance, this);
         }
 
-        [Fact]
+        /*[Fact]
         public void DemonstrateProfileThatModifiesValues()
         {
             var subject = new List<int> {11, 12, 13, 14, 15};
@@ -217,9 +209,9 @@ namespace ExtendedXmlSerialization.Test
   <sys:int>14</sys:int>
   <sys:int>15</sys:int>
 </ArrayOfInt32>", data);
-        }
+        }#1#
 
-        class LuckyProfile : SerializationProfile
+        /*class LuckyProfile : SerializationProfile
         {
             public LuckyProfile()
                 : base(
@@ -227,10 +219,10 @@ namespace ExtendedXmlSerialization.Test
                     new Uri("https://github.com/wojtpl2/ExtendedXmlSerializer/futures/lucky")) {}
 
             protected override ISerializationToolsFactoryHost CreateHost(IImmutableList<object> services) 
-                => new SerializationToolsFactoryHost(() => new DefaultWritingContext(ContextAlteration.Default), services);
-        }
+                => new SerializationToolsFactoryHost(/*() => new AlteringWriting(ContextAlteration.Default),#2# services);
+        }#1#
 
-        class ContextAlteration : IAlteration<WriteContext>
+        /*class ContextAlteration : IAlteration<WriteContext>
         {
             public static ContextAlteration Default { get; } = new ContextAlteration();
             ContextAlteration() {}
@@ -238,9 +230,9 @@ namespace ExtendedXmlSerialization.Test
             public WriteContext Get(WriteContext parameter)
                 =>
                 parameter.Instance?.Equals(13) ?? false
-                    ? new WriteContext(parameter.State, parameter.Root, 7, parameter.Members, parameter.Member)
+                    ? new WriteContext(parameter.Parent, parameter.State, parameter.Root, 7, parameter.Definition, parameter.Members, parameter.Member)
                     : parameter;
-        }
+        }#1#
 
         [Fact]
         public void CustomWritePlanForListsWithInheritance()
@@ -271,4 +263,5 @@ namespace ExtendedXmlSerialization.Test
             public string Name { get; set; }
         }
     }
+*/
 }

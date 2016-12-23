@@ -138,7 +138,7 @@ namespace ExtendedXmlSerialization
 
         string IExtendedXmlSerializerConfig.GetObjectId(object obj)
         {
-            return _getObjectId((T) obj).ToString();
+            return _getObjectId?.Invoke((T) obj).ToString();
         }
 
         bool IExtendedXmlSerializerConfig.CheckPropertyEncryption(string propertyName)

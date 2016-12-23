@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
 using ExtendedXmlSerialization.Performance.Tests.Model;
-using ExtendedXmlSerialization.Profiles;
+using ExtendedXmlSerialization.Performance.Tests.Model.ExtendedXmlSerialization;
 
 namespace ExtendedXmlSerialization.Performance.Tests
 {
@@ -10,7 +10,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+        private readonly IExtendedXmlSerializer _serializer = new LegacyXmlSerializer();
 
         public ExtendedXmlSerializerTest()
         {
@@ -19,15 +19,11 @@ namespace ExtendedXmlSerialization.Performance.Tests
         }
 
         [Benchmark]
-        public string SerializationClassWithPrimitive()
-        {
-            return _serializer.Serialize(_obj);
-        }
+        public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
+
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
-        {
-            return _serializer.Deserialize<TestClassOtherClass>(_xml);
-        }
+            => _serializer.Deserialize<TestClassOtherClass>(_xml);
     }
 
 
@@ -35,7 +31,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly IExtendedXmlSerializer _serializer = ExtendedSerialization.Default.Get(SerializerFuturesProfile.Uri);
+        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 
         public ExtendedXmlSerializerV2Test()
         {
@@ -44,15 +40,11 @@ namespace ExtendedXmlSerialization.Performance.Tests
         }
 
         [Benchmark]
-        public string SerializationClassWithPrimitive()
-        {
-            return _serializer.Serialize(_obj);
-        }
+        public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
+
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
-        {
-            return _serializer.Deserialize<TestClassOtherClass>(_xml);
-        }
+            => _serializer.Deserialize<TestClassOtherClass>(_xml);
     }
 
     public class XmlSerializerTest
@@ -64,29 +56,28 @@ namespace ExtendedXmlSerialization.Performance.Tests
         public XmlSerializerTest()
         {
             _obj.Init();
-            using (StringWriter textWriter = new StringWriter())
-            {
-                _serializer.Serialize(textWriter, _obj);
-                _xml = textWriter.ToString();
-            }
+            _xml = SerializationClassWithPrimitive();
         }
 
         [Benchmark]
         public string SerializationClassWithPrimitive()
         {
-            using (StringWriter textWriter = new StringWriter())
+            using (var stream = new MemoryStream())
             {
-                _serializer.Serialize(textWriter, _obj);
-                return textWriter.ToString();
+                _serializer.Serialize(stream, _obj);
+                stream.Seek(0, SeekOrigin.Begin);
+                var result = new StreamReader(stream).ReadToEnd();
+                return result;
             }
         }
 
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(TestClassOtherClass));
-            StringReader textReader = new StringReader(_xml);
-            return (TestClassOtherClass)xmlSerializer.Deserialize(textReader);
+            using (StringReader textReader = new StringReader(_xml))
+            {
+                return (TestClassOtherClass) _serializer.Deserialize(textReader);
+            }
         }
     }
 }
