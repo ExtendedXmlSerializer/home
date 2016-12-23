@@ -22,16 +22,18 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IWriter : IDisposable
+    class VersionLocator : IVersionLocator
     {
-        IDisposable New(IContext context);
+        private readonly ISerializationToolsFactory _factory;
 
-        void Emit(IContext context);
+        public VersionLocator(ISerializationToolsFactory factory)
+        {
+            _factory = factory;
+        }
 
-        void Emit(object instance);
+        public int? Get(Type parameter) => _factory.GetConfiguration(parameter)?.Version;
     }
 }

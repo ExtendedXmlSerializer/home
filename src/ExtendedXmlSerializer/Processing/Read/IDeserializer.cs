@@ -21,17 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Model.Write;
+using System.IO;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Processing.Read
 {
-    public interface IWriter : IDisposable
+    public interface IDeserializer
     {
-        IDisposable New(IContext context);
+        object Deserialize(Stream stream);
+    }
 
-        void Emit(IContext context);
-
-        void Emit(object instance);
+    class Deserializer : IDeserializer 
+    {
+        public object Deserialize(Stream stream)
+        {
+            var reader = XmlReader.Create(stream);
+            return null;
+        }
     }
 }

@@ -25,14 +25,6 @@ using System;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class DefaultIdentityLocator : IIdentityLocator
-    {
-        public static DefaultIdentityLocator Default { get; } = new DefaultIdentityLocator();
-        DefaultIdentityLocator() {}
-
-        public object Get(object parameter) => null;
-    }
-
     public class IdentityLocator : IIdentityLocator
     {
         public static IdentityLocator Default { get; } = new IdentityLocator();

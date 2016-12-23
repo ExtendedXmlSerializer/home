@@ -21,17 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Model.Write;
-
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Read
 {
-    public interface IWriter : IDisposable
-    {
-        IDisposable New(IContext context);
-
-        void Emit(IContext context);
-
-        void Emit(object instance);
-    }
+    public class Class {}
 }

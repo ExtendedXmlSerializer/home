@@ -27,11 +27,13 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class EnumerableObjectBase<TInstance, TItem> : Object<TInstance>, IEnumerableObject where TInstance : IEnumerable where TItem : IItem
+    public abstract class EnumerableObjectBase<TInstance, TItem> : Object<TInstance>, IEnumerableObject
+        where TInstance : IEnumerable where TItem : IItem
     {
         private readonly IEnumerable<TItem> _items;
 
-        protected EnumerableObjectBase(TInstance instance, Type type, IEnumerable<IMember> members, IEnumerable<TItem> items) : base(instance, type, members)
+        protected EnumerableObjectBase(TInstance instance, Type type, IEnumerable<IMember> members,
+                                       IEnumerable<TItem> items) : base(instance, type, members)
         {
             _items = items;
         }

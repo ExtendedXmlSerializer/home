@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,16 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Model.Write;
 
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IWriter : IDisposable
+    public class Item : TypeAwareContextBase<IEntity>, IItem
     {
-        IDisposable New(IContext context);
-
-        void Emit(IContext context);
-
-        void Emit(object instance);
+        public Item(IEntity entity, Type elementType, string name) : base(entity, elementType, name) {}
     }
 }

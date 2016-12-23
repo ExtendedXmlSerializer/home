@@ -21,17 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Model.Write;
+using System.IO;
+using System.Xml;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IWriter : IDisposable
+    public class SimpleSerializer : ISerializer
     {
-        IDisposable New(IContext context);
+        public static SimpleSerializer Default { get; } = new SimpleSerializer();
+        SimpleSerializer() {}
 
-        void Emit(IContext context);
-
-        void Emit(object instance);
+        public void Serialize(Stream stream, object instance)
+        {
+            using (var writer = new LegacyWriter(XmlWriter.Create(stream)))
+            {
+                var selector = new MutableEntitySelector();
+                selector.Selector = new EntitySelector(new EntityBuilder(selector));
+                var serialization = new Serialization(new RootBuilder(selector.Selector), new DefaultEmitter(writer));
+                serialization.Execute(instance);
+            }
+        }
     }
 }

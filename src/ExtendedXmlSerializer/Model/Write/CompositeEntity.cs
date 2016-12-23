@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,16 +22,25 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Model.Write;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IWriter : IDisposable
+    public class CompositeEntity : EntityBase, IEnumerable<IContext>
     {
-        IDisposable New(IContext context);
+        private readonly IEnumerable<IContext> _entities;
 
-        void Emit(IContext context);
+        public CompositeEntity(Type type, params IContext[] entities)
+            : this(type, entities.AsEnumerable()) {}
 
-        void Emit(object instance);
+        public CompositeEntity(Type type, IEnumerable<IContext> entities) : base(type)
+        {
+            _entities = entities;
+        }
+
+        public IEnumerator<IContext> GetEnumerator() => _entities.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -38,8 +38,6 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        //readonly private static ISerializationServices Services = SerializationServices.Default;
-
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -329,23 +327,5 @@ namespace ExtendedXmlSerialization
             }
             return defuaultType == null ? null : TypeDefinitions.Default.Get(defuaultType);
         }
-
-        /*interface ISerializationServices : ISerializationToolsFactory, ISerializer {}
-        sealed class SerializationServices : CompositeServiceProvider, ISerializationServices
-        {
-            private readonly ISerializer _serializer;
-            public static ISerializationServices Default { get; } = new SerializationServices();
-            private SerializationServices() : this(Serializer.Default) {}
-
-            SerializationServices(ISerializer serializer) : base(Enumerable.Empty<object>().ToImmutableList())
-            {
-                _serializer = serializer;
-            }
-
-            public IExtendedXmlSerializerConfig GetConfiguration(Type type) => null;
-
-            public IPropertyEncryption EncryptionAlgorithm => null;
-            public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
-        }*/
     }
 }

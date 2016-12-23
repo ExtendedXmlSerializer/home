@@ -102,8 +102,10 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)), keyDefinition.Type);
-                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)), valueDefinition.Type);
+                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)),
+                                            keyDefinition.Type);
+                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)),
+                                                valueDefinition.Type);
                 var result = new DictionaryEntryItem(key, value);
                 yield return result;
             }

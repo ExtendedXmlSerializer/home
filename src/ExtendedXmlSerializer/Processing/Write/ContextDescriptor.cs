@@ -37,12 +37,13 @@ namespace ExtendedXmlSerialization.Processing.Write
             : this(instance, declaredType, declaredType.Name) {}
 
         public ContextDescriptor(object instance, ITypeDefinition declaredType,
-                                  string name) : this(instance, declaredType, declaredType.For(instance), name) {}
+                                 string name) : this(instance, declaredType, declaredType.For(instance), name) {}
 
-        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType) : this(instance, declaredType, actualType, actualType.Name) {}
+        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType)
+            : this(instance, declaredType, actualType, actualType.Name) {}
 
         public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
-                                  string name)
+                                 string name)
         {
             Instance = instance;
             DeclaredType = declaredType;

@@ -21,17 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IWriter : IDisposable
+    class ContextMonitor : IContextMonitor
     {
-        IDisposable New(IContext context);
+        public void Update(IContext context) => Current = context;
 
-        void Emit(IContext context);
-
-        void Emit(object instance);
+        public IContext Current { get; private set; }
     }
 }

@@ -21,9 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model.Write;
@@ -76,7 +73,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                     return _references[instance];
                 }
             }
-            finally 
+            finally
             {
                 if (scanned != null)
                 {

@@ -27,23 +27,6 @@ using ExtendedXmlSerialization.Configuration.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class SimpleSerializer : ISerializer
-    {
-        public static SimpleSerializer Default { get; } = new SimpleSerializer();
-        SimpleSerializer() {}
-
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writer = new LegacyWriter(XmlWriter.Create(stream)))
-            {
-                var selector = new MutableEntitySelector();
-                selector.Selector = new EntitySelector(new EntityBuilder(selector));
-                var serialization = new Serialization(new RootBuilder(selector.Selector), new DefaultEmitter(writer));
-                serialization.Execute(instance);
-            }
-        }
-    }
-
     class LegacySerializer : ISerializer
     {
         private readonly ISerializationToolsFactory _tools;
@@ -55,7 +38,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             : this(tools, new IdentityLocator(tools.Locate), new EncryptionFactory(tools), new VersionLocator(tools)) {}
 
         public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
-                                                   IEncryptionFactory encryption, IVersionLocator version)
+                                IEncryptionFactory encryption, IVersionLocator version)
         {
             _tools = tools;
             _locator = locator;

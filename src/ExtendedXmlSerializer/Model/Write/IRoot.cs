@@ -24,6 +24,4 @@
 namespace ExtendedXmlSerialization.Model.Write
 {
     public interface IRoot : IContext {}
-
-    
 }

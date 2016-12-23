@@ -22,17 +22,9 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface ITypeAwareContext : IContext
-    {
-        Type ReferencedType { get; }
-    }
-
-    public interface IItem : ITypeAwareContext {}
-
     public abstract class TypeAwareContextBase<T> : ContextBase<T>, ITypeAwareContext where T : IEntity
     {
         protected TypeAwareContextBase(T entity, Type referencedType, string name) : base(entity, name)
@@ -41,11 +33,6 @@ namespace ExtendedXmlSerialization.Model.Write
         }
 
         public Type ReferencedType { get; }
-    }
-
-    public class Item : TypeAwareContextBase<IEntity>, IItem
-    {
-        public Item(IEntity entity, Type elementType, string name) : base(entity, elementType, name) {}
     }
 
     /*public class DictionaryEntryObject : EntityBase
@@ -62,12 +49,4 @@ namespace ExtendedXmlSerialization.Model.Write
 
         public object Value { get; }
     }*/
-
-    public class DictionaryEntryItem : Item
-    {
-        readonly private static Type Type = typeof(DictionaryEntry);
-
-        public DictionaryEntryItem(IDictionaryKey key, IDictionaryValue value)
-            : base(new CompositeEntity(Type, key, value), Type, ExtendedXmlSerializer.Item) {}
-    }
 }

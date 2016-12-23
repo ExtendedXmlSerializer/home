@@ -46,7 +46,9 @@ namespace ExtendedXmlSerialization.Processing.Write
             => @this?.GetConfiguration(arg.GetType())?.GetObjectId(arg);
 
         public static object Instance(this IContext @this) => @this.Entity.Instance();
-        public static object Instance(this IEntity @this) => (@this as IPrimitive)?.Value ?? (@this as IObject)?.Instance;
+
+        public static object Instance(this IEntity @this)
+            => (@this as IPrimitive)?.Value ?? (@this as IObject)?.Instance;
 
         public static string Serialize(this ISerializer @this, object instance)
         {

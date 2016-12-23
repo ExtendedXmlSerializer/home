@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Model.Write;
-
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IWriter : IDisposable
+    public struct IdentityGenerationContext
     {
-        IDisposable New(IContext context);
+        public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
+        {
+            UniqueId = uniqueId;
+            Instance = instance;
+            FirstEncounter = firstEncounter;
+        }
 
-        void Emit(IContext context);
-
-        void Emit(object instance);
+        public long UniqueId { get; }
+        public object Instance { get; }
+        public bool FirstEncounter { get; }
     }
 }
