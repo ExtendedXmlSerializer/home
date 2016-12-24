@@ -21,22 +21,110 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
+using System;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model;
 
 namespace ExtendedXmlSerialization.Processing.Read
 {
-    public interface IDeserializer
+    /*class InstanceWriter : IWriter
     {
-        object Deserialize(Stream stream);
-    }
-
-    class Deserializer : IDeserializer 
-    {
-        public object Deserialize(Stream stream)
+        public IDisposable New(IElement element)
         {
-            var reader = XmlReader.Create(stream);
+            return null;
+        }
+
+
+        public void Emit(IElement element) {}
+        public void Emit(object instance) {}
+        public void Dispose() {}
+    }*/
+
+    /*public class RootBuilder : IRootBuilder
+    {
+        private readonly IEntitySelector _builder;
+
+        public RootBuilder(IEntitySelector builder)
+        {
+            _builder = builder;
+        }
+
+        public IElement Get(object parameter)
+        {
+            /*var descriptor = new InstanceDescriptor(parameter);
+            var body = _builder.Get(descriptor);
+            var result = new Root(body, descriptor.Name);#1#
+            return null;
+        }
+    }*/
+
+    public interface IInstanceBuilder : IParameterizedSource<XElement, object> {}
+    class InstanceBuilder : IInstanceBuilder
+    {
+        private readonly IInstanceSelector _selector;
+        private readonly ITypeDefinitionLocator _locator;
+
+        public InstanceBuilder(IInstanceSelector selector, ITypeDefinitionLocator locator)
+        {
+            _selector = selector;
+            _locator = locator;
+        }
+
+        public object Get(XElement parameter)
+        {
+            var definition = _locator.Get(parameter);
+
             return null;
         }
     }
+
+    public interface IInstanceSelector : IParameterizedSource<Descriptor, object> {}
+
+    public interface ITypeDefinitionLocator : IParameterizedSource<XElement, ITypeDefinition> {}
+    class TypeDefinitionLocator : ITypeDefinitionLocator
+    {
+        public static TypeDefinitionLocator Default { get; } = new TypeDefinitionLocator();
+
+        private readonly ITypeParser _parser;
+        private readonly ITypeDefinitions _definitions;
+        private readonly Type _context;
+
+        public TypeDefinitionLocator(Type context = null) : this(Types.Default, TypeDefinitions.Default, context) {}
+
+        public TypeDefinitionLocator(ITypeParser parser, ITypeDefinitions definitions, Type context = null)
+        {
+            _parser = parser;
+            _definitions = definitions;
+            _context = context;
+        }
+
+        public ITypeDefinition Get(XElement parameter)
+        {
+            var value = parameter.Attribute(ExtendedXmlSerializer.Type)?.Value;
+            var type = value != null ? _parser.Get(value) : _context;
+            var result = type != null ? _definitions.Get(type) : null;
+            return result;
+        }
+    }
+
+    public struct Descriptor
+    {
+        public Descriptor(ITypeDefinition definition) : this(definition, definition.Activate()) {}
+
+        public Descriptor(ITypeDefinition definition, object instance)
+        {
+            Definition = definition;
+            Instance = instance;
+        }
+
+        public ITypeDefinition Definition { get; }
+        public object Instance { get; }
+    }
+
+
+    /*class Emitter : IProcessor
+    {
+        public void Execute(IContext parameter) {}
+    }*/
 }

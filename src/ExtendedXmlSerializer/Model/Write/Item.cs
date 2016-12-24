@@ -25,8 +25,8 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Item : TypeAwareContextBase<IEntity>, IItem
+    public class Item : ElementBase<IInstance>, IItem
     {
-        public Item(IEntity entity, Type elementType, string name) : base(entity, elementType, name) {}
+        public Item(IInstance instance, Type elementType, string name) : base(instance, elementType, name) {}
     }
 }

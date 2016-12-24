@@ -27,7 +27,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public interface IContextMonitor
     {
-        void Update(IContext context);
-        IContext Current { get; }
+        void Update(IElement element);
+        IElement Current { get; }
     }
 }

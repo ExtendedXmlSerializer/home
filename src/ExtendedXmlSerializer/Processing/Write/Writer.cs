@@ -29,18 +29,20 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    sealed class LegacyWriter : IWriter
+    public class Writer : IWriter
     {
         private readonly XmlWriter _writer;
         private readonly IObjectSerializer _serializer;
+        private readonly ITypeDefinitions _definitions;
+        private readonly INamespaces _name;
         private readonly IDisposable _end;
 
-        public LegacyWriter(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
-
-        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer)
+        public Writer(XmlWriter writer, INamespaces name, IObjectSerializer serializer, ITypeDefinitions definitions)
         {
             _writer = writer;
             _serializer = serializer;
+            _definitions = definitions;
+            _name = name;
             _end = new DelegatedDisposable(End);
         }
 
@@ -57,15 +59,26 @@ namespace ExtendedXmlSerialization.Processing.Write
                     break;
             }
 
-            _writer.WriteStartElement(element.Name);
+            var ns = _name.Get(element.Instance.Type);
+            _writer.WriteStartElement(element.Name, ns);
             return _end;
         }
 
         public void Emit(IElement element)
         {
-            var instance = element.Instance.Value;
-            var text = _serializer.Serialize(instance);
-            _writer.WriteAttributeString(element.Name, null, text);
+            var ns = _name.Get(element.Instance.Type);
+            var value = element.Instance.Value;
+            var type = value as Type;
+            if (type != null)
+            {
+                var definition = _definitions.Get(type);
+                _writer.WriteStartAttribute(element.Name, ns);
+                _writer.WriteQualifiedName(definition.Name, _name.Get(definition.Type));
+                _writer.WriteEndAttribute();
+                return;
+            }
+            var text = _serializer.Serialize(value);
+            _writer.WriteAttributeString(element.Name, ns, text);
         }
 
         public void Dispose() => _writer.Dispose();

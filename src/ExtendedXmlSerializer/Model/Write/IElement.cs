@@ -25,8 +25,10 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IEntity
+    public interface IElement : IContext
     {
+        string Name { get; }
+
         Type Type { get; }
     }
 }

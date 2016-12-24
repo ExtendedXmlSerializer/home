@@ -32,25 +32,25 @@ using Object = ExtendedXmlSerialization.Model.Write.Object;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class EntityBuilder : IEntityBuilder
+    public class InstanceBuilder : IInstanceBuilder
     {
-        private readonly IEntitySelector _selector;
-        private readonly ISpecification<ContextDescriptor> _member;
+        private readonly IInstanceSelector _selector;
+        private readonly ISpecification<Descriptor> _member;
 
         readonly private static Func<ITypeDefinition, bool> IsEnumerable =
             IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
 
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        public EntityBuilder(IEntitySelector selector) : this(selector, DefaultMemberSpecification.Default) {}
+        public InstanceBuilder(IInstanceSelector selector) : this(selector, DefaultMemberSpecification.Default) {}
 
-        public EntityBuilder(IEntitySelector selector, ISpecification<ContextDescriptor> member)
+        public InstanceBuilder(IInstanceSelector selector, ISpecification<Descriptor> member)
         {
             _selector = selector;
             _member = member;
         }
 
-        public IEntity Get(ContextDescriptor parameter)
+        public IInstance Get(Descriptor parameter)
         {
             var members = CreateMembers(parameter.Instance, parameter.ActualType);
 
@@ -80,10 +80,10 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (var member in definition.Members)
             {
-                var descriptor = new ContextDescriptor(member.GetValue(instance), member.TypeDefinition, member.Name);
+                var descriptor = new Descriptor(member.GetValue(instance), member.TypeDefinition, member.Name);
                 if (_member.IsSatisfiedBy(descriptor))
                 {
-                    yield return new Member(_selector.Get(descriptor), member.Name, member);
+                    yield return new Member(_selector.Get(descriptor), member.Name, descriptor.DeclaredType.Type, member.Metadata.DeclaringType, member.IsWritable);
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (var item in Arrays.Default.AsArray(instance))
             {
-                var descriptor = new ContextDescriptor(item, definition, definition.For(item));
+                var descriptor = new Descriptor(item, definition, definition.For(item));
                 yield return new Item(_selector.Get(descriptor), definition.Type, descriptor.Name);
             }
         }
@@ -102,9 +102,9 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                var key = new DictionaryKey(_selector.Get(new ContextDescriptor(entry.Key, keyDefinition)),
+                var key = new DictionaryKey(_selector.Get(new Descriptor(entry.Key, keyDefinition)),
                                             keyDefinition.Type);
-                var value = new DictionaryValue(_selector.Get(new ContextDescriptor(entry.Value, valueDefinition)),
+                var value = new DictionaryValue(_selector.Get(new Descriptor(entry.Value, valueDefinition)),
                                                 valueDefinition.Type);
                 var result = new DictionaryEntryItem(key, value);
                 yield return result;

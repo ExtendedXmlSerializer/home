@@ -21,14 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Model.Write;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ExtendedXmlSerialization.Processing.Write
+namespace ExtendedXmlSerialization.Model.Write
 {
-    class MutableEntitySelector : IEntitySelector
+    public class CompositeInstance : InstanceBase<IEnumerable<IElement>>, IEnumerable<IElement>
     {
-        public IEntitySelector Selector { get; set; }
+        public CompositeInstance(Type type, params IElement[] entities)
+            : this(type, entities.AsEnumerable()) {}
 
-        public IEntity Get(ContextDescriptor parameter) => Selector?.Get(parameter);
+        public CompositeInstance(Type type, IEnumerable<IElement> entities) : base(entities, type) {}
+
+        public IEnumerator<IElement> GetEnumerator() => Instance.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

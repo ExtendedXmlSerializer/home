@@ -31,16 +31,13 @@ namespace ExtendedXmlSerialization.Model.Write
         public Object(object instance, Type type, IEnumerable<IMember> members) : base(instance, type, members) {}
     }
 
-    public class Object<T> : EntityBase, IObject<T>
+    public class Object<T> : InstanceBase<T>, IObject<T>
     {
-        public Object(T instance, Type type, IEnumerable<IMember> members) : base(type)
+        public Object(T instance, Type type, IEnumerable<IMember> members) : base(instance, type)
         {
-            Instance = instance;
             Members = members;
         }
 
-        public T Instance { get; }
-        object IObject.Instance => Instance;
         public IEnumerable<IMember> Members { get; }
     }
 }

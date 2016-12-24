@@ -21,17 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ContextBase<T> : NodeBase, IContext<T> where T : IEntity
+    public interface IInstance
     {
-        protected ContextBase(T entity, string name) : base(name)
-        {
-            Entity = entity;
-        }
+        Type Type { get; }
 
-        public T Entity { get; }
-
-        IEntity IContext.Entity => Entity;
+        object Value { get; }
     }
 }

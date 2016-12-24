@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    public interface IEncryptionFactory : IParameterizedSource<IContext, IPropertyEncryption> {}
+    public interface IEncryptionFactory : IParameterizedSource<IElement, IPropertyEncryption> {}
 
     class EncryptionFactory : IEncryptionFactory
     {
@@ -37,17 +37,16 @@ namespace ExtendedXmlSerialization.Configuration.Write
             _factory = factory;
         }
 
-        public IPropertyEncryption Get(IContext parameter)
+        public IPropertyEncryption Get(IElement parameter)
         {
             var member = parameter as IMember;
             if (member != null)
             {
-                var definition = member.Definition;
-                var configuration = _factory.GetConfiguration(definition.Metadata.DeclaringType);
+                var configuration = _factory.GetConfiguration(member.DeclaringType);
                 if (configuration != null)
                 {
                     var allow =
-                        configuration.CheckPropertyEncryption(definition.Name);
+                        configuration.CheckPropertyEncryption(member.Name);
                     var result = allow ? _factory.EncryptionAlgorithm : null;
                     return result;
                 }

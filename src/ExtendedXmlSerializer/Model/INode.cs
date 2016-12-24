@@ -21,10 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using ExtendedXmlSerialization.Model.Write;
+using ExtendedXmlSerialization.Processing;
+
 namespace ExtendedXmlSerialization.Model
 {
-    public interface INode
+    public interface IContext
     {
-        string Name { get; }
+        IInstance Instance { get; }
+    }
+
+    public abstract class ContextBase<T> : IContext where T : IInstance
+    {
+        protected ContextBase(T instance)
+        {
+            Instance = instance;
+        }
+
+        public T Instance { get; }
+
+        IInstance IContext.Instance => Instance;
+    }
+
+    public static class Extensions
+    {
+        readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
+
+        public static ITypeDefinition For(this ITypeDefinition @this, object value)
+        {
+            var type = value?.GetType();
+            var result = type != null && type != @this.Type ? Definition(type) : @this;
+            return result;
+        }
+
+        /*public static object Instance(this IInstance @this)
+            => (@this as IPrimitive)?.Value ?? (@this as IObject)?.Instance;*/
     }
 }

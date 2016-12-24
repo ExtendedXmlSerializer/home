@@ -25,15 +25,10 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : EntityBase, IReference
+    public class Reference : InstanceBase<object>, IReference
     {
         public Reference(IUniqueObject entity) : this(entity.Id, entity.Type) {}
 
-        public Reference(object id, Type type) : base(type)
-        {
-            ReferencedId = id;
-        }
-
-        public object ReferencedId { get; }
+        public Reference(object id, Type type) : base(id, type) {}
     }
 }

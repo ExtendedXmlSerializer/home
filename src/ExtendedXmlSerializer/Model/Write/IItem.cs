@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IItem : ITypeAwareContext {}
+    public interface IItem : IElement {}
 }

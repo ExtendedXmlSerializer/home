@@ -22,11 +22,10 @@
 // SOFTWARE.
 
 using System;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface INamespaceLocator
-    {
-        Uri Locate(object candidate);
-    }
+    public interface INamespaces : IParameterizedSource<Type, string> {}
 }

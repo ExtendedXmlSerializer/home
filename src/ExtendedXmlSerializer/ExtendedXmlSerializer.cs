@@ -258,13 +258,13 @@ namespace ExtendedXmlSerialization
 
         private object ReadXmlDictionary(XElement currentNode, ITypeDefinition type, object instance = null)
         {
-            int arrayCount = currentNode.Elements().Count();
             var elements = currentNode.Elements().ToArray();
+            var count = elements.Length;
 
             var definition = GetElementTypeDefinition(currentNode) ?? type;
             object dict = instance ?? definition.Activate();
 
-            for (int i = 0; i < arrayCount; i++)
+            for (int i = 0; i < count; i++)
             {
                 var element = elements[i];
 
@@ -320,12 +320,10 @@ namespace ExtendedXmlSerialization
 
         private static ITypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)
         {
-            var typeAttribute = element.Attribute(Type);
-            if (typeAttribute != null)
-            {
-                return TypeDefinitions.Default.Get(Types.Default.Get(typeAttribute.Value));
-            }
-            return defuaultType == null ? null : TypeDefinitions.Default.Get(defuaultType);
+            var value = element.Attribute(Type)?.Value;
+            var type = value != null ? Types.Default.Get(value) : defuaultType;
+            var result = type != null ? TypeDefinitions.Default.Get(type) : null;
+            return result;
         }
     }
 }

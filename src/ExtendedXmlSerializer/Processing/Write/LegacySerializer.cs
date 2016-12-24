@@ -53,8 +53,8 @@ namespace ExtendedXmlSerialization.Processing.Write
             var inner = new LegacyWriter(xmlWriter, new EncryptedObjectSerializer(monitor, _encryption));
             using (var writer = new LegacyCustomWriter(_tools, inner, xmlWriter))
             {
-                var selector = new MutableEntitySelector();
-                selector.Selector = new EntitySelector(new EntityBuilder(selector));
+                var selector = new MutableInstanceSelector();
+                selector.Selector = new InstanceSelector(new InstanceBuilder(selector));
                 var serialization = new Serialization(new RootBuilder(selector.Selector),
                                                       new LegacyEmitter(writer, monitor, _locator, _version));
                 serialization.Execute(instance);

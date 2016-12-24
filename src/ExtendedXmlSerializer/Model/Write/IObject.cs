@@ -25,15 +25,13 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IObject<out T> : IObject
+    public interface IObject : IInstance
     {
-        new T Instance { get; }
+        IEnumerable<IMember> Members { get; }
     }
 
-    public interface IObject : IEntity
+    public interface IObject<out T> : IObject
     {
-        object Instance { get; }
-
-        IEnumerable<IMember> Members { get; }
+        T Instance { get; }
     }
 }

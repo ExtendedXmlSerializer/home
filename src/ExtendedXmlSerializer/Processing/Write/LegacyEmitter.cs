@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class LegacyEmitter : IEmitter
+    sealed class LegacyEmitter : IEmitter
     {
         private readonly IWriter _writer;
         private readonly IContextMonitor _monitor;
@@ -46,11 +46,11 @@ namespace ExtendedXmlSerialization.Processing.Write
             _version = version;
         }
 
-        public void Execute(IContext parameter)
+        public void Execute(IElement parameter)
         {
             _monitor.Update(parameter);
 
-            var entity = parameter.Entity;
+            var entity = parameter.Instance;
             var primitive = entity as IPrimitive;
             if (primitive != null)
             {
@@ -67,14 +67,14 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 using (_writer.New(parameter))
                 {
-                    var instance = @object.Instance;
+                    var instance = @object.Value;
                     var identity = _scanned.Contains(instance)
                         ? parameter is IItem
                         : _generator.For(instance).FirstEncounter;
                     var id = _locator.Get(instance);
                     ApplyType(parameter, id != null && identity);
 
-                    var version = _version.Get(parameter.Entity.Type);
+                    var version = _version.Get(parameter.Instance.Type);
                     if (version != null && version.Value > 0)
                     {
                         _writer.Emit(new VersionProperty(version.Value));
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var composite = entity as CompositeEntity;
+            var composite = entity as CompositeInstance;
             if (composite != null)
             {
                 using (_writer.New(parameter))
@@ -134,35 +134,29 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private static bool ShouldApply(IContext context, bool? identity)
+        private static bool ShouldApply(IElement element, bool? identity)
         {
-            var entity = context.Entity;
-            if (context is IRoot)
+            var entity = element.Instance;
+            if (element is IRoot)
             {
                 return !(entity is IEnumerableObject) && !(entity is IPrimitive);
             }
 
-            var member = context as IMember;
+            var member = element as IMember;
             if (member != null)
             {
                 return identity.GetValueOrDefault() ||
-                       (member.Definition.IsWritable && entity.Type != member.Definition.Type);
+                       (member.IsWritable && entity.Type != member.Type);
             }
 
-            var item = context as ITypeAwareContext;
-            if (item != null)
-            {
-                return identity.GetValueOrDefault() || item.ReferencedType != entity.Type;
-            }
-
-            return false;
+            return identity.GetValueOrDefault() || element.Type != entity.Type;
         }
 
-        private void ApplyType(IContext context, bool? tag = null)
+        private void ApplyType(IElement element, bool? tag = null)
         {
-            if (ShouldApply(context, tag))
+            if (ShouldApply(element, tag))
             {
-                _writer.Emit(new TypeProperty(context.Entity.Type));
+                _writer.Emit(new TypeProperty(element.Instance.Type));
             }
         }
     }

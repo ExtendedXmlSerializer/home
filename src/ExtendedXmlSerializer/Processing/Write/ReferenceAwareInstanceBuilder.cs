@@ -27,22 +27,22 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class ReferenceAwareEntityBuilder : IEntityBuilder
+    public class ReferenceAwareInstanceBuilder : IInstanceBuilder
     {
-        private readonly IEntityBuilder _builder;
+        private readonly IInstanceBuilder _builder;
         private readonly IIdentityLocator _locator;
         readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
         readonly ISet<object> _scanned = new HashSet<object>();
 
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public ReferenceAwareEntityBuilder(IEntityBuilder builder, IIdentityLocator locator)
+        public ReferenceAwareInstanceBuilder(IInstanceBuilder builder, IIdentityLocator locator)
         {
             _builder = builder;
             _locator = locator;
         }
 
-        public IEntity Get(ContextDescriptor parameter)
+        public IInstance Get(Descriptor parameter)
         {
             // Scan ahead:
             var instance = parameter.Instance;
@@ -89,7 +89,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                       $"Recursion detected while building entity '{instance}' of type '{parameter.DeclaredType}'.");
         }
 
-        private IEntity For(ContextDescriptor descriptor)
+        private IInstance For(Descriptor descriptor)
         {
             var key = descriptor.Instance;
             var context = _generator.For(key);

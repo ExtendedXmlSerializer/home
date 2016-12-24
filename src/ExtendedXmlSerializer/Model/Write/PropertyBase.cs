@@ -28,8 +28,8 @@ namespace ExtendedXmlSerialization.Model.Write
         protected PropertyBase(T instance, string name) : base(new Primitive<T>(instance), name) {}
     }
 
-    public abstract class PropertyBase : ContextBase<IEntity>, IProperty
+    public abstract class PropertyBase : ElementBase<IInstance>, IProperty
     {
-        protected PropertyBase(IEntity entity, string name) : base(entity, name) {}
+        protected PropertyBase(IInstance instance, string name) : base(instance, name) {}
     }
 }

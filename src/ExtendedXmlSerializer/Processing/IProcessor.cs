@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
-{
-    public interface IContext : INode
-    {
-        IEntity Entity { get; }
-    }
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Model;
 
-    public interface IContext<out T> : IContext where T : IEntity
-    {
-        new T Entity { get; }
-    }
+namespace ExtendedXmlSerialization.Processing
+{
+    public interface IProcessor<in T> : ICommand<T> where T : IContext {}
 }

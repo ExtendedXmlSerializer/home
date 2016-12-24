@@ -26,15 +26,12 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model;
 
-#if NETSTANDARD1_6 || NETSTANDARD2_0
-
-#endif
-
 namespace ExtendedXmlSerialization.Processing
 {
-    public class TypeDefinitions : WeakCache<Type, ITypeDefinition>
+    public interface ITypeDefinitions : IParameterizedSource<Type, ITypeDefinition> {}
+    public class TypeDefinitions : WeakCache<Type, ITypeDefinition>, ITypeDefinitions
     {
-        public static IParameterizedSource<Type, ITypeDefinition> Default { get; } = new TypeDefinitions();
+        public static ITypeDefinitions Default { get; } = new TypeDefinitions();
         TypeDefinitions() : base(key => new TypeDefinition(key)) {}
     }
 }

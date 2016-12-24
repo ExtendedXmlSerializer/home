@@ -33,7 +33,8 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace ExtendedXmlSerialization.Processing
 {
-    public class Types : ConcurrentDictionary<string, Type>, IParameterizedSource<string, Type>
+    public interface ITypeParser : IParameterizedSource<string, Type> {}
+    public class Types : ConcurrentDictionary<string, Type>, ITypeParser
     {
         public static Types Default { get; } = new Types();
         Types() {}

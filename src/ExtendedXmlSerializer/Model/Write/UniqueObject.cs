@@ -25,7 +25,7 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class UniqueObject : Object, IUniqueObject
     {
-        public UniqueObject(object id, IObject @object) : base(@object.Instance, @object.Type, @object.Members)
+        public UniqueObject(object id, IObject @object) : base(@object.Value, @object.Type, @object.Members)
         {
             Id = id;
         }

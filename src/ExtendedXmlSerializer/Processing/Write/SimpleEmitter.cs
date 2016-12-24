@@ -21,22 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class DefaultEmitter : IEmitter
+    class SimpleEmitter : IEmitter
     {
         private readonly IWriter _writer;
 
-        public DefaultEmitter(IWriter writer)
+        public SimpleEmitter(IWriter writer)
         {
             _writer = writer;
         }
 
-        public void Execute(IContext parameter)
+        public void Execute(IElement parameter)
         {
-            var primitive = parameter.Entity as IPrimitive;
+            var primitive = parameter.Instance as IPrimitive;
             if (primitive != null)
             {
                 using (_writer.New(parameter))
@@ -47,7 +48,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var instance = parameter.Entity as IObject;
+            var instance = parameter.Instance as IObject;
             if (instance != null)
             {
                 using (_writer.New(parameter))
@@ -71,7 +72,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var composite = parameter.Entity as CompositeEntity;
+            var composite = parameter.Instance as IEnumerable<IElement>;
             if (composite != null)
             {
                 using (_writer.New(parameter))
@@ -81,15 +82,14 @@ namespace ExtendedXmlSerialization.Processing.Write
                         Execute(context);
                     }
                 }
-                return;
             }
         }
 
-        private static bool ShouldApply(IContext context)
+        private static bool ShouldApply(IElement element)
         {
-            var entity = context.Entity;
+            var entity = element.Instance;
             var enumerable = entity is IEnumerableObject;
-            if (context is IRoot)
+            if (element is IRoot)
             {
                 return !enumerable && !(entity is IPrimitive);
             }
@@ -100,20 +100,20 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return true;
             }
 
-            var member = context as IMember;
+            var member = element as IMember;
             if (member != null)
             {
-                return member.Definition.IsWritable && entity.Type != member.Definition.Type;
+                return member.IsWritable && entity.Type != member.Type;
             }
 
             return false;
         }
 
-        private void ApplyType(IContext context)
+        private void ApplyType(IElement element)
         {
-            if (ShouldApply(context))
+            if (ShouldApply(element))
             {
-                _writer.Emit(new TypeProperty(context.Entity.Type));
+                _writer.Emit(new TypeProperty(element.Instance.Type));
             }
         }
     }

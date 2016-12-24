@@ -24,6 +24,7 @@
 using System;
 using System.Xml;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -49,27 +50,27 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         private bool Enabled { get; set; } = true;
 
-        public IDisposable New(IContext context)
+        public IDisposable New(IElement element)
         {
             if (Enabled)
             {
-                var result = _inner.New(context);
-                var configuration = _tools.GetConfiguration(context.Entity.Type);
+                var result = _inner.New(element);
+                var configuration = _tools.GetConfiguration(element.Instance.Type);
                 if (configuration?.IsCustomSerializer ?? false)
                 {
                     Enabled = false;
-                    return new Context(configuration, _writer, context.Instance(), result, _complete);
+                    return new Context(configuration, _writer, element.Instance.Value, result, _complete);
                 }
                 return result;
             }
             return Empty;
         }
 
-        public void Emit(IContext context)
+        public void Emit(IElement element)
         {
-            if (Enabled || context is IProperty)
+            if (Enabled || element is IProperty)
             {
-                _inner.Emit(context);
+                _inner.Emit(element);
             }
         }
 

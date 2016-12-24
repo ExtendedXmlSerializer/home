@@ -23,8 +23,5 @@
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IReference : IEntity
-    {
-        object ReferencedId { get; }
-    }
+    public interface IReference : IInstance {}
 }

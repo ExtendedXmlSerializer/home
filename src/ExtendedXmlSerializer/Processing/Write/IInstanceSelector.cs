@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model.Write;
 
-namespace ExtendedXmlSerialization.Model.Write
+namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface ITypeAwareContext : IContext
-    {
-        Type ReferencedType { get; }
-    }
+    public interface IInstanceSelector : IParameterizedSource<Descriptor, IInstance> {}
 }

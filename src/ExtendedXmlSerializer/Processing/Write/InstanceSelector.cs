@@ -21,32 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Model.Write;
 
-namespace ExtendedXmlSerialization.Model.Write
+namespace ExtendedXmlSerialization.Processing.Write
 {
-    public abstract class TypeAwareContextBase<T> : ContextBase<T>, ITypeAwareContext where T : IEntity
+    public class InstanceSelector : IInstanceSelector
     {
-        protected TypeAwareContextBase(T entity, Type referencedType, string name) : base(entity, name)
+        private readonly IInstanceBuilder _builder;
+
+        public InstanceSelector(IInstanceBuilder builder)
         {
-            ReferencedType = referencedType;
+            _builder = builder;
         }
 
-        public Type ReferencedType { get; }
-    }
-
-    /*public class DictionaryEntryObject : EntityBase
-    {
-        public DictionaryEntryObject() : base(Type) {}
-    }
-
-    public class Primitive : EntityBase, IPrimitive
-    {
-        public Primitive(IDictionaryKey key, Type type) : base(type)
+        public IInstance Get(Descriptor parameter)
         {
-            Value = value;
-        }
+            var type = parameter.ActualType;
+            if (type.IsPrimitive)
+            {
+                return new Primitive(parameter.Instance, type.Type);
+            }
 
-        public object Value { get; }
-    }*/
+            var instance = _builder.Get(parameter);
+            if (instance != null)
+            {
+                return instance;
+            }
+
+            throw new SerializationException(
+                      $"Could not locate an entity for '{parameter.Instance}' of type '{type.Type}'.");
+        }
+    }
 }

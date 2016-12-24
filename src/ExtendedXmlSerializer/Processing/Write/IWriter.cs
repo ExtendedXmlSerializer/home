@@ -28,9 +28,9 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public interface IWriter : IDisposable
     {
-        IDisposable New(IContext context);
+        IDisposable New(IElement element);
 
-        void Emit(IContext context);
+        void Emit(IElement element);
 
         void Emit(object instance);
     }

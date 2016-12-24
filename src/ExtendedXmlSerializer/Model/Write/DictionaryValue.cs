@@ -25,9 +25,9 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class DictionaryValue : TypeAwareContextBase<IEntity>, IDictionaryValue
+    public class DictionaryValue : ElementBase<IInstance>, IDictionaryValue
     {
-        public DictionaryValue(IEntity @object, Type valueType)
+        public DictionaryValue(IInstance @object, Type valueType)
             : base(@object, valueType, ExtendedXmlSerializer.Value) {}
     }
 }

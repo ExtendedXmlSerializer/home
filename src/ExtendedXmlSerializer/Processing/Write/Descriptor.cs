@@ -26,23 +26,23 @@ using ExtendedXmlSerialization.Model;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public struct ContextDescriptor
+    public struct Descriptor
     {
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        public ContextDescriptor(object instance)
+        public Descriptor(object instance)
             : this(instance, Definition(instance.GetType())) {}
 
-        public ContextDescriptor(object instance, ITypeDefinition declaredType)
+        public Descriptor(object instance, ITypeDefinition declaredType)
             : this(instance, declaredType, declaredType.Name) {}
 
-        public ContextDescriptor(object instance, ITypeDefinition declaredType,
+        public Descriptor(object instance, ITypeDefinition declaredType,
                                  string name) : this(instance, declaredType, declaredType.For(instance), name) {}
 
-        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType)
+        public Descriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType)
             : this(instance, declaredType, actualType, actualType.Name) {}
 
-        public ContextDescriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
+        public Descriptor(object instance, ITypeDefinition declaredType, ITypeDefinition actualType,
                                  string name)
         {
             Instance = instance;

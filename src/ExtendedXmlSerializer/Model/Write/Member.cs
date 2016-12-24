@@ -21,15 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Member : ContextBase<IEntity>, IMember
+    public class Member : ElementBase<IInstance>, IMember
     {
-        public Member(IEntity entity, string name, IMemberDefinition definition) : base(entity, name)
+        public Member(IInstance instance, string name, Type type, Type declaringType, bool isWritable) : base(instance, type, name)
         {
-            Definition = definition;
+            DeclaringType = declaringType;
+            IsWritable = isWritable;
         }
 
-        public IMemberDefinition Definition { get; }
+
+        public Type DeclaringType { get; }
+        public bool IsWritable { get; }
     }
 }

@@ -29,6 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
+/*
     class NamespaceWalker : ObjectWalkerBase<object, IEnumerable<Uri>>
     {
         private readonly INamespaceLocator _locator;
@@ -144,4 +145,5 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
     }
+*/
 }

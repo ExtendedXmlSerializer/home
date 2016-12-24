@@ -21,10 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model
+using System;
+
+namespace ExtendedXmlSerialization.Model.Write
 {
-    public interface IQualifiedNode : INode
+    public abstract class ElementBase<T> : ContextBase<T>, IElement where T : IInstance
     {
-        ITypeDefinition DeclaredType { get; }
+        protected ElementBase(T instance, string name) : this(instance, instance.Type, name) {}
+
+        protected ElementBase(T instance, Type type, string name) : base(instance)
+        {
+            Type = type;
+            Name = name;
+        }
+
+        public Type Type { get; }
+        public string Name { get; }
     }
 }

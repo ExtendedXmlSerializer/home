@@ -30,13 +30,8 @@ namespace ExtendedXmlSerialization.Model.Write
         public Primitive(T value) : base(value, typeof(T)) {}
     }
 
-    public class Primitive : EntityBase, IPrimitive
+    public class Primitive : InstanceBase<object>, IPrimitive
     {
-        public Primitive(object value, Type type) : base(type)
-        {
-            Value = value;
-        }
-
-        public object Value { get; }
+        public Primitive(object value, Type type) : base(value, type) {}
     }
 }

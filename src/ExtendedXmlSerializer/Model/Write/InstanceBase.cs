@@ -22,25 +22,20 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class CompositeEntity : EntityBase, IEnumerable<IContext>
+    public abstract class InstanceBase<T> : IInstance
     {
-        private readonly IEnumerable<IContext> _entities;
-
-        public CompositeEntity(Type type, params IContext[] entities)
-            : this(type, entities.AsEnumerable()) {}
-
-        public CompositeEntity(Type type, IEnumerable<IContext> entities) : base(type)
+        protected InstanceBase(T instance, Type type)
         {
-            _entities = entities;
+            Instance = instance;
+            Type = type;
         }
 
-        public IEnumerator<IContext> GetEnumerator() => _entities.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public T Instance { get; }
+        public Type Type { get; }
+
+        object IInstance.Value => Instance;
     }
 }

@@ -35,9 +35,9 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             using (var writer = new LegacyWriter(XmlWriter.Create(stream)))
             {
-                var selector = new MutableEntitySelector();
-                selector.Selector = new EntitySelector(new EntityBuilder(selector));
-                var serialization = new Serialization(new RootBuilder(selector.Selector), new DefaultEmitter(writer));
+                var selector = new MutableInstanceSelector();
+                selector.Selector = new InstanceSelector(new InstanceBuilder(selector));
+                var serialization = new Serialization(new RootBuilder(selector.Selector), new SimpleEmitter(writer));
                 serialization.Execute(instance);
             }
         }
