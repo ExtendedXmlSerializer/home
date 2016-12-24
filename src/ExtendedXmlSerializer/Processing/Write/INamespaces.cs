@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing.Write

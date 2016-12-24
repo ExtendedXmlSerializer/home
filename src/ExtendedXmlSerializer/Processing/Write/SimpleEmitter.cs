@@ -37,18 +37,18 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         public void Execute(IElement parameter)
         {
-            var primitive = parameter.Instance as IPrimitive;
+            var primitive = parameter.Content as IPrimitive;
             if (primitive != null)
             {
                 using (_writer.New(parameter))
                 {
                     ApplyType(parameter);
-                    _writer.Emit(primitive.Value);
+                    _writer.Emit(primitive.Instance);
                 }
                 return;
             }
 
-            var instance = parameter.Instance as IObject;
+            var instance = parameter.Content as IObject;
             if (instance != null)
             {
                 using (_writer.New(parameter))
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var composite = parameter.Instance as IEnumerable<IElement>;
+            var composite = parameter.Content as IEnumerable<IElement>;
             if (composite != null)
             {
                 using (_writer.New(parameter))
@@ -87,7 +87,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         private static bool ShouldApply(IElement element)
         {
-            var entity = element.Instance;
+            var entity = element.Content;
             var enumerable = entity is IEnumerableObject;
             if (element is IRoot)
             {
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var member = element as IMember;
             if (member != null)
             {
-                return member.IsWritable && entity.Type != member.Type;
+                return member.IsWritable && entity.Type != member.DefinedType;
             }
 
             return false;
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             if (ShouldApply(element))
             {
-                _writer.Emit(new TypeProperty(element.Instance.Type));
+                _writer.Emit(new TypeProperty(element.Content.Type));
             }
         }
     }

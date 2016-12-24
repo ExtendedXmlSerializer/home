@@ -19,7 +19,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Numerics;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void Struct()
         {
-            var vector2 = new Vector2(1, 2);
+            var vector2 = new System.Numerics.Vector2(1, 2);
 
             CheckSerializationAndDeserializationByXml(
                 @"<?xml version=""1.0"" encoding=""utf-8""?>

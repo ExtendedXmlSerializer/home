@@ -21,14 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class Reference : InstanceBase<object>, IReference
+    public class Reference : InstanceBase<IObject>, IReference
     {
-        public Reference(IUniqueObject entity) : this(entity.Id, entity.Type) {}
-
-        public Reference(object id, Type type) : base(id, type) {}
+        public Reference(IObject instance) : base(instance, instance.Type) {}
     }
 }

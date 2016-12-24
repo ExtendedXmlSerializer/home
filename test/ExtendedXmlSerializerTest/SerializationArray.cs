@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void ArrayOfObject()
         {
-            var obj = new TestClassPrimitiveTypes[]
+            var obj = new[]
             {
                 new TestClassPrimitiveTypes(), 
                 new TestClassPrimitiveTypes(), 

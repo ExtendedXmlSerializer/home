@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
     {
         public TestClassWithSerializerConfig()
         {
-            this.CustomSerializer(Serializer, Deserialize);
+            CustomSerializer(Serializer, Deserialize);
         }
 
         public TestClassWithSerializer Deserialize(XElement element)

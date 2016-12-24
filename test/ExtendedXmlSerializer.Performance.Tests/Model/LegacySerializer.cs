@@ -369,9 +369,6 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 return currentObject;
             }
 
-            private static object GetPrimitiveValue(ITypeDefinition type, XElement currentNode)
-                => GetPrimitiveValue(type, currentNode.Value, currentNode.Name.LocalName);
-
             private static object GetPrimitiveValue(ITypeDefinition type, string value, string name)
             {
                 try

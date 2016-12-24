@@ -36,6 +36,6 @@ namespace ExtendedXmlSerialization.Model.Write
         public T Instance { get; }
         public Type Type { get; }
 
-        object IInstance.Value => Instance;
+        object IInstance.Instance => Instance;
     }
 }

@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.AspCore.Samples.ModelConfig
     {
         public TestClassConfig()
         {
-            this.AddMigration(Migration1).AddMigration(Migration2);
+            AddMigration(Migration1).AddMigration(Migration2);
         }
         private void Migration1(XElement node)
         {

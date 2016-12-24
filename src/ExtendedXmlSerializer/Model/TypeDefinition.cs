@@ -144,7 +144,7 @@ namespace ExtendedXmlSerialization.Model
             var result = new List<IMemberDefinition>();
             if (IsObjectToSerialize)
             {
-                int order = -1;
+                int order;
 
                 foreach (PropertyInfo propertyInfo in Type.GetProperties())
                 {

@@ -21,9 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration
+/*namespace ExtendedXmlSerialization.Configuration
 {
-/*
         public abstract class ExtensionBase<T> : IExtensionSpecification, IExtensionDefinition where T : IServiceProvider
         {
             public abstract void Accept(IExtensionRegistry registry);
@@ -60,5 +59,4 @@ namespace ExtendedXmlSerialization.Configuration
             public virtual void Executed(T services) {}#1#
             public virtual void Completed(T services) {}
         }
-    */
-}
+}*/

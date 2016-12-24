@@ -21,9 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Model.Write
+/*namespace ExtendedXmlSerialization.Model.Write
 {
-    /*
     public interface IAttachedProperties
     {
         void Attach(object instance, IProperty property);
@@ -53,5 +52,4 @@ namespace ExtendedXmlSerialization.Model.Write
 
         public RootNamespace(Uri identifier) : base(Prefix, identifier) {}
     }
-    */
-}
+}*/

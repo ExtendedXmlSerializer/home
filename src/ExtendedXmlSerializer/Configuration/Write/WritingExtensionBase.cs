@@ -21,9 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration.Write
+/*namespace ExtendedXmlSerialization.Configuration.Write
 {
-/*
         public abstract class WritingExtensionBase : ExtensionBase<ISerialization> {}
-    */
-}
+}*/

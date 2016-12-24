@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Model.Write
     {
         Type Type { get; }
 
-        object Value { get; }
+        object Instance { get; }
     }
 }

@@ -19,12 +19,13 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationDifferentProperty:BaseTest
+    public class SerializationDifferentProperty : BaseTest
     {
         [Fact]
         public void DifferentProperty()
@@ -32,8 +33,7 @@ namespace ExtendedXmlSerialization.Test
             var obj = new TestClassPropertyType();
             obj.Init();
 
-            this.CheckCompatibilityWithDefaultSerializator(obj);
-
-    }
+            CheckCompatibilityWithDefaultSerializator(obj);
+        }
     }
 }

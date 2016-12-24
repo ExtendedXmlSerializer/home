@@ -28,9 +28,9 @@ namespace ExtendedXmlSerialization.Model.Write
 {
     public class DictionaryEntryItem : Item
     {
-        readonly private new static Type Type = typeof(DictionaryEntry);
+        readonly private static Type Type = typeof(DictionaryEntry);
 
         public DictionaryEntryItem(IDictionaryKey key, IDictionaryValue value)
-            : base(new CompositeInstance(Type, key, value), Type, ExtendedXmlSerializer.Item) {}
+            : base(new Elements(key, value), Type, ExtendedXmlSerializer.Item) {}
     }
 }

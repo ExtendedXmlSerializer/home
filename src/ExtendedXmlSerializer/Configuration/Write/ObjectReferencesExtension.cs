@@ -21,9 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration.Write
+/*namespace ExtendedXmlSerialization.Configuration.Write
 {
-/*
             public class ObjectReferencesExtension : WritingExtensionBase
             {
                 private readonly WeakCache<ISerialization, Context> _contexts = new WeakCache<ISerialization, Context>(_ => new Context());
@@ -113,5 +112,4 @@ namespace ExtendedXmlSerialization.Configuration.Write
                     public ISet<object> Elements { get; }
                 }
             }
-        */
-}
+}*/

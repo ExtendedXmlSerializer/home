@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void SerializeBool()
         {
-            var obj = true;
+            const bool obj = true;
 
             CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <boolean>True</boolean>", obj);
@@ -69,7 +69,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void SerializeArrayOfInt()
         {
-            var obj = new int[] {1, 2, 3};
+            var obj = new[] {1, 2, 3};
 
             CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <ArrayOfInt32>

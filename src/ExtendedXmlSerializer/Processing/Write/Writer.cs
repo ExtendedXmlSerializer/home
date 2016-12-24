@@ -23,7 +23,6 @@
 
 using System;
 using System.Xml;
-using ExtendedXmlSerialization.Configuration.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model.Write;
 
@@ -59,15 +58,15 @@ namespace ExtendedXmlSerialization.Processing.Write
                     break;
             }
 
-            var ns = _name.Get(element.Instance.Type);
+            var ns = _name.Get(element.Content.Type);
             _writer.WriteStartElement(element.Name, ns);
             return _end;
         }
 
         public void Emit(IElement element)
         {
-            var ns = _name.Get(element.Instance.Type);
-            var value = element.Instance.Value;
+            var ns = _name.Get(element.Content.Type);
+            var value = element.Content.Instance;
             var type = value as Type;
             if (type != null)
             {

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,53 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
-using ExtendedXmlSerialization.Configuration.Write;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    sealed class LegacyWriter : IWriter
+    public class ReferencedInstanceBuilder : IInstanceBuilder
     {
-        private readonly XmlWriter _writer;
-        private readonly IObjectSerializer _serializer;
-        private readonly IDisposable _end;
+        private readonly IInstanceBuilder _builder;
+        readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
 
-        public LegacyWriter(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
+        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public LegacyWriter(XmlWriter writer, IObjectSerializer serializer)
+        public ReferencedInstanceBuilder(IInstanceBuilder builder)
         {
-            _writer = writer;
-            _serializer = serializer;
-            _end = new DelegatedDisposable(End);
+            _builder = builder;
         }
 
-        private void End() => _writer.WriteEndElement();
-
-        public void Emit(object instance) => _writer.WriteString(_serializer.Serialize(instance));
-
-        public IDisposable New(IElement element)
+        public IInstance Get(Descriptor parameter)
         {
-            switch (_writer.WriteState)
+            var instance = parameter.Instance;
+            var context = _generator.For(instance);
+            if (context.FirstEncounter)
             {
-                case WriteState.Start:
-                    _writer.WriteStartDocument();
-                    break;
+                var result = _builder.Get(parameter);
+                var o = result as IObject;
+                if (o != null)
+                {
+                    _references.Add(instance, new Reference(o));
+                }
+                return result;
             }
 
-            _writer.WriteStartElement(element.Name);
-            return _end;
-        }
+            if (_references.ContainsKey(instance))
+            {
+                return _references[instance];
+            }
 
-        public void Emit(IElement element)
-        {
-            var instance = element.Content.Instance;
-            var text = _serializer.Serialize(instance);
-            _writer.WriteAttributeString(element.Name, text);
+            // TODO: Make optional?
+            throw new SerializationException(
+                      $"Recursion detected while building entity '{instance}' of type '{parameter.DeclaredType}'.");
         }
-
-        public void Dispose() => _writer.Dispose();
     }
 }

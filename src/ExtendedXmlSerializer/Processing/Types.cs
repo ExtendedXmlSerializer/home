@@ -62,10 +62,8 @@ namespace ExtendedXmlSerialization.Processing
                     if (type != null)
                         return type;
                 }
-                catch
-                {
-                    continue;
-                }
+                catch (System.IO.FileNotFoundException)
+                {}
             }
 #else
             foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())

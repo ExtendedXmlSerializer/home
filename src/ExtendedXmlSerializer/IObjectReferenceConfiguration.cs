@@ -22,8 +22,9 @@
 
 namespace ExtendedXmlSerialization
 {
-	public interface IObjectReferenceConfiguration<T>
-	{
-		void ExtractToList(string name);
-	}
+    // ReSharper disable once UnusedTypeParameter
+    public interface IObjectReferenceConfiguration<T>
+    {
+        void ExtractToList(string name);
+    }
 }

@@ -25,17 +25,22 @@ using System;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public abstract class ElementBase<T> : ContextBase<T>, IElement where T : IInstance
+    public abstract class ElementBase<T> : IElement where T : IInstance
     {
         protected ElementBase(T instance, string name) : this(instance, instance.Type, name) {}
 
-        protected ElementBase(T instance, Type type, string name) : base(instance)
+        protected ElementBase(T instance, Type type, string name)
         {
-            Type = type;
+            Instance = instance;
+            DefinedType = type;
             Name = name;
         }
 
-        public Type Type { get; }
+        public IInstance Instance { get; }
+
+        IInstance IElement.Content => Instance;
+
+        public Type DefinedType { get; }
         public string Name { get; }
     }
 }

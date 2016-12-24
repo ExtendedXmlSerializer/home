@@ -28,12 +28,14 @@ using System.Linq;
 
 namespace ExtendedXmlSerialization.Model.Write
 {
-    public class CompositeInstance : InstanceBase<IEnumerable<IElement>>, IEnumerable<IElement>
+    public class Elements : InstanceBase<IEnumerable<IElement>>, IEnumerable<IElement>
     {
-        public CompositeInstance(Type type, params IElement[] entities)
-            : this(type, entities.AsEnumerable()) {}
+        readonly private static Type InstanceType = typeof(IEnumerable<IElement>);
 
-        public CompositeInstance(Type type, IEnumerable<IElement> entities) : base(entities, type) {}
+        public Elements(params IElement[] entities)
+            : this(entities.AsEnumerable()) {}
+
+        public Elements(IEnumerable<IElement> entities) : base(entities, InstanceType) {}
 
         public IEnumerator<IElement> GetEnumerator() => Instance.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

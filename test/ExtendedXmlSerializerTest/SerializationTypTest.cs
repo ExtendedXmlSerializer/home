@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -26,17 +28,6 @@ namespace ExtendedXmlSerialization.Test
 {
     public class SerializationTypTest : BaseTest
     {
-        class TestClassPrimitiveTypes2
-        {
-            public TestEnum PropEnum { get; set; }
-        }
-
-        [Fact]
-        public void Simple()
-        {
-            var instance = new TestClassPrimitiveTypes2() { PropEnum = TestEnum.EnumValue1 };
-        }
-
         [Fact]
         public void ClassPrimitiveTypes()
         {
@@ -53,7 +44,8 @@ namespace ExtendedXmlSerialization.Test
             var obj = new TestClassPrimitiveTypesNullable();
             obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullable.xml", obj);
+            CheckSerializationAndDeserialization(
+                "ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullable.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -63,7 +55,8 @@ namespace ExtendedXmlSerialization.Test
             var obj = new TestClassPrimitiveTypesNullable();
             obj.InitNull();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullableSetNull.xml", obj);
+            CheckSerializationAndDeserialization(
+                "ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullableSetNull.xml", obj);
             CheckCompatibilityWithDefaultSerializator(obj);
         }
 
@@ -93,7 +86,8 @@ namespace ExtendedXmlSerialization.Test
             var obj = new TestClassWithListWithClass();
             obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithListWithClass.xml", obj);
+            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithListWithClass.xml",
+                                                 obj);
 //            CheckCompatibilityWithDefaultSerializator(obj);
         }
 

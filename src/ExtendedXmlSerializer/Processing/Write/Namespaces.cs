@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Processing.Write
+/*namespace ExtendedXmlSerialization.Processing.Write
 {
-    /*public class Namespaces : INamespaces
+    public class Namespaces : INamespaces
     {
         private readonly INamespaceLocator _locator;
         private readonly Func<IPrefixGenerator> _generator;
@@ -74,5 +74,5 @@ namespace ExtendedXmlSerialization.Processing.Write
                 }
             }
         }
-    }*/
-}
+    }
+}*/

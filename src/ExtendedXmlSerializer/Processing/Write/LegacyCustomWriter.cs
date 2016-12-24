@@ -24,7 +24,6 @@
 using System;
 using System.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
@@ -55,11 +54,11 @@ namespace ExtendedXmlSerialization.Processing.Write
             if (Enabled)
             {
                 var result = _inner.New(element);
-                var configuration = _tools.GetConfiguration(element.Instance.Type);
+                var configuration = _tools.GetConfiguration(element.Content.Type);
                 if (configuration?.IsCustomSerializer ?? false)
                 {
                     Enabled = false;
-                    return new Context(configuration, _writer, element.Instance.Value, result, _complete);
+                    return new Context(configuration, _writer, element.Content.Instance, result, _complete);
                 }
                 return result;
             }

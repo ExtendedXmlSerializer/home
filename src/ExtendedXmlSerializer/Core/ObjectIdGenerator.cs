@@ -23,7 +23,6 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization;
 using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization.Core
@@ -33,8 +32,7 @@ namespace ExtendedXmlSerialization.Core
     /// </summary>
     public class ObjectIdGenerator
     {
-        private static readonly int[] Sizes = new int[21]
-                                              {
+        private static readonly int[] Sizes = {
                                                   5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717,
                                                   51437,
                                                   102877, 205759, 411527, 823117, 1646237, 3292489, 6584983
@@ -97,7 +95,7 @@ namespace ExtendedXmlSerialization.Core
                 long[] ids = _ids;
                 int currentCount = _currentCount;
                 _currentCount = currentCount + 1;
-                long num = (long) currentCount;
+                long num = currentCount;
                 ids[index] = num;
                 id = _ids[index];
                 if (_currentCount > _currentSize*4/2)

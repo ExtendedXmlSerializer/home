@@ -3,7 +3,6 @@
     var wsexp = / *(.*) +\n/g;
     var contexp = /(<.+>)(.+\n)/g;
     xml = xml.replace(reg, '$1\n$2$3').replace(wsexp, '$1\n').replace(contexp, '$1\n$2');
-    var pad = 0;
     var formatted = '';
     var lines = xml.split('\n');
     var indent = 0;
@@ -42,7 +41,7 @@
         for (var j = 0; j < indent; j++) {
             padding += '  ';
         }
-        if (fromTo == 'opening->closing')
+        if (fromTo === 'opening->closing')
             formatted = formatted.substr(0, formatted.length - 1) + ln + '\n'; // substr removes line break (\n) from prev loop
         else
             formatted += padding + ln + '\n';
@@ -73,6 +72,6 @@ function upload(url, data, success) {
         data: data,
         success: success,
         dataType: "xml",
-        contentType: "application/xml",
+        contentType: "application/xml"
     });
 }

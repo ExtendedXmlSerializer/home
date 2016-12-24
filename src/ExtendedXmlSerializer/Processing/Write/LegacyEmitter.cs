@@ -50,14 +50,14 @@ namespace ExtendedXmlSerialization.Processing.Write
         {
             _monitor.Update(parameter);
 
-            var entity = parameter.Instance;
+            var entity = parameter.Content;
             var primitive = entity as IPrimitive;
             if (primitive != null)
             {
                 using (_writer.New(parameter))
                 {
                     ApplyType(parameter);
-                    _writer.Emit(primitive.Value);
+                    _writer.Emit(primitive.Instance);
                 }
                 return;
             }
@@ -67,14 +67,14 @@ namespace ExtendedXmlSerialization.Processing.Write
             {
                 using (_writer.New(parameter))
                 {
-                    var instance = @object.Value;
+                    var instance = @object.Instance;
                     var identity = _scanned.Contains(instance)
                         ? parameter is IItem
                         : _generator.For(instance).FirstEncounter;
                     var id = _locator.Get(instance);
                     ApplyType(parameter, id != null && identity);
 
-                    var version = _version.Get(parameter.Instance.Type);
+                    var version = _version.Get(parameter.Content.Type);
                     if (version != null && version.Value > 0)
                     {
                         _writer.Emit(new VersionProperty(version.Value));
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 return;
             }
 
-            var composite = entity as CompositeInstance;
+            var composite = entity as Elements;
             if (composite != null)
             {
                 using (_writer.New(parameter))
@@ -130,13 +130,12 @@ namespace ExtendedXmlSerialization.Processing.Write
                         Execute(context);
                     }
                 }
-                return;
             }
         }
 
         private static bool ShouldApply(IElement element, bool? identity)
         {
-            var entity = element.Instance;
+            var entity = element.Content;
             if (element is IRoot)
             {
                 return !(entity is IEnumerableObject) && !(entity is IPrimitive);
@@ -146,17 +145,17 @@ namespace ExtendedXmlSerialization.Processing.Write
             if (member != null)
             {
                 return identity.GetValueOrDefault() ||
-                       (member.IsWritable && entity.Type != member.Type);
+                       (member.IsWritable && entity.Type != member.DefinedType);
             }
 
-            return identity.GetValueOrDefault() || element.Type != entity.Type;
+            return identity.GetValueOrDefault() || element.DefinedType != entity.Type;
         }
 
         private void ApplyType(IElement element, bool? tag = null)
         {
             if (ShouldApply(element, tag))
             {
-                _writer.Emit(new TypeProperty(element.Instance.Type));
+                _writer.Emit(new TypeProperty(element.Content.Type));
             }
         }
     }

@@ -67,22 +67,26 @@ namespace ExtendedXmlSerialization.Processing
 
         internal static PropertyGetter CreatePropertyGetter(MemberInfo member)
         {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+            if (member.DeclaringType != null)
+            {
+                // Object (type object) from witch the data are retrieved
+                ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
 
-            // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, member.DeclaringType);
+                // Object casted to specific type using the operator "as".
+                UnaryExpression itemCasted = Expression.Convert(itemObject, member.DeclaringType);
 
-            // Property from casted object
-            MemberExpression property = Expression.PropertyOrField(itemCasted, member.Name);
+                // Property from casted object
+                MemberExpression property = Expression.PropertyOrField(itemCasted, member.Name);
 
-            // Because we use this function also for value type we need to add conversion to object
-            Expression conversion = Expression.Convert(property, typeof(object));
+                // Because we use this function also for value type we need to add conversion to object
+                Expression conversion = Expression.Convert(property, typeof(object));
 
-            LambdaExpression lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
+                LambdaExpression lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
 
-            PropertyGetter compiled = (PropertyGetter) lambda.Compile();
-            return compiled;
+                PropertyGetter compiled = (PropertyGetter) lambda.Compile();
+                return compiled;
+            }
+            return null;
         }
 
         internal static AddItemToDictionary CreateMethodAddToDictionary(Type type)

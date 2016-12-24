@@ -22,12 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface IContext
+    /*public interface IContext
     {
         IInstance Instance { get; }
     }
@@ -42,7 +41,7 @@ namespace ExtendedXmlSerialization.Model
         public T Instance { get; }
 
         IInstance IContext.Instance => Instance;
-    }
+    }*/
 
     public static class Extensions
     {
