@@ -21,35 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class InstanceSelector : IInstanceSelector
-    {
-        private readonly IInstanceBuilder _builder;
-
-        public InstanceSelector(IInstanceBuilder builder)
-        {
-            _builder = builder;
-        }
-
-        public IInstance Get(Descriptor parameter)
-        {
-            var type = parameter.ActualType;
-            if (type.IsPrimitive)
-            {
-                return new Primitive(parameter.Instance, type.Type);
-            }
-
-            var instance = _builder.Get(parameter);
-            if (instance != null)
-            {
-                return instance;
-            }
-
-            throw new SerializationException(
-                      $"Could not locate an entity for '{parameter.Instance}' of type '{type.Type}'.");
-        }
-    }
+    public interface IPrimaryInstanceFactory : IParameterizedSource<Descriptor, IInstance> {}
 }

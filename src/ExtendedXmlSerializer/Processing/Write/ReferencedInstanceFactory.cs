@@ -27,25 +27,25 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class ReferencedInstanceBuilder : IInstanceBuilder
+    public class ReferencedInstanceFactory : IInstanceFactory
     {
-        private readonly IInstanceBuilder _builder;
+        private readonly IInstanceFactory _inner;
         readonly private IDictionary<object, IReference> _references = new Dictionary<object, IReference>();
 
         readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public ReferencedInstanceBuilder(IInstanceBuilder builder)
+        public ReferencedInstanceFactory(IInstanceFactory inner)
         {
-            _builder = builder;
+            _inner = inner;
         }
 
-        public IInstance Get(Descriptor parameter)
+        public IInstance Create(IPrimaryInstanceFactory factory, Descriptor parameter)
         {
             var instance = parameter.Instance;
             var context = _generator.For(instance);
             if (context.FirstEncounter)
             {
-                var result = _builder.Get(parameter);
+                var result = _inner.Create(factory, parameter);
                 var o = result as IObject;
                 if (o != null)
                 {

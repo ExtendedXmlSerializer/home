@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Configuration.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class LegacySerializer : ISerializer
+    sealed class LegacySerializer : ISerializer
     {
         private readonly ISerializationToolsFactory _tools;
         private readonly IIdentityLocator _locator;
@@ -53,10 +53,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             var inner = new LegacyWriter(xmlWriter, new EncryptedObjectSerializer(monitor, _encryption));
             using (var writer = new LegacyCustomWriter(_tools, inner, xmlWriter))
             {
-                var selector = new MutableInstanceSelector();
-                selector.Selector = new InstanceSelector(new InstanceBuilder(selector));
-                var serialization = new Serialization(new RootBuilder(selector.Selector),
-                                                      new LegacyTemplatedEmitter(writer, monitor, new Properties(_locator), _version));
+                var serialization = new Serialization(new LegacyTemplatedEmitter(writer, monitor, new Properties(_locator), _version));
                 serialization.Execute(instance);
             }
         }

@@ -27,17 +27,20 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     public class RootBuilder : IRootBuilder
     {
-        private readonly IInstanceSelector _selector;
+        public static RootBuilder Default { get; } = new RootBuilder();
+        RootBuilder() : this(PrimaryInstanceFactory.Default) {}
 
-        public RootBuilder(IInstanceSelector selector)
+        private readonly IPrimaryInstanceFactory _factory;
+
+        public RootBuilder(IPrimaryInstanceFactory factory)
         {
-            _selector = selector;
+            _factory = factory;
         }
 
         public IElement Get(object parameter)
         {
             var descriptor = new Descriptor(parameter);
-            var body = _selector.Get(descriptor);
+            var body = _factory.Get(descriptor);
             var result = new Root(body, descriptor.Name);
             return result;
         }

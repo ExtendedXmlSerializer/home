@@ -32,27 +32,28 @@ using Object = ExtendedXmlSerialization.Model.Write.Object;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class InstanceBuilder : IInstanceBuilder
+    public class InstanceFactory : IInstanceFactory
     {
-        private readonly IInstanceSelector _selector;
+        public static InstanceFactory Default { get; } = new InstanceFactory();
+        InstanceFactory() : this(DefaultMemberSpecification.Default) {}
+
         private readonly ISpecification<Descriptor> _member;
+
 
         readonly private static Func<ITypeDefinition, bool> IsEnumerable =
             IsEnumerableTypeSpecification.Default.IsSatisfiedBy;
 
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
 
-        public InstanceBuilder(IInstanceSelector selector) : this(selector, DefaultMemberSpecification.Default) {}
 
-        public InstanceBuilder(IInstanceSelector selector, ISpecification<Descriptor> member)
+        public InstanceFactory(ISpecification<Descriptor> member)
         {
-            _selector = selector;
             _member = member;
         }
 
-        public IInstance Get(Descriptor parameter)
+        public IInstance Create(IPrimaryInstanceFactory factory, Descriptor parameter)
         {
-            var members = CreateMembers(parameter.Instance, parameter.ActualType);
+            var members = CreateMembers(factory, parameter.Instance, parameter.ActualType);
 
             var dictionary = parameter.Instance as IDictionary;
             if (dictionary != null)
@@ -60,14 +61,14 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var arguments = parameter.DeclaredType.GenericArguments;
                 var key = Definition(arguments[0]);
                 var value = Definition(arguments[1]);
-                var entries = CreateEntries(dictionary, key, value);
+                var entries = CreateEntries(factory, dictionary, key, value);
                 return new DictionaryObject(dictionary, parameter.ActualType.Type, members, entries);
             }
 
             if (IsEnumerable(parameter.ActualType))
             {
                 var definition = Definition(parameter.DeclaredType.GenericArguments[0]);
-                var items = CreateItems(parameter.Instance, definition);
+                var items = CreateItems(factory, parameter.Instance, definition);
                 return new EnumerableObject((IEnumerable) parameter.Instance,
                                             parameter.ActualType.Type,
                                             members, items);
@@ -76,35 +77,39 @@ namespace ExtendedXmlSerialization.Processing.Write
             return result;
         }
 
-        IEnumerable<IMember> CreateMembers(object instance, ITypeDefinition definition)
+        IEnumerable<IMember> CreateMembers(IPrimaryInstanceFactory factory, object instance, ITypeDefinition definition)
         {
             foreach (var member in definition.Members)
             {
                 var descriptor = new Descriptor(member.GetValue(instance), member.TypeDefinition, member.Name);
                 if (_member.IsSatisfiedBy(descriptor))
                 {
-                    yield return new Member(_selector.Get(descriptor), member.Name, descriptor.DeclaredType.Type, member.Metadata.DeclaringType, member.IsWritable);
+                    yield return
+                        new Member(factory.Get(descriptor), member.Name, descriptor.DeclaredType.Type,
+                                   member.Metadata.DeclaringType, member.IsWritable);
                 }
             }
         }
 
-        private IEnumerable<IItem> CreateItems(object instance, ITypeDefinition definition)
+        private static IEnumerable<IItem> CreateItems(IPrimaryInstanceFactory factory, object instance, ITypeDefinition definition)
         {
             foreach (var item in Arrays.Default.AsArray(instance))
             {
                 var descriptor = new Descriptor(item, definition, definition.For(item));
-                yield return new Item(_selector.Get(descriptor), definition.Type, descriptor.Name);
+                yield return new Item(factory.Get(descriptor), definition.Type, descriptor.Name);
             }
         }
 
-        private IEnumerable<DictionaryEntryItem> CreateEntries(IDictionary dictionary, ITypeDefinition keyDefinition,
-                                                               ITypeDefinition valueDefinition)
+        private static IEnumerable<DictionaryEntryItem> CreateEntries(
+            IPrimaryInstanceFactory factory,
+            IDictionary dictionary, ITypeDefinition keyDefinition,
+            ITypeDefinition valueDefinition)
         {
             foreach (DictionaryEntry entry in dictionary)
             {
-                var key = new DictionaryKey(_selector.Get(new Descriptor(entry.Key, keyDefinition)),
+                var key = new DictionaryKey(factory.Get(new Descriptor(entry.Key, keyDefinition)),
                                             keyDefinition.Type);
-                var value = new DictionaryValue(_selector.Get(new Descriptor(entry.Value, valueDefinition)),
+                var value = new DictionaryValue(factory.Get(new Descriptor(entry.Value, valueDefinition)),
                                                 valueDefinition.Type);
                 var result = new DictionaryEntryItem(key, value);
                 yield return result;

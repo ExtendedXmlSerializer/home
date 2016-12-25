@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -35,7 +34,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         void Render(IEmitter emitter, IWriter writer, IElement element);
     }
 
-    class PrimitiveTemplate : TemplateBase<IPrimitive>
+    sealed class PrimitiveTemplate : TemplateBase<IPrimitive>
     {
         public static PrimitiveTemplate Default { get; } = new PrimitiveTemplate();
         PrimitiveTemplate() {}
@@ -60,7 +59,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
             foreach (var item in content.Instance)
             {
-                _identities.Monitor(item);
+                _identities.Track(item);
             }
 
             foreach (var item in content.Items)
@@ -77,7 +76,7 @@ namespace ExtendedXmlSerialization.Processing.Write
 
     public interface IIdentities : IParameterizedSource<IElement, IProperty>
     {
-        void Monitor(object instance);
+        void Track(object instance);
         void Release(object instance);
     }
 
@@ -106,7 +105,7 @@ namespace ExtendedXmlSerialization.Processing.Write
             return null;
         }
 
-        public void Monitor(object instance)
+        public void Track(object instance)
         {
             if (!_generator.Contains(instance))
             {
@@ -241,7 +240,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         }
     }
 
-    class TemplatedEmitter : IEmitter
+    public class TemplatedEmitter : IEmitter
     {
         private readonly IWriter _writer;
         private readonly ITemplate[] _templates;
@@ -267,137 +266,4 @@ namespace ExtendedXmlSerialization.Processing.Write
 
         protected virtual void Render(IElement parameter, ITemplate template) => template.Render(this, _writer, parameter);
     }
-
-/*
-    sealed class LegacyEmitter : IEmitter
-    {
-        readonly ISet<object> _scanned = new HashSet<object>();
-        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
-
-
-        private readonly IWriter _writer;
-        private readonly IContextMonitor _monitor;
-        private readonly IIdentityLocator _locator;
-        private readonly IVersionLocator _version;
-
-        public LegacyEmitter(IWriter writer, IContextMonitor monitor, IIdentityLocator locator, IVersionLocator version)
-        {
-            _writer = writer;
-            _monitor = monitor;
-            _locator = locator;
-            _version = version;
-        }
-
-        public void Execute(IElement parameter)
-        {
-            _monitor.Update(parameter);
-
-            var entity = parameter.Content;
-            var primitive = entity as IPrimitive;
-            if (primitive != null)
-            {
-                using (_writer.New(parameter))
-                {
-                    ApplyType(parameter);
-                    _writer.Emit(primitive.Instance);
-                }
-                return;
-            }
-
-            var @object = entity as IObject;
-            if (@object != null)
-            {
-                using (_writer.New(parameter))
-                {
-                    var instance = @object.Instance;
-                    var identity = _scanned.Contains(instance)
-                        ? parameter is IItem
-                        : _generator.For(instance).FirstEncounter;
-                    var id = _locator.Get(instance);
-                    ApplyType(parameter, id != null && identity);
-
-                    var version = _version.Get(parameter.Content.Type);
-                    if (version != null && version.Value > 0)
-                    {
-                        _writer.Emit(new VersionProperty(version.Value));
-                    }
-
-                    if (id != null)
-                    {
-                        var property = identity ? (IProperty) new IdentityProperty(id) : new ObjectReferenceProperty(id);
-                        _writer.Emit(property);
-                        if (!identity)
-                        {
-                            return;
-                        }
-                    }
-
-                    foreach (var o in @object.Members)
-                    {
-                        Execute(o);
-                    }
-
-                    var enumerable = @object as IEnumerableObject;
-                    if (enumerable != null)
-                    {
-                        foreach (var item in enumerable.Instance)
-                        {
-                            if (!_generator.Contains(item))
-                            {
-                                _scanned.Add(item);
-                            }
-                        }
-
-                        foreach (var item in enumerable.Items)
-                        {
-                            Execute(item);
-                        }
-
-                        foreach (var item in enumerable.Instance)
-                        {
-                            _scanned.Remove(item);
-                        }
-                    }
-                }
-                return;
-            }
-
-            var composite = entity as Elements;
-            if (composite != null)
-            {
-                using (_writer.New(parameter))
-                {
-                    foreach (var context in composite)
-                    {
-                        Execute(context);
-                    }
-                }
-            }
-        }
-
-        private static bool ShouldApply(IElement element)
-        {
-            var entity = element.Content;
-            if (element is IRoot)
-            {
-                return !(entity is IEnumerableObject) && !(entity is IPrimitive);
-            }
-
-            if (element.DefinedType != entity.Type)
-            {
-                return (element as IMember)?.IsWritable ?? true;
-            }
-
-            return false;
-        }
-
-        private void ApplyType(IElement element, bool? tag = null)
-        {
-            if (tag.GetValueOrDefault() || ShouldApply(element))
-            {
-                _writer.Emit(new TypeProperty(element.Content.Type));
-            }
-        }
-    }
-*/
 }

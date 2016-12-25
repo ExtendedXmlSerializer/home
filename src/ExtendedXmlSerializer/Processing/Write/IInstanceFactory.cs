@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface IInstanceSelector : IParameterizedSource<Descriptor, IInstance> {}
+    public interface IInstanceFactory
+    {
+        IInstance Create(IPrimaryInstanceFactory factory, Descriptor descriptor);
+    }
 }

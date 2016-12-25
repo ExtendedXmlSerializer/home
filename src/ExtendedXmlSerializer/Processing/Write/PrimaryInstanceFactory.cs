@@ -25,10 +25,34 @@ using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    class MutableInstanceSelector : IInstanceSelector
+    class PrimaryInstanceFactory : IPrimaryInstanceFactory
     {
-        public IInstanceSelector Selector { get; set; }
+        public static PrimaryInstanceFactory Default { get; } = new PrimaryInstanceFactory();
+        PrimaryInstanceFactory() : this(InstanceFactory.Default) {}
 
-        public IInstance Get(Descriptor parameter) => Selector?.Get(parameter);
+        private readonly IInstanceFactory _factory;
+
+        public PrimaryInstanceFactory(IInstanceFactory factory)
+        {
+            _factory = factory;
+        }
+
+        public IInstance Get(Descriptor parameter)
+        {
+            var type = parameter.ActualType;
+            if (type.IsPrimitive)
+            {
+                return new Primitive(parameter.Instance, type.Type);
+            }
+
+            var instance = _factory.Create(this, parameter);
+            if (instance != null)
+            {
+                return instance;
+            }
+
+            throw new SerializationException(
+                      $"Could not locate an entity for '{parameter.Instance}' of type '{type.Type}'.");
+        }
     }
 }

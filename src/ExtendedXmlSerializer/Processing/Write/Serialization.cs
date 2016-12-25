@@ -33,6 +33,8 @@ namespace ExtendedXmlSerialization.Processing.Write
         private readonly IRootBuilder _builder;
         private readonly IEmitter _emitter;
 
+        public Serialization(IEmitter emitter) : this(RootBuilder.Default, emitter) {}
+
         public Serialization(IRootBuilder builder, IEmitter emitter)
         {
             _builder = builder;
