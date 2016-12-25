@@ -21,3 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    sealed class LegacyPrimitiveTemplate : LegacyTemplateBase<IPrimitive>
+    {
+        public static LegacyPrimitiveTemplate Default { get; } = new LegacyPrimitiveTemplate();
+        LegacyPrimitiveTemplate() {}
+
+        protected override void Render(IEmitter emitter, IWriter writer, IElement element, IPrimitive content)
+            => writer.Emit(content.Instance);
+    }
+}

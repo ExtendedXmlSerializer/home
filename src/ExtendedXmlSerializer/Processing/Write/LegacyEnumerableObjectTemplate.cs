@@ -21,3 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    sealed class LegacyEnumerableObjectTemplate : LegacyObjectTemplateBase<IEnumerableObject>
+    {
+        private readonly IIdentities _identities;
+
+        public LegacyEnumerableObjectTemplate(IIdentities identities, IVersionLocator version)
+            : base(identities, version)
+        {
+            _identities = identities;
+        }
+
+        protected override void Render(IEmitter emitter, IEnumerableObject content)
+        {
+            base.Render(emitter, content);
+
+            foreach (var item in content.Instance)
+            {
+                _identities.Track(item);
+            }
+
+            foreach (var item in content.Items)
+            {
+                emitter.Execute(item);
+            }
+
+            foreach (var item in content.Instance)
+            {
+                _identities.Release(item);
+            }
+        }
+    }
+}

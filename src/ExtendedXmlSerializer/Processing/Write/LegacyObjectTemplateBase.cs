@@ -21,43 +21,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
-using ExtendedXmlSerialization.Configuration.Write;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    sealed class LegacySerializer : ISerializer
+    abstract class LegacyObjectTemplateBase<T> : LegacyTemplateBase<T> where T : IObject
     {
-        private readonly ISerializationToolsFactory _tools;
-        private readonly IIdentityLocator _locator;
-        private readonly IEncryptionFactory _encryption;
+        private readonly IIdentities _identities;
         private readonly IVersionLocator _version;
 
-        public LegacySerializer(ISerializationToolsFactory tools)
-            : this(
-                tools, new DelegatedIdentityLocator(tools.Locate), new EncryptionFactory(tools),
-                new VersionLocator(tools)) {}
-
-        public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
-                                IEncryptionFactory encryption, IVersionLocator version)
+        protected LegacyObjectTemplateBase(IIdentities identities, IVersionLocator version)
         {
-            _tools = tools;
-            _locator = locator;
-            _encryption = encryption;
+            _identities = identities;
             _version = version;
         }
 
-        public void Serialize(Stream stream, object instance)
+        protected override bool EmitType(IElement element) =>
+            _identities.Get(element) is IdentityProperty || base.EmitType(element);
+
+        protected override void Render(IEmitter emitter, IWriter writer, IElement element, T content)
         {
-            var monitor = new ContextMonitor();
-            var xmlWriter = XmlWriter.Create(stream);
-            var inner = new LegacyWriter(xmlWriter, new EncryptedObjectSerializer(monitor, _encryption));
-            using (var writer = new LegacyCustomWriter(_tools, inner, xmlWriter))
+            var version = _version.Get(content.Type);
+            if (version > 0)
             {
-                var serialization =
-                    new Serialization(new LegacyTemplatedEmitter(writer, monitor, new Properties(_locator), _version));
-                serialization.Execute(instance);
+                writer.Emit(new VersionProperty(version.Value));
+            }
+
+            var property = _identities.Get(element);
+            if (property != null)
+            {
+                writer.Emit(property);
+                if (property is ObjectReferenceProperty)
+                {
+                    return;
+                }
+            }
+
+            Render(emitter, content);
+        }
+
+        protected virtual void Render(IEmitter emitter, T content)
+        {
+            foreach (var o in content.Members)
+            {
+                emitter.Execute(o);
             }
         }
     }

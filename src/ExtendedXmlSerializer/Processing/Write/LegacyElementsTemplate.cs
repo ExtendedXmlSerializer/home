@@ -21,3 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    sealed class LegacyElementsTemplate : LegacyTemplateBase<Elements>
+    {
+        public static LegacyElementsTemplate Default { get; } = new LegacyElementsTemplate();
+        LegacyElementsTemplate() {}
+
+        protected override bool EmitType(IElement element) => false;
+
+        protected override void Render(IEmitter emitter, IWriter writer, IElement element, Elements content)
+        {
+            foreach (var context in content)
+            {
+                emitter.Execute(context);
+            }
+        }
+    }
+}

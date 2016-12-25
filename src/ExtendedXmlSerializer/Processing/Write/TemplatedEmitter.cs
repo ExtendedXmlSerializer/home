@@ -21,3 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    public class TemplatedEmitter : IEmitter
+    {
+        private readonly IWriter _writer;
+        private readonly ITemplate[] _templates;
+
+        public TemplatedEmitter(IWriter writer, params ITemplate[] templates)
+        {
+            _writer = writer;
+            _templates = templates;
+        }
+
+        public void Execute(IElement parameter)
+        {
+            foreach (var template in _templates)
+            {
+                if (template.IsSatisfiedBy(parameter))
+                {
+                    Render(parameter, template);
+                    return;
+                }
+            }
+            throw new SerializationException(
+                      $"Could not find a template for element '{parameter}' with a defined type of '{parameter.DefinedType}'.");
+        }
+
+        protected virtual void Render(IElement parameter, ITemplate template)
+            => template.Render(this, _writer, parameter);
+    }
+}

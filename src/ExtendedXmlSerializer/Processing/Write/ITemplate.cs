@@ -21,3 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    public interface ITemplate : ISpecification<IElement>
+    {
+        void Render(IEmitter emitter, IWriter writer, IElement element);
+    }
+}

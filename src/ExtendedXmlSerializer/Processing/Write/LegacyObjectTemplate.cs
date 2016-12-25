@@ -21,3 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    sealed class LegacyObjectTemplate : LegacyObjectTemplateBase<IObject>
+    {
+        public LegacyObjectTemplate(IIdentities identities, IVersionLocator version) : base(identities, version) {}
+    }
+}

@@ -21,44 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
-using ExtendedXmlSerialization.Configuration.Write;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    sealed class LegacySerializer : ISerializer
+    sealed class Properties : WeakCacheBase<IElement, IProperty>, IIdentities
     {
-        private readonly ISerializationToolsFactory _tools;
         private readonly IIdentityLocator _locator;
-        private readonly IEncryptionFactory _encryption;
-        private readonly IVersionLocator _version;
+        readonly ISet<object> _watching = new HashSet<object>();
 
-        public LegacySerializer(ISerializationToolsFactory tools)
-            : this(
-                tools, new DelegatedIdentityLocator(tools.Locate), new EncryptionFactory(tools),
-                new VersionLocator(tools)) {}
+        readonly private ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-        public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
-                                IEncryptionFactory encryption, IVersionLocator version)
+        public Properties(IIdentityLocator locator)
         {
-            _tools = tools;
             _locator = locator;
-            _encryption = encryption;
-            _version = version;
         }
 
-        public void Serialize(Stream stream, object instance)
+        protected override IProperty Callback(IElement key)
         {
-            var monitor = new ContextMonitor();
-            var xmlWriter = XmlWriter.Create(stream);
-            var inner = new LegacyWriter(xmlWriter, new EncryptedObjectSerializer(monitor, _encryption));
-            using (var writer = new LegacyCustomWriter(_tools, inner, xmlWriter))
+            var instance = key.Content.Instance;
+            var id = _locator.Get(instance);
+            if (id != null)
             {
-                var serialization =
-                    new Serialization(new LegacyTemplatedEmitter(writer, monitor, new Properties(_locator), _version));
-                serialization.Execute(instance);
+                var identity = _watching.Contains(instance) ? key is IItem : _generator.For(instance).FirstEncounter;
+                var result = identity ? (IProperty) new IdentityProperty(id) : new ObjectReferenceProperty(id);
+                return result;
+            }
+            return null;
+        }
+
+        public void Track(object instance)
+        {
+            if (!_generator.Contains(instance))
+            {
+                _watching.Add(instance);
             }
         }
+
+        public void Release(object instance) => _watching.Remove(instance);
     }
 }

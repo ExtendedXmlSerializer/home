@@ -21,10 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface INamespaces : IParameterizedSource<Type, string> {}
+    abstract class LegacyTemplateBase<T> : ITemplate where T : IInstance
+    {
+        public void Render(IEmitter emitter, IWriter writer, IElement element)
+        {
+            var content = (T) element.Content;
+
+            using (writer.New(element))
+            {
+                if (EmitType(element))
+                {
+                    writer.Emit(new TypeProperty(element.Content.Type));
+                }
+
+                Render(emitter, writer, element, content);
+            }
+        }
+
+        protected abstract void Render(IEmitter emitter, IWriter writer, IElement element, T content);
+
+        protected virtual bool EmitType(IElement element)
+        {
+            var entity = element.Content;
+            if (element is IRoot)
+            {
+                return !(entity is IEnumerableObject) && !(entity is IPrimitive);
+            }
+
+            if (element.DefinedType != entity.Type)
+            {
+                return (element as IMember)?.IsWritable ?? true;
+            }
+
+            return false;
+        }
+
+        public bool IsSatisfiedBy(IElement parameter) => parameter.Content is T;
+    }
 }

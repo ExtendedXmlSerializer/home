@@ -91,7 +91,8 @@ namespace ExtendedXmlSerialization.Processing.Write
             }
         }
 
-        private static IEnumerable<IItem> CreateItems(IPrimaryInstanceFactory factory, object instance, ITypeDefinition definition)
+        private static IEnumerable<IItem> CreateItems(IPrimaryInstanceFactory factory, object instance,
+                                                      ITypeDefinition definition)
         {
             foreach (var item in Arrays.Default.AsArray(instance))
             {

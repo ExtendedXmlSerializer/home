@@ -21,3 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Model.Write;
+
+namespace ExtendedXmlSerialization.Processing.Write
+{
+    sealed class LegacyTemplatedEmitter : TemplatedEmitter
+    {
+        private readonly IContextMonitor _monitor;
+
+        public LegacyTemplatedEmitter(IWriter writer, IContextMonitor monitor, IIdentities identities,
+                                      IVersionLocator locator) : base(writer,
+                                                                      LegacyPrimitiveTemplate.Default,
+                                                                      new LegacyEnumerableObjectTemplate(
+                                                                          identities, locator),
+                                                                      new LegacyObjectTemplate(identities, locator),
+                                                                      LegacyElementsTemplate.Default
+        )
+        {
+            _monitor = monitor;
+        }
+
+        protected override void Render(IElement parameter, ITemplate template)
+        {
+            _monitor.Update(parameter);
+            base.Render(parameter, template);
+        }
+    }
+}

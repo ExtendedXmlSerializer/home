@@ -36,7 +36,8 @@ namespace ExtendedXmlSerialization.Processing.Write
         private readonly INamespaces _namespaces;
         private readonly IDisposable _end;
 
-        public Writer(XmlWriter writer, INamespaces namespaces, IObjectSerializer serializer, ITypeDefinitions definitions)
+        public Writer(XmlWriter writer, INamespaces namespaces, IObjectSerializer serializer,
+                      ITypeDefinitions definitions)
         {
             _writer = writer;
             _serializer = serializer;
