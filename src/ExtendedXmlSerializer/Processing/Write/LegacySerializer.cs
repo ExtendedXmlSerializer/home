@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization.Processing.Write
                 var selector = new MutableInstanceSelector();
                 selector.Selector = new InstanceSelector(new InstanceBuilder(selector));
                 var serialization = new Serialization(new RootBuilder(selector.Selector),
-                                                      new LegacyEmitter(writer, monitor, _locator, _version));
+                                                      new LegacyTemplatedEmitter(writer, monitor, new Properties(_locator), _version));
                 serialization.Execute(instance);
             }
         }
