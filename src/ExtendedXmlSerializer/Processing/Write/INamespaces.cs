@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public interface INamespaces : IParameterizedSource<Type, string> {}
+    public interface INamespaces : IParameterizedSource<Type, string> { }
 }

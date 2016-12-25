@@ -104,6 +104,10 @@ namespace ExtendedXmlSerialization.Processing.Read
             var value = parameter.Attribute(ExtendedXmlSerializer.Type)?.Value;
             var type = value != null ? _parser.Get(value) : _context;
             var result = type != null ? _definitions.Get(type) : null;
+            if (result == null)
+            {
+                throw new SerializationException($"Could not find TypeDefinition from provided value: {value}");
+            }
             return result;
         }
     }

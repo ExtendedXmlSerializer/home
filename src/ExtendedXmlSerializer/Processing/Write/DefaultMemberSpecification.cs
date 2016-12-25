@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class DefaultMemberSpecification : ISpecification<Descriptor>
+    class DefaultMemberSpecification : ISpecification<Descriptor>
     {
         public static DefaultMemberSpecification Default { get; } = new DefaultMemberSpecification();
         DefaultMemberSpecification() {}

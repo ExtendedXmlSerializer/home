@@ -33,15 +33,15 @@ namespace ExtendedXmlSerialization.Processing.Write
         private readonly XmlWriter _writer;
         private readonly IObjectSerializer _serializer;
         private readonly ITypeDefinitions _definitions;
-        private readonly INamespaces _name;
+        private readonly INamespaces _namespaces;
         private readonly IDisposable _end;
 
-        public Writer(XmlWriter writer, INamespaces name, IObjectSerializer serializer, ITypeDefinitions definitions)
+        public Writer(XmlWriter writer, INamespaces namespaces, IObjectSerializer serializer, ITypeDefinitions definitions)
         {
             _writer = writer;
             _serializer = serializer;
             _definitions = definitions;
-            _name = name;
+            _namespaces = namespaces;
             _end = new DelegatedDisposable(End);
         }
 
@@ -58,21 +58,21 @@ namespace ExtendedXmlSerialization.Processing.Write
                     break;
             }
 
-            var ns = _name.Get(element.Content.Type);
+            var ns = _namespaces.Get(element.Content.Type);
             _writer.WriteStartElement(element.Name, ns);
             return _end;
         }
 
         public void Emit(IElement element)
         {
-            var ns = _name.Get(element.Content.Type);
+            var ns = _namespaces.Get(element.Content.Type);
             var value = element.Content.Instance;
             var type = value as Type;
             if (type != null)
             {
                 var definition = _definitions.Get(type);
                 _writer.WriteStartAttribute(element.Name, ns);
-                _writer.WriteQualifiedName(definition.Name, _name.Get(definition.Type));
+                _writer.WriteQualifiedName(definition.Name, _namespaces.Get(definition.Type));
                 _writer.WriteEndAttribute();
                 return;
             }

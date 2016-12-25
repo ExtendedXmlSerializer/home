@@ -26,21 +26,42 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
-    /*public interface IContext
+    /*public interface IIdentity
     {
-        IInstance Instance { get; }
+        string Name { get; }
+
+        Type Key { get; }
     }
 
-    public abstract class ContextBase<T> : IContext where T : IInstance
+    public abstract class Identity<T> : Identity
     {
-        protected ContextBase(T instance)
+        readonly private static Type DefaultScope = typeof(T);
+
+        protected Identity() : base(DefaultScope) {}
+
+        protected Identity(string name) : this(DefaultScope, name) {}
+
+        protected Identity(Type key, string name) : base(key, name) {}
+    }
+
+    public class LocalIdentity : Identity
+    {
+        public LocalIdentity(string name) : base(null, name) {}
+    }
+
+    public class Identity : IIdentity
+    {
+        public Identity(Type key) : this(key, key.Name) {}
+
+        public Identity(Type key, string name)
         {
-            Instance = instance;
+            Key = key;
+            Name = name;
         }
 
-        public T Instance { get; }
+        public string Name { get; }
 
-        IInstance IContext.Instance => Instance;
+        public Type Key { get; }
     }*/
 
     public static class Extensions

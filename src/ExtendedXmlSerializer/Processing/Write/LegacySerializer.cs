@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Processing.Write
         private readonly IVersionLocator _version;
 
         public LegacySerializer(ISerializationToolsFactory tools)
-            : this(tools, new IdentityLocator(tools.Locate), new EncryptionFactory(tools), new VersionLocator(tools)) {}
+            : this(tools, new DelegatedIdentityLocator(tools.Locate), new EncryptionFactory(tools), new VersionLocator(tools)) {}
 
         public LegacySerializer(ISerializationToolsFactory tools, IIdentityLocator locator,
                                 IEncryptionFactory encryption, IVersionLocator version)

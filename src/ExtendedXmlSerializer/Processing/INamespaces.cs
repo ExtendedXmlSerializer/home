@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Processing.Write
-{
-    class DefaultIdentityLocator : IIdentityLocator
-    {
-        public static DefaultIdentityLocator Default { get; } = new DefaultIdentityLocator();
-        DefaultIdentityLocator() {}
+using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-        public object Get(object parameter) => null;
-    }
+namespace ExtendedXmlSerialization.Processing
+{
+    public interface INamespaces : IParameterizedSource<Type, string> {}
+    
+
 }

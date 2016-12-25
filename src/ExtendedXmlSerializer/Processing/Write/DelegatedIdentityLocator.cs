@@ -25,14 +25,11 @@ using System;
 
 namespace ExtendedXmlSerialization.Processing.Write
 {
-    public class IdentityLocator : IIdentityLocator
+    class DelegatedIdentityLocator : IIdentityLocator
     {
-        public static IdentityLocator Default { get; } = new IdentityLocator();
-        IdentityLocator() : this(o => null) {}
-
         private readonly Func<object, object> _locator;
 
-        public IdentityLocator(Func<object, object> locator)
+        public DelegatedIdentityLocator(Func<object, object> locator)
         {
             _locator = locator;
         }

@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Model.Write
 
     public interface IObject<out T> : IObject
     {
-        T Instance { get; }
+        new T Instance { get; }
     }
 }
