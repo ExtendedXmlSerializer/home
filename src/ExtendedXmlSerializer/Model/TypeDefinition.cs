@@ -69,10 +69,11 @@ namespace ExtendedXmlSerialization.Model
             TypeCode = Type.GetTypeCode(Type);
             string name;
             IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name);
-            Name = IsPrimitive ? name : Type.Name;
-
+            
             var typeInfo = Type.GetTypeInfo();
             var isGenericType = typeInfo.IsGenericType;
+
+            Name = typeInfo.GetCustomAttribute<XmlRootAttribute>()?.ElementName ?? (IsPrimitive ? name : Type.Name);
 
             if (isGenericType)
             {
@@ -119,13 +120,7 @@ namespace ExtendedXmlSerialization.Model
                 }
             }
 
-            XmlRootAttribute attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>();
-            if (attribute != null)
-            {
-                Name = attribute.ElementName;
-            }
-
-            IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
+            IsObjectToSerialize =
                 !IsPrimitive &&
                 !typeInfo.IsEnum && Type != TypeObject &&
                 //not generic or generic but not List<> and Set<>
@@ -133,11 +128,10 @@ namespace ExtendedXmlSerialization.Model
             _properties = new Lazy<ImmutableArray<IMemberDefinition>>(GetPropertieToSerialze);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
-            DefaultValue = DefaultValues.Default.Get(type);
         }
 
-        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
-        public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
+        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get;  }
+        public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; }
 
         private ImmutableArray<IMemberDefinition> GetPropertieToSerialze()
         {
@@ -174,7 +168,7 @@ namespace ExtendedXmlSerialization.Model
                         name = xmlElement.ElementName;
                         order = xmlElement.Order;
                     }
-                    var property = new PropertieDefinition(propertyInfo, name);
+                    var property = new MemberDefinition(propertyInfo, name);
                     if (order != -1)
                     {
                         property.Order = order;
@@ -210,7 +204,7 @@ namespace ExtendedXmlSerialization.Model
                         order = xmlElement.Order;
                     }
 
-                    var property = new PropertieDefinition(field, name);
+                    var property = new MemberDefinition(field, name);
                     if (order != -1)
                     {
                         property.Order = order;

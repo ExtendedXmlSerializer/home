@@ -24,25 +24,24 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Processing;
 
-namespace ExtendedXmlSerialization.Processing
+namespace ExtendedXmlSerialization.Model
 {
-    class PropertieDefinition : IMemberDefinition
+    class MemberDefinition : IMemberDefinition
     {
-        public PropertieDefinition(MemberInfo memberInfo, string name)
+        private readonly ObjectAccessors.PropertyGetter _getter;
+        private readonly ObjectAccessors.PropertySetter _propertySetter;
+
+        public MemberDefinition(MemberInfo memberInfo, string name)
         {
+            Metadata = memberInfo;
             Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
             TypeDefinition = TypeDefinitions.Default.Get(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);
-            _propertySetter = Setters.Default.Get(memberInfo);
-            Metadata = memberInfo;
+            _propertySetter = IsWritable ? ObjectAccessors.CreatePropertySetter(memberInfo.DeclaringType, memberInfo.Name) : TypeDefinition.Add;
         }
-
-
-        private readonly ObjectAccessors.PropertyGetter _getter;
-        private readonly ObjectAccessors.PropertySetter _propertySetter;
 
         public string Name { get; }
         public ITypeDefinition TypeDefinition { get; }
@@ -52,7 +51,6 @@ namespace ExtendedXmlSerialization.Processing
         public int Order { get; set; } = -1;
 
         public object GetValue(object obj) => _getter(obj);
-
         public void SetValue(object obj, object value) => _propertySetter?.Invoke(obj, value);
     }
 }

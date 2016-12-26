@@ -27,6 +27,8 @@ namespace ExtendedXmlSerialization.Processing.Write
 {
     abstract class LegacyTemplateBase<T> : ITemplate where T : IInstance
     {
+        public bool IsSatisfiedBy(IElement parameter) => parameter.Content is T;
+
         public void Render(IEmitter emitter, IWriter writer, IElement element)
         {
             var content = (T) element.Content;
@@ -60,6 +62,5 @@ namespace ExtendedXmlSerialization.Processing.Write
             return false;
         }
 
-        public bool IsSatisfiedBy(IElement parameter) => parameter.Content is T;
     }
 }
