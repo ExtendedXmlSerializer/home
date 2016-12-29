@@ -28,6 +28,9 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Model.Write;
+using IInstance = ExtendedXmlSerialization.Model.Write.IInstance;
+using IItem = ExtendedXmlSerialization.Model.Write.IItem;
+using IMember = ExtendedXmlSerialization.Model.Write.IMember;
 using Object = ExtendedXmlSerialization.Model.Write.Object;
 
 namespace ExtendedXmlSerialization.Processing.Write

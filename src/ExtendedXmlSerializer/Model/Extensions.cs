@@ -26,44 +26,6 @@ using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
-    /*public interface IIdentity
-    {
-        string Name { get; }
-
-        Type Key { get; }
-    }
-
-    public abstract class Identity<T> : Identity
-    {
-        readonly private static Type DefaultScope = typeof(T);
-
-        protected Identity() : base(DefaultScope) {}
-
-        protected Identity(string name) : this(DefaultScope, name) {}
-
-        protected Identity(Type key, string name) : base(key, name) {}
-    }
-
-    public class LocalIdentity : Identity
-    {
-        public LocalIdentity(string name) : base(null, name) {}
-    }
-
-    public class Identity : IIdentity
-    {
-        public Identity(Type key) : this(key, key.Name) {}
-
-        public Identity(Type key, string name)
-        {
-            Key = key;
-            Name = name;
-        }
-
-        public string Name { get; }
-
-        public Type Key { get; }
-    }*/
-
     public static class Extensions
     {
         readonly private static Func<Type, ITypeDefinition> Definition = TypeDefinitions.Default.Get;
@@ -74,8 +36,5 @@ namespace ExtendedXmlSerialization.Model
             var result = type != null && type != @this.Type ? Definition(type) : @this;
             return result;
         }
-
-        /*public static object Instance(this IInstance @this)
-            => (@this as IPrimitive)?.Value ?? (@this as IObject)?.Instance;*/
     }
 }
