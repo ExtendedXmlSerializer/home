@@ -21,38 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Processing;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Processing.Write;
 
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    public class ObjectSerializer : IObjectSerializer
-    {
-        private readonly ITypeFormatter _formatter;
-        public static ObjectSerializer Default { get; } = new ObjectSerializer();
-        ObjectSerializer() : this(DefaultTypeFormatter.Default) {}
-
-        public ObjectSerializer(ITypeFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
-        public string Serialize(object instance)
-        {
-            var result =
-                (instance as ISerializable)?.Get(this) ??
-                instance as string ??
-                         (instance as Enum)?.ToString() ??
-                         FromType(instance) ?? PrimitiveValueTools.SetPrimitiveValue(instance);
-            return result;
-        }
-
-        private string FromType(object instance)
-        {
-            var type = instance as Type;
-            var result = type != null ? _formatter.Format(type) : null;
-            return result;
-        }
-    }
+    public interface ISerializable : IParameterizedSource<IObjectSerializer, string> {}
 }
