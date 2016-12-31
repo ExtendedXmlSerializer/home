@@ -22,16 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using ExtendedXmlSerialization.Configuration.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 using ExtendedXmlSerialization.Processing.Write;
@@ -44,21 +41,7 @@ namespace ExtendedXmlSerialization.Test
         [Fact]
         public void PrimitiveSerialization()
         {
-            var root = new Root(new FixedSource(6776).Get());
-            var builder = new StringBuilder();
-            var writer = XmlWriter.Create(builder);
-            var emitter = new Emitter(writer);
-            root.Execute(emitter);
-            writer.Flush();
-
-            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-16""?><int>6776</int>", builder.ToString());
-        }
-
-        [Fact]
-        public void InstanceSerialization()
-        {
-            var instance = new InstanceClass {PropertyName = "Hello World!"};
-            var root = new Root(new FixedSource(instance).Get());
+            var root = new Root(new ProvidedContentFactory(6776).Get());
             var builder = new StringBuilder();
             var writer = XmlWriter.Create(builder);
             var emitter = new Emitter(writer);
@@ -66,7 +49,24 @@ namespace ExtendedXmlSerialization.Test
             writer.Flush();
 
             var actual = builder.ToString();
-            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-16""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>", actual);
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-16""?><int>6776</int>", actual);
+        }
+
+        [Fact]
+        public void InstanceSerialization()
+        {
+            var instance = new InstanceClass {PropertyName = "Hello World!"};
+            var root = new Root(new ProvidedContentFactory(instance).Get());
+            var builder = new StringBuilder();
+            var writer = XmlWriter.Create(builder);
+            var emitter = new Emitter(writer);
+            root.Execute(emitter);
+            writer.Flush();
+
+            var actual = builder.ToString();
+            Assert.Equal(
+                @"<?xml version=""1.0"" encoding=""utf-16""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
+                actual);
         }
 
         class InstanceClass
@@ -74,26 +74,25 @@ namespace ExtendedXmlSerialization.Test
             public string PropertyName { get; set; }
         }
 
-        public interface IContentSource
+        public interface IContentFactory
         {
-            IContent Get();
+            IContext Get();
         }
 
-        public class FixedSource : IContentSource
+        public class ProvidedContentFactory : IContentFactory
         {
             private readonly object _source;
             private readonly Type _instanceType;
 
-            public FixedSource(object source) : this(source, source.GetType()) {}
+            public ProvidedContentFactory(object source) : this(source, source.GetType()) {}
 
-            public FixedSource(object source, Type instanceType)
+            public ProvidedContentFactory(object source, Type instanceType)
             {
                 _source = source;
                 _instanceType = instanceType;
             }
 
-
-            public IContent Get()
+            public IContext Get()
             {
                 if (Primitives.Default.ContainsKey(_instanceType))
                 {
@@ -101,7 +100,7 @@ namespace ExtendedXmlSerialization.Test
                 }
 
                 var members =
-                    SelectMembers().Select(x => new Member(new FixedSource(x.GetValue(_source)), x));
+                    SelectMembers().Select(x => new Member(x.Name, new ProvidedContentFactory(x.GetValue(_source)).Get()));
                 var instance = new Instance(TypeDefinitions.Default.Get(_instanceType).Name, members);
                 return instance;
             }
@@ -113,38 +112,18 @@ namespace ExtendedXmlSerialization.Test
             }
         }
 
-        public interface IContext : ICommand<IEmitter> {}
-
         public interface IRoot : IContext {}
 
-        class Root : IRoot
+        class Root : DecoratedContext, IRoot
         {
-            private readonly IContent _content;
-
-            public Root(IContent content)
-            {
-                _content = content;
-            }
-
-            public void Execute(IEmitter parameter)
-            {
-                parameter.Start(this);
-                _content.Execute(parameter);
-                parameter.End(this);
-            }
-
-            public override string ToString()
-            {
-                return _content.ToString();
-            }
+            public Root(IContext context) : base(context) {}
         }
 
         public interface IEmitter
         {
             void Start(IContext context);
-            void Emit(IContent content);
+            void Emit(IContext context);
             void End(IContext context);
-            // void Emit(IContext context, IContent content);
         }
 
         class Emitter : IEmitter
@@ -160,40 +139,36 @@ namespace ExtendedXmlSerialization.Test
                 _serializer = serializer;
             }
 
-            public void Start(IContext context)
-            {
-                _writer.WriteStartElement(_serializer.Serialize(context));
-            }
+            public void Start(IContext context) => _writer.WriteStartElement(_serializer.Serialize(context));
 
-            public void Emit(IContent content) => _writer.WriteString(_serializer.Serialize(content));
+            public void Emit(IContext context) => _writer.WriteString(_serializer.Serialize(context));
 
             public void End(IContext context) => _writer.WriteEndElement();
         }
 
-        public interface IContent : ICommand<IEmitter> {}
-
-        public interface IInstance : IContent {}
-
-        class Instance : IInstance
+        public interface IContext : ICommand<IEmitter>
         {
-            private readonly string _name;
+            string Name { get; }
+        }
+
+        public interface IInstance : IContext {}
+
+        class Instance : ContextBase, IInstance
+        {
             private readonly IEnumerable<IMember> _members;
 
-            public Instance(string name, IEnumerable<IMember> members)
+            public Instance(string name, IEnumerable<IMember> members) : base(name)
             {
-                _name = name;
                 _members = members;
             }
 
-            public void Execute(IEmitter parameter)
+            public override void Execute(IEmitter parameter)
             {
                 foreach (var member in _members)
                 {
                     member.Execute(parameter);
                 }
             }
-
-            public override string ToString() => _name;
         }
 
         public interface IMember : IContext
@@ -201,90 +176,57 @@ namespace ExtendedXmlSerialization.Test
             // bool IsWritable { get; }
         }
 
-        class Member : IMember, ISerializable
+        class Member : DecoratedContext, IMember
         {
-            private readonly IContentSource _source;
-            private readonly IMemberDefinition _definition;
+            public Member(string name, IContext context) : base(name, context) {}
+        }
 
-            public Member(IContentSource source, IMemberDefinition definition)
+        public class DecoratedContext : ContextBase
+        {
+            private readonly IContext _context;
+
+            public DecoratedContext(IContext context) : this(context.Name, context) {}
+
+            public DecoratedContext(string name, IContext context) : base(name)
             {
-                _source = source;
-                _definition = definition;
+                _context = context;
             }
 
-            public void Execute(IEmitter parameter)
+            public override void Execute(IEmitter parameter)
             {
                 parameter.Start(this);
-                var content = _source.Get();
-                content.Execute(parameter);
+                _context.Execute(parameter);
                 parameter.End(this);
             }
-
-            public string Get(IObjectSerializer parameter) => _definition.Name;
         }
 
-        abstract class ContentBase : IContent
+        public abstract class ContextBase : IContext, ISerializable
         {
+            protected ContextBase(string name)
+            {
+                Name = name;
+            }
+
+            public string Name { get; }
+
             public abstract void Execute(IEmitter parameter);
+
+            public virtual string Get(IObjectSerializer parameter) => Name;
         }
 
-        public interface IPrimitive : IContent {}
+        public interface IPrimitive : IContext {}
 
-        class Primitive : ContentBase, IPrimitive, ISerializable
+        class Primitive : ContextBase, IPrimitive
         {
-            private readonly string _name;
             private readonly object _instance;
 
-            public Primitive(string name, object instance)
+            public Primitive(string name, object instance) : base(name)
             {
-                _name = name;
                 _instance = instance;
             }
 
             public override void Execute(IEmitter parameter) => parameter.Emit(this);
-            public string Get(IObjectSerializer parameter) => parameter.Serialize(_instance);
-
-            public override string ToString() => _name;
+            public override string Get(IObjectSerializer parameter) => parameter.Serialize(_instance);
         }
-
-
-        /*
-                [Fact]
-                public void Basic()
-                {
-                    / * var selector = new ContentSelector(PrimitiveContentSelector.Default);
-                    var emitter = new Emitter(selector);
-        
-                    var root = new Root(new FixedSource(6776));
-                    emitter.Execute(root); * /
-                    // var serialization = new Serialization(new RootBuilder(selector), new TemplatedEmitter());
-                }
-                       
-                       
-                class Emitter : IEmitter
-                {
-                    private readonly IContentSelector _selector;
-                    private readonly IWriter _writer;
-        
-                    public Emitter(IContentSelector selector, IWriter writer)
-                    {
-                        _selector = selector;
-                        _writer = writer;
-                    }
-        
-                    public void Execute(IContext parameter)
-                    {
-                        var content = _selector.Get(parameter);
-        
-                        content.Execute(_writer);
-        
-                        /*var primitive = content as IPrimitive;
-                        if (primitive != null)
-                        {
-                              
-                        }* /
-                    }
-                }
-        }*/
     }
 }
