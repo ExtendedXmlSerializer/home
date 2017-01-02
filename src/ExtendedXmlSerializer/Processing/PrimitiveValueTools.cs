@@ -29,16 +29,15 @@ namespace ExtendedXmlSerialization.Processing
 {
     internal static class PrimitiveValueTools
     {
-        public static string SetPrimitiveValue(object value) => SetPrimitiveValue(value, value.GetType());
-
-        public static string SetPrimitiveValue(object value, Type type)
+        public static string SetPrimitiveValue(object value)
         {
+            var type = value.GetType();
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Boolean:
                     return value.ToString();
                 case TypeCode.Char:
-                    return XmlConvert.ToString((UInt16) (char) value);
+                    return XmlConvert.ToString((ushort) (char) value);
                 case TypeCode.SByte:
                     return XmlConvert.ToString((sbyte) value);
                 case TypeCode.Byte:
@@ -130,13 +129,6 @@ namespace ExtendedXmlSerialization.Processing
             }
         }
 
-        private static string DecimalSeparator(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
-            return value.Replace(",", ".");
-        }
+        private static string DecimalSeparator(string value) => string.IsNullOrEmpty(value) ? value : value.Replace(",", ".");
     }
 }

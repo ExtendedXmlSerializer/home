@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
@@ -255,32 +256,7 @@ namespace ExtendedXmlSerialization.Model
         }
     }*/
 
-    public class Primitives : Dictionary<Type, string>
-    {
-        public static Primitives Default { get; } = new Primitives();
-
-        Primitives() : base(new Dictionary<Type, string>
-                            {
-                                {typeof(bool), "boolean"},
-                                {typeof(char), "char"},
-                                {typeof(sbyte), "byte"},
-                                {typeof(byte), "unsignedByte"},
-                                {typeof(short), "short"},
-                                {typeof(ushort), "unsignedShort"},
-                                {typeof(int), "int"},
-                                {typeof(uint), "unsignedInt"},
-                                {typeof(long), "long"},
-                                {typeof(ulong), "unsignedLong"},
-                                {typeof(float), "float"},
-                                {typeof(double), "double"},
-                                {typeof(decimal), "decimal"},
-                                {typeof(DateTime), "dateTime"},
-                                {typeof(DateTimeOffset), "dateTimeOffset"},
-                                {typeof(string), "string"},
-                                {typeof(Guid), "guid"},
-                                {typeof(TimeSpan), "TimeSpan"},
-                            }) {}
-    }
+    
 
     /*public class PrimitiveContentSelector : IContentSelector
     {
