@@ -22,6 +22,9 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -36,31 +39,25 @@ namespace ExtendedXmlSerialization.Test
     public class ContextsTests
     {
         [Fact]
-        public void PrimitiveSerialization()
+        public void PrimitiveWrite()
         {
-            var builder = new StringBuilder();
-            using (var writer = XmlWriter.Create(builder))
-            {
-                var serializer = new Serializer(IntegerWriter.Default);
-                serializer.Serialize(writer, 6776);
-            }
-
-            var actual = builder.ToString();
-            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-16""?><int>6776</int>", actual);
+            var stream = new MemoryStream();
+            var serializer = new Serializer(new ConditionalCompositeWriter(IntegerConverter.Default));
+            serializer.Serialize(stream, 6776);
+            stream.Seek(0, SeekOrigin.Begin);
+            var actual = new StreamReader(stream).ReadToEnd();
+            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>", actual);
         }
 
-        /*[Fact]
-        public void PrimitiveDeserialization()
+        [Fact]
+        public void PrimitiveRead()
         {
-            var data = @"<?xml version=""1.0"" encoding=""utf-16""?><int>6776</int>";
-            var element = XElement.Parse(data);
-            var root = new Root(new DocumentContentFactory(element).Get());
-            var emitter = new InstanceEmitter();
-            root.Execute(emitter);
-
-
-            Assert.Equal(data, actual);
-        }*/
+            const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>";
+            var deserializer = new Deserializer(new ConditionalCompositeReader(new HintedRootTypeProvider(typeof(int), TypeProvider.Default), IntegerConverter.Default));
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var actual = deserializer.Deserialize(stream);
+            Assert.Equal(6776, actual);
+        }
 
         /*[Fact]
         public void InstanceSerialization()
@@ -91,21 +88,40 @@ namespace ExtendedXmlSerialization.Test
 
         public interface IInstanceFactory : IParameterizedSource<XElement, object> {}*/
 
-        public interface ITypeProvider : IParameterizedSource<XElement, Type> {}
+        interface ITypeProvider : IParameterizedSource<XElement, Type> {}
 
-        private class TypeProvider : ITypeProvider
+        class HintedRootTypeProvider : ITypeProvider
         {
-            public static TypeProvider Default { get; } = new TypeProvider();
-            TypeProvider() : this(Types.Default) {}
+            private readonly Type _hint;
+            private readonly ITypeProvider _provider;
 
-            private readonly ITypeParser _parser;
-
-            public TypeProvider(ITypeParser parser)
+            public HintedRootTypeProvider(Type hint, ITypeProvider provider)
             {
-                _parser = parser;
+                _hint = hint;
+                _provider = provider;
             }
 
-            public Type Get(XElement parameter)
+            public Type Get(XElement parameter) => parameter.Document.Root == parameter ? _hint : _provider.Get(parameter);
+        }
+
+        class TypeProvider : ITypeProvider
+        {
+            public static TypeProvider Default { get; } = new TypeProvider();
+            TypeProvider() : this(Types.Default, Identities.Default) {}
+
+            private readonly ITypeParser _parser;
+            private readonly IIdentities _identities;
+
+            public TypeProvider(ITypeParser parser, IIdentities identities)
+            {
+                _parser = parser;
+                _identities = identities;
+            }
+
+            public Type Get(XElement parameter) => 
+                _identities.Get(parameter.Name) ?? FromAttribute(parameter);
+
+            private Type FromAttribute(XElement parameter)
             {
                 var value = parameter.Attribute(ExtendedXmlSerializer.Type)?.Value;
                 var result = value != null ? _parser.Get(value) : null;
@@ -193,101 +209,252 @@ namespace ExtendedXmlSerialization.Test
                                 }) {}
         }*/
 
-        public interface ISerializer
+        interface IConditionalReader : ISpecification<Type>, IReader {}
+
+        interface IReader
         {
-            void Serialize(XmlWriter writer, object instance);
+            object Read(XElement element);
         }
 
-        private class Serializer : ISerializer
+        abstract class ReaderBase : IReader
+        {
+            public abstract object Read(XElement element);
+        }
+
+        abstract class ReaderBase<T> : IReader
+        {
+            object IReader.Read(XElement element) => Read(element);
+
+            protected abstract T Read(XElement element);
+        }
+
+        class ValueReader<T> : ReaderBase<T>
+        {
+            private readonly Func<string, T> _deserialize;
+
+            public ValueReader(Func<string, T> deserialize)
+            {
+                _deserialize = deserialize;
+            }
+
+            protected override T Read(XElement element) => _deserialize(element.Value);
+        }
+
+        class DecoratedReader : ReaderBase
+        {
+            private readonly IReader _reader;
+
+            public DecoratedReader(IReader reader)
+            {
+                _reader = reader;
+            }
+
+            public override object Read(XElement element) => _reader.Read(element);
+        }
+
+        class ConditionalCompositeReader : IReader
+        {
+            private readonly IConditionalReader[] _readers;
+            private readonly ITypeProvider _provider;
+
+
+            public ConditionalCompositeReader(params IConditionalReader[] readers) : this(TypeProvider.Default, readers) {}
+
+            public ConditionalCompositeReader(ITypeProvider provider, params IConditionalReader[] readers)
+            {
+                _provider = provider;
+                _readers = readers;
+            }
+
+            public object Read(XElement element)
+            {
+                var type = _provider.Get(element);
+                foreach (var reader in _readers)
+                {
+                    if (reader.IsSatisfiedBy(type))
+                    {
+                        var result = reader.Read(element);
+                        return result;
+                    }
+                }
+                return null;
+            }
+        }
+
+        interface IDeserializer
+        {
+            object Deserialize(Stream stream);
+        }
+
+        class Deserializer : IDeserializer
+        {
+            private readonly IReader _reader;
+
+            public Deserializer(IReader reader)
+            {
+                _reader = reader;
+            }
+
+            public object Deserialize(Stream stream)
+            {
+                var text = new StreamReader(stream).ReadToEnd();
+                var element = XDocument.Parse(text).Root;
+                var result = _reader.Read(element);
+                return result;
+            }
+        }
+
+        interface ISerializer
+        {
+            void Serialize(Stream stream, object instance);
+        }
+
+        class ConditionalCompositeWriter : IWriter
         {
             private readonly IConditionalWriter[] _writers;
 
-            public Serializer(params IConditionalWriter[] writers)
+            public ConditionalCompositeWriter(params IConditionalWriter[] writers)
             {
                 _writers = writers;
             }
 
-            public void Serialize(XmlWriter writer, object instance)
+            public void Write(XmlWriter writer, object instance)
             {
                 var type = instance.GetType();
-                foreach (var definition in _writers)
+                foreach (var item in _writers)
                 {
-                    if (definition.IsSatisfiedBy(type))
+                    if (item.IsSatisfiedBy(type))
                     {
-                        definition.Write(writer, instance);
+                        item.Write(writer, instance);
                         return;
                     }
                 }
             }
         }
 
-        /*public class IntegerDefinition : PrimitiveDefinition<int>
+        class Serializer : ISerializer
         {
-            public static IntegerDefinition Default { get; } = new IntegerDefinition();
-            IntegerDefinition() : this("int") {}
+            private readonly IWriter _writer;
 
-            public IntegerDefinition(string name) : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
-        }
-
-        public class PrimitiveDefinition<T> : Definition<T>
-        {
-            public PrimitiveDefinition(Action<XmlWriter, T> serialize, Func<XElement, T> deserialize)
-                : base(serialize, deserialize)
+            public Serializer(IWriter writer)
             {
-                
+                _writer = writer;
+            }
+
+            public void Serialize(Stream stream, object instance)
+            {
+                using (var writer = XmlWriter.Create(stream))
+                {
+                    _writer.Write(writer, instance);
+                }
             }
         }
 
-        public class Definition<T> : DefinitionBase<T>
-        {
-            private readonly Action<XmlWriter, T> _serialize;
-            private readonly Func<XElement,T> _deserialize;
+        interface IIdentities : ISpecification<Type>, ISpecification<XName>,
+                                             IParameterizedSource<Type, XName>, IParameterizedSource<XName, Type> {}
 
-            public Definition(Action<XmlWriter, T> serialize, Func<XElement,T> deserialize)
+        class Identities : IIdentities
+        {
+            public static Identities Default { get; } = new Identities();
+            Identities() : this(string.Empty) {}
+
+            private readonly IDictionary<Type, XName> _names;
+            private readonly IDictionary<XName, Type> _types;
+
+            public Identities(string namespaceName)
+                : this(new Dictionary<Type, XName>
+                       {
+                           {typeof(int), XName.Get("int", namespaceName)}
+                       }) {}
+
+            public Identities(IDictionary<Type, XName> names)
+                : this(names, names.ToDictionary(x => x.Value, y => y.Key)) {}
+
+            public Identities(IDictionary<Type, XName> names, IDictionary<XName, Type> types)
             {
-                _serialize = serialize;
-                _deserialize = deserialize;
+                _names = names;
+                _types = types;
             }
 
-            protected override void OnSerialize(XmlWriter writer, T instance) => _serialize(writer, instance);
 
-            protected override T OnDeserialize(XElement element) => _deserialize(element);
-        }*/
+            public XName Get(Type parameter)
+            {
+                XName result;
+                return _names.TryGetValue(parameter, out result) ? result : null;
+            }
 
-        class IntegerWriter : PrimitiveWriterBase<int>
-        {
-            public static IntegerWriter Default { get; } = new IntegerWriter();
-            IntegerWriter() : this("int") {}
+            public Type Get(XName parameter)
+            {
+                Type result;
+                return _types.TryGetValue(parameter, out result) ? result : null;
+            }
 
-            public IntegerWriter(string elementName) : base(elementName, XmlConvert.ToString) {}
+            public bool IsSatisfiedBy(Type parameter) => _names.ContainsKey(parameter);
+
+            public bool IsSatisfiedBy(XName parameter) => _types.ContainsKey(parameter);
         }
 
-        abstract class PrimitiveWriterBase<T> : ConditionalWriter
+        interface IConverter : IConditionalWriter, IConditionalReader {}
+
+        class Converter<T> : ConverterBase<T>
         {
-            protected PrimitiveWriterBase(string elementName, Func<T, string> serialize)
-                : base(typeof(T), new ElementWriter(elementName, new ValueWriter<T>(serialize))) {}
+            private readonly ISpecification<Type> _specification;
+            private readonly IWriter _writer;
+            private readonly IReader _reader;
+
+            public Converter(ISpecification<Type> specification, IWriter writer, IReader reader)
+            {
+                _specification = specification;
+                _writer = writer;
+                _reader = reader;
+            }
+
+            public override bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
+            public override void Write(XmlWriter writer, object instance) => _writer.Write(writer, instance);
+            public override object Read(XElement element) => _reader.Read(element);
         }
 
-        public abstract class WriterBase<T> : WriterBase, IWriter<T>
+        abstract class ConverterBase<T> : IConverter
         {
-            public abstract void Write(XmlWriter writer, T instance);
+            public abstract bool IsSatisfiedBy(Type parameter);
 
-            public sealed override void Write(XmlWriter writer, object instance) => Write(writer, (T) instance);
+            public abstract void Write(XmlWriter writer, object instance);
+            public abstract object Read(XElement element);
         }
 
-        public abstract class WriterBase : IWriter
+        class IntegerConverter : PrimitiveConverterBase<int>
+        {
+            public static IntegerConverter Default { get; } = new IntegerConverter();
+            IntegerConverter() : this(Identities.Default) {}
+
+            public IntegerConverter(IIdentities identities) : base(identities, XmlConvert.ToString, XmlConvert.ToInt32) {}
+        }
+
+        abstract class PrimitiveConverterBase<T> : Converter<T>
+        {
+            readonly private static Type SupportedType = typeof(T);
+
+            protected PrimitiveConverterBase(IIdentities provider, Func<T, string> serialize, Func<string, T> deserialize)
+                : this(IsAssignableSpecification<T>.Default, new ElementWriter(provider.Get(SupportedType), new ValueWriter<T>(serialize)), new ValueReader<T>(deserialize)) {}
+
+            protected PrimitiveConverterBase(ISpecification<Type> specification, IWriter writer, IReader reader) : base(specification, writer, reader) {}
+        }
+
+        abstract class WriterBase<T> : IWriter
+        {
+            protected abstract void Write(XmlWriter writer, T instance);
+
+            void IWriter.Write(XmlWriter writer, object instance) => Write(writer, (T) instance);
+        }
+
+        abstract class WriterBase : IWriter
         {
             public abstract void Write(XmlWriter writer, object instance);
         }
 
-        public interface IWriter<in T> : IWriter
-        {
-            void Write(XmlWriter writer, T instance);
-        }
+        interface IConditionalWriter : ISpecification<Type>, IWriter {}
 
-        public interface IConditionalWriter : ISpecification<Type>, IWriter {}
-
-        class ConditionalWriter : DecoratedWriter, IConditionalWriter
+        /*class ConditionalWriter : DecoratedWriter, IConditionalWriter
         {
             private readonly Type _supportedType;
 
@@ -297,9 +464,9 @@ namespace ExtendedXmlSerialization.Test
             }
 
             public bool IsSatisfiedBy(Type parameter) => _supportedType.IsAssignableFrom(parameter);
-        }
+        }*/
 
-        public interface IWriter
+        interface IWriter
         {
             void Write(XmlWriter writer, object instance);
         }
@@ -318,10 +485,10 @@ namespace ExtendedXmlSerialization.Test
                 _serialize = serialize;
             }
 
-            public override void Write(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
+            protected override void Write(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
         }
 
-        public class DecoratedWriter : WriterBase
+        class DecoratedWriter : WriterBase
         {
             private readonly IWriter _writer;
 
@@ -335,235 +502,19 @@ namespace ExtendedXmlSerialization.Test
 
         class ElementWriter : DecoratedWriter
         {
-            private readonly string _elementName;
+            private readonly XName _name;
 
-            public ElementWriter(string elementName, IWriter writer) : base(writer)
+            public ElementWriter(XName name, IWriter writer) : base(writer)
             {
-                _elementName = elementName;
+                _name = name;
             }
 
             public override void Write(XmlWriter writer, object instance)
             {
-                writer.WriteStartElement(_elementName);
+                writer.WriteStartElement(_name.LocalName, _name.NamespaceName);
                 base.Write(writer, instance);
                 writer.WriteEndElement();
             }
         }
-
-        /*class ElementWriter : ElementWriterBase
-        {
-            private readonly Action<XmlWriter, object> _write;
-
-            public ElementWriter(string elementName, Action<XmlWriter, object> write) : base(elementName)
-            {
-                _write = write;
-            }
-
-            protected override void SerializeBody(XmlWriter writer, object instance) => _write(writer, instance);
-        }
-
-        abstract class ElementWriterBase : IWriter
-        {
-            private readonly string _elementName;
-
-            protected ElementWriterBase(string elementName)
-            {
-                _elementName = elementName;
-            }
-
-            public void Write(XmlWriter writer, object instance)
-            {
-                writer.WriteStartElement(_elementName);
-                SerializeBody(writer, instance);
-                writer.WriteEndElement();
-            }
-
-            protected abstract void SerializeBody(XmlWriter writer, object instance);
-        }*/
-
-
-        /*public abstract class DefinitionBase<T> : DefinitionBase
-                {
-                    protected DefinitionBase() : base(typeof(T)) {}
-        
-                    protected abstract void OnSerialize(XmlWriter writer, T instance);
-                    public sealed override void Serialize(XmlWriter writer, object instance) => OnSerialize(writer, (T)instance);
-        
-                    protected abstract T OnDeserialize(XElement element);
-                    public override object Deserialize(XElement element) => OnDeserialize(element);
-                }
-        
-                public abstract class DefinitionBase : IDefinition
-                {
-                    private readonly Type _supportedType;
-                    protected DefinitionBase(Type supportedType)
-                    {
-                        _supportedType = supportedType;
-                    }
-        
-                    public bool IsSatisfiedBy(Type parameter) => _supportedType.IsAssignableFrom(parameter);
-        
-                    // public abstract string Serialize(object instance);
-        
-                    public abstract void Serialize(XmlWriter writer, object instance);
-                    public abstract object Deserialize(XElement element);
-                }*/
-
-        /*public interface IContentFactory : IParameterizedSource<object, IContext> {}
-
-        public class ProvidedContentFactory : IContentFactory
-        {
-            /*private readonly object _source;
-            private readonly Type _instanceType;
-
-            public ProvidedContentFactory(object source) : this(source, source.GetType()) {}
-
-            public ProvidedContentFactory(object source, Type instanceType)
-            {
-                _source = source;
-                _instanceType = instanceType;
-            }#1#
-
-            public IContext Get(object parameter)
-            {
-                
-                var type = parameter.GetType();
-                if (Primitives.Default.ContainsKey(type))
-                {
-                    return new Primitive(Primitives.Default[type], parameter);
-                }
-
-                var definition = TypeDefinitions.Default.Get(type);
-                var members =
-                    definition.Members
-                              .Select(x => new Member(x.Name, Get(x.GetValue(parameter))));
-                var instance = new Instance(definition.Name, members);
-                return instance;
-            }
-        }*/
-
-        /*public interface IRoot : IContext {}
-
-        class Root : DecoratedContext, IRoot
-        {
-            public Root(IContext context) : base(context) {}
-        }*/
-
-        /*public interface IEmitter
-        {
-            void Start(IContext context);
-            void Emit(IContext context);
-            void End(IContext context);
-        }
-
-        class DocumentEmitter : IEmitter
-        {
-            private readonly XmlWriter _writer;
-            private readonly IObjectSerializer _serializer;
-
-            public DocumentEmitter(XmlWriter writer) : this(writer, ObjectSerializer.Default) {}
-
-            public DocumentEmitter(XmlWriter writer, IObjectSerializer serializer)
-            {
-                _writer = writer;
-                _serializer = serializer;
-            }
-
-            public void Start(IContext context) => _writer.WriteStartElement(_serializer.Serialize(context));
-
-            public void Emit(IContext context) => _writer.WriteString(_serializer.Serialize(context));
-
-            public void End(IContext context) => _writer.WriteEndElement();
-        }
-
-        public class InstanceEmitter : ContextsTests.IEmitter
-        {
-            public void Start(IContext context) {}
-            public void Emit(IContext context) {}
-            public void End(IContext context) {}
-        }*/
-
-        /*public interface IContext //: ICommand<IEmitter>
-        {
-            string Name { get; }
-        }
-
-        public interface IInstance : IContext {}
-
-        class Instance : ContextBase, IInstance
-        {
-            private readonly IEnumerable<IMember> _members;
-
-            public Instance(string name, IEnumerable<IMember> members) : base(name)
-            {
-                _members = members;
-            }
-
-            public override void Execute(IEmitter parameter)
-            {
-                foreach (var member in _members)
-                {
-                    member.Execute(parameter);
-                }
-            }
-        }*/
-
-        /*public interface IMember : IContext
-        {
-            // bool IsWritable { get; }
-        }
-
-        class Member : DecoratedContext, IMember
-        {
-            public Member(string name, IContext context) : base(name, context) {}
-        }
-
-        public class DecoratedContext : ContextBase
-        {
-            private readonly IContext _context;
-
-            public DecoratedContext(IContext context) : this(context.Name, context) {}
-
-            public DecoratedContext(string name, IContext context) : base(name)
-            {
-                _context = context;
-            }
-
-            public override void Execute(IEmitter parameter)
-            {
-                parameter.Start(this);
-                _context.Execute(parameter);
-                parameter.End(this);
-            }
-        }*/
-
-        /*public abstract class ContextBase : IContext, ISerializable
-        {
-            protected ContextBase(string name)
-            {
-                Name = name;
-            }
-
-            public string Name { get; }
-
-            public abstract void Execute(IEmitter parameter);
-
-            public virtual string Get(IObjectSerializer parameter) => Name;
-        }*/
-
-        /*public interface IPrimitive : IContext {}
-
-        class Primitive : ContextBase, IPrimitive
-        {
-            private readonly object _instance;
-
-            public Primitive(string name, object instance) : base(name)
-            {
-                _instance = instance;
-            }
-
-            public override void Execute(IEmitter parameter) => parameter.Emit(this);
-            public override string Get(IObjectSerializer parameter) => parameter.Serialize(_instance);
-        }*/
     }
 }
