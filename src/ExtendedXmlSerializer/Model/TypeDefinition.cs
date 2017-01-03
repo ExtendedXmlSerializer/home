@@ -60,17 +60,20 @@ namespace ExtendedXmlSerialization.Model
                                                                       {typeof(TimeSpan), "TimeSpan"},
                                                                   };
 
-        readonly Lazy<ImmutableArray<IMemberDefinition>> _properties;
         readonly private static Type TypeObject = typeof(object);
+
+        readonly private Lazy<ImmutableArray<IMemberDefinition>> _members =
+            new Lazy<ImmutableArray<IMemberDefinition>>(Empty);
 
         public TypeDefinition(Type type)
         {
             Type = Nullable.GetUnderlyingType(type) ?? type;
             TypeCode = Type.GetTypeCode(Type);
-            string name;
-            IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name);
-            
             var typeInfo = Type.GetTypeInfo();
+            string name;
+            IsPrimitive = Codes.TryGetValue(TypeCode, out name) || Other.TryGetValue(Type, out name) || typeInfo.IsEnum;
+
+
             var isGenericType = typeInfo.IsGenericType;
 
             Name = typeInfo.GetCustomAttribute<XmlRootAttribute>()?.ElementName ?? (IsPrimitive ? name : Type.Name);
@@ -84,160 +87,123 @@ namespace ExtendedXmlSerialization.Model
 
             FullName = Type.FullName;
 
-            IsEnum = typeInfo.IsEnum;
-            IsArray = typeInfo.IsArray;
-            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(Type);
-
-            if (IsEnumerable)
+            if (!IsPrimitive)
             {
-                IsDictionary = typeof(IDictionary).IsAssignableFrom(Type) ||
-                               typeof(IDictionary<,>).IsAssignableFromGeneric(Type);
-
                 var elementType = ElementTypeLocator.Default.Locate(Type);
-                if (isGenericType)
+                IsEnumerable = elementType != null;
+                if (IsEnumerable)
                 {
-                    GenericArguments = Type.GetGenericArguments().ToImmutableArray();
-                }
-                else if (elementType != null)
-                {
-                    GenericArguments = ImmutableArray.Create(elementType);
+                    var isArray = typeInfo.IsArray;
+                    IsDictionary = typeof(IDictionary).IsAssignableFrom(Type) ||
+                                   typeof(IDictionary<,>).IsAssignableFromGeneric(Type);
+
+
+                    GenericArguments = isGenericType
+                        ? Type.GetGenericArguments().ToImmutableArray()
+                        : ImmutableArray.Create(elementType);
+
+                    Name = isArray || isGenericType
+                        ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}"
+                        : Type.Name;
+
+                    if (IsDictionary)
+                    {
+                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(Type);
+                    }
+                    else if (!isArray)
+                    {
+                        MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
+                        MethodAddToCollection = add != null
+                            ? ObjectAccessors.CreateMethodAddCollection(Type, elementType, add)
+                            : null;
+                    }
                 }
 
-                Name = IsArray || isGenericType
-                    ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}"
-                    : Type.Name;
-
-                if (IsDictionary)
+                var members = Type != TypeObject &&
+                              //not generic or generic but not List<> and Set<>
+                              (!isGenericType || !IsEnumerable);
+                if (members)
                 {
-                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(Type);
-                }
-                else if (elementType != null && !IsArray)
-                {
-                    MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
-                    MethodAddToCollection = add != null
-                        ? ObjectAccessors.CreateMethodAddCollection(Type, elementType, add)
-                        : null;
+                    _members =
+                        new Lazy<ImmutableArray<IMemberDefinition>>(CreateMembers);
                 }
             }
-
-            IsObjectToSerialize =
-                !IsPrimitive &&
-                !typeInfo.IsEnum && Type != TypeObject &&
-                //not generic or generic but not List<> and Set<>
-                (!isGenericType || !IsEnumerable);
-            _properties = new Lazy<ImmutableArray<IMemberDefinition>>(GetPropertieToSerialze);
 
             ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
         }
 
-        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get;  }
+        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; }
         public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; }
 
-        private ImmutableArray<IMemberDefinition> GetPropertieToSerialze()
+        private static ImmutableArray<IMemberDefinition> Empty() => ImmutableArray<IMemberDefinition>.Empty;
+
+        private ImmutableArray<IMemberDefinition> CreateMembers()
+            => YieldMembers().OrderBy(x => x, MemberComparer.Default).ToImmutableArray();
+
+        private IEnumerable<IMemberDefinition> YieldMembers()
         {
-            var result = new List<IMemberDefinition>();
-            if (IsObjectToSerialize)
+            foreach (PropertyInfo propertyInfo in Type.GetProperties())
             {
-                int order;
-
-                foreach (PropertyInfo propertyInfo in Type.GetProperties())
+                var elementType = ElementTypeLocator.Default.Locate(propertyInfo.PropertyType);
+                var getMethod = propertyInfo.GetGetMethod(true);
+                if (propertyInfo.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
+                    (propertyInfo.CanWrite || elementType != null) &&
+                    !(!propertyInfo.GetSetMethod(true)?.IsPublic ?? false) &&
+                    propertyInfo.GetIndexParameters().Length <= 0 &&
+                    !propertyInfo.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    var elementType = ElementTypeLocator.Default.Locate(propertyInfo.PropertyType);
-                    var getMethod = propertyInfo.GetGetMethod(true);
-                    if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
-                        !propertyInfo.CanWrite && elementType == null ||
-                        (!propertyInfo.GetSetMethod(true)?.IsPublic ?? false) ||
-                        propertyInfo.GetIndexParameters().Length > 0)
-                    {
-                        continue;
-                    }
-
-                    bool ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                    if (ignore)
-                    {
-                        continue;
-                    }
-
-                    var name = string.Empty;
-                    order = -1;
                     var xmlElement =
                         propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as
                             XmlElementAttribute;
-                    if (xmlElement != null)
-                    {
-                        name = xmlElement.ElementName;
-                        order = xmlElement.Order;
-                    }
-                    var property = new MemberDefinition(propertyInfo, name);
-                    if (order != -1)
-                    {
-                        property.Order = order;
-                    }
-                    MemberNames.Default.Add(propertyInfo, property.Name);
-                    result.Add(property);
+                    var definition = new MemberDefinition(propertyInfo,
+                                                          xmlElement?.ElementName.NullIfEmpty() ?? propertyInfo.Name)
+                                     {
+                                         Order = xmlElement?.Order ?? -1
+                                     };
+                    yield return definition;
                 }
-
-                var fields = Type.GetFields();
-                foreach (FieldInfo field in fields)
-                {
-                    if (field.IsLiteral && !field.IsInitOnly)
-                    {
-                        continue;
-                    }
-                    if (field.IsInitOnly || field.IsStatic)
-                    {
-                        continue;
-                    }
-                    bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                    if (ignore)
-                    {
-                        continue;
-                    }
-                    var name = string.Empty;
-                    order = -1;
-                    var xmlElement =
-                        field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as
-                            XmlElementAttribute;
-                    if (xmlElement != null)
-                    {
-                        name = xmlElement.ElementName;
-                        order = xmlElement.Order;
-                    }
-
-                    var property = new MemberDefinition(field, name);
-                    if (order != -1)
-                    {
-                        property.Order = order;
-                    }
-                    MemberNames.Default.Add(field, property.Name);
-                    result.Add(property);
-                }
-
-                result.Sort((p1, p2) =>
-                            {
-                                if (p1.Order == -1 || p2.Order == -1)
-                                {
-                                    if (p1.Order > -1)
-                                    {
-                                        return -1;
-                                    }
-                                    if (p2.Order > -1)
-                                    {
-                                        return 1;
-                                    }
-                                    return p1.Metadata.MetadataToken.CompareTo(p2.Metadata.MetadataToken);
-                                }
-
-                                return p1.Order.CompareTo(p2.Order);
-                            }
-                );
             }
-            return result.ToImmutableArray();
+
+            foreach (FieldInfo field in Type.GetFields())
+            {
+                if ((field.IsInitOnly ? !field.IsLiteral : !field.IsStatic) &&
+                    !field.IsDefined(typeof(XmlIgnoreAttribute), false))
+                {
+                    var xmlElement = field.GetCustomAttribute<XmlElementAttribute>(false);
+                    var definition = new MemberDefinition(field, xmlElement?.ElementName.NullIfEmpty() ?? field.Name)
+                                     {
+                                         Order = xmlElement?.Order ?? -1
+                                     };
+                    yield return definition;
+                }
+            }
+        }
+
+        class MemberComparer : IComparer<IMemberDefinition>
+        {
+            public static MemberComparer Default { get; } = new MemberComparer();
+            MemberComparer() {}
+
+            public int Compare(IMemberDefinition x, IMemberDefinition y)
+            {
+                if (x.Order == -1 || y.Order == -1)
+                {
+                    if (x.Order > -1)
+                    {
+                        return -1;
+                    }
+                    if (y.Order > -1)
+                    {
+                        return 1;
+                    }
+                    return x.Metadata.MetadataToken.CompareTo(y.Metadata.MetadataToken);
+                }
+
+                return x.Order.CompareTo(y.Order);
+            }
         }
 
         public bool IsPrimitive { get; }
-
-        public object DefaultValue { get; }
 
         public void Add(object item, object value) => MethodAddToCollection?.Invoke(item, value);
         public void Add(object item, object key, object value) => MethodAddToDictionary?.Invoke(item, key, value);
@@ -246,18 +212,15 @@ namespace ExtendedXmlSerialization.Model
 
         public object Activate() => ObjectActivator();
 
-        public bool IsArray { get; }
         public bool IsEnumerable { get; }
         public bool IsDictionary { get; }
         public ImmutableArray<Type> GenericArguments { get; }
 
-        public ImmutableArray<IMemberDefinition> Members => _properties.Value;
+        public ImmutableArray<IMemberDefinition> Members => _members.Value;
 
         public Type Type { get; }
         public string Name { get; }
         public string FullName { get; }
-        public bool IsObjectToSerialize { get; }
-        public bool IsEnum { get; }
 
         public TypeCode TypeCode { get; }
 

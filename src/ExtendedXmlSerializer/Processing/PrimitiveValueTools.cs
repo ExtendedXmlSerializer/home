@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Model;
 
@@ -79,7 +80,7 @@ namespace ExtendedXmlSerialization.Processing
 
         public static object GetPrimitiveValue(string value, ITypeDefinition type)
         {
-            if (type.IsEnum)
+            if (type.Type.GetTypeInfo().IsEnum)
             {
                 return Enum.Parse(type.Type, value);
             }

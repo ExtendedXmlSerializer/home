@@ -29,6 +29,7 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 using ExtendedXmlSerialization.Processing.Write;
+using ISerializer = ExtendedXmlSerialization.Processing.Write.ISerializer;
 
 namespace ExtendedXmlSerialization
 {
@@ -117,7 +118,7 @@ namespace ExtendedXmlSerialization
                 return ReadXmlDictionary(currentNode, type);
             }
 
-            if (type.IsArray || type.IsEnumerable)
+            if (type.IsEnumerable)
             {
                 return ReadXmlArray(currentNode, type, instance);
             }
@@ -202,8 +203,7 @@ namespace ExtendedXmlSerialization
                     var obj2 = ReadXml(xElement, targetTypeDef, obj);
                     propertyInfo.SetValue(currentObject, obj2);
                 }
-                else if (propertyDef.IsObjectToSerialize || propertyDef.IsArray || propertyDef.IsEnumerable ||
-                         propertyDef.IsDictionary)
+                else if (propertyDef.IsEnumerable || currentObject is Array || propertyDef.Members.Any())
                 {
                     //If xml does not contain type but we known that it is object
                     var obj = propertyInfo.GetValue(currentObject);
@@ -284,7 +284,8 @@ namespace ExtendedXmlSerialization
             int arrayCount = elements.Length;
             object list = null;
             Array array = null;
-            if (type.IsArray)
+            var isArray = type.Type.IsArray;
+            if (isArray)
             {
                 array = instance as Array ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
             }
@@ -301,7 +302,7 @@ namespace ExtendedXmlSerialization
                 var definition = GetElementTypeDefinition(element, elementType);
 
                 var xml = ReadXml(element, definition);
-                if (type.IsArray)
+                if (isArray)
                 {
                     array?.SetValue(xml, i);
                 }
@@ -310,11 +311,7 @@ namespace ExtendedXmlSerialization
                     type.Add(list, xml);
                 }
             }
-            if (type.IsArray)
-            {
-                return array;
-            }
-            return list;
+            return isArray ? array : list;
         }
 
         private static ITypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)

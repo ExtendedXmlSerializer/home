@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,22 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Processing
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-    class MemberNames : WeakCacheBase<MemberInfo, string>
+    public class ContainsSpecification<T> : DelegatedSpecification<T>
     {
-        public static MemberNames Default { get; } = new MemberNames();
-        MemberNames() {}
-
-        protected override string Callback(MemberInfo key)
-        {
-            var result = key.GetCustomAttribute<XmlAttributeAttribute>()?.AttributeName.NullIfEmpty() ??
-                         key.GetCustomAttribute<XmlElementAttribute>()?.ElementName.NullIfEmpty() ?? key.Name;
-            return result;
-        }
+        public ContainsSpecification(ICollection<T> source) : base(source.Contains) {}
     }
 }

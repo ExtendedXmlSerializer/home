@@ -30,14 +30,9 @@ namespace ExtendedXmlSerialization.Model
     {
         string FullName { get; }
         ImmutableArray<Type> GenericArguments { get; }
-        bool IsArray { get; }
         bool IsDictionary { get; }
-        bool IsEnum { get; }
         bool IsEnumerable { get; }
-        bool IsObjectToSerialize { get; }
         bool IsPrimitive { get; }
-
-        object DefaultValue { get; }
 
         void Add(object item, object value);
 

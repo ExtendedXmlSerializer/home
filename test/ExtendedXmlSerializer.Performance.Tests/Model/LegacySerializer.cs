@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
@@ -247,7 +248,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     return ReadXmlDictionary(currentNode, type);
                 }
 
-                if (type.IsArray || type.IsEnumerable)
+                if (type.IsEnumerable)
                 {
                     return ReadXmlArray(currentNode, type, instance);
                 }
@@ -332,8 +333,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                         var obj2 = ReadXml(xElement, targetTypeDef, obj);
                         propertyInfo.SetValue(currentObject, obj2);
                     }
-                    else if (propertyDef.IsObjectToSerialize || propertyDef.IsArray || propertyDef.IsEnumerable ||
-                             propertyDef.IsDictionary)
+                    else if (propertyDef.IsEnumerable)
                     {
                         //If xml does not contain type but we known that it is object
                         var obj = propertyInfo.GetValue(currentObject);
@@ -411,9 +411,10 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 int arrayCount = elements.Length;
                 object list = null;
                 Array array = null;
-                if (type.IsArray)
+                var isArray = instance is Array;
+                if (isArray)
                 {
-                    array = instance as Array ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
+                    array = Array.CreateInstance(type.Type.GetElementType(), arrayCount);
                 }
                 else
                 {
@@ -428,7 +429,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     var definition = GetElementTypeDefinition(element, elementType);
 
                     var xml = ReadXml(element, definition);
-                    if (type.IsArray)
+                    if (isArray)
                     {
                         array?.SetValue(xml, i);
                     }
@@ -437,11 +438,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                         type.Add(list, xml);
                     }
                 }
-                if (type.IsArray)
-                {
-                    return array;
-                }
-                return list;
+                return isArray ? array : list;
             }
 
             private ITypeDefinition GetElementTypeDefinition(XElement element, Type defuaultType = null)
@@ -488,7 +485,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     WriteXmlDictionary(o, writer, type, name, forceSaveType);
                     return;
                 }
-                if (type.IsArray || type.IsEnumerable)
+                if (type.IsEnumerable)
                 {
                     WriteXmlArray(o, writer, type, name, forceSaveType);
                     return;
@@ -555,13 +552,13 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 
                     var defType = TypeDefinitions.Default.Get(propertyValue.GetType());
 
-                    if (defType.IsObjectToSerialize || defType.IsArray || defType.IsEnumerable)
+                    if (defType.IsEnumerable)
                     {
                         WriteXml(writer, propertyValue, defType, propertyInfo.Name,
                                  forceSaveType:
                                  propertyInfo.IsWritable && propertyInfo.TypeDefinition.FullName != defType.FullName);
                     }
-                    else if (defType.IsEnum)
+                    else if (defType.Type.GetTypeInfo().IsEnum)
                     {
                         writer.WriteStartElement(propertyInfo.Name);
                         writer.WriteString(propertyValue.ToString());

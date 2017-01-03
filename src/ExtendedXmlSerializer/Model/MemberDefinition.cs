@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Model
         public MemberDefinition(MemberInfo memberInfo, string name)
         {
             Metadata = memberInfo;
-            Name = string.IsNullOrEmpty(name) ? memberInfo.Name : name;
+            Name = name;
             TypeDefinition = TypeDefinitions.Default.Get(memberInfo.GetMemberType());
             IsWritable = memberInfo.IsWritable();
             _getter = ObjectAccessors.CreatePropertyGetter(memberInfo);

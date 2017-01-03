@@ -31,6 +31,6 @@ namespace ExtendedXmlSerialization.Processing
         public static IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
         IsEnumerableTypeSpecification() {}
 
-        public bool IsSatisfiedBy(ITypeDefinition parameter) => parameter.IsArray || parameter.IsEnumerable;
+        public bool IsSatisfiedBy(ITypeDefinition parameter) => parameter.IsEnumerable;
     }
 }
