@@ -30,6 +30,7 @@ using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 using ExtendedXmlSerialization.Processing.Write;
 using ISerializer = ExtendedXmlSerialization.Processing.Write.ISerializer;
+using Types = ExtendedXmlSerialization.Processing.Types;
 
 namespace ExtendedXmlSerialization
 {
@@ -204,7 +205,7 @@ namespace ExtendedXmlSerialization
                     var obj2 = ReadXml(xElement, targetTypeDef, obj);
                     propertyInfo.SetValue(currentObject, obj2);
                 }
-                else if (propertyDef.IsEnumerable || currentObject is Array || propertyDef.Members.Any())
+                else if (propertyDef.IsEnumerable || propertyDef.Members.Any())
                 {
                     //If xml does not contain type but we known that it is object
                     var obj = propertyInfo.GetValue(currentObject);

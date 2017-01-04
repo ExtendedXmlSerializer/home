@@ -125,9 +125,9 @@ namespace ExtendedXmlSerialization.Model
                     _members =
                         new Lazy<ImmutableArray<IMemberDefinition>>(CreateMembers);
                 }
-            }
 
-            ObjectActivator = ObjectAccessors.CreateObjectActivator(Type, IsPrimitive);
+                ObjectActivator = ObjectAccessors.CreateObjectActivator(Type);
+            }
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; }

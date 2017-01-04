@@ -40,21 +40,12 @@ namespace ExtendedXmlSerialization.Processing
 
         internal delegate void AddItemToDictionary(object item, object key, object value);
 
-        internal static ObjectActivator CreateObjectActivator(Type type, bool isPrimitive)
+        internal static ObjectActivator CreateObjectActivator(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             //if isClass or struct but not abstract, enum or primitive
-            if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum &&
-                !typeInfo.IsPrimitive)
+            if (!typeInfo.IsAbstract && (typeInfo.IsValueType || typeInfo.IsClass && type.GetConstructor(Type.EmptyTypes) != null)) //class must have constructor
             {
-                if (typeInfo.IsClass)
-                {
-                    //class must have constructor
-                    var constructor = type.GetConstructor(Type.EmptyTypes);
-                    if (constructor == null)
-                        return null;
-                }
-
                 var newExp = Expression.Convert(Expression.New(type), typeof(object));
 
                 var lambda = Expression.Lambda<ObjectActivator>(newExp);
