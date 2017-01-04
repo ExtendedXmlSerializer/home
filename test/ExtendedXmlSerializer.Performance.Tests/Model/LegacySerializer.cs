@@ -389,7 +389,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 var elements = currentNode.Elements().ToArray();
 
                 var definition = GetElementTypeDefinition(currentNode) ?? type;
-                object dict = instance ?? definition.Activate();
+                var dict = (IDictionary)(instance ?? definition.Activate());
 
                 for (int i = 0; i < arrayCount; i++)
                 {
@@ -401,7 +401,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     var keyDef = GetElementTypeDefinition(key, type.GenericArguments[0]);
                     var valuDef = GetElementTypeDefinition(value, type.GenericArguments[1]);
 
-                    type.Add(dict, ReadXml(key, keyDef), ReadXml(value, valuDef));
+                    dict.Add(ReadXml(key, keyDef), ReadXml(value, valuDef));
                 }
                 return dict;
             }

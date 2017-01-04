@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -263,7 +264,7 @@ namespace ExtendedXmlSerialization
             var count = elements.Length;
 
             var definition = GetElementTypeDefinition(currentNode) ?? type;
-            object dict = instance ?? definition.Activate();
+            var dict = (IDictionary)(instance ?? definition.Activate());
 
             for (int i = 0; i < count; i++)
             {
@@ -275,7 +276,7 @@ namespace ExtendedXmlSerialization
                 var keyDef = GetElementTypeDefinition(key, type.GenericArguments[0]);
                 var valuDef = GetElementTypeDefinition(value, type.GenericArguments[1]);
 
-                type.Add(dict, ReadXml(key, keyDef), ReadXml(value, valuDef));
+                dict.Add(ReadXml(key, keyDef), ReadXml(value, valuDef));
             }
             return dict;
         }

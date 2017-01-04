@@ -31,6 +31,7 @@ using ExtendedXmlSerialization.Model.Write;
 using IInstance = ExtendedXmlSerialization.Model.Write.IInstance;
 using IItem = ExtendedXmlSerialization.Model.Write.IItem;
 using IMember = ExtendedXmlSerialization.Model.Write.IMember;
+using Member = ExtendedXmlSerialization.Model.Write.Member;
 using Object = ExtendedXmlSerialization.Model.Write.Object;
 
 namespace ExtendedXmlSerialization.Processing.Write

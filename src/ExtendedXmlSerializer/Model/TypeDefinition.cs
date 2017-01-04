@@ -104,11 +104,7 @@ namespace ExtendedXmlSerialization.Model
                         ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}"
                         : Type.Name;
 
-                    if (IsDictionary)
-                    {
-                        MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(Type);
-                    }
-                    else if (!isArray)
+                    if (!isArray)
                     {
                         MethodInfo add = AddMethodLocator.Default.Locate(type, elementType);
                         MethodAddToCollection = add != null
@@ -131,8 +127,7 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; }
-        public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; }
-
+        
         private static ImmutableArray<IMemberDefinition> Empty() => ImmutableArray<IMemberDefinition>.Empty;
 
         private ImmutableArray<IMemberDefinition> CreateMembers()
@@ -204,8 +199,7 @@ namespace ExtendedXmlSerialization.Model
         public bool IsPrimitive { get; }
 
         public void Add(object item, object value) => MethodAddToCollection?.Invoke(item, value);
-        public void Add(object item, object key, object value) => MethodAddToDictionary?.Invoke(item, key, value);
-
+        
         public bool CanActivate => ObjectActivator != null;
 
         public object Activate() => ObjectActivator();

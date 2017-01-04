@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -38,13 +37,13 @@ namespace ExtendedXmlSerialization.Processing
 
         internal delegate void AddItemToCollection(object item, object value);
 
-        internal delegate void AddItemToDictionary(object item, object key, object value);
-
         internal static ObjectActivator CreateObjectActivator(Type type)
         {
             var typeInfo = type.GetTypeInfo();
             //if isClass or struct but not abstract, enum or primitive
-            if (!typeInfo.IsAbstract && (typeInfo.IsValueType || typeInfo.IsClass && type.GetConstructor(Type.EmptyTypes) != null)) //class must have constructor
+            if (!typeInfo.IsAbstract &&
+                (typeInfo.IsValueType || typeInfo.IsClass && type.GetConstructor(Type.EmptyTypes) != null))
+                //class must have constructor
             {
                 var newExp = Expression.Convert(Expression.New(type), typeof(object));
 
@@ -78,36 +77,6 @@ namespace ExtendedXmlSerialization.Processing
                 return compiled;
             }
             return null;
-        }
-
-        internal static AddItemToDictionary CreateMethodAddToDictionary(Type type)
-        {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
-
-            // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
-
-            var arguments = type.GetGenericArguments();
-            List<ParameterExpression> objParams = new List<ParameterExpression>();
-            //Add object as first param
-            objParams.Add(itemObject);
-            List<Expression> castedParams = new List<Expression>();
-            foreach (var argument in arguments)
-            {
-                ParameterExpression value = Expression.Parameter(typeof(object), "value");
-                objParams.Add(value);
-                castedParams.Add(Expression.Convert(value, argument));
-            }
-
-            MethodInfo method = type.GetMethod("Add");
-
-            Expression conversion = Expression.Call(itemCasted, method, castedParams);
-
-            LambdaExpression lambda = Expression.Lambda(typeof(AddItemToDictionary), conversion, objParams);
-
-            AddItemToDictionary compiled = (AddItemToDictionary) lambda.Compile();
-            return compiled;
         }
 
         internal static AddItemToCollection CreateMethodAddCollection(Type type, Type parameterType, MethodInfo add)
