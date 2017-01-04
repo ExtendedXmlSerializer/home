@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core.Specifications
@@ -29,11 +28,11 @@ namespace ExtendedXmlSerialization.Core.Specifications
     public class IsAssignableSpecification<T> : IsAssignableSpecification
     {
         public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        IsAssignableSpecification() : base(typeof(T)) {}
+        IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
     }
 
-    public class IsAssignableSpecification : DelegatedSpecification<Type>
+    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
     {
-        public IsAssignableSpecification(Type type) : base(type.GetTypeInfo().IsAssignableFrom) {}
+        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
     }
 }

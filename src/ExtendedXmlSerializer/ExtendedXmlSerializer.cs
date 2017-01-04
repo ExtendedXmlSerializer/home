@@ -304,7 +304,7 @@ namespace ExtendedXmlSerialization
                 var xml = ReadXml(element, definition);
                 if (isArray)
                 {
-                    array?.SetValue(xml, i);
+                    array.SetValue(xml, i);
                 }
                 else
                 {
