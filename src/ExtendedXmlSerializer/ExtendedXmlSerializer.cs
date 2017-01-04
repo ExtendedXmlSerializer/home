@@ -153,9 +153,10 @@ namespace ExtendedXmlSerialization
                 if (configuration.IsObjectReference)
                 {
                     string refId = currentNode.Attribute(Ref)?.Value;
+                    var prefix = currentNodeDef.Type.FullName + Underscore;
                     if (!string.IsNullOrEmpty(refId))
                     {
-                        var key = currentNodeDef.FullName + Underscore + refId;
+                        var key = prefix + refId;
                         if (_referencesObjects.ContainsKey(key))
                         {
                             return _referencesObjects[key];
@@ -165,7 +166,7 @@ namespace ExtendedXmlSerialization
                     string objectId = currentNode.Attribute(Id)?.Value;
                     if (!string.IsNullOrEmpty(objectId))
                     {
-                        var key = currentNodeDef.FullName + Underscore + objectId;
+                        var key = prefix + objectId;
                         if (_referencesObjects.ContainsKey(key))
                         {
                             currentObject = _referencesObjects[key];

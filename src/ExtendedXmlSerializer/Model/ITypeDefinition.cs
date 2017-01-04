@@ -28,7 +28,6 @@ namespace ExtendedXmlSerialization.Model
 {
     public interface ITypeDefinition : IDefinition
     {
-        string FullName { get; }
         ImmutableArray<Type> GenericArguments { get; }
         bool IsDictionary { get; }
         bool IsEnumerable { get; }

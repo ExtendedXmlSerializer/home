@@ -135,7 +135,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 writer.WriteStartElement(name ?? def.Name);
                 if (forceSaveType)
                 {
-                    writer.WriteAttributeString(Type, def.FullName);
+                    writer.WriteAttributeString(Type, def.Type.FullName);
                 }
                 var dict = o as IDictionary;
                 if (dict != null)
@@ -146,11 +146,11 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 
                         var itemDef = TypeDefinitions.Default.Get(item.Key.GetType());
                         WriteXml(writer, item.Key, itemDef, Key,
-                                 forceSaveType: def.GenericArguments[0].FullName != itemDef.FullName);
+                                 forceSaveType: def.GenericArguments[0].FullName != itemDef.Type.FullName);
 
                         var itemValueDef = TypeDefinitions.Default.Get(item.Value.GetType());
                         WriteXml(writer, item.Value, itemValueDef, Value,
-                                 forceSaveType: def.GenericArguments[1].FullName != itemValueDef.FullName);
+                                 forceSaveType: def.GenericArguments[1].FullName != itemValueDef.Type.FullName);
 
                         writer.WriteEndElement();
                     }
@@ -159,12 +159,12 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 writer.WriteEndElement();
             }
 
-            private void WriteXmlArray(object o, XmlWriter writer, ITypeDefinition def, string name, bool forceSaveType)
+            private void WriteXmlArray(object o, XmlWriter writer, IDefinition def, string name, bool forceSaveType)
             {
                 writer.WriteStartElement(name ?? def.Name);
                 if (forceSaveType)
                 {
-                    writer.WriteAttributeString(Type, def.FullName);
+                    writer.WriteAttributeString(Type, def.Type.FullName);
                 }
                 List<string> toWriteReservedObject = new List<string>();
                 var elementType = ElementTypeLocator.Default.Locate(def.Type);
@@ -204,7 +204,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                                 }
                             }
                             WriteXml(writer, item, itemDef, writeReservedObject: writeReservedObject,
-                                     forceSaveType: elementType.FullName != itemDef.FullName);
+                                     forceSaveType: elementType.FullName != itemDef.Type.FullName);
                         }
                     }
                 }
@@ -285,7 +285,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                         string refId = currentNode.Attribute(Ref)?.Value;
                         if (!string.IsNullOrEmpty(refId))
                         {
-                            var key = currentNodeDef.FullName + Underscore + refId;
+                            var key = currentNodeDef.Type.FullName + Underscore + refId;
                             if (_referencesObjects.ContainsKey(key))
                             {
                                 return _referencesObjects[key];
@@ -295,7 +295,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                         string objectId = currentNode.Attribute(Id)?.Value;
                         if (!string.IsNullOrEmpty(objectId))
                         {
-                            var key = currentNodeDef.FullName + Underscore + objectId;
+                            var key = currentNodeDef.Type.FullName + Underscore + objectId;
                             if (_referencesObjects.ContainsKey(key))
                             {
                                 currentObject = _referencesObjects[key];
@@ -495,13 +495,14 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 // Get configuration for type
                 var configuration = GetConfiguration(type.Type);
 
+                var fullName = type.Type.FullName;
                 if (configuration != null)
                 {
                     if (configuration.IsObjectReference)
                     {
                         var objectId = configuration.GetObjectId(o);
 
-                        var key = type.FullName + Underscore + objectId;
+                        var key = fullName + Underscore + objectId;
                         if (writeReservedObject && _reservedReferencesObjects.ContainsKey(key))
                         {
                             _reservedReferencesObjects.Remove(key);
@@ -510,20 +511,20 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                         {
                             if (forceSaveType)
                             {
-                                writer.WriteAttributeString(Type, type.FullName);
+                                writer.WriteAttributeString(Type, fullName);
                             }
 
                             writer.WriteAttributeString(Ref, objectId);
                             writer.WriteEndElement();
                             return;
                         }
-                        writer.WriteAttributeString(Type, type.FullName);
+                        writer.WriteAttributeString(Type, fullName);
                         writer.WriteAttributeString(Id, objectId);
                         _referencesObjects.Add(key, o);
                     }
                     else
                     {
-                        writer.WriteAttributeString(Type, type.FullName);
+                        writer.WriteAttributeString(Type, fullName);
                     }
 
                     if (configuration.Version > 0)
@@ -540,7 +541,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 }
                 else
                 {
-                    writer.WriteAttributeString(Type, type.FullName);
+                    writer.WriteAttributeString(Type, fullName);
                 }
 
                 var properties = type.Members;
@@ -556,7 +557,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     {
                         WriteXml(writer, propertyValue, defType, propertyInfo.Name,
                                  forceSaveType:
-                                 propertyInfo.IsWritable && propertyInfo.TypeDefinition.FullName != defType.FullName);
+                                 propertyInfo.IsWritable && propertyInfo.TypeDefinition.Type.FullName != defType.Type.FullName);
                     }
                     else if (defType.Type.GetTypeInfo().IsEnum)
                     {

@@ -85,8 +85,6 @@ namespace ExtendedXmlSerialization.Model
                                     $"Of{string.Join(string.Empty, types.Select(p => p.Name))}");
             }
 
-            FullName = Type.FullName;
-
             if (!IsPrimitive)
             {
                 var elementType = ElementTypeLocator.Default.Locate(Type);
@@ -220,7 +218,6 @@ namespace ExtendedXmlSerialization.Model
 
         public Type Type { get; }
         public string Name { get; }
-        public string FullName { get; }
 
         public TypeCode TypeCode { get; }
 
