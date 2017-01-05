@@ -32,11 +32,12 @@ namespace ExtendedXmlSerialization.Core
     /// </summary>
     public class ObjectIdGenerator
     {
-        private static readonly int[] Sizes = {
-                                                  5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717,
-                                                  51437,
-                                                  102877, 205759, 411527, 823117, 1646237, 3292489, 6584983
-                                              };
+        private static readonly int[] Sizes =
+        {
+            5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717,
+            51437,
+            102877, 205759, 411527, 823117, 1646237, 3292489, 6584983
+        };
 
 
         int _currentCount, _currentSize;
@@ -48,17 +49,17 @@ namespace ExtendedXmlSerialization.Core
         {
             _currentCount = 1;
             _currentSize = Sizes[0];
-            _ids = new long[_currentSize*4];
-            _objs = new object[_currentSize*4];
+            _ids = new long[_currentSize * 4];
+            _objs = new object[_currentSize * 4];
         }
 
         private int FindIndex(object obj, out bool found)
         {
             int hashCode = RuntimeHelpers.GetHashCode(obj);
-            int num1 = 1 + (hashCode & int.MaxValue)%(_currentSize - 2);
+            int num1 = 1 + (hashCode & int.MaxValue) % (_currentSize - 2);
             while (true)
             {
-                int num2 = (hashCode & int.MaxValue)%_currentSize*4;
+                int num2 = (hashCode & int.MaxValue) % _currentSize * 4;
                 for (int index = num2; index < num2 + 4; ++index)
                 {
                     var o = _objs[index];
@@ -98,7 +99,7 @@ namespace ExtendedXmlSerialization.Core
                 long num = currentCount;
                 ids[index] = num;
                 id = _ids[index];
-                if (_currentCount > _currentSize*4/2)
+                if (_currentCount > _currentSize * 4 / 2)
                     Rehash();
             }
             else
@@ -137,8 +138,8 @@ namespace ExtendedXmlSerialization.Core
             if (index1 == Sizes.Length)
                 throw new SerializationException("Serialization_TooManyElements");
             _currentSize = Sizes[index1];
-            long[] numArray = new long[_currentSize*4];
-            object[] objArray = new object[_currentSize*4];
+            long[] numArray = new long[_currentSize * 4];
+            object[] objArray = new object[_currentSize * 4];
             long[] ids = _ids;
             object[] objs = _objs;
             _ids = numArray;

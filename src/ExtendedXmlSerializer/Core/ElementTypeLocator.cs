@@ -37,22 +37,22 @@ namespace ExtendedXmlSerialization.Core
         public Type Locate(Type type) => Get(type);
 
         // Attribution: http://stackoverflow.com/a/17713382/3602057
-        protected override Type Callback(Type key)
+        protected override Type Create(Type parameter)
         {
             // Type is Array
             // short-circuit if you expect lots of arrays 
-            if (ArrayInfo.IsAssignableFrom(key))
-                return key.GetElementType();
+            if (ArrayInfo.IsAssignableFrom(parameter))
+                return parameter.GetElementType();
 
             // type is IEnumerable<T>;
-            if (key.GetTypeInfo().IsGenericType && key.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                return key.GetGenericArguments()[0];
+            if (parameter.GetTypeInfo().IsGenericType && parameter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return parameter.GetGenericArguments()[0];
 
             // type implements/extends IEnumerable<T>;
-            var result = key.GetInterfaces()
-                            .Where(t => t.GetTypeInfo().IsGenericType &&
-                                        t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                            .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
+            var result = parameter.GetInterfaces()
+                                  .Where(t => t.GetTypeInfo().IsGenericType &&
+                                              t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                                  .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
 
             return result;
         }

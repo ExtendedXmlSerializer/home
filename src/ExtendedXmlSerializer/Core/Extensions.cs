@@ -67,22 +67,16 @@ namespace ExtendedXmlSerialization.Core
         {
             var interfaceTypes = candidate.GetInterfaces();
 
-            foreach (var it in interfaceTypes)
+            foreach (var it in interfaceTypes.Append(candidate))
             {
                 if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == @this)
                     return true;
             }
 
-            var typeInfo = candidate.GetTypeInfo();
-            if (typeInfo.IsGenericType && candidate.GetGenericTypeDefinition() == @this)
-                return true;
-
-            Type baseType = typeInfo.BaseType;
-            if (baseType == null) return false;
-
-            return IsAssignableFromGeneric(@this, baseType);
+            var baseType = candidate.GetTypeInfo().BaseType;
+            var result = baseType != null && IsAssignableFromGeneric(@this, baseType);
+            return result;
         }
-
 
         public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 

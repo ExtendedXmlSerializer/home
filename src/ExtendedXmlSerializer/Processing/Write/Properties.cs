@@ -39,13 +39,13 @@ namespace ExtendedXmlSerialization.Processing.Write
             _locator = locator;
         }
 
-        protected override IProperty Callback(IElement key)
+        protected override IProperty Create(IElement parameter)
         {
-            var instance = key.Content.Instance;
+            var instance = parameter.Content.Instance;
             var id = _locator.Get(instance);
             if (id != null)
             {
-                var identity = _watching.Contains(instance) ? key is IItem : _generator.For(instance).FirstEncounter;
+                var identity = _watching.Contains(instance) ? parameter is IItem : _generator.For(instance).FirstEncounter;
                 var result = identity ? (IProperty) new IdentityProperty(id) : new ObjectReferenceProperty(id);
                 return result;
             }

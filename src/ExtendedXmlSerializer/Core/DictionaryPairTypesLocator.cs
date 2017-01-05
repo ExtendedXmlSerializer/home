@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,26 +23,38 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public sealed class AllInterfaces
+    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>
     {
-        readonly Func<Type, IEnumerable<Type>> _selector;
+        public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
+        DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
-        public static AllInterfaces Instance { get; } = new AllInterfaces();
+        private readonly Type _type;
 
-        AllInterfaces()
+        public DictionaryPairTypesLocator(Type type)
         {
-            _selector = Yield;
+            _type = type;
         }
 
-        public IEnumerable<Type> Yield(Type parameter) =>
-            new[] {parameter}
-                .Concat(parameter.GetTypeInfo().ImplementedInterfaces.SelectMany(_selector))
-                .Where(x => x.GetTypeInfo().IsInterface)
-                .Distinct();
+        protected override DictionaryPairTypes Create(Type parameter)
+        {
+            foreach (var it in parameter.GetInterfaces().Append(parameter))
+            {
+                var info = it.GetTypeInfo();
+                if (info.IsGenericType && it.GetGenericTypeDefinition() == _type)
+                {
+                    var arguments = info.GetGenericArguments();
+                    var mapping = new DictionaryPairTypes(arguments[0], arguments[1]);
+                    return mapping;
+                }
+            }
+
+            var baseType = parameter.GetTypeInfo().BaseType;
+            var result = baseType != null ? Get(baseType) : null;
+            return result;
+        }
     }
 }

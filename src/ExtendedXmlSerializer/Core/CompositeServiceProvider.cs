@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.Core
 
         public object GetService(Type serviceType) => Get(serviceType);
 
-        protected override object Callback(Type key) => FromServices(key) ?? FromProviders(key);
+        protected override object Create(Type parameter) => FromServices(parameter) ?? FromProviders(parameter);
 
         private object FromServices(Type key)
         {
