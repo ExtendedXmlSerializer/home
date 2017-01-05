@@ -34,6 +34,7 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 using IEnumerable = System.Collections.IEnumerable;
+using Types = ExtendedXmlSerialization.Processing.Types;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Model
 {

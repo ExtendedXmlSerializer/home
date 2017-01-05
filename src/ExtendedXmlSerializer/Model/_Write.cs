@@ -29,7 +29,6 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -56,20 +55,11 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    class InstanceWriter : ElementWriterBase, IConditionalWriter
+    abstract class InstanceWriterBase : ElementWriter
     {
-        private readonly INameProvider _provider;
+        protected InstanceWriterBase(IWriter writer) : this(NameProvider.Default, writer) {}
 
-        public InstanceWriter(IWriter writer) : this(NameProvider.Default, writer) {}
-
-        public InstanceWriter(INameProvider provider, IWriter writer) : base(writer)
-        {
-            _provider = provider;
-        }
-
-        protected override XName Get(TypeInfo type) => _provider.Get(type);
-
-        public virtual bool IsSatisfiedBy(TypeInfo parameter) => true;
+        protected InstanceWriterBase(INameProvider provider, IWriter writer) : base(provider.Get, writer) {}
     }
 
     public class MemberWriter : WriterBase
@@ -118,39 +108,38 @@ namespace ExtendedXmlSerialization.Model
     class NameProvider : WeakCacheBase<MemberInfo, XName>, INameProvider
     {
         public static NameProvider Default { get; } = new NameProvider();
-        NameProvider() {}
+        NameProvider() : this(string.Empty) {}
 
-        protected override XName Callback(MemberInfo key)
+        private readonly string _defaultNamespace;
+
+        public NameProvider(string defaultNamespace)
         {
-            var result = key.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-                         key.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ?? key.Name;
+            _defaultNamespace = defaultNamespace;
+        }
+
+        protected override XName Create(MemberInfo parameter)
+        {
+            var typeInfo = parameter as TypeInfo ?? parameter.DeclaringType.GetTypeInfo();
+            var attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>(false);
+            var name = attribute?.ElementName.NullIfEmpty() ?? typeInfo.Name;
+            var ns = attribute?.Namespace ?? _defaultNamespace;
+            var result = XName.Get(name, ns);
             return result;
         }
     }
 
-    public class ConditionalCompositeWriter : IWriter
+    class MemberNameProvider : WeakCacheBase<MemberInfo, XName>, INameProvider
     {
-        private readonly IConditionalWriter[] _writers;
+        public static MemberNameProvider Default { get; } = new MemberNameProvider();
+        MemberNameProvider() {}
 
-        public ConditionalCompositeWriter(params IConditionalWriter[] writers)
+        protected override XName Create(MemberInfo parameter)
         {
-            _writers = writers;
-        }
-
-        public void Write(XmlWriter writer, object instance)
-        {
-            var type = instance.GetType().GetTypeInfo();
-            foreach (var item in _writers)
-            {
-                if (item.IsSatisfiedBy(type))
-                {
-                    item.Write(writer, instance);
-                    return;
-                }
-            }
+            var result = parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+                         parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ?? parameter.Name;
+            return result;
         }
     }
-
 
     public abstract class WriterBase<T> : IWriter
     {
@@ -163,8 +152,6 @@ namespace ExtendedXmlSerialization.Model
     {
         public abstract void Write(XmlWriter writer, object instance);
     }
-
-    public interface IConditionalWriter : ISpecification<TypeInfo>, IWriter {}
 
     public interface IWriter
     {

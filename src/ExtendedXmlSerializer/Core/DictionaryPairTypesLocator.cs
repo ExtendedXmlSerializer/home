@@ -27,7 +27,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>
+    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>, IDictionaryPairTypesLocator
     {
         public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
         DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}

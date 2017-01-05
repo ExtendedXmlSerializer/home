@@ -23,14 +23,10 @@
 
 using System;
 using System.IO;
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface IConditionalReader : ISpecification<TypeInfo>, IReader {}
-
     public interface IReader
     {
         object Read(XElement element);
@@ -70,35 +66,6 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public override object Read(XElement element) => _reader.Read(element);
-    }
-
-    public class ConditionalCompositeReader : IReader
-    {
-        private readonly IConditionalReader[] _readers;
-        private readonly ITypeProvider _provider;
-
-
-        public ConditionalCompositeReader(params IConditionalReader[] readers) : this(TypeProvider.Default, readers) {}
-
-        public ConditionalCompositeReader(ITypeProvider provider, params IConditionalReader[] readers)
-        {
-            _provider = provider;
-            _readers = readers;
-        }
-
-        public object Read(XElement element)
-        {
-            var type = _provider.Get(element).GetTypeInfo();
-            foreach (var reader in _readers)
-            {
-                if (reader.IsSatisfiedBy(type))
-                {
-                    var result = reader.Read(element);
-                    return result;
-                }
-            }
-            return null;
-        }
     }
 
     public interface IDeserializer
