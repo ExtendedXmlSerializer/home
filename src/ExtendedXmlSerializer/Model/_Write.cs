@@ -23,6 +23,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -41,6 +42,8 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly IWriter _writer;
 
+        public Serializer() : this(Root.Default) {}
+
         public Serializer(IWriter writer)
         {
             _writer = writer;
@@ -55,57 +58,41 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    abstract class InstanceWriterBase : ElementWriter
+    public class ActivatedTypeWriter : WriterBase
     {
-        protected InstanceWriterBase(IWriter writer) : this(NameProvider.Default, writer) {}
+        public static ActivatedTypeWriter Default { get; } = new ActivatedTypeWriter();
+        ActivatedTypeWriter() : this(InstanceMembers.Default) {}
 
-        protected InstanceWriterBase(INameProvider provider, IWriter writer) : base(provider.Get, writer) {}
-    }
+        private readonly IInstanceMembers _members;
+        
+        public ActivatedTypeWriter(IInstanceMembers members)
+        {
+            _members = members;
+        }
 
-    public class MemberWriter : WriterBase
-    {
-        public override void Write(XmlWriter writer, object instance) {}
+        public override void Write(XmlWriter writer, object instance)
+        {
+            foreach (var member in _members.Get(instance.GetType().GetTypeInfo()))
+            {
+                member.Write(writer, instance);
+            }
+        }
     }
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
 
-    /*class GenericNameProvider : NameProvider
+    class EnumerableNameProvider : NameProvider
     {
-        protected override XName GetName(MemberInfo key, TypeInfo typeInfo)
-        {
-        var typeInfo = key as TypeInfo ?? key.DeclaringType.GetTypeInfo();
-            
-            var name = base.GetName(key, typeInfo);
-            var isGenericType = typeInfo.IsGenericType;
-            if (isGenericType)
-            {
-                var types = typeInfo.GetGenericArguments();
-                var names = string.Join(string.Empty, types.Select(p => p.Name));
-                var result = name.LocalName.Replace($"`{types.Length.ToString()}", $"Of{names}");
-                return result;
-            }
+        public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
+        EnumerableNameProvider() : this(string.Empty) {}
 
+        public EnumerableNameProvider(string defaultNamespace) : base(defaultNamespace) {}
 
-            return name;
-        }
+        protected override string DetermineName(TypeInfo type) =>
+            $"ArrayOf{string.Join(string.Empty, type.GetGenericArguments().Select(p => p.Name))}";
     }
 
-    class EnumerableNameProvider : GenericNameProvider
-    {
-        protected override XName GetName(MemberInfo key, TypeInfo typeInfo)
-        {
-            if (typeof(IEnumerable).IsAssignableFrom(typeInfo.AsType()))
-            {
-                var result = typeInfo.IsArray || isGenericType
-                    ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}"
-                    : name;
-                return result;
-            }
-            return base.GetName(key, typeInfo);
-        }
-    }*/
-
-    class NameProvider : WeakCacheBase<MemberInfo, XName>, INameProvider
+    class NameProvider : NameProviderBase
     {
         public static NameProvider Default { get; } = new NameProvider();
         NameProvider() : this(string.Empty) {}
@@ -117,46 +104,93 @@ namespace ExtendedXmlSerialization.Model
             _defaultNamespace = defaultNamespace;
         }
 
-        protected override XName Create(MemberInfo parameter)
+        protected override XName Create(TypeInfo type, MemberInfo member)
         {
-            var typeInfo = parameter as TypeInfo ?? parameter.DeclaringType.GetTypeInfo();
-            var attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? typeInfo.Name;
+            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
+            var name = attribute?.ElementName.NullIfEmpty() ?? DetermineName(type);
             var ns = attribute?.Namespace ?? _defaultNamespace;
             var result = XName.Get(name, ns);
             return result;
         }
+
+        protected virtual string DetermineName(TypeInfo type)
+        {
+            if (type.IsGenericType)
+            {
+                var types = type.GetGenericArguments();
+                var names = string.Join(string.Empty, types.Select(p => p.Name));
+                var result = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
+                return result;
+            }
+            return type.Name;
+        }
     }
 
-    class MemberNameProvider : WeakCacheBase<MemberInfo, XName>, INameProvider
+    abstract class NameProviderBase : WeakCacheBase<MemberInfo, XName>, INameProvider
+    {
+        protected override XName Create(MemberInfo parameter)
+        {
+            var typeInfo = parameter as TypeInfo ?? parameter.DeclaringType.GetTypeInfo();
+            var result = Create(typeInfo, parameter);
+            return result;
+        }
+
+        protected abstract XName Create(TypeInfo type, MemberInfo member);
+    }
+
+    class MemberNameProvider : NameProviderBase
     {
         public static MemberNameProvider Default { get; } = new MemberNameProvider();
         MemberNameProvider() {}
 
-        protected override XName Create(MemberInfo parameter)
+        protected override XName Create(TypeInfo type, MemberInfo member)
         {
-            var result = parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-                         parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ?? parameter.Name;
+            var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+                         member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
+                         member.Name;
             return result;
         }
     }
 
     public abstract class WriterBase<T> : IWriter
     {
-        protected abstract void Write(XmlWriter writer, T instance);
+        protected abstract void Write(XmlWriter context, T instance);
 
-        void IWriter.Write(XmlWriter writer, object instance) => Write(writer, (T) instance);
+        void IWriter.Write(XmlWriter context, object instance)
+            => Write(context, (T) instance);
     }
 
     public abstract class WriterBase : IWriter
     {
-        public abstract void Write(XmlWriter writer, object instance);
+        public abstract void Write(XmlWriter context, object instance);
     }
 
-    public interface IWriter
+
+    /*public interface IWriterContext
     {
-        void Write(XmlWriter writer, object instance);
+        XmlWriter Writer { get; }
+
+        void StartNewContext(object instance);
     }
+
+    class WriterContext : IWriterContext
+    {
+        private readonly IWriter _writer;
+
+        public WriterContext(IWriter writer, XmlWriter xmlWriter)
+        {
+            _writer = writer;
+            Writer = xmlWriter;
+        }
+
+        public void StartNewContext(object instance) => _writer.Write(Writer, instance);
+        public XmlWriter Writer { get; }
+    }
+
+    public interface IEnhancedWriter
+    {
+        void Write(IWriterContext context, object instance, Typed type);
+    }*/
 
     public class ValueWriter : ValueWriter<object>
     {
@@ -172,7 +206,8 @@ namespace ExtendedXmlSerialization.Model
             _serialize = serialize;
         }
 
-        protected override void Write(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
+        protected override void Write(XmlWriter writer, T instance)
+            => writer.WriteString(_serialize(instance));
     }
 
     public class DecoratedWriter : WriterBase
@@ -184,7 +219,8 @@ namespace ExtendedXmlSerialization.Model
             _writer = writer;
         }
 
-        public override void Write(XmlWriter writer, object instance) => _writer.Write(writer, instance);
+        public override void Write(XmlWriter writer, object instance)
+            => _writer.Write(writer, instance);
     }
 
     public abstract class ElementWriterBase : DecoratedWriter
@@ -193,8 +229,7 @@ namespace ExtendedXmlSerialization.Model
 
         public override void Write(XmlWriter writer, object instance)
         {
-            var type = instance.GetType().GetTypeInfo();
-            var name = Get(type);
+            var name = Get(instance.GetType().GetTypeInfo());
             writer.WriteStartElement(name.LocalName, name.NamespaceName);
             base.Write(writer, instance);
             writer.WriteEndElement();

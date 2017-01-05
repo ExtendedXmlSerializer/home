@@ -28,44 +28,70 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Model.Write;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface IMember
+    public interface IMember : IWriter
     {
-        XName Name { get; }
-
         MemberInfo Info { get; }
+
+        /*XName Name { get; }
 
         IType Owner { get; }
 
-        Sort Sort { get; }
-
-        object Get(object instance);
+        object Get(object instance);*/
     }
 
-    class Member : IMember
+    class SelectedWriter : IWriter
+    {
+        public static SelectedWriter Default { get; } = new SelectedWriter();
+        SelectedWriter() : this(Selector.Default) {}
+
+        private readonly ISelector _selector;
+
+        public SelectedWriter(ISelector selector)
+        {
+            _selector = selector;
+        }
+
+        public void Write(XmlWriter writer, object instance) =>
+            _selector.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+    }
+
+    class Member : ElementWriter, IMember
     {
         private readonly Func<object, object> _getter;
 
-        public Member(XName name, MemberInfo info, IType owner, Sort sort, Func<object, object> getter)
+        public Member(XName name, MemberInfo info, Func<object, object> getter)
+            : this(SelectedWriter.Default, name, info, getter) {}
+
+        public Member(IWriter body, XName name, MemberInfo info, Func<object, object> getter) : base(name.Accept, body)
         {
             _getter = getter;
-            Name = name;
             Info = info;
-            Owner = owner;
-            Sort = sort;
         }
 
-        public XName Name { get; }
         public MemberInfo Info { get; }
-        public IType Owner { get; }
-        public Sort Sort { get; }
 
-        public object Get(object instance) => _getter(instance);
+        public override void Write(XmlWriter writer, object instance) => base.Write(writer, _getter(instance));
+
+        /*public object Get(object instance) => _getter(instance);
+        public override bool IsSatisfiedBy(TypeInfo parameter)
+        {
+            return false;
+        }*/
+
+
+        /*public override object Read(XElement element)
+        {
+            return null;
+        }*/
     }
 
     public interface IAssignableMember : IMember
@@ -77,8 +103,8 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly Action<object, object> _setter;
 
-        public AssignableMember(XName name, MemberInfo info, IType owner, Sort sort, Func<object, object> getter,
-                                Action<object, object> setter) : base(name, info, owner, sort, getter)
+        public AssignableMember(XName name, MemberInfo info, Func<object, object> getter,
+                                Action<object, object> setter) : base(name, info, getter)
         {
             _setter = setter;
         }
@@ -89,29 +115,36 @@ namespace ExtendedXmlSerialization.Model
 
     public interface IMembers : IParameterizedSource<string, IMember>, IEnumerable<IMember> {}
 
-    public interface IMembersFactory : IParameterizedSource<IType, IMembers> {}
+    public interface IInstanceMembers : IParameterizedSource<TypeInfo, IMembers> {}
 
-    class MembersFactory : IMembersFactory
+    class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
     {
-        public static MembersFactory Default { get; } = new MembersFactory();
-        MembersFactory() : this(MemberNameProvider.Default, GetterFactory.Default, SetterFactory.Default) {}
+        public static InstanceMembers Default { get; } = new InstanceMembers();
 
+        InstanceMembers()
+            : this(Names.Default, MemberNameProvider.Default, GetterFactory.Default, SetterFactory.Default) {}
+
+        private readonly INames _names;
         private readonly INameProvider _name;
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
 
-        public MembersFactory(INameProvider name, IGetterFactory getter, ISetterFactory setter)
+        public InstanceMembers(INames names, INameProvider name, IGetterFactory getter, ISetterFactory setter)
         {
+            _names = names;
             _name = name;
             _getter = getter;
             _setter = setter;
         }
 
-        public IMembers Get(IType parameter) => new Members(Create(parameter).OrderBy(x => x.Sort));
-
-        IEnumerable<IMember> Create(IType type)
+        protected override IMembers Create(TypeInfo parameter)
         {
-            foreach (var member in type.Subject.GetProperties())
+            return new Members(CreateMembers(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
+        }
+
+        IEnumerable<SortedMember> CreateMembers(TypeInfo type)
+        {
+            foreach (var member in type.GetProperties())
             {
                 var getMethod = member.GetGetMethod(true);
                 if (member.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
@@ -123,7 +156,7 @@ namespace ExtendedXmlSerialization.Model
                 }
             }
 
-            foreach (var member in type.Subject.GetFields())
+            foreach (var member in type.GetFields())
             {
                 var readOnly = member.IsInitOnly;
                 if ((readOnly ? !member.IsLiteral : !member.IsStatic) &&
@@ -134,19 +167,58 @@ namespace ExtendedXmlSerialization.Model
             }
         }
 
-        private Member Create(IType type, MemberInfo member, bool readOnly)
+        struct SortedMember
         {
-            var name = _name.Get(member);
-            var sort = new Sort(member.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
-                                member.MetadataToken);
-            var getter = _getter.Get(member);
-            var result = readOnly
-                ? new Member(name, member, type, sort, getter)
-                : new AssignableMember(name, member, type, sort, getter, _setter.Get(member));
+            public SortedMember(IMember member, Sort sort)
+            {
+                Member = member;
+                Sort = sort;
+            }
+
+            public IMember Member { get; }
+            public Sort Sort { get; }
+        }
+
+        private SortedMember Create(TypeInfo type, MemberInfo metadata, bool readOnly)
+        {
+            var name = XName.Get(_name.Get(metadata).LocalName, _names.Get(type).NamespaceName);
+            var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
+                                metadata.MetadataToken);
+            var getter = _getter.Get(metadata);
+            var member = readOnly
+                ? new Member(name, metadata, getter)
+                : new AssignableMember(name, metadata, getter, _setter.Get(metadata));
+            var result = new SortedMember(member, sort);
             return result;
         }
     }
 
+    sealed class Members : IMembers
+    {
+        private readonly ImmutableArray<IMember> _items;
+        private readonly IDictionary<string, IMember> _lookup;
+
+        public Members(IEnumerable<IMember> items) : this(items.ToImmutableArray()) {}
+        public Members(ImmutableArray<IMember> items) : this(items, items.ToDictionary(x => x.Info.Name)) {}
+
+        public Members(ImmutableArray<IMember> items, IDictionary<string, IMember> lookup)
+        {
+            _items = items;
+            _lookup = lookup;
+        }
+
+        public IMember Get(string parameter)
+        {
+            IMember result;
+            return _lookup.TryGetValue(parameter, out result) ? result : null;
+        }
+
+        public IEnumerator<IMember> GetEnumerator() => ((IEnumerable<IMember>) _items).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+/*
     class Members : IMembers
     {
         private readonly IEnumerable<IMember> _source;
@@ -191,6 +263,7 @@ namespace ExtendedXmlSerialization.Model
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
+*/
 
     public interface ISetterFactory : IParameterizedSource<MemberInfo, Action<object, object>> {}
 

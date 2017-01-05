@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -31,6 +32,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
@@ -96,7 +98,8 @@ namespace ExtendedXmlSerialization.Model
         public Identities(string namespaceName)
             : this(new Dictionary<Type, XName>
                    {
-                       {typeof(int), XName.Get("int", namespaceName)}
+                       {typeof(int), XName.Get("int", namespaceName)},
+                       {typeof(string), XName.Get("string", namespaceName)}
                    }) {}
 
         public Identities(IDictionary<Type, XName> names)
@@ -125,7 +128,74 @@ namespace ExtendedXmlSerialization.Model
         public bool IsSatisfiedBy(XName parameter) => _types.ContainsKey(parameter);
     }
 
+    public interface INames : IParameterizedSource<TypeInfo, XName> {}
+
+    public class Names : INames
+    {
+        public static Names Default { get; } = new Names();
+        Names() : this(Identities.Default, TypeNames.Default) {}
+
+        private readonly IIdentities _identities;
+        private readonly INames _types;
+
+        public Names(IIdentities identities, INames types)
+        {
+            _identities = identities;
+            _types = types;
+        }
+
+        public XName Get(TypeInfo parameter) => _identities.Get(parameter.AsType()) ?? _types.Get(parameter);
+    }
+
+    public interface ITypeName : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, XName> {}
+
+    class TypeName : ITypeName
+    {
+        private readonly ISpecification<TypeInfo> _specification;
+        private readonly IParameterizedSource<TypeInfo, XName> _source;
+
+        public TypeName(ISpecification<TypeInfo> specification, IParameterizedSource<TypeInfo, XName> source)
+        {
+            _specification = specification;
+            _source = source;
+        }
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
+
+        public XName Get(TypeInfo parameter) => _source.Get(parameter);
+    }
+
+    public class TypeNames : WeakCacheBase<TypeInfo, XName>, INames
+    {
+        public static TypeNames Default { get; } = new TypeNames();
+        TypeNames() : this(new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
+
+        private readonly ITypeName[] _names;
+
+        public TypeNames(params ITypeName[] names)
+        {
+            _names = names;
+        }
+
+        protected override XName Create(TypeInfo parameter)
+        {
+            foreach (var name in _names)
+            {
+                if (name.IsSatisfiedBy(parameter))
+                {
+                    return name.Get(parameter);
+                }
+            }
+            return null;
+        }
+    }
+
     public interface IConverter : ISpecification<TypeInfo>, IWriter, IReader {}
+
+    public interface IWriter
+    {
+        void Write(XmlWriter writer, object instance);
+    }
 
     public class Converter : ConverterBase
     {
@@ -141,8 +211,11 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public override bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
-        public override void Write(XmlWriter writer, object instance) => _writer.Write(writer, instance);
+
         public override object Read(XElement element) => _reader.Read(element);
+
+        public override void Write(XmlWriter writer, object instance)
+            => _writer.Write(writer, instance);
     }
 
     public abstract class ConverterBase : IConverter
@@ -153,22 +226,53 @@ namespace ExtendedXmlSerialization.Model
         public abstract object Read(XElement element);
     }
 
-    class Converters : WeakCacheBase<TypeInfo, IConverter>, IReader, IWriter
+    class KnownConverters : IEnumerable<IConverter>
     {
-        private readonly ITypeProvider _provider;
+        public static KnownConverters Default { get; } = new KnownConverters();
+        KnownConverters() {}
+
+        public IEnumerator<IConverter> GetEnumerator()
+        {
+            yield return IntegerConverter.Default;
+            yield return StringConverter.Default;
+            yield return ActivatedTypeConverter.Default;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public class Root : ElementWriter
+    {
+        public static Root Default { get; } = new Root();
+        Root() : this(Names.Default) {}
+
+        public Root(INames names) : this(names, SelectedWriter.Default) {}
+
+        public Root(INames names, IWriter body) : base(names.Get, body) {}
+    }
+
+    public interface ISelector : IParameterizedSource<TypeInfo, IConverter> {}
+
+    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector //, IReader, IWriter
+    {
+        public static Selector Default { get; } = new Selector();
+        Selector() : this(KnownConverters.Default.ToArray()) {}
+
         private readonly ImmutableArray<IConverter> _converters;
 
-        public Converters(params IConverter[] converters)
-            : this(TypeProvider.Default, converters.ToImmutableArray()) {}
+        public Selector(params IConverter[] converters)
+            : this(converters.ToImmutableArray()) {}
 
-        public Converters(ITypeProvider provider, ImmutableArray<IConverter> converters)
+        public Selector(ImmutableArray<IConverter> converters)
         {
-            _provider = provider;
             _converters = converters;
         }
 
-        public void Write(XmlWriter writer, object instance)
-            => Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+        /*public void Write(XmlWriter writer, object instance)
+        {
+            var type = new Typed(instance.GetType());
+            Get(type).Write(new WriterContext(this, writer), instance, type);
+        }
 
         public object Read(XElement element)
         {
@@ -176,7 +280,7 @@ namespace ExtendedXmlSerialization.Model
             var converter = Get(info);
             var result = converter.Read(element);
             return result;
-        }
+        }*/
 
         protected override IConverter Create(TypeInfo parameter)
         {
@@ -194,24 +298,57 @@ namespace ExtendedXmlSerialization.Model
     public class StringConverter : PrimitiveConverterBase<string>
     {
         readonly private static Func<string, string> Self = Self<string>.Default.Get;
-        public StringConverter(IIdentities provider) : base(provider, Self, Self) {}
+
+        public static StringConverter Default { get; } = new StringConverter();
+        StringConverter() : base(Self, Self) {}
     }
 
     public class IntegerConverter : PrimitiveConverterBase<int>
     {
-        public IntegerConverter(IIdentities identities) : base(identities, XmlConvert.ToString, XmlConvert.ToInt32) {}
+        public static IntegerConverter Default { get; } = new IntegerConverter();
+        IntegerConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
     }
+
+    public class ActivatedTypeConverter : Converter
+    {
+        public static ActivatedTypeConverter Default { get; } = new ActivatedTypeConverter();
+
+        ActivatedTypeConverter()
+            : base(IsActivatedTypeSpecification.Default, ActivatedTypeWriter.Default, new Reader()) {}
+    }
+
+
+    public class IsActivatedTypeSpecification : ISpecification<TypeInfo>
+    {
+        public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
+        IsActivatedTypeSpecification() {}
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => !parameter.IsAbstract &&
+                                                         (parameter.IsValueType ||
+                                                          parameter.IsClass &&
+                                                          parameter.GetConstructor(Type.EmptyTypes) != null);
+    }
+
+    /*class TypeOfSpecification<T> : ISpecification<TypeInfo> where T : IType
+    {
+        private readonly ITypes _types;
+
+        public TypeOfSpecification(ITypes types)
+        {
+            _types = types;
+        }
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => _types.Get(parameter) is T;
+    }*/
 
     public abstract class PrimitiveConverterBase<T> : Converter
     {
-        readonly private static Type SupportedType = typeof(T);
-
-        protected PrimitiveConverterBase(IIdentities provider, Func<T, string> serialize,
+        protected PrimitiveConverterBase(Func<T, string> serialize,
                                          Func<string, T> deserialize)
             : this(
                 TypeEqualitySpecification<T>.Default,
-                new ElementWriter(provider.Get(SupportedType).Accept, new ValueWriter<T>(serialize)),
-                new ElementValueReader<T>(deserialize)
+                new ValueWriter<T>(serialize),
+                new ValueReader<T>(deserialize)
             ) {}
 
         protected PrimitiveConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)

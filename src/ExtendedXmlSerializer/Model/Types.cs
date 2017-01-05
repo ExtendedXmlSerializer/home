@@ -31,14 +31,18 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface ITypes : IParameterizedSource<TypeInfo, IType> {}
+    /*public interface ITypes : IParameterizedSource<TypeInfo, IType> {}
 
-    class Types : WeakCacheBase<TypeInfo, IType>, ITypes
+    public class Types : WeakCacheBase<TypeInfo, IType>, ITypes
     {
+        public static Types Default { get; } = new Types();
+        Types() : this(/*DictionaryTypeFactory.Default, EnumerableTypeFactory.Default,#1# ActivatedTypeFactory.Default) {}
+
         private readonly ImmutableArray<ITypeFactory> _factories;
 
         public Types(params ITypeFactory[] factories)
@@ -64,7 +68,7 @@ namespace ExtendedXmlSerialization.Model
         IType Create(ITypes source, Typed type);
     }
 
-    class BaseTypeFactory : TypeFactoryBase
+    /*class BaseTypeFactory : TypeFactoryBase
     {
         public BaseTypeFactory(INameProvider names, IMembersFactory members) : base(names, members) {}
 
@@ -72,13 +76,21 @@ namespace ExtendedXmlSerialization.Model
 
         protected override IType Create(ITypes source, XName name, Typed typed, Func<IType, IMembers> members) =>
             new BaseType(name, typed.Info, members);
-    }
+    }#1#
 
     class DictionaryTypeFactory : ActivatedTypeFactoryBase
     {
+        public static DictionaryTypeFactory Default { get; } = new DictionaryTypeFactory();
+
+        DictionaryTypeFactory()
+            : this(
+                EnumerableNameProvider.Default, InstanceMembers.Default, ActivatorFactory.Default,
+                DictionaryPairTypesLocator.Default) {}
+
         private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryTypeFactory(INameProvider names, IMembersFactory members, IActivatorFactory factory, IDictionaryPairTypesLocator locator)
+        public DictionaryTypeFactory(INameProvider names, IInstanceMembers members, IActivatorFactory factory,
+                                     IDictionaryPairTypesLocator locator)
             : base(names, members, factory)
         {
             _locator = locator;
@@ -99,10 +111,16 @@ namespace ExtendedXmlSerialization.Model
 
     class EnumerableTypeFactory : ActivatedTypeFactoryBase
     {
+        public static EnumerableTypeFactory Default { get; } = new EnumerableTypeFactory();
+        EnumerableTypeFactory()
+            : this(
+                EnumerableNameProvider.Default, InstanceMembers.Default, ActivatorFactory.Default,
+                ElementTypeLocator.Default, AddDelegateFactory.Default) {}
+
         private readonly IElementTypeLocator _locator;
         private readonly IAddDelegateFactory _add;
 
-        public EnumerableTypeFactory(INameProvider names, IMembersFactory members, IActivatorFactory factory,
+        public EnumerableTypeFactory(INameProvider names, IInstanceMembers members, IActivatorFactory factory,
                                      IElementTypeLocator locator, IAddDelegateFactory add)
             : base(names, members, factory)
         {
@@ -122,7 +140,7 @@ namespace ExtendedXmlSerialization.Model
                                             add);
             return result;
         }
-    }
+    }*/
 
     public struct AddDelegateParameter
     {
@@ -141,7 +159,7 @@ namespace ExtendedXmlSerialization.Model
     class AddDelegateFactory : IAddDelegateFactory
     {
         public static AddDelegateFactory Default { get; } = new AddDelegateFactory();
-        AddDelegateFactory() {}
+        AddDelegateFactory() : this(AddMethodLocator.Default) {}
 
         private readonly IAddMethodLocator _locator;
 
@@ -173,9 +191,12 @@ namespace ExtendedXmlSerialization.Model
     }
 
 
-    class ActivatedTypeFactory : ActivatedTypeFactoryBase
+    /*class ActivatedTypeFactory : ActivatedTypeFactoryBase
     {
-        public ActivatedTypeFactory(INameProvider names, IMembersFactory members, IActivatorFactory factory)
+        public static ActivatedTypeFactory Default { get; } = new ActivatedTypeFactory();
+        ActivatedTypeFactory() : this(NameProvider.Default, InstanceMembers.Default, ActivatorFactory.Default) {}
+
+        public ActivatedTypeFactory(INameProvider names, IInstanceMembers members, IActivatorFactory factory)
             : base(names, members, factory) {}
 
         protected override IType Create(ITypes source, XName name, Typed type, Func<IType, IMembers> members,
@@ -187,7 +208,7 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly IActivatorFactory _factory;
 
-        protected ActivatedTypeFactoryBase(INameProvider names, IMembersFactory members, IActivatorFactory factory)
+        protected ActivatedTypeFactoryBase(INameProvider names, IInstanceMembers members, IActivatorFactory factory)
             : base(names, members)
         {
             _factory = factory;
@@ -209,7 +230,7 @@ namespace ExtendedXmlSerialization.Model
     {
         readonly private INameProvider _names;
         readonly private Func<IType, IMembers> _members;
-        protected TypeFactoryBase(INameProvider names, IMembersFactory members) : this(names, members.Get) {}
+        protected TypeFactoryBase(INameProvider names, IInstanceMembers members) : this(names, members.Get) {}
 
         protected TypeFactoryBase(INameProvider names, Func<IType, IMembers> members)
         {
@@ -221,7 +242,7 @@ namespace ExtendedXmlSerialization.Model
 
         public IType Create(ITypes source, Typed type) => Create(source, _names.Get(type.Info), type, _members);
         protected abstract IType Create(ITypes source, XName name, Typed type, Func<IType, IMembers> members);
-    }
+    }*/
 
     public interface IType
     {

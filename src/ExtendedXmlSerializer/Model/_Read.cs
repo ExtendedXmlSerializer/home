@@ -32,6 +32,13 @@ namespace ExtendedXmlSerialization.Model
         object Read(XElement element);
     }
 
+    class Reader : IReader {
+        public object Read(XElement element)
+        {
+            return null;
+        }
+    }
+
     public abstract class ReaderBase : IReader
     {
         public abstract object Read(XElement element);
@@ -44,11 +51,11 @@ namespace ExtendedXmlSerialization.Model
         protected abstract T Read(XElement element);
     }
 
-    public class ElementValueReader<T> : ReaderBase<T>
+    public class ValueReader<T> : ReaderBase<T>
     {
         private readonly Func<string, T> _deserialize;
 
-        public ElementValueReader(Func<string, T> deserialize)
+        public ValueReader(Func<string, T> deserialize)
         {
             _deserialize = deserialize;
         }
