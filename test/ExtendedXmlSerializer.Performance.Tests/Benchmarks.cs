@@ -6,7 +6,7 @@ using ExtendedXmlSerialization.Performance.Tests.Model.ExtendedXmlSerialization;
 
 namespace ExtendedXmlSerialization.Performance.Tests
 {
-    public class ExtendedXmlSerializerTest
+    /*public class ExtendedXmlSerializerTest
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
@@ -24,7 +24,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
             => _serializer.Deserialize<TestClassOtherClass>(_xml);
-    }
+    }*/
 
 
     public class ExtendedXmlSerializerV2Test

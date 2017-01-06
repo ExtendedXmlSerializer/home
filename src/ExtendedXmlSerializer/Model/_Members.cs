@@ -255,7 +255,7 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public struct Sort : IComparable<Sort>
+    struct Sort : IComparable<Sort>
     {
         public Sort(int? assigned, int value)
         {

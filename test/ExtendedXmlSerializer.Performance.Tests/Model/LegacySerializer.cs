@@ -34,7 +34,6 @@ using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 using ExtendedXmlSerialization.Processing;
 using IEnumerable = System.Collections.IEnumerable;
-using Types = ExtendedXmlSerialization.Processing.Types;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Model
 {
@@ -62,6 +61,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 
     namespace ExtendedXmlSerialization
     {
+/*
         /// <summary>
         /// Extended Xml Serializer
         /// </summary>
@@ -325,7 +325,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                     if (xElement.HasAttributes && xElement.Attribute(Type) != null)
                     {
                         // If type of property is saved in xml, we need check type of object actual assigned to property. There may be a base type. 
-                        Type targetType = Types.Default.Get(xElement.Attribute(Type).Value);
+                        Type targetType = TypeParser.Default.Get(xElement.Attribute(Type).Value);
                         var targetTypeDef = TypeDefinitions.Default.Get(targetType);
                         var obj = propertyInfo.GetValue(currentObject);
                         if ((obj == null || obj.GetType() != targetType) && targetTypeDef.CanActivate)
@@ -448,7 +448,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 var typeAttribute = element.Attribute(Type);
                 if (typeAttribute != null)
                 {
-                    return TypeDefinitions.Default.Get(Types.Default.Get(typeAttribute.Value));
+                    return TypeDefinitions.Default.Get(TypeParser.Default.Get(typeAttribute.Value));
                 }
                 return defuaultType == null ? null : TypeDefinitions.Default.Get(defuaultType);
             }
@@ -601,5 +601,6 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
                 return _toolsFactory?.EncryptionAlgorithm;
             }
         }
+*/
     }
 }

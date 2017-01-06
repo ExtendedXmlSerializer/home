@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Linq;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.Model;
-using ExtendedXmlSerialization.Processing;
-
 namespace ExtendedXmlSerialization.Core
 {
+/*
     class Arrays : WeakCache<object, Array>
     {
         private readonly ISpecification<ITypeDefinition> _specification;
@@ -61,4 +55,5 @@ namespace ExtendedXmlSerialization.Core
         public bool Is(Type type) => Is(TypeDefinitions.Default.Get(type));
         public bool Is(ITypeDefinition definition) => _specification.IsSatisfiedBy(definition);
     }
+*/
 }

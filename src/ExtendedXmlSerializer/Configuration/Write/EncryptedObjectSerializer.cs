@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Processing.Write;
-
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    class EncryptedObjectSerializer : IObjectSerializer
+    /*class EncryptedObjectSerializer : IObjectSerializer
     {
         private readonly IEncryptionFactory _encryption;
         private readonly IContextMonitor _monitor;
@@ -53,5 +51,5 @@ namespace ExtendedXmlSerialization.Configuration.Write
             var result = encryption?.Encrypt(text) ?? text;
             return result;
         }
-    }
+    }*/
 }

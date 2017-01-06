@@ -195,10 +195,10 @@ namespace ExtendedXmlSerialization.Model
         void Write(IWriterContext context, object instance, Typed type);
     }*/
 
-    public class ValueWriter : ValueWriter<object>
+    /*public class ValueWriter : ValueWriter<object>
     {
         public ValueWriter(Func<object, string> serialize) : base(serialize) {}
-    }
+    }*/
 
     public class ValueWriter<T> : WriterBase<T>
     {
@@ -210,7 +210,10 @@ namespace ExtendedXmlSerialization.Model
         }
 
         protected override void Write(XmlWriter writer, T instance)
-            => writer.WriteString(_serialize(instance));
+        {
+            var serialize = _serialize(instance);
+            writer.WriteString(serialize);
+        }
     }
 
     public class DecoratedWriter : WriterBase

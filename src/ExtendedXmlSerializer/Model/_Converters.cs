@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.Model
     public class Types : WeakCacheBase<XElement, Type>, ITypes
     {
         public static Types Default { get; } = new Types();
-        Types() : this(Processing.Types.Default, Identities.Default) {}
+        Types() : this(TypeParser.Default, Identities.Default) {}
 
         private readonly ITypeParser _parser;
         private readonly IIdentities _identities;
@@ -107,7 +107,7 @@ namespace ExtendedXmlSerialization.Model
                        {typeof(int), XName.Get("int", namespaceName)},
                        {typeof(uint), XName.Get("unsignedInt", namespaceName)},
                        {typeof(long), XName.Get("long", namespaceName)},
-                       {typeof(uint), XName.Get("unsignedLong", namespaceName)},
+                       {typeof(ulong), XName.Get("unsignedLong", namespaceName)},
                        {typeof(float), XName.Get("float", namespaceName)},
                        {typeof(double), XName.Get("double", namespaceName)},
                        {typeof(decimal), XName.Get("decimal", namespaceName)},

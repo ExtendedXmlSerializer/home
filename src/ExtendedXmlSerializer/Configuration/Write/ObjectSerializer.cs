@@ -21,13 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Processing;
-using ExtendedXmlSerialization.Processing.Write;
-
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    public class ObjectSerializer : IObjectSerializer
+    /*public class ObjectSerializer : IObjectSerializer
     {
         private readonly ITypeFormatter _formatter;
         public static ObjectSerializer Default { get; } = new ObjectSerializer();
@@ -54,5 +50,5 @@ namespace ExtendedXmlSerialization.Configuration.Write
             var result = type != null ? _formatter.Format(type) : null;
             return result;
         }
-    }
+    }*/
 }

@@ -21,12 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Model.Write;
-
 namespace ExtendedXmlSerialization.Configuration.Write
 {
-    public interface IEncryptionFactory : IParameterizedSource<IElement, IPropertyEncryption> {}
+    /*public interface IEncryptionFactory : IParameterizedSource<IElement, IPropertyEncryption> {}
 
     class EncryptionFactory : IEncryptionFactory
     {
@@ -53,5 +50,5 @@ namespace ExtendedXmlSerialization.Configuration.Write
             }
             return null;
         }
-    }
+    }*/
 }

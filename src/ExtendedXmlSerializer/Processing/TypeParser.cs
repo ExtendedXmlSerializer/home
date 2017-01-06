@@ -34,10 +34,10 @@ using Microsoft.Extensions.DependencyModel;
 namespace ExtendedXmlSerialization.Processing
 {
     public interface ITypeParser : IParameterizedSource<string, Type> {}
-    public class Types : ConcurrentDictionary<string, Type>, ITypeParser
+    public class TypeParser : ConcurrentDictionary<string, Type>, ITypeParser
     {
-        public static Types Default { get; } = new Types();
-        Types() {}
+        public static TypeParser Default { get; } = new TypeParser();
+        TypeParser() {}
 
         private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 

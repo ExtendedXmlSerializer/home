@@ -24,14 +24,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
-using ExtendedXmlSerialization.Processing;
-using ExtendedXmlSerialization.Processing.Write;
-using ISerializer = ExtendedXmlSerialization.Processing.Write.ISerializer;
-using Types = ExtendedXmlSerialization.Processing.Types;
 
 namespace ExtendedXmlSerialization
 {
@@ -49,9 +47,6 @@ namespace ExtendedXmlSerialization
         public const string Underscore = "_";
         public const string Item = "Item";
 
-        private readonly Dictionary<string, object> _referencesObjects = new Dictionary<string, object>();
-        private ISerializationToolsFactory _tools;
-
         public ExtendedXmlSerializer() : this(null) {}
 
         public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
@@ -62,26 +57,25 @@ namespace ExtendedXmlSerialization
         /// <summary>
         /// Gets or sets <see cref="ISerializationToolsFactory"/>
         /// </summary>
-        public ISerializationToolsFactory SerializationToolsFactory
-        {
-            get { return _tools; }
-            set
-            {
-                _tools = value;
-                Serializer = _tools != null
-                    ? new LegacySerializer(_tools)
-                    : (ISerializer) SimpleSerializer.Default;
-            }
-        }
-        
-        private ISerializer Serializer { get; set; } = SimpleSerializer.Default;
+        public ISerializationToolsFactory SerializationToolsFactory { get; set; }
+
+        private ISerializer Serializer { get; set; } = new Serializer();
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => Serializer.Serialize(o);
+        public string Serialize(object o)
+        {
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, o);
+                stream.Seek(0, SeekOrigin.Begin);
+                var result = new StreamReader(stream).ReadToEnd();
+                return result;
+            }
+        }
 
         /// <summary>
         /// Deserializes the XML document
@@ -91,11 +85,19 @@ namespace ExtendedXmlSerialization
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
         {
-            var def = TypeDefinitions.Default.Get(type);
+            var deserializer = new Deserializer(type);
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            {
+                var result = deserializer.Deserialize(stream);
+                return result;
+            }
+            
+
+            /*var def = TypeDefinitions.Default.Get(type);
             XDocument doc = XDocument.Parse(xml);
             var result = ReadXml(doc.Root, def);
             _referencesObjects.Clear();
-            return result;
+            return result;*/
         }
 
         /// <summary>
@@ -109,7 +111,7 @@ namespace ExtendedXmlSerialization
             return (T) Deserialize(xml, typeof(T));
         }
 
-        private object ReadXml(XElement currentNode, ITypeDefinition type, object instance = null)
+        /*private object ReadXml(XElement currentNode, ITypeDefinition type, object instance = null)
         {
             if (type.IsPrimitive)
             {
@@ -254,7 +256,7 @@ namespace ExtendedXmlSerialization
             catch (Exception ex)
             {
                 throw new InvalidOperationException(
-                          $"Unsuccessful conversion node {name} for type {type.Name} - value {value}", ex);
+                    $"Unsuccessful conversion node {name} for type {type.Name} - value {value}", ex);
             }
         }
 
@@ -264,7 +266,7 @@ namespace ExtendedXmlSerialization
             var count = elements.Length;
 
             var definition = GetElementTypeDefinition(currentNode) ?? type;
-            var dict = (IDictionary)(instance ?? definition.Activate());
+            var dict = (IDictionary) (instance ?? definition.Activate());
 
             for (int i = 0; i < count; i++)
             {
@@ -323,6 +325,6 @@ namespace ExtendedXmlSerialization
             var type = value != null ? Types.Default.Get(value) : defuaultType;
             var result = type != null ? TypeDefinitions.Default.Get(type) : null;
             return result;
-        }
+        }*/
     }
 }
