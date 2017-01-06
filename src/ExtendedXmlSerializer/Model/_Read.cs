@@ -23,19 +23,91 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Model
 {
+    public interface IDeserializer
+    {
+        object Deserialize(Stream stream);
+    }
+
+    public class Deserializer<T> : IDeserializer
+    {
+        private readonly IDeserializer _deserializer;
+
+        public Deserializer() : this(new Deserializer(typeof(T))) {}
+
+        public Deserializer(IDeserializer deserializer)
+        {
+            _deserializer = deserializer;
+        }
+
+        public T Deserialize(Stream stream) => (T) _deserializer.Deserialize(stream);
+
+        object IDeserializer.Deserialize(Stream stream) => Deserialize(stream);
+    }
+
+    public class Deserializer : IDeserializer
+    {
+        private readonly IReader _reader;
+
+        public Deserializer() : this(RootReader.Default) {}
+
+        public Deserializer(Type type)
+            : this(new HintedRootTypes(type)) {}
+
+        public Deserializer(ITypes types)
+            : this(new RootReader(new SelectingReader(types, new Selector(types)))) {}
+
+        public Deserializer(IReader reader)
+        {
+            _reader = reader;
+        }
+
+        public object Deserialize(Stream stream)
+        {
+            var text = new StreamReader(stream).ReadToEnd();
+            var element = XDocument.Parse(text).Root;
+            var result = _reader.Read(element);
+            return result;
+        }
+    }
+
     public interface IReader
     {
         object Read(XElement element);
     }
 
-    class Reader : IReader {
+    class RootReader : DecoratedReader
+    {
+        public static RootReader Default { get; } = new RootReader();
+        RootReader() : this(SelectingReader.Default) {}
+
+        public RootReader(IReader reader) : base(reader) {}
+    }
+
+    class SelectingReader : IReader
+    {
+        public static SelectingReader Default { get; } = new SelectingReader();
+        SelectingReader() : this(Types.Default, Selector.Default) {}
+
+        private readonly ITypes _types;
+        private readonly ISelector _selector;
+
+        public SelectingReader(ITypes types, ISelector selector)
+        {
+            _types = types;
+            _selector = selector;
+        }
+
         public object Read(XElement element)
         {
-            return null;
+            var info = _types.Get(element).GetTypeInfo();
+            var converter = _selector.Get(info);
+            var result = converter.Read(element);
+            return result;
         }
     }
 
@@ -73,28 +145,5 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public override object Read(XElement element) => _reader.Read(element);
-    }
-
-    public interface IDeserializer
-    {
-        object Deserialize(Stream stream);
-    }
-
-    public class Deserializer : IDeserializer
-    {
-        private readonly IReader _reader;
-
-        public Deserializer(IReader reader)
-        {
-            _reader = reader;
-        }
-
-        public object Deserialize(Stream stream)
-        {
-            var text = new StreamReader(stream).ReadToEnd();
-            var element = XDocument.Parse(text).Root;
-            var result = _reader.Read(element);
-            return result;
-        }
     }
 }

@@ -22,16 +22,9 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
@@ -244,7 +237,7 @@ namespace ExtendedXmlSerialization.Model
         protected abstract IType Create(ITypes source, XName name, Typed type, Func<IType, IMembers> members);
     }*/
 
-    public interface IType
+    /*public interface IType
     {
         XName Name { get; }
 
@@ -326,16 +319,16 @@ namespace ExtendedXmlSerialization.Model
     public interface IActivatedType<out T> : IActivatedType
     {
         new T New();
-    }
+    }*/
 
-    public interface IActivatorFactory : IParameterizedSource<Type, Func<object>> {}
+    public interface IActivators : IParameterizedSource<Type, Func<object>> {}
 
-    class ActivatorFactory : IActivatorFactory
+    class Activators : WeakCacheBase<Type, Func<object>>, IActivators
     {
-        public static ActivatorFactory Default { get; } = new ActivatorFactory();
-        ActivatorFactory() {}
+        public static Activators Default { get; } = new Activators();
+        Activators() {}
 
-        public Func<object> Get(Type parameter)
+        protected override Func<object> Create(Type parameter)
         {
             var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
             var lambda = Expression.Lambda<Func<object>>(newExp);
@@ -344,7 +337,7 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    class ActivatedType<T> : BaseType, IActivatedType<T>
+    /*class ActivatedType<T> : BaseType, IActivatedType<T>
     {
         private readonly Func<object> _activator;
 
@@ -357,5 +350,5 @@ namespace ExtendedXmlSerialization.Model
         public T New() => (T) _activator();
 
         object IActivatedType.New() => New();
-    }
+    }*/
 }

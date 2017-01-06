@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly IWriter _writer;
 
-        public Serializer() : this(Root.Default) {}
+        public Serializer() : this(RootWriter.Default) {}
 
         public Serializer(IWriter writer)
         {
@@ -58,25 +58,28 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public class ActivatedTypeWriter : WriterBase
+    public class RootWriter : ElementWriter
     {
-        public static ActivatedTypeWriter Default { get; } = new ActivatedTypeWriter();
-        ActivatedTypeWriter() : this(InstanceMembers.Default) {}
+        public static RootWriter Default { get; } = new RootWriter();
+        RootWriter() : this(AllNames.Default, SelectingWriter.Default) {}
 
-        private readonly IInstanceMembers _members;
-        
-        public ActivatedTypeWriter(IInstanceMembers members)
+        public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
+    }
+
+    class SelectingWriter : IWriter
+    {
+        public static SelectingWriter Default { get; } = new SelectingWriter();
+        SelectingWriter() : this(Selector.Default) {}
+
+        private readonly ISelector _selector;
+
+        public SelectingWriter(ISelector selector)
         {
-            _members = members;
+            _selector = selector;
         }
 
-        public override void Write(XmlWriter writer, object instance)
-        {
-            foreach (var member in _members.Get(instance.GetType().GetTypeInfo()))
-            {
-                member.Write(writer, instance);
-            }
-        }
+        public void Write(XmlWriter writer, object instance) =>
+            _selector.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
     }
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}

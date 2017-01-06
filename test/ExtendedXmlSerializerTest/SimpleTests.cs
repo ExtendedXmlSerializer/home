@@ -22,12 +22,14 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Text;
 using ExtendedXmlSerialization.Model;
 using Xunit;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class ContextsTests
+    public class SimpleTests
     {
         [Fact]
         public void PrimitiveWrite()
@@ -40,18 +42,15 @@ namespace ExtendedXmlSerialization.Test
             Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>", actual);
         }
 
-        /*[Fact]
+        [Fact]
         public void PrimitiveRead()
         {
             const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>";
-            var deserializer =
-                new Deserializer(
-                    new ConditionalCompositeReader(new HintedRootTypeProvider(typeof(int), TypeProvider.Default),
-                                                   IntegerConverter.Default));
+            var deserializer = new Deserializer();
             var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
             var actual = deserializer.Deserialize(stream);
             Assert.Equal(6776, actual);
-        }*/
+        }
 
         [Fact]
         public void InstanceWrite()
@@ -67,35 +66,20 @@ namespace ExtendedXmlSerialization.Test
                 actual);
         }
 
+        [Fact]
+        public void InstanceRead()
+        {
+            const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>";
+            var deserializer = new Deserializer<InstanceClass>();
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var instance = deserializer.Deserialize(stream);
+            Assert.NotNull(instance);
+            Assert.Equal("Hello World!", instance.PropertyName);
+        }
+
         class InstanceClass
         {
             public string PropertyName { get; set; }
         }
-
-        /*public class Primitives : Dictionary<Type, string>
-        {
-            public static Primitives Default { get; } = new Primitives();
-            Primitives() : base(new Dictionary<Type, string>
-                                {
-                                    {typeof(bool), "boolean"},
-                                    {typeof(char), "char"},
-                                    {typeof(sbyte), "byte"},
-                                    {typeof(byte), "unsignedByte"},
-                                    {typeof(short), "short"},
-                                    {typeof(ushort), "unsignedShort"},
-                                    {typeof(int), "int"},
-                                    {typeof(uint), "unsignedInt"},
-                                    {typeof(long), "long"},
-                                    {typeof(ulong), "unsignedLong"},
-                                    {typeof(float), "float"},
-                                    {typeof(double), "double"},
-                                    {typeof(decimal), "decimal"},
-                                    {typeof(DateTime), "dateTime"},
-                                    {typeof(DateTimeOffset), "dateTimeOffset"},
-                                    {typeof(string), "string"},
-                                    {typeof(Guid), "guid"},
-                                    {typeof(TimeSpan), "TimeSpan"},
-                                }) {}
-        }*/
     }
 }

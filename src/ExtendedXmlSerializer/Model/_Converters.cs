@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -32,19 +31,20 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.Model.Write;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
-    public interface ITypeProvider : IParameterizedSource<XElement, Type> {}
+    public interface ITypes : IParameterizedSource<XElement, Type> {}
 
-    public class HintedRootTypeProvider : ITypeProvider
+    public class HintedRootTypes : ITypes
     {
         private readonly Type _hint;
-        private readonly ITypeProvider _provider;
+        private readonly ITypes _provider;
 
-        public HintedRootTypeProvider(Type hint, ITypeProvider provider)
+        public HintedRootTypes(Type hint) : this(hint, Types.Default) {}
+
+        public HintedRootTypes(Type hint, ITypes provider)
         {
             _hint = hint;
             _provider = provider;
@@ -54,22 +54,22 @@ namespace ExtendedXmlSerialization.Model
             => parameter.Document.Root == parameter ? _hint : _provider.Get(parameter);
     }
 
-    public class TypeProvider : ITypeProvider
+    public class Types : WeakCacheBase<XElement, Type>, ITypes
     {
-        public static TypeProvider Default { get; } = new TypeProvider();
-        TypeProvider() : this(Processing.Types.Default, Identities.Default) {}
+        public static Types Default { get; } = new Types();
+        Types() : this(Processing.Types.Default, Identities.Default) {}
 
         private readonly ITypeParser _parser;
         private readonly IIdentities _identities;
 
-        public TypeProvider(ITypeParser parser, IIdentities identities)
+        public Types(ITypeParser parser, IIdentities identities)
         {
             _parser = parser;
             _identities = identities;
         }
 
-        public Type Get(XElement parameter) =>
-            _identities.Get(parameter.Name) ?? FromAttribute(parameter);
+        protected override Type Create(XElement parameter)
+            => _identities.Get(parameter.Name) ?? FromAttribute(parameter);
 
         private Type FromAttribute(XElement parameter)
         {
@@ -77,7 +77,7 @@ namespace ExtendedXmlSerialization.Model
             var result = value != null ? _parser.Get(value) : null;
             if (result == null)
             {
-                throw new SerializationException($"Could not find TypeDefinition from provided value: {value}");
+                throw new SerializationException($"Could not find Type information from provided value: {value}");
             }
 
             return result;
@@ -98,8 +98,24 @@ namespace ExtendedXmlSerialization.Model
         public Identities(string namespaceName)
             : this(new Dictionary<Type, XName>
                    {
+                       {typeof(bool), XName.Get("boolean", namespaceName)},
+                       {typeof(char), XName.Get("char", namespaceName)},
+                       {typeof(sbyte), XName.Get("byte", namespaceName)},
+                       {typeof(byte), XName.Get("unsignedByte", namespaceName)},
+                       {typeof(short), XName.Get("short", namespaceName)},
+                       {typeof(ushort), XName.Get("unsignedShort", namespaceName)},
                        {typeof(int), XName.Get("int", namespaceName)},
-                       {typeof(string), XName.Get("string", namespaceName)}
+                       {typeof(uint), XName.Get("unsignedInt", namespaceName)},
+                       {typeof(long), XName.Get("long", namespaceName)},
+                       {typeof(uint), XName.Get("unsignedLong", namespaceName)},
+                       {typeof(float), XName.Get("float", namespaceName)},
+                       {typeof(double), XName.Get("double", namespaceName)},
+                       {typeof(decimal), XName.Get("decimal", namespaceName)},
+                       {typeof(DateTime), XName.Get("dateTime", namespaceName)},
+                       {typeof(DateTimeOffset), XName.Get("dateTimeOffset", namespaceName)},
+                       {typeof(string), XName.Get("string", namespaceName)},
+                       {typeof(Guid), XName.Get("guid", namespaceName)},
+                       {typeof(TimeSpan), XName.Get("TimeSpan", namespaceName)}
                    }) {}
 
         public Identities(IDictionary<Type, XName> names)
@@ -130,21 +146,22 @@ namespace ExtendedXmlSerialization.Model
 
     public interface INames : IParameterizedSource<TypeInfo, XName> {}
 
-    public class Names : INames
+    public class AllNames : WeakCacheBase<TypeInfo, XName>, INames
     {
-        public static Names Default { get; } = new Names();
-        Names() : this(Identities.Default, TypeNames.Default) {}
+        public static AllNames Default { get; } = new AllNames();
+        AllNames() : this(Identities.Default, TypeNames.Default) {}
 
         private readonly IIdentities _identities;
         private readonly INames _types;
 
-        public Names(IIdentities identities, INames types)
+        public AllNames(IIdentities identities, INames types)
         {
             _identities = identities;
             _types = types;
         }
 
-        public XName Get(TypeInfo parameter) => _identities.Get(parameter.AsType()) ?? _types.Get(parameter);
+        protected override XName Create(TypeInfo parameter)
+            => _identities.Get(parameter.AsType()) ?? _types.Get(parameter);
     }
 
     public interface ITypeName : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, XName> {}
@@ -165,7 +182,7 @@ namespace ExtendedXmlSerialization.Model
         public XName Get(TypeInfo parameter) => _source.Get(parameter);
     }
 
-    public class TypeNames : WeakCacheBase<TypeInfo, XName>, INames
+    public class TypeNames : INames
     {
         public static TypeNames Default { get; } = new TypeNames();
         TypeNames() : this(new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
@@ -177,7 +194,7 @@ namespace ExtendedXmlSerialization.Model
             _names = names;
         }
 
-        protected override XName Create(TypeInfo parameter)
+        public XName Get(TypeInfo parameter)
         {
             foreach (var name in _names)
             {
@@ -226,37 +243,35 @@ namespace ExtendedXmlSerialization.Model
         public abstract object Read(XElement element);
     }
 
-    class KnownConverters : IEnumerable<IConverter>
-    {
-        public static KnownConverters Default { get; } = new KnownConverters();
-        KnownConverters() {}
-
-        public IEnumerator<IConverter> GetEnumerator()
-        {
-            yield return IntegerConverter.Default;
-            yield return StringConverter.Default;
-            yield return ActivatedTypeConverter.Default;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
-    public class Root : ElementWriter
-    {
-        public static Root Default { get; } = new Root();
-        Root() : this(Names.Default) {}
-
-        public Root(INames names) : this(names, SelectedWriter.Default) {}
-
-        public Root(INames names, IWriter body) : base(names.Get, body) {}
-    }
-
     public interface ISelector : IParameterizedSource<TypeInfo, IConverter> {}
 
-    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector //, IReader, IWriter
+    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector
     {
         public static Selector Default { get; } = new Selector();
-        Selector() : this(KnownConverters.Default.ToArray()) {}
+        Selector() : this(Types.Default) {}
+
+        public Selector(ITypes types)
+            : this(
+                BooleanConverter.Default,
+                CharacterConverter.Default,
+                ByteConverter.Default,
+                UnsignedByteConverter.Default,
+                ShortConverter.Default,
+                UnsignedShortConverter.Default,
+                IntegerConverter.Default,
+                UnsignedIntegerConverter.Default,
+                LongConverter.Default,
+                UnsignedLongConverter.Default,
+                FloatConverter.Default,
+                DoubleConverter.Default,
+                DecimalConverter.Default,
+                DateTimeConverter.Default,
+                DateTimeOffsetConverter.Default,
+                StringConverter.Default,
+                GuidConverter.Default,
+                TimeSpanConverter.Default,
+                new ActivatedTypeConverter(types)
+            ) {}
 
         private readonly ImmutableArray<IConverter> _converters;
 
@@ -267,20 +282,6 @@ namespace ExtendedXmlSerialization.Model
         {
             _converters = converters;
         }
-
-        /*public void Write(XmlWriter writer, object instance)
-        {
-            var type = new Typed(instance.GetType());
-            Get(type).Write(new WriterContext(this, writer), instance, type);
-        }
-
-        public object Read(XElement element)
-        {
-            var info = _provider.Get(element).GetTypeInfo();
-            var converter = Get(info);
-            var result = converter.Read(element);
-            return result;
-        }*/
 
         protected override IConverter Create(TypeInfo parameter)
         {
@@ -295,12 +296,86 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public class StringConverter : PrimitiveConverterBase<string>
+    public class TimeSpanConverter : PrimitiveConverterBase<TimeSpan>
     {
-        readonly private static Func<string, string> Self = Self<string>.Default.Get;
+        public static TimeSpanConverter Default { get; } = new TimeSpanConverter();
+        TimeSpanConverter() : base(XmlConvert.ToString, XmlConvert.ToTimeSpan) {}
+    }
 
-        public static StringConverter Default { get; } = new StringConverter();
-        StringConverter() : base(Self, Self) {}
+    public class GuidConverter : PrimitiveConverterBase<Guid>
+    {
+        public static GuidConverter Default { get; } = new GuidConverter();
+        GuidConverter() : base(XmlConvert.ToString, XmlConvert.ToGuid) {}
+    }
+
+    public class DateTimeOffsetConverter : PrimitiveConverterBase<DateTimeOffset>
+    {
+        public static DateTimeOffsetConverter Default { get; } = new DateTimeOffsetConverter();
+        DateTimeOffsetConverter() : base(XmlConvert.ToString, XmlConvert.ToDateTimeOffset) {}
+    }
+
+    public class DateTimeConverter : PrimitiveConverterBase<DateTime>
+    {
+        public static DateTimeConverter Default { get; } = new DateTimeConverter();
+
+        DateTimeConverter()
+            : base(
+                x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind),
+                x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
+    }
+
+    public class DecimalConverter : PrimitiveConverterBase<decimal>
+    {
+        public static DecimalConverter Default { get; } = new DecimalConverter();
+        DecimalConverter() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
+    }
+
+    public class DoubleConverter : PrimitiveConverterBase<double>
+    {
+        public static DoubleConverter Default { get; } = new DoubleConverter();
+        DoubleConverter() : base(XmlConvert.ToString, XmlConvert.ToDouble) {}
+    }
+
+    public class FloatConverter : PrimitiveConverterBase<float>
+    {
+        public static FloatConverter Default { get; } = new FloatConverter();
+        FloatConverter() : base(XmlConvert.ToString, XmlConvert.ToSingle) {}
+    }
+
+    public class LongConverter : PrimitiveConverterBase<long>
+    {
+        public static LongConverter Default { get; } = new LongConverter();
+        LongConverter() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
+    }
+
+    public class UnsignedLongConverter : PrimitiveConverterBase<ulong>
+    {
+        public static UnsignedLongConverter Default { get; } = new UnsignedLongConverter();
+        UnsignedLongConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt64) {}
+    }
+
+    public class ByteConverter : PrimitiveConverterBase<sbyte>
+    {
+        public static ByteConverter Default { get; } = new ByteConverter();
+        ByteConverter() : base(XmlConvert.ToString, XmlConvert.ToSByte) {}
+    }
+
+    public class UnsignedByteConverter : PrimitiveConverterBase<byte>
+    {
+        public static UnsignedByteConverter Default { get; } = new UnsignedByteConverter();
+        UnsignedByteConverter() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
+    }
+
+    public class ShortConverter : PrimitiveConverterBase<short>
+    {
+        public static ShortConverter Default { get; } = new ShortConverter();
+        ShortConverter() : base(XmlConvert.ToString, XmlConvert.ToInt16) {}
+    }
+
+    public class UnsignedShortConverter : PrimitiveConverterBase<ushort>
+    {
+        public static UnsignedShortConverter Default { get; } = new UnsignedShortConverter();
+        UnsignedShortConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt16) {}
     }
 
     public class IntegerConverter : PrimitiveConverterBase<int>
@@ -309,12 +384,85 @@ namespace ExtendedXmlSerialization.Model
         IntegerConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
     }
 
-    public class ActivatedTypeConverter : Converter
+    public class UnsignedIntegerConverter : PrimitiveConverterBase<uint>
+    {
+        public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
+        UnsignedIntegerConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt32) {}
+    }
+
+    public class BooleanConverter : PrimitiveConverterBase<bool>
+    {
+        public static BooleanConverter Default { get; } = new BooleanConverter();
+        BooleanConverter() : base(XmlConvert.ToString, XmlConvert.ToBoolean) {}
+    }
+
+    public class CharacterConverter : PrimitiveConverterBase<char>
+    {
+        public static CharacterConverter Default { get; } = new CharacterConverter();
+        CharacterConverter() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
+    }
+
+    public class StringConverter : PrimitiveConverterBase<string>
+    {
+        readonly private static Func<string, string> Self = Self<string>.Default.Get;
+
+        public static StringConverter Default { get; } = new StringConverter();
+        StringConverter() : base(Self, Self) {}
+    }
+
+    public class ActivatedTypeConverter : ConverterBase
     {
         public static ActivatedTypeConverter Default { get; } = new ActivatedTypeConverter();
+        ActivatedTypeConverter() : this(Types.Default) {}
 
-        ActivatedTypeConverter()
-            : base(IsActivatedTypeSpecification.Default, ActivatedTypeWriter.Default, new Reader()) {}
+        public ActivatedTypeConverter(ITypes types)
+            : this(IsActivatedTypeSpecification.Default, InstanceMembers.Default, types, Activators.Default) {}
+
+        private readonly ISpecification<TypeInfo> _specification;
+        private readonly IInstanceMembers _members;
+        private readonly ITypes _provider;
+        private readonly IActivators _activators;
+
+        public ActivatedTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members, ITypes provider,
+                                      IActivators activators)
+        {
+            _specification = specification;
+            _members = members;
+            _provider = provider;
+            _activators = activators;
+        }
+
+        public override bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
+
+        public override void Write(XmlWriter writer, object instance)
+        {
+            foreach (var member in _members.Get(instance.GetType().GetTypeInfo()))
+            {
+                member.Write(writer, instance);
+            }
+        }
+
+        public override object Read(XElement element)
+        {
+            var type = _provider.Get(element);
+            var result = _activators.Get(type).Invoke();
+            var members = _members.Get(type.GetTypeInfo());
+            foreach (var child in element.Elements())
+            {
+                var member = members.Get(child.Name);
+                if (member != null)
+                {
+                    Apply(result, member, member.Read(child));
+                }
+            }
+            return result;
+        }
+
+        protected virtual void Apply(object instance, IMember member, object value)
+        {
+            var assignable = member as IAssignableMember;
+            assignable?.Set(instance, value);
+        }
     }
 
 
@@ -328,18 +476,6 @@ namespace ExtendedXmlSerialization.Model
                                                           parameter.IsClass &&
                                                           parameter.GetConstructor(Type.EmptyTypes) != null);
     }
-
-    /*class TypeOfSpecification<T> : ISpecification<TypeInfo> where T : IType
-    {
-        private readonly ITypes _types;
-
-        public TypeOfSpecification(ITypes types)
-        {
-            _types = types;
-        }
-
-        public bool IsSatisfiedBy(TypeInfo parameter) => _types.Get(parameter) is T;
-    }*/
 
     public abstract class PrimitiveConverterBase<T> : Converter
     {
