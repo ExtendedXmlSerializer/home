@@ -28,44 +28,35 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing
 {
-    public struct AddDelegateParameter
+    public interface IAddDelegates : IParameterizedSource<Type, Action<object, object>> {}
+
+    class AddDelegates : WeakCacheBase<Type, Action<object, object>>, IAddDelegates
     {
-        public AddDelegateParameter(Type type, Type elementType)
-        {
-            Type = type;
-            ElementType = elementType;
-        }
+        public static AddDelegates Default { get; } = new AddDelegates();
+        AddDelegates() : this(ElementTypeLocator.Default, AddMethodLocator.Default) {}
 
-        public Type Type { get; }
-        public Type ElementType { get; }
-    }
+        private readonly IElementTypeLocator _locator;
+        private readonly IAddMethodLocator _add;
 
-    public interface IAddDelegateFactory : IParameterizedSource<AddDelegateParameter, Action<object, object>> {}
-
-    class AddDelegateFactory : IAddDelegateFactory
-    {
-        public static AddDelegateFactory Default { get; } = new AddDelegateFactory();
-        AddDelegateFactory() : this(AddMethodLocator.Default) {}
-
-        private readonly IAddMethodLocator _locator;
-
-        public AddDelegateFactory(IAddMethodLocator locator)
+        public AddDelegates(IElementTypeLocator locator, IAddMethodLocator add)
         {
             _locator = locator;
+            _add = add;
         }
 
-        public Action<object, object> Get(AddDelegateParameter parameter)
+        protected override Action<object, object> Create(Type parameter)
         {
-            var add = _locator.Locate(parameter.Type, parameter.ElementType);
+            var elementType = _locator.Locate(parameter);
+            var add = _add.Locate(parameter, elementType);
             // Object (type object) from witch the data are retrieved
             var itemObject = Expression.Parameter(typeof(object), "item");
 
             // Object casted to specific type using the operator "as".
-            var itemCasted = Expression.Convert(itemObject, parameter.Type);
+            var itemCasted = Expression.Convert(itemObject, parameter);
 
             var value = Expression.Parameter(typeof(object), "value");
 
-            var castedParam = Expression.Convert(value, parameter.ElementType);
+            var castedParam = Expression.Convert(value, elementType);
 
             var conversion = Expression.Call(itemCasted, add, castedParam);
 

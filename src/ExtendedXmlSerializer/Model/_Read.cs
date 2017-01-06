@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -51,33 +52,31 @@ namespace ExtendedXmlSerialization.Model
 
     public class Deserializer : IDeserializer
     {
+        private readonly Typed? _type;
         private readonly IReader _reader;
 
         public Deserializer() : this(RootReader.Default) {}
 
-        public Deserializer(Type type)
-            : this(new HintedRootTypes(type)) {}
+        public Deserializer(Typed type) : this(RootReader.Default, type) {}
 
-        public Deserializer(ITypes types)
-            : this(new RootReader(new SelectingReader(types, new Selector(types)))) {}
-
-        public Deserializer(IReader reader)
+        public Deserializer(IReader reader, Typed? type = null)
         {
             _reader = reader;
+            _type = type;
         }
 
         public object Deserialize(Stream stream)
         {
             var text = new StreamReader(stream).ReadToEnd();
             var element = XDocument.Parse(text).Root;
-            var result = _reader.Read(element);
+            var result = _reader.Read(element, _type);
             return result;
         }
     }
 
     public interface IReader
     {
-        object Read(XElement element);
+        object Read(XElement element, Typed? hint = null);
     }
 
     class RootReader : DecoratedReader
@@ -91,7 +90,7 @@ namespace ExtendedXmlSerialization.Model
     class SelectingReader : IReader
     {
         public static SelectingReader Default { get; } = new SelectingReader();
-        SelectingReader() : this(Types.Default, Selector.Default) {}
+        SelectingReader() : this(Types.Default, Selectors.Default.Get(Types.Default)) {}
 
         private readonly ITypes _types;
         private readonly ISelector _selector;
@@ -102,25 +101,25 @@ namespace ExtendedXmlSerialization.Model
             _selector = selector;
         }
 
-        public object Read(XElement element)
+        public object Read(XElement element, Typed? hint = null)
         {
-            var info = _types.Get(element).GetTypeInfo();
-            var converter = _selector.Get(info);
-            var result = converter.Read(element);
+            var typed = hint ?? _types.Get(element);
+            var converter = _selector.Get(typed);
+            var result = converter.Read(element, typed);
             return result;
         }
     }
 
     public abstract class ReaderBase : IReader
     {
-        public abstract object Read(XElement element);
+        public abstract object Read(XElement element, Typed? hint = null);
     }
 
     public abstract class ReaderBase<T> : IReader
     {
-        object IReader.Read(XElement element) => Read(element);
+        object IReader.Read(XElement element, Typed? hint) => Read(element, hint);
 
-        protected abstract T Read(XElement element);
+        protected abstract T Read(XElement element, Typed? hint = null);
     }
 
     public class ValueReader<T> : ReaderBase<T>
@@ -132,7 +131,7 @@ namespace ExtendedXmlSerialization.Model
             _deserialize = deserialize;
         }
 
-        protected override T Read(XElement element) => _deserialize(element.Value);
+        protected override T Read(XElement element, Typed? hint = null) => _deserialize(element.Value);
     }
 
     public class DecoratedReader : ReaderBase
@@ -144,6 +143,6 @@ namespace ExtendedXmlSerialization.Model
             _reader = reader;
         }
 
-        public override object Read(XElement element) => _reader.Read(element);
+        public override object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint);
     }
 }

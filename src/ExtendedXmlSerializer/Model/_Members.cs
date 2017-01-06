@@ -45,24 +45,23 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly IReader _reader;
         private readonly IWriter _writer;
+        private readonly Typed _memberType;
         private readonly Func<object, object> _getter;
 
-        public Member(XName name, TypeInfo memberType, Func<object, object> getter)
-            : this(Selector.Default.Get(memberType), new ElementWriter(name.Accept, SelectingWriter.Default), name, getter) {}
-
-        public Member(IReader reader, IWriter writer, XName name, Func<object, object> getter)
+        public Member(IReader reader, IWriter writer, XName name, Typed memberType, Func<object, object> getter)
         {
             Name = name;
             _reader = reader;
             _writer = writer;
+            _memberType = memberType;
             _getter = getter;
         }
 
         public XName Name { get; }
 
         public void Write(XmlWriter writer, object instance) => _writer.Write(writer, _getter(instance));
-        
-        public object Read(XElement element) => _reader.Read(element);
+
+        public object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint ?? _memberType);
     }
 
     public interface IAssignableMember : IMember
@@ -74,8 +73,8 @@ namespace ExtendedXmlSerialization.Model
     {
         private readonly Action<object, object> _setter;
 
-        public AssignableMember(XName name, TypeInfo memberType, Func<object, object> getter,
-                                Action<object, object> setter) : base(name, memberType, getter)
+        public AssignableMember(IReader reader, IWriter writer, XName name, Typed memberType, Func<object, object> getter,
+                                Action<object, object> setter) : base(reader, writer, name, memberType, getter)
         {
             _setter = setter;
         }
@@ -90,32 +89,33 @@ namespace ExtendedXmlSerialization.Model
 
     class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
     {
-        public static InstanceMembers Default { get; } = new InstanceMembers();
+        public InstanceMembers(Func<ISelector> selector)
+            : this(selector, AllNames.Default, MemberNameProvider.Default, GetterFactory.Default,
+                   SetterFactory.Default) {}
 
-        InstanceMembers()
-            : this(AllNames.Default, MemberNameProvider.Default, GetterFactory.Default, SetterFactory.Default) {}
-
+        private readonly Func<ISelector> _selector; // TODO: Should make a dependency. Currently it causes recursion.
         private readonly INames _names;
         private readonly INameProvider _name;
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
 
-        public InstanceMembers(INames names, INameProvider name, IGetterFactory getter, ISetterFactory setter)
+        public InstanceMembers(Func<ISelector> selector, INames names, INameProvider name, IGetterFactory getter,
+                               ISetterFactory setter)
         {
+            _selector = selector;
             _names = names;
             _name = name;
             _getter = getter;
             _setter = setter;
         }
 
-        protected override IMembers Create(TypeInfo parameter)
-        {
-            return new Members(CreateMembers(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
-        }
+        protected override IMembers Create(TypeInfo parameter) =>
+            new Members(CreateMembers(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
 
-        IEnumerable<SortedMember> CreateMembers(TypeInfo type)
+        IEnumerable<SortedMember> CreateMembers(TypeInfo declaringType)
         {
-            foreach (var property in type.GetProperties())
+            var selector = _selector();
+            foreach (var property in declaringType.GetProperties())
             {
                 var getMethod = property.GetGetMethod(true);
                 if (property.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
@@ -123,19 +123,55 @@ namespace ExtendedXmlSerialization.Model
                     property.GetIndexParameters().Length <= 0 &&
                     !property.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    yield return Create(type, property, property.PropertyType.GetTypeInfo(), !property.CanWrite);
+                    var type = new Typed(property.PropertyType);
+                    var reader = selector.Get(type);
+                    if (reader != null)
+                    {
+                        yield return Create(selector, reader, declaringType, property, type, !property.CanWrite);
+                    }
+                    else
+                    {
+                        // TODO: Warning? Throw?
+                    }
                 }
             }
 
-            foreach (var field in type.GetFields())
+            foreach (var field in declaringType.GetFields())
             {
                 var readOnly = field.IsInitOnly;
                 if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
                     !field.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    yield return Create(type, field, field.FieldType.GetTypeInfo(), readOnly);
+                    var type = new Typed(field.FieldType);
+                    var reader = selector.Get(type);
+                    if (reader != null)
+                    {
+                        yield return Create(selector, reader, declaringType, field, type, readOnly);
+                    }
+                    else
+                    {
+                        // TODO: Warning? Throw?
+                    }
                 }
             }
+        }
+
+        private SortedMember Create(ISelector selector, IReader reader, TypeInfo type, MemberInfo metadata, Typed memberType,
+                                    bool readOnly)
+        {
+            var name = XName.Get(_name.Get(metadata).LocalName, _names.Get(type).NamespaceName);
+            var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
+                                metadata.MetadataToken);
+            var getter = _getter.Get(metadata);
+
+
+            var writer = new ElementWriter(name.Accept, new SelectingWriter(selector));
+
+            var member = readOnly
+                ? new Member(reader, writer, name, memberType, getter)
+                : new AssignableMember(reader, writer, name, memberType, getter, _setter.Get(metadata));
+            var result = new SortedMember(member, sort);
+            return result;
         }
 
         struct SortedMember
@@ -148,19 +184,6 @@ namespace ExtendedXmlSerialization.Model
 
             public IMember Member { get; }
             public Sort Sort { get; }
-        }
-
-        private SortedMember Create(TypeInfo type, MemberInfo metadata, TypeInfo memberType, bool readOnly)
-        {
-            var name = XName.Get(_name.Get(metadata).LocalName, _names.Get(type).NamespaceName);
-            var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
-                                metadata.MetadataToken);
-            var getter = _getter.Get(metadata);
-            var member = readOnly
-                ? new Member(name, memberType, getter)
-                : new AssignableMember(name, memberType, getter, _setter.Get(metadata));
-            var result = new SortedMember(member, sort);
-            return result;
         }
     }
 

@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,6 +32,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -69,7 +72,7 @@ namespace ExtendedXmlSerialization.Model
     class SelectingWriter : IWriter
     {
         public static SelectingWriter Default { get; } = new SelectingWriter();
-        SelectingWriter() : this(Selector.Default) {}
+        SelectingWriter() : this(Selectors.Default.Get(Types.Default)) {}
 
         private readonly ISelector _selector;
 
@@ -87,12 +90,24 @@ namespace ExtendedXmlSerialization.Model
     class EnumerableNameProvider : NameProvider
     {
         public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
-        EnumerableNameProvider() : this(string.Empty) {}
+        EnumerableNameProvider() : this(ElementTypeLocator.Default, string.Empty) {}
 
-        public EnumerableNameProvider(string defaultNamespace) : base(defaultNamespace) {}
+        private readonly IElementTypeLocator _locator;
 
-        protected override string DetermineName(TypeInfo type) =>
-            $"ArrayOf{string.Join(string.Empty, type.GetGenericArguments().Select(p => p.Name))}";
+        public EnumerableNameProvider(IElementTypeLocator locator, string defaultNamespace) : base(defaultNamespace)
+        {
+            _locator = locator;
+        }
+
+        protected override string DetermineName(Typed type)
+        {
+            var arguments = type.Info.GetGenericArguments();
+            var name = arguments.Any()
+                ? string.Join(string.Empty, arguments.Select(p => p.Name))
+                : _locator.Locate(type).Name;
+            var result = $"ArrayOf{name}";
+            return result;
+        }
     }
 
     class NameProvider : NameProviderBase
@@ -116,16 +131,16 @@ namespace ExtendedXmlSerialization.Model
             return result;
         }
 
-        protected virtual string DetermineName(TypeInfo type)
+        protected virtual string DetermineName(Typed type)
         {
-            if (type.IsGenericType)
+            if (type.Info.IsGenericType)
             {
-                var types = type.GetGenericArguments();
+                var types = type.Info.GetGenericArguments();
                 var names = string.Join(string.Empty, types.Select(p => p.Name));
-                var result = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
+                var result = type.Info.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
                 return result;
             }
-            return type.Name;
+            return type.Info.Name;
         }
     }
 
