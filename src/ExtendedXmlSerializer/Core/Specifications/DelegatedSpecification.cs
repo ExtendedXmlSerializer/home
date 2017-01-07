@@ -34,6 +34,6 @@ namespace ExtendedXmlSerialization.Core.Specifications
             _delegate = @delegate;
         }
 
-        public bool IsSatisfiedBy(T parameter) => _delegate.Invoke(parameter);
+        public virtual bool IsSatisfiedBy(T parameter) => _delegate.Invoke(parameter);
     }
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,40 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>, IDictionaryPairTypesLocator
+    public class AllSpecification<T> : ISpecification<T>
     {
-        public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
-        DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
+        readonly ImmutableArray<ISpecification<T>> _specifications;
 
-        private readonly Type _type;
-
-        public DictionaryPairTypesLocator(Type type)
+        public AllSpecification(params ISpecification<T>[] specifications)
         {
-            _type = type;
+            _specifications = specifications.ToImmutableArray();
         }
 
-        protected override DictionaryPairTypes Create(Type parameter)
+        public bool IsSatisfiedBy(T parameter)
         {
-            foreach (var it in parameter.GetInterfaces().Append(parameter))
+            foreach (var specification in _specifications)
             {
-                var info = it.GetTypeInfo();
-                if (info.IsGenericType && it.GetGenericTypeDefinition() == _type)
+                if (!specification.IsSatisfiedBy(parameter))
                 {
-                    var arguments = info.GetGenericArguments();
-                    var mapping = new DictionaryPairTypes(new Typed(arguments[0]), new Typed(arguments[1]));
-                    return mapping;
+                    return false;
                 }
             }
-
-            var baseType = parameter.GetTypeInfo().BaseType;
-            var result = baseType != null ? Get(baseType) : null;
-            return result;
+            return true;
         }
     }
 }

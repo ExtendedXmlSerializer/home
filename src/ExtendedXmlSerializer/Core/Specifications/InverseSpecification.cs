@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public struct Typed
+    public class InverseSpecification<T> : DelegatedSpecification<T>
     {
-        public Typed(Type type) : this(type, type.GetTypeInfo()) {}
+        public InverseSpecification(ISpecification<T> inner) : base(inner.IsSatisfiedBy) {}
 
-        public Typed(TypeInfo info) : this(info.AsType(), info) {}
-
-        public Typed(Type type, TypeInfo info)
-        {
-            Type = type;
-            Info = info;
-        }
-
-        public Type Type { get; }
-
-        public TypeInfo Info { get; }
-
-        public static implicit operator Typed?(Type type) => type != null ? new Typed(type) : (Typed?)null;
-        public static implicit operator Typed?(TypeInfo info) => info != null ? new Typed(info) : (Typed?)null;
-        public static implicit operator Type(Typed type) => type.Type;
-        public static implicit operator TypeInfo(Typed type) => type.Info;
+        public override bool IsSatisfiedBy(T parameter) => !base.IsSatisfiedBy(parameter);
     }
 }

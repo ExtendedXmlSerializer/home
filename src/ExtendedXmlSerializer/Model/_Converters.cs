@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
@@ -189,7 +190,7 @@ namespace ExtendedXmlSerialization.Model
 
         TypeNames() : this(
             new TypeName(
-                new AnySpecification<TypeInfo>(IsArraySpecification.Default, IsGenericTypeSpecification.Default),
+                new AnySpecification<TypeInfo>(IsArraySpecification.Default, new AllSpecification<TypeInfo>(IsGenericTypeSpecification.Default, IsEnumerableTypeSpecification.Default)),
                 EnumerableNameProvider.Default),
             new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
 
@@ -301,8 +302,8 @@ namespace ExtendedXmlSerialization.Model
             var converter = new DeferredSelectingConverter(singleton.Get);
             var converters =
                 _primitives
-                .Concat(Yield(parameter, converter))
-                .ToImmutableArray();
+                    .Concat(Yield(parameter, converter))
+                    .ToImmutableArray();
             var result = new NullableAwareSelector(new Selector(converters));
             return result;
         }
@@ -374,6 +375,7 @@ namespace ExtendedXmlSerialization.Model
     public class NullableAwareSelector : ISelector
     {
         private readonly ISelector _selector;
+
         public NullableAwareSelector(ISelector selector)
         {
             _selector = selector;
@@ -510,13 +512,33 @@ namespace ExtendedXmlSerialization.Model
 
     public class TypeEmittingWriter : DecoratedWriter
     {
-        public TypeEmittingWriter(IWriter writer) : base(writer) {}
+        private readonly ISpecification<TypeInfo> _specification;
+
+        public TypeEmittingWriter(IWriter writer) : this(AlwaysSpecification<TypeInfo>.Default, writer) {}
+
+        public TypeEmittingWriter(ISpecification<TypeInfo> specification, IWriter writer) : base(writer)
+        {
+            _specification = specification;
+        }
 
         public override void Write(XmlWriter writer, object instance)
         {
-            writer.WriteAttributeString(ExtendedXmlSerializer.Type,
-                                        DefaultTypeFormatter.Default.Format(instance.GetType()));
+            var type = instance.GetType();
+            var tracker = Tracker.Default.Get(writer);
+            if (_specification.IsSatisfiedBy(type.GetTypeInfo()) && !tracker.Contains(instance))
+            {
+                tracker.Add(instance);
+                writer.WriteAttributeString(ExtendedXmlSerializer.Type,
+                                            DefaultTypeFormatter.Default.Format(type));
+            }
+
             base.Write(writer, instance);
+        }
+
+        sealed class Tracker : WeakCache<XmlWriter, HashSet<object>>
+        {
+            public static Tracker Default { get; } = new Tracker();
+            Tracker() : base(_ => new HashSet<object>()) {}
         }
     }
 
@@ -621,7 +643,9 @@ namespace ExtendedXmlSerialization.Model
 
     public static class Extensions
     {
-        public static TypeInfo AccountForNullable(this TypeInfo @this) => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+        public static TypeInfo AccountForNullable(this TypeInfo @this)
+            => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+
         public static Type AccountForNullable(this Type @this) => Nullable.GetUnderlyingType(@this) ?? @this;
 
         public static T Activate<T>(this IActivators @this, Typed type) => (T) @this.Get(type).Invoke();
@@ -643,7 +667,7 @@ namespace ExtendedXmlSerialization.Model
         public override object Read(XElement element, Typed? hint = null)
         {
             var type = hint ?? _types.Get(element);
-            var result = Create(element, type);
+            var result = type.HasValue ? Create(element, type.Value) : null;
             return result;
         }
 
@@ -662,15 +686,18 @@ namespace ExtendedXmlSerialization.Model
                 var member = members.Get(child.Name);
                 if (member != null)
                 {
-                    Apply(result, member, member.Read(child));
+                    Apply(result, member, member.Read(child, _types.Get(child)));
                 }
             }
         }
 
         protected virtual void Apply(object instance, IMember member, object value)
         {
-            var assignable = member as IAssignableMember;
-            assignable?.Set(instance, value);
+            if (value != null)
+            {
+                var assignable = member as IAssignableMember;
+                assignable?.Set(instance, value);
+            }
         }
     }
 
@@ -698,12 +725,14 @@ namespace ExtendedXmlSerialization.Model
             : this(IsActivatedTypeSpecification.Default, types, converter) {}
 
         protected ActivatedTypeConverter(ISpecification<TypeInfo> specification, ITypes types, IConverter converter)
-            : this(specification, new InstanceMembers(converter, new EnumeratingReader(types, converter)), types, Activators.Default) {}
+            : this(
+                specification, new InstanceMembers(converter, new EnumeratingReader(types, converter)), types,
+                Activators.Default) {}
 
         public ActivatedTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members, ITypes types,
                                       IActivators activators)
             : base(
-                specification, new TypeEmittingWriter(new InstanceBodyWriter(members)),
+                specification, new TypeEmittingWriter(new InstanceBodyWriter(members)), 
                 new InstanceBodyReader(members, types, activators)) {}
     }
 
@@ -713,10 +742,21 @@ namespace ExtendedXmlSerialization.Model
         public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
         IsActivatedTypeSpecification() {}
 
-        public bool IsSatisfiedBy(TypeInfo parameter) => !parameter.IsAbstract &&
-                                                         (parameter.IsValueType ||
-                                                          parameter.IsClass &&
-                                                          parameter.GetConstructor(Type.EmptyTypes) != null);
+        public bool IsSatisfiedBy(TypeInfo parameter)
+            =>  parameter.IsValueType ||
+                !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
+    }
+
+    public class EmitTypeSpecification : ISpecification<TypeInfo>
+    {
+        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
+        EmitTypeSpecification() {}
+
+        public bool IsSatisfiedBy(TypeInfo parameter)
+            => !parameter.IsPrimitive &&
+               !parameter.IsArray &&
+               !typeof(IEnumerable).IsAssignableFrom(parameter.AsType()) &
+               IsActivatedTypeSpecification.Default.IsSatisfiedBy(parameter);
     }
 
     public abstract class PrimitiveConverterBase<T> : Converter

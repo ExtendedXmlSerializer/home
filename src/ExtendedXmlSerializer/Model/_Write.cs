@@ -98,9 +98,9 @@ namespace ExtendedXmlSerialization.Model
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
 
-    class EnumerableNameProvider : NameProvider
+    class EnumerableNameProvider : ElementNameProviderBase
     {
-        public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
+        public static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
         EnumerableNameProvider() : this(ElementTypeLocator.Default, string.Empty) {}
 
         private readonly IElementTypeLocator _locator;
@@ -121,28 +121,14 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    class NameProvider : NameProviderBase
+    class NameProvider : ElementNameProviderBase
     {
         public static NameProvider Default { get; } = new NameProvider();
         NameProvider() : this(string.Empty) {}
 
-        private readonly string _defaultNamespace;
+        public NameProvider(string defaultNamespace) : base(defaultNamespace) {}
 
-        public NameProvider(string defaultNamespace)
-        {
-            _defaultNamespace = defaultNamespace;
-        }
-
-        protected override XName Create(TypeInfo type, MemberInfo member)
-        {
-            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? DetermineName(type);
-            var ns = attribute?.Namespace ?? _defaultNamespace;
-            var result = XName.Get(name, ns);
-            return result;
-        }
-
-        protected virtual string DetermineName(Typed type)
+        protected override string DetermineName(Typed type)
         {
             if (type.Info.IsGenericType)
             {
@@ -154,6 +140,26 @@ namespace ExtendedXmlSerialization.Model
             return type.Info.Name;
         }
     }
+    abstract class ElementNameProviderBase : NameProviderBase
+    {
+        private readonly string _defaultNamespace;
+
+        protected ElementNameProviderBase(string defaultNamespace)
+        {
+            _defaultNamespace = defaultNamespace;
+        }
+
+        protected override XName Create(TypeInfo type, MemberInfo member)
+        {
+            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
+            var name = attribute?.ElementName.NullIfEmpty() ?? DetermineName(new Typed(type));
+            var ns = attribute?.Namespace ?? _defaultNamespace;
+            var result = XName.Get(name, ns);
+            return result;
+        }
+
+        protected abstract string DetermineName(Typed type);
+    }
 
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
@@ -162,7 +168,8 @@ namespace ExtendedXmlSerialization.Model
         public EnumerableBodyWriter(IWriter itemWriter)
             : this(AllNames.Default, itemWriter) {}
 
-        public EnumerableBodyWriter(INames names, IWriter itemWriter) : this(new ElementWriter(names.Get, itemWriter)) {}
+        public EnumerableBodyWriter(INames names, IWriter itemWriter)
+            : this(new ElementWriter(names.Get, itemWriter)) {}
 
         EnumerableBodyWriter(ElementWriter writer)
         {

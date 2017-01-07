@@ -33,6 +33,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
@@ -139,7 +140,7 @@ namespace ExtendedXmlSerialization.Model
         }
 
         protected override IMembers Create(TypeInfo parameter) =>
-            new Members(CreateMembers(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
+            new Members(CreateMembers(new Typed(parameter)).OrderBy(x => x.Sort).Select(x => x.Member));
 
         IEnumerable<MemberSort> CreateMembers(Typed declaringType)
         {
@@ -186,7 +187,7 @@ namespace ExtendedXmlSerialization.Model
 
             if (assignable)
             {
-                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, _converter));
+                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, new TypeEmittingWriter(new InverseSpecification<TypeInfo>(new TypeEqualitySpecification(memberType)), _converter)));
                 var member = new AssignableMember(_converter, writer, name, memberType, getter, _setter.Get(metadata));
                 var result = new MemberSort(member, sort);
                 return result;

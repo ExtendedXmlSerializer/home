@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.Model
 
         public Deserializer() : this(RootReader.Default) {}
 
-        public Deserializer(Typed type) : this(RootReader.Default, type) {}
+        public Deserializer(Type type) : this(RootReader.Default, type) {}
 
         public Deserializer(IReader reader, Typed? type = null)
         {
@@ -212,7 +212,7 @@ namespace ExtendedXmlSerialization.Model
 
         protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
         {
-            var result = _activators.Activate<object>(listType);
+            var result = _activators.Activate<object>(new Typed(listType));
             var list = result as IList ?? new ListAdapter(result, _add.Get(listType));
             foreach (var item in enumerable)
             {
