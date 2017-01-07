@@ -47,22 +47,30 @@ namespace ExtendedXmlSerialization.Processing
         protected override Action<object, object> Create(Type parameter)
         {
             var elementType = _locator.Locate(parameter);
-            var add = _add.Locate(parameter, elementType);
-            // Object (type object) from witch the data are retrieved
-            var itemObject = Expression.Parameter(typeof(object), "item");
-            var value = Expression.Parameter(typeof(object), "value");
+            if (elementType != null)
+            {
+                var add = _add.Locate(parameter, elementType);
+                if (add != null)
+                {
+                    // Object (type object) from witch the data are retrieved
+                    var itemObject = Expression.Parameter(typeof(object), "item");
+                    var value = Expression.Parameter(typeof(object), "value");
 
-            // Object casted to specific type using the operator "as".
-            var itemCasted = Expression.Convert(itemObject, parameter);
+                    // Object casted to specific type using the operator "as".
+                    var itemCasted = Expression.Convert(itemObject, parameter);
 
-            var castedParam = Expression.Convert(value, elementType);
+                    var castedParam = Expression.Convert(value, elementType);
 
-            var conversion = Expression.Call(itemCasted, add, castedParam);
+                    var conversion = Expression.Call(itemCasted, add, castedParam);
 
-            var lambda = Expression.Lambda<Action<object, object>>(conversion, itemObject, value);
+                    var lambda = Expression.Lambda<Action<object, object>>(conversion, itemObject, value);
 
-            var result = lambda.Compile();
-            return result;
+                    var result = lambda.Compile();
+                    return result;
+                }
+            }
+
+            return null;
         }
     }
 

@@ -78,6 +78,7 @@ namespace ExtendedXmlSerialization.Core
             return result;
         }
 
+        public static T Self<T>( this T @this ) => @this;
         public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)

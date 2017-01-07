@@ -188,7 +188,9 @@ namespace ExtendedXmlSerialization.Model
         public static TypeNames Default { get; } = new TypeNames();
 
         TypeNames() : this(
-            new TypeName(new AnySpecification<TypeInfo>(IsArraySpecification.Default, IsGenericTypeSpecification.Default), EnumerableNameProvider.Default),
+            new TypeName(
+                new AnySpecification<TypeInfo>(IsArraySpecification.Default, IsGenericTypeSpecification.Default),
+                EnumerableNameProvider.Default),
             new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
 
         private readonly ITypeName[] _names;
@@ -296,16 +298,19 @@ namespace ExtendedXmlSerialization.Model
         {
             var source = new Source(this, parameter);
             var singleton = new SingletonSource<ISelector>(source.Get);
-            var converters = _primitives.Concat(Yield(parameter, singleton.Get)).ToImmutableArray();
+            var converters =
+                _primitives
+                .Concat(Yield(parameter, new DeferredSelectingConverter(singleton.Get)))
+                .ToImmutableArray();
             var result = new Selector(converters);
             return result;
         }
 
-        protected virtual IEnumerable<IConverter> Yield(ITypes parameter, Func<ISelector> selector)
+        protected virtual IEnumerable<IConverter> Yield(ITypes parameter, IConverter converter)
         {
-            yield return new LegacyArrayConverter(parameter, selector);
-            yield return new LegacyEnumerableConverter(parameter, selector);
-            yield return new ActivatedTypeConverter(parameter, selector);
+            yield return new LegacyArrayConverter(parameter, converter);
+            yield return new LegacyEnumerableConverter(parameter, converter);
+            yield return new ActivatedTypeConverter(parameter, converter);
         }
 
         sealed class Source : ISource<ISelector>
@@ -320,6 +325,24 @@ namespace ExtendedXmlSerialization.Model
             }
 
             public ISelector Get() => _selectors.Get(_parameter);
+        }
+    }
+
+    public class DeferredSelectingConverter : Converter
+    {
+        public DeferredSelectingConverter(Func<ISelector> selector)
+            : base(new Specification(selector), new SelectingWriter(selector), new SelectingReader(selector)) {}
+
+        sealed class Specification : ISpecification<TypeInfo>
+        {
+            private readonly Func<ISelector> _selector;
+
+            public Specification(Func<ISelector> selector)
+            {
+                _selector = selector;
+            }
+
+            public bool IsSatisfiedBy(TypeInfo parameter) => _selector().Get(parameter) != null;
         }
     }
 
@@ -512,28 +535,23 @@ namespace ExtendedXmlSerialization.Model
 
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly INames _names;
-        private readonly Func<ISelector> _selector;
-        private readonly Lazy<IWriter> _writer;
+        private readonly IWriter _writer;
 
-        public EnumerableBodyWriter(Func<ISelector> selector)
-            : this(AllNames.Default, selector) {}
+        public EnumerableBodyWriter(IWriter itemWriter)
+            : this(AllNames.Default, itemWriter) {}
 
-        public EnumerableBodyWriter(INames names, Func<ISelector> selector)
+        public EnumerableBodyWriter(INames names, IWriter itemWriter) : this(new ElementWriter(names.Get, itemWriter)) {}
+
+        EnumerableBodyWriter(ElementWriter writer)
         {
-            _names = names;
-            _selector = selector;
-            _writer = new Lazy<IWriter>(Create);
+            _writer = writer;
         }
-
-        IWriter Create() => new ElementWriter(_names.Get, new SelectingWriter(_selector()));
 
         protected override void Write(XmlWriter writer, IEnumerable instance)
         {
-            var w = _writer.Value;
             foreach (var item in instance)
             {
-                w.Write(writer, item);
+                _writer.Write(writer, item);
             }
         }
     }
@@ -573,7 +591,7 @@ namespace ExtendedXmlSerialization.Model
 
     public class ArrayReader : ListReaderBase
     {
-        public ArrayReader(ITypes types, Func<ISelector> selector) : base(types, selector) {}
+        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
 
         protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
         {
@@ -593,9 +611,11 @@ namespace ExtendedXmlSerialization.Model
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(ITypes types, Func<ISelector> selector) : this(types, selector, Activators.Default, AddDelegates.Default) {}
+        public ListReader(ITypes types, IReader reader)
+            : this(types, reader, Activators.Default, AddDelegates.Default) {}
 
-        public ListReader(ITypes types, Func<ISelector> selector, IActivators activators, IAddDelegates add) : base(types, selector)
+        public ListReader(ITypes types, IReader reader, IActivators activators, IAddDelegates add)
+            : base(types, reader)
         {
             _activators = activators;
             _add = add;
@@ -619,8 +639,8 @@ namespace ExtendedXmlSerialization.Model
         private readonly IEnumeratingReader _reader;
         private readonly IElementTypeLocator _locator;
 
-        protected ListReaderBase(ITypes types, Func<ISelector> selector)
-            : this(types, new EnumeratingReader(types, selector), ElementTypeLocator.Default) {}
+        protected ListReaderBase(ITypes types, IReader reader)
+            : this(types, new EnumeratingReader(types, reader), ElementTypeLocator.Default) {}
 
         protected ListReaderBase(ITypes types, IEnumeratingReader reader, IElementTypeLocator locator)
         {
@@ -646,24 +666,21 @@ namespace ExtendedXmlSerialization.Model
     public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
         private readonly ITypes _types;
-        private readonly Func<ISelector> _selector;
+        private readonly IReader _reader;
 
-        public EnumeratingReader(ITypes types, Func<ISelector> selector)
+        public EnumeratingReader(ITypes types, IReader reader)
         {
             _types = types;
-            _selector = selector;
+            _reader = reader;
         }
 
         public override IEnumerable Read(XElement element, Typed? hint = null)
         {
-            var selector = _selector();
-            var converter = selector.Get(hint);
             var elementType = hint.GetValueOrDefault().Info;
             foreach (var child in element.Elements())
             {
                 var itemType = _types.Get(child)?.GetTypeInfo() ?? elementType;
-                var reader = Equals(itemType, elementType) ? converter : selector.Get(itemType);
-                var item = reader.Read(child, itemType);
+                var item = _reader.Read(child, itemType);
                 yield return item;
             }
         }
@@ -713,17 +730,17 @@ namespace ExtendedXmlSerialization.Model
 
     public class LegacyArrayConverter : Converter
     {
-        public LegacyArrayConverter(ITypes types, Func<ISelector> selector)
-            : base(IsArraySpecification.Default, new EnumerableBodyWriter(selector), new ArrayReader(types, selector)) {}
+        public LegacyArrayConverter(ITypes types, IConverter converter)
+            : base(IsArraySpecification.Default, new EnumerableBodyWriter(converter), new ArrayReader(types, converter)) {}
     }
 
     public class LegacyEnumerableConverter : Converter
     {
-        public LegacyEnumerableConverter(ITypes types, Func<ISelector> selector)
+        public LegacyEnumerableConverter(ITypes types, IConverter converter)
             : base(
                 IsEnumerableTypeSpecification.Default,
-                new EnumerableBodyWriter(selector),
-                new ListReader(types, selector)
+                new EnumerableBodyWriter(converter),
+                new ListReader(types, converter)
             ) {}
     }
 
@@ -830,11 +847,11 @@ namespace ExtendedXmlSerialization.Model
 
     public class ActivatedTypeConverter : Converter
     {
-        public ActivatedTypeConverter(ITypes types, Func<ISelector> selector)
-            : this(IsActivatedTypeSpecification.Default, types, selector) {}
+        public ActivatedTypeConverter(ITypes types, IConverter converter)
+            : this(IsActivatedTypeSpecification.Default, types, converter) {}
 
-        protected ActivatedTypeConverter(ISpecification<TypeInfo> specification, ITypes types, Func<ISelector> selector)
-            : this(specification, new InstanceMembers(selector), types, Activators.Default) {}
+        protected ActivatedTypeConverter(ISpecification<TypeInfo> specification, ITypes types, IConverter converter)
+            : this(specification, new InstanceMembers(converter, new EnumeratingReader(types, converter)), types, Activators.Default) {}
 
         public ActivatedTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members, ITypes types,
                                       IActivators activators)

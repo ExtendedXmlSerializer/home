@@ -95,12 +95,14 @@ namespace ExtendedXmlSerialization.Model
     class SelectingReader : IReader
     {
         public static SelectingReader Default { get; } = new SelectingReader();
-        SelectingReader() : this(Types.Default, Selectors.Default.Get(Types.Default)) {}
+        SelectingReader() : this(Selectors.Default.Get(Types.Default).Self) {}
 
         private readonly ITypes _types;
-        private readonly ISelector _selector;
+        private readonly Func<ISelector> _selector;
 
-        public SelectingReader(ITypes types, ISelector selector)
+        public SelectingReader(Func<ISelector> selector) : this(Types.Default, selector) {}
+
+        public SelectingReader(ITypes types, Func<ISelector> selector)
         {
             _types = types;
             _selector = selector;
@@ -109,7 +111,7 @@ namespace ExtendedXmlSerialization.Model
         public object Read(XElement element, Typed? hint = null)
         {
             var typed = hint ?? _types.Get(element);
-            var converter = _selector.Get(typed);
+            var converter = _selector().Get(typed);
             var result = converter.Read(element, typed);
             return result;
         }

@@ -69,17 +69,17 @@ namespace ExtendedXmlSerialization.Model
     class SelectingWriter : IWriter
     {
         public static SelectingWriter Default { get; } = new SelectingWriter();
-        SelectingWriter() : this(Selectors.Default.Get(Types.Default)) {}
+        SelectingWriter() : this(Selectors.Default.Get(Types.Default).Self) {}
 
-        private readonly ISelector _selector;
+        private readonly Func<ISelector> _selector;
 
-        public SelectingWriter(ISelector selector)
+        public SelectingWriter(Func<ISelector> selector)
         {
             _selector = selector;
         }
 
         public void Write(XmlWriter writer, object instance) =>
-            _selector.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+            _selector().Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
     }
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
