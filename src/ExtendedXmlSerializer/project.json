@@ -34,6 +34,7 @@
         },
         "netstandard1.6": {
             "dependencies": {
+                "System.Collections.NonGeneric": "4.3.0",
                 "NETStandard.Library": "1.6.1",
                 "System.Reflection.TypeExtensions": "4.3.0",
                 "Microsoft.Extensions.DependencyModel": "1.1.0",

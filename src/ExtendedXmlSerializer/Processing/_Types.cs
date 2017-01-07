@@ -50,11 +50,10 @@ namespace ExtendedXmlSerialization.Processing
             var add = _add.Locate(parameter, elementType);
             // Object (type object) from witch the data are retrieved
             var itemObject = Expression.Parameter(typeof(object), "item");
+            var value = Expression.Parameter(typeof(object), "value");
 
             // Object casted to specific type using the operator "as".
             var itemCasted = Expression.Convert(itemObject, parameter);
-
-            var value = Expression.Parameter(typeof(object), "value");
 
             var castedParam = Expression.Convert(value, elementType);
 

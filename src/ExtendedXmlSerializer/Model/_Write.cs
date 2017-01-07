@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +30,6 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -172,10 +169,10 @@ namespace ExtendedXmlSerialization.Model
 
     public abstract class WriterBase<T> : IWriter
     {
-        protected abstract void Write(XmlWriter context, T instance);
+        protected abstract void Write(XmlWriter writer, T instance);
 
-        void IWriter.Write(XmlWriter context, object instance)
-            => Write(context, (T) instance);
+        void IWriter.Write(XmlWriter writer, object instance)
+            => Write(writer, (T) instance);
     }
 
     public abstract class WriterBase : IWriter

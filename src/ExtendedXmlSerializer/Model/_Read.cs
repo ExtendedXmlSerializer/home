@@ -79,6 +79,11 @@ namespace ExtendedXmlSerialization.Model
         object Read(XElement element, Typed? hint = null);
     }
 
+    public interface IReader<out T> : IReader
+    {
+        new T Read(XElement element, Typed? hint = null);
+    }
+
     class RootReader : DecoratedReader
     {
         public static RootReader Default { get; } = new RootReader();
@@ -115,11 +120,11 @@ namespace ExtendedXmlSerialization.Model
         public abstract object Read(XElement element, Typed? hint = null);
     }
 
-    public abstract class ReaderBase<T> : IReader
+    public abstract class ReaderBase<T> : IReader<T>
     {
         object IReader.Read(XElement element, Typed? hint) => Read(element, hint);
 
-        protected abstract T Read(XElement element, Typed? hint = null);
+        public abstract T Read(XElement element, Typed? hint = null);
     }
 
     public class ValueReader<T> : ReaderBase<T>
@@ -131,7 +136,7 @@ namespace ExtendedXmlSerialization.Model
             _deserialize = deserialize;
         }
 
-        protected override T Read(XElement element, Typed? hint = null) => _deserialize(element.Value);
+        public override T Read(XElement element, Typed? hint = null) => _deserialize(element.Value);
     }
 
     public class DecoratedReader : ReaderBase
