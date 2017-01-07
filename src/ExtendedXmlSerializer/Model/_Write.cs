@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -64,6 +65,19 @@ namespace ExtendedXmlSerialization.Model
         RootWriter() : this(AllNames.Default, SelectingWriter.Default) {}
 
         public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
+    }
+
+    public class InstanceValidatingWriter : DecoratedWriter
+    {
+        public InstanceValidatingWriter(IWriter writer) : base(writer) {}
+
+        public override void Write(XmlWriter writer, object instance)
+        {
+            if (instance != null)
+            {
+                base.Write(writer, instance);
+            }
+        }
     }
 
     class SelectingWriter : IWriter
@@ -138,6 +152,29 @@ namespace ExtendedXmlSerialization.Model
                 return result;
             }
             return type.Info.Name;
+        }
+    }
+
+    public class EnumerableBodyWriter : WriterBase<IEnumerable>
+    {
+        private readonly IWriter _writer;
+
+        public EnumerableBodyWriter(IWriter itemWriter)
+            : this(AllNames.Default, itemWriter) {}
+
+        public EnumerableBodyWriter(INames names, IWriter itemWriter) : this(new ElementWriter(names.Get, itemWriter)) {}
+
+        EnumerableBodyWriter(ElementWriter writer)
+        {
+            _writer = writer;
+        }
+
+        protected override void Write(XmlWriter writer, IEnumerable instance)
+        {
+            foreach (var item in instance)
+            {
+                _writer.Write(writer, item);
+            }
         }
     }
 
@@ -221,11 +258,7 @@ namespace ExtendedXmlSerialization.Model
             _serialize = serialize;
         }
 
-        protected override void Write(XmlWriter writer, T instance)
-        {
-            var serialize = _serialize(instance);
-            writer.WriteString(serialize);
-        }
+        protected override void Write(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
     }
 
     public class DecoratedWriter : WriterBase

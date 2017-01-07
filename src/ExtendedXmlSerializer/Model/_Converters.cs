@@ -298,11 +298,12 @@ namespace ExtendedXmlSerialization.Model
         {
             var source = new Source(this, parameter);
             var singleton = new SingletonSource<ISelector>(source.Get);
+            var converter = new DeferredSelectingConverter(singleton.Get);
             var converters =
                 _primitives
-                .Concat(Yield(parameter, new DeferredSelectingConverter(singleton.Get)))
+                .Concat(Yield(parameter, converter))
                 .ToImmutableArray();
-            var result = new Selector(converters);
+            var result = new NullableAwareSelector(new Selector(converters));
             return result;
         }
 
@@ -368,6 +369,17 @@ namespace ExtendedXmlSerialization.Model
             }
             return null;
         }
+    }
+
+    public class NullableAwareSelector : ISelector
+    {
+        private readonly ISelector _selector;
+        public NullableAwareSelector(ISelector selector)
+        {
+            _selector = selector;
+        }
+
+        public IConverter Get(TypeInfo parameter) => _selector.Get(parameter.AccountForNullable());
     }
 
     public class TimeSpanConverter : PrimitiveConverterBase<TimeSpan>
@@ -517,174 +529,6 @@ namespace ExtendedXmlSerialization.Model
             ) {}
     }
 
-    sealed class EnumReader : ReaderBase
-    {
-        public static EnumReader Default { get; } = new EnumReader();
-        EnumReader() {}
-
-        public override object Read(XElement element, Typed? hint = null)
-        {
-            if (hint.HasValue)
-            {
-                return Enum.Parse(hint, element.Value);
-            }
-            throw new InvalidOperationException(
-                $"An attempt was made to read element as an enumeration, but no type was specified.");
-        }
-    }
-
-    public class EnumerableBodyWriter : WriterBase<IEnumerable>
-    {
-        private readonly IWriter _writer;
-
-        public EnumerableBodyWriter(IWriter itemWriter)
-            : this(AllNames.Default, itemWriter) {}
-
-        public EnumerableBodyWriter(INames names, IWriter itemWriter) : this(new ElementWriter(names.Get, itemWriter)) {}
-
-        EnumerableBodyWriter(ElementWriter writer)
-        {
-            _writer = writer;
-        }
-
-        protected override void Write(XmlWriter writer, IEnumerable instance)
-        {
-            foreach (var item in instance)
-            {
-                _writer.Write(writer, item);
-            }
-        }
-    }
-
-    /*public class LegacyEnumerableBodyWriter : WriterBase<IEnumerable>
-    {
-        private readonly INames _names;
-        private readonly Func<ISelector> _selector;
-        private readonly IElementTypeLocator _locator;
-        private readonly Lazy<IWriter> _writer, _differentiating;
-
-        public LegacyEnumerableBodyWriter(Func<ISelector> selector)
-            : this(AllNames.Default, selector, ElementTypeLocator.Default) {}
-
-        public LegacyEnumerableBodyWriter(INames names, Func<ISelector> selector, IElementTypeLocator locator)
-        {
-            _names = names;
-            _selector = selector;
-            _locator = locator;
-            _writer = new Lazy<IWriter>(Create);
-            _differentiating = new Lazy<IWriter>(CreateDifferentiating);
-        }
-
-        IWriter Create() => new ElementWriter(_names.Get, new SelectingWriter(_selector()));
-        IWriter CreateDifferentiating() => new ElementWriter(_names.Get, new TypeEmittingWriter(new SelectingWriter(_selector())));
-
-        protected override void Write(XmlWriter writer, IEnumerable instance)
-        {
-            var elementType = _locator.Locate(instance.GetType());
-            foreach (var item in instance)
-            {
-                var w = item.GetType() != elementType ? _differentiating : _writer;
-                w.Value.Write(writer, item);
-            }
-        }
-    }*/
-
-    public class ArrayReader : ListReaderBase
-    {
-        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
-
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
-        {
-            var list = new ArrayList();
-            foreach (var item in enumerable)
-            {
-                list.Add(item);
-            }
-
-            var result = list.ToArray(elementType);
-            return result;
-        }
-    }
-
-    public class ListReader : ListReaderBase
-    {
-        private readonly IActivators _activators;
-        private readonly IAddDelegates _add;
-
-        public ListReader(ITypes types, IReader reader)
-            : this(types, reader, Activators.Default, AddDelegates.Default) {}
-
-        public ListReader(ITypes types, IReader reader, IActivators activators, IAddDelegates add)
-            : base(types, reader)
-        {
-            _activators = activators;
-            _add = add;
-        }
-
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
-        {
-            var result = _activators.Activate<object>(listType);
-            var list = result as IList ?? new ListAdapter(result, _add.Get(listType));
-            foreach (var item in enumerable)
-            {
-                list.Add(item);
-            }
-            return result;
-        }
-    }
-
-    public abstract class ListReaderBase : ReaderBase
-    {
-        private readonly ITypes _types;
-        private readonly IEnumeratingReader _reader;
-        private readonly IElementTypeLocator _locator;
-
-        protected ListReaderBase(ITypes types, IReader reader)
-            : this(types, new EnumeratingReader(types, reader), ElementTypeLocator.Default) {}
-
-        protected ListReaderBase(ITypes types, IEnumeratingReader reader, IElementTypeLocator locator)
-        {
-            _types = types;
-            _reader = reader;
-            _locator = locator;
-        }
-
-        public sealed override object Read(XElement element, Typed? hint = null)
-        {
-            var type = hint ?? _types.Get(element);
-            var elementType = _locator.Locate(type);
-            var enumerable = _reader.Read(element, elementType);
-            var result = Create(type, enumerable, elementType);
-            return result;
-        }
-
-        protected abstract object Create(Type listType, IEnumerable enumerable, Type elementType);
-    }
-
-    public interface IEnumeratingReader : IReader<IEnumerable> {}
-
-    public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
-    {
-        private readonly ITypes _types;
-        private readonly IReader _reader;
-
-        public EnumeratingReader(ITypes types, IReader reader)
-        {
-            _types = types;
-            _reader = reader;
-        }
-
-        public override IEnumerable Read(XElement element, Typed? hint = null)
-        {
-            var elementType = hint.GetValueOrDefault().Info;
-            foreach (var child in element.Elements())
-            {
-                var itemType = _types.Get(child)?.GetTypeInfo() ?? elementType;
-                var item = _reader.Read(child, itemType);
-                yield return item;
-            }
-        }
-    }
 
     sealed class ListAdapter : IList
     {
@@ -777,6 +621,9 @@ namespace ExtendedXmlSerialization.Model
 
     public static class Extensions
     {
+        public static TypeInfo AccountForNullable(this TypeInfo @this) => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+        public static Type AccountForNullable(this Type @this) => Nullable.GetUnderlyingType(@this) ?? @this;
+
         public static T Activate<T>(this IActivators @this, Typed type) => (T) @this.Get(type).Invoke();
     }
 
@@ -885,6 +732,6 @@ namespace ExtendedXmlSerialization.Model
             : this(TypeEqualitySpecification<T>.Default, writer, reader) {}
 
         protected PrimitiveConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
-            : base(specification, writer, reader) {}
+            : base(specification, new InstanceValidatingWriter(writer), new ValueValidatingReader(reader)) {}
     }
 }

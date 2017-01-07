@@ -151,7 +151,7 @@ namespace ExtendedXmlSerialization.Model
                     property.GetIndexParameters().Length <= 0 &&
                     !property.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    var type = new Typed(property.PropertyType);
+                    var type = new Typed(property.PropertyType.AccountForNullable());
                     var member = Create(property, type, property.CanWrite);
                     if (member != null)
                     {
@@ -166,7 +166,7 @@ namespace ExtendedXmlSerialization.Model
                 if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
                     !field.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    var type = new Typed(field.FieldType);
+                    var type = new Typed(field.FieldType.AccountForNullable());
                     var member = Create(field, type, !readOnly);
                     if (member != null)
                     {
@@ -186,7 +186,7 @@ namespace ExtendedXmlSerialization.Model
 
             if (assignable)
             {
-                var writer = new ElementWriter(name.Accept, _converter);
+                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, _converter));
                 var member = new AssignableMember(_converter, writer, name, memberType, getter, _setter.Get(metadata));
                 var result = new MemberSort(member, sort);
                 return result;

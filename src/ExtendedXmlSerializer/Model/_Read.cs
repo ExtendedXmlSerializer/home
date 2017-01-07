@@ -22,10 +22,12 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -92,6 +94,22 @@ namespace ExtendedXmlSerialization.Model
         public RootReader(IReader reader) : base(reader) {}
     }
 
+    sealed class EnumReader : ReaderBase
+    {
+        public static EnumReader Default { get; } = new EnumReader();
+        EnumReader() {}
+
+        public override object Read(XElement element, Typed? hint = null)
+        {
+            if (hint.HasValue)
+            {
+                return Enum.Parse(hint, element.Value);
+            }
+            throw new InvalidOperationException(
+                $"An attempt was made to read element as an enumeration, but no type was specified.");
+        }
+    }
+
     class SelectingReader : IReader
     {
         public static SelectingReader Default { get; } = new SelectingReader();
@@ -141,6 +159,13 @@ namespace ExtendedXmlSerialization.Model
         public override T Read(XElement element, Typed? hint = null) => _deserialize(element.Value);
     }
 
+    public class ValueValidatingReader : DecoratedReader
+    {
+        public ValueValidatingReader(IReader reader) : base(reader) {}
+        public override object Read(XElement element, Typed? hint = null) => 
+            element.Value.NullIfEmpty() != null ? base.Read(element, hint) : null;
+    }
+
     public class DecoratedReader : ReaderBase
     {
         private readonly IReader _reader;
@@ -151,5 +176,102 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public override object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint);
+    }
+
+    public class ArrayReader : ListReaderBase
+    {
+        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
+
+        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        {
+            var list = new ArrayList();
+            foreach (var item in enumerable)
+            {
+                list.Add(item);
+            }
+
+            var result = list.ToArray(elementType);
+            return result;
+        }
+    }
+
+    public class ListReader : ListReaderBase
+    {
+        private readonly IActivators _activators;
+        private readonly IAddDelegates _add;
+
+        public ListReader(ITypes types, IReader reader)
+            : this(types, reader, Activators.Default, AddDelegates.Default) {}
+
+        public ListReader(ITypes types, IReader reader, IActivators activators, IAddDelegates add)
+            : base(types, reader)
+        {
+            _activators = activators;
+            _add = add;
+        }
+
+        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        {
+            var result = _activators.Activate<object>(listType);
+            var list = result as IList ?? new ListAdapter(result, _add.Get(listType));
+            foreach (var item in enumerable)
+            {
+                list.Add(item);
+            }
+            return result;
+        }
+    }
+
+    public abstract class ListReaderBase : ReaderBase
+    {
+        private readonly ITypes _types;
+        private readonly IEnumeratingReader _reader;
+        private readonly IElementTypeLocator _locator;
+
+        protected ListReaderBase(ITypes types, IReader reader)
+            : this(types, new EnumeratingReader(types, reader), ElementTypeLocator.Default) {}
+
+        protected ListReaderBase(ITypes types, IEnumeratingReader reader, IElementTypeLocator locator)
+        {
+            _types = types;
+            _reader = reader;
+            _locator = locator;
+        }
+
+        public sealed override object Read(XElement element, Typed? hint = null)
+        {
+            var type = hint ?? _types.Get(element);
+            var elementType = _locator.Locate(type);
+            var enumerable = _reader.Read(element, elementType);
+            var result = Create(type, enumerable, elementType);
+            return result;
+        }
+
+        protected abstract object Create(Type listType, IEnumerable enumerable, Type elementType);
+    }
+
+    public interface IEnumeratingReader : IReader<IEnumerable> {}
+
+    public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
+    {
+        private readonly ITypes _types;
+        private readonly IReader _reader;
+
+        public EnumeratingReader(ITypes types, IReader reader)
+        {
+            _types = types;
+            _reader = reader;
+        }
+
+        public override IEnumerable Read(XElement element, Typed? hint = null)
+        {
+            var elementType = hint.GetValueOrDefault().Info;
+            foreach (var child in element.Elements())
+            {
+                var itemType = _types.Get(child)?.GetTypeInfo() ?? elementType;
+                var item = _reader.Read(child, itemType);
+                yield return item;
+            }
+        }
     }
 }
