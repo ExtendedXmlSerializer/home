@@ -188,6 +188,7 @@ namespace ExtendedXmlSerialization.Model
     class LegacyTypeNames : INames
     {
         public static LegacyTypeNames Default { get; } = new LegacyTypeNames();
+
         LegacyTypeNames() : this(
             new TypeName(
                 new AnySpecification<TypeInfo>(IsArraySpecification.Default,
@@ -392,18 +393,22 @@ namespace ExtendedXmlSerialization.Model
 
     class CustomElementWriter : ElementWriter
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfig configuration) : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(configuration))) {}
+        public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
+            : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(configuration))) {}
+
         public CustomElementWriter(INames names, IWriter writer) : base(names.Get, writer) {}
 
         sealed class CustomElementBodyWriter : WriterBase
         {
             private readonly IExtendedXmlSerializerConfig _configuration;
+
             public CustomElementBodyWriter(IExtendedXmlSerializerConfig configuration)
             {
                 _configuration = configuration;
             }
 
-            public override void Write(XmlWriter writer, object instance) => _configuration.WriteObject(writer, instance);
+            public override void Write(XmlWriter writer, object instance)
+                => _configuration.WriteObject(writer, instance);
         }
     }
 
@@ -419,10 +424,19 @@ namespace ExtendedXmlSerialization.Model
         public override void Write(XmlWriter writer, object instance)
         {
             var configuration = _factory.GetConfiguration(instance.GetType());
-            if (configuration?.IsCustomSerializer ?? false)
+            if (configuration != null)
             {
-                new CustomElementWriter(configuration).Write(writer, instance);
-                return;
+                if (configuration.Version > 0)
+                {
+                    writer.WriteAttributeString(ExtendedXmlSerializer.Version,
+                                                configuration.Version.ToString(CultureInfo.InvariantCulture));
+                }
+
+                if (configuration.IsCustomSerializer)
+                {
+                    new CustomElementWriter(configuration).Write(writer, instance);
+                    return;
+                }
             }
 
             base.Write(writer, instance);
@@ -431,9 +445,18 @@ namespace ExtendedXmlSerialization.Model
         public override object Read(XElement element, Typed? hint = null)
         {
             var configuration = _factory.GetConfiguration(hint);
-            if (configuration?.IsCustomSerializer ?? false)
+            if (configuration != null)
             {
-                return configuration.ReadObject(element);
+                // Run migrator if exists
+                if (configuration.Version > 0)
+                {
+                    configuration.Map(hint, element);
+                }
+
+                if (configuration.IsCustomSerializer)
+                {
+                    return configuration.ReadObject(element);
+                }
             }
 
             return base.Read(element, hint);
