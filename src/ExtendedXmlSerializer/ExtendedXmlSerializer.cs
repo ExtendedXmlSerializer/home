@@ -22,13 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Model;
 
 namespace ExtendedXmlSerialization
@@ -38,8 +33,9 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        private ISerializationToolsFactory _serializationToolsFactory;
         readonly private static SimpleSerializationToolsFactory Default = new SimpleSerializationToolsFactory();
+
+        private ISerializationToolsFactory _serializationToolsFactory;
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -101,7 +97,7 @@ namespace ExtendedXmlSerialization
                 var result = deserializer.Deserialize(stream);
                 return result;
             }
-            
+
 
             /*var def = TypeDefinitions.Default.Get(type);
             XDocument doc = XDocument.Parse(xml);

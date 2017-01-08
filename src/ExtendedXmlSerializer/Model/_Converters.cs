@@ -293,10 +293,12 @@ namespace ExtendedXmlSerialization.Model
 
     class LegacyAdditionalTypeConverters : ITypeConverters
     {
+        private readonly ISerializationToolsFactory _tools;
         private readonly ITypes _types;
 
-        public LegacyAdditionalTypeConverters(ITypes types)
+        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools, ITypes types)
         {
+            _tools = tools;
             _types = types;
         }
 
@@ -305,7 +307,7 @@ namespace ExtendedXmlSerialization.Model
             yield return new LegacyDictionaryTypeConverter(_types, parameter);
             yield return new LegacyArrayTypeConverter(_types, parameter);
             yield return new LegacyEnumerableTypeConverter(_types, parameter);
-            yield return new LegacyInstanceTypeConverter(_types, parameter);
+            yield return new LegacyInstanceTypeConverter(_tools, _types, parameter);
         }
     }
 
@@ -328,11 +330,11 @@ namespace ExtendedXmlSerialization.Model
     class LegacySelectorFactory : AlteredSelectorFactory
     {
         public static LegacySelectorFactory Default { get; } = new LegacySelectorFactory();
-        LegacySelectorFactory() : this(Types.Default) {}
+        LegacySelectorFactory() : this(new SimpleSerializationToolsFactory(), Types.Default) {}
 
-        public LegacySelectorFactory(ITypes types)
+        public LegacySelectorFactory(ISerializationToolsFactory tools, ITypes types)
             : base(
-                new SelectorFactory(LegacyPrimitives.Default, new LegacyAdditionalTypeConverters(types)),
+                new SelectorFactory(LegacyPrimitives.Default, new LegacyAdditionalTypeConverters(tools, types)),
                 NullableSelectorAlteration.Default) {}
     }
 
@@ -377,18 +379,25 @@ namespace ExtendedXmlSerialization.Model
     public class RootConverters : RootConverters<object>
     {
         public static RootConverters Default { get; } = new RootConverters();
-        RootConverters() : base(Types.Default, LegacySelectorFactory.Default) {}
+        RootConverters() : base(AllNames.Default, Types.Default, LegacySelectorFactory.Default) {}
     }
 
     class LegacyRootConverters : RootConverters<ISerializationToolsFactory>
     {
-        public static LegacyRootConverters Default { get; } = new LegacyRootConverters();
-        LegacyRootConverters() : this(Types.Default) {}
+        /*public static LegacyRootConverters Default { get; } = new LegacyRootConverters();
+        LegacyRootConverters() : this(Types.Default) {}*/
 
-        public LegacyRootConverters(ITypes types) : base(types, new LegacySelectorFactory(types)) {}
+        public LegacyRootConverters(ISerializationToolsFactory tools) : this(tools, Types.Default) {}
 
-        protected override IConverter Create(ISerializationToolsFactory parameter) =>
-            new LegacyRootConverter(parameter, base.Create(parameter));
+        public LegacyRootConverters(ISerializationToolsFactory tools, ITypes types)
+            : base(AllNames.Default, types, new LegacySelectorFactory(tools, types)) {}
+
+        protected override IConverter Create(ISerializationToolsFactory parameter)
+        {
+            var converter = base.Create(parameter);
+            var root = new Converter(new RootReader(converter), new RootWriter(AllNames.Default, converter));
+            return new LegacyRootConverter(parameter, root);
+        }
     }
 
     class CustomElementWriter : ElementWriter
@@ -479,11 +488,13 @@ namespace ExtendedXmlSerialization.Model
 
     public class RootConverters<T> : WeakCacheBase<T, IConverter>, IRootConverters<T> where T : class
     {
+        private readonly INames _names;
         private readonly ITypes _types;
         private readonly ISelectorFactory _selector;
 
-        public RootConverters(ITypes types, ISelectorFactory selector)
+        public RootConverters(INames names, ITypes types, ISelectorFactory selector)
         {
+            _names = names;
             _types = types;
             _selector = selector;
         }
@@ -491,15 +502,13 @@ namespace ExtendedXmlSerialization.Model
         protected override IConverter Create(T parameter)
         {
             var source = new AssignableSelector();
-            var result = Create(parameter, source);
+            var selector = new Converter(new SelectingReader(_types, source), new SelectingWriter(source));
 
-            source.Execute(_selector.Get(result));
+            source.Execute(_selector.Get(selector));
 
-            return result;
+            // var result = new Converter(new RootReader(selector), new RootWriter(_names, selector));
+            return selector;
         }
-
-        protected virtual Converter Create(T parameter, ISelector source) =>
-            new Converter(new SelectingReader(_types, source), new SelectingWriter(source));
     }
 
     public interface ISelector : ISelector<TypeInfo, IConverter> {}
@@ -649,9 +658,13 @@ namespace ExtendedXmlSerialization.Model
 
     class TypeEmittingWriter : DecoratedWriter
     {
+        readonly private static ISpecification<TypeInfo> Specification =
+            /*new InverseSpecification<TypeInfo>(TypeEqualitySpecification<string>.Default)*/
+            AlwaysSpecification<TypeInfo>.Default;
+
         private readonly ISpecification<TypeInfo> _specification;
 
-        public TypeEmittingWriter(IWriter writer) : this(AlwaysSpecification<TypeInfo>.Default, writer) {}
+        public TypeEmittingWriter(IWriter writer) : this(Specification, writer) {}
 
         public TypeEmittingWriter(ISpecification<TypeInfo> specification, IWriter writer) : base(writer)
         {
@@ -662,9 +675,8 @@ namespace ExtendedXmlSerialization.Model
         {
             var type = new Typed(instance.GetType());
             var tracker = Tracker.Default.Get(writer);
-            if (_specification.IsSatisfiedBy(type) && !tracker.Contains(instance))
+            if (_specification.IsSatisfiedBy(type) && tracker.Add(instance))
             {
-                tracker.Add(instance);
                 writer.WriteAttributeString(ExtendedXmlSerializer.Type,
                                             LegacyTypeFormatter.Default.Format(type));
             }
@@ -678,6 +690,21 @@ namespace ExtendedXmlSerialization.Model
             Tracker() : base(_ => new HashSet<object>()) {}
         }
     }
+
+    public class EmitTypeSpecification : ISpecification<TypeInfo>
+    {
+        private readonly TypeInfo _info;
+        readonly private static Type StringType = typeof(string), ObjectType = typeof(object);
+
+        public EmitTypeSpecification(TypeInfo info)
+        {
+            _info = info;
+        }
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => 
+            !_info.IsPrimitive && (parameter.AsType() != StringType || _info.AsType() == ObjectType) && !Equals(parameter, _info);
+    }
+
 
     public class EnumerationTypeConverter : PrimitiveTypeConverterBase<Enum>
     {
@@ -810,6 +837,14 @@ namespace ExtendedXmlSerialization.Model
         public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsArray;
     }
 
+    public class IsPrimitiveSpecification : ISpecification<TypeInfo>
+    {
+        public static IsPrimitiveSpecification Default { get; } = new IsPrimitiveSpecification();
+        IsPrimitiveSpecification() {}
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsPrimitive;
+    }
+
     public class IsGenericTypeSpecification : ISpecification<TypeInfo>
     {
         public static IsGenericTypeSpecification Default { get; } = new IsGenericTypeSpecification();
@@ -904,13 +939,21 @@ namespace ExtendedXmlSerialization.Model
 
     public class LegacyInstanceTypeConverter : TypeConverter
     {
-        public LegacyInstanceTypeConverter(ITypes types, IConverter converter)
-            : this(IsActivatedTypeSpecification.Default, types, converter) {}
+        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ITypes types, IConverter converter)
+            : this(tools, IsActivatedTypeSpecification.Default, types, converter) {}
 
-        protected LegacyInstanceTypeConverter(ISpecification<TypeInfo> specification, ITypes types,
+        protected LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ISpecification<TypeInfo> specification,
+                                              ITypes types,
                                               IConverter converter)
             : this(
-                specification, new InstanceMembers(converter, new EnumeratingReader(types, converter)), types,
+                specification,
+                new InstanceMembers(new LegacyMemberFactory(tools,
+                                                            new MemberFactory(converter,
+                                                                              new EnumeratingReader(types, converter),
+                                                                              new LegacyGetterFactory(tools,
+                                                                                                      GetterFactory
+                                                                                                          .Default)))),
+                types,
                 Activators.Default) {}
 
         public LegacyInstanceTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members,
@@ -930,18 +973,6 @@ namespace ExtendedXmlSerialization.Model
         public bool IsSatisfiedBy(TypeInfo parameter)
             => parameter.IsValueType ||
                !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
-    }
-
-    public class EmitTypeSpecification : ISpecification<TypeInfo>
-    {
-        public static EmitTypeSpecification Default { get; } = new EmitTypeSpecification();
-        EmitTypeSpecification() {}
-
-        public bool IsSatisfiedBy(TypeInfo parameter)
-            => !parameter.IsPrimitive &&
-               !parameter.IsArray &&
-               !typeof(IEnumerable).IsAssignableFrom(parameter.AsType()) &
-               IsActivatedTypeSpecification.Default.IsSatisfiedBy(parameter);
     }
 
     public abstract class PrimitiveTypeConverterBase<T> : TypeConverter

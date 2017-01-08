@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Model
 
     class LegacySerializer : Serializer
     {
-        public LegacySerializer(ISerializationToolsFactory tools) : base(LegacyRootConverters.Default.Get(tools)) {}
+        public LegacySerializer(ISerializationToolsFactory tools) : base(new LegacyRootConverters(tools).Get(tools)) {}
     }
 
     public class Serializer : ISerializer
@@ -69,8 +69,9 @@ namespace ExtendedXmlSerialization.Model
     public class RootWriter : ElementWriter
     {
         public static RootWriter Default { get; } = new RootWriter();
-        RootWriter() : this(AllNames.Default, RootConverter.Default) {}
+        RootWriter() : this(RootConverter.Default) {}
 
+        public RootWriter(IWriter body) : this(AllNames.Default, body) {}
         public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
     }
 

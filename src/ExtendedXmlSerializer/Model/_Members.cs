@@ -63,7 +63,7 @@ namespace ExtendedXmlSerialization.Model
 
         public void Write(XmlWriter writer, object instance) => _writer.Write(writer, Get(instance));
 
-        protected object Get(object instance) => _getter(instance);
+        protected virtual object Get(object instance) => _getter(instance);
 
         public object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint ?? _memberType);
     }
@@ -115,28 +115,11 @@ namespace ExtendedXmlSerialization.Model
 
     class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
     {
-        private readonly IEnumeratingReader _reader;
-        private readonly IConverter _converter;
-        private readonly INames _names;
-        private readonly INameProvider _name;
-        private readonly IGetterFactory _getter;
-        private readonly ISetterFactory _setter;
-        private readonly IAddDelegates _add;
+        private readonly IMemberFactory _factory;
 
-        public InstanceMembers(IConverter converter, IEnumeratingReader reader)
-            : this(converter, reader, AllNames.Default, MemberNameProvider.Default, GetterFactory.Default,
-                   SetterFactory.Default, AddDelegates.Default) {}
-
-        public InstanceMembers(IConverter converter, IEnumeratingReader reader, INames names, INameProvider name,
-                               IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
+        public InstanceMembers(IMemberFactory factory)
         {
-            _converter = converter;
-            _reader = reader;
-            _names = names;
-            _name = name;
-            _getter = getter;
-            _setter = setter;
-            _add = add;
+            _factory = factory;
         }
 
         protected override IMembers Create(TypeInfo parameter) =>
@@ -179,25 +162,12 @@ namespace ExtendedXmlSerialization.Model
 
         private MemberSort? Create(MemberInfo metadata, Typed memberType, bool assignable)
         {
-            var name = XName.Get(_name.Get(metadata).LocalName,
-                                 _names.Get(metadata.DeclaringType.GetTypeInfo()).NamespaceName);
-            var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
-                                metadata.MetadataToken);
-            var getter = _getter.Get(metadata);
-
-            if (assignable)
+            var member = _factory.Create(metadata, memberType, assignable);
+            if (member != null)
             {
-                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, new TypeEmittingWriter(new InverseSpecification<TypeInfo>(new TypeEqualitySpecification(memberType)), _converter)));
-                var member = new AssignableMember(_converter, writer, name, memberType, getter, _setter.Get(metadata));
-                var result = new MemberSort(member, sort);
-                return result;
-            }
+                var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
+                                    metadata.MetadataToken);
 
-            var add = _add.Get(memberType);
-            if (add != null)
-            {
-                var writer = new ElementWriter(name.Accept, _converter);
-                var member = new ReadOnlyCollectionMember(_reader, writer, name, memberType, getter, add);
                 var result = new MemberSort(member, sort);
                 return result;
             }
@@ -216,6 +186,222 @@ namespace ExtendedXmlSerialization.Model
 
             public IMember Member { get; }
             public Sort Sort { get; }
+        }
+    }
+
+    public interface IMemberFactory
+    {
+        IMember Create(MemberInfo metadata, Typed memberType, bool assignable);
+    }
+
+    class LegacySetterFactory : ISetterFactory
+    {
+        private readonly ISerializationToolsFactory _tools;
+        private readonly ISetterFactory _factory;
+
+        public LegacySetterFactory(ISerializationToolsFactory tools, ISetterFactory factory)
+        {
+            _tools = tools;
+            _factory = factory;
+        }
+
+        public Action<object, object> Get(MemberInfo parameter)
+        {
+            var result = _factory.Get(parameter);
+            var configuration = _tools.GetConfiguration(parameter.DeclaringType);
+            if (configuration != null)
+            {
+                if (configuration.CheckPropertyEncryption(parameter.Name))
+                {
+                    var algorithm = _tools.EncryptionAlgorithm;
+                    if (algorithm != null)
+                    {
+                        return new Decrypt(algorithm, result).Assign;
+                    }
+                }
+            }
+            return result;
+        }
+
+        sealed class Decrypt
+        {
+            private readonly IPropertyEncryption _encryption;
+            private readonly Action<object, object> _source;
+            public Decrypt(IPropertyEncryption encryption, Action<object, object> source)
+            {
+                _encryption = encryption;
+                _source = source;
+            }
+
+            public void Assign(object instance, object value)
+            {
+                var text = _encryption.Decrypt(value as string ?? value.ToString());
+                _source(instance, text);
+            }
+        }
+    }
+
+    class LegacyGetterFactory : IGetterFactory
+    {
+        private readonly ISerializationToolsFactory _tools;
+        private readonly IGetterFactory _factory;
+
+        public LegacyGetterFactory(ISerializationToolsFactory tools, IGetterFactory factory)
+        {
+            _tools = tools;
+            _factory = factory;
+        }
+
+        public Func<object, object> Get(MemberInfo parameter)
+        {
+            var result = _factory.Get(parameter);
+            var configuration = _tools.GetConfiguration(parameter.DeclaringType);
+            if (configuration != null)
+            {
+                if (configuration.CheckPropertyEncryption(parameter.Name))
+                {
+                    var algorithm = _tools.EncryptionAlgorithm;
+                    if (algorithm != null)
+                    {
+                        return new Encrypt(algorithm, result).Get;
+                    }
+                }
+            }
+            return result;
+        }
+
+        sealed class Encrypt : IParameterizedSource<object, object>
+        {
+            private readonly IPropertyEncryption _encryption;
+            private readonly Func<object, object> _source;
+            public Encrypt(IPropertyEncryption encryption, Func<object, object> source)
+            {
+                _encryption = encryption;
+                _source = source;
+            }
+
+            public object Get(object parameter)
+            {
+                var value = _source(parameter);
+                var result = _encryption.Encrypt(value as string ?? value.ToString());
+                return result;
+            }
+        }
+    }
+
+    class LegacyMemberFactory : IMemberFactory
+    {
+        private readonly ISerializationToolsFactory _tools;
+        private readonly IMemberFactory _factory;
+
+        public LegacyMemberFactory(ISerializationToolsFactory tools, IMemberFactory factory)
+        {
+            _tools = tools;
+            _factory = factory;
+        }
+
+        public IMember Create(MemberInfo metadata, Typed memberType, bool assignable)
+        {
+            var result = _factory.Create(metadata, memberType, assignable);
+            var assignableMember = result as IAssignableMember;
+            if (assignableMember != null)
+            {
+                var configuration = _tools.GetConfiguration(metadata.DeclaringType);
+                if (configuration != null)
+                {
+                    if (configuration.CheckPropertyEncryption(metadata.Name))
+                    {
+                        var algorithm = _tools.EncryptionAlgorithm;
+                        if (algorithm != null)
+                        {
+                            return new EncryptedMember(algorithm, assignableMember);
+                            // value = algorithm.Decrypt(value);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+    }
+
+    public class EncryptedMember : IAssignableMember
+    {
+        private readonly IPropertyEncryption _encryption;
+        private readonly IAssignableMember _member;
+
+        public EncryptedMember(IPropertyEncryption encryption, IAssignableMember member)
+        {
+            _encryption = encryption;
+            _member = member;
+        }
+
+        public object Read(XElement element, Typed? hint = null)
+        {
+            element.Value = _encryption.Decrypt(element.Value);
+            return _member.Read(element, hint);
+        }
+
+        public void Write(XmlWriter writer, object instance)
+        {
+            _member.Write(writer, instance);
+        }
+
+        public XName Name => _member.Name;
+
+        public void Set(object instance, object value)
+        {
+            _member.Set(instance, value);
+        }
+    }
+
+    public class MemberFactory : IMemberFactory
+    {
+        private readonly IEnumeratingReader _reader;
+        private readonly IConverter _converter;
+        private readonly INames _names;
+        private readonly INameProvider _name;
+        private readonly IGetterFactory _getter;
+        private readonly ISetterFactory _setter;
+        private readonly IAddDelegates _add;
+
+        public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter)
+            : this(converter, reader, AllNames.Default, MemberNameProvider.Default, getter, 
+                   SetterFactory.Default, AddDelegates.Default) {}
+
+        public MemberFactory(IConverter converter, IEnumeratingReader reader, INames names, INameProvider name,
+                             IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
+        {
+            _converter = converter;
+            _reader = reader;
+            _names = names;
+            _name = name;
+            _getter = getter;
+            _setter = setter;
+            _add = add;
+        }
+
+        public IMember Create(MemberInfo metadata, Typed memberType, bool assignable)
+        {
+            var name = XName.Get(_name.Get(metadata).LocalName,
+                                 _names.Get(metadata.DeclaringType.GetTypeInfo()).NamespaceName);
+            var getter = _getter.Get(metadata);
+
+            if (assignable)
+            {
+                var type = new TypeEmittingWriter(new EmitTypeSpecification(memberType), _converter);
+                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, type));
+                var result = new AssignableMember(_converter, writer, name, memberType, getter, _setter.Get(metadata));
+                return result;
+            }
+
+            var add = _add.Get(memberType);
+            if (add != null)
+            {
+                var writer = new ElementWriter(name.Accept, _converter);
+                var result = new ReadOnlyCollectionMember(_reader, writer, name, memberType, getter, add);
+                return result;
+            }
+            return null;
         }
     }
 

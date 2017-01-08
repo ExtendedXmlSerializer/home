@@ -79,7 +79,7 @@ namespace ExtendedXmlSerialization.Model
         private readonly Typed? _type;
         private readonly IReader _reader;
 
-        public LegacyDeserializer(ISerializationToolsFactory tools, Type type) : this(LegacyRootConverters.Default.Get(tools), type) {}
+        public LegacyDeserializer(ISerializationToolsFactory tools, Type type) : this(new LegacyRootConverters(tools).Get(tools), type) {}
 
         public LegacyDeserializer(IReader reader, Typed? type = null)
         {
