@@ -62,22 +62,6 @@ namespace ExtendedXmlSerialization.Core
 
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
-        // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
-        public static bool IsAssignableFromGeneric(this Type @this, Type candidate)
-        {
-            var interfaceTypes = candidate.GetInterfaces();
-
-            foreach (var it in interfaceTypes.Append(candidate))
-            {
-                if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == @this)
-                    return true;
-            }
-
-            var baseType = candidate.GetTypeInfo().BaseType;
-            var result = baseType != null && IsAssignableFromGeneric(@this, baseType);
-            return result;
-        }
-
         public static T Self<T>( this T @this ) => @this;
         public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 

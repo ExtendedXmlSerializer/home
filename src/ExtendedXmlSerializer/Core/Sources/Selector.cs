@@ -21,18 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
+    public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
+        where TParameter : class where TResult : class
     {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+        private readonly ImmutableArray<ICandidate<TParameter, TResult>> _candidates;
 
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+        public Selector(params ICandidate<TParameter, TResult>[] candidates) : this(candidates.ToImmutableArray()) {}
+
+        public Selector(ImmutableArray<ICandidate<TParameter, TResult>> candidates)
+        {
+            _candidates = candidates;
+        }
+
+        protected override TResult Create(TParameter parameter)
+        {
+            foreach (var candidate in _candidates)
+            {
+                if (candidate.IsSatisfiedBy(parameter))
+                {
+                    return candidate.Get(parameter);
+                }
+            }
+            return null;
+        }
     }
 }

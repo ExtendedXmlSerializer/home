@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerialization.Processing
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
+    class LegacyTypeFormatter : ITypeFormatter
     {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+        public static LegacyTypeFormatter Default { get; } = new LegacyTypeFormatter();
+        LegacyTypeFormatter() {}
 
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+        public string Format(Typed type) => type.Type.FullName;
     }
 }

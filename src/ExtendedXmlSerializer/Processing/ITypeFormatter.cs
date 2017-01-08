@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Processing
 {
     public interface ITypeFormatter
     {
-        string Format(Type type);
+        string Format(Typed type);
     }
 }

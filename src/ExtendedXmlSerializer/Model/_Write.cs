@@ -31,6 +31,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Processing;
 
 namespace ExtendedXmlSerialization.Model
 {
@@ -62,7 +63,7 @@ namespace ExtendedXmlSerialization.Model
     public class RootWriter : ElementWriter
     {
         public static RootWriter Default { get; } = new RootWriter();
-        RootWriter() : this(AllNames.Default, SelectingWriter.Default) {}
+        RootWriter() : this(AllNames.Default, SelectingConverter.Default) {}
 
         public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
     }
@@ -82,9 +83,6 @@ namespace ExtendedXmlSerialization.Model
 
     class SelectingWriter : IWriter
     {
-        public static SelectingWriter Default { get; } = new SelectingWriter();
-        SelectingWriter() : this(Selectors.Default.Get(Types.Default).Self) {}
-
         private readonly Func<ISelector> _selector;
 
         public SelectingWriter(Func<ISelector> selector)
@@ -98,19 +96,24 @@ namespace ExtendedXmlSerialization.Model
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
 
-    class EnumerableNameProvider : ElementNameProviderBase
+    class LegacyEnumerableNameProvider : NameProvider
     {
-        public static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
-        EnumerableNameProvider() : this(ElementTypeLocator.Default, string.Empty) {}
+        public new static LegacyEnumerableNameProvider Default { get; } = new LegacyEnumerableNameProvider();
+        LegacyEnumerableNameProvider() : base(EnumerableTypeFormatter.Default, string.Empty) {}
+    }
+
+    class EnumerableTypeFormatter : ITypeFormatter
+    {
+        public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
+        EnumerableTypeFormatter() : this(ElementTypeLocator.Default) {}
 
         private readonly IElementTypeLocator _locator;
-
-        public EnumerableNameProvider(IElementTypeLocator locator, string defaultNamespace) : base(defaultNamespace)
+        public EnumerableTypeFormatter(IElementTypeLocator locator)
         {
             _locator = locator;
         }
 
-        protected override string DetermineName(Typed type)
+        public string Format(Typed type)
         {
             var arguments = type.Info.GetGenericArguments();
             var name = arguments.Any()
@@ -121,14 +124,12 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    class NameProvider : ElementNameProviderBase
+    class TypeNameFormatter : ITypeFormatter
     {
-        public static NameProvider Default { get; } = new NameProvider();
-        NameProvider() : this(string.Empty) {}
+        public static TypeNameFormatter Default { get; } = new TypeNameFormatter();
+        TypeNameFormatter() {}
 
-        public NameProvider(string defaultNamespace) : base(defaultNamespace) {}
-
-        protected override string DetermineName(Typed type)
+        public string Format(Typed type)
         {
             if (type.Info.IsGenericType)
             {
@@ -141,25 +142,28 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    abstract class ElementNameProviderBase : NameProviderBase
+    public class NameProvider : NameProviderBase
     {
+        public static NameProvider Default { get; } = new NameProvider();
+        NameProvider() : this(TypeNameFormatter.Default, string.Empty) {}
+
+        private readonly ITypeFormatter _formatter;
         private readonly string _defaultNamespace;
 
-        protected ElementNameProviderBase(string defaultNamespace)
+        public NameProvider(ITypeFormatter formatter, string defaultNamespace)
         {
+            _formatter = formatter;
             _defaultNamespace = defaultNamespace;
         }
 
         protected override XName Create(TypeInfo type, MemberInfo member)
         {
             var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? DetermineName(new Typed(type));
+            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(new Typed(type));
             var ns = attribute?.Namespace ?? _defaultNamespace;
             var result = XName.Get(name, ns);
             return result;
         }
-
-        protected abstract string DetermineName(Typed type);
     }
 
     static class LegacyNames
@@ -192,12 +196,15 @@ namespace ExtendedXmlSerialization.Model
 
     sealed class DictionaryEntryWriter : WriterBase<DictionaryEntry>
     {
+        readonly private static Func<TypeInfo, XName> 
+            Key = LegacyNames.Key.Accept,
+            Value = LegacyNames.Value.Accept;
+
         private readonly IWriter _key;
         private readonly IWriter _value;
 
-
         public DictionaryEntryWriter(IWriter writer)
-            : this(new ElementWriter(LegacyNames.Key.Accept, writer), new ElementWriter(LegacyNames.Value.Accept, writer)) {}
+            : this(new ElementWriter(Key, writer), new ElementWriter(Value, writer)) {}
 
         public DictionaryEntryWriter(IWriter key, IWriter value)
         {
@@ -236,7 +243,7 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    abstract class NameProviderBase : WeakCacheBase<MemberInfo, XName>, INameProvider
+    public abstract class NameProviderBase : WeakCacheBase<MemberInfo, XName>, INameProvider
     {
         protected override XName Create(MemberInfo parameter)
         {
@@ -248,7 +255,7 @@ namespace ExtendedXmlSerialization.Model
         protected abstract XName Create(TypeInfo type, MemberInfo member);
     }
 
-    class MemberNameProvider : NameProviderBase
+    public class MemberNameProvider : NameProviderBase
     {
         public static MemberNameProvider Default { get; } = new MemberNameProvider();
         MemberNameProvider() {}

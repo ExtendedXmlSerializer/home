@@ -21,18 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
+    class SingletonSource<T> : ISource<T>
     {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+        private readonly Lazy<T> _source;
 
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+        public SingletonSource(Func<T> source) : this(new Lazy<T>(source)) {}
+
+        SingletonSource(Lazy<T> source)
+        {
+            _source = source;
+        }
+
+        public T Get() => _source.Value;
     }
 }

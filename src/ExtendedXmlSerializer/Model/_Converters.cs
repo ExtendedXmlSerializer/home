@@ -193,7 +193,7 @@ namespace ExtendedXmlSerialization.Model
                 new AnySpecification<TypeInfo>(IsArraySpecification.Default,
                                                new AllSpecification<TypeInfo>(IsGenericTypeSpecification.Default,
                                                                               IsEnumerableTypeSpecification.Default)),
-                EnumerableNameProvider.Default),
+                LegacyEnumerableNameProvider.Default),
             new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
 
         private readonly ITypeName[] _names;
@@ -216,7 +216,9 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public interface IConverter : ISpecification<TypeInfo>, IWriter, IReader {}
+    public interface IConverter : IReader, IWriter {}
+
+    public interface IConversion : ICandidate<TypeInfo, IConverter> {}
 
     public interface IWriter
     {
@@ -225,18 +227,14 @@ namespace ExtendedXmlSerialization.Model
 
     public class Converter : ConverterBase
     {
-        private readonly ISpecification<TypeInfo> _specification;
-        private readonly IWriter _writer;
         private readonly IReader _reader;
+        private readonly IWriter _writer;
 
-        public Converter(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
+        public Converter(IReader reader, IWriter writer)
         {
-            _specification = specification;
-            _writer = writer;
             _reader = reader;
+            _writer = writer;
         }
-
-        public override bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
 
         public override object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint);
 
@@ -244,42 +242,46 @@ namespace ExtendedXmlSerialization.Model
             => _writer.Write(writer, instance);
     }
 
+    public class Conversion : FixedCandidate<TypeInfo, IConverter>, IConversion
+    {
+        public Conversion(ISpecification<TypeInfo> specification, IReader reader, IWriter writer) : this(specification, new Converter(reader, writer)) {}
+        public Conversion(ISpecification<TypeInfo> specification, IConverter converter) : base(specification, converter) {}
+    }
+
     public abstract class ConverterBase : IConverter
     {
-        public abstract bool IsSatisfiedBy(TypeInfo parameter);
-
         public abstract void Write(XmlWriter writer, object instance);
         public abstract object Read(XElement element, Typed? hint = null);
     }
 
     public interface ISelectors : IParameterizedSource<ITypes, ISelector> {}
 
-    class LegacyPrimitiveConverters : IEnumerable<IConverter>
+    class LegacyPrimitives : IEnumerable<IConversion>
     {
-        public static LegacyPrimitiveConverters Default { get; } = new LegacyPrimitiveConverters();
-        LegacyPrimitiveConverters() {}
+        public static LegacyPrimitives Default { get; } = new LegacyPrimitives();
+        LegacyPrimitives() {}
 
-        public IEnumerator<IConverter> GetEnumerator()
+        public IEnumerator<IConversion> GetEnumerator()
         {
-            yield return LegacyBooleanConverter.Default;
-            yield return LegacyCharacterConverter.Default;
-            yield return ByteConverter.Default;
-            yield return UnsignedByteConverter.Default;
-            yield return ShortConverter.Default;
-            yield return UnsignedShortConverter.Default;
-            yield return IntegerConverter.Default;
-            yield return UnsignedIntegerConverter.Default;
-            yield return LongConverter.Default;
-            yield return UnsignedLongConverter.Default;
-            yield return FloatConverter.Default;
-            yield return DoubleConverter.Default;
-            yield return DecimalConverter.Default;
-            yield return EnumerationConverter.Default;
-            yield return DateTimeConverter.Default;
-            yield return DateTimeOffsetConverter.Default;
-            yield return StringConverter.Default;
-            yield return GuidConverter.Default;
-            yield return TimeSpanConverter.Default;
+            yield return LegacyBooleanConversion.Default;
+            yield return LegacyCharacterConversion.Default;
+            yield return ByteConversion.Default;
+            yield return UnsignedByteConversion.Default;
+            yield return ShortConversion.Default;
+            yield return UnsignedShortConversion.Default;
+            yield return IntegerConversion.Default;
+            yield return UnsignedIntegerConversion.Default;
+            yield return LongConversion.Default;
+            yield return UnsignedLongConversion.Default;
+            yield return FloatConversion.Default;
+            yield return DoubleConversion.Default;
+            yield return DecimalConversion.Default;
+            yield return EnumerationConversion.Default;
+            yield return DateTimeConversion.Default;
+            yield return DateTimeOffsetConversion.Default;
+            yield return StringConversion.Default;
+            yield return GuidConversion.Default;
+            yield return TimeSpanConversion.Default;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -288,11 +290,11 @@ namespace ExtendedXmlSerialization.Model
     class Selectors : WeakCacheBase<ITypes, ISelector>, ISelectors
     {
         public static Selectors Default { get; } = new Selectors();
-        Selectors() : this(LegacyPrimitiveConverters.Default) {}
+        Selectors() : this(LegacyPrimitives.Default) {}
 
-        private readonly IEnumerable<IConverter> _primitives;
+        private readonly IEnumerable<IConversion> _primitives;
 
-        public Selectors(IEnumerable<IConverter> primitives)
+        public Selectors(IEnumerable<IConversion> primitives)
         {
             _primitives = primitives;
         }
@@ -301,21 +303,21 @@ namespace ExtendedXmlSerialization.Model
         {
             var source = new Source(this, parameter);
             var singleton = new SingletonSource<ISelector>(source.Get);
-            var converter = new DeferredSelectingConverter(singleton.Get);
+            var converter = new SelectingConverter(singleton.Get);
             var converters =
                 _primitives
                     .Concat(Yield(parameter, converter))
-                    .ToImmutableArray();
+                    .ToArray();
             var result = new NullableAwareSelector(new Selector(converters));
             return result;
         }
 
-        protected virtual IEnumerable<IConverter> Yield(ITypes parameter, IConverter converter)
+        protected virtual IEnumerable<IConversion> Yield(ITypes parameter, IConverter converter)
         {
-            yield return new LegacyDictionaryConverter(parameter, converter);
-            yield return new LegacyArrayConverter(parameter, converter);
-            yield return new LegacyEnumerableConverter(parameter, converter);
-            yield return new ActivatedTypeConverter(parameter, converter);
+            yield return new LegacyDictionaryConversion(parameter, converter);
+            yield return new LegacyArrayConversion(parameter, converter);
+            yield return new LegacyEnumerableConversion(parameter, converter);
+            yield return new LegacyInstanceConversion(parameter, converter);
         }
 
         sealed class Source : ISource<ISelector>
@@ -333,46 +335,19 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public class DeferredSelectingConverter : Converter
+    public class SelectingConverter : Converter
     {
-        public DeferredSelectingConverter(Func<ISelector> selector)
-            : base(new Specification(selector), new SelectingWriter(selector), new SelectingReader(selector)) {}
+        public static SelectingConverter Default { get; } = new SelectingConverter();
+        SelectingConverter() : this(Selectors.Default.Get(Types.Default).Self) {}
 
-        sealed class Specification : ISpecification<TypeInfo>
-        {
-            private readonly Func<ISelector> _selector;
-
-            public Specification(Func<ISelector> selector)
-            {
-                _selector = selector;
-            }
-
-            public bool IsSatisfiedBy(TypeInfo parameter) => _selector().Get(parameter) != null;
-        }
+        public SelectingConverter(Func<ISelector> selector) : base(new SelectingReader(selector), new SelectingWriter(selector)) {}
     }
 
-    public interface ISelector : IParameterizedSource<TypeInfo, IConverter> {}
+    public interface ISelector : ISelector<TypeInfo, IConverter> {}
 
-    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector
+    public class Selector : Selector<TypeInfo, IConverter>, ISelector
     {
-        private readonly ImmutableArray<IConverter> _converters;
-
-        public Selector(ImmutableArray<IConverter> converters)
-        {
-            _converters = converters;
-        }
-
-        protected override IConverter Create(TypeInfo parameter)
-        {
-            foreach (var converter in _converters)
-            {
-                if (converter.IsSatisfiedBy(parameter))
-                {
-                    return converter;
-                }
-            }
-            return null;
-        }
+        public Selector(params IConversion[] candidates) : base(candidates) {}
     }
 
     public class NullableAwareSelector : ISelector
@@ -387,133 +362,133 @@ namespace ExtendedXmlSerialization.Model
         public IConverter Get(TypeInfo parameter) => _selector.Get(parameter.AccountForNullable());
     }
 
-    public class TimeSpanConverter : PrimitiveConverterBase<TimeSpan>
+    public class TimeSpanConversion : PrimitiveConversionBase<TimeSpan>
     {
-        public static TimeSpanConverter Default { get; } = new TimeSpanConverter();
-        TimeSpanConverter() : base(XmlConvert.ToString, XmlConvert.ToTimeSpan) {}
+        public static TimeSpanConversion Default { get; } = new TimeSpanConversion();
+        TimeSpanConversion() : base(XmlConvert.ToString, XmlConvert.ToTimeSpan) {}
     }
 
-    public class GuidConverter : PrimitiveConverterBase<Guid>
+    public class GuidConversion : PrimitiveConversionBase<Guid>
     {
-        public static GuidConverter Default { get; } = new GuidConverter();
-        GuidConverter() : base(XmlConvert.ToString, XmlConvert.ToGuid) {}
+        public static GuidConversion Default { get; } = new GuidConversion();
+        GuidConversion() : base(XmlConvert.ToString, XmlConvert.ToGuid) {}
     }
 
-    public class DateTimeOffsetConverter : PrimitiveConverterBase<DateTimeOffset>
+    public class DateTimeOffsetConversion : PrimitiveConversionBase<DateTimeOffset>
     {
-        public static DateTimeOffsetConverter Default { get; } = new DateTimeOffsetConverter();
-        DateTimeOffsetConverter() : base(XmlConvert.ToString, XmlConvert.ToDateTimeOffset) {}
+        public static DateTimeOffsetConversion Default { get; } = new DateTimeOffsetConversion();
+        DateTimeOffsetConversion() : base(XmlConvert.ToString, XmlConvert.ToDateTimeOffset) {}
     }
 
-    public class DateTimeConverter : PrimitiveConverterBase<DateTime>
+    public class DateTimeConversion : PrimitiveConversionBase<DateTime>
     {
-        public static DateTimeConverter Default { get; } = new DateTimeConverter();
+        public static DateTimeConversion Default { get; } = new DateTimeConversion();
 
-        DateTimeConverter()
+        DateTimeConversion()
             : base(
                 x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind),
                 x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
     }
 
-    public class DecimalConverter : PrimitiveConverterBase<decimal>
+    public class DecimalConversion : PrimitiveConversionBase<decimal>
     {
-        public static DecimalConverter Default { get; } = new DecimalConverter();
-        DecimalConverter() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
+        public static DecimalConversion Default { get; } = new DecimalConversion();
+        DecimalConversion() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
     }
 
-    public class DoubleConverter : PrimitiveConverterBase<double>
+    public class DoubleConversion : PrimitiveConversionBase<double>
     {
-        public static DoubleConverter Default { get; } = new DoubleConverter();
-        DoubleConverter() : base(XmlConvert.ToString, XmlConvert.ToDouble) {}
+        public static DoubleConversion Default { get; } = new DoubleConversion();
+        DoubleConversion() : base(XmlConvert.ToString, XmlConvert.ToDouble) {}
     }
 
-    public class FloatConverter : PrimitiveConverterBase<float>
+    public class FloatConversion : PrimitiveConversionBase<float>
     {
-        public static FloatConverter Default { get; } = new FloatConverter();
-        FloatConverter() : base(XmlConvert.ToString, XmlConvert.ToSingle) {}
+        public static FloatConversion Default { get; } = new FloatConversion();
+        FloatConversion() : base(XmlConvert.ToString, XmlConvert.ToSingle) {}
     }
 
-    public class LongConverter : PrimitiveConverterBase<long>
+    public class LongConversion : PrimitiveConversionBase<long>
     {
-        public static LongConverter Default { get; } = new LongConverter();
-        LongConverter() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
+        public static LongConversion Default { get; } = new LongConversion();
+        LongConversion() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
     }
 
-    public class UnsignedLongConverter : PrimitiveConverterBase<ulong>
+    public class UnsignedLongConversion : PrimitiveConversionBase<ulong>
     {
-        public static UnsignedLongConverter Default { get; } = new UnsignedLongConverter();
-        UnsignedLongConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt64) {}
+        public static UnsignedLongConversion Default { get; } = new UnsignedLongConversion();
+        UnsignedLongConversion() : base(XmlConvert.ToString, XmlConvert.ToUInt64) {}
     }
 
-    public class ByteConverter : PrimitiveConverterBase<sbyte>
+    public class ByteConversion : PrimitiveConversionBase<sbyte>
     {
-        public static ByteConverter Default { get; } = new ByteConverter();
-        ByteConverter() : base(XmlConvert.ToString, XmlConvert.ToSByte) {}
+        public static ByteConversion Default { get; } = new ByteConversion();
+        ByteConversion() : base(XmlConvert.ToString, XmlConvert.ToSByte) {}
     }
 
-    public class UnsignedByteConverter : PrimitiveConverterBase<byte>
+    public class UnsignedByteConversion : PrimitiveConversionBase<byte>
     {
-        public static UnsignedByteConverter Default { get; } = new UnsignedByteConverter();
-        UnsignedByteConverter() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
+        public static UnsignedByteConversion Default { get; } = new UnsignedByteConversion();
+        UnsignedByteConversion() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
     }
 
-    public class ShortConverter : PrimitiveConverterBase<short>
+    public class ShortConversion : PrimitiveConversionBase<short>
     {
-        public static ShortConverter Default { get; } = new ShortConverter();
-        ShortConverter() : base(XmlConvert.ToString, XmlConvert.ToInt16) {}
+        public static ShortConversion Default { get; } = new ShortConversion();
+        ShortConversion() : base(XmlConvert.ToString, XmlConvert.ToInt16) {}
     }
 
-    public class UnsignedShortConverter : PrimitiveConverterBase<ushort>
+    public class UnsignedShortConversion : PrimitiveConversionBase<ushort>
     {
-        public static UnsignedShortConverter Default { get; } = new UnsignedShortConverter();
-        UnsignedShortConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt16) {}
+        public static UnsignedShortConversion Default { get; } = new UnsignedShortConversion();
+        UnsignedShortConversion() : base(XmlConvert.ToString, XmlConvert.ToUInt16) {}
     }
 
-    public class IntegerConverter : PrimitiveConverterBase<int>
+    public class IntegerConversion : PrimitiveConversionBase<int>
     {
-        public static IntegerConverter Default { get; } = new IntegerConverter();
-        IntegerConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
+        public static IntegerConversion Default { get; } = new IntegerConversion();
+        IntegerConversion() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
     }
 
-    public class UnsignedIntegerConverter : PrimitiveConverterBase<uint>
+    public class UnsignedIntegerConversion : PrimitiveConversionBase<uint>
     {
-        public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
-        UnsignedIntegerConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt32) {}
+        public static UnsignedIntegerConversion Default { get; } = new UnsignedIntegerConversion();
+        UnsignedIntegerConversion() : base(XmlConvert.ToString, XmlConvert.ToUInt32) {}
     }
 
-    public class BooleanConverter : PrimitiveConverterBase<bool>
+    public class BooleanConversion : PrimitiveConversionBase<bool>
     {
-        public static BooleanConverter Default { get; } = new BooleanConverter();
-        BooleanConverter() : base(XmlConvert.ToString, XmlConvert.ToBoolean) {}
+        public static BooleanConversion Default { get; } = new BooleanConversion();
+        BooleanConversion() : base(XmlConvert.ToString, XmlConvert.ToBoolean) {}
     }
 
-    public class LegacyBooleanConverter : PrimitiveConverterBase<bool>
+    public class LegacyBooleanConversion : PrimitiveConversionBase<bool>
     {
-        public static LegacyBooleanConverter Default { get; } = new LegacyBooleanConverter();
-        LegacyBooleanConverter() : base(x => x.ToString(), Convert.ToBoolean) {}
+        public static LegacyBooleanConversion Default { get; } = new LegacyBooleanConversion();
+        LegacyBooleanConversion() : base(x => x.ToString(), Convert.ToBoolean) {}
     }
 
-    public class CharacterConverter : PrimitiveConverterBase<char>
+    public class CharacterConversion : PrimitiveConversionBase<char>
     {
-        public static CharacterConverter Default { get; } = new CharacterConverter();
-        CharacterConverter() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
+        public static CharacterConversion Default { get; } = new CharacterConversion();
+        CharacterConversion() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
     }
 
-    public class LegacyCharacterConverter : PrimitiveConverterBase<char>
+    public class LegacyCharacterConversion : PrimitiveConversionBase<char>
     {
-        public static LegacyCharacterConverter Default { get; } = new LegacyCharacterConverter();
-        LegacyCharacterConverter() : base(x => XmlConvert.ToString((ushort) x), s => (char) XmlConvert.ToUInt16(s)) {}
+        public static LegacyCharacterConversion Default { get; } = new LegacyCharacterConversion();
+        LegacyCharacterConversion() : base(x => XmlConvert.ToString((ushort) x), s => (char) XmlConvert.ToUInt16(s)) {}
     }
 
-    public class StringConverter : PrimitiveConverterBase<string>
+    public class StringConversion : PrimitiveConversionBase<string>
     {
         readonly private static Func<string, string> Self = Self<string>.Default.Get;
 
-        public static StringConverter Default { get; } = new StringConverter();
-        StringConverter() : base(Self, Self) {}
+        public static StringConversion Default { get; } = new StringConversion();
+        StringConversion() : base(Self, Self) {}
     }
 
-    public class TypeEmittingWriter : DecoratedWriter
+    class TypeEmittingWriter : DecoratedWriter
     {
         private readonly ISpecification<TypeInfo> _specification;
 
@@ -526,13 +501,13 @@ namespace ExtendedXmlSerialization.Model
 
         public override void Write(XmlWriter writer, object instance)
         {
-            var type = instance.GetType();
+            var type = new Typed(instance.GetType());
             var tracker = Tracker.Default.Get(writer);
-            if (_specification.IsSatisfiedBy(type.GetTypeInfo()) && !tracker.Contains(instance))
+            if (_specification.IsSatisfiedBy(type) && !tracker.Contains(instance))
             {
                 tracker.Add(instance);
                 writer.WriteAttributeString(ExtendedXmlSerializer.Type,
-                                            DefaultTypeFormatter.Default.Format(type));
+                                            LegacyTypeFormatter.Default.Format(type));
             }
 
             base.Write(writer, instance);
@@ -545,11 +520,11 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public class EnumerationConverter : PrimitiveConverterBase<Enum>
+    public class EnumerationConversion : PrimitiveConversionBase<Enum>
     {
-        public static EnumerationConverter Default { get; } = new EnumerationConverter();
+        public static EnumerationConversion Default { get; } = new EnumerationConversion();
 
-        EnumerationConverter()
+        EnumerationConversion()
             : base(IsAssignableSpecification<Enum>.Default, new ValueWriter<Enum>(x => x.ToString()), EnumReader.Default
             ) {}
     }
@@ -566,57 +541,106 @@ namespace ExtendedXmlSerialization.Model
             _add = add;
         }
 
-        public IEnumerator GetEnumerator() => null;
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotSupportedException();
+        }
 
-        public void CopyTo(Array array, int index) {}
-        public int Count { get; }
-        public bool IsSynchronized { get; }
-        public object SyncRoot { get; }
+        void ICollection.CopyTo(Array array, int index)
+        {
+            throw new NotSupportedException();
+        }
 
-        public int Add(object value)
+        int ICollection.Count
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        int IList.Add(object value)
         {
             _add(_instance, value);
             return 0;
         }
 
-        public void Clear() {}
-        public bool Contains(object value) => false;
-
-        public int IndexOf(object value) => 0;
-
-        public void Insert(int index, object value) {}
-        public void Remove(object value) {}
-        public void RemoveAt(int index) {}
-        public bool IsFixedSize { get; }
-        public bool IsReadOnly { get; }
-
-        public object this[int index]
+        bool IList.Contains(object value)
         {
-            get { return null; }
-            set { }
+            throw new NotSupportedException();
+        }
+
+        void IList.Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        int IList.IndexOf(object value)
+        {
+            throw new NotSupportedException();
+        }
+
+        void IList.Insert(int index, object value)
+        {
+            throw new NotSupportedException();
+        }
+
+        void IList.Remove(object value)
+        {
+            throw new NotSupportedException();
+        }
+
+        void IList.RemoveAt(int index)
+        {
+            throw new NotSupportedException();
+        }
+
+        object IList.this[int index]
+        {
+            get { throw new NotSupportedException(); }
+            set { throw new NotSupportedException(); }
+        }
+
+        bool IList.IsReadOnly
+        {
+            get { throw new NotSupportedException(); }
+        }
+
+        bool IList.IsFixedSize
+        {
+            get { throw new NotSupportedException(); }
         }
     }
 
-    public class LegacyArrayConverter : Converter
+    public class LegacyArrayConversion : Conversion
     {
-        public LegacyArrayConverter(ITypes types, IConverter converter)
-            : base(IsArraySpecification.Default, new EnumerableBodyWriter(converter), new ArrayReader(types, converter)) {}
+        public LegacyArrayConversion(ITypes types, IConverter converter)
+            : base(IsArraySpecification.Default, new ArrayReader(types, converter), new EnumerableBodyWriter(converter)) {}
     }
 
-    public class LegacyEnumerableConverter : Converter
+    public class LegacyEnumerableConversion : Conversion
     {
-        public LegacyEnumerableConverter(ITypes types, IConverter converter)
+        public LegacyEnumerableConversion(ITypes types, IConverter converter)
             : base(
                 IsEnumerableTypeSpecification.Default,
-                new EnumerableBodyWriter(converter),
-                new ListReader(types, converter)
+                new ListReader(types, converter),
+                new EnumerableBodyWriter(converter)
             ) {}
     }
 
-    public class LegacyDictionaryConverter : Converter
+    public class LegacyDictionaryConversion : Conversion
     {
-        public LegacyDictionaryConverter(ITypes types, IConverter converter)
-            : base(IsAssignableSpecification<IDictionary>.Default, new DictionaryBodyWriter(converter), new DictionaryReader(types, converter)) {}
+        public LegacyDictionaryConversion(ITypes types, IConverter converter)
+            : base(
+                IsAssignableSpecification<IDictionary>.Default, new DictionaryReader(types, converter),
+                new DictionaryBodyWriter(converter)) {}
     }
 
     public class IsArraySpecification : ISpecification<TypeInfo>
@@ -635,7 +659,7 @@ namespace ExtendedXmlSerialization.Model
         public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsGenericType;
     }
 
-    public class IsEnumerableTypeSpecification : ISpecification<TypeInfo>
+    /*public class IsEnumerableTypeSpecification : ISpecification<TypeInfo>
     {
         public static IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
         IsEnumerableTypeSpecification() : this(ElementTypeLocator.Default) {}
@@ -648,6 +672,12 @@ namespace ExtendedXmlSerialization.Model
         }
 
         public bool IsSatisfiedBy(TypeInfo parameter) => _locator.Locate(parameter.AsType()) != null;
+    }*/
+
+    public class IsEnumerableTypeSpecification : IsAssignableSpecification<IEnumerable>
+    {
+        public static new IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
+        IsEnumerableTypeSpecification()  {}
     }
 
     public static class Extensions
@@ -728,21 +758,23 @@ namespace ExtendedXmlSerialization.Model
         }
     }
 
-    public class ActivatedTypeConverter : Converter
+    public class LegacyInstanceConversion : Conversion
     {
-        public ActivatedTypeConverter(ITypes types, IConverter converter)
+        public LegacyInstanceConversion(ITypes types, IConverter converter)
             : this(IsActivatedTypeSpecification.Default, types, converter) {}
 
-        protected ActivatedTypeConverter(ISpecification<TypeInfo> specification, ITypes types, IConverter converter)
+        protected LegacyInstanceConversion(ISpecification<TypeInfo> specification, ITypes types,
+                                               IConverter converter)
             : this(
                 specification, new InstanceMembers(converter, new EnumeratingReader(types, converter)), types,
                 Activators.Default) {}
 
-        public ActivatedTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members, ITypes types,
-                                      IActivators activators)
+        public LegacyInstanceConversion(ISpecification<TypeInfo> specification, IInstanceMembers members,
+                                            ITypes types,
+                                            IActivators activators)
             : base(
-                specification, new TypeEmittingWriter(new InstanceBodyWriter(members)),
-                new InstanceBodyReader(members, types, activators)) {}
+                specification, new InstanceBodyReader(members, types, activators),
+                new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
     }
 
 
@@ -768,19 +800,19 @@ namespace ExtendedXmlSerialization.Model
                IsActivatedTypeSpecification.Default.IsSatisfiedBy(parameter);
     }
 
-    public abstract class PrimitiveConverterBase<T> : Converter
+    public abstract class PrimitiveConversionBase<T> : Conversion
     {
-        protected PrimitiveConverterBase(Func<T, string> serialize,
+        protected PrimitiveConversionBase(Func<T, string> serialize,
                                          Func<string, T> deserialize)
             : this(
                 new ValueWriter<T>(serialize),
                 new ValueReader<T>(deserialize)
             ) {}
 
-        protected PrimitiveConverterBase(IWriter writer, IReader reader)
+        protected PrimitiveConversionBase(IWriter writer, IReader reader)
             : this(TypeEqualitySpecification<T>.Default, writer, reader) {}
 
-        protected PrimitiveConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
-            : base(specification, new InstanceValidatingWriter(writer), new ValueValidatingReader(reader)) {}
+        protected PrimitiveConversionBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
+            : base(specification, new ValueValidatingReader(reader), new InstanceValidatingWriter(writer)) {}
     }
 }

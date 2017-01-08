@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,21 +22,33 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class ConditionalParameterizedSource<TParameter, TResult> :
-        ConditionalParameterizedSourceBase<TParameter, TResult>
+    public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
     {
-        private readonly Func<TParameter, TResult> _source;
+        private readonly Type _genericType;
 
-        public ConditionalParameterizedSource(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
-            : base(specification)
+        public IsAssignableGenericSpecification(Type genericType)
         {
-            _source = source;
+            _genericType = genericType;
         }
 
-        protected override TResult GetResult(TParameter parameter) => _source(parameter);
+        // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
+        public bool IsSatisfiedBy(TypeInfo parameter)
+        {
+            var interfaceTypes = parameter.GetInterfaces();
+
+            foreach (var it in interfaceTypes.Append(parameter.AsType()))
+            {
+                if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == _genericType)
+                    return true;
+            }
+
+            var baseType = parameter.BaseType?.GetTypeInfo();
+            var result = baseType != null && IsSatisfiedBy(baseType);
+            return result;
+        }
     }
 }

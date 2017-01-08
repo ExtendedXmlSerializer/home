@@ -90,7 +90,7 @@ namespace ExtendedXmlSerialization.Model
     class RootReader : DecoratedReader
     {
         public static RootReader Default { get; } = new RootReader();
-        RootReader() : this(SelectingReader.Default) {}
+        RootReader() : this(SelectingConverter.Default) {}
 
         public RootReader(IReader reader) : base(reader) {}
     }
@@ -113,9 +113,6 @@ namespace ExtendedXmlSerialization.Model
 
     class SelectingReader : IReader
     {
-        public static SelectingReader Default { get; } = new SelectingReader();
-        SelectingReader() : this(Selectors.Default.Get(Types.Default).Self) {}
-
         private readonly ITypes _types;
         private readonly Func<ISelector> _selector;
 

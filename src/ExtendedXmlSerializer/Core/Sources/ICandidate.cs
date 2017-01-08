@@ -21,18 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
-    {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
-
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
-    }
+    public interface ICandidate<in TParameter, out TResult> : ISpecification<TParameter>,
+                                                              IParameterizedSource<TParameter, TResult> {}
 }

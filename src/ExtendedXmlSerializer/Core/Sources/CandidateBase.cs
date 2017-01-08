@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
+    public abstract class CandidateBase<TParameter, TResult> : ICandidate<TParameter, TResult>
     {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+        private readonly ISpecification<TParameter> _specification;
 
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+        protected CandidateBase(ISpecification<TParameter> specification)
+        {
+            _specification = specification;
+        }
+
+        public abstract TResult Get(TParameter parameter);
+
+        public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
     }
 }

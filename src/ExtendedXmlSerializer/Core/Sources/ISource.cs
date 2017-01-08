@@ -21,26 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerialization.Core.Sources
 {
     public interface ISource<out T>
     {
         T Get();
-    }
-
-    class SingletonSource<T> : ISource<T>
-    {
-        private readonly Lazy<T> _source;
-
-        public SingletonSource(Func<T> source) : this(new Lazy<T>(source)) {}
-
-        SingletonSource(Lazy<T> source)
-        {
-            _source = source;
-        }
-
-        public T Get() => _source.Value;
     }
 }

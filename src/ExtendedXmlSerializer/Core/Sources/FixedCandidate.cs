@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Processing
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    class DefaultTypeFormatter : ITypeFormatter
+    public class FixedCandidate<TParameter, TResult> : CandidateBase<TParameter, TResult>
     {
-        public static DefaultTypeFormatter Default { get; } = new DefaultTypeFormatter();
-        DefaultTypeFormatter() {}
+        private readonly TResult _instance;
 
-        public string Format(Type type) => type.FullName;
+        public FixedCandidate(ISpecification<TParameter> specification, TResult instance) : base(specification)
+        {
+            _instance = instance;
+        }
+
+        public override TResult Get(TParameter parameter) => _instance;
     }
 }
