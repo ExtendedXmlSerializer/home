@@ -37,13 +37,13 @@ namespace ExtendedXmlSerialization.Model
         object Deserialize(Stream stream);
     }
 
-    public class Deserializer<T> : IDeserializer
+    public class LegacyDeserializer<T> : IDeserializer
     {
         private readonly IDeserializer _deserializer;
 
-        public Deserializer() : this(new Deserializer(typeof(T))) {}
+        public LegacyDeserializer(ISerializationToolsFactory tools) : this(new LegacyDeserializer(tools, typeof(T))) {}
 
-        public Deserializer(IDeserializer deserializer)
+        public LegacyDeserializer(IDeserializer deserializer)
         {
             _deserializer = deserializer;
         }
@@ -55,14 +55,33 @@ namespace ExtendedXmlSerialization.Model
 
     public class Deserializer : IDeserializer
     {
+        public static Deserializer Default { get; } = new Deserializer();
+        Deserializer() : this(RootReader.Default) {}
+
+        private readonly IReader _reader;
+        
+        public Deserializer(IReader reader)
+        {
+            _reader = reader;
+        }
+
+        public object Deserialize(Stream stream)
+        {
+            var text = new StreamReader(stream).ReadToEnd();
+            var root = XDocument.Parse(text).Root;
+            var result = _reader.Read(root);
+            return result;
+        }
+    }
+
+    class LegacyDeserializer : IDeserializer
+    {
         private readonly Typed? _type;
         private readonly IReader _reader;
 
-        public Deserializer() : this(RootReader.Default) {}
+        public LegacyDeserializer(ISerializationToolsFactory tools, Type type) : this(LegacyRootConverters.Default.Get(tools), type) {}
 
-        public Deserializer(Type type) : this(RootReader.Default, type) {}
-
-        public Deserializer(IReader reader, Typed? type = null)
+        public LegacyDeserializer(IReader reader, Typed? type = null)
         {
             _reader = reader;
             _type = type;
@@ -71,8 +90,8 @@ namespace ExtendedXmlSerialization.Model
         public object Deserialize(Stream stream)
         {
             var text = new StreamReader(stream).ReadToEnd();
-            var element = XDocument.Parse(text).Root;
-            var result = _reader.Read(element, _type);
+            var root = XDocument.Parse(text).Root;
+            var result = _reader.Read(root, _type);
             return result;
         }
     }
@@ -90,7 +109,7 @@ namespace ExtendedXmlSerialization.Model
     class RootReader : DecoratedReader
     {
         public static RootReader Default { get; } = new RootReader();
-        RootReader() : this(SelectingConverter.Default) {}
+        RootReader() : this(RootConverter.Default) {}
 
         public RootReader(IReader reader) : base(reader) {}
     }
@@ -114,11 +133,11 @@ namespace ExtendedXmlSerialization.Model
     class SelectingReader : IReader
     {
         private readonly ITypes _types;
-        private readonly Func<ISelector> _selector;
+        private readonly ISelector _selector;
 
-        public SelectingReader(Func<ISelector> selector) : this(Types.Default, selector) {}
+        public SelectingReader(ISelector selector) : this(Types.Default, selector) {}
 
-        public SelectingReader(ITypes types, Func<ISelector> selector)
+        public SelectingReader(ITypes types, ISelector selector)
         {
             _types = types;
             _selector = selector;
@@ -127,7 +146,7 @@ namespace ExtendedXmlSerialization.Model
         public object Read(XElement element, Typed? hint = null)
         {
             var typed = hint ?? _types.Get(element);
-            var converter = _selector().Get(typed);
+            var converter = _selector.Get(typed);
             var result = converter.Read(element, typed);
             return result;
         }

@@ -40,11 +40,17 @@ namespace ExtendedXmlSerialization.Model
         void Serialize(Stream stream, object instance);
     }
 
+    class LegacySerializer : Serializer
+    {
+        public LegacySerializer(ISerializationToolsFactory tools) : base(LegacyRootConverters.Default.Get(tools)) {}
+    }
+
     public class Serializer : ISerializer
     {
-        private readonly IWriter _writer;
+        public static Serializer Default { get; } = new Serializer();
+        Serializer() : this(RootWriter.Default) {}
 
-        public Serializer() : this(RootWriter.Default) {}
+        private readonly IWriter _writer;
 
         public Serializer(IWriter writer)
         {
@@ -63,7 +69,7 @@ namespace ExtendedXmlSerialization.Model
     public class RootWriter : ElementWriter
     {
         public static RootWriter Default { get; } = new RootWriter();
-        RootWriter() : this(AllNames.Default, SelectingConverter.Default) {}
+        RootWriter() : this(AllNames.Default, RootConverter.Default) {}
 
         public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
     }
@@ -83,15 +89,15 @@ namespace ExtendedXmlSerialization.Model
 
     class SelectingWriter : IWriter
     {
-        private readonly Func<ISelector> _selector;
+        private readonly ISelector _selector;
 
-        public SelectingWriter(Func<ISelector> selector)
+        public SelectingWriter(ISelector selector)
         {
             _selector = selector;
         }
 
         public void Write(XmlWriter writer, object instance) =>
-            _selector().Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+            _selector.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
     }
 
     public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
@@ -279,7 +285,7 @@ namespace ExtendedXmlSerialization.Model
 
     public abstract class WriterBase : IWriter
     {
-        public abstract void Write(XmlWriter context, object instance);
+        public abstract void Write(XmlWriter writer, object instance);
     }
 
 
