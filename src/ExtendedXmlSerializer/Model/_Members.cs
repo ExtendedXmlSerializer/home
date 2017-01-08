@@ -333,23 +333,4 @@ namespace ExtendedXmlSerialization.Model
             return result;
         }
     }
-
-/*    sealed class SortComparer : IComparer<Sort>
-    {
-        public static SortComparer Default { get; } = new SortComparer();
-        SortComparer() {}
-
-        public int Compare(Sort x, Sort y)
-        {
-            var right = !y.Assigned.HasValue;
-            if (!x.Assigned.HasValue && right)
-            {
-                return x.Value.CompareTo(y.Value);
-            }
-            var compare = x.Assigned.GetValueOrDefault(-1).CompareTo(y.Assigned.GetValueOrDefault(-1));
-            var result = right ? -compare : compare;
-            return result;
-        }
-    }
-*/
 }

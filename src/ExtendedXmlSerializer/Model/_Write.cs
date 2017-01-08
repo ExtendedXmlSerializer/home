@@ -140,6 +140,7 @@ namespace ExtendedXmlSerialization.Model
             return type.Info.Name;
         }
     }
+
     abstract class ElementNameProviderBase : NameProviderBase
     {
         private readonly string _defaultNamespace;
@@ -159,6 +160,56 @@ namespace ExtendedXmlSerialization.Model
         }
 
         protected abstract string DetermineName(Typed type);
+    }
+
+    static class LegacyNames
+    {
+        public static XName Item { get; } = XName.Get(ExtendedXmlSerializer.Item, string.Empty);
+        public static XName Key { get; } = XName.Get(ExtendedXmlSerializer.Key, string.Empty);
+        public static XName Value { get; } = XName.Get(ExtendedXmlSerializer.Value, string.Empty);
+    }
+
+    class DictionaryBodyWriter : WriterBase<IDictionary>
+    {
+        private readonly ElementWriter _writer;
+
+        public DictionaryBodyWriter(IWriter itemWriter)
+            : this(new ElementWriter(LegacyNames.Item.Accept, new DictionaryEntryWriter(itemWriter))) {}
+
+        DictionaryBodyWriter(ElementWriter writer)
+        {
+            _writer = writer;
+        }
+
+        protected override void Write(XmlWriter writer, IDictionary instance)
+        {
+            foreach (DictionaryEntry entry in instance)
+            {
+                _writer.Write(writer, entry);
+            }
+        }
+    }
+
+    sealed class DictionaryEntryWriter : WriterBase<DictionaryEntry>
+    {
+        private readonly IWriter _key;
+        private readonly IWriter _value;
+
+
+        public DictionaryEntryWriter(IWriter writer)
+            : this(new ElementWriter(LegacyNames.Key.Accept, writer), new ElementWriter(LegacyNames.Value.Accept, writer)) {}
+
+        public DictionaryEntryWriter(IWriter key, IWriter value)
+        {
+            _key = key;
+            _value = value;
+        }
+
+        protected override void Write(XmlWriter writer, DictionaryEntry instance)
+        {
+            _key.Write(writer, instance.Key);
+            _value.Write(writer, instance.Value);
+        }
     }
 
     public class EnumerableBodyWriter : WriterBase<IEnumerable>

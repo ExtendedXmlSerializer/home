@@ -190,7 +190,9 @@ namespace ExtendedXmlSerialization.Model
 
         TypeNames() : this(
             new TypeName(
-                new AnySpecification<TypeInfo>(IsArraySpecification.Default, new AllSpecification<TypeInfo>(IsGenericTypeSpecification.Default, IsEnumerableTypeSpecification.Default)),
+                new AnySpecification<TypeInfo>(IsArraySpecification.Default,
+                                               new AllSpecification<TypeInfo>(IsGenericTypeSpecification.Default,
+                                                                              IsEnumerableTypeSpecification.Default)),
                 EnumerableNameProvider.Default),
             new TypeName(IsActivatedTypeSpecification.Default, NameProvider.Default)) {}
 
@@ -310,6 +312,7 @@ namespace ExtendedXmlSerialization.Model
 
         protected virtual IEnumerable<IConverter> Yield(ITypes parameter, IConverter converter)
         {
+            yield return new LegacyDictionaryConverter(parameter, converter);
             yield return new LegacyArrayConverter(parameter, converter);
             yield return new LegacyEnumerableConverter(parameter, converter);
             yield return new ActivatedTypeConverter(parameter, converter);
@@ -610,6 +613,12 @@ namespace ExtendedXmlSerialization.Model
             ) {}
     }
 
+    public class LegacyDictionaryConverter : Converter
+    {
+        public LegacyDictionaryConverter(ITypes types, IConverter converter)
+            : base(IsAssignableSpecification<IDictionary>.Default, new DictionaryBodyWriter(converter), new DictionaryReader(types, converter)) {}
+    }
+
     public class IsArraySpecification : ISpecification<TypeInfo>
     {
         public static IsArraySpecification Default { get; } = new IsArraySpecification();
@@ -732,7 +741,7 @@ namespace ExtendedXmlSerialization.Model
         public ActivatedTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members, ITypes types,
                                       IActivators activators)
             : base(
-                specification, new TypeEmittingWriter(new InstanceBodyWriter(members)), 
+                specification, new TypeEmittingWriter(new InstanceBodyWriter(members)),
                 new InstanceBodyReader(members, types, activators)) {}
     }
 
@@ -743,8 +752,8 @@ namespace ExtendedXmlSerialization.Model
         IsActivatedTypeSpecification() {}
 
         public bool IsSatisfiedBy(TypeInfo parameter)
-            =>  parameter.IsValueType ||
-                !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
+            => parameter.IsValueType ||
+               !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
     }
 
     public class EmitTypeSpecification : ISpecification<TypeInfo>

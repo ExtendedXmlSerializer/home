@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
@@ -162,7 +163,8 @@ namespace ExtendedXmlSerialization.Model
     public class ValueValidatingReader : DecoratedReader
     {
         public ValueValidatingReader(IReader reader) : base(reader) {}
-        public override object Read(XElement element, Typed? hint = null) => 
+
+        public override object Read(XElement element, Typed? hint = null) =>
             element.Value.NullIfEmpty() != null ? base.Read(element, hint) : null;
     }
 
@@ -191,6 +193,30 @@ namespace ExtendedXmlSerialization.Model
             }
 
             var result = list.ToArray(elementType);
+            return result;
+        }
+    }
+
+    public class DictionaryReader : ListReaderBase
+    {
+        private readonly IActivators _activators;
+
+        public DictionaryReader(ITypes types, IReader reader)
+            : this(types, reader, Activators.Default, ElementTypeLocator.Default) {}
+
+        public DictionaryReader(ITypes types, IReader reader, IActivators activators, IElementTypeLocator locator)
+            : base(types, new DictionaryEntryReader(types, reader), locator)
+        {
+            _activators = activators;
+        }
+
+        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        {
+            var result = _activators.Activate<IDictionary>(new Typed(listType));
+            foreach (DictionaryEntry item in enumerable)
+            {
+                result.Add(item.Key, item.Value);
+            }
             return result;
         }
     }
@@ -272,6 +298,44 @@ namespace ExtendedXmlSerialization.Model
                 var item = _reader.Read(child, itemType);
                 yield return item;
             }
+        }
+    }
+
+    public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
+    {
+        readonly private static DictionaryPairTypesLocator Locator = new DictionaryPairTypesLocator(typeof(KeyValuePair<,>));
+        private readonly ITypes _types;
+        private readonly IReader _reader;
+        private readonly IDictionaryPairTypesLocator _locator;
+
+        public DictionaryEntryReader(ITypes types, IReader reader)
+            : this(types, reader, Locator) {}
+
+        public DictionaryEntryReader(ITypes types, IReader reader, IDictionaryPairTypesLocator locator)
+        {
+            _types = types;
+            _reader = reader;
+            _locator = locator;
+        }
+
+        public override IEnumerable Read(XElement element, Typed? hint = null) => Entries(element, hint);
+
+        IEnumerable<DictionaryEntry> Entries(XContainer element, Type dictionaryType)
+        {
+            var pair = _locator.Get(dictionaryType);
+            foreach (var child in element.Elements(LegacyNames.Item))
+            {
+                var key = Read(child, LegacyNames.Key, pair.KeyType);
+                var value = Read(child, LegacyNames.Value, pair.ValueType);
+                yield return new DictionaryEntry(key, value);
+            }
+        }
+
+        object Read(XContainer element, XName name, Type type)
+        {
+            var child = element.Element(name);
+            var result = _reader.Read(child, _types.Get(child) ?? type);
+            return result;
         }
     }
 }
