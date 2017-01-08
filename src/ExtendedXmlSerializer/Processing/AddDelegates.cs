@@ -24,12 +24,9 @@
 using System;
 using System.Linq.Expressions;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Processing
 {
-    public interface IAddDelegates : IParameterizedSource<Type, Action<object, object>> {}
-
     class AddDelegates : WeakCacheBase<Type, Action<object, object>>, IAddDelegates
     {
         public static AddDelegates Default { get; } = new AddDelegates();
@@ -71,23 +68,6 @@ namespace ExtendedXmlSerialization.Processing
             }
 
             return null;
-        }
-    }
-
-
-    public interface IActivators : IParameterizedSource<Type, Func<object>> {}
-
-    class Activators : WeakCacheBase<Type, Func<object>>, IActivators
-    {
-        public static Activators Default { get; } = new Activators();
-        Activators() {}
-
-        protected override Func<object> Create(Type parameter)
-        {
-            var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
-            var lambda = Expression.Lambda<Func<object>>(newExp);
-            var result = lambda.Compile();
-            return result;
         }
     }
 }

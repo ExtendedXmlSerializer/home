@@ -23,7 +23,8 @@
 
 using System.IO;
 using System.Text;
-using ExtendedXmlSerialization.Model;
+using ExtendedXmlSerialization.Converters.Read;
+using ExtendedXmlSerialization.Converters.Write;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 

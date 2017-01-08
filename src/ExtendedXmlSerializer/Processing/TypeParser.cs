@@ -34,6 +34,7 @@ using Microsoft.Extensions.DependencyModel;
 namespace ExtendedXmlSerialization.Processing
 {
     public interface ITypeParser : IParameterizedSource<string, Type> {}
+
     public class TypeParser : ConcurrentDictionary<string, Type>, ITypeParser
     {
         public static TypeParser Default { get; } = new TypeParser();
