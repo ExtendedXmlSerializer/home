@@ -29,9 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyRootConverters : RootConverters<ISerializationToolsFactory>
     {
-        /*public static LegacyRootConverters Default { get; } = new LegacyRootConverters();
-        LegacyRootConverters() : this(Types.Default) {}*/
-
         public LegacyRootConverters(ISerializationToolsFactory tools) : this(tools, Types.Default) {}
 
         public LegacyRootConverters(ISerializationToolsFactory tools, ITypes types)

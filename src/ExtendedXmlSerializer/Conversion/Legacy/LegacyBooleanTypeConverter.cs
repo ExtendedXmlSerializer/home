@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Conversion.Primitives;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class LegacyBooleanTypeConverter : PrimitiveTypeConverterBase<bool>
+    class LegacyBooleanTypeConverter : PrimitiveTypeConverterBase<bool>
     {
         public static LegacyBooleanTypeConverter Default { get; } = new LegacyBooleanTypeConverter();
         LegacyBooleanTypeConverter() : base(x => x.ToString(), Convert.ToBoolean) {}

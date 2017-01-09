@@ -32,9 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class TypeEmittingWriter : DecoratedWriter
     {
-        readonly private static ISpecification<TypeInfo> Specification =
-            /*new InverseSpecification<TypeInfo>(TypeEqualitySpecification<string>.Default)*/
-            AlwaysSpecification<TypeInfo>.Default;
+        readonly private static ISpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
 
         private readonly ISpecification<TypeInfo> _specification;
 

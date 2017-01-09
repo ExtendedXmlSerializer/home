@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class LegacyInstanceTypeConverter : TypeConverter
+    class LegacyInstanceTypeConverter : TypeConverter
     {
         public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ITypes types, IConverter converter)
             : this(tools, IsActivatedTypeSpecification.Default, types, converter) {}

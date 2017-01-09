@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Conversion.Primitives;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class LegacyCharacterTypeConverter : PrimitiveTypeConverterBase<char>
+    class LegacyCharacterTypeConverter : PrimitiveTypeConverterBase<char>
     {
         public static LegacyCharacterTypeConverter Default { get; } = new LegacyCharacterTypeConverter();
         LegacyCharacterTypeConverter() : base(x => XmlConvert.ToString((ushort) x), s => (char) XmlConvert.ToUInt16(s)) {}

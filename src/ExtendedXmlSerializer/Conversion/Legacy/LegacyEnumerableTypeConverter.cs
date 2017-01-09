@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class LegacyEnumerableTypeConverter : TypeConverter
+    class LegacyEnumerableTypeConverter : TypeConverter
     {
         public LegacyEnumerableTypeConverter(ITypes types, IConverter converter)
             : base(

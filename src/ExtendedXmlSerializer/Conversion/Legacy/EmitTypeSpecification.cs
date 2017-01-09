@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class EmitTypeSpecification : ISpecification<TypeInfo>
+    class EmitTypeSpecification : ISpecification<TypeInfo>
     {
         private readonly TypeInfo _info;
         readonly private static Type StringType = typeof(string), ObjectType = typeof(object);

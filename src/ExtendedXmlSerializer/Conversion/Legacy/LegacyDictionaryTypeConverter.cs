@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class LegacyDictionaryTypeConverter : TypeConverter
+    class LegacyDictionaryTypeConverter : TypeConverter
     {
         public LegacyDictionaryTypeConverter(ITypes types, IConverter converter)
             : base(
