@@ -22,13 +22,38 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Legacy;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
+    public class RootConverters<T> : WeakCacheBase<T, IConverter>, IRootConverters<T> where T : class
+    {
+        private readonly ITypes _types;
+        private readonly ISelectorFactory _selector;
+
+        public RootConverters(ITypes types, ISelectorFactory selector)
+        {
+            _types = types;
+            _selector = selector;
+        }
+
+        protected override IConverter Create(T parameter)
+        {
+            var source = new AssignableSelector();
+            var selector = new Converter(new SelectingReader(_types, source), new SelectingWriter(source));
+
+            source.Execute(_selector.Get(selector));
+
+            return selector;
+        }
+    }
+
     public class RootConverters : RootConverters<object>
     {
         public static RootConverters Default { get; } = new RootConverters();
-        RootConverters() : base(AllNames.Default, Types.Default, LegacySelectorFactory.Default) {}
+        RootConverters() : base(Types.Default, SelectorFactory.Default) {}
     }
 }

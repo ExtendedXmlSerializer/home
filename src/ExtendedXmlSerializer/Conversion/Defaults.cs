@@ -21,15 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
-
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion
 {
-    class LegacyArrayTypeConverter : TypeConverter
+    public static class Defaults
     {
-        public LegacyArrayTypeConverter(ITypes types, IConverter converter)
-            : base(IsArraySpecification.Default, new ArrayReader(types, converter), new EnumerableBodyWriter(converter)) {}
+        public static IConverter RootConverter { get; } = RootConverters.Default.Get(new object());
+
+        public static ISerializationToolsFactory Tools { get; } = new SimpleSerializationToolsFactory();
     }
 }

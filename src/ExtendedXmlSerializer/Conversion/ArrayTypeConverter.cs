@@ -24,37 +24,12 @@
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class RootConverter
+    public class ArrayTypeConverter : TypeConverter
     {
-        public static IConverter Default { get; } = RootConverters.Default.Get(new object());
-        RootConverter() {}
-    }
-
-    public class RootConverters<T> : WeakCacheBase<T, IConverter>, IRootConverters<T> where T : class
-    {
-        private readonly INames _names;
-        private readonly ITypes _types;
-        private readonly ISelectorFactory _selector;
-
-        public RootConverters(INames names, ITypes types, ISelectorFactory selector)
-        {
-            _names = names;
-            _types = types;
-            _selector = selector;
-        }
-
-        protected override IConverter Create(T parameter)
-        {
-            var source = new AssignableSelector();
-            var selector = new Converter(new SelectingReader(_types, source), new SelectingWriter(source));
-
-            source.Execute(_selector.Get(selector));
-
-            return selector;
-        }
+        public ArrayTypeConverter(ITypes types, IConverter converter)
+            : base(IsArraySpecification.Default, new ArrayReader(types, converter), new EnumerableBodyWriter(converter)) {}
     }
 }

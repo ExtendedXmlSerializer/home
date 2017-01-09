@@ -24,6 +24,7 @@
 using System;
 using System.IO;
 using System.Text;
+using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -34,8 +35,6 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        readonly private static SimpleSerializationToolsFactory Default = new SimpleSerializationToolsFactory();
-
         private ISerializationToolsFactory _serializationToolsFactory;
         public const string Type = "type";
         public const string Ref = "ref";
@@ -92,7 +91,7 @@ namespace ExtendedXmlSerialization
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
         {
-            var deserializer = new LegacyDeserializer(SerializationToolsFactory ?? Default, type);
+            var deserializer = new LegacyDeserializer(SerializationToolsFactory ?? Defaults.Tools, type);
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
             {
                 var result = deserializer.Deserialize(stream);

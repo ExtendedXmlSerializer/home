@@ -27,6 +27,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     class LegacySerializer : Serializer
     {
-        public LegacySerializer(ISerializationToolsFactory tools) : base(new LegacyRootConverters(tools).Get(tools)) {}
+        public LegacySerializer(ISerializationToolsFactory tools)
+            : base(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools)) {}
     }
 }

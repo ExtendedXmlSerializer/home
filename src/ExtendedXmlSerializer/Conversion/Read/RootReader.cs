@@ -26,7 +26,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     class RootReader : DecoratedReader
     {
         public static RootReader Default { get; } = new RootReader();
-        RootReader() : this(RootConverter.Default) {}
+        RootReader() : this(Defaults.RootConverter) {}
 
         public RootReader(IReader reader) : base(reader) {}
     }

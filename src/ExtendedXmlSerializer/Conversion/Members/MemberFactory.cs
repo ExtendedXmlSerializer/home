@@ -41,6 +41,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
         private readonly ISetterFactory _setter;
         private readonly IAddDelegates _add;
 
+        public MemberFactory(IConverter converter, IEnumeratingReader reader)
+            : this(converter, reader, GetterFactory.Default) {}
+
         public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter)
             : this(converter, reader, AllNames.Default, MemberNameProvider.Default, getter,
                    SetterFactory.Default, AddDelegates.Default) {}

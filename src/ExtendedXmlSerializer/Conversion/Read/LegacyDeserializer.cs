@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IReader _reader;
 
         public LegacyDeserializer(ISerializationToolsFactory tools, Type type)
-            : this(new LegacyRootConverters(tools).Get(tools), type) {}
+            : this(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools), type) {}
 
         public LegacyDeserializer(IReader reader, Typed? type = null)
         {

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
     public class RootWriter : ElementWriter
     {
         public static RootWriter Default { get; } = new RootWriter();
-        RootWriter() : this(RootConverter.Default) {}
+        RootWriter() : this(Defaults.RootConverter) {}
 
         public RootWriter(IWriter body) : this(AllNames.Default, body) {}
         public RootWriter(INames names, IWriter body) : base(names.Get, body) {}

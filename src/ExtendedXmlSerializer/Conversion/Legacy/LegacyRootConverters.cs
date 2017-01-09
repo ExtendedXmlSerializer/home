@@ -29,16 +29,14 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyRootConverters : RootConverters<ISerializationToolsFactory>
     {
-        public LegacyRootConverters(ISerializationToolsFactory tools) : this(tools, Types.Default) {}
-
-        public LegacyRootConverters(ISerializationToolsFactory tools, ITypes types)
-            : base(AllNames.Default, types, new LegacySelectorFactory(tools, types)) {}
+        public LegacyRootConverters(ISelectorFactory factory) : base(Types.Default, factory) {}
 
         protected override IConverter Create(ISerializationToolsFactory parameter)
         {
             var converter = base.Create(parameter);
-            var root = new Converter(new RootReader(converter), new RootWriter(AllNames.Default, converter));
-            return new LegacyRootConverter(parameter, root);
+            var root = new Converter(new RootReader(converter), new RootWriter(converter));
+            var result = new LegacyRootConverter(parameter, root);
+            return result;
         }
     }
 }

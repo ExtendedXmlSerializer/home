@@ -28,6 +28,9 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class SelectorFactory : ISelectorFactory
     {
+        public static SelectorFactory Default { get; } = new SelectorFactory();
+        SelectorFactory() : this(PrimitiveTypeConverters.Default, AdditionalTypeConverters.Default) {}
+
         private readonly IEnumerable<ITypeConverter> _primitives;
         private readonly ITypeConverters _additional;
 
