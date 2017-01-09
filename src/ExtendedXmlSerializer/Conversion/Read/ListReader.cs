@@ -21,10 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -43,10 +41,10 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _add = add;
         }
 
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        protected override object Create(IEnumerable enumerable, EnumerableTyping typing)
         {
-            var result = _activators.Activate<object>(new Typed(listType));
-            var list = result as IList ?? new ListAdapter(result, _add.Get(listType));
+            var result = _activators.Activate<object>(typing);
+            var list = result as IList ?? new ListAdapter(result, _add.Get(typing));
             foreach (var item in enumerable)
             {
                 list.Add(item);

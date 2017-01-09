@@ -23,7 +23,6 @@
 
 using System;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -36,6 +35,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _deserialize = deserialize;
         }
 
-        public override T Read(XElement element, Typed? hint = null) => _deserialize(element.Value);
+        public override T Read(XElement element) => _deserialize(element.Value);
     }
 }

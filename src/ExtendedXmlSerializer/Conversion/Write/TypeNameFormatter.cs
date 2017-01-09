@@ -23,7 +23,6 @@
 
 using System.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public static TypeNameFormatter Default { get; } = new TypeNameFormatter();
         TypeNameFormatter() {}
 
-        public string Format(Typed type)
+        public string Format(Typing type)
         {
             if (type.Info.IsGenericType)
             {

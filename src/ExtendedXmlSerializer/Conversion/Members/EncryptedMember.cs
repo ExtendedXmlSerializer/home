@@ -23,7 +23,6 @@
 
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -38,10 +37,10 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _member = member;
         }
 
-        public object Read(XElement element, Typed? hint = null)
+        public object Read(XElement element)
         {
             element.Value = _encryption.Decrypt(element.Value);
-            return _member.Read(element, hint);
+            return _member.Read(element);
         }
 
         public void Write(XmlWriter writer, object instance)

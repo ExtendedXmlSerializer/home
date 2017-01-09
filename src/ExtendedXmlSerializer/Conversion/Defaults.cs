@@ -25,8 +25,6 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public static class Defaults
     {
-        public static IConverter RootConverter { get; } = RootConverters.Default.Get(new object());
-
         public static ISerializationToolsFactory Tools { get; } = new SimpleSerializationToolsFactory();
     }
 }

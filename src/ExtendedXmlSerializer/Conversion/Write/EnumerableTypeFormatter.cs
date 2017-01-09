@@ -23,7 +23,6 @@
 
 using System.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
@@ -39,7 +38,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _locator = locator;
         }
 
-        public string Format(Typed type)
+        public string Format(Typing type)
         {
             var arguments = type.Info.GetGenericArguments();
             var name = arguments.Any()

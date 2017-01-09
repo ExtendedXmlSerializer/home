@@ -21,16 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class RootWriter : ElementWriter
+    public class InitializingReader : DecoratedReader
     {
-        public static RootWriter Default { get; } = new RootWriter();
-        RootWriter() : this(Defaults.RootConverter) {}
+        private readonly ITypes _initializer;
+        private readonly Typing _typing;
 
-        public RootWriter(IWriter body) : this(AllNames.Default, body) {}
-        public RootWriter(INames names, IWriter body) : base(names.Get, body) {}
+        public InitializingReader(IReader reader, Typing typing) : this(Types.Default, reader, typing) {}
+
+        public InitializingReader(ITypes initializer, IReader reader, Typing typing) : base(reader)
+        {
+            _initializer = initializer;
+            _typing = typing;
+        }
+
+        public override object Read(XElement element) => base.Read(_initializer.Initialized(element, _typing));
     }
 }

@@ -24,7 +24,6 @@
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -41,21 +40,21 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _activators = activators;
         }
 
-        public override object Read(XElement element, Typed? hint = null)
+        public override object Read(XElement element)
         {
-            var type = hint ?? _types.Get(element);
-            var result = type.HasValue ? Create(element, type.Value) : null;
+            var type = _types.Get(element);
+            var result = type != null ? Create(element, type) : null;
             return result;
         }
 
-        protected virtual object Create(XElement element, Typed type)
+        protected virtual object Create(XElement element, Typing type)
         {
             var result = _activators.Activate<object>(type);
             OnRead(element, result, type);
             return result;
         }
 
-        protected virtual void OnRead(XElement element, object result, Typed type)
+        protected virtual void OnRead(XElement element, object result, Typing type)
         {
             var members = _members.Get(type);
             foreach (var child in element.Elements())
@@ -63,7 +62,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 var member = members.Get(child.Name);
                 if (member != null)
                 {
-                    Apply(result, member, member.Read(child, _types.Get(child)));
+                    Apply(result, member, member.Read(child));
                 }
             }
         }

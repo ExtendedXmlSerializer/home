@@ -21,39 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public abstract class ListReaderBase : ReaderBase
     {
-        private readonly ITypes _types;
         private readonly IEnumeratingReader _reader;
-        private readonly IElementTypeLocator _locator;
+        private readonly IEnumerableTypings _typings;
 
         protected ListReaderBase(ITypes types, IReader reader)
-            : this(types, new EnumeratingReader(types, reader), ElementTypeLocator.Default) {}
+            : this(types, reader, EnumerableTypingsStore.Default.Get(types)) {}
 
-        protected ListReaderBase(ITypes types, IEnumeratingReader reader, IElementTypeLocator locator)
+        protected ListReaderBase(ITypes types, IReader reader, IEnumerableTypings typings)
+            : this(new EnumeratingReader(types, reader, typings), typings) {}
+
+        protected ListReaderBase(IEnumeratingReader reader, IEnumerableTypings typings)
         {
-            _types = types;
             _reader = reader;
-            _locator = locator;
+            _typings = typings;
         }
 
-        public sealed override object Read(XElement element, Typed? hint = null)
+        public sealed override object Read(XElement element)
         {
-            var type = hint ?? _types.Get(element);
-            var elementType = _locator.Locate(type);
-            var enumerable = _reader.Read(element, elementType);
-            var result = Create(type, enumerable, elementType);
+            var typing = _typings.Get(element);
+            var enumerable = _reader.Read(element);
+            var result = Create(enumerable, typing);
             return result;
         }
 
-        protected abstract object Create(Type listType, IEnumerable enumerable, Type elementType);
+        protected abstract object Create(IEnumerable enumerable, EnumerableTyping typing);
     }
 }

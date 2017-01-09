@@ -22,49 +22,41 @@
 // SOFTWARE.
 
 using System;
-using System.IO;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Legacy;
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    class LegacyDeserializer : IDeserializer
+    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>, IDictionaryPairTypesLocator
     {
-        private readonly Typed? _type;
-        private readonly IReader _reader;
+        public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
+        DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
-        public LegacyDeserializer(ISerializationToolsFactory tools, Type type)
-            : this(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools), type) {}
+        private readonly Type _type;
 
-        public LegacyDeserializer(IReader reader, Typed? type = null)
+        public DictionaryPairTypesLocator(Type type)
         {
-            _reader = reader;
             _type = type;
         }
 
-        public object Deserialize(Stream stream)
+        protected override DictionaryPairTypes Create(Type parameter)
         {
-            var text = new StreamReader(stream).ReadToEnd();
-            var root = XDocument.Parse(text).Root;
-            var result = _reader.Read(root, _type);
+            foreach (var it in parameter.GetInterfaces().Append(parameter))
+            {
+                var info = it.GetTypeInfo();
+                if (info.IsGenericType && it.GetGenericTypeDefinition() == _type)
+                {
+                    var arguments = info.GetGenericArguments();
+                    var mapping = new DictionaryPairTypes(arguments[0], arguments[1]);
+                    return mapping;
+                }
+            }
+
+            var baseType = parameter.GetTypeInfo().BaseType;
+            var result = baseType != null ? Get(baseType) : null;
             return result;
         }
-    }
-
-    class LegacyDeserializer<T> : IDeserializer
-    {
-        private readonly IDeserializer _deserializer;
-
-        public LegacyDeserializer(ISerializationToolsFactory tools) : this(new LegacyDeserializer(tools, typeof(T))) {}
-
-        public LegacyDeserializer(IDeserializer deserializer)
-        {
-            _deserializer = deserializer;
-        }
-
-        public T Deserialize(Stream stream) => (T) _deserializer.Deserialize(stream);
-
-        object IDeserializer.Deserialize(Stream stream) => Deserialize(stream);
     }
 }

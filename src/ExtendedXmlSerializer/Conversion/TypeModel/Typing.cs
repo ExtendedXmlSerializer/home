@@ -21,13 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Read
-{
-    class RootReader : DecoratedReader
-    {
-        public static RootReader Default { get; } = new RootReader();
-        RootReader() : this(Defaults.RootConverter) {}
+using System;
+using System.Reflection;
 
-        public RootReader(IReader reader) : base(reader) {}
+namespace ExtendedXmlSerialization.Conversion.TypeModel
+{
+    public class Typing
+    {
+        public Typing(Type type) : this(type, type.GetTypeInfo()) {}
+
+        public Typing(TypeInfo info) : this(info.AsType(), info) {}
+
+        public Typing(Type type, TypeInfo info)
+        {
+            Type = type;
+            Info = info;
+        }
+
+        public Type Type { get; }
+
+        public TypeInfo Info { get; }
+
+        public static implicit operator Typing(Type type) => type != null ? new Typing(type) : null;
+        public static implicit operator Typing(TypeInfo info) => info != null ? new Typing(info) : null;
+        public static implicit operator Type(Typing type) => type.Type;
+        public static implicit operator TypeInfo(Typing type) => type.Info;
     }
 }

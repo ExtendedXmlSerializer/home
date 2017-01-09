@@ -23,11 +23,10 @@
 
 using System;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class Types : WeakCacheBase<XElement, Type>, ITypes
+    public class Types : ITypes
     {
         public static Types Default { get; } = new Types();
         Types() : this(TypeParser.Default, Identities.Default) {}
@@ -41,19 +40,35 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
             _identities = identities;
         }
 
-        protected override Type Create(XElement parameter)
-            => _identities.Get(parameter.Name) ?? FromAttribute(parameter);
-
         private Type FromAttribute(XElement parameter)
         {
             var value = parameter.Attribute(ExtendedXmlSerializer.Type)?.Value;
             var result = value != null ? _parser.Get(value) : null;
-            /*if (result == null)
-            {
-                throw new SerializationException($"Could not find Type information from provided value: {value}");
-            }*/
-
             return result;
+        }
+
+        public Typing Get(XElement parameter)
+        {
+            var stored = parameter.Annotation<Typing>();
+            if (stored == null)
+            {
+                var found = _identities.Get(parameter.Name) ?? FromAttribute(parameter);
+                if (found != null)
+                {
+                    var result = new Typing(found);
+                    parameter.AddAnnotation(result);
+                    return result;
+                }
+            }
+            return stored;
+        }
+
+        public void Initialize(XElement element, Typing typing)
+        {
+            if (Get(element) == null)
+            {
+                element.Annotated(typing);
+            }
         }
     }
 }

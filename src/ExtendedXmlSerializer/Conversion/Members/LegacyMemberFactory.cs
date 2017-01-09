@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _factory = factory;
         }
 
-        public IMember Create(MemberInfo metadata, Typed memberType, bool assignable)
+        public IMember Create(MemberInfo metadata, Typing memberType, bool assignable)
         {
             var result = _factory.Create(metadata, memberType, assignable);
             var assignableMember = result as IAssignableMember;
@@ -52,7 +52,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
                         if (algorithm != null)
                         {
                             return new EncryptedMember(algorithm, assignableMember);
-                            // value = algorithm.Decrypt(value);
                         }
                     }
                 }

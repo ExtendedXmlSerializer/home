@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class Serializer : ISerializer
+    public abstract class WeakCacheBase<TKey, TValue> where TKey : class where TValue : class
     {
-        public static Serializer Default { get; } = new Serializer();
-        Serializer() : this(RootWriter.Default) {}
+        readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+        readonly private ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-        private readonly IWriter _writer;
-
-        public Serializer(IWriter writer)
+        protected WeakCacheBase()
         {
-            _writer = writer;
+            _callback = Create;
         }
 
-        public void Serialize(Stream stream, object instance)
+        protected abstract TValue Create(TKey parameter);
+
+        public bool Contains(TKey key)
         {
-            using (var writer = XmlWriter.Create(stream))
-            {
-                _writer.Write(writer, instance);
-            }
+            TValue temp;
+            return _cache.TryGetValue(key, out temp);
         }
+
+        public void Add(TKey key, TValue value)
+        {
+            _cache.Remove(key);
+            _cache.Add(key, value);
+        }
+
+        public TValue Get(TKey key) => _cache.GetValue(key, _callback);
     }
 }

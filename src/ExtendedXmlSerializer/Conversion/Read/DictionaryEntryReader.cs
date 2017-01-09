@@ -27,14 +27,12 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
-        readonly private static DictionaryPairTypesLocator Locator =
-            new DictionaryPairTypesLocator(typeof(KeyValuePair<,>));
+        readonly private static DictionaryPairTypesLocator Locator = DictionaryPairTypesLocator.Default;
 
         private readonly ITypes _types;
         private readonly IReader _reader;
@@ -43,18 +41,20 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public DictionaryEntryReader(ITypes types, IReader reader)
             : this(types, reader, Locator) {}
 
-        public DictionaryEntryReader(ITypes types, IReader reader, IDictionaryPairTypesLocator locator)
+        public DictionaryEntryReader(ITypes types, IReader reader,
+                                     IDictionaryPairTypesLocator locator)
         {
             _types = types;
             _reader = reader;
             _locator = locator;
         }
 
-        public override IEnumerable Read(XElement element, Typed? hint = null) => Entries(element, hint);
+        public override IEnumerable Read(XElement element) => Entries(element);
 
-        IEnumerable<DictionaryEntry> Entries(XContainer element, Type dictionaryType)
+        IEnumerable<DictionaryEntry> Entries(XElement element)
         {
-            var pair = _locator.Get(dictionaryType);
+            var type = _types.Get(element);
+            var pair = _locator.Get(type);
             foreach (var child in element.Elements(LegacyNames.Item))
             {
                 var key = Read(child, LegacyNames.Key, pair.KeyType);
@@ -66,7 +66,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
         object Read(XContainer element, XName name, Type type)
         {
             var child = element.Element(name);
-            var result = _reader.Read(child, _types.Get(child) ?? type);
+            var initialized = _types.Initialized(child, type);
+            var result = _reader.Read(initialized);
             return result;
         }
     }

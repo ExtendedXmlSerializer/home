@@ -25,7 +25,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -39,9 +40,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
         }
 
         protected override IMembers Create(TypeInfo parameter) =>
-            new Members(CreateMembers(new Typed(parameter)).OrderBy(x => x.Sort).Select(x => x.Member));
+            new Members(CreateMembers(new Typing(parameter)).OrderBy(x => x.Sort).Select(x => x.Member));
 
-        IEnumerable<MemberSort> CreateMembers(Typed declaringType)
+        IEnumerable<MemberSort> CreateMembers(Typing declaringType)
         {
             foreach (var property in declaringType.Info.GetProperties())
             {
@@ -51,7 +52,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
                     property.GetIndexParameters().Length <= 0 &&
                     !property.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    var type = new Typed(property.PropertyType.AccountForNullable());
+                    var type = new Typing(property.PropertyType.AccountForNullable());
                     var member = Create(property, type, property.CanWrite);
                     if (member != null)
                     {
@@ -66,7 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
                 if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
                     !field.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    var type = new Typed(field.FieldType.AccountForNullable());
+                    var type = new Typing(field.FieldType.AccountForNullable());
                     var member = Create(field, type, !readOnly);
                     if (member != null)
                     {
@@ -76,7 +77,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             }
         }
 
-        private MemberSort? Create(MemberInfo metadata, Typed memberType, bool assignable)
+        private MemberSort? Create(MemberInfo metadata, Typing memberType, bool assignable)
         {
             var member = _factory.Create(metadata, memberType, assignable);
             if (member != null)

@@ -22,12 +22,10 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMember : IReader, IWriter
+    public interface IMember : IConverter
     {
         XName Name { get; }
     }

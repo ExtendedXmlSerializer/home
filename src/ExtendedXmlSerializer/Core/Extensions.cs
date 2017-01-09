@@ -62,7 +62,7 @@ namespace ExtendedXmlSerialization.Core
 
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
-        public static T Self<T>( this T @this ) => @this;
+        public static T Self<T>(this T @this) => @this;
         public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)

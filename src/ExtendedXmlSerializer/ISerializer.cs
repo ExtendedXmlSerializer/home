@@ -21,39 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+using System.IO;
+using System.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization
 {
-    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>, IDictionaryPairTypesLocator
+    public interface ISerializer
     {
-        public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
-        DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
+        void Serialize(Stream stream, object instance);
 
-        private readonly Type _type;
+        object Deserialize(Stream stream);
+    }
 
-        public DictionaryPairTypesLocator(Type type)
+    public class Serializer : ISerializer
+    {
+        public static Serializer Default { get; } = new Serializer();
+        Serializer() : this(RootConverter.Default) {}
+
+        private readonly IReader _reader;
+        private readonly IWriter _writer;
+
+        public Serializer(IConverter converter) : this(converter, converter) {}
+
+        public Serializer(IReader reader, IWriter writer)
         {
-            _type = type;
+            _reader = reader;
+            _writer = writer;
         }
 
-        protected override DictionaryPairTypes Create(Type parameter)
+        public void Serialize(Stream stream, object instance)
         {
-            foreach (var it in parameter.GetInterfaces().Append(parameter))
+            using (var writer = XmlWriter.Create(stream))
             {
-                var info = it.GetTypeInfo();
-                if (info.IsGenericType && it.GetGenericTypeDefinition() == _type)
-                {
-                    var arguments = info.GetGenericArguments();
-                    var mapping = new DictionaryPairTypes(new Typed(arguments[0]), new Typed(arguments[1]));
-                    return mapping;
-                }
+                _writer.Write(writer, instance);
             }
+        }
 
-            var baseType = parameter.GetTypeInfo().BaseType;
-            var result = baseType != null ? Get(baseType) : null;
+        public object Deserialize(Stream stream)
+        {
+            var text = new StreamReader(stream).ReadToEnd();
+            var document = XDocument.Parse(text);
+            var result = _reader.Read(document.Root);
             return result;
         }
     }

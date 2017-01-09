@@ -22,17 +22,16 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public interface IReader
     {
-        object Read(XElement element, Typed? hint = null);
+        object Read(XElement element);
     }
 
     public interface IReader<out T> : IReader
     {
-        new T Read(XElement element, Typed? hint = null);
+        new T Read(XElement element);
     }
 }

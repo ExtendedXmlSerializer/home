@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
+using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
-    {
-        public static MemberInfoEqualityComparer Default { get; } = new MemberInfoEqualityComparer();
-        MemberInfoEqualityComparer() {}
-
-        public bool Equals(MemberInfo x, MemberInfo y) => x.Name == y.Name;
-
-        public int GetHashCode(MemberInfo obj) => obj.Name.GetHashCode();
-    }
+    public interface ITypesSource : IParameterizedSource<Type, ITypes> {}
 }

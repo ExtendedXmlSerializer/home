@@ -24,8 +24,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
@@ -45,7 +46,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override void Write(XmlWriter writer, object instance)
         {
-            var type = new Typed(instance.GetType());
+            var type = new Typing(instance.GetType());
             var tracker = Tracker.Default.Get(writer);
             if (_specification.IsSatisfiedBy(type) && tracker.Add(instance))
             {

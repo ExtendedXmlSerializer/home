@@ -26,7 +26,6 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -34,15 +33,13 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly IReader _reader;
         private readonly IWriter _writer;
-        private readonly Typed _memberType;
         private readonly Func<object, object> _getter;
 
-        protected MemberBase(IReader reader, IWriter writer, XName name, Typed memberType, Func<object, object> getter)
+        protected MemberBase(IReader reader, IWriter writer, XName name, Func<object, object> getter)
         {
             Name = name;
             _reader = reader;
             _writer = writer;
-            _memberType = memberType;
             _getter = getter;
         }
 
@@ -50,8 +47,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         public void Write(XmlWriter writer, object instance) => _writer.Write(writer, Get(instance));
 
-        protected virtual object Get(object instance) => _getter(instance);
+        protected object Get(object instance) => _getter(instance);
 
-        public object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint ?? _memberType);
+        public object Read(XElement element) => _reader.Read(element);
     }
 }

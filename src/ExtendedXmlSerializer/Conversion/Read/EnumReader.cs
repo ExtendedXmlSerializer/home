@@ -23,20 +23,28 @@
 
 using System;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     sealed class EnumReader : ReaderBase
     {
         public static EnumReader Default { get; } = new EnumReader();
-        EnumReader() {}
+        EnumReader() : this(Types.Default) {}
 
-        public override object Read(XElement element, Typed? hint = null)
+        private readonly ITypes _types;
+
+        public EnumReader(ITypes types)
         {
-            if (hint.HasValue)
+            _types = types;
+        }
+
+        public override object Read(XElement element)
+        {
+            var type = _types.Get(element);
+            if (type != null)
             {
-                return Enum.Parse(hint, element.Value);
+                return Enum.Parse(type, element.Value);
             }
             throw new InvalidOperationException(
                 $"An attempt was made to read element as an enumeration, but no type was specified.");

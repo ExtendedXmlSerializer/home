@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using System;
-using System.IO;
-using System.Text;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization
 {
@@ -35,7 +33,6 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        private ISerializationToolsFactory _serializationToolsFactory;
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -44,6 +41,8 @@ namespace ExtendedXmlSerialization
         public const string Value = "Value";
         public const string Underscore = "_";
         public const string Item = "Item";
+
+        private ISerializationToolsFactory _tools;
 
         public ExtendedXmlSerializer() : this(null) {}
 
@@ -57,31 +56,22 @@ namespace ExtendedXmlSerialization
         /// </summary>
         public ISerializationToolsFactory SerializationToolsFactory
         {
-            get { return _serializationToolsFactory; }
+            get { return _tools; }
             set
             {
-                _serializationToolsFactory = value;
-                Serializer = value != null ? new LegacySerializer(_serializationToolsFactory) : Conversion.Write.Serializer.Default;
+                _tools = value;
+                Converter = _tools != null ? new LegacyRootConverter(_tools) : LegacyRootConverter.Default;
             }
         }
 
-        private ISerializer Serializer { get; set; } = Conversion.Write.Serializer.Default;
+        private IConverter Converter { get; set; } = LegacyRootConverter.Default;
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o)
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, o);
-                stream.Seek(0, SeekOrigin.Begin);
-                var result = new StreamReader(stream).ReadToEnd();
-                return result;
-            }
-        }
+        public string Serialize(object o) => new Serializer(Converter).Serialize(o);
 
         /// <summary>
         /// Deserializes the XML document
@@ -90,21 +80,7 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-        {
-            var deserializer = new LegacyDeserializer(SerializationToolsFactory ?? Defaults.Tools, type);
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
-            {
-                var result = deserializer.Deserialize(stream);
-                return result;
-            }
-
-
-            /*var def = TypeDefinitions.Default.Get(type);
-            XDocument doc = XDocument.Parse(xml);
-            var result = ReadXml(doc.Root, def);
-            _referencesObjects.Clear();
-            return result;*/
-        }
+            => new Serializer(new InitializingReader(Converter, type), Converter).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

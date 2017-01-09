@@ -21,10 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -32,18 +30,17 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         private readonly IActivators _activators;
 
-        public DictionaryReader(ITypes types, IReader reader)
-            : this(types, reader, Activators.Default, ElementTypeLocator.Default) {}
+        public DictionaryReader(ITypes types, IReader reader) : this(types, reader, Activators.Default) {}
 
-        public DictionaryReader(ITypes types, IReader reader, IActivators activators, IElementTypeLocator locator)
-            : base(types, new DictionaryEntryReader(types, reader), locator)
+        public DictionaryReader(ITypes types, IReader reader, IActivators activators)
+            : base(new DictionaryEntryReader(types, reader), EnumerableTypingsStore.Default.Get(types))
         {
             _activators = activators;
         }
 
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        protected override object Create(IEnumerable enumerable, EnumerableTyping typing)
         {
-            var result = _activators.Activate<IDictionary>(new Typed(listType));
+            var result = _activators.Activate<IDictionary>(typing.Type);
             foreach (DictionaryEntry item in enumerable)
             {
                 result.Add(item.Key, item.Value);

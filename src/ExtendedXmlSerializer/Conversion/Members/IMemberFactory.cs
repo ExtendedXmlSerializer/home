@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     public interface IMemberFactory
     {
-        IMember Create(MemberInfo metadata, Typed memberType, bool assignable);
+        IMember Create(MemberInfo metadata, Typing memberType, bool assignable);
     }
 }

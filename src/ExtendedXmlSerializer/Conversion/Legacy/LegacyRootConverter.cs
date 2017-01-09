@@ -24,22 +24,33 @@
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyRootConverter : DecoratedConverter
     {
-        private readonly ISerializationToolsFactory _factory;
+        public static LegacyRootConverter Default { get; } = new LegacyRootConverter();
+        LegacyRootConverter() : this(Defaults.Tools) {}
 
-        public LegacyRootConverter(ISerializationToolsFactory factory, IConverter converter) : base(converter)
+        private readonly ITypes _types;
+        private readonly ISerializationToolsFactory _tools;
+
+        public LegacyRootConverter(ISerializationToolsFactory tools) : this(Types.Default, tools) {}
+
+        public LegacyRootConverter(ITypes types, ISerializationToolsFactory tools)
+            : this(types, tools, new RootConverter(new LegacySelectorFactory(tools))) {}
+
+        public LegacyRootConverter(ITypes types, ISerializationToolsFactory tools, IConverter converter)
+            : base(converter)
         {
-            _factory = factory;
+            _types = types;
+            _tools = tools;
         }
 
         public override void Write(XmlWriter writer, object instance)
         {
-            var configuration = _factory.GetConfiguration(instance.GetType());
+            var configuration = _tools.GetConfiguration(instance.GetType());
             if (configuration != null)
             {
                 if (configuration.Version > 0)
@@ -58,15 +69,16 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             base.Write(writer, instance);
         }
 
-        public override object Read(XElement element, Typed? hint = null)
+        public override object Read(XElement element)
         {
-            var configuration = _factory.GetConfiguration(hint);
+            var type = _types.Get(element);
+            var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {
                 // Run migrator if exists
                 if (configuration.Version > 0)
                 {
-                    configuration.Map(hint, element);
+                    configuration.Map(type, element);
                 }
 
                 if (configuration.IsCustomSerializer)
@@ -74,8 +86,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
                     return configuration.ReadObject(element);
                 }
             }
-
-            return base.Read(element, hint);
+            return base.Read(element);
         }
     }
 }

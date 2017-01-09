@@ -21,29 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.Conversion
 {
-    public class Deserializer : IDeserializer
-    {
-        public static Deserializer Default { get; } = new Deserializer();
-        Deserializer() : this(RootReader.Default) {}
-
-        private readonly IReader _reader;
-
-        public Deserializer(IReader reader)
-        {
-            _reader = reader;
-        }
-
-        public object Deserialize(Stream stream)
-        {
-            var text = new StreamReader(stream).ReadToEnd();
-            var root = XDocument.Parse(text).Root;
-            var result = _reader.Read(root);
-            return result;
-        }
-    }
+    public interface IRootSelector : ISelector, ICommand<IConverter> {}
 }

@@ -23,18 +23,31 @@
 
 using System;
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
+        public static T Annotated<T>(this XElement @this, T item)
+        {
+            @this.AddAnnotation(item);
+            return item;
+        }
+
+        public static XElement Initialized(this ITypes @this, XElement element, Typing typing)
+        {
+            @this.Initialize(element, typing);
+            return element;
+        }
+
+
         public static TypeInfo AccountForNullable(this TypeInfo @this)
             => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
         public static Type AccountForNullable(this Type @this) => Nullable.GetUnderlyingType(@this) ?? @this;
 
-        public static T Activate<T>(this IActivators @this, Typed type) => (T) @this.Get(type).Invoke();
+        public static T Activate<T>(this IActivators @this, Typing type) => (T) @this.Get(type).Invoke();
     }
 }

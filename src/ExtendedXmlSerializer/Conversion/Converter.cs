@@ -25,7 +25,6 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion
             _writer = writer;
         }
 
-        public override object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint);
+        public override object Read(XElement element) => _reader.Read(element);
 
         public override void Write(XmlWriter writer, object instance)
             => _writer.Write(writer, instance);

@@ -23,7 +23,6 @@
 
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -32,19 +31,17 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly ITypes _types;
         private readonly ISelector _selector;
 
-        public SelectingReader(ISelector selector) : this(Types.Default, selector) {}
-
         public SelectingReader(ITypes types, ISelector selector)
         {
             _types = types;
             _selector = selector;
         }
 
-        public object Read(XElement element, Typed? hint = null)
+        public object Read(XElement element)
         {
-            var typed = hint ?? _types.Get(element);
+            var typed = _types.Get(element);
             var converter = _selector.Get(typed);
-            var result = converter.Read(element, typed);
+            var result = converter.Read(element);
             return result;
         }
     }

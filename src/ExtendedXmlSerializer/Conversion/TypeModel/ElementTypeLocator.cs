@@ -25,8 +25,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
     public class ElementTypeLocator : WeakCacheBase<Type, Type>, IElementTypeLocator
     {

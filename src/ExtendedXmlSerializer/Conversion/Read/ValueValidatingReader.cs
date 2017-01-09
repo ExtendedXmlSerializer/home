@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public ValueValidatingReader(IReader reader) : base(reader) {}
 
-        public override object Read(XElement element, Typed? hint = null) =>
-            element.Value.NullIfEmpty() != null ? base.Read(element, hint) : null;
+        public override object Read(XElement element) =>
+            element.Value.NullIfEmpty() != null ? base.Read(element) : null;
     }
 }

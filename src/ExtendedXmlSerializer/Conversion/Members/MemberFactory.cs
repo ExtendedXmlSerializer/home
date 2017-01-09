@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _add = add;
         }
 
-        public IMember Create(MemberInfo metadata, Typed memberType, bool assignable)
+        public IMember Create(MemberInfo metadata, Typing memberType, bool assignable)
         {
             var name = XName.Get(_name.Get(metadata).LocalName,
                                  _names.Get(metadata.DeclaringType.GetTypeInfo()).NamespaceName);
@@ -70,7 +70,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             {
                 var type = new TypeEmittingWriter(new EmitTypeSpecification(memberType), _converter);
                 var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, type));
-                var result = new AssignableMember(_converter, writer, name, memberType, getter, _setter.Get(metadata));
+                var result = new AssignableMember(new InitializingReader(_converter, memberType), writer, name, getter,
+                                                  _setter.Get(metadata));
                 return result;
             }
 
@@ -78,7 +79,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             if (add != null)
             {
                 var writer = new ElementWriter(name.Accept, _converter);
-                var result = new ReadOnlyCollectionMember(_reader, writer, name, memberType, getter, add);
+                var result = new ReadOnlyCollectionMember(new InitializingReader(_reader, memberType), writer, name,
+                                                          getter, add);
                 return result;
             }
             return null;

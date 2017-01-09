@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class ArrayReader : ListReaderBase
+    public class MemberInfoEqualityComparer : IEqualityComparer<MemberInfo>
     {
-        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
+        public static MemberInfoEqualityComparer Default { get; } = new MemberInfoEqualityComparer();
+        MemberInfoEqualityComparer() {}
 
-        protected override object Create(IEnumerable enumerable, EnumerableTyping typing)
-        {
-            var list = new ArrayList();
-            foreach (var item in enumerable)
-            {
-                list.Add(item);
-            }
+        public bool Equals(MemberInfo x, MemberInfo y) => x.Name == y.Name;
 
-            var result = list.ToArray(typing.ElementType);
-            return result;
-        }
+        public int GetHashCode(MemberInfo obj) => obj.Name.GetHashCode();
     }
 }

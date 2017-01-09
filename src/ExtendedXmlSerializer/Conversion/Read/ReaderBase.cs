@@ -22,19 +22,18 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public abstract class ReaderBase : IReader
     {
-        public abstract object Read(XElement element, Typed? hint = null);
+        public abstract object Read(XElement element);
     }
 
     public abstract class ReaderBase<T> : IReader<T>
     {
-        object IReader.Read(XElement element, Typed? hint) => Read(element, hint);
+        object IReader.Read(XElement element) => Read(element);
 
-        public abstract T Read(XElement element, Typed? hint = null);
+        public abstract T Read(XElement element);
     }
 }

@@ -22,29 +22,10 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public struct Typed
-    {
-        public Typed(Type type) : this(type, type.GetTypeInfo()) {}
-
-        public Typed(TypeInfo info) : this(info.AsType(), info) {}
-
-        public Typed(Type type, TypeInfo info)
-        {
-            Type = type;
-            Info = info;
-        }
-
-        public Type Type { get; }
-
-        public TypeInfo Info { get; }
-
-        public static implicit operator Typed?(Type type) => type != null ? new Typed(type) : (Typed?)null;
-        public static implicit operator Typed?(TypeInfo info) => info != null ? new Typed(info) : (Typed?)null;
-        public static implicit operator Type(Typed type) => type.Type;
-        public static implicit operator TypeInfo(Typed type) => type.Info;
-    }
+    public interface IDictionaryPairTypesLocator : IParameterizedSource<Type, DictionaryPairTypes> {}
 }

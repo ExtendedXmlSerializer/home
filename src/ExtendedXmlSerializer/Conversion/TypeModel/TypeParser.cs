@@ -24,8 +24,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
 
@@ -33,8 +31,6 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface ITypeParser : IParameterizedSource<string, Type> {}
-
     public class TypeParser : ConcurrentDictionary<string, Type>, ITypeParser
     {
         public static TypeParser Default { get; } = new TypeParser();
@@ -63,8 +59,7 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
                     if (type != null)
                         return type;
                 }
-                catch (System.IO.FileNotFoundException)
-                {}
+                catch (System.IO.FileNotFoundException) {}
             }
 #else
             foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())

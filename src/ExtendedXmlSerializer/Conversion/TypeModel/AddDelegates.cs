@@ -23,7 +23,7 @@
 
 using System;
 using System.Linq.Expressions;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {

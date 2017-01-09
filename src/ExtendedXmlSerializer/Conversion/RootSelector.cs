@@ -21,10 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Conversion
 {
-    public interface IDictionaryPairTypesLocator : IParameterizedSource<Type, DictionaryPairTypes> {}
+    public class RootSelector : IRootSelector
+    {
+        private readonly ISelectorFactory _factory;
+        private ISelector _selector;
+
+        public RootSelector(ISelectorFactory factory)
+        {
+            _factory = factory;
+        }
+
+        public IConverter Get(TypeInfo parameter) => _selector?.Get(parameter);
+        public void Execute(IConverter parameter) => _selector = _factory.Get(parameter);
+    }
 }

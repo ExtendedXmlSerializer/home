@@ -21,13 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Legacy;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    class LegacySerializer : Serializer
+    public class EnumerableTypingsStore : WeakCacheBase<ITypes, IEnumerableTypings>
     {
-        public LegacySerializer(ISerializationToolsFactory tools)
-            : base(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools)) {}
+        public static EnumerableTypingsStore Default { get; } = new EnumerableTypingsStore();
+        EnumerableTypingsStore() : this(ElementTypeLocator.Default) {}
+
+        private readonly IElementTypeLocator _locator;
+
+        public EnumerableTypingsStore(IElementTypeLocator locator)
+        {
+            _locator = locator;
+        }
+
+        protected override IEnumerableTypings Create(ITypes parameter) => new EnumerableTypings(parameter, _locator);
     }
 }

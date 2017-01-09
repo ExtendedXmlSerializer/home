@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
     public interface IElementTypeLocator
     {

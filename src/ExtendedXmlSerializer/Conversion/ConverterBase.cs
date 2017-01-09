@@ -23,13 +23,12 @@
 
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public abstract class ConverterBase : IConverter
     {
         public abstract void Write(XmlWriter writer, object instance);
-        public abstract object Read(XElement element, Typed? hint = null);
+        public abstract object Read(XElement element);
     }
 }

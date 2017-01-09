@@ -34,9 +34,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly Action<object, object> _add;
 
-        public ReadOnlyCollectionMember(IReader reader, IWriter writer, XName name, Typed memberType,
+        public ReadOnlyCollectionMember(IReader reader, IWriter writer, XName name,
                                         Func<object, object> getter, Action<object, object> add)
-            : base(reader, writer, name, memberType, getter)
+            : base(reader, writer, name, getter)
         {
             _add = add;
         }

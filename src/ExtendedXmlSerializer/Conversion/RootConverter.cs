@@ -21,12 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion
 {
-    public interface ISerializer
+    public class RootConverter : Converter
     {
-        void Serialize(Stream stream, object instance);
+        public static RootConverter Default { get; } = new RootConverter();
+        RootConverter() : this(SelectorFactory.Default) {}
+
+        public RootConverter(ISelectorFactory factory) : this(AllNames.Default, factory) {}
+
+        public RootConverter(INames names, ISelectorFactory factory) : this(names, Types.Default, factory) {}
+
+        public RootConverter(INames names, ITypes types, ISelectorFactory factory)
+            : this(names, types, new RootSelector(factory)) {}
+
+        public RootConverter(INames names, ITypes types, IRootSelector selector)
+            : this(names, selector, new Converter(new SelectingReader(types, selector), new SelectingWriter(selector))) {}
+
+        public RootConverter(INames names, IRootSelector selector, IConverter converter)
+            : base(converter, new ElementWriter(names.Get, converter))
+        {
+            selector.Execute(converter);
+        }
     }
 }

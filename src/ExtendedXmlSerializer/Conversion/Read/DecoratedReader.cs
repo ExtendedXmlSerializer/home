@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -35,6 +34,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _reader = reader;
         }
 
-        public override object Read(XElement element, Typed? hint = null) => _reader.Read(element, hint);
+        public override object Read(XElement element) => _reader.Read(element);
     }
 }

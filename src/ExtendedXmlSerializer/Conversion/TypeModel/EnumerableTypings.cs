@@ -21,21 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    class LegacyRootConverters : RootConverters<ISerializationToolsFactory>
+    public class EnumerableTypings : WeakCacheBase<XElement, EnumerableTyping>, IEnumerableTypings
     {
-        public LegacyRootConverters(ISelectorFactory factory) : base(Types.Default, factory) {}
+        private readonly ITypes _types;
+        private readonly IElementTypeLocator _locator;
 
-        protected override IConverter Create(ISerializationToolsFactory parameter)
+        public EnumerableTypings(ITypes types, IElementTypeLocator locator)
         {
-            var converter = base.Create(parameter);
-            var root = new Converter(new RootReader(converter), new RootWriter(converter));
-            var result = new LegacyRootConverter(parameter, root);
+            _types = types;
+            _locator = locator;
+        }
+
+        protected override EnumerableTyping Create(XElement parameter)
+        {
+            var type = _types.Get(parameter);
+            var elementType = _locator.Locate(type);
+            var result = new EnumerableTyping(elementType, type);
+            parameter.AddAnnotation(result);
             return result;
         }
     }

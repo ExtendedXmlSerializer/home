@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         protected override XName Create(TypeInfo type, MemberInfo member)
         {
             var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(new Typed(type));
+            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(new Typing(type));
             var ns = attribute?.Namespace ?? _defaultNamespace;
             var result = XName.Get(name, ns);
             return result;
