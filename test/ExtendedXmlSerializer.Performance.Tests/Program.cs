@@ -9,7 +9,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
         {
             var switcher = new BenchmarkSwitcher(new[]
             {
-                // typeof(ExtendedXmlSerializerTest),
+                typeof(ExtendedXmlSerializerTest),
                 typeof(ExtendedXmlSerializerV2Test),
                 typeof(XmlSerializerTest)
             });

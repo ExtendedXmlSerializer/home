@@ -28,11 +28,11 @@ using ExtendedXmlSerialization.Performance.Tests.Model;
 
 namespace ExtendedXmlSerialization.Performance.Tests
 {
-    /*public class ExtendedXmlSerializerTest
+    public class ExtendedXmlSerializerTest
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly IExtendedXmlSerializer _serializer = new LegacyXmlSerializer();
+        private readonly Legacy.IExtendedXmlSerializer _serializer = new Legacy.ExtendedXmlSerializer();
 
         public ExtendedXmlSerializerTest()
         {
@@ -46,14 +46,14 @@ namespace ExtendedXmlSerialization.Performance.Tests
         [Benchmark]
         public TestClassOtherClass DeserializationClassWithPrimitive()
             => _serializer.Deserialize<TestClassOtherClass>(_xml);
-    }*/
+    }
 
 
     public class ExtendedXmlSerializerV2Test
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer(new SimpleSerializationToolsFactory());
 
         public ExtendedXmlSerializerV2Test()
         {
