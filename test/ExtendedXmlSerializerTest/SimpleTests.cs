@@ -23,8 +23,8 @@
 
 using System.IO;
 using System.Text;
-using ExtendedXmlSerialization.Converters.Read;
-using ExtendedXmlSerialization.Converters.Write;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -68,9 +68,7 @@ namespace ExtendedXmlSerialization.Test
         public void InstanceRead()
         {
             const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>";
-            var deserializer = new LegacyDeserializer<InstanceClass>(new SimpleSerializationToolsFactory());
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var instance = deserializer.Deserialize(stream);
+            var instance = new ExtendedXmlSerializer(new SimpleSerializationToolsFactory()).Deserialize<InstanceClass>(data);
             Assert.NotNull(instance);
             Assert.Equal("Hello World!", instance.PropertyName);
         }

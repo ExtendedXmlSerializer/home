@@ -24,8 +24,8 @@
 using System;
 using System.IO;
 using System.Text;
-using ExtendedXmlSerialization.Converters.Read;
-using ExtendedXmlSerialization.Converters.Write;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization
 {
@@ -62,11 +62,11 @@ namespace ExtendedXmlSerialization
             set
             {
                 _serializationToolsFactory = value;
-                Serializer = value != null ? new LegacySerializer(_serializationToolsFactory) : Converters.Write.Serializer.Default;
+                Serializer = value != null ? new LegacySerializer(_serializationToolsFactory) : Conversion.Write.Serializer.Default;
             }
         }
 
-        private ISerializer Serializer { get; set; } = Converters.Write.Serializer.Default;
+        private ISerializer Serializer { get; set; } = Conversion.Write.Serializer.Default;
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
