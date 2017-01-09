@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Runtime.CompilerServices;
+
 namespace ExtendedXmlSerialization.Core
 {
-/*
     /// <summary>
     /// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
     /// </summary>
@@ -105,7 +107,7 @@ namespace ExtendedXmlSerialization.Core
             return result;
         }
 
-        /#1#// <summary>Determines whether an object has already been assigned an ID.</summary>
+        /*/// <summary>Determines whether an object has already been assigned an ID.</summary>
         /// <returns>The object ID of <paramref name="obj" /> if previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, null.</returns>
         /// <param name="obj">The object you are asking for. </param>
         /// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
@@ -117,7 +119,7 @@ namespace ExtendedXmlSerialization.Core
             var index = FindIndex(obj, out found);
             var result = found ? (long?) _ids[index] : null;
             return result;
-        }#1#
+        }*/
 
         public virtual bool Contains(object obj)
         {
@@ -153,5 +155,4 @@ namespace ExtendedXmlSerialization.Core
             }
         }
     }
-*/
 }

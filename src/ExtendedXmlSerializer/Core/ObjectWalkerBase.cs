@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerialization.Core
 {
-/*
     /// <summary>
     /// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
     /// </summary>
@@ -89,5 +92,4 @@ namespace ExtendedXmlSerialization.Core
 
         public virtual void Dispose() {}
     }
-*/
 }

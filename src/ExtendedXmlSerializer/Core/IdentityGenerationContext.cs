@@ -21,34 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration.Write
+namespace ExtendedXmlSerialization.Core
 {
-    /*public interface IEncryptionFactory : IParameterizedSource<IElement, IPropertyEncryption> {}
-
-    class EncryptionFactory : IEncryptionFactory
+    public struct IdentityGenerationContext
     {
-        private readonly ISerializationToolsFactory _factory;
-
-        public EncryptionFactory(ISerializationToolsFactory factory)
+        public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
         {
-            _factory = factory;
+            UniqueId = uniqueId;
+            Instance = instance;
+            FirstEncounter = firstEncounter;
         }
 
-        public IPropertyEncryption Get(IElement parameter)
-        {
-            var member = parameter as IMember;
-            if (member != null)
-            {
-                var configuration = _factory.GetConfiguration(member.DeclaringType);
-                if (configuration != null)
-                {
-                    var allow =
-                        configuration.CheckPropertyEncryption(member.Name);
-                    var result = allow ? _factory.EncryptionAlgorithm : null;
-                    return result;
-                }
-            }
-            return null;
-        }
-    }*/
+        public long UniqueId { get; }
+        public object Instance { get; }
+        public bool FirstEncounter { get; }
+    }
 }
