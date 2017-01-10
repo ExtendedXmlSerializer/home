@@ -21,21 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public abstract class NameProviderBase : WeakCacheBase<MemberInfo, XName>, INameProvider
+    sealed class LegacyElementTypes : ElementTypes
     {
-        protected override XName Create(MemberInfo parameter)
-        {
-            var typeInfo = parameter as TypeInfo ?? parameter.DeclaringType.GetTypeInfo();
-            var result = Create(typeInfo, parameter);
-            return result;
-        }
-
-        protected abstract XName Create(TypeInfo type, MemberInfo member);
+        public new static LegacyElementTypes Default { get; } = new LegacyElementTypes();
+        LegacyElementTypes() : base(LegacyNamedTypes.Default, TypeParser.Default) {}
     }
 }

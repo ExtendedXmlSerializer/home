@@ -22,39 +22,40 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     public class MemberFactory : IMemberFactory
     {
         private readonly IEnumeratingReader _reader;
+        private readonly IElementTypes _elementTypes;
         private readonly IConverter _converter;
-        private readonly INames _names;
-        private readonly INameProvider _name;
+        private readonly IElementProvider _element;
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
         private readonly IAddDelegates _add;
 
-        public MemberFactory(IConverter converter, IEnumeratingReader reader)
-            : this(converter, reader, GetterFactory.Default) {}
+        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader)
+            : this(elementTypes, converter, reader, GetterFactory.Default) {}
 
-        public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter)
-            : this(converter, reader, AllNames.Default, MemberNameProvider.Default, getter,
+        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader,
+                             IGetterFactory getter)
+            : this(elementTypes, converter, reader, MemberElementProvider.Default, getter,
                    SetterFactory.Default, AddDelegates.Default) {}
 
-        public MemberFactory(IConverter converter, IEnumeratingReader reader, INames names, INameProvider name,
+        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader,
+                             IElementProvider element,
                              IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
         {
+            _elementTypes = elementTypes;
             _converter = converter;
             _reader = reader;
-            _names = names;
-            _name = name;
+            _element = element;
             _getter = getter;
             _setter = setter;
             _add = add;
@@ -62,25 +63,24 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         public IMember Create(MemberInfo metadata, Typing memberType, bool assignable)
         {
-            var name = XName.Get(_name.Get(metadata).LocalName,
-                                 _names.Get(metadata.DeclaringType.GetTypeInfo()).NamespaceName);
+            var element = _element.Get(metadata);
             var getter = _getter.Get(metadata);
 
             if (assignable)
             {
                 var type = new TypeEmittingWriter(new EmitTypeSpecification(memberType), _converter);
-                var writer = new InstanceValidatingWriter(new ElementWriter(name.Accept, type));
-                var result = new AssignableMember(new InitializingReader(_converter, memberType), writer, name, getter,
-                                                  _setter.Get(metadata));
+                var writer = new InstanceValidatingWriter(new ElementWriter(element, type));
+                var result = new AssignableMember(new InitializingReader(_elementTypes, _converter, memberType),
+                                                  writer, element, getter, _setter.Get(metadata));
                 return result;
             }
 
             var add = _add.Get(memberType);
             if (add != null)
             {
-                var writer = new ElementWriter(name.Accept, _converter);
-                var result = new ReadOnlyCollectionMember(new InitializingReader(_reader, memberType), writer, name,
-                                                          getter, add);
+                var writer = new ElementWriter(element, _converter);
+                var result = new ReadOnlyCollectionMember(new InitializingReader(_elementTypes, _reader, memberType),
+                                                          writer, element, getter, add);
                 return result;
             }
             return null;

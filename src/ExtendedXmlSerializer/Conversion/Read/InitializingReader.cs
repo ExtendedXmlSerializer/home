@@ -22,18 +22,19 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class InitializingReader : DecoratedReader
     {
-        private readonly ITypes _initializer;
+        private readonly IElementTypes _initializer;
         private readonly Typing _typing;
 
-        public InitializingReader(IReader reader, Typing typing) : this(Types.Default, reader, typing) {}
+        // public InitializingReader(IReader reader, Typing typing) : this(Types.Default, reader, typing) {}
 
-        public InitializingReader(ITypes initializer, IReader reader, Typing typing) : base(reader)
+        public InitializingReader(IElementTypes initializer, IReader reader, Typing typing) : base(reader)
         {
             _initializer = initializer;
             _typing = typing;

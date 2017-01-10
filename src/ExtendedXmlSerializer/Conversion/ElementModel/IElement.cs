@@ -21,11 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Write
+using ExtendedXmlSerialization.Conversion.TypeModel;
+
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    class LegacyEnumerableNameProvider : NameProvider
+    public interface IElement
     {
-        public new static LegacyEnumerableNameProvider Default { get; } = new LegacyEnumerableNameProvider();
-        LegacyEnumerableNameProvider() : base(EnumerableTypeFormatter.Default, string.Empty) {}
+        string Name { get; }
+
+        Typing OwnerType { get; }
     }
 }

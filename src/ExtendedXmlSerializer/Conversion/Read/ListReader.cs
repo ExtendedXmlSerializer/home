@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -31,11 +32,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(ITypes types, IReader reader)
-            : this(types, reader, Activators.Default, AddDelegates.Default) {}
+        public ListReader(IElementTypes elementTypes, IReader reader)
+            : this(elementTypes, reader, Activators.Default, AddDelegates.Default) {}
 
-        public ListReader(ITypes types, IReader reader, IActivators activators, IAddDelegates add)
-            : base(types, reader)
+        public ListReader(IElementTypes elementTypes, IReader reader, IActivators activators, IAddDelegates add)
+            : base(elementTypes, reader)
         {
             _activators = activators;
             _add = add;

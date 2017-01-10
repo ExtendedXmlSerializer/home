@@ -22,13 +22,14 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class ArrayReader : ListReaderBase
     {
-        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
+        public ArrayReader(IElementTypes elementTypes, IReader reader) : base(elementTypes, reader) {}
 
         protected override object Create(IEnumerable enumerable, EnumerableTyping typing)
         {

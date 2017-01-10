@@ -24,6 +24,7 @@
 using System;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -36,9 +37,12 @@ namespace ExtendedXmlSerialization.Conversion
             return item;
         }
 
-        public static XElement Initialized(this ITypes @this, XElement element, Typing typing)
+        public static XElement Initialized(this IElementTypes @this, XElement element, Typing typing)
         {
-            @this.Initialize(element, typing);
+            if (@this.Get(element) == null)
+            {
+                element.Annotated(typing);
+            }
             return element;
         }
 

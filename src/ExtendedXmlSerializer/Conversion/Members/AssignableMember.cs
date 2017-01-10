@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -32,9 +32,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly Action<object, object> _setter;
 
-        public AssignableMember(IReader reader, IWriter writer, XName name,
+        public AssignableMember(IReader reader, IWriter writer, IElement element,
                                 Func<object, object> getter, Action<object, object> setter)
-            : base(reader, writer, name, getter)
+            : base(reader, writer, element, getter)
         {
             _setter = setter;
         }

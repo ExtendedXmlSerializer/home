@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
@@ -44,23 +42,15 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             _specification = specification;
         }
 
-        public override void Write(XmlWriter writer, object instance)
+        public override void Write(IWriteContext context, object instance)
         {
-            var type = new Typing(instance.GetType());
-            var tracker = Tracker.Default.Get(writer);
-            if (_specification.IsSatisfiedBy(type) && tracker.Add(instance))
+            var type = instance.GetType();
+            if (_specification.IsSatisfiedBy(type.GetTypeInfo()) && context.Get<EmittedTypes>().Add(instance))
             {
-                writer.WriteAttributeString(ExtendedXmlSerializer.Type,
-                                            LegacyTypeFormatter.Default.Format(type));
+                context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
             }
 
-            base.Write(writer, instance);
-        }
-
-        sealed class Tracker : WeakCache<XmlWriter, HashSet<object>>
-        {
-            public static Tracker Default { get; } = new Tracker();
-            Tracker() : base(_ => new HashSet<object>()) {}
+            base.Write(context, instance);
         }
     }
 }

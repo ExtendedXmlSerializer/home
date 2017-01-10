@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Globalization;
-using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -33,45 +33,47 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public static LegacyRootConverter Default { get; } = new LegacyRootConverter();
         LegacyRootConverter() : this(Defaults.Tools) {}
 
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyRootConverter(ISerializationToolsFactory tools) : this(Types.Default, tools) {}
+        public LegacyRootConverter(ISerializationToolsFactory tools) : this(LegacyElementTypes.Default, tools) {}
 
-        public LegacyRootConverter(ITypes types, ISerializationToolsFactory tools)
-            : this(types, tools, new RootConverter(new LegacySelectorFactory(tools))) {}
+        public LegacyRootConverter(IElementTypes elementTypes, ISerializationToolsFactory tools)
+            : this(
+                elementTypes, tools,
+                new RootConverter(LegacyElements.Default, LegacyElementTypes.Default, new LegacySelectorFactory(tools))) {}
 
-        public LegacyRootConverter(ITypes types, ISerializationToolsFactory tools, IConverter converter)
+        public LegacyRootConverter(IElementTypes elementTypes, ISerializationToolsFactory tools, IConverter converter)
             : base(converter)
         {
-            _types = types;
+            _elementTypes = elementTypes;
             _tools = tools;
         }
 
-        public override void Write(XmlWriter writer, object instance)
+        public override void Write(IWriteContext context, object instance)
         {
             var configuration = _tools.GetConfiguration(instance.GetType());
             if (configuration != null)
             {
                 if (configuration.Version > 0)
                 {
-                    writer.WriteAttributeString(ExtendedXmlSerializer.Version,
-                                                configuration.Version.ToString(CultureInfo.InvariantCulture));
+                    context.Write(VersionProperty.Default,
+                                 configuration.Version.ToString(CultureInfo.InvariantCulture));
                 }
 
                 if (configuration.IsCustomSerializer)
                 {
-                    new CustomElementWriter(configuration).Write(writer, instance);
+                    new CustomElementWriter(configuration).Write(context, instance);
                     return;
                 }
             }
 
-            base.Write(writer, instance);
+            base.Write(context, instance);
         }
 
         public override object Read(XElement element)
         {
-            var type = _types.Get(element);
+            var type = _elementTypes.Get(element);
             var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {

@@ -25,8 +25,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -34,17 +35,17 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         readonly private static DictionaryPairTypesLocator Locator = DictionaryPairTypesLocator.Default;
 
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
         private readonly IReader _reader;
         private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryEntryReader(ITypes types, IReader reader)
-            : this(types, reader, Locator) {}
+        public DictionaryEntryReader(IElementTypes elementTypes, IReader reader)
+            : this(elementTypes, reader, Locator) {}
 
-        public DictionaryEntryReader(ITypes types, IReader reader,
+        public DictionaryEntryReader(IElementTypes elementTypes, IReader reader,
                                      IDictionaryPairTypesLocator locator)
         {
-            _types = types;
+            _elementTypes = elementTypes;
             _reader = reader;
             _locator = locator;
         }
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerable<DictionaryEntry> Entries(XElement element)
         {
-            var type = _types.Get(element);
+            var type = _elementTypes.Get(element);
             var pair = _locator.Get(type);
             foreach (var child in element.Elements(LegacyNames.Item))
             {
@@ -66,7 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         object Read(XContainer element, XName name, Type type)
         {
             var child = element.Element(name);
-            var initialized = _types.Initialized(child, type);
+            var initialized = _elementTypes.Initialized(child, type);
             var result = _reader.Read(initialized);
             return result;
         }

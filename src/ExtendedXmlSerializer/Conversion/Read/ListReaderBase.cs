@@ -23,6 +23,7 @@
 
 using System.Collections;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -32,11 +33,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IEnumeratingReader _reader;
         private readonly IEnumerableTypings _typings;
 
-        protected ListReaderBase(ITypes types, IReader reader)
-            : this(types, reader, EnumerableTypingsStore.Default.Get(types)) {}
+        protected ListReaderBase(IElementTypes elementTypes, IReader reader)
+            : this(elementTypes, reader, EnumerableTypingsStore.Default.Get(elementTypes)) {}
 
-        protected ListReaderBase(ITypes types, IReader reader, IEnumerableTypings typings)
-            : this(new EnumeratingReader(types, reader, typings), typings) {}
+        protected ListReaderBase(IElementTypes elementTypes, IReader reader, IEnumerableTypings typings)
+            : this(new EnumeratingReader(elementTypes, reader, typings), typings) {}
 
         protected ListReaderBase(IEnumeratingReader reader, IEnumerableTypings typings)
         {

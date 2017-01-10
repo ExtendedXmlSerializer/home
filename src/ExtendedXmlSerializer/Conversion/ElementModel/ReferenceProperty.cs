@@ -21,14 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    static class LegacyNames
+    sealed class ReferenceProperty : FrameworkPropertyBase
     {
-        public static XName Item { get; } = XName.Get(ExtendedXmlSerializer.Item, string.Empty);
-        public static XName Key { get; } = XName.Get(ExtendedXmlSerializer.Key, string.Empty);
-        public static XName Value { get; } = XName.Get(ExtendedXmlSerializer.Value, string.Empty);
+        public static ReferenceProperty Default { get; } = new ReferenceProperty();
+        ReferenceProperty() : base("ref") {}
     }
 }

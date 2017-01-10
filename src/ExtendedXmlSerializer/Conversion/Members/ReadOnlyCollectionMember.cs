@@ -23,7 +23,7 @@
 
 using System;
 using System.Collections;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
@@ -34,9 +34,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly Action<object, object> _add;
 
-        public ReadOnlyCollectionMember(IReader reader, IWriter writer, XName name,
+        public ReadOnlyCollectionMember(IReader reader, IWriter writer, IElement element,
                                         Func<object, object> getter, Action<object, object> add)
-            : base(reader, writer, name, getter)
+            : base(reader, writer, element, getter)
         {
             _add = add;
         }

@@ -21,18 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyEnumerableTypeConverter : TypeConverter
+    sealed class LegacyEnumerableTypeConverter : TypeConverter
     {
-        public LegacyEnumerableTypeConverter(ITypes types, IConverter converter)
+        public LegacyEnumerableTypeConverter(IElementTypes elementTypes, IConverter converter)
             : base(
                 IsEnumerableTypeSpecification.Default,
-                new ListReader(types, converter),
+                new ListReader(elementTypes, converter),
                 new EnumerableBodyWriter(converter)
             ) {}
     }

@@ -39,8 +39,10 @@ namespace ExtendedXmlSerialization.Core.Sources
 
         protected override TResult Create(TParameter parameter)
         {
-            foreach (var candidate in _candidates)
+            var length = _candidates.Length;
+            for (int i = 0; i < length; i++)
             {
+                var candidate = _candidates[i];
                 if (candidate.IsSatisfiedBy(parameter))
                 {
                     return candidate.Get(parameter);

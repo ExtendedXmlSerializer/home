@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -30,19 +31,19 @@ namespace ExtendedXmlSerialization.Conversion.Read
     class InstanceBodyReader : ReaderBase
     {
         private readonly IInstanceMembers _members;
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IInstanceMembers members, ITypes types, IActivators activators)
+        public InstanceBodyReader(IInstanceMembers members, IElementTypes elementTypes, IActivators activators)
         {
             _members = members;
-            _types = types;
+            _elementTypes = elementTypes;
             _activators = activators;
         }
 
         public override object Read(XElement element)
         {
-            var type = _types.Get(element);
+            var type = _elementTypes.Get(element);
             var result = type != null ? Create(element, type) : null;
             return result;
         }
@@ -59,7 +60,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var members = _members.Get(type);
             foreach (var child in element.Elements())
             {
-                var member = members.Get(child.Name);
+                var member = members.Get(child.Name.LocalName);
                 if (member != null)
                 {
                     Apply(result, member, member.Read(child));

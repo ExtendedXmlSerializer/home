@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
@@ -31,22 +30,21 @@ namespace ExtendedXmlSerialization.Conversion.Write
     {
         private readonly IWriter _writer;
 
-        public EnumerableBodyWriter(IWriter itemWriter)
-            : this(AllNames.Default, itemWriter) {}
+        public EnumerableBodyWriter(IWriter itemWriter) : this(Elements.Default, itemWriter) {}
 
-        public EnumerableBodyWriter(INames names, IWriter itemWriter)
-            : this(new ElementWriter(names.Get, itemWriter)) {}
+        public EnumerableBodyWriter(IElements elements, IWriter itemWriter)
+            : this(new ElementWriter(elements.Get, itemWriter)) {}
 
         EnumerableBodyWriter(ElementWriter writer)
         {
             _writer = writer;
         }
 
-        protected override void Write(XmlWriter writer, IEnumerable instance)
+        protected override void Write(IWriteContext context, IEnumerable instance)
         {
             foreach (var item in instance)
             {
-                _writer.Write(writer, item);
+                _writer.Write(context, item);
             }
         }
     }

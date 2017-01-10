@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class DecoratedWriter : WriterBase
@@ -34,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _writer = writer;
         }
 
-        public override void Write(XmlWriter writer, object instance)
-            => _writer.Write(writer, instance);
+        public override void Write(IWriteContext context, object instance)
+            => _writer.Write(context, instance);
     }
 }

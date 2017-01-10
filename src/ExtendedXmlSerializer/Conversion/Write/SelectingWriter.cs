@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
@@ -35,7 +34,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _selector = selector;
         }
 
-        public void Write(XmlWriter writer, object instance) =>
-            _selector.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+        public void Write(IWriteContext context, object instance) =>
+            _selector.Get(instance.GetType().GetTypeInfo()).Write(context, instance);
     }
 }

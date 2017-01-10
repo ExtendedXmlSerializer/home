@@ -32,6 +32,9 @@ namespace ExtendedXmlSerialization.Core
 {
     public static class Extensions
     {
+        public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
+            => key != null && target.ContainsKey(key) ? target[key] : default(TValue);
+
         public static IEnumerable<T> Append<T>(this T @this, params T[] second) => @this.Append(second.AsEnumerable());
 
         public static IEnumerable<T> Append<T>(this T @this, ImmutableArray<T> second)

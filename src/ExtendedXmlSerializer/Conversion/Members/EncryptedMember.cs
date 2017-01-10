@@ -21,8 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -43,16 +44,14 @@ namespace ExtendedXmlSerialization.Conversion.Members
             return _member.Read(element);
         }
 
-        public void Write(XmlWriter writer, object instance)
+        public void Write(IWriteContext context, object instance)
         {
-            _member.Write(writer, instance);
+            _member.Write(context, instance);
         }
 
-        public XName Name => _member.Name;
+        public string Name => _member.Name;
+        public Typing OwnerType => _member.OwnerType;
 
-        public void Set(object instance, object value)
-        {
-            _member.Set(instance, value);
-        }
+        public void Set(object instance, object value) => _member.Set(instance, value);
     }
 }

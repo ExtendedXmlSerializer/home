@@ -21,24 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
-using System.Xml;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public abstract class ElementWriterBase : DecoratedWriter
+    /*class TypeResolver : IParameterizedSource<XElement, IElement>
     {
-        protected ElementWriterBase(IWriter writer) : base(writer) {}
+        private readonly INamedTypes _types;
+        private readonly IElements _elements;
 
-        public override void Write(XmlWriter writer, object instance)
+        public TypeResolver(INamedTypes types, IElements elements)
         {
-            var name = Get(instance.GetType().GetTypeInfo());
-            writer.WriteStartElement(name.LocalName, name.NamespaceName);
-            base.Write(writer, instance);
-            writer.WriteEndElement();
+            _types = types;
+            _elements = elements;
         }
 
-        protected abstract XName Get(TypeInfo type);
+        public IElement Get(XElement parameter)
+        {
+            var type = _types.Get(parameter);
+            var result = _elements.Get(type);
+            return result;
+        }
+    }*/
+
+    public class Elements : Selector<TypeInfo, IElement>, IElements
+    {
+        public static Elements Default { get; } = new Elements();
+        Elements() : this(new ElementCandidates().ToArray()) {}
+
+        public Elements(params ICandidate<TypeInfo, IElement>[] candidates) : base(candidates) {}
     }
 }

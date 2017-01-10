@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
@@ -35,6 +34,6 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _serialize = serialize;
         }
 
-        protected override void Write(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
+        protected override void Write(IWriteContext context, T instance) => context.Write(_serialize(instance));
     }
 }

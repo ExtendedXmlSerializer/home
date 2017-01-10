@@ -22,24 +22,24 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     class SelectingReader : IReader
     {
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
         private readonly ISelector _selector;
 
-        public SelectingReader(ITypes types, ISelector selector)
+        public SelectingReader(IElementTypes elementTypes, ISelector selector)
         {
-            _types = types;
+            _elementTypes = elementTypes;
             _selector = selector;
         }
 
         public object Read(XElement element)
         {
-            var typed = _types.Get(element);
+            var typed = _elementTypes.Get(element);
             var converter = _selector.Get(typed);
             var result = converter.Read(element);
             return result;

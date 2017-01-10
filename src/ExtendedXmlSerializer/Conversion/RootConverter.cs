@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -30,20 +30,21 @@ namespace ExtendedXmlSerialization.Conversion
     public class RootConverter : Converter
     {
         public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(SelectorFactory.Default) {}
+        RootConverter() : this(Elements.Default, ElementTypes.Default, SelectorFactory.Default) {}
 
-        public RootConverter(ISelectorFactory factory) : this(AllNames.Default, factory) {}
+        /*public RootConverter(ISelectorFactory factory) : this(Elements.Default, factory) {}
 
-        public RootConverter(INames names, ISelectorFactory factory) : this(names, Types.Default, factory) {}
+        public RootConverter(IElements elements, ISelectorFactory factory) : this(elements, Types.Default, factory) {}*/
 
-        public RootConverter(INames names, ITypes types, ISelectorFactory factory)
-            : this(names, types, new RootSelector(factory)) {}
+        public RootConverter(IElements elements, IElementTypes elementTypes, ISelectorFactory factory)
+            : this(elements, elementTypes, new RootSelector(factory)) {}
 
-        public RootConverter(INames names, ITypes types, IRootSelector selector)
-            : this(names, selector, new Converter(new SelectingReader(types, selector), new SelectingWriter(selector))) {}
+        public RootConverter(IElements elements, IElementTypes elementTypes, IRootSelector selector)
+            : this(
+                elements, selector, new Converter(new SelectingReader(elementTypes, selector), new SelectingWriter(selector))) {}
 
-        public RootConverter(INames names, IRootSelector selector, IConverter converter)
-            : base(converter, new ElementWriter(names.Get, converter))
+        public RootConverter(IElements elements, IRootSelector selector, IConverter converter)
+            : base(converter, new ElementWriter(elements.Get, converter))
         {
             selector.Execute(converter);
         }

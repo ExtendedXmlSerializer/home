@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public interface IWriter
     {
-        void Write(XmlWriter writer, object instance);
+        void Write(IWriteContext context, object instance);
     }
 }

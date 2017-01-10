@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml;
 using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Write
@@ -36,11 +35,11 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _members = members;
         }
 
-        public override void Write(XmlWriter writer, object instance)
+        public override void Write(IWriteContext context, object instance)
         {
             foreach (var member in _members.Get(instance.GetType().GetTypeInfo()))
             {
-                member.Write(writer, instance);
+                member.Write(context, instance);
             }
         }
     }

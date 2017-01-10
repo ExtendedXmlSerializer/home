@@ -22,24 +22,25 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
     public class EnumerableTypings : WeakCacheBase<XElement, EnumerableTyping>, IEnumerableTypings
     {
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
         private readonly IElementTypeLocator _locator;
 
-        public EnumerableTypings(ITypes types, IElementTypeLocator locator)
+        public EnumerableTypings(IElementTypes elementTypes, IElementTypeLocator locator)
         {
-            _types = types;
+            _elementTypes = elementTypes;
             _locator = locator;
         }
 
         protected override EnumerableTyping Create(XElement parameter)
         {
-            var type = _types.Get(parameter);
+            var type = _elementTypes.Get(parameter);
             var elementType = _locator.Locate(type);
             var result = new EnumerableTyping(elementType, type);
             parameter.AddAnnotation(result);

@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface INameProvider : IParameterizedSource<MemberInfo, XName> {}
+    sealed class IdentifierProperty : FrameworkPropertyBase
+    {
+        public static IdentifierProperty Default { get; } = new IdentifierProperty();
+        IdentifierProperty() : base("id") {}
+    }
 }

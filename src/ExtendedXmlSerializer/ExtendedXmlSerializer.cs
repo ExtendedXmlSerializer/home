@@ -33,15 +33,8 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        public const string Type = "type";
-        public const string Ref = "ref";
-        public const string Version = "ver";
-        public const string Id = "id";
-        public const string Key = "Key";
-        public const string Value = "Value";
         public const string Underscore = "_";
-        public const string Item = "Item";
-
+        
         private ISerializationToolsFactory _tools;
 
         public ExtendedXmlSerializer() : this(null) {}
@@ -80,7 +73,7 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-            => new Serializer(new InitializingReader(Converter, type), Converter).Deserialize(xml);
+            => new Serializer(new InitializingReader(LegacyElementTypes.Default, Converter, type), Converter).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

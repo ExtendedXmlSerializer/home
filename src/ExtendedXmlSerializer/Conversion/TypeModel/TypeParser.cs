@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Reflection;
+
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
 
@@ -31,18 +32,18 @@ using Microsoft.Extensions.DependencyModel;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class TypeParser : ConcurrentDictionary<string, Type>, ITypeParser
+    public class TypeParser : ConcurrentDictionary<string, TypeInfo>, ITypeParser
     {
         public static TypeParser Default { get; } = new TypeParser();
         TypeParser() {}
 
-        private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
+        private static readonly Func<string, TypeInfo> GetTypeFromNameDelegate = GetTypeFromName;
 
-        public Type Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
+        public TypeInfo Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
 
-        private static Type GetTypeFromName(string typeName)
+        private static TypeInfo GetTypeFromName(string typeName)
         {
-            Type type = Type.GetType(typeName);
+            var type = Type.GetType(typeName)?.GetTypeInfo();
             if (type != null)
                 return type;
 #if NETSTANDARD1_6 || NETSTANDARD2_0
@@ -55,7 +56,7 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
                 {
                     var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
 
-                    type = assembly.GetType(typeName);
+                    type = assembly.GetType(typeName)?.GetTypeInfo();
                     if (type != null)
                         return type;
                 }
@@ -64,7 +65,7 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
 #else
             foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())
             {
-                type = c.GetType(typeName);
+                type = c.GetType(typeName)?.GetTypeInfo();
                 if (type != null)
                 {
                     return type;

@@ -21,13 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IIdentities : ISpecification<Type>, ISpecification<XName>,
-                                   IParameterizedSource<Type, XName>, IParameterizedSource<XName, Type> {}
+    sealed class Namespaces : INamespaces
+    {
+        public static Namespaces Default { get; } = new Namespaces();
+        Namespaces() {}
+
+        public string Get(TypeInfo parameter) => string.Empty;
+        public string Get(string parameter) => string.Empty;
+    }
 }

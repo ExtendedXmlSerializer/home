@@ -22,9 +22,10 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
@@ -35,20 +36,24 @@ namespace ExtendedXmlSerialization.Conversion.Members
         private readonly IWriter _writer;
         private readonly Func<object, object> _getter;
 
-        protected MemberBase(IReader reader, IWriter writer, XName name, Func<object, object> getter)
+        protected MemberBase(IReader reader, IWriter writer, IElement element, Func<object, object> getter)
+            : this(reader, writer, getter, element.OwnerType, element.Name) {}
+
+        protected MemberBase(IReader reader, IWriter writer, Func<object, object> getter, Typing ownerType, string name)
         {
-            Name = name;
             _reader = reader;
             _writer = writer;
             _getter = getter;
+            OwnerType = ownerType;
+            Name = name;
         }
 
-        public XName Name { get; }
-
-        public void Write(XmlWriter writer, object instance) => _writer.Write(writer, Get(instance));
+        public void Write(IWriteContext context, object instance) => _writer.Write(context, Get(instance));
 
         protected object Get(object instance) => _getter(instance);
 
         public object Read(XElement element) => _reader.Read(element);
+        public string Name { get; }
+        public Typing OwnerType { get; }
     }
 }

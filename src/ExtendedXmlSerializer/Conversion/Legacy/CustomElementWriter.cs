@@ -22,17 +22,18 @@
 // SOFTWARE.
 
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class CustomElementWriter : ElementWriter
     {
         public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
-            : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(configuration))) {}
+            : this(LegacyElements.Default, new TypeEmittingWriter(new CustomElementBodyWriter(configuration))) {}
 
-        public CustomElementWriter(INames names, IWriter writer) : base(names.Get, writer) {}
+        public CustomElementWriter(IElements elements, IWriter writer) : base(elements.Get, writer) {}
 
         sealed class CustomElementBodyWriter : WriterBase
         {
@@ -43,8 +44,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
                 _configuration = configuration;
             }
 
-            public override void Write(XmlWriter writer, object instance)
-                => _configuration.WriteObject(writer, instance);
+            public override void Write(IWriteContext context, object instance)
+                => _configuration.WriteObject(context.Get<XmlWriter>(), instance);
         }
     }
 }

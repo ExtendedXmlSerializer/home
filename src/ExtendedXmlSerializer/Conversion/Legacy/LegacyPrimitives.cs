@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return FloatTypeConverter.Default;
             yield return DoubleTypeConverter.Default;
             yield return DecimalTypeConverter.Default;
-            yield return EnumerationTypeConverter.Default;
+            yield return LegacyEnumerationTypeConverter.Default;
             yield return DateTimeTypeConverter.Default;
             yield return DateTimeOffsetTypeConverter.Default;
             yield return StringTypeConverter.Default;

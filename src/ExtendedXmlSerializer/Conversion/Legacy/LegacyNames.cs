@@ -21,35 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using System.Xml.Linq;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class NameProvider : NameProviderBase
+    static class LegacyNames
     {
-        public static NameProvider Default { get; } = new NameProvider();
-        NameProvider() : this(TypeNameFormatter.Default, string.Empty) {}
-
-        private readonly ITypeFormatter _formatter;
-        private readonly string _defaultNamespace;
-
-        public NameProvider(ITypeFormatter formatter, string defaultNamespace)
-        {
-            _formatter = formatter;
-            _defaultNamespace = defaultNamespace;
-        }
-
-        protected override XName Create(TypeInfo type, MemberInfo member)
-        {
-            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(new Typing(type));
-            var ns = attribute?.Namespace ?? _defaultNamespace;
-            var result = XName.Get(name, ns);
-            return result;
-        }
+        public static XName Item { get; } = XName.Get(ItemProperty.Default.Name, string.Empty);
+        public static XName Key { get; } = XName.Get(KeyProperty.Default.Name, string.Empty);
+        public static XName Value { get; } = XName.Get(ValueProperty.Default.Name, string.Empty);
     }
 }

@@ -21,11 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class EnumerableTypingsStore : WeakCacheBase<ITypes, IEnumerableTypings>
+    public class EnumerableTypingsStore : WeakCacheBase<IElementTypes, IEnumerableTypings>
     {
         public static EnumerableTypingsStore Default { get; } = new EnumerableTypingsStore();
         EnumerableTypingsStore() : this(ElementTypeLocator.Default) {}
@@ -37,6 +38,6 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
             _locator = locator;
         }
 
-        protected override IEnumerableTypings Create(ITypes parameter) => new EnumerableTypings(parameter, _locator);
+        protected override IEnumerableTypings Create(IElementTypes parameter) => new EnumerableTypings(parameter, _locator);
     }
 }

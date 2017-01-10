@@ -21,12 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMember : IConverter
-    {
-        XName Name { get; }
-    }
+    public interface IMember : IConverter, IElement {}
 }

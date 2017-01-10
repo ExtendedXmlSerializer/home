@@ -21,43 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyTypeNames : INames
+    sealed class LegacyEnumerablePropertyProvider : ElementProvider
     {
-        public static LegacyTypeNames Default { get; } = new LegacyTypeNames();
-
-        LegacyTypeNames() : this(
-            new TypeName(
-                new AnySpecification<TypeInfo>(IsArraySpecification.Default,
-                                               new AllSpecification<TypeInfo>(IsGenericTypeSpecification.Default,
-                                                                              IsEnumerableTypeSpecification.Default)),
-                LegacyEnumerableNameProvider.Default),
-            new TypeName(AlwaysSpecification<TypeInfo>.Default, NameProvider.Default)) {}
-
-        private readonly ITypeName[] _names;
-
-        public LegacyTypeNames(params ITypeName[] names)
-        {
-            _names = names;
-        }
-
-        public XName Get(TypeInfo parameter)
-        {
-            foreach (var name in _names)
-            {
-                if (name.IsSatisfiedBy(parameter))
-                {
-                    return name.Get(parameter);
-                }
-            }
-            return null;
-        }
+        public new static LegacyEnumerablePropertyProvider Default { get; } = new LegacyEnumerablePropertyProvider();
+        LegacyEnumerablePropertyProvider() : base(EnumerableTypeFormatter.Default) {}
     }
 }

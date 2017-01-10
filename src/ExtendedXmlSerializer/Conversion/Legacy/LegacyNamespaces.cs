@@ -22,10 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public interface INames : IParameterizedSource<TypeInfo, XName> {}
+    sealed class LegacyNamespaces : INamespaces
+    {
+        public static LegacyNamespaces Default { get; } = new LegacyNamespaces();
+        LegacyNamespaces() {}
+
+        public string Get(TypeInfo parameter) => string.Empty;
+        public string Get(string parameter) => string.Empty;
+    }
 }

@@ -23,25 +23,25 @@
 
 using System;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    sealed class EnumReader : ReaderBase
+    class EnumReader : ReaderBase
     {
         public static EnumReader Default { get; } = new EnumReader();
-        EnumReader() : this(Types.Default) {}
+        EnumReader() : this(ElementTypes.Default) {}
 
-        private readonly ITypes _types;
+        private readonly IElementTypes _elementTypes;
 
-        public EnumReader(ITypes types)
+        public EnumReader(IElementTypes elementTypes)
         {
-            _types = types;
+            _elementTypes = elementTypes;
         }
 
         public override object Read(XElement element)
         {
-            var type = _types.Get(element);
+            var type = _elementTypes.Get(element);
             if (type != null)
             {
                 return Enum.Parse(type, element.Value);

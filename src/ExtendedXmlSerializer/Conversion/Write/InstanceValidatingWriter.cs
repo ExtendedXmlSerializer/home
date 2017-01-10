@@ -21,19 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class InstanceValidatingWriter : DecoratedWriter
     {
         public InstanceValidatingWriter(IWriter writer) : base(writer) {}
 
-        public override void Write(XmlWriter writer, object instance)
+        public override void Write(IWriteContext context, object instance)
         {
             if (instance != null)
             {
-                base.Write(writer, instance);
+                base.Write(context, instance);
             }
         }
     }

@@ -21,20 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public abstract class WriterBase : IWriter
     {
-        public abstract void Write(XmlWriter writer, object instance);
+        public abstract void Write(IWriteContext context, object instance);
     }
 
     public abstract class WriterBase<T> : IWriter
     {
-        protected abstract void Write(XmlWriter writer, T instance);
+        protected abstract void Write(IWriteContext context, T instance);
 
-        void IWriter.Write(XmlWriter writer, object instance)
-            => Write(writer, (T) instance);
+        void IWriter.Write(IWriteContext context, object instance)
+            => Write(context, (T) instance);
     }
 }

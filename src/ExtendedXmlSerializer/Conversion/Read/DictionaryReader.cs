@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -30,10 +31,10 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         private readonly IActivators _activators;
 
-        public DictionaryReader(ITypes types, IReader reader) : this(types, reader, Activators.Default) {}
+        public DictionaryReader(IElementTypes elementTypes, IReader reader) : this(elementTypes, reader, Activators.Default) {}
 
-        public DictionaryReader(ITypes types, IReader reader, IActivators activators)
-            : base(new DictionaryEntryReader(types, reader), EnumerableTypingsStore.Default.Get(types))
+        public DictionaryReader(IElementTypes elementTypes, IReader reader, IActivators activators)
+            : base(new DictionaryEntryReader(elementTypes, reader), EnumerableTypingsStore.Default.Get(elementTypes))
         {
             _activators = activators;
         }

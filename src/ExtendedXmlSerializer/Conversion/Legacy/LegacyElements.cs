@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public interface ITypes : IParameterizedSource<XElement, Typing>
+    sealed class LegacyElements : Elements
     {
-        void Initialize(XElement element, Typing typing);
+        public new static LegacyElements Default { get; } = new LegacyElements();
+        LegacyElements() : base(new ElementCandidates(Defaults.Elements).ToArray()) {}
     }
 }

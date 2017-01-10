@@ -22,9 +22,10 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface ITypesSource : IParameterizedSource<Type, ITypes> {}
+    public interface ITypesSource : IParameterizedSource<Type, IElementTypes> {}
 }

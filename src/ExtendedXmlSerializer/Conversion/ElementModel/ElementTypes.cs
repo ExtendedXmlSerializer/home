@@ -23,26 +23,45 @@
 
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Legacy;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class AllNames : WeakCacheBase<TypeInfo, XName>, INames
+    public class ElementTypes : IElementTypes
     {
-        public static AllNames Default { get; } = new AllNames();
-        AllNames() : this(Identities.Default, LegacyTypeNames.Default) {}
+        public static ElementTypes Default { get; } = new ElementTypes();
+        ElementTypes() : this(NamedTypes.Default, TypeParser.Default) {}
 
-        private readonly IIdentities _identities;
-        private readonly INames _types;
+        private readonly INamedTypes _types;
+        private readonly ITypeParser _parser;
 
-        public AllNames(IIdentities identities, INames types)
+        public ElementTypes(INamedTypes types, ITypeParser parser)
         {
-            _identities = identities;
+            _parser = parser;
             _types = types;
         }
 
-        protected override XName Create(TypeInfo parameter)
-            => _identities.Get(parameter.AsType()) ?? _types.Get(parameter);
+        public Typing Get(XElement parameter)
+        {
+            var stored = parameter.Annotation<Typing>();
+            if (stored == null)
+            {
+                var found = _types.Get(parameter.Name) ?? FromAttribute(parameter);
+                if (found != null)
+                {
+                    var result = new Typing(found);
+                    parameter.AddAnnotation(result);
+                    return result;
+                }
+            }
+            return stored;
+        }
+
+        private TypeInfo FromAttribute(XElement parameter)
+        {
+            var value = parameter.Attribute(TypeProperty.Default.Name)?.Value;
+            var result = value != null ? _parser.Get(value) : null;
+            return result;
+        }
     }
 }
