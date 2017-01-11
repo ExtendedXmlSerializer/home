@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
             var pair = _locator.Get(context.OwnerType);
-            foreach (var child in context.Children(ItemProperty.Default))
+            foreach (var child in context.ChildrenOf(ItemProperty.Default))
             {
                 var key = Read(child, KeyProperty.Default, pair.KeyType);
                 var value = Read(child, ValueProperty.Default, pair.ValueType);

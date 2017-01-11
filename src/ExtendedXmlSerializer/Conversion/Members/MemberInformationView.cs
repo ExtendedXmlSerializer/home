@@ -21,9 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberFactory : IParameterizedSource<MemberInformation, IMember> {}
+    class MemberInformationView : IMemberInformationView
+    {
+        private readonly IImmutableList<MemberInformation> _items;
+        private readonly IDictionary<string, MemberInformation> _lookup;
+
+        public MemberInformationView(IImmutableList<MemberInformation> items)
+            : this(items, items.ToDictionary(x => x.Element.Name)) {}
+
+        public MemberInformationView(IImmutableList<MemberInformation> items,
+                                     IDictionary<string, MemberInformation> lookup)
+        {
+            _items = items;
+            _lookup = lookup;
+        }
+
+        public IEnumerator<MemberInformation> GetEnumerator() => _items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public MemberInformation? Get(string parameter) => _lookup.TryGet(parameter);
+    }
 }

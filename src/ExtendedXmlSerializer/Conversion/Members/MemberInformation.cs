@@ -21,9 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberFactory : IParameterizedSource<MemberInformation, IMember> {}
+    public struct MemberInformation
+    {
+        public MemberInformation(IElement element, MemberInfo metadata, Typing memberType, bool assignable)
+        {
+            Element = element;
+            Metadata = metadata;
+            MemberType = memberType;
+            Assignable = assignable;
+        }
+
+        public IElement Element { get; }
+        public MemberInfo Metadata { get; }
+        public Typing MemberType { get; }
+        public bool Assignable { get; }
+    }
 }

@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         protected virtual void OnRead(IReadContext context, object result)
         {
             var members = _members.Get(context.OwnerType);
-            foreach (var child in context.Members(members))
+            foreach (var child in context)
             {
                 var member = members.Get(child.Name);
                 if (member != null)

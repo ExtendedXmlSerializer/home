@@ -24,20 +24,17 @@
 using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext : IServiceRepository, IElement
+    public interface IReadContext : IEnumerable<IReadContext>, IServiceRepository, IElement
     {
         IReadContext Member(IElement element, Type hint = null);
 
         IEnumerable<IReadContext> Items();
 
-        IEnumerable<IReadContext> Members(IMembers members);
-
-        IEnumerable<IReadContext> Children(IElement element);
+        IEnumerable<IReadContext> ChildrenOf(IElement element);
 
         string Read();
     }

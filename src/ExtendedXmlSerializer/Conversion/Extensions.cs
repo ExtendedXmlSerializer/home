@@ -37,6 +37,9 @@ namespace ExtendedXmlSerialization.Conversion
             return item;
         }
 
+        public static object AnnotationAll(this XElement @this, Type type)
+            => @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
+
         public static XElement Initialized(this IElementTypes @this, XElement element, Typing typing)
         {
             if (typing != null && @this.Get(element) == null)

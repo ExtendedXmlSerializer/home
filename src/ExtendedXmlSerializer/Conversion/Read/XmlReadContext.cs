@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
@@ -32,37 +33,55 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class XmlReadContext : IReadContext
     {
+        private readonly IMemberInformationProvider _information;
+        private readonly IMemberInformationView _view;
         private readonly IElementTypeLocator _locator;
         private readonly IElementTypes _types;
         private readonly INamespaces _namespaces;
         private readonly XElement _element;
 
         public XmlReadContext(XElement element)
-            : this(ElementTypeLocator.Default, ElementTypes.Default, Namespaces.Default, element) {}
+            : this(
+                MemberInformationProvider.Default, ElementTypeLocator.Default, ElementTypes.Default, Namespaces.Default,
+                element,
+                MemberInformationProvider.Default, ElementTypeLocator.Default, ElementTypes.Default, Namespaces.Default) {}
 
-        public XmlReadContext(IElementTypeLocator locator, IElementTypes types, INamespaces namespaces, XElement element)
-            : this(locator, types, namespaces, types.Get(element), element.Name.LocalName, element, element) {}
-
-        XmlReadContext(IElementTypeLocator locator, IElementTypes types, INamespaces namespaces, Typing ownerType,
-                       string name, XElement element, params object[] services)
+        public XmlReadContext(IMemberInformationProvider information, IElementTypeLocator locator, IElementTypes types,
+                              INamespaces namespaces, XElement element, params object[] services)
+            : this(information, locator, types, namespaces, element)
         {
-            _locator = locator;
-            _types = types;
-            _namespaces = namespaces;
-            OwnerType = ownerType;
-            Name = name;
-            _element = element;
-
             for (int i = 0; i < services.Length; i++)
             {
                 Add(services[i]);
             }
         }
 
+        private XmlReadContext(IMemberInformationProvider information, IElementTypeLocator locator, IElementTypes types,
+                               INamespaces namespaces, XElement element)
+            : this(information, locator, types, namespaces, types.Get(element), element) {}
+
+        private XmlReadContext(IMemberInformationProvider information, IElementTypeLocator locator, IElementTypes types,
+                               INamespaces namespaces, Typing ownerType, XElement element)
+            : this(information, information.Get(ownerType), locator, types, namespaces, ownerType, element) {}
+
+        XmlReadContext(IMemberInformationProvider information, IMemberInformationView view, IElementTypeLocator locator,
+                       IElementTypes types, INamespaces namespaces, Typing ownerType, XElement element)
+        {
+            _information = information;
+            _view = view;
+            _locator = locator;
+            _types = types;
+            _namespaces = namespaces;
+            OwnerType = ownerType;
+            Name = element.Name.LocalName;
+            _element = element;
+            Add(element);
+        }
+
         public Typing OwnerType { get; }
         public string Name { get; }
 
-        public object GetService(Type serviceType) => _element.Annotation(serviceType);
+        public object GetService(Type serviceType) => _element.AnnotationAll(serviceType);
 
         public void Add(object service) => _element.AddAnnotation(service);
 
@@ -71,23 +90,9 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public IReadContext Member(IElement element, Type hint = null)
         {
             var name = ElementName(element);
-            var result = new XmlReadContext(_locator, _types, _namespaces,
-                                            _types.Initialized(_element.Element(name), hint));
+            var native = _element.Element(name);
+            var result = Create(native, hint);
             return result;
-        }
-
-        public IEnumerable<IReadContext> Members(IMembers members)
-        {
-            foreach (var child in _element.Elements())
-            {
-                var member = members.Get(child.Name.LocalName);
-                if (member != null)
-                {
-                    yield return
-                        new XmlReadContext(_locator, _types, _namespaces,
-                                           _types.Initialized(child, member.MemberType));
-                }
-            }
         }
 
         public IEnumerable<IReadContext> Items()
@@ -95,19 +100,36 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var elementType = _locator.Get(OwnerType);
             foreach (var child in _element.Elements())
             {
-                yield return new XmlReadContext(_locator, _types, _namespaces, _types.Initialized(child, elementType));
+                yield return Create(child, elementType);
             }
         }
 
-        public IEnumerable<IReadContext> Children(IElement element)
+        private XmlReadContext Create(XElement child, Type elementType = null) =>
+            new XmlReadContext(_information, _locator, _types, _namespaces, _types.Initialized(child, elementType));
+
+        public IEnumerable<IReadContext> ChildrenOf(IElement element)
         {
             var name = ElementName(element);
             foreach (var child in _element.Elements(name))
             {
-                yield return new XmlReadContext(_locator, _types, _namespaces, child);
+                yield return Create(child, element.OwnerType);
             }
         }
 
         private XName ElementName(IElement element) => XName.Get(element.Name, _namespaces.Get(element.OwnerType));
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public IEnumerator<IReadContext> GetEnumerator()
+        {
+            foreach (var child in _element.Elements())
+            {
+                var memberType = _view.Get(child.Name.LocalName)?.MemberType;
+                if (memberType != null)
+                {
+                    yield return Create(child, memberType);
+                }
+            }
+        }
     }
 }

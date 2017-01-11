@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    sealed class Members : IMembers
+    public sealed class Members : IMembers
     {
         private readonly IImmutableList<IMember> _items;
         private readonly IDictionary<string, IMember> _lookup;

@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberFactory : IParameterizedSource<MemberInformation, IMember> {}
+    public interface IMemberInformationView : IEnumerable<MemberInformation>,
+                                              IParameterizedSource<string, MemberInformation?> {}
 }

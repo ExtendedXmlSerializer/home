@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
@@ -34,7 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly IEnumeratingReader _reader;
         private readonly IConverter _converter;
-        private readonly IElementProvider _element;
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
         private readonly IAddDelegates _add;
@@ -43,40 +40,41 @@ namespace ExtendedXmlSerialization.Conversion.Members
             : this(converter, reader, GetterFactory.Default) {}
 
         public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter)
-            : this(converter, reader, MemberElementProvider.Default, getter, SetterFactory.Default, AddDelegates.Default
-            ) {}
+            : this(converter, reader, getter, SetterFactory.Default, AddDelegates.Default) {}
 
-        public MemberFactory(IConverter converter, IEnumeratingReader reader,
-                             IElementProvider element, IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
+        public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter,
+                             ISetterFactory setter, IAddDelegates add)
         {
             _converter = converter;
             _reader = reader;
-            _element = element;
             _getter = getter;
             _setter = setter;
             _add = add;
         }
 
-        public IMember Create(MemberInfo metadata, Typing memberType, bool assignable)
+        public IMember Get(MemberInformation parameter)
         {
-            var element = _element.Get(metadata);
-            var getter = _getter.Get(metadata);
+            var getter = _getter.Get(parameter.Metadata);
 
-            if (assignable)
+            if (parameter.Assignable)
             {
-                var type = new TypeEmittingWriter(new EmitTypeSpecification(memberType), _converter);
-                var writer = new InstanceValidatingWriter(new ElementWriter(element, type));
-                var result = new AssignableMember(_converter, writer, memberType, element, getter, _setter.Get(metadata));
+                var type = new TypeEmittingWriter(new EmitTypeSpecification(parameter.MemberType), _converter);
+                var writer = new InstanceValidatingWriter(new ElementWriter(parameter.Element, type));
+                var result = new AssignableMember(_converter, writer, parameter.MemberType, parameter.Element, getter,
+                                                  _setter.Get(parameter.Metadata));
                 return result;
             }
 
-            var add = _add.Get(memberType);
+            var add = _add.Get(parameter.MemberType);
             if (add != null)
             {
-                var writer = new ElementWriter(element, _converter);
-                var result = new ReadOnlyCollectionMember(_reader, writer, memberType, element, getter, add);
+                var writer = new ElementWriter(parameter.Element, _converter);
+                var result = new ReadOnlyCollectionMember(_reader, writer, parameter.MemberType, parameter.Element,
+                                                          getter, add);
                 return result;
             }
+
+            // TODO: Warning? Throw?
             return null;
         }
     }

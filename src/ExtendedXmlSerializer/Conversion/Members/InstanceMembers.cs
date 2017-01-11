@@ -21,88 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
     {
-        private readonly IMemberFactory _factory;
+        private readonly Func<MemberInformation, IMember> _factory;
+        private readonly IMemberInformationProvider _information;
 
-        public InstanceMembers(IMemberFactory factory)
+        public InstanceMembers(IMemberFactory factory) : this(factory.Get, MemberInformationProvider.Default) {}
+
+        public InstanceMembers(Func<MemberInformation, IMember> factory, IMemberInformationProvider information)
         {
             _factory = factory;
+            _information = information;
         }
 
         protected override IMembers Create(TypeInfo parameter) =>
-            new Members(CreateMembers(new Typing(parameter)).OrderBy(x => x.Sort).Select(x => x.Member));
-
-        IEnumerable<MemberSort> CreateMembers(Typing declaringType)
-        {
-            foreach (var property in declaringType.Info.GetProperties())
-            {
-                var getMethod = property.GetGetMethod(true);
-                if (property.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
-                    !(!property.GetSetMethod(true)?.IsPublic ?? false) &&
-                    property.GetIndexParameters().Length <= 0 &&
-                    !property.IsDefined(typeof(XmlIgnoreAttribute), false))
-                {
-                    var type = new Typing(property.PropertyType.AccountForNullable());
-                    var member = Create(property, type, property.CanWrite);
-                    if (member != null)
-                    {
-                        yield return member.Value;
-                    }
-                }
-            }
-
-            foreach (var field in declaringType.Info.GetFields())
-            {
-                var readOnly = field.IsInitOnly;
-                if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
-                    !field.IsDefined(typeof(XmlIgnoreAttribute), false))
-                {
-                    var type = new Typing(field.FieldType.AccountForNullable());
-                    var member = Create(field, type, !readOnly);
-                    if (member != null)
-                    {
-                        yield return member.Value;
-                    }
-                }
-            }
-        }
-
-        private MemberSort? Create(MemberInfo metadata, Typing memberType, bool assignable)
-        {
-            var member = _factory.Create(metadata, memberType, assignable);
-            if (member != null)
-            {
-                var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
-                                    metadata.MetadataToken);
-
-                var result = new MemberSort(member, sort);
-                return result;
-            }
-
-            // TODO: Warning? Throw?
-            return null;
-        }
-
-        struct MemberSort
-        {
-            public MemberSort(IMember member, Sort sort)
-            {
-                Member = member;
-                Sort = sort;
-            }
-
-            public IMember Member { get; }
-            public Sort Sort { get; }
-        }
+            new Members(_information.Get(parameter).Select(_factory).Where(x => x != null));
     }
 }

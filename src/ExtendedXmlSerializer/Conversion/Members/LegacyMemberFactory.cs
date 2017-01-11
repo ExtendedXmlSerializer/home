@@ -21,9 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     class LegacyMemberFactory : IMemberFactory
@@ -37,16 +34,16 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _factory = factory;
         }
 
-        public IMember Create(MemberInfo metadata, Typing memberType, bool assignable)
+        public IMember Get(MemberInformation parameter)
         {
-            var result = _factory.Create(metadata, memberType, assignable);
+            var result = _factory.Get(parameter);
             var assignableMember = result as IAssignableMember;
             if (assignableMember != null)
             {
-                var configuration = _tools.GetConfiguration(metadata.DeclaringType);
+                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
                 if (configuration != null)
                 {
-                    if (configuration.CheckPropertyEncryption(metadata.Name))
+                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
                     {
                         var algorithm = _tools.EncryptionAlgorithm;
                         if (algorithm != null)

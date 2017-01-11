@@ -24,6 +24,7 @@
 using System;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Legacy;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -32,6 +33,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public LegacyXmlReadContext(XElement element, Type type)
             : base(
+                MemberInformationProvider.Default,
                 ElementTypeLocator.Default,
                 LegacyElementTypes.Default, LegacyNamespaces.Default,
                 LegacyElementTypes.Default.Initialized(element, type)) {}
