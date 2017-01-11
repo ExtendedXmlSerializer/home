@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 
@@ -28,8 +29,13 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     static class Defaults
     {
-        public static IImmutableList<IElement> Elements { get; } = new LegacyKnownElements().ToImmutableArray();
+        public static IEnumerable<IElement> Elements { get; } = new LegacyKnownElements().ToImmutableArray();
 
-        public static ISerializationToolsFactory Tools { get; } = new SimpleSerializationToolsFactory();
+        public static IConverter Root { get; } = new RootConverter(LegacyElements.Default,
+                                                                   new AlteredSelectorFactory(
+                                                                       new SelectorFactory(LegacyPrimitives.Default,
+                                                                                           AdditionalTypeConverters.Default),
+                                                                       NullableSelectorAlteration.Default));
+        
     }
 }

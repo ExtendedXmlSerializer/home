@@ -32,9 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyRootConverter : DecoratedConverter
     {
-        public static LegacyRootConverter Default { get; } = new LegacyRootConverter();
-        LegacyRootConverter() : this(Defaults.Tools) {}
-
         private readonly ISerializationToolsFactory _tools;
 
         public LegacyRootConverter(ISerializationToolsFactory tools)

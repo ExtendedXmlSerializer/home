@@ -24,6 +24,7 @@
 using System;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Legacy;
+using Defaults = ExtendedXmlSerialization.Conversion.Legacy.Defaults;
 
 namespace ExtendedXmlSerialization
 {
@@ -50,11 +51,11 @@ namespace ExtendedXmlSerialization
             set
             {
                 _tools = value;
-                Converter = _tools != null ? new LegacyRootConverter(_tools) : LegacyRootConverter.Default;
+                Converter = _tools != null ? new LegacyRootConverter(_tools) : Defaults.Root;
             }
         }
 
-        private IConverter Converter { get; set; } = LegacyRootConverter.Default;
+        private IConverter Converter { get; set; } = Defaults.Root;
 
         /// <summary>
         /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
