@@ -22,8 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMember : IConverter, IElement {}
+    public interface IMember : IConverter, IElement
+    {
+        Typing MemberType { get; }
+    }
 }

@@ -21,15 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Legacy;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.Read
 {
-    static class LegacyNames
+    sealed class LegacyXmlReadContext : XmlReadContext
     {
-        public static XName Item { get; } = XName.Get(ItemProperty.Default.Name, string.Empty);
-        public static XName Key { get; } = XName.Get(KeyProperty.Default.Name, string.Empty);
-        public static XName Value { get; } = XName.Get(ValueProperty.Default.Name, string.Empty);
+        public LegacyXmlReadContext(XElement element, Type type)
+            : base(
+                ElementTypeLocator.Default,
+                LegacyElementTypes.Default, LegacyNamespaces.Default,
+                LegacyElementTypes.Default.Initialized(element, type)) {}
     }
 }

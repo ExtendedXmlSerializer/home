@@ -21,30 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class EnumerableTypings : WeakCacheBase<XElement, EnumerableTyping>, IEnumerableTypings
+    sealed class ConvertMembers : WeakCacheBase<IConverter, IInstanceMembers>
     {
-        private readonly IElementTypes _elementTypes;
-        private readonly IElementTypeLocator _locator;
+        private readonly ISerializationToolsFactory _tools;
 
-        public EnumerableTypings(IElementTypes elementTypes, IElementTypeLocator locator)
+        public ConvertMembers(ISerializationToolsFactory tools)
         {
-            _elementTypes = elementTypes;
-            _locator = locator;
+            _tools = tools;
         }
 
-        protected override EnumerableTyping Create(XElement parameter)
-        {
-            var type = _elementTypes.Get(parameter);
-            var elementType = _locator.Locate(type);
-            var result = new EnumerableTyping(elementType, type);
-            parameter.AddAnnotation(result);
-            return result;
-        }
+        protected override IInstanceMembers Create(IConverter parameter)
+            => new InstanceMembers(new LegacyMemberFactory(_tools,
+                                                           new MemberFactory(parameter,
+                                                                             new EnumeratingReader(parameter),
+                                                                             new LegacyGetterFactory(_tools))));
     }
 }

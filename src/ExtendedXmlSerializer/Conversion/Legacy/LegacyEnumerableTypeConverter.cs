@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
@@ -30,10 +29,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyEnumerableTypeConverter : TypeConverter
     {
-        public LegacyEnumerableTypeConverter(IElementTypes elementTypes, IConverter converter)
+        public LegacyEnumerableTypeConverter(IConverter converter)
             : base(
                 IsEnumerableTypeSpecification.Default,
-                new ListReader(elementTypes, converter),
+                new ListReader(converter),
                 new EnumerableBodyWriter(converter)
             ) {}
     }

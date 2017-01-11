@@ -30,18 +30,14 @@ namespace ExtendedXmlSerialization.Conversion
     public class RootConverter : Converter
     {
         public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(Elements.Default, ElementTypes.Default, SelectorFactory.Default) {}
+        RootConverter() : this(Elements.Default, SelectorFactory.Default) {}
 
-        /*public RootConverter(ISelectorFactory factory) : this(Elements.Default, factory) {}
+        public RootConverter(IElements elements, ISelectorFactory factory)
+            : this(elements, new RootSelector(factory)) {}
 
-        public RootConverter(IElements elements, ISelectorFactory factory) : this(elements, Types.Default, factory) {}*/
-
-        public RootConverter(IElements elements, IElementTypes elementTypes, ISelectorFactory factory)
-            : this(elements, elementTypes, new RootSelector(factory)) {}
-
-        public RootConverter(IElements elements, IElementTypes elementTypes, IRootSelector selector)
+        public RootConverter(IElements elements, IRootSelector selector)
             : this(
-                elements, selector, new Converter(new SelectingReader(elementTypes, selector), new SelectingWriter(selector))) {}
+                elements, selector, new Converter(new SelectingReader(selector), new SelectingWriter(selector))) {}
 
         public RootConverter(IElements elements, IRootSelector selector, IConverter converter)
             : base(converter, new ElementWriter(elements.Get, converter))

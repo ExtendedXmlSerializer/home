@@ -24,7 +24,6 @@
 using System;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Legacy;
-using ExtendedXmlSerialization.Conversion.Read;
 
 namespace ExtendedXmlSerialization
 {
@@ -33,8 +32,6 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        public const string Underscore = "_";
-        
         private ISerializationToolsFactory _tools;
 
         public ExtendedXmlSerializer() : this(null) {}
@@ -73,7 +70,7 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-            => new Serializer(new InitializingReader(LegacyElementTypes.Default, Converter, type), Converter).Deserialize(xml);
+            => new LegacySerializer(Converter, type).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

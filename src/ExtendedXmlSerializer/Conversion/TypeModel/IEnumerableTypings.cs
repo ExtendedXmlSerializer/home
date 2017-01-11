@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface IEnumerableTypings : IParameterizedSource<XElement, EnumerableTyping> {}
+    public interface IEnumerableTypings : IParameterizedSource<IReadContext, EnumerableTyping> {}
 }

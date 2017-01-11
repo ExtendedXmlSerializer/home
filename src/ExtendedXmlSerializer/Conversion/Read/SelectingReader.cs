@@ -21,27 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     class SelectingReader : IReader
     {
-        private readonly IElementTypes _elementTypes;
         private readonly ISelector _selector;
 
-        public SelectingReader(IElementTypes elementTypes, ISelector selector)
+        public SelectingReader(ISelector selector)
         {
-            _elementTypes = elementTypes;
             _selector = selector;
         }
 
-        public object Read(XElement element)
+        public object Read(IReadContext context)
         {
-            var typed = _elementTypes.Get(element);
-            var converter = _selector.Get(typed);
-            var result = converter.Read(element);
+            var converter = _selector.Get(context.OwnerType);
+            var result = converter.Read(context);
             return result;
         }
     }

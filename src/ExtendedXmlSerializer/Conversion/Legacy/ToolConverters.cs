@@ -21,25 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class InitializingReader : DecoratedReader
+    sealed class ToolConverters :
+        WeakCache<ISerializationToolsFactory, IParameterizedSource<IConverter, IInstanceMembers>>
     {
-        private readonly IElementTypes _initializer;
-        private readonly Typing _typing;
-
-        // public InitializingReader(IReader reader, Typing typing) : this(Types.Default, reader, typing) {}
-
-        public InitializingReader(IElementTypes initializer, IReader reader, Typing typing) : base(reader)
-        {
-            _initializer = initializer;
-            _typing = typing;
-        }
-
-        public override object Read(XElement element) => base.Read(_initializer.Initialized(element, _typing));
+        public static ToolConverters Default { get; } = new ToolConverters();
+        ToolConverters() : base(x => new ConvertMembers(x)) {}
     }
 }

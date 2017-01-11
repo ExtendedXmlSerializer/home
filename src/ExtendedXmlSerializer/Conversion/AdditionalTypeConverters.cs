@@ -23,7 +23,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
@@ -36,53 +35,42 @@ namespace ExtendedXmlSerialization.Conversion
     class AdditionalTypeConverters : ITypeConverters
     {
         public static AdditionalTypeConverters Default { get; } = new AdditionalTypeConverters();
-        AdditionalTypeConverters() : this(ElementTypes.Default) {}
-
-        private readonly IElementTypes _elementTypes;
-
-        public AdditionalTypeConverters(IElementTypes elementTypes)
-        {
-            _elementTypes = elementTypes;
-        }
+        AdditionalTypeConverters() {}
 
         public IEnumerable<ITypeConverter> Get(IConverter parameter)
         {
-            yield return new DictionaryTypeConverter(_elementTypes, parameter);
-            yield return new ArrayTypeConverter(_elementTypes, parameter);
-            yield return new EnumerableTypeConverter(_elementTypes, parameter);
-            yield return new InstanceTypeConverter(_elementTypes, parameter);
+            yield return new DictionaryTypeConverter(parameter);
+            yield return new ArrayTypeConverter(parameter);
+            yield return new EnumerableTypeConverter(parameter);
+            yield return new InstanceTypeConverter(parameter);
         }
 
         class DictionaryTypeConverter : TypeConverter
         {
-            public DictionaryTypeConverter(IElementTypes elementTypes, IConverter converter)
+            public DictionaryTypeConverter(IConverter converter)
                 : base(IsAssignableSpecification<IDictionary>.Default,
-                       new DictionaryReader(elementTypes, converter), new DictionaryBodyWriter(converter)) {}
+                       new DictionaryReader(converter), new DictionaryBodyWriter(converter)) {}
         }
 
         class EnumerableTypeConverter : TypeConverter
         {
-            public EnumerableTypeConverter(IElementTypes elementTypes, IConverter converter)
+            public EnumerableTypeConverter(IConverter converter)
                 : base(
                     IsEnumerableTypeSpecification.Default,
-                    new ListReader(elementTypes, converter),
+                    new ListReader(converter),
                     new EnumerableBodyWriter(converter)
                 ) {}
         }
 
         class InstanceTypeConverter : TypeConverter
         {
-            public InstanceTypeConverter(IElementTypes elementTypes, IConverter converter)
-                : this(
-                    elementTypes,
-                    new InstanceMembers(new MemberFactory(elementTypes, converter,
-                                                          new EnumeratingReader(elementTypes, converter))),
-                    Activators.Default) {}
+            public InstanceTypeConverter(IConverter converter)
+                : this(new InstanceMembers(new MemberFactory(converter, new EnumeratingReader(converter))),
+                       Activators.Default) {}
 
-            public InstanceTypeConverter(IElementTypes elementTypes, IInstanceMembers members, IActivators activators)
-                : base(
-                    IsActivatedTypeSpecification.Default, new InstanceBodyReader(members, elementTypes, activators),
-                    new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
+            public InstanceTypeConverter(IInstanceMembers members, IActivators activators)
+                : base(IsActivatedTypeSpecification.Default, new InstanceBodyReader(members, activators),
+                       new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
         }
     }
 }

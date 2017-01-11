@@ -25,6 +25,7 @@ using System;
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
@@ -34,9 +35,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly Action<object, object> _add;
 
-        public ReadOnlyCollectionMember(IReader reader, IWriter writer, IElement element,
+        public ReadOnlyCollectionMember(IReader reader, IWriter writer, Typing memberType, IElement element,
                                         Func<object, object> getter, Action<object, object> add)
-            : base(reader, writer, element, getter)
+            : base(reader, writer, memberType, element, getter)
         {
             _add = add;
         }

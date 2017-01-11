@@ -33,26 +33,22 @@ namespace ExtendedXmlSerialization.Conversion.Members
     public class MemberFactory : IMemberFactory
     {
         private readonly IEnumeratingReader _reader;
-        private readonly IElementTypes _elementTypes;
         private readonly IConverter _converter;
         private readonly IElementProvider _element;
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
         private readonly IAddDelegates _add;
 
-        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader)
-            : this(elementTypes, converter, reader, GetterFactory.Default) {}
+        public MemberFactory(IConverter converter, IEnumeratingReader reader)
+            : this(converter, reader, GetterFactory.Default) {}
 
-        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader,
-                             IGetterFactory getter)
-            : this(elementTypes, converter, reader, MemberElementProvider.Default, getter,
-                   SetterFactory.Default, AddDelegates.Default) {}
+        public MemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter)
+            : this(converter, reader, MemberElementProvider.Default, getter, SetterFactory.Default, AddDelegates.Default
+            ) {}
 
-        public MemberFactory(IElementTypes elementTypes, IConverter converter, IEnumeratingReader reader,
-                             IElementProvider element,
-                             IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
+        public MemberFactory(IConverter converter, IEnumeratingReader reader,
+                             IElementProvider element, IGetterFactory getter, ISetterFactory setter, IAddDelegates add)
         {
-            _elementTypes = elementTypes;
             _converter = converter;
             _reader = reader;
             _element = element;
@@ -70,8 +66,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             {
                 var type = new TypeEmittingWriter(new EmitTypeSpecification(memberType), _converter);
                 var writer = new InstanceValidatingWriter(new ElementWriter(element, type));
-                var result = new AssignableMember(new InitializingReader(_elementTypes, _converter, memberType),
-                                                  writer, element, getter, _setter.Get(metadata));
+                var result = new AssignableMember(_converter, writer, memberType, element, getter, _setter.Get(metadata));
                 return result;
             }
 
@@ -79,8 +74,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             if (add != null)
             {
                 var writer = new ElementWriter(element, _converter);
-                var result = new ReadOnlyCollectionMember(new InitializingReader(_elementTypes, _reader, memberType),
-                                                          writer, element, getter, add);
+                var result = new ReadOnlyCollectionMember(_reader, writer, memberType, element, getter, add);
                 return result;
             }
             return null;

@@ -27,7 +27,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+
 
 namespace ExtendedXmlSerialization
 {
@@ -42,32 +42,34 @@ namespace ExtendedXmlSerialization
     {
         public static Serializer Default { get; } = new Serializer();
         Serializer() : this(RootConverter.Default) {}
+        private readonly IConverter _converter;
 
-        private readonly IReader _reader;
-        private readonly IWriter _writer;
-
-        public Serializer(IConverter converter) : this(converter, converter) {}
-
-        public Serializer(IReader reader, IWriter writer)
+        public Serializer(IConverter converter)
         {
-            _reader = reader;
-            _writer = writer;
+            _converter = converter;
         }
 
         public void Serialize(Stream stream, object instance)
         {
             using (var writer = XmlWriter.Create(stream))
             {
-                _writer.Write(new LegacyXmlWriteContext(writer), instance);
+                _converter.Write(new LegacyXmlWriteContext(writer), instance);
             }
         }
 
         public object Deserialize(Stream stream)
         {
+            var context = CreateContext(stream);
+            var result = _converter.Read(context);
+            return result;
+        }
+
+        protected virtual IReadContext CreateContext(Stream stream)
+        {
             var text = new StreamReader(stream).ReadToEnd();
             var document = XDocument.Parse(text);
-            var result = _reader.Read(document.Root);
-            return result;
+            var context = new XmlReadContext(document.Root);
+            return context;
         }
     }
 }

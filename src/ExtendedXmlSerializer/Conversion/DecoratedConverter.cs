@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -37,6 +37,6 @@ namespace ExtendedXmlSerialization.Conversion
 
         public override void Write(IWriteContext context, object instance) => _converter.Write(context, instance);
 
-        public override object Read(XElement element) => _converter.Read(element);
+        public override object Read(IReadContext context) => _converter.Read(context);
     }
 }

@@ -24,6 +24,7 @@
 using System;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
@@ -32,9 +33,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
     {
         private readonly Action<object, object> _setter;
 
-        public AssignableMember(IReader reader, IWriter writer, IElement element,
+        public AssignableMember(IReader reader, IWriter writer, Typing memberType, IElement element,
                                 Func<object, object> getter, Action<object, object> setter)
-            : base(reader, writer, element, getter)
+            : base(reader, writer, memberType, element, getter)
         {
             _setter = setter;
         }

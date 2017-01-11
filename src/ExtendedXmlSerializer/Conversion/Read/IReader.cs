@@ -21,17 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public interface IReader
     {
-        object Read(XElement element);
+        object Read(IReadContext context);
     }
 
     public interface IReader<out T> : IReader
     {
-        new T Read(XElement element);
+        new T Read(IReadContext context);
     }
 }

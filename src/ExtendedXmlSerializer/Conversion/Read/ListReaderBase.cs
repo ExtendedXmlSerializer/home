@@ -22,37 +22,27 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public abstract class ListReaderBase : ReaderBase
     {
         private readonly IEnumeratingReader _reader;
-        private readonly IEnumerableTypings _typings;
 
-        protected ListReaderBase(IElementTypes elementTypes, IReader reader)
-            : this(elementTypes, reader, EnumerableTypingsStore.Default.Get(elementTypes)) {}
+        protected ListReaderBase(IReader reader) : this(new EnumeratingReader(reader)) {}
 
-        protected ListReaderBase(IElementTypes elementTypes, IReader reader, IEnumerableTypings typings)
-            : this(new EnumeratingReader(elementTypes, reader, typings), typings) {}
-
-        protected ListReaderBase(IEnumeratingReader reader, IEnumerableTypings typings)
+        protected ListReaderBase(IEnumeratingReader reader)
         {
             _reader = reader;
-            _typings = typings;
         }
 
-        public sealed override object Read(XElement element)
+        public sealed override object Read(IReadContext context)
         {
-            var typing = _typings.Get(element);
-            var enumerable = _reader.Read(element);
-            var result = Create(enumerable, typing);
+            var enumerable = _reader.Read(context);
+            var result = Create(context, enumerable);
             return result;
         }
 
-        protected abstract object Create(IEnumerable enumerable, EnumerableTyping typing);
+        protected abstract object Create(IReadContext context, IEnumerable enumerable);
     }
 }

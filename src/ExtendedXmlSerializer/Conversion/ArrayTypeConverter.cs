@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
@@ -30,7 +29,7 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class ArrayTypeConverter : TypeConverter
     {
-        public ArrayTypeConverter(IElementTypes elementTypes, IConverter converter)
-            : base(IsArraySpecification.Default, new ArrayReader(elementTypes, converter), new EnumerableBodyWriter(converter)) {}
+        public ArrayTypeConverter(IConverter converter)
+            : base(IsArraySpecification.Default, new ArrayReader(converter), new EnumerableBodyWriter(converter)) {}
     }
 }

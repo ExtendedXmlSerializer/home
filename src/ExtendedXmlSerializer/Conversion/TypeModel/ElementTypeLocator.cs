@@ -35,8 +35,6 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
         public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
         ElementTypeLocator() {}
 
-        public Type Locate(Type type) => Get(type);
-
         // Attribution: http://stackoverflow.com/a/17713382/3602057
         protected override Type Create(Type parameter)
         {

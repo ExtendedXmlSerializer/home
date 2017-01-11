@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion
 
         public static XElement Initialized(this IElementTypes @this, XElement element, Typing typing)
         {
-            if (@this.Get(element) == null)
+            if (typing != null && @this.Get(element) == null)
             {
                 element.Annotated(typing);
             }

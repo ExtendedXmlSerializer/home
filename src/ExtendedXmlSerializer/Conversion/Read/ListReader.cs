@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -32,20 +31,18 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(IElementTypes elementTypes, IReader reader)
-            : this(elementTypes, reader, Activators.Default, AddDelegates.Default) {}
+        public ListReader(IReader reader) : this(reader, Activators.Default, AddDelegates.Default) {}
 
-        public ListReader(IElementTypes elementTypes, IReader reader, IActivators activators, IAddDelegates add)
-            : base(elementTypes, reader)
+        public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
         {
             _activators = activators;
             _add = add;
         }
 
-        protected override object Create(IEnumerable enumerable, EnumerableTyping typing)
+        protected override object Create(IReadContext context, IEnumerable enumerable)
         {
-            var result = _activators.Activate<object>(typing);
-            var list = result as IList ?? new ListAdapter(result, _add.Get(typing));
+            var result = _activators.Activate<object>(context.OwnerType);
+            var list = result as IList ?? new ListAdapter(result, _add.Get(context.OwnerType));
             foreach (var item in enumerable)
             {
                 list.Add(item);

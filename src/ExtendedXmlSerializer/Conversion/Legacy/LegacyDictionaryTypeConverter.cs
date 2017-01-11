@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -31,9 +30,9 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyDictionaryTypeConverter : TypeConverter
     {
-        public LegacyDictionaryTypeConverter(IElementTypes elementTypes, IConverter converter)
+        public LegacyDictionaryTypeConverter(IConverter converter)
             : base(
-                IsAssignableSpecification<IDictionary>.Default, new DictionaryReader(elementTypes, converter),
+                IsAssignableSpecification<IDictionary>.Default, new DictionaryReader(converter),
                 new DictionaryBodyWriter(converter)) {}
     }
 }

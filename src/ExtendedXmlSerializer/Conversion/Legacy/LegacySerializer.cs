@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using System.IO;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class EnumerableTypingsStore : WeakCacheBase<IElementTypes, IEnumerableTypings>
+    sealed class LegacySerializer : Serializer
     {
-        public static EnumerableTypingsStore Default { get; } = new EnumerableTypingsStore();
-        EnumerableTypingsStore() : this(ElementTypeLocator.Default) {}
+        private readonly Type _type;
 
-        private readonly IElementTypeLocator _locator;
-
-        public EnumerableTypingsStore(IElementTypeLocator locator)
+        public LegacySerializer(IConverter converter, Type type) : base(converter)
         {
-            _locator = locator;
+            _type = type;
         }
 
-        protected override IEnumerableTypings Create(IElementTypes parameter) => new EnumerableTypings(parameter, _locator);
+        protected override IReadContext CreateContext(Stream stream)
+        {
+            var text = new StreamReader(stream).ReadToEnd();
+            var document = XDocument.Parse(text);
+            var result = new LegacyXmlReadContext(document.Root, _type);
+            return result;
+        }
     }
 }

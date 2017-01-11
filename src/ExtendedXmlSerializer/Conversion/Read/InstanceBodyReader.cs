@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -31,36 +29,27 @@ namespace ExtendedXmlSerialization.Conversion.Read
     class InstanceBodyReader : ReaderBase
     {
         private readonly IInstanceMembers _members;
-        private readonly IElementTypes _elementTypes;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IInstanceMembers members, IElementTypes elementTypes, IActivators activators)
+        public InstanceBodyReader(IInstanceMembers members, IActivators activators)
         {
             _members = members;
-            _elementTypes = elementTypes;
             _activators = activators;
         }
 
-        public override object Read(XElement element)
+        public override object Read(IReadContext context)
         {
-            var type = _elementTypes.Get(element);
-            var result = type != null ? Create(element, type) : null;
+            var result = _activators.Activate<object>(context.OwnerType);
+            OnRead(context, result);
             return result;
         }
 
-        protected virtual object Create(XElement element, Typing type)
+        protected virtual void OnRead(IReadContext context, object result)
         {
-            var result = _activators.Activate<object>(type);
-            OnRead(element, result, type);
-            return result;
-        }
-
-        protected virtual void OnRead(XElement element, object result, Typing type)
-        {
-            var members = _members.Get(type);
-            foreach (var child in element.Elements())
+            var members = _members.Get(context.OwnerType);
+            foreach (var child in context.Members(members))
             {
-                var member = members.Get(child.Name.LocalName);
+                var member = members.Get(child.Name);
                 if (member != null)
                 {
                     Apply(result, member, member.Read(child));

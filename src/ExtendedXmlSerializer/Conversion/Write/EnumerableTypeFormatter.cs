@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var arguments = type.Info.GetGenericArguments();
             var name = arguments.Any()
                 ? string.Join(string.Empty, arguments.Select(p => p.Name))
-                : _locator.Locate(type).Name;
+                : _locator.Get(type).Name;
             var result = $"ArrayOf{name}";
             return result;
         }

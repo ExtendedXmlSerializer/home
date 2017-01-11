@@ -24,7 +24,9 @@
 using System.Globalization;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -33,20 +35,14 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public static LegacyRootConverter Default { get; } = new LegacyRootConverter();
         LegacyRootConverter() : this(Defaults.Tools) {}
 
-        private readonly IElementTypes _elementTypes;
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyRootConverter(ISerializationToolsFactory tools) : this(LegacyElementTypes.Default, tools) {}
+        public LegacyRootConverter(ISerializationToolsFactory tools)
+            : this(tools, new RootConverter(LegacyElements.Default, new LegacySelectorFactory(tools))) {}
 
-        public LegacyRootConverter(IElementTypes elementTypes, ISerializationToolsFactory tools)
-            : this(
-                elementTypes, tools,
-                new RootConverter(LegacyElements.Default, LegacyElementTypes.Default, new LegacySelectorFactory(tools))) {}
-
-        public LegacyRootConverter(IElementTypes elementTypes, ISerializationToolsFactory tools, IConverter converter)
+        public LegacyRootConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(converter)
         {
-            _elementTypes = elementTypes;
             _tools = tools;
         }
 
@@ -58,7 +54,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
                 if (configuration.Version > 0)
                 {
                     context.Write(VersionProperty.Default,
-                                 configuration.Version.ToString(CultureInfo.InvariantCulture));
+                                  configuration.Version.ToString(CultureInfo.InvariantCulture));
                 }
 
                 if (configuration.IsCustomSerializer)
@@ -71,12 +67,13 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             base.Write(context, instance);
         }
 
-        public override object Read(XElement element)
+        public override object Read(IReadContext context)
         {
-            var type = _elementTypes.Get(element);
+            var type = context.OwnerType;
             var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {
+                var element = context.Get<XElement>();
                 // Run migrator if exists
                 if (configuration.Version > 0)
                 {
@@ -88,7 +85,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
                     return configuration.ReadObject(element);
                 }
             }
-            return base.Read(element);
+            return base.Read(context);
         }
     }
 }

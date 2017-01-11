@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
 
         protected override Action<object, object> Create(Type parameter)
         {
-            var elementType = _locator.Locate(parameter);
+            var elementType = _locator.Get(parameter);
             if (elementType != null)
             {
                 var add = _add.Locate(parameter, elementType);

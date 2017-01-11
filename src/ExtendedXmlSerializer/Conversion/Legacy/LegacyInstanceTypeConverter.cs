@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
@@ -31,30 +30,17 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyInstanceTypeConverter : TypeConverter
+    sealed class LegacyInstanceTypeConverter : TypeConverter
     {
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IElementTypes elementTypes, IConverter converter)
-            : this(tools, IsActivatedTypeSpecification.Default, elementTypes, converter) {}
-
-        protected LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ISpecification<TypeInfo> specification,
-                                              IElementTypes elementTypes,
-                                              IConverter converter)
+        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : this(
-                specification,
-                new InstanceMembers(new LegacyMemberFactory(tools,
-                                                            new MemberFactory(elementTypes, converter,
-                                                                              new EnumeratingReader(elementTypes, converter),
-                                                                              new LegacyGetterFactory(tools,
-                                                                                                      GetterFactory
-                                                                                                          .Default)))),
-                elementTypes,
+                IsActivatedTypeSpecification.Default, ToolConverters.Default.Get(tools).Get(converter),
                 Activators.Default) {}
 
         public LegacyInstanceTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members,
-                                           IElementTypes elementTypes,
                                            IActivators activators)
             : base(
-                specification, new InstanceBodyReader(members, elementTypes, activators),
+                specification, new InstanceBodyReader(members, activators),
                 new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
     }
 }

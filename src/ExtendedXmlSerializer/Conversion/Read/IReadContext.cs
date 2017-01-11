@@ -22,20 +22,23 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Conversion.Primitives;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class LegacyEnumerationTypeConverter : PrimitiveTypeConverterBase<Enum>
+    public interface IReadContext : IServiceRepository, IElement
     {
-        public static LegacyEnumerationTypeConverter Default { get; } = new LegacyEnumerationTypeConverter();
+        IReadContext Member(IElement element, Type hint = null);
 
-        LegacyEnumerationTypeConverter()
-            : base(
-                IsAssignableSpecification<Enum>.Default, new ValueWriter<Enum>(x => x.ToString()),
-                LegacyEnumReader.Default
-            ) {}
+        IEnumerable<IReadContext> Items();
+
+        IEnumerable<IReadContext> Members(IMembers members);
+
+        IEnumerable<IReadContext> Children(IElement element);
+
+        string Read();
     }
 }

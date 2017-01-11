@@ -27,8 +27,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IElementTypes : IParameterizedSource<XElement, Typing>
-    {
-        // void Initialize(XElement element, Typing typing);
-    }
+    public interface IElementTypes : IParameterizedSource<XElement, Typing> {}
 }

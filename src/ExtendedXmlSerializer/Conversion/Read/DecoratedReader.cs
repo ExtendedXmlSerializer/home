@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class DecoratedReader : ReaderBase
@@ -34,6 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _reader = reader;
         }
 
-        public override object Read(XElement element) => _reader.Read(element);
+        public override object Read(IReadContext context) => _reader.Read(context);
     }
 }

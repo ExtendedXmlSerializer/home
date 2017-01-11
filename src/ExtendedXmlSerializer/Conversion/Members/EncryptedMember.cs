@@ -22,8 +22,10 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -38,10 +40,11 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _member = member;
         }
 
-        public object Read(XElement element)
+        public object Read(IReadContext context)
         {
+            var element = context.Get<XElement>();
             element.Value = _encryption.Decrypt(element.Value);
-            return _member.Read(element);
+            return _member.Read(context);
         }
 
         public void Write(IWriteContext context, object instance)
@@ -53,5 +56,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
         public Typing OwnerType => _member.OwnerType;
 
         public void Set(object instance, object value) => _member.Set(instance, value);
+        public Typing MemberType => _member.MemberType;
     }
 }

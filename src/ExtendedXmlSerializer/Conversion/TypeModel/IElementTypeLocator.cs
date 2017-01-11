@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface IElementTypeLocator
-    {
-        Type Locate(Type type);
-    }
+    public interface IElementTypeLocator : IParameterizedSource<Type, Type> {}
 }

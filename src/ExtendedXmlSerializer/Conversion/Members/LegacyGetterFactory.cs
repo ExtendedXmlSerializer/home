@@ -32,6 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
         private readonly ISerializationToolsFactory _tools;
         private readonly IGetterFactory _factory;
 
+        public LegacyGetterFactory(ISerializationToolsFactory tools) : this(tools, GetterFactory.Default) {}
+
         public LegacyGetterFactory(ISerializationToolsFactory tools, IGetterFactory factory)
         {
             _tools = tools;

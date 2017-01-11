@@ -22,29 +22,24 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyAdditionalTypeConverters : ITypeConverters
+    sealed class LegacyAdditionalTypeConverters : ITypeConverters
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly IElementTypes _elementTypes;
 
-        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools) : this(tools, LegacyElementTypes.Default) {}
-
-        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools, IElementTypes elementTypes)
+        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools)
         {
             _tools = tools;
-            _elementTypes = elementTypes;
         }
 
         public IEnumerable<ITypeConverter> Get(IConverter parameter)
         {
-            yield return new LegacyDictionaryTypeConverter(_elementTypes, parameter);
-            yield return new ArrayTypeConverter(_elementTypes, parameter);
-            yield return new LegacyEnumerableTypeConverter(_elementTypes, parameter);
-            yield return new LegacyInstanceTypeConverter(_tools, _elementTypes, parameter);
+            yield return new LegacyDictionaryTypeConverter(parameter);
+            yield return new ArrayTypeConverter(parameter);
+            yield return new LegacyEnumerableTypeConverter(parameter);
+            yield return new LegacyInstanceTypeConverter(_tools, parameter);
         }
     }
 }
