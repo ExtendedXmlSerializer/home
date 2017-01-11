@@ -33,7 +33,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     sealed class LegacyInstanceTypeConverter : TypeConverter
     {
         public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : this(IsActivatedTypeSpecification.Default, new ConvertMembers(tools).Get(converter), Activators.Default) {}
+            : this(new ConvertMembers(tools).Get(converter)) {}
+
+        public LegacyInstanceTypeConverter(IInstanceMembers members)
+            : this(IsActivatedTypeSpecification.Default, members, Activators.Default) {}
 
         public LegacyInstanceTypeConverter(ISpecification<TypeInfo> specification, IInstanceMembers members,
                                            IActivators activators)

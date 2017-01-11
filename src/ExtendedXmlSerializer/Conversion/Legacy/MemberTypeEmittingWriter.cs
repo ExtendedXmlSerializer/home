@@ -21,17 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public interface IWriteContext : IServiceProvider
+    sealed class MemberTypeEmittingWriter : DecoratedWriter
     {
-        IWriteElementContext Start(IElement element);
+        public MemberTypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        void Write(string text);
+        public override void Write(IWriteContext context, object instance)
+        {
+            var type = instance.GetType();
+            var element = context as IWriteElementContext;
+            if (element != null)
+            {
+                var info = type.GetTypeInfo();
+                var member = element.Current as ILegacyMemberElement;
+                if (member == null || member.IsSatisfiedBy(info))
+                {
+                    context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
+                }
+            }
 
-        void Write(IElement element, string value);
+            base.Write(context, instance);
+        }
     }
 }

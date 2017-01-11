@@ -23,7 +23,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
@@ -65,12 +64,16 @@ namespace ExtendedXmlSerialization.Conversion
         class InstanceTypeConverter : TypeConverter
         {
             public InstanceTypeConverter(IConverter converter)
-                : this(new InstanceMembers(new MemberFactory(converter, new EnumeratingReader(converter))),
-                       Activators.Default) {}
+                : this(
+                    new InstanceMembers(new CompositeMemberFactory(new AssignableMemberFactory(converter),
+                                                                   new ReadOnlyCollectionMemberFactory(converter,
+                                                                                                       new EnumeratingReader
+                                                                                                           (converter)))),
+                    Activators.Default) {}
 
             public InstanceTypeConverter(IInstanceMembers members, IActivators activators)
                 : base(IsActivatedTypeSpecification.Default, new InstanceBodyReader(members, activators),
-                       new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
+                       new InstanceBodyWriter(members)) {}
         }
     }
 }

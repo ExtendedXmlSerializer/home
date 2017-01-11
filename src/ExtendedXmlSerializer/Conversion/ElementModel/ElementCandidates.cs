@@ -38,7 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         private readonly IDictionary<TypeInfo, IElement> _elements;
         public ElementCandidates() : this(Defaults.Elements) {}
 
-        public ElementCandidates(IEnumerable<IElement> elements) : this(elements.ToDictionary(x => x.OwnerType.Info)) {}
+        public ElementCandidates(IEnumerable<IElement> elements)
+            : this(elements.ToDictionary(x => x.ReferencedType.Info)) {}
 
         public ElementCandidates(IDictionary<TypeInfo, IElement> elements)
         {

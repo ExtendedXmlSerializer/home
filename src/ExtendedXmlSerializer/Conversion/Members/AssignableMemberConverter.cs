@@ -22,16 +22,22 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IWriteContext : IServiceProvider
+    public class AssignableMemberConverter : MemberConverterBase, IAssignableMemberConverter
     {
-        IWriteElementContext Start(IElement element);
+        private readonly Action<object, object> _setter;
 
-        void Write(string text);
+        public AssignableMemberConverter(IReader reader, IWriter writer, IMemberElement element,
+                                         Func<object, object> getter, Action<object, object> setter)
+            : base(reader, writer, element, getter)
+        {
+            _setter = setter;
+        }
 
-        void Write(IElement element, string value);
+        public void Set(object instance, object value) => _setter(instance, value);
     }
 }

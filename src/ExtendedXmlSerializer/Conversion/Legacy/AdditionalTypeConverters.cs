@@ -21,39 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Members
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.Read;
+
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyMemberFactory : IMemberFactory
+    sealed class AdditionalTypeConverters : ITypeConverters
     {
-        private readonly ISerializationToolsFactory _tools;
-        private readonly IMemberFactory _factory;
+        public static AdditionalTypeConverters Default { get; } = new AdditionalTypeConverters();
+        AdditionalTypeConverters() {}
 
-        public LegacyMemberFactory(ISerializationToolsFactory tools, IMemberFactory factory)
+        public IEnumerable<ITypeConverter> Get(IConverter parameter)
         {
-            _tools = tools;
-            _factory = factory;
-        }
+            yield return new LegacyDictionaryTypeConverter(parameter);
+            yield return new ArrayTypeConverter(parameter);
+            yield return new LegacyEnumerableTypeConverter(parameter);
 
-        public IMember Get(MemberInformation parameter)
-        {
-            var result = _factory.Get(parameter);
-            var assignableMember = result as IAssignableMember;
-            if (assignableMember != null)
-            {
-                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
-                if (configuration != null)
-                {
-                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
-                    {
-                        var algorithm = _tools.EncryptionAlgorithm;
-                        if (algorithm != null)
-                        {
-                            return new EncryptedMember(algorithm, assignableMember);
-                        }
-                    }
-                }
-            }
-            return result;
+            var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter));
+            var factory = new CompositeMemberFactory(new LegacyAssignableMemberFactory(parameter), factories);
+            var members = new InstanceMembers(new TypeEnabledMemberFactory(factory));
+            yield return new LegacyInstanceTypeConverter(members);
         }
     }
 }

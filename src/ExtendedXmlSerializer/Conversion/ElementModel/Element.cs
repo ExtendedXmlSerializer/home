@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
         public Element(Typing ownerType, string name)
         {
-            OwnerType = ownerType;
+            ReferencedType = ownerType;
             Name = name;
         }
 
         public string Name { get; }
-        public Typing OwnerType { get; }
+        public Typing ReferencedType { get; }
 
         /*public bool Equals(Element other) =>
             !ReferenceEquals(null, other) &&

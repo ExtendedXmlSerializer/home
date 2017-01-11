@@ -21,31 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class TypeEmittingWriter : DecoratedWriter
+    sealed class TypeEmittingWriter : DecoratedWriter
     {
-        readonly private static ISpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
+        readonly private static Func<TypeInfo, bool> Activated = IsActivatedTypeSpecification.Default.IsSatisfiedBy;
 
-        private readonly ISpecification<TypeInfo> _specification;
-
-        public TypeEmittingWriter(IWriter writer) : this(Specification, writer) {}
-
-        public TypeEmittingWriter(ISpecification<TypeInfo> specification, IWriter writer) : base(writer)
-        {
-            _specification = specification;
-        }
+        public TypeEmittingWriter(IWriter writer) : base(writer) {}
 
         public override void Write(IWriteContext context, object instance)
         {
             var type = instance.GetType();
-            if (_specification.IsSatisfiedBy(type.GetTypeInfo()) && context.Get<EmittedTypes>().Add(instance))
+            var element = context as IWriteElementContext;
+            var member = element?.Current as ILegacyMemberElement;
+            if (member == null || Activated(member.MemberType))
             {
                 context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
             }

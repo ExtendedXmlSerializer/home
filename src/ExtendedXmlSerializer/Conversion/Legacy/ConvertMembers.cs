@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
@@ -37,9 +38,14 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         }
 
         protected override IInstanceMembers Create(IConverter parameter)
-            => new InstanceMembers(new LegacyMemberFactory(_tools,
-                                                           new MemberFactory(parameter,
-                                                                             new EnumeratingReader(parameter),
-                                                                             new LegacyGetterFactory(_tools))));
+        {
+            var getter = new LegacyGetterFactory(_tools);
+            var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter), getter,
+                                                                AddDelegates.Default);
+            var factory = new CompositeMemberFactory(new LegacyAssignableMemberFactory(parameter, getter), factories);
+            var memberFactory = new LegacyMemberFactory(_tools, new TypeEnabledMemberFactory(factory));
+            var result = new InstanceMembers(memberFactory);
+            return result;
+        }
     }
 }

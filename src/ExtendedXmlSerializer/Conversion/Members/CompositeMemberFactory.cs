@@ -21,34 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class ReadOnlyCollectionMember : MemberBase, IAssignableMember
+    public class CompositeMemberFactory : IMemberFactory
     {
-        private readonly Action<object, object> _add;
+        private readonly ImmutableArray<IMemberFactory> _factories;
 
-        public ReadOnlyCollectionMember(IReader reader, IWriter writer, Typing memberType, IElement element,
-                                        Func<object, object> getter, Action<object, object> add)
-            : base(reader, writer, memberType, element, getter)
+        public CompositeMemberFactory(params IMemberFactory[] factories) : this(factories.ToImmutableArray()) {}
+
+        public CompositeMemberFactory(ImmutableArray<IMemberFactory> factories)
         {
-            _add = add;
+            _factories = factories;
         }
 
-        public void Set(object instance, object value)
+        public IMemberConverter Get(IMemberElement parameter)
         {
-            var target = Get(instance);
-            foreach (var element in value.AsValid<IEnumerable>())
+            foreach (var factory in _factories)
             {
-                _add(target, element);
+                var member = factory.Get(parameter);
+                if (member != null)
+                {
+                    return member;
+                }
             }
+
+
+            // TODO: Warning? Throw?
+            return null;
         }
     }
 }

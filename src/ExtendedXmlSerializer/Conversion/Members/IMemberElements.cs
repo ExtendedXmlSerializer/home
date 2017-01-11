@@ -21,17 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IWriteContext : IServiceProvider
-    {
-        IWriteElementContext Start(IElement element);
-
-        void Write(string text);
-
-        void Write(IElement element, string value);
-    }
+    public interface IMemberElements : IEnumerable<IMemberElement>,
+                                       IParameterizedSource<string, IMemberElement> {}
 }

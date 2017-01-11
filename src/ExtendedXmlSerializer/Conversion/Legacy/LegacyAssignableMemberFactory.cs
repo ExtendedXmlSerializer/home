@@ -21,28 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class CustomElementWriter : LegacyElementWriter
+    sealed class LegacyAssignableMemberFactory : IMemberFactory
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
-            : base(new BodyWriter(configuration)) {}
+        private readonly IConverter _converter;
+        private readonly IGetterFactory _getter;
+        private readonly ISetterFactory _setter;
 
-        sealed class BodyWriter : WriterBase
+        public LegacyAssignableMemberFactory(IConverter converter) : this(converter, GetterFactory.Default) {}
+
+        public LegacyAssignableMemberFactory(IConverter converter, IGetterFactory getter)
+            : this(converter, getter, SetterFactory.Default) {}
+
+        public LegacyAssignableMemberFactory(IConverter converter, IGetterFactory getter, ISetterFactory setter)
         {
-            private readonly IExtendedXmlSerializerConfig _configuration;
+            _converter = converter;
+            _getter = getter;
+            _setter = setter;
+        }
 
-            public BodyWriter(IExtendedXmlSerializerConfig configuration)
+        public IMemberConverter Get(IMemberElement parameter)
+        {
+            if (parameter.Assignable)
             {
-                _configuration = configuration;
+                var getter = _getter.Get(parameter.Metadata);
+                var writer =
+                    new InstanceValidatingWriter(new ElementWriter(parameter, new MemberTypeEmittingWriter(_converter)));
+                var result = new AssignableMemberConverter(_converter, writer, parameter,
+                                                           getter, _setter.Get(parameter.Metadata));
+                return result;
             }
-
-            public override void Write(IWriteContext context, object instance)
-                => _configuration.WriteObject(context.Get<XmlWriter>(), instance);
+            return null;
         }
     }
 }

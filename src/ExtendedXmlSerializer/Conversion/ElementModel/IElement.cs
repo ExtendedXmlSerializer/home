@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     {
         string Name { get; }
 
-        Typing OwnerType { get; }
+        Typing ReferencedType { get; }
     }
 }

@@ -39,14 +39,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public override object Read(IReadContext context)
         {
-            var result = _activators.Activate<object>(context.OwnerType);
+            var result = _activators.Activate<object>(context.ReferencedType);
             OnRead(context, result);
             return result;
         }
 
         protected virtual void OnRead(IReadContext context, object result)
         {
-            var members = _members.Get(context.OwnerType);
+            var members = _members.Get(context.ReferencedType);
             foreach (var child in context)
             {
                 var member = members.Get(child.Name);
@@ -57,11 +57,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        protected virtual void Apply(object instance, IMember member, object value)
+        protected virtual void Apply(object instance, IMemberConverter member, object value)
         {
             if (value != null)
             {
-                var assignable = member as IAssignableMember;
+                var assignable = member as IAssignableMemberConverter;
                 assignable?.Set(instance, value);
             }
         }

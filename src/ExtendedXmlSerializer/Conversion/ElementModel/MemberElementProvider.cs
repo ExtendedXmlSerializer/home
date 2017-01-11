@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
@@ -37,7 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             var name = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
                        member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
                        member.Name;
-            var result = new Element(member.DeclaringType, name);
+            var result = new MemberElement(name, member.DeclaringType, member,
+                                           member.GetMemberType().AccountForNullable(), member.IsWritable());
             return result;
         }
     }

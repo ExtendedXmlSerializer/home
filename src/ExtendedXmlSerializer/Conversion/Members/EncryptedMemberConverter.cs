@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
@@ -29,12 +30,12 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class EncryptedMember : IAssignableMember
+    public class EncryptedMemberConverter : IAssignableMemberConverter
     {
         private readonly IPropertyEncryption _encryption;
-        private readonly IAssignableMember _member;
+        private readonly IAssignableMemberConverter _member;
 
-        public EncryptedMember(IPropertyEncryption encryption, IAssignableMember member)
+        public EncryptedMemberConverter(IPropertyEncryption encryption, IAssignableMemberConverter member)
         {
             _encryption = encryption;
             _member = member;
@@ -52,10 +53,16 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _member.Write(context, instance);
         }
 
-        public string Name => _member.Name;
-        public Typing OwnerType => _member.OwnerType;
-
         public void Set(object instance, object value) => _member.Set(instance, value);
+
+        public string Name => _member.Name;
+
+        public Typing ReferencedType => _member.ReferencedType;
+
+        public bool Assignable => _member.Assignable;
+
+        public MemberInfo Metadata => _member.Metadata;
+
         public Typing MemberType => _member.MemberType;
     }
 }

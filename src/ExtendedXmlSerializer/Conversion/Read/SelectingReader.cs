@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public object Read(IReadContext context)
         {
-            var converter = _selector.Get(context.OwnerType);
+            var converter = _selector.Get(context.ReferencedType);
             var result = converter.Read(context);
             return result;
         }

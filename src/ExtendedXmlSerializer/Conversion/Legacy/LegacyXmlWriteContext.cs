@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     sealed class LegacyXmlWriteContext : XmlWriteContext
     {
         public LegacyXmlWriteContext(XmlWriter writer)
-            : base(LegacyNamespaces.Default, writer, new EmittedTypes(), writer) {}
+            : base(LegacyNamespaces.Default, writer, new References(), writer) {}
     }
 }

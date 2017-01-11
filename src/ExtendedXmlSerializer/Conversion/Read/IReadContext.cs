@@ -37,5 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         IEnumerable<IReadContext> ChildrenOf(IElement element);
 
         string Read();
+
+        string this[IElement element] { get; }
     }
 }

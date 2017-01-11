@@ -23,21 +23,25 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacySetterFactory : ISetterFactory
+    class LegacyGetterFactory : IGetterFactory
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly ISetterFactory _factory;
+        private readonly IGetterFactory _factory;
 
-        public LegacySetterFactory(ISerializationToolsFactory tools, ISetterFactory factory)
+        public LegacyGetterFactory(ISerializationToolsFactory tools) : this(tools, GetterFactory.Default) {}
+
+        public LegacyGetterFactory(ISerializationToolsFactory tools, IGetterFactory factory)
         {
             _tools = tools;
             _factory = factory;
         }
 
-        public Action<object, object> Get(MemberInfo parameter)
+        public Func<object, object> Get(MemberInfo parameter)
         {
             var result = _factory.Get(parameter);
             var configuration = _tools.GetConfiguration(parameter.DeclaringType);
@@ -48,28 +52,29 @@ namespace ExtendedXmlSerialization.Conversion.Members
                     var algorithm = _tools.EncryptionAlgorithm;
                     if (algorithm != null)
                     {
-                        return new Decrypt(algorithm, result).Assign;
+                        return new Encrypt(algorithm, result).Get;
                     }
                 }
             }
             return result;
         }
 
-        sealed class Decrypt
+        sealed class Encrypt : IParameterizedSource<object, object>
         {
             private readonly IPropertyEncryption _encryption;
-            private readonly Action<object, object> _source;
+            private readonly Func<object, object> _source;
 
-            public Decrypt(IPropertyEncryption encryption, Action<object, object> source)
+            public Encrypt(IPropertyEncryption encryption, Func<object, object> source)
             {
                 _encryption = encryption;
                 _source = source;
             }
 
-            public void Assign(object instance, object value)
+            public object Get(object parameter)
             {
-                var text = _encryption.Decrypt(value as string ?? value.ToString());
-                _source(instance, text);
+                var value = _source(parameter);
+                var result = _encryption.Encrypt(value as string ?? value.ToString());
+                return result;
             }
         }
     }

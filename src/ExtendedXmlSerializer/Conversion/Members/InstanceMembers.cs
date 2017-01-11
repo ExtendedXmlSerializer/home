@@ -30,12 +30,12 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
     class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
     {
-        private readonly Func<MemberInformation, IMember> _factory;
+        private readonly Func<IMemberElement, IMemberConverter> _factory;
         private readonly IMemberInformationProvider _information;
 
         public InstanceMembers(IMemberFactory factory) : this(factory.Get, MemberInformationProvider.Default) {}
 
-        public InstanceMembers(Func<MemberInformation, IMember> factory, IMemberInformationProvider information)
+        public InstanceMembers(Func<IMemberElement, IMemberConverter> factory, IMemberInformationProvider information)
         {
             _factory = factory;
             _information = information;

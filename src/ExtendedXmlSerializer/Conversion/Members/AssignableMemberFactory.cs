@@ -21,11 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberInformationView : IEnumerable<MemberInformation>,
-                                              IParameterizedSource<string, MemberInformation?> {}
+    public class AssignableMemberFactory : IMemberFactory
+    {
+        private readonly IConverter _converter;
+        private readonly IGetterFactory _getter;
+        private readonly ISetterFactory _setter;
+
+        public AssignableMemberFactory(IConverter converter)
+            : this(converter, GetterFactory.Default, SetterFactory.Default) {}
+
+        public AssignableMemberFactory(IConverter converter, IGetterFactory getter, ISetterFactory setter)
+        {
+            _converter = converter;
+            _getter = getter;
+            _setter = setter;
+        }
+
+        public IMemberConverter Get(IMemberElement parameter)
+        {
+            if (parameter.Assignable)
+            {
+                var getter = _getter.Get(parameter.Metadata);
+                var writer =
+                    new InstanceValidatingWriter(new ElementWriter(parameter, _converter));
+                var result = new AssignableMemberConverter(_converter, writer, parameter,
+                                                           getter, _setter.Get(parameter.Metadata));
+                return result;
+            }
+            return null;
+        }
+    }
 }

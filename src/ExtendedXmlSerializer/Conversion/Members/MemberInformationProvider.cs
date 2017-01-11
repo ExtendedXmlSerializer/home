@@ -27,12 +27,11 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class MemberInformationProvider : WeakCacheBase<TypeInfo, IMemberInformationView>, IMemberInformationProvider
+    public class MemberInformationProvider : WeakCacheBase<TypeInfo, IMemberElements>, IMemberInformationProvider
     {
         public static MemberInformationProvider Default { get; } = new MemberInformationProvider();
         MemberInformationProvider() : this(MemberElementProvider.Default) {}
@@ -44,8 +43,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _provider = provider;
         }
 
-        protected override IMemberInformationView Create(TypeInfo parameter) =>
-            new MemberInformationView(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member).ToImmutableArray());
+        protected override IMemberElements Create(TypeInfo parameter) =>
+            new MemberElements(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member).ToImmutableArray());
 
         IEnumerable<SortedInformation> Yield(TypeInfo parameter)
         {
@@ -57,8 +56,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
                     property.GetIndexParameters().Length <= 0 &&
                     !property.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    yield return
-                        Create(property, property.PropertyType.AccountForNullable(), property.CanWrite);
+                    yield return Create(property);
                 }
             }
 
@@ -68,31 +66,29 @@ namespace ExtendedXmlSerialization.Conversion.Members
                 if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
                     !field.IsDefined(typeof(XmlIgnoreAttribute), false))
                 {
-                    yield return Create(field, field.FieldType.AccountForNullable(), !readOnly);
+                    yield return Create(field);
                 }
             }
         }
 
-        private SortedInformation Create(MemberInfo metadata, Typing memberType, bool assignable)
+        private SortedInformation Create(MemberInfo metadata)
         {
             var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
                                 metadata.MetadataToken);
 
-            var result =
-                new SortedInformation(new MemberInformation(_provider.Get(metadata), metadata, memberType, assignable),
-                                      sort);
+            var result = new SortedInformation((IMemberElement) _provider.Get(metadata), sort);
             return result;
         }
 
         struct SortedInformation
         {
-            public SortedInformation(MemberInformation member, Sort sort)
+            public SortedInformation(IMemberElement member, Sort sort)
             {
                 Member = member;
                 Sort = sort;
             }
 
-            public MemberInformation Member { get; }
+            public IMemberElement Member { get; }
             public Sort Sort { get; }
         }
     }

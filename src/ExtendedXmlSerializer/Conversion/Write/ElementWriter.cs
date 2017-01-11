@@ -30,21 +30,21 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class ElementWriter : DecoratedWriter
     {
-        private readonly Func<TypeInfo, IElement> _property;
+        private readonly Func<TypeInfo, IElement> _element;
 
         public ElementWriter(IElement element, IWriter writer) : this(element.Accept, writer) {}
 
-        public ElementWriter(Func<TypeInfo, IElement> property, IWriter writer) : base(writer)
+        public ElementWriter(Func<TypeInfo, IElement> element, IWriter writer) : base(writer)
         {
-            _property = property;
+            _element = element;
         }
 
         public override void Write(IWriteContext context, object instance)
         {
-            var property = _property(instance.GetType().GetTypeInfo());
-            using (context.Start(property))
+            var element = _element(instance.GetType().GetTypeInfo());
+            using (var child = context.Start(element))
             {
-                base.Write(context, instance);
+                base.Write(child, instance);
             }
         }
     }

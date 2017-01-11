@@ -22,9 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -43,24 +40,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return new ArrayTypeConverter(parameter);
             yield return new LegacyEnumerableTypeConverter(parameter);
             yield return new LegacyInstanceTypeConverter(_tools, parameter);
-        }
-    }
-
-    sealed class AdditionalTypeConverters : ITypeConverters
-    {
-        public static AdditionalTypeConverters Default { get; } = new AdditionalTypeConverters();
-        AdditionalTypeConverters() {}
-
-        public IEnumerable<ITypeConverter> Get(IConverter parameter)
-        {
-            yield return new LegacyDictionaryTypeConverter(parameter);
-            yield return new ArrayTypeConverter(parameter);
-            yield return new LegacyEnumerableTypeConverter(parameter);
-            yield return
-                new LegacyInstanceTypeConverter(IsActivatedTypeSpecification.Default,
-                                                new InstanceMembers(new MemberFactory(parameter,
-                                                                                      new EnumeratingReader(parameter))),
-                                                Activators.Default);
         }
     }
 }

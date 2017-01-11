@@ -21,25 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Members;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public struct MemberInformation
+    sealed class TypeEnabledMemberFactory : IMemberFactory
     {
-        public MemberInformation(IElement element, MemberInfo metadata, Typing memberType, bool assignable)
+        private readonly IMemberFactory _factory;
+
+        public TypeEnabledMemberFactory(IMemberFactory factory)
         {
-            Element = element;
-            Metadata = metadata;
-            MemberType = memberType;
-            Assignable = assignable;
+            _factory = factory;
         }
 
-        public IElement Element { get; }
-        public MemberInfo Metadata { get; }
-        public Typing MemberType { get; }
-        public bool Assignable { get; }
+        public IMemberConverter Get(IMemberElement parameter)
+            => _factory.Get(new LegacyMemberElement(parameter, new EmitTypeSpecification(parameter.MemberType)));
     }
 }

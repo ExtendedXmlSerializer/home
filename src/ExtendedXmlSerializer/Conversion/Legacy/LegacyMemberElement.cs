@@ -21,33 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class MemberInformationView : IMemberInformationView
+    sealed class LegacyMemberElement : ILegacyMemberElement
     {
-        private readonly IImmutableList<MemberInformation> _items;
-        private readonly IDictionary<string, MemberInformation> _lookup;
+        private readonly IMemberElement _element;
+        private readonly ISpecification<TypeInfo> _specification;
 
-        public MemberInformationView(IImmutableList<MemberInformation> items)
-            : this(items, items.ToDictionary(x => x.Element.Name)) {}
-
-        public MemberInformationView(IImmutableList<MemberInformation> items,
-                                     IDictionary<string, MemberInformation> lookup)
+        public LegacyMemberElement(IMemberElement element, ISpecification<TypeInfo> specification)
         {
-            _items = items;
-            _lookup = lookup;
+            _element = element;
+            _specification = specification;
         }
 
-        public IEnumerator<MemberInformation> GetEnumerator() => _items.GetEnumerator();
+        public string Name => _element.Name;
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public Typing ReferencedType => _element.ReferencedType;
 
-        public MemberInformation? Get(string parameter) => _lookup.TryGet(parameter);
+        public bool Assignable => _element.Assignable;
+
+        public MemberInfo Metadata => _element.Metadata;
+
+        public Typing MemberType => _element.MemberType;
+
+        public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
     }
 }

@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     public class XmlReadContext : IReadContext
     {
         private readonly IMemberInformationProvider _information;
-        private readonly IMemberInformationView _view;
+        private readonly IMemberElements _view;
         private readonly IElementTypeLocator _locator;
         private readonly IElementTypes _types;
         private readonly INamespaces _namespaces;
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                                INamespaces namespaces, Typing ownerType, XElement element)
             : this(information, information.Get(ownerType), locator, types, namespaces, ownerType, element) {}
 
-        XmlReadContext(IMemberInformationProvider information, IMemberInformationView view, IElementTypeLocator locator,
+        XmlReadContext(IMemberInformationProvider information, IMemberElements view, IElementTypeLocator locator,
                        IElementTypes types, INamespaces namespaces, Typing ownerType, XElement element)
         {
             _information = information;
@@ -72,13 +72,13 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _locator = locator;
             _types = types;
             _namespaces = namespaces;
-            OwnerType = ownerType;
+            ReferencedType = ownerType;
             Name = element.Name.LocalName;
             _element = element;
             Add(element);
         }
 
-        public Typing OwnerType { get; }
+        public Typing ReferencedType { get; }
         public string Name { get; }
 
         public object GetService(Type serviceType) => _element.AnnotationAll(serviceType);
@@ -97,7 +97,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IEnumerable<IReadContext> Items()
         {
-            var elementType = _locator.Get(OwnerType);
+            var elementType = _locator.Get(ReferencedType);
             foreach (var child in _element.Elements())
             {
                 yield return Create(child, elementType);
@@ -112,11 +112,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var name = ElementName(element);
             foreach (var child in _element.Elements(name))
             {
-                yield return Create(child, element.OwnerType);
+                yield return Create(child, element.ReferencedType);
             }
         }
 
-        private XName ElementName(IElement element) => XName.Get(element.Name, _namespaces.Get(element.OwnerType));
+        private XName ElementName(IElement element) => XName.Get(element.Name, _namespaces.Get(element.ReferencedType));
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -129,6 +129,16 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 {
                     yield return Create(child, memberType);
                 }
+            }
+        }
+
+        public string this[IElement element]
+        {
+            get
+            {
+                var name = ElementName(element);
+                var result = _element.Attribute(name)?.Value;
+                return result;
             }
         }
     }

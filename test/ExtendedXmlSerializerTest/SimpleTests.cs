@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.Test
             stream.Seek(0, SeekOrigin.Begin);
             var actual = new StreamReader(stream).ReadToEnd();
             Assert.Equal(
-                @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass type=""ExtendedXmlSerialization.Test.SimpleTests+InstanceClass""><PropertyName>Hello World!</PropertyName></InstanceClass>",
+                @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
                 actual);
         }
 

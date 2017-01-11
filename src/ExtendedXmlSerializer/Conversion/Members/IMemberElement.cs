@@ -21,42 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public abstract class MemberBase : IMember
+    public interface IMemberElement : IElement
     {
-        private readonly IReader _reader;
-        private readonly IWriter _writer;
-        private readonly Func<object, object> _getter;
+        bool Assignable { get; }
 
-        protected MemberBase(IReader reader, IWriter writer, Typing memberType, IElement element,
-                             Func<object, object> getter)
-            : this(reader, writer, getter, memberType, element.OwnerType, element.Name) {}
+        MemberInfo Metadata { get; }
 
-        protected MemberBase(IReader reader, IWriter writer, Func<object, object> getter, Typing memberType,
-                             Typing ownerType, string name)
-        {
-            _reader = reader;
-            _writer = writer;
-            _getter = getter;
-            MemberType = memberType;
-            OwnerType = ownerType;
-            Name = name;
-        }
-
-        public void Write(IWriteContext context, object instance) => _writer.Write(context, Get(instance));
-
-        protected object Get(object instance) => _getter(instance);
-
-        public object Read(IReadContext context) => _reader.Read(context);
-        public string Name { get; }
-        public Typing MemberType { get; }
-        public Typing OwnerType { get; }
+        Typing MemberType { get; }
     }
 }

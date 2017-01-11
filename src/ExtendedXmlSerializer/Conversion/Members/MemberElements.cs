@@ -21,10 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerialization.Core;
+
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IAssignableMember : IMember
+    class MemberElements : IMemberElements
     {
-        void Set(object instance, object value);
+        private readonly IImmutableList<IMemberElement> _items;
+        private readonly IDictionary<string, IMemberElement> _lookup;
+
+        public MemberElements(IImmutableList<IMemberElement> items)
+            : this(items, items.ToDictionary(x => x.Name)) {}
+
+        public MemberElements(IImmutableList<IMemberElement> items,
+                              IDictionary<string, IMemberElement> lookup)
+        {
+            _items = items;
+            _lookup = lookup;
+        }
+
+        public IEnumerator<IMemberElement> GetEnumerator() => _items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
     }
 }

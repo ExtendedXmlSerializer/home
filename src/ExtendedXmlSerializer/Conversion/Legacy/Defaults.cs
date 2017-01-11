@@ -34,8 +34,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public static IConverter Root { get; } = new RootConverter(LegacyElements.Default,
                                                                    new AlteredSelectorFactory(
                                                                        new SelectorFactory(LegacyPrimitives.Default,
-                                                                                           AdditionalTypeConverters.Default),
+                                                                                           AdditionalTypeConverters
+                                                                                               .Default),
                                                                        NullableSelectorAlteration.Default));
-        
     }
 }

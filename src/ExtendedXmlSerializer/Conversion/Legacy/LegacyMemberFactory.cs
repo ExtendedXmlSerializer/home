@@ -21,24 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class EmitTypeSpecification : ISpecification<TypeInfo>
+    sealed class LegacyMemberFactory : IMemberFactory
     {
-        readonly private static Type StringType = typeof(string), ObjectType = typeof(object);
-        private readonly TypeInfo _info;
+        private readonly ISerializationToolsFactory _tools;
+        private readonly IMemberFactory _factory;
 
-        public EmitTypeSpecification(TypeInfo info)
+        public LegacyMemberFactory(ISerializationToolsFactory tools, IMemberFactory factory)
         {
-            _info = info;
+            _tools = tools;
+            _factory = factory;
         }
 
-        public bool IsSatisfiedBy(TypeInfo parameter) =>
-            _info.IsInterface || _info.AsType() == ObjectType ||
-            !_info.IsPrimitive && parameter.AsType() != StringType && !Equals(parameter, _info);
+        public IMemberConverter Get(IMemberElement parameter)
+        {
+            var result = _factory.Get(parameter);
+            var converter = result as IAssignableMemberConverter;
+            if (converter != null)
+            {
+                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
+                if (configuration != null)
+                {
+                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
+                    {
+                        var algorithm = _tools.EncryptionAlgorithm;
+                        if (algorithm != null)
+                        {
+                            return new EncryptedMemberConverter(algorithm, converter);
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 }

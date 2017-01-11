@@ -41,8 +41,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         protected override object Create(IReadContext context, IEnumerable enumerable)
         {
-            var result = _activators.Activate<object>(context.OwnerType);
-            var list = result as IList ?? new ListAdapter(result, _add.Get(context.OwnerType));
+            var result = _activators.Activate<object>(context.ReferencedType);
+            var list = result as IList ?? new ListAdapter(result, _add.Get(context.ReferencedType));
             foreach (var item in enumerable)
             {
                 list.Add(item);

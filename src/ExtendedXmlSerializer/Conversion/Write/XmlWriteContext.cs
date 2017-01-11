@@ -60,15 +60,41 @@ namespace ExtendedXmlSerialization.Conversion.Write
             return null;
         }
 
-        public IDisposable Start(IElement element)
+        public IWriteElementContext Start(IElement element)
         {
-            var ns = _namespaces.Get(element.OwnerType);
+            var ns = _namespaces.Get(element.ReferencedType);
             _writer.WriteStartElement(element.Name, ns);
-            return _finish;
+
+            var result = new WriteElementContext(this, element, _finish);
+            return result;
         }
 
         public void Write(string text) => _writer.WriteString(text);
 
         public void Write(IElement element, string value) => _writer.WriteAttributeString(element.Name, value);
+
+        class WriteElementContext : IWriteElementContext
+        {
+            private readonly IWriteContext _context;
+            private readonly IDisposable _disposable;
+
+            public WriteElementContext(IWriteContext context, IElement element, IDisposable disposable)
+            {
+                _context = context;
+                _disposable = disposable;
+                Current = element;
+            }
+
+            public object GetService(Type serviceType) => _context.GetService(serviceType);
+
+            public IWriteElementContext Start(IElement element) => _context.Start(element);
+
+            public void Write(string text) => _context.Write(text);
+
+            public void Write(IElement element, string value) => _context.Write(element, value);
+
+            public void Dispose() => _disposable.Dispose();
+            public IElement Current { get; }
+        }
     }
 }

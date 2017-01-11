@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var result = list.ToArray(_locator.Get(context.OwnerType));
+            var result = list.ToArray(_locator.Get(context.ReferencedType));
             return result;
         }
     }

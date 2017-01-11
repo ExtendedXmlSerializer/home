@@ -31,21 +31,21 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
     public sealed class Members : IMembers
     {
-        private readonly IImmutableList<IMember> _items;
-        private readonly IDictionary<string, IMember> _lookup;
+        private readonly IImmutableList<IMemberConverter> _items;
+        private readonly IDictionary<string, IMemberConverter> _lookup;
 
-        public Members(IEnumerable<IMember> items) : this(items.ToImmutableArray()) {}
-        public Members(ImmutableArray<IMember> items) : this(items, items.ToDictionary(x => x.Name)) {}
+        public Members(IEnumerable<IMemberConverter> items) : this(items.ToImmutableArray()) {}
+        public Members(ImmutableArray<IMemberConverter> items) : this(items, items.ToDictionary(x => x.Name)) {}
 
-        public Members(ImmutableArray<IMember> items, IDictionary<string, IMember> lookup)
+        public Members(ImmutableArray<IMemberConverter> items, IDictionary<string, IMemberConverter> lookup)
         {
             _items = items;
             _lookup = lookup;
         }
 
-        public IMember Get(string parameter) => _lookup.TryGet(parameter);
+        public IMemberConverter Get(string parameter) => _lookup.TryGet(parameter);
 
-        public IEnumerator<IMember> GetEnumerator() => _items.GetEnumerator();
+        public IEnumerator<IMemberConverter> GetEnumerator() => _items.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

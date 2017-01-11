@@ -21,30 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class DictionaryReader : ListReaderBase
+    public abstract class MemberConverterBase : IMemberConverter
     {
-        private readonly IActivators _activators;
+        private readonly IReader _reader;
+        private readonly IWriter _writer;
+        private readonly IMemberElement _element;
+        private readonly Func<object, object> _getter;
 
-        public DictionaryReader(IReader reader) : this(reader, Activators.Default) {}
-
-        public DictionaryReader(IReader reader, IActivators activators) : base(new DictionaryEntryReader(reader))
+        protected MemberConverterBase(IReader reader, IWriter writer, IMemberElement element,
+                                      Func<object, object> getter)
         {
-            _activators = activators;
+            _reader = reader;
+            _writer = writer;
+            _element = element;
+            _getter = getter;
         }
 
-        protected override object Create(IReadContext context, IEnumerable enumerable)
-        {
-            var result = _activators.Activate<IDictionary>(context.ReferencedType);
-            foreach (DictionaryEntry item in enumerable)
-            {
-                result.Add(item.Key, item.Value);
-            }
-            return result;
-        }
+        public void Write(IWriteContext context, object instance) => _writer.Write(context, Get(instance));
+
+        protected object Get(object instance) => _getter(instance);
+
+        public object Read(IReadContext context) => _reader.Read(context);
+
+        public string Name => _element.Name;
+
+        public Typing ReferencedType => _element.ReferencedType;
+
+        public bool Assignable => _element.Assignable;
+
+        public MemberInfo Metadata => _element.Metadata;
+
+        public Typing MemberType => _element.MemberType;
     }
 }

@@ -21,17 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IWriteContext : IServiceProvider
+    class MemberElement : IMemberElement
     {
-        IWriteElementContext Start(IElement element);
+        public MemberElement(string name, Typing referencedType, MemberInfo metadata, Typing memberType, bool assignable)
+        {
+            Name = name;
+            ReferencedType = referencedType;
+            Metadata = metadata;
+            MemberType = memberType;
+            Assignable = assignable;
+        }
 
-        void Write(string text);
-
-        void Write(IElement element, string value);
+        public string Name { get; }
+        public Typing ReferencedType { get; }
+        public MemberInfo Metadata { get; }
+        public Typing MemberType { get; }
+        public bool Assignable { get; }
     }
 }

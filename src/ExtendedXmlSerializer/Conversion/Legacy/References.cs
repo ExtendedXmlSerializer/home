@@ -21,17 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public interface IWriteContext : IServiceProvider
+    sealed class References : Dictionary<string, object>
     {
-        IWriteElementContext Start(IElement element);
+        public References() : this(new Dictionary<string, object>(), new HashSet<string>()) {}
 
-        void Write(string text);
+        public References(IDictionary<string, object> reserved, ISet<string> items)
+        {
+            Reserved = reserved;
+            Items = items;
+        }
 
-        void Write(IElement element, string value);
+        public IDictionary<string, object> Reserved { get; }
+        public ISet<string> Items { get; }
     }
 }
