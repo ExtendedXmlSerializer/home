@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     class MemberElement : IMemberElement
     {
-        public MemberElement(string name, Typing referencedType, MemberInfo metadata, Typing memberType, bool assignable)
+        public MemberElement(string name, TypeInfo referencedType, MemberInfo metadata, TypeInfo memberType, bool assignable)
         {
             Name = name;
             ReferencedType = referencedType;
@@ -38,9 +37,9 @@ namespace ExtendedXmlSerialization.Conversion.Members
         }
 
         public string Name { get; }
-        public Typing ReferencedType { get; }
+        public TypeInfo ReferencedType { get; }
         public MemberInfo Metadata { get; }
-        public Typing DeclaredType { get; }
+        public TypeInfo DeclaredType { get; }
         public bool Assignable { get; }
     }
 }

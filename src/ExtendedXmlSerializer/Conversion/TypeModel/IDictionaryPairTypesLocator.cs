@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface IDictionaryPairTypesLocator : IParameterizedSource<Type, DictionaryPairTypes> {}
+    public interface IDictionaryPairTypesLocator : IParameterizedSource<TypeInfo, DictionaryPairTypes> {}
 }

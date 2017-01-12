@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
     public interface ITypeFormatter
     {
-        string Format(Typing type);
+        string Format(TypeInfo type);
     }
 }

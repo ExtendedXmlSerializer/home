@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core;
 
@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public interface IReadContext : IEnumerable<IReadContext>, IServiceRepository, IElement
     {
-        IReadContext Member(IElement element, Type hint = null);
+        IReadContext Member(IElement element, TypeInfo hint = null);
 
         IEnumerable<IReadContext> Items();
 

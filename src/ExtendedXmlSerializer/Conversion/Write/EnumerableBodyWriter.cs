@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         protected override void Write(IWriteContext context, IEnumerable instance)
         {
-            var elementType = _locator.Get(instance.GetType());
+            var elementType = _locator.Get(instance.GetType().GetTypeInfo());
             foreach (var item in instance)
             {
                 var element = _elements.Get(item.GetType().GetTypeInfo());

@@ -22,9 +22,10 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface IAddDelegates : IParameterizedSource<Type, Action<object, object>> {}
+    public interface IAddDelegates : IParameterizedSource<TypeInfo, Action<object, object>> {}
 }

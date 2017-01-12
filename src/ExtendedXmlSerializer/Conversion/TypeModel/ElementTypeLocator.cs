@@ -29,29 +29,29 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class ElementTypeLocator : WeakCacheBase<Type, Type>, IElementTypeLocator
+    public class ElementTypeLocator : WeakCacheBase<TypeInfo, TypeInfo>, IElementTypeLocator
     {
         readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
         public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
         ElementTypeLocator() {}
 
         // Attribution: http://stackoverflow.com/a/17713382/3602057
-        protected override Type Create(Type parameter)
+        protected override TypeInfo Create(TypeInfo parameter)
         {
             // Type is Array
             // short-circuit if you expect lots of arrays 
             if (ArrayInfo.IsAssignableFrom(parameter))
-                return parameter.GetElementType();
+                return parameter.GetElementType().GetTypeInfo();
 
             // type is IEnumerable<T>;
-            if (parameter.GetTypeInfo().IsGenericType && parameter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                return parameter.GetGenericArguments()[0];
+            if (parameter.IsGenericType && parameter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return parameter.GetGenericArguments()[0].GetTypeInfo();
 
             // type implements/extends IEnumerable<T>;
             var result = parameter.GetInterfaces()
                                   .Where(t => t.GetTypeInfo().IsGenericType &&
                                               t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                                  .Select(t => t.GenericTypeArguments[0]).FirstOrDefault();
+                                  .Select(t => t.GenericTypeArguments[0]).FirstOrDefault()?.GetTypeInfo();
 
             return result;
         }

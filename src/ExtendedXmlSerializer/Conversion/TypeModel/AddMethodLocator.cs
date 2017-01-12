@@ -21,26 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
+    public sealed class AddMethodLocator : ConcurrentDictionary<TypeInfo, MethodInfo>, IAddMethodLocator
     {
         const string Add = "Add";
 
         public static AddMethodLocator Default { get; } = new AddMethodLocator();
         AddMethodLocator() {}
 
-        public MethodInfo Locate(Type type, Type elementType)
+        public MethodInfo Locate(TypeInfo type, TypeInfo elementType)
         {
             return GetOrAdd(type, t => Get(type, elementType));
         }
 
-        static MethodInfo Get(Type type, Type elementType)
+        static MethodInfo Get(TypeInfo type, TypeInfo elementType)
         {
             foreach (var candidate in AllInterfaces.Instance.Yield(type))
             {

@@ -21,20 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     class DictionaryElement : Element, IDictionaryElement
     {
-        public DictionaryElement(IElement element, Typing keyType, Typing valueType)
+        public DictionaryElement(IElement element, TypeInfo keyType, TypeInfo valueType)
             : base(element.ReferencedType, element.Name)
         {
             KeyType = keyType;
             ValueType = valueType;
         }
 
-        public Typing KeyType { get; }
-        public Typing ValueType { get; }
+        public TypeInfo KeyType { get; }
+        public TypeInfo ValueType { get; }
     }
 }

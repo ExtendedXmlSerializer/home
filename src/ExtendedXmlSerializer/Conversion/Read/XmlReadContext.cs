@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
@@ -61,11 +62,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
             : this(information, locator, types, namespaces, types.Get(element), element) {}
 
         private XmlReadContext(IMemberInformationProvider information, IElementTypeLocator locator, IElementTypes types,
-                               INamespaces namespaces, Typing ownerType, XElement element)
+                               INamespaces namespaces, TypeInfo ownerType, XElement element)
             : this(information, information.Get(ownerType), locator, types, namespaces, ownerType, element) {}
 
         XmlReadContext(IMemberInformationProvider information, IMemberElements view, IElementTypeLocator locator,
-                       IElementTypes types, INamespaces namespaces, Typing ownerType, XElement element)
+                       IElementTypes types, INamespaces namespaces, TypeInfo ownerType, XElement element)
         {
             _information = information;
             _view = view;
@@ -78,7 +79,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             Add(element);
         }
 
-        public Typing ReferencedType { get; }
+        public TypeInfo ReferencedType { get; }
         public string Name { get; }
 
         public object GetService(Type serviceType) => _element.AnnotationAll(serviceType);
@@ -87,7 +88,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public string Read() => _element.Value;
 
-        public IReadContext Member(IElement element, Type hint = null)
+        public IReadContext Member(IElement element, TypeInfo hint = null)
         {
             var name = ElementName(element);
             var native = _element.Element(name);
@@ -104,7 +105,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        private XmlReadContext Create(XElement child, Type elementType = null) =>
+        private XmlReadContext Create(XElement child, TypeInfo elementType = null) =>
             new XmlReadContext(_information, _locator, _types, _namespaces, _types.Initialized(child, elementType));
 
         public IEnumerable<IReadContext> ChildrenOf(IElement element)

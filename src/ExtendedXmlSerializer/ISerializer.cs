@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
@@ -54,7 +55,7 @@ namespace ExtendedXmlSerialization
         {
             using (var writer = XmlWriter.Create(stream))
             {
-                _converter.Write(new LegacyXmlWriteContext(writer, new Root(instance.GetType())), instance);
+                _converter.Write(new LegacyXmlWriteContext(writer, new Root(instance.GetType().GetTypeInfo())), instance);
             }
         }
 

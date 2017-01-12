@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             return result;
         }
 
-        protected virtual object Activate(IReadContext context) => _activators.Activate<object>(context.ReferencedType);
+        protected virtual object Activate(IReadContext context) => _activators.Activate<object>(context.ReferencedType.AsType());
 
         protected virtual void OnRead(IReadContext context, object result)
         {

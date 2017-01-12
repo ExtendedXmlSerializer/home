@@ -23,13 +23,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class DictionaryPairTypesLocator : WeakCacheBase<Type, DictionaryPairTypes>, IDictionaryPairTypesLocator
+    public class DictionaryPairTypesLocator : WeakCacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
     {
         public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
         DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
@@ -41,20 +42,19 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
             _type = type;
         }
 
-        protected override DictionaryPairTypes Create(Type parameter)
+        protected override DictionaryPairTypes Create(TypeInfo parameter)
         {
-            foreach (var it in parameter.GetInterfaces().Append(parameter))
+            foreach (var it in parameter.GetInterfaces().Select(x => x.GetTypeInfo()).Append(parameter))
             {
-                var info = it.GetTypeInfo();
-                if (info.IsGenericType && it.GetGenericTypeDefinition() == _type)
+                if (it.IsGenericType && it.GetGenericTypeDefinition() == _type)
                 {
-                    var arguments = info.GetGenericArguments();
-                    var mapping = new DictionaryPairTypes(arguments[0], arguments[1]);
+                    var arguments = it.GetGenericArguments();
+                    var mapping = new DictionaryPairTypes(arguments[0].GetTypeInfo(), arguments[1].GetTypeInfo());
                     return mapping;
                 }
             }
 
-            var baseType = parameter.GetTypeInfo().BaseType;
+            var baseType = parameter.BaseType?.GetTypeInfo();
             var result = baseType != null ? Get(baseType) : null;
             return result;
         }

@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
@@ -33,12 +33,12 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         public TypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        protected override bool Emit(IWriteContext context, object instance, Type type)
+        protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
             if (!(context.Current is IMemberElement))
             {
                 var declared = (context.Current as IDeclaredTypeElement)?.DeclaredType;
-                var result = declared == null || declared.Type != type || CheckInstance(context, instance);
+                var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
                 return result;
             }
             return false;

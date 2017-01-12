@@ -21,43 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class Element : IElement
     {
-        public Element(Typing referencedType) : this(referencedType, referencedType.Type.Name) {}
+        public Element(Type referencedType) : this(referencedType.GetTypeInfo()) {}
+        public Element(TypeInfo referencedType) : this(referencedType, referencedType.Name) {}
 
-        public Element(Typing referencedType, string name)
+        public Element(Type referencedType, string name) : this(referencedType.GetTypeInfo(), name) {}
+
+        public Element(TypeInfo referencedType, string name)
         {
             ReferencedType = referencedType;
             Name = name;
         }
 
         public string Name { get; }
-        public Typing ReferencedType { get; }
-
-        /*public bool Equals(Element other) =>
-            !ReferenceEquals(null, other) &&
-            (ReferenceEquals(this, other) ||
-             string.Equals(Name, other.Name) && Equals(OwnerType, other.OwnerType));
-
-        public override bool Equals(object obj) =>
-            !ReferenceEquals(null, obj) &&
-            (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((Element) obj));
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return ((Name?.GetHashCode() ?? 0) * 397) ^
-                       (OwnerType?.GetHashCode() ?? 0);
-            }
-        }
-
-        public static bool operator ==(Element left, Element right) => Equals(left, right);
-
-        public static bool operator !=(Element left, Element right) => !Equals(left, right);*/
+        public TypeInfo ReferencedType { get; }
     }
 }

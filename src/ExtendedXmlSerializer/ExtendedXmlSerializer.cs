@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using Defaults = ExtendedXmlSerialization.Conversion.Legacy.Defaults;
@@ -71,7 +72,7 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-            => new LegacySerializer(Converter, type).Deserialize(xml);
+            => new LegacySerializer(Converter, type.GetTypeInfo()).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

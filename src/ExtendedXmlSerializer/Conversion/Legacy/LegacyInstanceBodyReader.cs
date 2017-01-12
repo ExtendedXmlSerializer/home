@@ -41,10 +41,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         {
             var result = base.Activate(context);
             var type = context.ReferencedType;
-            var configuration = _tools.GetConfiguration(type);
+            var configuration = _tools.GetConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {
-                var prefix = context.ReferencedType.Type.FullName + Defaults.Underscore;
+                var prefix = context.ReferencedType.FullName + Defaults.Underscore;
                 var refId = context[ReferenceProperty.Default];
                 var references = context.Get<ReadReferences>();
                 if (!string.IsNullOrEmpty(refId))

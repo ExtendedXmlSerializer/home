@@ -24,7 +24,6 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
@@ -53,12 +52,12 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         public string Name => _element.Name;
 
-        public Typing ReferencedType => _element.ReferencedType;
+        public TypeInfo ReferencedType => _element.ReferencedType;
 
         public bool Assignable => _element.Assignable;
 
         public MemberInfo Metadata => _element.Metadata;
 
-        public Typing DeclaredType => _element.DeclaredType;
+        public TypeInfo DeclaredType => _element.DeclaredType;
     }
 }

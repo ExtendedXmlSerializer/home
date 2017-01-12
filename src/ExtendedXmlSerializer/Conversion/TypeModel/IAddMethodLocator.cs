@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
     public interface IAddMethodLocator
     {
-        MethodInfo Locate(Type type, Type elementType);
+        MethodInfo Locate(TypeInfo type, TypeInfo elementType);
     }
 }

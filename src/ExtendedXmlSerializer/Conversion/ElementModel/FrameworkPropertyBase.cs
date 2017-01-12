@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     abstract class FrameworkPropertyBase : Element
     {
-        protected FrameworkPropertyBase(string name) : base(typeof(IExtendedXmlSerializer), name) {}
+        readonly private static TypeInfo Type = typeof(IExtendedXmlSerializer).GetTypeInfo();
+        protected FrameworkPropertyBase(string name) : base(Type, name) {}
     }
 }

@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -30,18 +30,19 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class MemberTypeEmittingWriter : TypeEmittingWriterBase
     {
-        readonly private static Type TypeString = typeof(string);
-        readonly private static Type TypeObject = typeof(object);
+        readonly private static TypeInfo
+            TypeString = typeof(string).GetTypeInfo(),
+            TypeObject = typeof(object).GetTypeInfo();
 
         public MemberTypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        protected override bool Emit(IWriteContext context, object instance, Type type)
+        protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
             var declaredType = ((IMemberElement) context.Current).DeclaredType;
-            var primitive = declaredType.Info.IsPrimitive || declaredType.Info.IsValueType ||
-                            declaredType.Type == TypeString;
-            var result = declaredType.Type == TypeObject ||
-                         !primitive && (declaredType.Type != type || CheckInstance(context, instance));
+            var primitive = declaredType.IsPrimitive || declaredType.IsValueType ||
+                            Equals(declaredType, TypeString);
+            var result = Equals(declaredType, TypeObject) ||
+                         !primitive && (!Equals(declaredType, type) || CheckInstance(context, instance));
             return result;
         }
 

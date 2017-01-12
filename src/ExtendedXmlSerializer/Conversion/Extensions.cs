@@ -40,11 +40,11 @@ namespace ExtendedXmlSerialization.Conversion
         public static object AnnotationAll(this XElement @this, Type type)
             => @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
 
-        public static XElement Initialized(this IElementTypes @this, XElement element, Typing typing)
+        public static XElement Initialized(this IElementTypes @this, XElement element, TypeInfo type)
         {
-            if (typing != null && @this.Get(element) == null)
+            if (type != null && @this.Get(element) == null)
             {
-                element.Annotated(typing);
+                element.Annotated(type);
             }
             return element;
         }
@@ -53,8 +53,7 @@ namespace ExtendedXmlSerialization.Conversion
         public static TypeInfo AccountForNullable(this TypeInfo @this)
             => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
-        public static Type AccountForNullable(this Type @this) => Nullable.GetUnderlyingType(@this) ?? @this;
-
-        public static T Activate<T>(this IActivators @this, Typing type) => (T) @this.Get(type).Invoke();
+        
+        public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
     }
 }

@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         public ElementCandidates() : this(Defaults.Elements) {}
 
         public ElementCandidates(IEnumerable<IElement> elements)
-            : this(elements.ToDictionary(x => x.ReferencedType.Info)) {}
+            : this(elements.ToDictionary(x => x.ReferencedType)) {}
 
         public ElementCandidates(IDictionary<TypeInfo, IElement> elements)
         {

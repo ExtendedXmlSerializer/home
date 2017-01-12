@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
@@ -38,9 +39,9 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _locator = locator;
         }
 
-        public string Format(Typing type)
+        public string Format(TypeInfo type)
         {
-            var arguments = type.Info.GetGenericArguments();
+            var arguments = type.GetGenericArguments();
             var name = arguments.Any()
                 ? string.Join(string.Empty, arguments.Select(p => p.Name))
                 : _locator.Get(type).Name;

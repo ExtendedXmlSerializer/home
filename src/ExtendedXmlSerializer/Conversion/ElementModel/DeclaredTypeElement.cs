@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class DeclaredTypeElement : Element, IDeclaredTypeElement
     {
-        public DeclaredTypeElement(IElement element, Typing declaredType) : base(element.ReferencedType, element.Name)
+        public DeclaredTypeElement(IElement element, TypeInfo declaredType) : base(element.ReferencedType, element.Name)
         {
             DeclaredType = declaredType;
         }
 
-        public Typing DeclaredType { get; }
+        public TypeInfo DeclaredType { get; }
     }
 }

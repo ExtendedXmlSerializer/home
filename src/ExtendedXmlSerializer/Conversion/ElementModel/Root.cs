@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     class Root : Element, IRoot
     {
-        public Root(Typing referencedType) : base(referencedType) {}
+        public Root(TypeInfo referencedType) : base(referencedType) {}
     }
 }

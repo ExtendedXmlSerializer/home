@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override void Write(IWriteContext context, object instance)
         {
-            var type = instance.GetType();
+            var type = instance.GetType().GetTypeInfo();
             if (Emit(context, instance, type))
             {
                 context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
@@ -42,6 +42,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             base.Write(context, instance);
         }
 
-        protected abstract bool Emit(IWriteContext context, object instance, Type type);
+        protected abstract bool Emit(IWriteContext context, object instance, TypeInfo type);
     }
 }

@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
@@ -30,6 +31,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public static LegacyTypeFormatter Default { get; } = new LegacyTypeFormatter();
         LegacyTypeFormatter() {}
 
-        public string Format(Typing type) => type.Type.FullName;
+        public string Format(TypeInfo type) => type.FullName;
     }
 }

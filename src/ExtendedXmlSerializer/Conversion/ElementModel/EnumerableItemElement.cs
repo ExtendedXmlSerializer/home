@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class EnumerableItemElement : DeclaredTypeElement
     {
-        public EnumerableItemElement(IElement element, Typing elementType) : base(element, elementType) {}
+        public EnumerableItemElement(IElement element, TypeInfo elementType) : base(element, elementType) {}
     }
 }

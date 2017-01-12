@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IElementTypes : IParameterizedSource<XElement, Typing> {}
+    public interface IElementTypes : IParameterizedSource<XElement, TypeInfo> {}
 }

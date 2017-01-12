@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -57,6 +57,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        object Read(IReadContext context, IElement element, Type type) => _reader.Read(context.Member(element, type));
+        object Read(IReadContext context, IElement element, TypeInfo type) => _reader.Read(context.Member(element, type));
     }
 }

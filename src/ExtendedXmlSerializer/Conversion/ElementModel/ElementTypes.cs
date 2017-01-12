@@ -41,15 +41,14 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             _types = types;
         }
 
-        public Typing Get(XElement parameter)
+        public TypeInfo Get(XElement parameter)
         {
-            var stored = parameter.Annotation<Typing>();
+            var stored = parameter.Annotation<TypeInfo>();
             if (stored == null)
             {
-                var found = _types.Get(parameter.Name) ?? FromAttribute(parameter);
-                if (found != null)
+                var result = _types.Get(parameter.Name) ?? FromAttribute(parameter);
+                if (result != null)
                 {
-                    var result = new Typing(found);
                     parameter.AddAnnotation(result);
                     return result;
                 }

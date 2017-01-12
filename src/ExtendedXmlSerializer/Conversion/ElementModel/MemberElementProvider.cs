@@ -38,8 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             var name = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
                        member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
                        member.Name;
-            var result = new MemberElement(name, member.DeclaringType, member,
-                                           member.GetMemberType().AccountForNullable(), member.IsWritable());
+            var result = new MemberElement(name, member.DeclaringType.GetTypeInfo(), member,
+                                           member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable());
             return result;
         }
     }

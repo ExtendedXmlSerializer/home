@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
@@ -31,16 +32,16 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public static TypeNameFormatter Default { get; } = new TypeNameFormatter();
         TypeNameFormatter() {}
 
-        public string Format(Typing type)
+        public string Format(TypeInfo type)
         {
-            if (type.Info.IsGenericType)
+            if (type.IsGenericType)
             {
-                var types = type.Info.GetGenericArguments();
+                var types = type.GetGenericArguments();
                 var names = string.Join(string.Empty, types.Select(p => p.Name));
-                var result = type.Info.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
+                var result = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
                 return result;
             }
-            return type.Info.Name;
+            return type.Name;
         }
     }
 }

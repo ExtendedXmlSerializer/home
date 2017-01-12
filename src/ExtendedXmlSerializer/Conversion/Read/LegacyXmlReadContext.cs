@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Members;
@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     sealed class LegacyXmlReadContext : XmlReadContext
     {
-        public LegacyXmlReadContext(XElement element, Type type)
+        public LegacyXmlReadContext(XElement element, TypeInfo type)
             : base(
                 MemberInformationProvider.Default, ElementTypeLocator.Default, LegacyElementTypes.Default,
                 LegacyNamespaces.Default,

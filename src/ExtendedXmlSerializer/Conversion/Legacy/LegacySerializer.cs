@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.IO;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 
@@ -30,9 +30,9 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacySerializer : Serializer
     {
-        private readonly Type _type;
+        private readonly TypeInfo _type;
 
-        public LegacySerializer(IConverter converter, Type type) : base(converter)
+        public LegacySerializer(IConverter converter, TypeInfo type) : base(converter)
         {
             _type = type;
         }

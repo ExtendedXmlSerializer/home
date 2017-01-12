@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -43,7 +44,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         protected override void Write(IWriteContext context, IDictionary instance)
         {
-            var pair = _locator.Get(instance.GetType());
+            var pair = _locator.Get(instance.GetType().GetTypeInfo());
             var element = new DictionaryElement(ItemProperty.Default, pair.KeyType, pair.ValueType);
 
             foreach (DictionaryEntry entry in instance)

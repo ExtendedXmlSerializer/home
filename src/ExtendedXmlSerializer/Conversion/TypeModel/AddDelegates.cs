@@ -23,11 +23,12 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    class AddDelegates : WeakCacheBase<Type, Action<object, object>>, IAddDelegates
+    class AddDelegates : WeakCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
     {
         public static AddDelegates Default { get; } = new AddDelegates();
         AddDelegates() : this(ElementTypeLocator.Default, AddMethodLocator.Default) {}
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
             _add = add;
         }
 
-        protected override Action<object, object> Create(Type parameter)
+        protected override Action<object, object> Create(TypeInfo parameter)
         {
             var elementType = _locator.Get(parameter);
             if (elementType != null)
@@ -54,9 +55,9 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
                     var value = Expression.Parameter(typeof(object), "value");
 
                     // Object casted to specific type using the operator "as".
-                    var itemCasted = Expression.Convert(itemObject, parameter);
+                    var itemCasted = Expression.Convert(itemObject, parameter.AsType());
 
-                    var castedParam = Expression.Convert(value, elementType);
+                    var castedParam = Expression.Convert(value, elementType.AsType());
 
                     var conversion = Expression.Call(itemCasted, add, castedParam);
 
