@@ -21,19 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IWriteContext : IServiceProvider, IDisposable
+    class DictionaryElement : Element, IDictionaryElement
     {
-        IWriteContext Start(IElement element);
+        public DictionaryElement(IElement element, Typing keyType, Typing valueType)
+            : base(element.ReferencedType, element.Name)
+        {
+            KeyType = keyType;
+            ValueType = valueType;
+        }
 
-        void Write(string text);
-
-        void Write(IElement element, string value);
-
-        IElement Current { get; }
+        public Typing KeyType { get; }
+        public Typing ValueType { get; }
     }
 }

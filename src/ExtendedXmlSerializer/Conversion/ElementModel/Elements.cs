@@ -27,25 +27,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    /*class TypeResolver : IParameterizedSource<XElement, IElement>
-    {
-        private readonly INamedTypes _types;
-        private readonly IElements _elements;
-
-        public TypeResolver(INamedTypes types, IElements elements)
-        {
-            _types = types;
-            _elements = elements;
-        }
-
-        public IElement Get(XElement parameter)
-        {
-            var type = _types.Get(parameter);
-            var result = _elements.Get(type);
-            return result;
-        }
-    }*/
-
     public class Elements : Selector<TypeInfo, IElement>, IElements
     {
         public static Elements Default { get; } = new Elements();

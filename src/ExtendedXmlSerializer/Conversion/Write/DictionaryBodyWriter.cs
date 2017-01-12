@@ -23,26 +23,35 @@
 
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     class DictionaryBodyWriter : WriterBase<IDictionary>
     {
-        private readonly ElementWriter _writer;
+        private readonly IWriter _writer;
+        private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryBodyWriter(IWriter itemWriter)
-            : this(new ElementWriter(ItemProperty.Default, new DictionaryEntryWriter(itemWriter))) {}
+        public DictionaryBodyWriter(IWriter item)
+            : this(new DictionaryEntryWriter(item), DictionaryPairTypesLocator.Default) {}
 
-        DictionaryBodyWriter(ElementWriter writer)
+        DictionaryBodyWriter(IWriter writer, IDictionaryPairTypesLocator locator)
         {
             _writer = writer;
+            _locator = locator;
         }
 
         protected override void Write(IWriteContext context, IDictionary instance)
         {
+            var pair = _locator.Get(instance.GetType());
+            var element = new DictionaryElement(ItemProperty.Default, pair.KeyType, pair.ValueType);
+
             foreach (DictionaryEntry entry in instance)
             {
-                _writer.Write(context, entry);
+                using (var child = context.Start(element))
+                {
+                    _writer.Write(child, entry);
+                }
             }
         }
     }

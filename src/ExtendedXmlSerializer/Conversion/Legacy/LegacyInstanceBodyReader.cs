@@ -21,63 +21,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyRootConverter : RootConverter
+    sealed class LegacyInstanceBodyReader : InstanceBodyReader
     {
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyRootConverter(ISerializationToolsFactory tools)
-            : this(tools, new RootSelector(new LegacySelectorFactory(tools))) {}
-
-        public LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
-            : base(
-                LegacyElements.Default, selector,
-                new Converter(new SelectingReader(selector), new SelectingWriter(selector)))
+        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IInstanceMembers members) : base(members)
         {
             _tools = tools;
         }
 
-        public override void Write(IWriteContext context, object instance)
+        protected override object Activate(IReadContext context)
         {
-            var type = instance.GetType();
-            var configuration = _tools.GetConfiguration(type);
-            if (configuration != null)
-            {
-                if (configuration.IsCustomSerializer)
-                {
-                    new CustomElementWriter(configuration).Write(context, instance);
-                    return;
-                }
-            }
-
-            base.Write(context, instance);
-        }
-
-        public override object Read(IReadContext context)
-        {
+            var result = base.Activate(context);
             var type = context.ReferencedType;
             var configuration = _tools.GetConfiguration(type);
-            if (configuration != null)
+            if (configuration != null && configuration.IsObjectReference)
             {
-                var element = context.Get<XElement>();
-                // Run migrator if exists
-                if (configuration.Version > 0)
+                var prefix = context.ReferencedType.Type.FullName + Defaults.Underscore;
+                var refId = context[ReferenceProperty.Default];
+                var references = context.Get<ReadReferences>();
+                if (!string.IsNullOrEmpty(refId))
                 {
-                    configuration.Map(type, element);
+                    var key = prefix + refId;
+                    if (references.ContainsKey(key))
+                    {
+                        return references[key];
+                    }
+                    references.Add(key, result);
                 }
-
-                if (configuration.IsCustomSerializer)
+                else
                 {
-                    return configuration.ReadObject(element);
+                    var objectId = context[IdentifierProperty.Default];
+                    if (!string.IsNullOrEmpty(objectId))
+                    {
+                        var key = prefix + objectId;
+                        if (references.ContainsKey(key))
+                        {
+                            return references[key];
+                        }
+                        references.Add(key, result);
+                    }
                 }
             }
-            return base.Read(context);
+            return result;
         }
     }
 }

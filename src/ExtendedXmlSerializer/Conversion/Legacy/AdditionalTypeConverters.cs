@@ -24,6 +24,8 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -40,8 +42,17 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
             var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter));
             var factory = new CompositeMemberFactory(new LegacyAssignableMemberFactory(parameter), factories);
-            var members = new InstanceMembers(new TypeEnabledMemberFactory(factory));
+            var members = new InstanceMembers(factory);
             yield return new LegacyInstanceTypeConverter(members);
+        }
+
+        sealed class LegacyEnumerableTypeConverter : TypeConverter
+        {
+            public LegacyEnumerableTypeConverter(IConverter converter)
+                : base(
+                    IsEnumerableTypeSpecification.Default, new ListReader(converter),
+                    new EnumerableBodyWriter(LegacyElements.Default, converter)
+                ) {}
         }
     }
 }

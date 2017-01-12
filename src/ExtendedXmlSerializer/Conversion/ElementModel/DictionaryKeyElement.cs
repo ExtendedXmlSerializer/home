@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IEnumerableTypings : IParameterizedSource<IReadContext, EnumerableTyping> {}
+    public class DictionaryKeyElement : DeclaredTypeElement
+    {
+        public DictionaryKeyElement(Typing keyType) : base(KeyProperty.Default, keyType) {}
+    }
 }

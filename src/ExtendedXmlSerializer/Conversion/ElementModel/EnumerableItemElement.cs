@@ -21,21 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    sealed class References : Dictionary<string, object>
+    public class EnumerableItemElement : DeclaredTypeElement
     {
-        public References() : this(new Dictionary<string, object>(), new HashSet<string>()) {}
-
-        public References(IDictionary<string, object> reserved, ISet<string> items)
-        {
-            Reserved = reserved;
-            Items = items;
-        }
-
-        public IDictionary<string, object> Reserved { get; }
-        public ISet<string> Items { get; }
+        public EnumerableItemElement(IElement element, Typing elementType) : base(element, elementType) {}
     }
 }

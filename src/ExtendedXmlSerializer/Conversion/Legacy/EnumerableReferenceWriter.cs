@@ -21,13 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyElementWriter : ElementWriter
+    sealed class EnumerableReferenceWriter : DecoratedWriter
     {
-        public LegacyElementWriter(IWriter writer)
-            : base(LegacyElements.Default.Get, new MemberTypeEmittingWriter(writer)) {}
+        private readonly ISerializationToolsFactory _tools;
+
+        public EnumerableReferenceWriter(ISerializationToolsFactory tools, IWriter writer) : base(writer)
+        {
+            _tools = tools;
+        }
+
+        public override void Write(IWriteContext context, object instance)
+        {
+            var elementType = ElementTypeLocator.Default.Get(instance.GetType());
+            if (elementType != null)
+            {
+                var configuration = _tools.GetConfiguration(elementType);
+                if (configuration?.IsObjectReference ?? false)
+                {
+                    var references = context.Get<WriteReferences>();
+                    foreach (var item in (IEnumerable) instance)
+                    {
+                        if (!references.Contains(item) && !references.Reserved.Contains(item))
+                        {
+                            references.Reserved.Add(item);
+                        }
+                    }
+                }
+            }
+
+            base.Write(context, instance);
+        }
     }
 }

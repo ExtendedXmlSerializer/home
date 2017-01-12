@@ -21,34 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyMemberElement : ILegacyMemberElement
+    abstract class TypeEmittingWriterBase : DecoratedWriter
     {
-        private readonly IMemberElement _element;
-        private readonly ISpecification<TypeInfo> _specification;
+        public TypeEmittingWriterBase(IWriter writer) : base(writer) {}
 
-        public LegacyMemberElement(IMemberElement element, ISpecification<TypeInfo> specification)
+        public override void Write(IWriteContext context, object instance)
         {
-            _element = element;
-            _specification = specification;
+            var type = instance.GetType();
+            if (Emit(context, instance, type))
+            {
+                context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
+            }
+
+            base.Write(context, instance);
         }
 
-        public string Name => _element.Name;
-
-        public Typing ReferencedType => _element.ReferencedType;
-
-        public bool Assignable => _element.Assignable;
-
-        public MemberInfo Metadata => _element.Metadata;
-
-        public Typing MemberType => _element.MemberType;
-
-        public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
+        protected abstract bool Emit(IWriteContext context, object instance, Type type);
     }
 }

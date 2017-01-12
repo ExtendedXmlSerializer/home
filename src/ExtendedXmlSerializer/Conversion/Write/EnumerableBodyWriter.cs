@@ -22,29 +22,39 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly IWriter _writer;
+        private readonly IElements _elements;
+        private readonly IWriter _item;
+        private readonly IElementTypeLocator _locator;
 
-        public EnumerableBodyWriter(IWriter itemWriter) : this(Elements.Default, itemWriter) {}
+        public EnumerableBodyWriter(IWriter item) : this(Elements.Default, item) {}
 
-        public EnumerableBodyWriter(IElements elements, IWriter itemWriter)
-            : this(new ElementWriter(elements.Get, itemWriter)) {}
+        public EnumerableBodyWriter(IElements elements, IWriter item) : this(elements, item, ElementTypeLocator.Default) {}
 
-        EnumerableBodyWriter(ElementWriter writer)
+        public EnumerableBodyWriter(IElements elements, IWriter item, IElementTypeLocator locator)
         {
-            _writer = writer;
+            _elements = elements;
+            _item = item;
+            _locator = locator;
         }
 
         protected override void Write(IWriteContext context, IEnumerable instance)
         {
+            var elementType = _locator.Get(instance.GetType());
             foreach (var item in instance)
             {
-                _writer.Write(context, item);
+                var element = _elements.Get(item.GetType().GetTypeInfo());
+                using (var child = context.Start(new EnumerableItemElement(element, elementType)))
+                {
+                    _item.Write(child, item);
+                }
             }
         }
     }

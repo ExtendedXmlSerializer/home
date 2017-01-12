@@ -22,13 +22,14 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyXmlWriteContext : XmlWriteContext
     {
-        public LegacyXmlWriteContext(XmlWriter writer)
-            : base(LegacyNamespaces.Default, writer, new References(), writer) {}
+        public LegacyXmlWriteContext(XmlWriter writer, IElement element)
+            : base(LegacyNamespaces.Default, writer, element, new WriteReferences(), writer) {}
     }
 }

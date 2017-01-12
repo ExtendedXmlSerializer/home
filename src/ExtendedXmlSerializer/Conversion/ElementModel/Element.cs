@@ -27,11 +27,11 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class Element : IElement
     {
-        public Element(Typing ownerType) : this(ownerType, ownerType.Type.Name) {}
+        public Element(Typing referencedType) : this(referencedType, referencedType.Type.Name) {}
 
-        public Element(Typing ownerType, string name)
+        public Element(Typing referencedType, string name)
         {
-            ReferencedType = ownerType;
+            ReferencedType = referencedType;
             Name = name;
         }
 

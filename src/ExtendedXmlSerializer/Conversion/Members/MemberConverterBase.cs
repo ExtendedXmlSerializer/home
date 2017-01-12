@@ -59,6 +59,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         public MemberInfo Metadata => _element.Metadata;
 
-        public Typing MemberType => _element.MemberType;
+        public Typing DeclaredType => _element.DeclaredType;
     }
 }

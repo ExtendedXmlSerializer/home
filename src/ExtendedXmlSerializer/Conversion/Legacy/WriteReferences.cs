@@ -21,24 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class EmitTypeSpecification : ISpecification<TypeInfo>
+    sealed class WriteReferences : HashSet<object>
     {
-        readonly private static Type StringType = typeof(string), ObjectType = typeof(object);
-        private readonly TypeInfo _info;
+        public WriteReferences() : this(new HashSet<object>()) {}
 
-        public EmitTypeSpecification(TypeInfo info)
+        public WriteReferences(ICollection<object> reserved)
         {
-            _info = info;
+            Reserved = reserved;
         }
 
-        public bool IsSatisfiedBy(TypeInfo parameter) =>
-            _info.IsInterface || _info.AsType() == ObjectType ||
-            !_info.IsPrimitive && parameter.AsType() != StringType && !Equals(parameter, _info);
+        public ICollection<object> Reserved { get; }
     }
 }

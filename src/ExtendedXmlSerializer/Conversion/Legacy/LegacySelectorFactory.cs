@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacySelectorFactory : AlteredSelectorFactory
+    sealed class LegacySelectorFactory : AlteredSelectorFactory
     {
         public LegacySelectorFactory(ISerializationToolsFactory tools)
             : base(new SelectorFactory(LegacyPrimitives.Default, new LegacyAdditionalTypeConverters(tools)),

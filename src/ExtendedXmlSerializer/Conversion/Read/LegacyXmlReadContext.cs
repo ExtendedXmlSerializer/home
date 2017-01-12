@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 LegacyElementTypes.Default.Initialized(element, type),
 
                 // Services:
-                new References(), MemberInformationProvider.Default, ElementTypeLocator.Default,
+                new ReadReferences(), MemberInformationProvider.Default, ElementTypeLocator.Default,
                 LegacyElementTypes.Default, LegacyNamespaces.Default
             ) {}
     }

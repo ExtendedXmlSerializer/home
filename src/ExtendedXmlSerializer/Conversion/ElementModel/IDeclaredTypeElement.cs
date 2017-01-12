@@ -21,19 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IWriteContext : IServiceProvider, IDisposable
+    public interface IDeclaredTypeElement : IElement
     {
-        IWriteContext Start(IElement element);
-
-        void Write(string text);
-
-        void Write(IElement element, string value);
-
-        IElement Current { get; }
+        Typing DeclaredType { get; }
     }
 }

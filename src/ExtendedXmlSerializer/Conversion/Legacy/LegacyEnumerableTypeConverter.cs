@@ -29,11 +29,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyEnumerableTypeConverter : TypeConverter
     {
-        public LegacyEnumerableTypeConverter(IConverter converter)
+        public LegacyEnumerableTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(
-                IsEnumerableTypeSpecification.Default,
-                new ListReader(converter),
-                new EnumerableBodyWriter(converter)
+                IsEnumerableTypeSpecification.Default, new ListReader(converter),
+                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(converter))
             ) {}
     }
 }

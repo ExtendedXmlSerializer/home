@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         public IMemberConverter Get(IMemberElement parameter)
         {
-            var add = _add.Get(parameter.MemberType);
+            var add = _add.Get(parameter.DeclaredType);
             if (add != null)
             {
                 var getter = _getter.Get(parameter.Metadata);

@@ -124,7 +124,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         {
             foreach (var child in _element.Elements())
             {
-                var memberType = _view.Get(child.Name.LocalName)?.MemberType;
+                var memberType = _view.Get(child.Name.LocalName)?.DeclaredType;
                 if (memberType != null)
                 {
                     yield return Create(child, memberType);

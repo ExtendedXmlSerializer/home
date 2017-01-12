@@ -22,30 +22,28 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
+using System.Collections;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class TypeEmittingWriter : DecoratedWriter
+    class TypeEmittingWriter : TypeEmittingWriterBase
     {
-        readonly private static Func<TypeInfo, bool> Activated = IsActivatedTypeSpecification.Default.IsSatisfiedBy;
-
         public TypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        public override void Write(IWriteContext context, object instance)
+        protected override bool Emit(IWriteContext context, object instance, Type type)
         {
-            var type = instance.GetType();
-            var element = context as IWriteElementContext;
-            var member = element?.Current as ILegacyMemberElement;
-            if (member == null || Activated(member.MemberType))
+            if (!(context.Current is IMemberElement))
             {
-                context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
+                var declared = (context.Current as IDeclaredTypeElement)?.DeclaredType;
+                var result = declared == null || declared.Type != type || CheckInstance(context, instance);
+                return result;
             }
-
-            base.Write(context, instance);
+            return false;
         }
+
+        protected virtual bool CheckInstance(IWriteContext context, object instance) => !(instance is IEnumerable);
     }
 }

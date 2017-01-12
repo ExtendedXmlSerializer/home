@@ -21,19 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public interface IWriteContext : IServiceProvider, IDisposable
-    {
-        IWriteContext Start(IElement element);
-
-        void Write(string text);
-
-        void Write(IElement element, string value);
-
-        IElement Current { get; }
-    }
+    sealed class ReadReferences : Dictionary<string, object> {}
 }

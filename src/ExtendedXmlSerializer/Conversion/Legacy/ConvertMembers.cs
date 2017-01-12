@@ -42,8 +42,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             var getter = new LegacyGetterFactory(_tools);
             var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter), getter,
                                                                 AddDelegates.Default);
-            var factory = new CompositeMemberFactory(new LegacyAssignableMemberFactory(parameter, getter), factories);
-            var memberFactory = new LegacyMemberFactory(_tools, new TypeEnabledMemberFactory(factory));
+            var factory =
+                new CompositeMemberFactory(
+                    new LegacyAssignableMemberFactory(parameter, new LegacyMemberTypeEmittingWriter(parameter),
+                                                      getter), factories);
+            var memberFactory = new LegacyMemberFactory(_tools, factory);
             var result = new InstanceMembers(memberFactory);
             return result;
         }

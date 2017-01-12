@@ -33,14 +33,14 @@ namespace ExtendedXmlSerialization.Conversion.Members
             Name = name;
             ReferencedType = referencedType;
             Metadata = metadata;
-            MemberType = memberType;
+            DeclaredType = memberType;
             Assignable = assignable;
         }
 
         public string Name { get; }
         public Typing ReferencedType { get; }
         public MemberInfo Metadata { get; }
-        public Typing MemberType { get; }
+        public Typing DeclaredType { get; }
         public bool Assignable { get; }
     }
 }

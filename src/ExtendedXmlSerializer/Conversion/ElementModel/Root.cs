@@ -21,15 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
-{
-    public class EnumerableTyping : Typing
-    {
-        public EnumerableTyping(Typing elementType, Typing type) : base(type.Type, type.Info)
-        {
-            ElementType = elementType;
-        }
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-        public Typing ElementType { get; }
+namespace ExtendedXmlSerialization.Conversion.ElementModel
+{
+    class Root : Element, IRoot
+    {
+        public Root(Typing referencedType) : base(referencedType) {}
     }
 }

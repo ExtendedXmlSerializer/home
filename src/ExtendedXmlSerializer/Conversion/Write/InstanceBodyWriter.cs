@@ -37,7 +37,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public override void Write(IWriteContext context, object instance)
         {
-            foreach (var member in _members.Get(instance.GetType().GetTypeInfo()))
+            var enumerable = _members.Get(instance.GetType().GetTypeInfo());
+            foreach (var member in enumerable)
             {
                 member.Write(context, instance);
             }

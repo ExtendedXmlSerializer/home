@@ -31,6 +31,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IInstanceMembers _members;
         private readonly IActivators _activators;
 
+        public InstanceBodyReader(IInstanceMembers members) : this(members, Activators.Default) {}
+
         public InstanceBodyReader(IInstanceMembers members, IActivators activators)
         {
             _members = members;
@@ -39,10 +41,12 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public override object Read(IReadContext context)
         {
-            var result = _activators.Activate<object>(context.ReferencedType);
+            var result = Activate(context);
             OnRead(context, result);
             return result;
         }
+
+        protected virtual object Activate(IReadContext context) => _activators.Activate<object>(context.ReferencedType);
 
         protected virtual void OnRead(IReadContext context, object result)
         {

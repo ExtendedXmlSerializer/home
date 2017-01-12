@@ -25,6 +25,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
 
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization
         {
             using (var writer = XmlWriter.Create(stream))
             {
-                _converter.Write(new LegacyXmlWriteContext(writer), instance);
+                _converter.Write(new LegacyXmlWriteContext(writer, new Root(instance.GetType())), instance);
             }
         }
 

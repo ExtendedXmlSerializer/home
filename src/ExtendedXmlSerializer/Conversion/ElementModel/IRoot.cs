@@ -21,13 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IWriteElementContext : IWriteContext, IDisposable
-    {
-        IElement Current { get; }
-    }
+    public interface IRoot : IElement {}
 }

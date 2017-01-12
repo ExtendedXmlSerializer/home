@@ -37,13 +37,22 @@ namespace ExtendedXmlSerialization.Conversion.Write
         private readonly ImmutableArray<object> _services;
         private readonly IDisposable _finish;
 
-        public XmlWriteContext(INamespaces namespaces, XmlWriter writer, params object[] services)
+        public XmlWriteContext(XmlWriter writer, IElement element, params object[] services)
+            : this(Namespaces.Default, writer, element, services) {}
+
+        protected XmlWriteContext(INamespaces namespaces, XmlWriter writer, IElement element, params object[] services)
+            : this(namespaces, writer, element, services.ToImmutableArray()) {}
+
+        XmlWriteContext(INamespaces namespaces, XmlWriter writer, IElement element, ImmutableArray<object> services)
         {
+            Current = element;
             _namespaces = namespaces;
             _writer = writer;
-            _services = services.ToImmutableArray();
+            _services = services;
             _finish = new DelegatedDisposable(_writer.WriteEndElement);
         }
+
+        public IElement Current { get; }
 
         public object GetService(Type serviceType)
         {
@@ -60,12 +69,12 @@ namespace ExtendedXmlSerialization.Conversion.Write
             return null;
         }
 
-        public IWriteElementContext Start(IElement element)
+        public IWriteContext Start(IElement element)
         {
             var ns = _namespaces.Get(element.ReferencedType);
             _writer.WriteStartElement(element.Name, ns);
 
-            var result = new WriteElementContext(this, element, _finish);
+            var result = new XmlWriteContext(_namespaces, _writer, element, _services);
             return result;
         }
 
@@ -73,28 +82,6 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public void Write(IElement element, string value) => _writer.WriteAttributeString(element.Name, value);
 
-        class WriteElementContext : IWriteElementContext
-        {
-            private readonly IWriteContext _context;
-            private readonly IDisposable _disposable;
-
-            public WriteElementContext(IWriteContext context, IElement element, IDisposable disposable)
-            {
-                _context = context;
-                _disposable = disposable;
-                Current = element;
-            }
-
-            public object GetService(Type serviceType) => _context.GetService(serviceType);
-
-            public IWriteElementContext Start(IElement element) => _context.Start(element);
-
-            public void Write(string text) => _context.Write(text);
-
-            public void Write(IElement element, string value) => _context.Write(element, value);
-
-            public void Dispose() => _disposable.Dispose();
-            public IElement Current { get; }
-        }
+        public virtual void Dispose() => _finish.Dispose();
     }
 }

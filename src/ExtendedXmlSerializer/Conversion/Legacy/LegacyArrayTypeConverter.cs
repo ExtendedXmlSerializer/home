@@ -21,20 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class TypeEnabledMemberFactory : IMemberFactory
+    sealed class LegacyArrayTypeConverter : TypeConverter
     {
-        private readonly IMemberFactory _factory;
-
-        public TypeEnabledMemberFactory(IMemberFactory factory)
-        {
-            _factory = factory;
-        }
-
-        public IMemberConverter Get(IMemberElement parameter)
-            => _factory.Get(new LegacyMemberElement(parameter, new EmitTypeSpecification(parameter.MemberType)));
+        public LegacyArrayTypeConverter(ISerializationToolsFactory tools, IConverter converter)
+            : base(
+                IsArraySpecification.Default, new ArrayReader(converter),
+                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElements.Default, converter))) {}
     }
 }

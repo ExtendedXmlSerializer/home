@@ -27,10 +27,10 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class CustomElementWriter : LegacyElementWriter
+    sealed class CustomElementWriter : ElementWriter
     {
         public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
-            : base(new BodyWriter(configuration)) {}
+            : base(LegacyElements.Default.Get, new TypeEmittingWriter(new BodyWriter(configuration))) {}
 
         sealed class BodyWriter : WriterBase
         {

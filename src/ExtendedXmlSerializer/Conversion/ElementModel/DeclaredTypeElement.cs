@@ -21,26 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    sealed class ReferenceWriter : LegacyElementWriter
+    public class DeclaredTypeElement : Element, IDeclaredTypeElement
     {
-        public ReferenceWriter(string referenceId) : base(new BodyWriter(referenceId)) {}
-
-        sealed class BodyWriter : WriterBase
+        public DeclaredTypeElement(IElement element, Typing declaredType) : base(element.ReferencedType, element.Name)
         {
-            private readonly string _referenceId;
-
-            public BodyWriter(string referenceId)
-            {
-                _referenceId = referenceId;
-            }
-
-            public override void Write(IWriteContext context, object instance)
-                => context.Write(ReferenceProperty.Default, _referenceId);
+            DeclaredType = declaredType;
         }
+
+        public Typing DeclaredType { get; }
     }
 }

@@ -21,31 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System;
+using System.Collections;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class MemberTypeEmittingWriter : DecoratedWriter
+    class MemberTypeEmittingWriter : TypeEmittingWriterBase
     {
+        readonly private static Type TypeString = typeof(string);
+        readonly private static Type TypeObject = typeof(object);
+
         public MemberTypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        public override void Write(IWriteContext context, object instance)
+        protected override bool Emit(IWriteContext context, object instance, Type type)
         {
-            var type = instance.GetType();
-            var element = context as IWriteElementContext;
-            if (element != null)
-            {
-                var info = type.GetTypeInfo();
-                var member = element.Current as ILegacyMemberElement;
-                if (member == null || member.IsSatisfiedBy(info))
-                {
-                    context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
-                }
-            }
+            var declaredType = ((IMemberElement) context.Current).DeclaredType;
+            var primitive = declaredType.Info.IsPrimitive || declaredType.Info.IsValueType ||
+                            declaredType.Type == TypeString;
+            var result = declaredType.Type == TypeObject ||
+                         !primitive && (declaredType.Type != type || CheckInstance(context, instance));
+            return result;
+        }
 
-            base.Write(context, instance);
+        protected virtual bool CheckInstance(IWriteContext context, object instance)
+        {
+            return !(instance is IEnumerable);
         }
     }
 }

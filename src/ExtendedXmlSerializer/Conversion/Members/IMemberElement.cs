@@ -23,16 +23,13 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberElement : IElement
+    public interface IMemberElement : IDeclaredTypeElement
     {
         bool Assignable { get; }
 
         MemberInfo Metadata { get; }
-
-        Typing MemberType { get; }
     }
 }

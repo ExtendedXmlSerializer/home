@@ -29,6 +29,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     static class Defaults
     {
+        public const string Underscore = "_";
+
         public static IEnumerable<IElement> Elements { get; } = new LegacyKnownElements().ToImmutableArray();
 
         public static IConverter Root { get; } = new RootConverter(LegacyElements.Default,
