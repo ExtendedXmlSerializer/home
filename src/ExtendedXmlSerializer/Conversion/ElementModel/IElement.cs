@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
     public interface IElementName
     {
-        string Name { get; }
-        TypeInfo ReferencedType { get; }
+        string DisplayName { get; }
+        TypeInfo KeyedType { get; }
     }
 
     public class ElementName : IEquatable<ElementName>, IElementName
@@ -46,19 +46,19 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
         public ElementName(TypeInfo referencedType, string name)
         {
-            ReferencedType = referencedType;
-            Name = name;
+            KeyedType = referencedType;
+            DisplayName = name;
         }
 
-        public string Name { get; }
-        public TypeInfo ReferencedType { get; }
+        public string DisplayName { get; }
+        public TypeInfo KeyedType { get; }
 
-        public bool Equals(ElementName other) => Equals(ReferencedType, other.ReferencedType);
+        public bool Equals(ElementName other) => Equals(KeyedType, other.KeyedType);
 
         public override bool Equals(object obj) => 
             !ReferenceEquals(null, obj) && (obj is ElementName && Equals((ElementName) obj));
 
-        public override int GetHashCode() => ReferencedType?.GetHashCode() ?? 0;
+        public override int GetHashCode() => KeyedType?.GetHashCode() ?? 0;
 
         public static bool operator ==(ElementName left, ElementName right) => left.Equals(right);
 

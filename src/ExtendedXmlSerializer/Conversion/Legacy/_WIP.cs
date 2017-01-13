@@ -4,7 +4,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyElements : Selector<MemberInfo, IElement>, IElementFactory
+    class LegacyElements : Selector<MemberInfo, IElement>, IElementSelector
     {
         public static LegacyElements Default { get; } = new LegacyElements();
         LegacyElements() : this(DictionaryElementFactory.Default) {}

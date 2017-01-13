@@ -27,18 +27,14 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public abstract class MemberElementBase : IMemberElement
+    public abstract class MemberElementBase : DeclaredTypeElementBase, IMemberElement
     {
-        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType)
+        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType) : base(name, memberType)
         {
-            Name = name;
             Metadata = metadata;
-            DeclaredType = memberType;
         }
 
-        public IElementName Name { get; }
         public MemberInfo Metadata { get; }
-        public TypeInfo DeclaredType { get; }
 
         public abstract object Get(object instance);
         public abstract void Assign(object instance, object value);

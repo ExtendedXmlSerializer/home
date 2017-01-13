@@ -50,8 +50,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             for (int i = 0; i < length; i++)
             {
                 var element = _elements[i];
-                var info = element.ReferencedType;
-                if (ns == _namespaces.Get(info) && localName == element.Name)
+                var info = element.KeyedType;
+                if (ns == _namespaces.Get(info) && localName == element.DisplayName)
                 {
                     return info;
                 }

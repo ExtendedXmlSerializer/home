@@ -38,12 +38,12 @@ namespace ExtendedXmlSerialization.Conversion.Write
         protected override void Write(IWriteContext context, DictionaryEntry instance)
         {
             var element = (IDictionaryElement) context.Current;
-            using (var child = context.Start(new DictionaryKeyElement(element.KeyType)))
+            using (var child = context.Start(element.Key))
             {
                 _writer.Write(child, instance.Key);
             }
 
-            using (var child = context.Start(new DictionaryValueElement(element.ValueType)))
+            using (var child = context.Start(element.Value))
             {
                 _writer.Write(child, instance.Value);
             }

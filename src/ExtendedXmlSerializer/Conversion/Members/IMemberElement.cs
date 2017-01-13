@@ -26,8 +26,10 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMemberElement : IDeclaredTypeElement
+    public interface IMemberElement : IElement
     {
+        TypeInfo DeclaredType { get; }
+
         MemberInfo Metadata { get; }
 
         object Get(object instance);

@@ -25,9 +25,9 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class DeclaredTypeElement : Element, IDeclaredTypeElement
+    public abstract class DeclaredTypeElementBase : Element, IDeclaredTypeElement
     {
-        public DeclaredTypeElement(IElementName name, TypeInfo declaredType) : base(name)
+        protected DeclaredTypeElementBase(IElementName name, TypeInfo declaredType) : base(name)
         {
             DeclaredType = declaredType;
         }

@@ -6,11 +6,11 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    /*public interface IElementSelector : ISelector<TypeInfo, IElement> {}*/
+    public interface IElementSelector : ISelector<MemberInfo, IElement> {}
 
     public interface IElementNameProvider : IParameterizedSource<MemberInfo, IElementName> {}
 
-    class Elements : Selector<MemberInfo, IElement>, IElementFactory
+    class Elements : Selector<MemberInfo, IElement>, IElementSelector
     {
         public static Elements Default { get; } = new Elements();
         Elements() : this(DictionaryElementFactory.Default) {}

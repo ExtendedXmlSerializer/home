@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         RegisteredElementNames() : this(Defaults.Names) {}
 
         public RegisteredElementNames(IEnumerable<IElementName> elements)
-            : this(elements.ToDictionary(x => (MemberInfo) x.ReferencedType)) {}
+            : this(elements.ToDictionary(x => (MemberInfo) x.KeyedType)) {}
 
         public RegisteredElementNames(IDictionary<MemberInfo, IElementName> names)
             : base(new DelegatedSpecification<MemberInfo>(names.ContainsKey), names.TryGet) {}

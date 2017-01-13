@@ -29,11 +29,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class ElementTypeLocator : WeakCacheBase<TypeInfo, TypeInfo>, IElementTypeLocator
+    public class CollectionItemTypeLocator : WeakCacheBase<TypeInfo, TypeInfo>, ICollectionItemTypeLocator
     {
         readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
-        public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
-        ElementTypeLocator() {}
+        public static CollectionItemTypeLocator Default { get; } = new CollectionItemTypeLocator();
+        CollectionItemTypeLocator() {}
 
         // Attribution: http://stackoverflow.com/a/17713382/3602057
         protected override TypeInfo Create(TypeInfo parameter)

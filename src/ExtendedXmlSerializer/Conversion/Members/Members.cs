@@ -36,11 +36,11 @@ namespace ExtendedXmlSerialization.Conversion.Members
         public static Members Default { get; } = new Members();
         Members() : this(Elements.Default) {}
 
-        private readonly IElementFactory _factory;
+        private readonly IElementSelector _selector;
 
-        public Members(IElementFactory factory)
+        public Members(IElementSelector selector)
         {
-            _factory = factory;
+            _selector = selector;
         }
 
         protected override IMemberElements Create(TypeInfo parameter) =>
@@ -76,7 +76,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
             var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
                                 metadata.MetadataToken);
 
-            var result = new Sorting((IMemberElement) _factory.Get(metadata), sort);
+            var result = new Sorting((IMemberElement) _selector.Get(metadata), sort);
             return result;
         }
 

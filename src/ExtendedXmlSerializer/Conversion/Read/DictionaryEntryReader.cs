@@ -30,28 +30,22 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
-        readonly private static DictionaryPairTypesLocator Locator = DictionaryPairTypesLocator.Default;
-
         private readonly IReader _reader;
-        private readonly IDictionaryPairTypesLocator _locator;
-
-        public DictionaryEntryReader(IReader reader) : this(reader, Locator) {}
-
-        public DictionaryEntryReader(IReader reader, IDictionaryPairTypesLocator locator)
+        
+        public DictionaryEntryReader(IReader reader)
         {
             _reader = reader;
-            _locator = locator;
         }
 
         public override IEnumerable Read(IReadContext context) => Entries(context);
 
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var pair = _locator.Get(context.Name.ReferencedType);
+            var current = (IDictionaryElement)context.Current;
             foreach (var child in context.ChildrenOf(ItemProperty.Default))
             {
-                var key = Read(child, new DictionaryKeyElement(pair.KeyType));
-                var value = Read(child, new DictionaryKeyElement(pair.ValueType));
+                var key = Read(child, current.Key);
+                var value = Read(child, current.Value);
                 yield return new DictionaryEntry(key, value);
             }
         }

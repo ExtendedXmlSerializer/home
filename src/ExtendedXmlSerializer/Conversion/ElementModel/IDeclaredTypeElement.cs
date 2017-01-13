@@ -25,8 +25,10 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
+/*
     public interface IDeclaredTypeElement : IElement
     {
         TypeInfo DeclaredType { get; }
     }
+*/
 }

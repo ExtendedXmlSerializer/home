@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override void Write(IWriteContext context, object instance)
         {
-            var elementType = ElementTypeLocator.Default.Get(instance.GetType().GetTypeInfo());
+            var elementType = CollectionItemTypeLocator.Default.Get(instance.GetType().GetTypeInfo());
             if (elementType != null)
             {
                 var configuration = _tools.GetConfiguration(elementType.AsType());

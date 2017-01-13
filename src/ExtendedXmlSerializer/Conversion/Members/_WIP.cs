@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core.Sources;
 

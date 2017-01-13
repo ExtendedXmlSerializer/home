@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
         private TypeInfo FromAttribute(XElement parameter)
         {
-            var value = parameter.Attribute(TypeProperty.Default.Name)?.Value;
+            var value = parameter.Attribute(TypeProperty.Default.DisplayName)?.Value;
             var result = value != null ? _parser.Get(value) : null;
             return result;
         }

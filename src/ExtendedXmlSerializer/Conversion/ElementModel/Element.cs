@@ -30,20 +30,6 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             Name = name;
         }
 
-
-        /*public Element(Type referencedType) : this(referencedType.GetTypeInfo()) {}
-        public Element(TypeInfo referencedType) : this(referencedType, referencedType.Name) {}
-
-        public Element(Type referencedType, string name) : this(referencedType.GetTypeInfo(), name) {}
-
-        public Element(TypeInfo referencedType, string name)
-        {
-            ReferencedType = referencedType;
-            Name = name;
-        }
-
-        public string Name { get; }
-        public TypeInfo ReferencedType { get; }*/
         public IElementName Name { get; }
     }
 }

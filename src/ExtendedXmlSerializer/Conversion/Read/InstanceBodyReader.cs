@@ -50,14 +50,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         protected virtual object Activate(IReadContext context)
-            => _activators.Activate<object>(context.Name.ReferencedType.AsType());
+            => _activators.Activate<object>(context.Current.Name.KeyedType.AsType());
 
         protected virtual void OnRead(IReadContext context, object result)
         {
-            var members = _members.Get(context.Name.ReferencedType);
+            var members = _members.Get(context.Current.Name.KeyedType);
             foreach (var child in context)
             {
-                var member = members.Get(context.Name.Name);
+                var member = members.Get(context.Current.Name.DisplayName);
                 if (member != null)
                 {
                     var converter = _selector.Get(member);

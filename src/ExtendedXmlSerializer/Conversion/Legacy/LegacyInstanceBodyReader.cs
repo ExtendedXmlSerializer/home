@@ -40,11 +40,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         protected override object Activate(IReadContext context)
         {
             var result = base.Activate(context);
-            var type = context.Name.ReferencedType;
+            var type = context.Current.Name.KeyedType;
             var configuration = _tools.GetConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {
-                var prefix = context.Name.ReferencedType.FullName + Defaults.Underscore;
+                var prefix = type.FullName + Defaults.Underscore;
                 var refId = context[ReferenceProperty.Default];
                 var references = context.Get<ReadReferences>();
                 if (!string.IsNullOrEmpty(refId))

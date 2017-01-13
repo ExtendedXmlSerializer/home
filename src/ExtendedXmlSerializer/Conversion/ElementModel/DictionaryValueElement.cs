@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class DictionaryValueElement : DeclaredTypeElement
+    public class DictionaryValueElement : DeclaredTypeElementBase, IDictionaryValueElement
     {
         public DictionaryValueElement(TypeInfo valueType) : base(ValueProperty.Default, valueType) {}
     }

@@ -32,11 +32,13 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public LegacyXmlReadContext(XElement element, TypeInfo type)
             : base(
-                Members.Members.Default, ElementTypeLocator.Default, LegacyElementTypes.Default,
+                LegacyElements.Default, Members.Members.Default, CollectionItemTypeLocator.Default,
+                LegacyElementTypes.Default,
                 NameConverter.Default, LegacyElementTypes.Default.Initialized(element, type),
+                LegacyElements.Default.Get(type),
 
                 // Services:
-                new ReadReferences(), Members.Members.Default, ElementTypeLocator.Default,
+                new ReadReferences(), Members.Members.Default, CollectionItemTypeLocator.Default,
                 LegacyElementTypes.Default, LegacyNamespaces.Default
             ) {}
     }

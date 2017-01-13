@@ -29,12 +29,12 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
     class EnumerableTypeFormatter : ITypeFormatter
     {
         public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
-        EnumerableTypeFormatter() : this(TypeFormatter.Default, ElementTypeLocator.Default) {}
+        EnumerableTypeFormatter() : this(TypeFormatter.Default, CollectionItemTypeLocator.Default) {}
 
         private readonly ITypeFormatter _formatter;
-        private readonly IElementTypeLocator _locator;
+        private readonly ICollectionItemTypeLocator _locator;
 
-        public EnumerableTypeFormatter(ITypeFormatter formatter, IElementTypeLocator locator)
+        public EnumerableTypeFormatter(ITypeFormatter formatter, ICollectionItemTypeLocator locator)
         {
             _formatter = formatter;
             _locator = locator;

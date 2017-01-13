@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface IElementTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
+    public interface ICollectionItemTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
 }

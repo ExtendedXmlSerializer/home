@@ -25,9 +25,9 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IDictionaryElement : IElement
+    public interface IDictionaryElement : ICollectionElement
     {
-        TypeInfo KeyType { get; }
-        TypeInfo ValueType { get; }
+        IDictionaryKeyElement Key { get; }
+        IDictionaryValueElement Value { get; }
     }
 }

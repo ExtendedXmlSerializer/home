@@ -30,6 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public static EnumReader Default { get; } = new EnumReader();
         EnumReader() {}
 
-        public override object Read(IReadContext context) => Enum.Parse(context.Name.ReferencedType.AsType(), context.Read());
+        public override object Read(IReadContext context)
+            => Enum.Parse(context.Current.Name.KeyedType.AsType(), context.Read());
     }
 }

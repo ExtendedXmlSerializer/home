@@ -28,11 +28,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class ArrayReader : ListReaderBase
     {
-        private readonly IElementTypeLocator _locator;
+        private readonly ICollectionItemTypeLocator _locator;
 
-        public ArrayReader(IReader reader) : this(ElementTypeLocator.Default, reader) {}
+        public ArrayReader(IReader reader) : this(CollectionItemTypeLocator.Default, reader) {}
 
-        public ArrayReader(IElementTypeLocator locator, IReader reader) : base(reader)
+        public ArrayReader(ICollectionItemTypeLocator locator, IReader reader) : base(reader)
         {
             _locator = locator;
         }
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var result = list.ToArray(_locator.Get(context.Name.ReferencedType).AsType());
+            var result = list.ToArray(_locator.Get(context.Current.Name.KeyedType).AsType());
             return result;
         }
     }

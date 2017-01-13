@@ -39,11 +39,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     class LegacyEnumerableTypeFormatter : ITypeFormatter
     {
         public static LegacyEnumerableTypeFormatter Default { get; } = new LegacyEnumerableTypeFormatter();
-        LegacyEnumerableTypeFormatter() : this(ElementTypeLocator.Default) {}
+        LegacyEnumerableTypeFormatter() : this(CollectionItemTypeLocator.Default) {}
 
-        private readonly IElementTypeLocator _locator;
+        private readonly ICollectionItemTypeLocator _locator;
 
-        public LegacyEnumerableTypeFormatter(IElementTypeLocator locator)
+        public LegacyEnumerableTypeFormatter(ICollectionItemTypeLocator locator)
         {
             _locator = locator;
         }

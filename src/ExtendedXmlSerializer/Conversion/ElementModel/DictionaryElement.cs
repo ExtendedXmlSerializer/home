@@ -21,20 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    class DictionaryElement : Element, IDictionaryElement
+    class DictionaryElement : CollectionElement, IDictionaryElement
     {
-        public DictionaryElement(IElementName name, TypeInfo keyType, TypeInfo valueType)
-            : base(name)
+        public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
+
+        public DictionaryElement(IElementName name, TypeInfo keyType, TypeInfo valueType) : this(name, new DictionaryKeyElement(keyType), new DictionaryValueElement(valueType))
+        {}
+
+        public DictionaryElement(IElementName name, IDictionaryKeyElement key, IDictionaryValueElement value) : base(name, DictionaryEntryType)
         {
-            KeyType = keyType;
-            ValueType = valueType;
+            Key = key;
+            Value = value;
         }
 
-        public TypeInfo KeyType { get; }
-        public TypeInfo ValueType { get; }
+        public IDictionaryKeyElement Key { get; }
+        public IDictionaryValueElement Value { get; }
     }
 }

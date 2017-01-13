@@ -21,13 +21,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IItemElement : IDeclaredTypeElement {}
-    public class ItemElement : DeclaredTypeElement, IItemElement
+    /*public class ItemElement : DeclaredTypeElementBase, IItemElement
     {
         public ItemElement(IElementName name, TypeInfo elementType) : base(name, elementType) {}
+    }*/
+
+    public interface IDeclaredTypeElement : IElement
+    {
+        TypeInfo DeclaredType { get; }
     }
+
+    public interface ICollectionElement : IElement
+    {
+        TypeInfo ElementType { get; }
+    }
+
+    class CollectionElement : Element, ICollectionElement
+    {
+        public CollectionElement(IElementName name, TypeInfo elementType) : base(name)
+        {
+            ElementType = elementType;
+        }
+
+        public TypeInfo ElementType { get; }
+    }
+
+    public interface ICollectionItemElement : IDeclaredTypeElement {}
+
+    class CollectionItemElement : DeclaredTypeElementBase, ICollectionItemElement
+    {
+        public CollectionItemElement(IElementName name, TypeInfo declaredType) : base(name, declaredType) {}
+    }
+
+    /*public interface IDictionaryItemElement : IDeclaredTypeElement {}
+
+    public class DictionaryItemElement : DeclaredTypeElementBase
+    {
+        public static TypeInfo ElementType { get; } = typeof(DictionaryEntry).GetTypeInfo();
+
+        public static DictionaryItemElement Default { get; } = new DictionaryItemElement();
+        DictionaryItemElement() : base(ItemProperty.Default, ElementType) {}
+    }*/
+
+    public interface IDictionaryKeyElement : IDeclaredTypeElement {}
+
+    public interface IDictionaryValueElement : IDeclaredTypeElement {}
 }

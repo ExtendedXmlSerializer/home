@@ -71,8 +71,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public IWriteContext Start(IElement element)
         {
-            var ns = _namespaces.Get(element.Name.ReferencedType);
-            _writer.WriteStartElement(element.Name.Name, ns);
+            var ns = _namespaces.Get(element.Name.KeyedType);
+            _writer.WriteStartElement(element.Name.DisplayName, ns);
 
             var result = new XmlWriteContext(_namespaces, _writer, element, _services);
             return result;
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public void Write(string text) => _writer.WriteString(text);
 
-        public void Write(IElementName element, string value) => _writer.WriteAttributeString(element.Name, value);
+        public void Write(IElementName element, string value) => _writer.WriteAttributeString(element.DisplayName, value);
 
         public virtual void Dispose() => _finish.Dispose();
     }
