@@ -21,31 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    class EnumerableTypeFormatter : ITypeFormatter
+    public class MemberConverterFactory : ConverterFactoryBase<IMemberElement>
     {
-        public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
-        EnumerableTypeFormatter() : this(ElementTypeLocator.Default) {}
+        private readonly IConverter _converter;
 
-        private readonly IElementTypeLocator _locator;
-
-        public EnumerableTypeFormatter(IElementTypeLocator locator)
+        public MemberConverterFactory(IConverter converter)
         {
-            _locator = locator;
+            _converter = converter;
         }
 
-        public string Format(TypeInfo type)
+        protected override IConverter Create(IMemberElement parameter)
         {
-            var arguments = type.GetGenericArguments();
-            var name = arguments.Any()
-                ? string.Join(string.Empty, arguments.Select(p => p.Name))
-                : _locator.Get(type).Name;
-            var result = $"ArrayOf{name}";
+            var result = new MemberConverter(_converter,
+                                             new InstanceValidatingWriter(new ElementWriter(parameter, _converter)));
             return result;
         }
     }

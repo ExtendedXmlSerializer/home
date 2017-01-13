@@ -30,12 +30,12 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     public class ElementTypes : IElementTypes
     {
         public static ElementTypes Default { get; } = new ElementTypes();
-        ElementTypes() : this(NamedTypes.Default, TypeParser.Default) {}
+        ElementTypes() : this(NamedTypeLocator.Default, TypeParser.Default) {}
 
-        private readonly INamedTypes _types;
+        private readonly INamedTypeLocator _types;
         private readonly ITypeParser _parser;
 
-        public ElementTypes(INamedTypes types, ITypeParser parser)
+        public ElementTypes(INamedTypeLocator types, ITypeParser parser)
         {
             _parser = parser;
             _types = types;

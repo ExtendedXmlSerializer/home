@@ -30,6 +30,7 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class Selector : Selector<TypeInfo, IConverter>, ISelector
     {
-        public Selector(IEnumerable<ITypeConverter> candidates) : base(candidates.ToArray()) {}
+        public Selector(IEnumerable<ITypeConverter> candidates)
+            : base(candidates.Select(x => new FixedOption<TypeInfo, IConverter>(x, x)).ToArray()) {}
     }
 }

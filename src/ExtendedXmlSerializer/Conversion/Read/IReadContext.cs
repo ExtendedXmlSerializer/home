@@ -28,16 +28,18 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext : IEnumerable<IReadContext>, IServiceRepository, IElement
+    public interface IReadContext : IEnumerable<IReadContext>, IServiceRepository
     {
-        IReadContext Member(IElement element, TypeInfo hint = null);
+        IElementName Name { get; }
+
+        IReadContext Member(IElement element);
 
         IEnumerable<IReadContext> Items();
 
-        IEnumerable<IReadContext> ChildrenOf(IElement element);
+        IEnumerable<IReadContext> ChildrenOf(IElementName name);
 
         string Read();
 
-        string this[IElement element] { get; }
+        string this[IElementName name] { get; }
     }
 }

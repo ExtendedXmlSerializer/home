@@ -21,31 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class ElementProvider : ElementProviderBase
+    sealed class LegacyEnumerableElementNameProvider : ElementNameProvider
     {
-        public static ElementProvider Default { get; } = new ElementProvider();
-        ElementProvider() : this(TypeNameFormatter.Default) {}
+        public new static LegacyEnumerableElementNameProvider Default { get; } =
+            new LegacyEnumerableElementNameProvider();
 
-        private readonly ITypeFormatter _formatter;
+        LegacyEnumerableElementNameProvider() : base(LegacyEnumerableTypeFormatter.Default) {}
+    }
 
-        public ElementProvider(ITypeFormatter formatter)
+    class LegacyEnumerableTypeFormatter : ITypeFormatter
+    {
+        public static LegacyEnumerableTypeFormatter Default { get; } = new LegacyEnumerableTypeFormatter();
+        LegacyEnumerableTypeFormatter() : this(ElementTypeLocator.Default) {}
+
+        private readonly IElementTypeLocator _locator;
+
+        public LegacyEnumerableTypeFormatter(IElementTypeLocator locator)
         {
-            _formatter = formatter;
+            _locator = locator;
         }
 
-        protected override IElement Create(TypeInfo type, MemberInfo member)
+        public string Format(TypeInfo type)
         {
-            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(type);
-            var result = new Element(type, name);
+            var arguments = type.GetGenericArguments();
+            var name = arguments.Any()
+                ? string.Join(string.Empty, arguments.Select(p => p.Name))
+                : _locator.Get(type).Name;
+            var result = $"ArrayOf{name}";
             return result;
         }
     }

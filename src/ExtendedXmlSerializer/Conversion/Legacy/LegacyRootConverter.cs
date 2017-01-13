@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override object Read(IReadContext context)
         {
-            var type = context.ReferencedType.AsType();
+            var type = context.Name.ReferencedType.AsType();
             var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {

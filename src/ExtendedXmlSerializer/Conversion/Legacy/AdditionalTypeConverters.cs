@@ -40,10 +40,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return new ArrayTypeConverter(parameter);
             yield return new LegacyEnumerableTypeConverter(parameter);
 
-            var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter));
-            var factory = new CompositeMemberFactory(new LegacyAssignableMemberFactory(parameter), factories);
-            var members = new InstanceMembers(factory);
-            yield return new LegacyInstanceTypeConverter(members);
+            /*var factory = new ReadOnlyCollectionMemberConverterFactory(parameter, new EnumeratingReader(parameter));
+            var composite = new ConverterSelector(new LegacyAssignableMemberElementFactory(parameter), factory);
+            var members = new Members.Members(composite);
+            yield return new LegacyInstanceTypeConverter(members);*/
         }
 
         sealed class LegacyEnumerableTypeConverter : TypeConverter
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             public LegacyEnumerableTypeConverter(IConverter converter)
                 : base(
                     IsEnumerableTypeSpecification.Default, new ListReader(converter),
-                    new EnumerableBodyWriter(LegacyElements.Default, converter)
+                    new EnumerableBodyWriter(LegacyElementNames.Default, converter)
                 ) {}
         }
     }

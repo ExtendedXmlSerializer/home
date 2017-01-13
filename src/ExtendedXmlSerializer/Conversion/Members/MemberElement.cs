@@ -21,25 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    class MemberElement : IMemberElement
+    public abstract class MemberElementBase : IMemberElement
     {
-        public MemberElement(string name, TypeInfo referencedType, MemberInfo metadata, TypeInfo memberType, bool assignable)
+        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType)
         {
             Name = name;
-            ReferencedType = referencedType;
             Metadata = metadata;
             DeclaredType = memberType;
-            Assignable = assignable;
         }
 
-        public string Name { get; }
-        public TypeInfo ReferencedType { get; }
+        public IElementName Name { get; }
         public MemberInfo Metadata { get; }
         public TypeInfo DeclaredType { get; }
-        public bool Assignable { get; }
+
+        public abstract object Get(object instance);
+        public abstract void Assign(object instance, object value);
+    }
+
+    public class MemberElement : MemberElementBase
+    {
+        private readonly Action<object, object> _setter;
+        private readonly Func<object, object> _getter;
+
+        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter, Func<object, object> getter)
+            : base(name, metadata, memberType)
+        {
+            _setter = setter;
+            _getter = getter;
+        }
+
+        public override object Get(object instance) => _getter(instance);
+        public override void Assign(object instance, object value) => _setter(instance, value);
     }
 }

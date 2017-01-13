@@ -29,39 +29,20 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class EncryptedMemberConverter : IAssignableMemberConverter
+    public class EncryptedMemberConverter : DecoratedConverter
     {
         private readonly IPropertyEncryption _encryption;
-        private readonly IAssignableMemberConverter _member;
-
-        public EncryptedMemberConverter(IPropertyEncryption encryption, IAssignableMemberConverter member)
+        
+        public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
         {
             _encryption = encryption;
-            _member = member;
         }
 
-        public object Read(IReadContext context)
+        public override object Read(IReadContext context)
         {
             var element = context.Get<XElement>();
             element.Value = _encryption.Decrypt(element.Value);
-            return _member.Read(context);
+            return base.Read(context);
         }
-
-        public void Write(IWriteContext context, object instance)
-        {
-            _member.Write(context, instance);
-        }
-
-        public void Set(object instance, object value) => _member.Set(instance, value);
-
-        public string Name => _member.Name;
-
-        public TypeInfo ReferencedType => _member.ReferencedType;
-
-        public bool Assignable => _member.Assignable;
-
-        public MemberInfo Metadata => _member.Metadata;
-
-        public TypeInfo DeclaredType => _member.DeclaredType;
     }
 }

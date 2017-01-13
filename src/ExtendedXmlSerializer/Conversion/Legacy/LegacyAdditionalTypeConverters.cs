@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return new LegacyDictionaryTypeConverter(parameter);
             yield return new LegacyArrayTypeConverter(_tools, parameter);
             yield return new LegacyEnumerableTypeConverter(_tools, parameter);
-            yield return new LegacyInstanceTypeConverter(_tools, parameter);
+            // yield return new LegacyInstanceTypeConverter(_tools, parameter);
         }
     }
 }

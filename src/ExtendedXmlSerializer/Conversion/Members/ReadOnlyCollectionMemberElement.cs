@@ -21,10 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IElements : IParameterizedSource<TypeInfo, IElement> {}
+    public interface IReadOnlyCollectionMemberElement : IMemberElement {}
+
+    public class ReadOnlyCollectionMemberElement : MemberElement
+    {
+        public ReadOnlyCollectionMemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType,
+                                               Action<object, object> add, Func<object, object> getter)
+            : base(name, metadata, memberType, add, getter) {}
+
+        public override void Assign(object instance, object value)
+        {
+            var collection = Get(instance);
+            foreach (var element in value.AsValid<IEnumerable>())
+            {
+                base.Assign(collection, element);
+            }
+        }
+    }
 }

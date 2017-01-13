@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface IMemberInformationProvider : IParameterizedSource<TypeInfo, IMemberElements> {}
+    public class Option<TParameter, TResult> : OptionBase<TParameter, TResult>
+    {
+        private readonly Func<TParameter, TResult> _source;
+
+        public Option(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
+            : base(specification)
+        {
+            _source = source;
+        }
+
+        public override TResult Get(TParameter parameter) => _source(parameter);
+    }
 }

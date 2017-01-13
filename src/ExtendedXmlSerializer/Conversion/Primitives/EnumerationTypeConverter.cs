@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class EnumerationTypeConverter : PrimitiveTypeConverterBase<Enum>
+    public class EnumerationTypeConverter : ValueTypeConverterBase<Enum>
     {
         public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
 

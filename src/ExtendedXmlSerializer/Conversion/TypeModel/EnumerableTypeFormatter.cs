@@ -21,18 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.ElementModel
+namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public class ElementCandidate : Candidate<TypeInfo, IElement>
+    class EnumerableTypeFormatter : ITypeFormatter
     {
-        public ElementCandidate(Func<TypeInfo, IElement> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
+        public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
+        EnumerableTypeFormatter() : this(TypeFormatter.Default, ElementTypeLocator.Default) {}
 
-        public ElementCandidate(ISpecification<TypeInfo> specification, Func<TypeInfo, IElement> source)
-            : base(specification, source) {}
+        private readonly ITypeFormatter _formatter;
+        private readonly IElementTypeLocator _locator;
+
+        public EnumerableTypeFormatter(ITypeFormatter formatter, IElementTypeLocator locator)
+        {
+            _formatter = formatter;
+            _locator = locator;
+        }
+
+        public string Format(TypeInfo type)
+        {
+            var arguments = type.GetGenericArguments();
+            var name = arguments.Any()
+                ? string.Join(string.Empty, arguments.Select(p => p.Name))
+                : _formatter.Format(_locator.Get(type));
+            var result = $"{type.Name.ToStringArray('`')[0]}Of{name}";
+            return result;
+        }
     }
 }

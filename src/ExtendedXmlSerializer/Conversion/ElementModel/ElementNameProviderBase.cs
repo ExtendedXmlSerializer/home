@@ -21,19 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class FixedCandidate<TParameter, TResult> : CandidateBase<TParameter, TResult>
+    public abstract class ElementNameProviderBase : WeakCacheBase<MemberInfo, IElementName>, IElementNameProvider
     {
-        private readonly TResult _instance;
+        protected override IElementName Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
 
-        public FixedCandidate(ISpecification<TParameter> specification, TResult instance) : base(specification)
-        {
-            _instance = instance;
-        }
-
-        public override TResult Get(TParameter parameter) => _instance;
+        protected abstract IElementName Create(TypeInfo type, MemberInfo member);
     }
 }

@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
@@ -31,6 +33,14 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
+        public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
+
+        public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
+            target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
+
+        public static TypeInfo ToTypeInfo(this MemberInfo @this)
+            => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+
         public static T Annotated<T>(this XElement @this, T item)
         {
             @this.AddAnnotation(item);
@@ -53,7 +63,7 @@ namespace ExtendedXmlSerialization.Conversion
         public static TypeInfo AccountForNullable(this TypeInfo @this)
             => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
-        
+
         public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
     }
 }

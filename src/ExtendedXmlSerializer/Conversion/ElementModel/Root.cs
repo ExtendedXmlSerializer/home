@@ -27,6 +27,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     class Root : Element, IRoot
     {
-        public Root(TypeInfo referencedType) : base(referencedType) {}
+        public Root(TypeInfo referencedType) : this(ElementNames.Default, referencedType) {}
+        public Root(IElementNameSelector names, TypeInfo referencedType) : base(names.Get(referencedType)) {}
     }
 }

@@ -25,39 +25,23 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public abstract class MemberConverterBase : IMemberConverter
+    public abstract class ValueTypeConverterBase<T> : TypeConverter
     {
-        private readonly IReader _reader;
-        private readonly IWriter _writer;
-        private readonly IMemberElement _element;
-        private readonly Func<object, object> _getter;
+        protected ValueTypeConverterBase(Func<T, string> serialize,
+                                             Func<string, T> deserialize)
+            : this(
+                new ValueWriter<T>(serialize),
+                new ValueReader<T>(deserialize)
+            ) {}
 
-        protected MemberConverterBase(IReader reader, IWriter writer, IMemberElement element,
-                                      Func<object, object> getter)
-        {
-            _reader = reader;
-            _writer = writer;
-            _element = element;
-            _getter = getter;
-        }
+        protected ValueTypeConverterBase(IWriter writer, IReader reader)
+            : this(TypeEqualitySpecification<T>.Default, writer, reader) {}
 
-        public void Write(IWriteContext context, object instance) => _writer.Write(context, Get(instance));
-
-        protected object Get(object instance) => _getter(instance);
-
-        public object Read(IReadContext context) => _reader.Read(context);
-
-        public string Name => _element.Name;
-
-        public TypeInfo ReferencedType => _element.ReferencedType;
-
-        public bool Assignable => _element.Assignable;
-
-        public MemberInfo Metadata => _element.Metadata;
-
-        public TypeInfo DeclaredType => _element.DeclaredType;
+        protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
+            : base(specification, new ValueValidatingReader(reader), new InstanceValidatingWriter(writer)) {}
     }
 }

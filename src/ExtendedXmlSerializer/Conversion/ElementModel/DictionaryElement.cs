@@ -27,8 +27,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     class DictionaryElement : Element, IDictionaryElement
     {
-        public DictionaryElement(IElement element, TypeInfo keyType, TypeInfo valueType)
-            : base(element.ReferencedType, element.Name)
+        public DictionaryElement(IElementName name, TypeInfo keyType, TypeInfo valueType)
+            : base(name)
         {
             KeyType = keyType;
             ValueType = valueType;

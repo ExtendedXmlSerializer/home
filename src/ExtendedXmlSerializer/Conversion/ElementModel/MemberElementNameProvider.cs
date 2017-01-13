@@ -22,9 +22,24 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IElementProvider : IParameterizedSource<MemberInfo, IElement> {}
+    public class MemberElementNameProvider : ElementNameProviderBase
+    {
+        public static MemberElementNameProvider Default { get; } = new MemberElementNameProvider();
+        MemberElementNameProvider() {}
+
+        protected override IElementName Create(TypeInfo type, MemberInfo member)
+        {
+            var name = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+                       member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
+                       member.Name;
+            var result = new ElementName(member.DeclaringType.GetTypeInfo(), name); // member, member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable()
+            return result;
+        }
+    }
 }

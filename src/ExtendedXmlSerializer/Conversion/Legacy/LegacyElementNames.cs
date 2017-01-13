@@ -21,26 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Core;
+using System.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class MemberElementProvider : ElementProviderBase
+    sealed class LegacyElementNames : ElementNames
     {
-        public static MemberElementProvider Default { get; } = new MemberElementProvider();
-        MemberElementProvider() {}
-
-        protected override IElement Create(TypeInfo type, MemberInfo member)
-        {
-            var name = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-                       member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
-                       member.Name;
-            var result = new MemberElement(name, member.DeclaringType.GetTypeInfo(), member,
-                                           member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable());
-            return result;
-        }
+        public new static LegacyElementNames Default { get; } = new LegacyElementNames();
+        LegacyElementNames() : base(Defaults.Names) {}
     }
 }

@@ -27,42 +27,21 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyAssignableMemberFactory : IMemberFactory
+    sealed class LegacyAssignableMemberElementFactory : ConverterFactoryBase<IMemberElement>
     {
-        private readonly IReader _reader;
-        private readonly IWriter _writer;
-        private readonly IGetterFactory _getter;
-        private readonly ISetterFactory _setter;
-
-        public LegacyAssignableMemberFactory(IConverter converter) : this(converter, GetterFactory.Default) {}
-
-        public LegacyAssignableMemberFactory(IConverter converter, IGetterFactory getter)
-            : this(converter, new MemberTypeEmittingWriter(converter), getter, SetterFactory.Default) {}
-
-        public LegacyAssignableMemberFactory(IReader reader, IWriter writer, IGetterFactory getter)
-            : this(reader, writer, getter, SetterFactory.Default) {}
-
-        public LegacyAssignableMemberFactory(IReader reader, IWriter writer, IGetterFactory getter,
-                                             ISetterFactory setter)
+        private readonly IConverter _converter;
+        
+        public LegacyAssignableMemberElementFactory(IConverter converter)
         {
-            _reader = reader;
-            _writer = writer;
-            _getter = getter;
-            _setter = setter;
+            _converter = converter;
         }
-
-        public IMemberConverter Get(IMemberElement parameter)
+        
+        protected override IConverter Create(IMemberElement parameter)
         {
-            if (parameter.Assignable)
-            {
-                var getter = _getter.Get(parameter.Metadata);
-                var writer =
-                    new InstanceValidatingWriter(new ElementWriter(parameter, _writer));
-                var result = new AssignableMemberConverter(_reader, writer, parameter, getter,
-                                                           _setter.Get(parameter.Metadata));
-                return result;
-            }
-            return null;
+            var writer =
+                new InstanceValidatingWriter(new ElementWriter(parameter, _converter));
+            var result = new MemberConverter(_converter, writer);
+            return result;
         }
     }
 }

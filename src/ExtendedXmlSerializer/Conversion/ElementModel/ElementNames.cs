@@ -21,27 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    class TypeNameFormatter : ITypeFormatter
+    public interface IElementNameSelector : ISelector<MemberInfo, IElementName> {}
+    public class ElementNames : Selector<MemberInfo, IElementName>, IElementNameSelector
     {
-        public static TypeNameFormatter Default { get; } = new TypeNameFormatter();
-        TypeNameFormatter() {}
+        public static ElementNames Default { get; } = new ElementNames();
 
-        public string Format(TypeInfo type)
-        {
-            if (type.IsGenericType)
-            {
-                var types = type.GetGenericArguments();
-                var names = string.Join(string.Empty, types.Select(p => p.Name));
-                var result = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-                return result;
-            }
-            return type.Name;
-        }
+        private ElementNames()
+            : this(Defaults.Names) {}
+
+        protected ElementNames(IEnumerable<IElementName> names)
+            : this(
+                new RegisteredElementNames(names), ElementNameOption<Enum>.Default, EnumerableNameOption.Default,
+                DefaultElementNameOption.Default) {}
+
+        public ElementNames(params IElementNameOption[] options) : base(options) {}
     }
 }

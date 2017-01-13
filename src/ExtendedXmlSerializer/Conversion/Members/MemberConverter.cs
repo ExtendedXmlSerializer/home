@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    sealed class LegacyEnumerablePropertyProvider : ElementProvider
+    public class MemberConverter : Converter
     {
-        public new static LegacyEnumerablePropertyProvider Default { get; } = new LegacyEnumerablePropertyProvider();
-        LegacyEnumerablePropertyProvider() : base(EnumerableTypeFormatter.Default) {}
+        public MemberConverter(IReader reader, IWriter writer) : base(reader, writer) {}
+
+        public override void Write(IWriteContext context, object instance)
+            => base.Write(context, ((IMemberElement) context.Current).Get(instance));
     }
 }

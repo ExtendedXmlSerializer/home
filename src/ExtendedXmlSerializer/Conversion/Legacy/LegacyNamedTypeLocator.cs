@@ -21,23 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    public class AssignableMemberConverter : MemberConverterBase, IAssignableMemberConverter
+    sealed class LegacyNamedTypeLocator : NamedTypeLocator
     {
-        private readonly Action<object, object> _setter;
-
-        public AssignableMemberConverter(IReader reader, IWriter writer, IMemberElement element,
-                                         Func<object, object> getter, Action<object, object> setter)
-            : base(reader, writer, element, getter)
-        {
-            _setter = setter;
-        }
-
-        public void Set(object instance, object value) => _setter(instance, value);
+        public new static LegacyNamedTypeLocator Default { get; } = new LegacyNamedTypeLocator();
+        LegacyNamedTypeLocator() : base(Defaults.Names, LegacyNamespaces.Default) {}
     }
 }

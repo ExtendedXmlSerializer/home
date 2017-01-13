@@ -21,38 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class AssignableMemberFactory : IMemberFactory
+    public class ElementNameProvider : ElementNameProviderBase
     {
-        private readonly IConverter _converter;
-        private readonly IGetterFactory _getter;
-        private readonly ISetterFactory _setter;
+        public static ElementNameProvider Default { get; } = new ElementNameProvider();
+        ElementNameProvider() : this(TypeFormatter.Default) {}
 
-        public AssignableMemberFactory(IConverter converter)
-            : this(converter, GetterFactory.Default, SetterFactory.Default) {}
+        private readonly ITypeFormatter _formatter;
 
-        public AssignableMemberFactory(IConverter converter, IGetterFactory getter, ISetterFactory setter)
+        public ElementNameProvider(ITypeFormatter formatter)
         {
-            _converter = converter;
-            _getter = getter;
-            _setter = setter;
+            _formatter = formatter;
         }
 
-        public IMemberConverter Get(IMemberElement parameter)
+        protected override IElementName Create(TypeInfo type, MemberInfo member)
         {
-            if (parameter.Assignable)
-            {
-                var getter = _getter.Get(parameter.Metadata);
-                var writer =
-                    new InstanceValidatingWriter(new ElementWriter(parameter, _converter));
-                var result = new AssignableMemberConverter(_converter, writer, parameter,
-                                                           getter, _setter.Get(parameter.Metadata));
-                return result;
-            }
-            return null;
+            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
+            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(type);
+            var result = new ElementName(type, name);
+            return result;
         }
     }
 }

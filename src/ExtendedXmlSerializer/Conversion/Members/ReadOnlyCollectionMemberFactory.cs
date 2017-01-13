@@ -21,39 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class ReadOnlyCollectionMemberFactory : IMemberFactory
+    public class ReadOnlyCollectionMemberFactory : IMemberElementFactory
     {
-        private readonly IEnumeratingReader _reader;
-        private readonly IConverter _converter;
+        public static ReadOnlyCollectionMemberFactory Default { get; } = new ReadOnlyCollectionMemberFactory();
+        ReadOnlyCollectionMemberFactory()
+            : this(MemberElementNameProvider.Default, GetterFactory.Default, AddDelegates.Default) {}
+
+        private readonly IElementNameProvider _provider;
         private readonly IGetterFactory _getter;
         private readonly IAddDelegates _add;
 
-        public ReadOnlyCollectionMemberFactory(IConverter converter, IEnumeratingReader reader)
-            : this(converter, reader, GetterFactory.Default, AddDelegates.Default) {}
-
-        public ReadOnlyCollectionMemberFactory(IConverter converter, IEnumeratingReader reader, IGetterFactory getter,
+        public ReadOnlyCollectionMemberFactory(IElementNameProvider provider, IGetterFactory getter,
                                                IAddDelegates add)
         {
-            _converter = converter;
-            _reader = reader;
+            _provider = provider;
             _getter = getter;
             _add = add;
         }
 
-        public IMemberConverter Get(IMemberElement parameter)
+        public IMemberElement Get(MemberInformation parameter)
         {
-            var add = _add.Get(parameter.DeclaredType);
+            var add = _add.Get(parameter.MemberType);
             if (add != null)
             {
                 var getter = _getter.Get(parameter.Metadata);
-                var result = new ReadOnlyCollectionMemberConverter(_reader, new ElementWriter(parameter, _converter),
-                                                                   parameter, getter, add);
+                var result = new ReadOnlyCollectionMemberElement(_provider.Get(parameter.Metadata), parameter.Metadata,
+                                                                 parameter.MemberType, add, getter);
                 return result;
             }
             return null;

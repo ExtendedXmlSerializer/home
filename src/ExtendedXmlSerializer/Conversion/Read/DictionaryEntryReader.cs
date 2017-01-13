@@ -48,15 +48,15 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var pair = _locator.Get(context.ReferencedType);
+            var pair = _locator.Get(context.Name.ReferencedType);
             foreach (var child in context.ChildrenOf(ItemProperty.Default))
             {
-                var key = Read(child, KeyProperty.Default, pair.KeyType);
-                var value = Read(child, ValueProperty.Default, pair.ValueType);
+                var key = Read(child, new DictionaryKeyElement(pair.KeyType));
+                var value = Read(child, new DictionaryKeyElement(pair.ValueType));
                 yield return new DictionaryEntry(key, value);
             }
         }
 
-        object Read(IReadContext context, IElement element, TypeInfo type) => _reader.Read(context.Member(element, type));
+        object Read(IReadContext context, IElement element) => _reader.Read(context.Member(element));
     }
 }

@@ -33,16 +33,16 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyInstanceTypeConverter : TypeConverter
     {
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : this(tools, new ConvertMembers(tools).Get(converter)) {}
+        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter, IConverterSelector selector)
+            : this(tools, new ConvertMembers(tools).Get(converter), selector) {}
 
-        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IInstanceMembers members)
+        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IMembers members, IConverterSelector selector)
             : this(
-                new LegacyInstanceBodyReader(tools, members),
+                new LegacyInstanceBodyReader(tools, members, selector),
                 new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(members)))) {}
 
-        public LegacyInstanceTypeConverter(IInstanceMembers members)
-            : this(new InstanceBodyReader(members), new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
+        public LegacyInstanceTypeConverter(IMembers members, IConverterSelector selector)
+            : this(new InstanceBodyReader(members, selector), new TypeEmittingWriter(new InstanceBodyWriter(members))) {}
 
         LegacyInstanceTypeConverter(IReader reader, IWriter writer)
             : base(IsActivatedTypeSpecification.Default, reader, writer) {}

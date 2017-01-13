@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public static class Defaults
     {
-        public static IImmutableList<IElement> Elements { get; } = new KnownElements().ToImmutableArray();
+        public static IImmutableList<IElementName> Names { get; } = new KnownNames().ToImmutableArray();
     }
 }

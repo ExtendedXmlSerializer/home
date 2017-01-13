@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.Conversion
             yield return new DictionaryTypeConverter(parameter);
             yield return new ArrayTypeConverter(parameter);
             yield return new EnumerableTypeConverter(parameter);
-            yield return new InstanceTypeConverter(parameter);
+            // yield return new InstanceTypeConverter(parameter);
         }
 
         class DictionaryTypeConverter : TypeConverter
@@ -61,19 +61,17 @@ namespace ExtendedXmlSerialization.Conversion
                 ) {}
         }
 
-        class InstanceTypeConverter : TypeConverter
+        /*class InstanceTypeConverter : TypeConverter
         {
             public InstanceTypeConverter(IConverter converter)
                 : this(
-                    new InstanceMembers(new CompositeMemberFactory(new AssignableMemberFactory(converter),
-                                                                   new ReadOnlyCollectionMemberFactory(converter,
-                                                                                                       new EnumeratingReader
-                                                                                                           (converter)))),
+                    new Members.Members(new ConverterSelector(new ReadOnlyCollectionMemberConverterFactory(
+                                                                      converter, new EnumeratingReader(converter)), new MemberConverterFactory(converter))),
                     Activators.Default) {}
 
-            public InstanceTypeConverter(IInstanceMembers members, IActivators activators)
+            public InstanceTypeConverter(IMembers members, IActivators activators)
                 : base(IsActivatedTypeSpecification.Default, new InstanceBodyReader(members, activators),
                        new InstanceBodyWriter(members)) {}
-        }
+        }*/
     }
 }

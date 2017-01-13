@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class TimeSpanTypeConverter : PrimitiveTypeConverterBase<TimeSpan>
+    public class TimeSpanTypeConverter : ValueTypeConverterBase<TimeSpan>
     {
         public static TimeSpanTypeConverter Default { get; } = new TimeSpanTypeConverter();
         TimeSpanTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToTimeSpan) {}

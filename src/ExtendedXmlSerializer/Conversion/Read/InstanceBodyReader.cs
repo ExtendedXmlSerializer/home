@@ -28,14 +28,17 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     class InstanceBodyReader : ReaderBase
     {
-        private readonly IInstanceMembers _members;
+        private readonly IMembers _members;
+        private readonly IConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IInstanceMembers members) : this(members, Activators.Default) {}
+        public InstanceBodyReader(IMembers members, IConverterSelector selector)
+            : this(members, selector, Activators.Default) {}
 
-        public InstanceBodyReader(IInstanceMembers members, IActivators activators)
+        public InstanceBodyReader(IMembers members, IConverterSelector selector, IActivators activators)
         {
             _members = members;
+            _selector = selector;
             _activators = activators;
         }
 
@@ -46,27 +49,21 @@ namespace ExtendedXmlSerialization.Conversion.Read
             return result;
         }
 
-        protected virtual object Activate(IReadContext context) => _activators.Activate<object>(context.ReferencedType.AsType());
+        protected virtual object Activate(IReadContext context)
+            => _activators.Activate<object>(context.Name.ReferencedType.AsType());
 
         protected virtual void OnRead(IReadContext context, object result)
         {
-            var members = _members.Get(context.ReferencedType);
+            var members = _members.Get(context.Name.ReferencedType);
             foreach (var child in context)
             {
-                var member = members.Get(child.Name);
+                var member = members.Get(context.Name.Name);
                 if (member != null)
                 {
-                    Apply(result, member, member.Read(child));
+                    var converter = _selector.Get(member);
+                    member.Assign(result, converter.Read(child));
+                    
                 }
-            }
-        }
-
-        protected virtual void Apply(object instance, IMemberConverter member, object value)
-        {
-            if (value != null)
-            {
-                var assignable = member as IAssignableMemberConverter;
-                assignable?.Set(instance, value);
             }
         }
     }

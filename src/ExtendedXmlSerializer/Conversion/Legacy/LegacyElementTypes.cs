@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     sealed class LegacyElementTypes : ElementTypes
     {
         public new static LegacyElementTypes Default { get; } = new LegacyElementTypes();
-        LegacyElementTypes() : base(LegacyNamedTypes.Default, TypeParser.Default) {}
+        LegacyElementTypes() : base(LegacyNamedTypeLocator.Default, TypeParser.Default) {}
     }
 }

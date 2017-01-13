@@ -28,8 +28,10 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
     public interface IMemberElement : IDeclaredTypeElement
     {
-        bool Assignable { get; }
-
         MemberInfo Metadata { get; }
+
+        object Get(object instance);
+
+        void Assign(object instance, object value);
     }
 }

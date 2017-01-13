@@ -21,35 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class CompositeMemberFactory : IMemberFactory
+    public interface IItemElement : IDeclaredTypeElement {}
+    public class ItemElement : DeclaredTypeElement, IItemElement
     {
-        private readonly ImmutableArray<IMemberFactory> _factories;
-
-        public CompositeMemberFactory(params IMemberFactory[] factories) : this(factories.ToImmutableArray()) {}
-
-        public CompositeMemberFactory(ImmutableArray<IMemberFactory> factories)
-        {
-            _factories = factories;
-        }
-
-        public IMemberConverter Get(IMemberElement parameter)
-        {
-            foreach (var factory in _factories)
-            {
-                var member = factory.Get(parameter);
-                if (member != null)
-                {
-                    return member;
-                }
-            }
-
-
-            // TODO: Warning? Throw?
-            return null;
-        }
+        public ItemElement(IElementName name, TypeInfo elementType) : base(name, elementType) {}
     }
 }

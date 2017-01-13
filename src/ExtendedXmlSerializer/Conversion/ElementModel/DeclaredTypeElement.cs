@@ -27,7 +27,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class DeclaredTypeElement : Element, IDeclaredTypeElement
     {
-        public DeclaredTypeElement(IElement element, TypeInfo declaredType) : base(element.ReferencedType, element.Name)
+        public DeclaredTypeElement(IElementName name, TypeInfo declaredType) : base(name)
         {
             DeclaredType = declaredType;
         }

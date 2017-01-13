@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    class InstanceMembers : WeakCacheBase<TypeInfo, IMembers>, IInstanceMembers
+    /*class InstanceMembers : WeakCacheBase<TypeInfo, IMemberElements>, IInstanceMembers
     {
         private readonly Func<IMemberElement, IMemberConverter> _factory;
         private readonly IMemberInformationProvider _information;
@@ -43,5 +43,5 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         protected override IMembers Create(TypeInfo parameter) =>
             new Members(_information.Get(parameter).Select(_factory).Where(x => x != null));
-    }
+    }*/
 }

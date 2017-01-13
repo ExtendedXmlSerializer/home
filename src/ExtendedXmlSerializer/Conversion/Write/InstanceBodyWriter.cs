@@ -28,9 +28,9 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     class InstanceBodyWriter : WriterBase
     {
-        private readonly IInstanceMembers _members;
+        private readonly IMembers _members;
 
-        public InstanceBodyWriter(IInstanceMembers members)
+        public InstanceBodyWriter(IMembers members)
         {
             _members = members;
         }
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var enumerable = _members.Get(instance.GetType().GetTypeInfo());
             foreach (var member in enumerable)
             {
-                member.Write(context, instance);
+                // member.Write(context, instance);
             }
         }
     }

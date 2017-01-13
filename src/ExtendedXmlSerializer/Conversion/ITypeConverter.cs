@@ -23,8 +23,9 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface ITypeConverter : ICandidate<TypeInfo, IConverter> {}
+    public interface ITypeConverter : ISpecification<TypeInfo>, IConverter {}
 }

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class ConvertMembers : WeakCacheBase<IConverter, IInstanceMembers>
+    sealed class ConvertMembers : WeakCacheBase<IConverter, IMembers>
     {
         private readonly ISerializationToolsFactory _tools;
 
@@ -37,18 +37,19 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             _tools = tools;
         }
 
-        protected override IInstanceMembers Create(IConverter parameter)
+        protected override IMembers Create(IConverter parameter)
         {
-            var getter = new LegacyGetterFactory(_tools);
+            /*var getter = new LegacyGetterFactory(_tools);
             var factories = new ReadOnlyCollectionMemberFactory(parameter, new EnumeratingReader(parameter), getter,
                                                                 AddDelegates.Default);
             var factory =
                 new CompositeMemberFactory(
-                    new LegacyAssignableMemberFactory(parameter, new LegacyMemberTypeEmittingWriter(parameter),
+                    new LegacyAssignableMemberElementFactory(parameter, new LegacyMemberTypeEmittingWriter(parameter),
                                                       getter), factories);
             var memberFactory = new LegacyMemberFactory(_tools, factory);
-            var result = new InstanceMembers(memberFactory);
-            return result;
+            var result = new Members.Members(memberFactory);
+            return result;*/
+            return null;
         }
     }
 }

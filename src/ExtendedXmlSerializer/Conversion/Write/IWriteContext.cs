@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         void Write(string text);
 
-        void Write(IElement element, string value);
+        void Write(IElementName name, string value);
 
         IElement Current { get; }
     }

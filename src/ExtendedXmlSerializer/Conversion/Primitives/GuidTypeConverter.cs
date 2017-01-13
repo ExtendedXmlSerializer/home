@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class GuidTypeConverter : PrimitiveTypeConverterBase<Guid>
+    public class GuidTypeConverter : ValueTypeConverterBase<Guid>
     {
         public static GuidTypeConverter Default { get; } = new GuidTypeConverter();
         GuidTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToGuid) {}

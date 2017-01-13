@@ -28,15 +28,15 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class NamedTypes : INamedTypes
+    public class NamedTypeLocator : INamedTypeLocator
     {
-        public static NamedTypes Default { get; } = new NamedTypes();
-        NamedTypes() : this(Defaults.Elements, Namespaces.Default) {}
+        public static NamedTypeLocator Default { get; } = new NamedTypeLocator();
+        NamedTypeLocator() : this(Defaults.Names, Namespaces.Default) {}
 
-        private readonly ImmutableArray<IElement> _elements;
+        private readonly ImmutableArray<IElementName> _elements;
         private readonly INamespaces _namespaces;
 
-        public NamedTypes(IEnumerable<IElement> elements, INamespaces namespaces)
+        public NamedTypeLocator(IEnumerable<IElementName> elements, INamespaces namespaces)
         {
             _elements = elements.ToImmutableArray();
             _namespaces = namespaces;

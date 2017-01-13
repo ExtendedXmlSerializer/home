@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class UnsignedShortTypeConverter : PrimitiveTypeConverterBase<ushort>
+    public class UnsignedShortTypeConverter : ValueTypeConverterBase<ushort>
     {
         public static UnsignedShortTypeConverter Default { get; } = new UnsignedShortTypeConverter();
         UnsignedShortTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt16) {}

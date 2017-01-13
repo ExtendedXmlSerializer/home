@@ -28,11 +28,11 @@ namespace ExtendedXmlSerialization.Core.Sources
     public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
         where TParameter : class where TResult : class
     {
-        private readonly ImmutableArray<ICandidate<TParameter, TResult>> _candidates;
+        private readonly ImmutableArray<IOption<TParameter, TResult>> _candidates;
 
-        public Selector(params ICandidate<TParameter, TResult>[] candidates) : this(candidates.ToImmutableArray()) {}
+        public Selector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
 
-        public Selector(ImmutableArray<ICandidate<TParameter, TResult>> candidates)
+        public Selector(ImmutableArray<IOption<TParameter, TResult>> candidates)
         {
             _candidates = candidates;
         }

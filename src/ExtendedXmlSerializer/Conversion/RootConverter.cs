@@ -32,14 +32,14 @@ namespace ExtendedXmlSerialization.Conversion
         public static RootConverter Default { get; } = new RootConverter();
         RootConverter() : this(Elements.Default, SelectorFactory.Default) {}
 
-        public RootConverter(IElements elements, ISelectorFactory factory)
+        public RootConverter(IElementFactory elements, ISelectorFactory factory)
             : this(elements, new RootSelector(factory)) {}
 
-        public RootConverter(IElements elements, IRootSelector selector)
+        public RootConverter(IElementFactory elements, IRootSelector selector)
             : this(
                 elements, selector, new Converter(new SelectingReader(selector), new SelectingWriter(selector))) {}
 
-        public RootConverter(IElements elements, IRootSelector selector, IConverter converter)
+        public RootConverter(IElementFactory elements, IRootSelector selector, IConverter converter)
             : base(converter, new ElementWriter(elements.Get, converter))
         {
             selector.Execute(converter);

@@ -21,13 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    sealed class LegacyNamedTypes : NamedTypes
-    {
-        public new static LegacyNamedTypes Default { get; } = new LegacyNamedTypes();
-        LegacyNamedTypes() : base(Defaults.Elements, LegacyNamespaces.Default) {}
-    }
+    public interface INamedTypeLocator : IParameterizedSource<XName, TypeInfo> {}
 }

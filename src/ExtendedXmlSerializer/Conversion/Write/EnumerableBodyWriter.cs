@@ -30,17 +30,17 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly IElements _elements;
+        private readonly IElementNameSelector _names;
         private readonly IWriter _item;
         private readonly IElementTypeLocator _locator;
 
-        public EnumerableBodyWriter(IWriter item) : this(Elements.Default, item) {}
+        public EnumerableBodyWriter(IWriter item) : this(ElementNames.Default, item) {}
 
-        public EnumerableBodyWriter(IElements elements, IWriter item) : this(elements, item, ElementTypeLocator.Default) {}
+        public EnumerableBodyWriter(IElementNameSelector names, IWriter item) : this(names, item, ElementTypeLocator.Default) {}
 
-        public EnumerableBodyWriter(IElements elements, IWriter item, IElementTypeLocator locator)
+        public EnumerableBodyWriter(IElementNameSelector names, IWriter item, IElementTypeLocator locator)
         {
-            _elements = elements;
+            _names = names;
             _item = item;
             _locator = locator;
         }
@@ -50,8 +50,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var elementType = _locator.Get(instance.GetType().GetTypeInfo());
             foreach (var item in instance)
             {
-                var element = _elements.Get(item.GetType().GetTypeInfo());
-                using (var child = context.Start(new EnumerableItemElement(element, elementType)))
+                var element = _names.Get(item.GetType().GetTypeInfo());
+                using (var child = context.Start(new ItemElement(element, elementType)))
                 {
                     _item.Write(child, item);
                 }

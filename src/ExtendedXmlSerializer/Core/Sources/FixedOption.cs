@@ -21,14 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    sealed class LegacyElements : Elements
+    public class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
     {
-        public new static LegacyElements Default { get; } = new LegacyElements();
-        LegacyElements() : base(new ElementCandidates(Defaults.Elements).ToArray()) {}
+        private readonly TResult _instance;
+
+        public FixedOption(ISpecification<TParameter> specification, TResult instance) : base(specification)
+        {
+            _instance = instance;
+        }
+
+        public override TResult Get(TParameter parameter) => _instance;
     }
 }

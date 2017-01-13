@@ -21,32 +21,75 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public sealed class Members : IMembers
+    public class Members : WeakCacheBase<TypeInfo, IMemberElements>, IMembers
     {
-        private readonly IImmutableList<IMemberConverter> _items;
-        private readonly IDictionary<string, IMemberConverter> _lookup;
+        public static Members Default { get; } = new Members();
+        Members() : this(Elements.Default) {}
 
-        public Members(IEnumerable<IMemberConverter> items) : this(items.ToImmutableArray()) {}
-        public Members(ImmutableArray<IMemberConverter> items) : this(items, items.ToDictionary(x => x.Name)) {}
+        private readonly IElementFactory _factory;
 
-        public Members(ImmutableArray<IMemberConverter> items, IDictionary<string, IMemberConverter> lookup)
+        public Members(IElementFactory factory)
         {
-            _items = items;
-            _lookup = lookup;
+            _factory = factory;
         }
 
-        public IMemberConverter Get(string parameter) => _lookup.TryGet(parameter);
+        protected override IMemberElements Create(TypeInfo parameter) =>
+            new MemberElements(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member).ToImmutableArray());
 
-        public IEnumerator<IMemberConverter> GetEnumerator() => _items.GetEnumerator();
+        IEnumerable<Sorting> Yield(TypeInfo parameter)
+        {
+            foreach (var property in parameter.GetProperties())
+            {
+                var getMethod = property.GetGetMethod(true);
+                if (property.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
+                    !(!property.GetSetMethod(true)?.IsPublic ?? false) &&
+                    property.GetIndexParameters().Length <= 0 &&
+                    !property.IsDefined(typeof(XmlIgnoreAttribute), false))
+                {
+                    yield return Create(property);
+                }
+            }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            foreach (var field in parameter.GetFields())
+            {
+                var readOnly = field.IsInitOnly;
+                if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
+                    !field.IsDefined(typeof(XmlIgnoreAttribute), false))
+                {
+                    yield return Create(field);
+                }
+            }
+        }
+
+        private Sorting Create(MemberInfo metadata)
+        {
+            var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
+                                metadata.MetadataToken);
+
+            var result = new Sorting((IMemberElement) _factory.Get(metadata), sort);
+            return result;
+        }
+
+        struct Sorting
+        {
+            public Sorting(IMemberElement member, Sort sort)
+            {
+                Member = member;
+                Sort = sort;
+            }
+
+            public IMemberElement Member { get; }
+            public Sort Sort { get; }
+        }
     }
 }

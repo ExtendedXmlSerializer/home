@@ -28,7 +28,13 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public class Element : IElement
     {
-        public Element(Type referencedType) : this(referencedType.GetTypeInfo()) {}
+        public Element(IElementName name)
+        {
+            Name = name;
+        }
+
+
+        /*public Element(Type referencedType) : this(referencedType.GetTypeInfo()) {}
         public Element(TypeInfo referencedType) : this(referencedType, referencedType.Name) {}
 
         public Element(Type referencedType, string name) : this(referencedType.GetTypeInfo(), name) {}
@@ -40,6 +46,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         }
 
         public string Name { get; }
-        public TypeInfo ReferencedType { get; }
+        public TypeInfo ReferencedType { get; }*/
+        public IElementName Name { get; }
     }
 }

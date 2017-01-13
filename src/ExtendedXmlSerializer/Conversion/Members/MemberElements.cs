@@ -29,25 +29,24 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    class MemberElements : IMemberElements
+    public sealed class MemberElements : IMemberElements
     {
         private readonly IImmutableList<IMemberElement> _items;
         private readonly IDictionary<string, IMemberElement> _lookup;
 
-        public MemberElements(IImmutableList<IMemberElement> items)
-            : this(items, items.ToDictionary(x => x.Name)) {}
+        public MemberElements(IEnumerable<IMemberElement> items) : this(items.ToImmutableArray()) {}
+        public MemberElements(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.Name.Name)) {}
 
-        public MemberElements(IImmutableList<IMemberElement> items,
-                              IDictionary<string, IMemberElement> lookup)
+        public MemberElements(ImmutableArray<IMemberElement> items, IDictionary<string, IMemberElement> lookup)
         {
             _items = items;
             _lookup = lookup;
         }
 
+        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
+
         public IEnumerator<IMemberElement> GetEnumerator() => _items.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
     }
 }

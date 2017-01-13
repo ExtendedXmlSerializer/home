@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Members
+using ExtendedXmlSerialization.Core.Specifications;
+
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface IAssignableMemberConverter : IMemberConverter
+    public abstract class OptionBase<TParameter, TResult> : IOption<TParameter, TResult>
     {
-        void Set(object instance, object value);
+        private readonly ISpecification<TParameter> _specification;
+
+        protected OptionBase(ISpecification<TParameter> specification)
+        {
+            _specification = specification;
+        }
+
+        public abstract TResult Get(TParameter parameter);
+
+        public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
     }
 }

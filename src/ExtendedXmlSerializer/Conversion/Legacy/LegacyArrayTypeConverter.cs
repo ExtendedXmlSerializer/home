@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public LegacyArrayTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(
                 IsArraySpecification.Default, new ArrayReader(converter),
-                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElements.Default, converter))) {}
+                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElementNames.Default, converter))) {}
     }
 }

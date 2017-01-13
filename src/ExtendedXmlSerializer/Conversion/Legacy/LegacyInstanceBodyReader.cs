@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IInstanceMembers members) : base(members)
+        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IMembers members, IConverterSelector selector) : base(members, selector)
         {
             _tools = tools;
         }
@@ -40,11 +40,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         protected override object Activate(IReadContext context)
         {
             var result = base.Activate(context);
-            var type = context.ReferencedType;
+            var type = context.Name.ReferencedType;
             var configuration = _tools.GetConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {
-                var prefix = context.ReferencedType.FullName + Defaults.Underscore;
+                var prefix = context.Name.ReferencedType.FullName + Defaults.Underscore;
                 var refId = context[ReferenceProperty.Default];
                 var references = context.Get<ReadReferences>();
                 if (!string.IsNullOrEmpty(refId))
