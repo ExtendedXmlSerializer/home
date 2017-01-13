@@ -23,7 +23,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;

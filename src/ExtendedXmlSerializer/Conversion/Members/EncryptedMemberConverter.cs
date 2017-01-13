@@ -21,10 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members

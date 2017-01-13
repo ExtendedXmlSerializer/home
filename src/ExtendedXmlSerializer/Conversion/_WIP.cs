@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
+﻿using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 

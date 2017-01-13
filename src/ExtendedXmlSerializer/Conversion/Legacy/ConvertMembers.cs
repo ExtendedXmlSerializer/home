@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy

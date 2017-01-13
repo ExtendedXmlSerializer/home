@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core;
 

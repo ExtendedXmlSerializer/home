@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+﻿using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members

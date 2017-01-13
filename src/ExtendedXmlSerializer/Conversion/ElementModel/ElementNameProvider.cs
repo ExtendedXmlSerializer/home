@@ -24,7 +24,6 @@
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel

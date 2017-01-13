@@ -24,7 +24,6 @@
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion

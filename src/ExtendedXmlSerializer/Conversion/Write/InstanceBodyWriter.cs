@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 
@@ -40,6 +41,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var enumerable = _members.Get(instance.GetType().GetTypeInfo());
             foreach (var member in enumerable)
             {
+                throw new InvalidOperationException("Fix me.");
                 // member.Write(context, instance);
             }
         }
