@@ -21,38 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.Members;
+
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    /*sealed class LegacyMemberFactory : IElementFactory
+    sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly IElementFactory _factory;
-
-        public LegacyMemberFactory(ISerializationToolsFactory tools, IElementFactory factory)
+        private readonly IConverterOption _option;
+        
+        public LegacyMemberOption(ISerializationToolsFactory tools, IConverterOption option)
         {
             _tools = tools;
-            _factory = factory;
+            _option = option;
         }
 
-        public IElement Get(MemberInfo parameter)
+        protected override IConverter Create(IMemberElement parameter)
         {
-            var result = _factory.Get(parameter);
+            var result = _option.Get(parameter);
             if (result != null)
             {
-                var configuration = _tools.GetConfiguration(parameter.DeclaringType);
+                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
                 if (configuration != null)
                 {
-                    if (configuration.CheckPropertyEncryption(parameter.Name))
+                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
                     {
                         var algorithm = _tools.EncryptionAlgorithm;
                         if (algorithm != null)
                         {
-                            return new EncryptedMemberConverter(algorithm, converter);
+                            return new EncryptedMemberConverter(algorithm, result);
                         }
                     }
                 }
             }
             return result;
         }
-    }*/
+    }
 }

@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         protected override object Create(IReadContext context, IEnumerable enumerable)
         {
-            var result = _activators.Activate<IDictionary>(context.Current.Name.KeyedType.AsType());
+            var result = _activators.Activate<IDictionary>(context.Current.Name.Classification.AsType());
             foreach (DictionaryEntry item in enumerable)
             {
                 result.Add(item.Key, item.Value);

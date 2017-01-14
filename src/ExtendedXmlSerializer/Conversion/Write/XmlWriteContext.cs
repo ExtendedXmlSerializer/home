@@ -37,11 +37,11 @@ namespace ExtendedXmlSerialization.Conversion.Write
         private readonly ImmutableArray<object> _services;
         private readonly IDisposable _finish;
 
-        public XmlWriteContext(XmlWriter writer, IElement element, params object[] services)
-            : this(Namespaces.Default, writer, element, services) {}
+        public XmlWriteContext(XmlWriter writer, params object[] services)
+            : this(Namespaces.Default, writer, services) {}
 
-        protected XmlWriteContext(INamespaces namespaces, XmlWriter writer, IElement element, params object[] services)
-            : this(namespaces, writer, element, services.ToImmutableArray()) {}
+        protected XmlWriteContext(INamespaces namespaces, XmlWriter writer, params object[] services)
+            : this(namespaces, writer, null, services.ToImmutableArray()) {}
 
         XmlWriteContext(INamespaces namespaces, XmlWriter writer, IElement element, ImmutableArray<object> services)
         {
@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public IWriteContext Start(IElement element)
         {
-            var ns = _namespaces.Get(element.Name.KeyedType);
+            var ns = _namespaces.Get(element.Name.Classification);
             _writer.WriteStartElement(element.Name.DisplayName, ns);
 
             var result = new XmlWriteContext(_namespaces, _writer, element, _services);

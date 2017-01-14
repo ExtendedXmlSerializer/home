@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var result = list.ToArray(_locator.Get(context.Current.Name.KeyedType).AsType());
+            var result = list.ToArray(_locator.Get(context.Current.Name.Classification).AsType());
             return result;
         }
     }

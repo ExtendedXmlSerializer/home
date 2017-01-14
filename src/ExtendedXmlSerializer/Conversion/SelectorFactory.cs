@@ -23,23 +23,25 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public class SelectorFactory : ISelectorFactory
     {
         public static SelectorFactory Default { get; } = new SelectorFactory();
-        SelectorFactory() : this(PrimitiveTypeConverters.Default, AdditionalTypeConverters.Default) {}
+        SelectorFactory() : this(Elements.Default, ConverterOptions.Default) {}
 
-        private readonly IEnumerable<ITypeConverter> _primitives;
-        private readonly ITypeConverters _additional;
+        private readonly IElementSelector _elements;
+        private readonly IParameterizedSource<IConverter, IEnumerable<IConverterOption>> _options;
 
-        public SelectorFactory(IEnumerable<ITypeConverter> primitives, ITypeConverters additional)
+        public SelectorFactory(IElementSelector elements, IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
         {
-            _primitives = primitives;
-            _additional = additional;
+            _elements = elements;
+            _options = options;
         }
 
-        public ISelector Get(IConverter parameter) => new Selector(_primitives.Concat(_additional.Get(parameter)));
+        public ISelector Get(IConverter parameter) => new Selector(_elements, new ConverterSelector(_options.Get(parameter).ToArray()));
     }
 }

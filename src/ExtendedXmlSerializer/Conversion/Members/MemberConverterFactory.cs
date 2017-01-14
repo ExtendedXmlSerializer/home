@@ -25,19 +25,19 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public class MemberConverterFactory : ConverterFactoryBase<IMemberElement>
+    public class MemberConverterOption : ConverterOptionBase<IMemberElement>
     {
         private readonly IConverter _converter;
 
-        public MemberConverterFactory(IConverter converter)
+        public MemberConverterOption(IConverter converter)
         {
             _converter = converter;
         }
 
         protected override IConverter Create(IMemberElement parameter)
         {
-            var result = new MemberConverter(_converter,
-                                             new InstanceValidatingWriter(new ElementWriter(parameter, _converter)));
+            var writer = new InstanceValidatingWriter(new ElementWriter(parameter, _converter));
+            var result = new MemberConverter(_converter, writer);
             return result;
         }
     }

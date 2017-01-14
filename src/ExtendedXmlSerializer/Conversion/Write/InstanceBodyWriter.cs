@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 
@@ -29,20 +28,21 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     class InstanceBodyWriter : WriterBase
     {
-        private readonly IMembers _members;
-
-        public InstanceBodyWriter(IMembers members)
+        private readonly IElementMembers _members;
+        private readonly IMemberConverterSelector _selector;
+        
+        public InstanceBodyWriter(IElementMembers members, IMemberConverterSelector selector)
         {
             _members = members;
+            _selector = selector;
         }
 
         public override void Write(IWriteContext context, object instance)
         {
-            var enumerable = _members.Get(instance.GetType().GetTypeInfo());
-            foreach (var member in enumerable)
+            var members = _members.Get(instance.GetType().GetTypeInfo());
+            foreach (var member in members)
             {
-                throw new InvalidOperationException("Fix me.");
-                // member.Write(context, instance);
+                _selector.Get(member).Write(context, instance);
             }
         }
     }

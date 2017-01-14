@@ -32,13 +32,13 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     public class ElementNames : Selector<MemberInfo, IElementName>, IElementNameSelector
     {
         public static ElementNames Default { get; } = new ElementNames();
-
-        private ElementNames()
-            : this(Defaults.Names) {}
+        private ElementNames() : this(Defaults.Names) {}
 
         protected ElementNames(IEnumerable<IElementName> names)
             : this(
-                new RegisteredElementNames(names), ElementNameOption<Enum>.Default, EnumerableNameOption.Default,
+                new KnownElementNames(names), 
+                ElementNameOption<Enum>.Default, 
+                EnumerableNameOption.Default,
                 DefaultElementNameOption.Default) {}
 
         public ElementNames(params IElementNameOption[] options) : base(options) {}

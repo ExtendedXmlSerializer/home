@@ -21,13 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IDictionaryElement : ICollectionElement
-    {
-        IDictionaryKeyElement Key { get; }
-        IDictionaryValueElement Value { get; }
-    }
+    public interface IDictionaryElement : ICollectionElement<IDictionaryItem> {}
 }

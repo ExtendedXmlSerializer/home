@@ -21,25 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-    sealed class LegacyAdditionalTypeConverters : ITypeConverters
-    {
-        private readonly ISerializationToolsFactory _tools;
-
-        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools)
-        {
-            _tools = tools;
-        }
-
-        public IEnumerable<ITypeConverter> Get(IConverter parameter)
-        {
-            yield return new LegacyDictionaryTypeConverter(parameter);
-            yield return new LegacyArrayTypeConverter(_tools, parameter);
-            yield return new LegacyEnumerableTypeConverter(_tools, parameter);
-            // yield return new LegacyInstanceTypeConverter(_tools, parameter);
-        }
-    }
+    public interface IElementMembers : IParameterizedSource<TypeInfo, IMembers> {}
 }

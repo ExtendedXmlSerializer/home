@@ -24,7 +24,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -41,12 +40,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var current = (IDictionaryElement)context.Current;
-            foreach (var child in context.ChildrenOf(ItemProperty.Default))
+            var element = (IDictionaryElement)context.Current;
+            var item = element.Item;
+            foreach (var child in context.Items())
             {
-                var key = Read(child, current.Key);
-                var value = Read(child, current.Value);
-                yield return new DictionaryEntry(key, value);
+                var key = Read(child, item.Key);
+                var value = Read(child, item.Value);
+                var entry = new DictionaryEntry(key, value);
+                yield return entry;
             }
         }
 

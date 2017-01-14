@@ -28,14 +28,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     class InstanceBodyReader : ReaderBase
     {
-        private readonly IMembers _members;
-        private readonly IConverterSelector _selector;
+        private readonly IElementMembers _members;
+        private readonly IMemberConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IMembers members, IConverterSelector selector)
+        public InstanceBodyReader(IElementMembers members, IMemberConverterSelector selector)
             : this(members, selector, Activators.Default) {}
 
-        public InstanceBodyReader(IMembers members, IConverterSelector selector, IActivators activators)
+        public InstanceBodyReader(IElementMembers members, IMemberConverterSelector selector, IActivators activators)
         {
             _members = members;
             _selector = selector;
@@ -45,26 +45,22 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public override object Read(IReadContext context)
         {
             var result = Activate(context);
-            OnRead(context, result);
+            var members = _members.Get(context.Current.Name.Classification);
+            foreach (var child in context)
+            {
+                var member = members.Get(child.Current.Name.DisplayName);
+                if (member != null)
+                {
+                    var reader = _selector.Get(member);
+                    member.Assign(result, reader.Read(child));
+                    
+                }
+            }
             return result;
         }
 
         protected virtual object Activate(IReadContext context)
-            => _activators.Activate<object>(context.Current.Name.KeyedType.AsType());
+            => _activators.Activate<object>(context.Current.Name.Classification.AsType());
 
-        protected virtual void OnRead(IReadContext context, object result)
-        {
-            var members = _members.Get(context.Current.Name.KeyedType);
-            foreach (var child in context)
-            {
-                var member = members.Get(context.Current.Name.DisplayName);
-                if (member != null)
-                {
-                    var converter = _selector.Get(member);
-                    member.Assign(result, converter.Read(child));
-                    
-                }
-            }
-        }
     }
 }

@@ -31,13 +31,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         public const string Underscore = "_";
 
-        public static IEnumerable<IElementName> Names { get; } = new LegacyKnownElements().ToImmutableArray();
+        public static IEnumerable<IElementName> Names { get; } = new LegacyKnownNames().ToImmutableArray();
 
-        public static IConverter Root { get; } = new RootConverter(LegacyElements.Default,
-                                                                   new AlteredSelectorFactory(
-                                                                       new SelectorFactory(LegacyPrimitives.Default,
-                                                                                           AdditionalTypeConverters
-                                                                                               .Default),
-                                                                       NullableSelectorAlteration.Default));
+        public static IConverter Root { get; }
+            = new RootConverter(LegacyElements.Default,
+                new RootSelector(new SelectorFactory(LegacyElements.Default, ConverterOptions.Default)));
     }
 }

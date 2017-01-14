@@ -21,20 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class SelectingWriter : IWriter
+    sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        private readonly ISelector _selector;
-
-        public SelectingWriter(ISelector selector)
+        private readonly ISerializationToolsFactory _tools;
+        public LegacyConverterOptions(ISerializationToolsFactory tools)
         {
-            _selector = selector;
+            _tools = tools;
         }
 
-        public void Write(IWriteContext context, object instance) =>
-            _selector.Get(instance.GetType().GetTypeInfo()).Write(context, instance);
+        public IEnumerable<IConverterOption> Get(IConverter parameter)
+        {
+            yield return KnownConverters.Default;
+            yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
+            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
+            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter));
+            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter));
+        }
     }
 }

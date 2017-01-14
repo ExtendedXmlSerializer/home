@@ -33,12 +33,10 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         private readonly ISerializationToolsFactory _tools;
 
         public LegacyRootConverter(ISerializationToolsFactory tools)
-            : this(tools, new RootSelector(new LegacySelectorFactory(tools))) {}
+            : this(tools, new RootSelector(new SelectorFactory(new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(tools))), new LegacyConverterOptions(tools)))) {}
 
-        public LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
-            : base(
-                LegacyElements.Default, selector,
-                new Converter(new SelectingReader(selector), new SelectingWriter(selector)))
+        LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
+            : base(LegacyElements.Default, selector, new SelectingConverter(new NullableAwareSelector(selector)))
         {
             _tools = tools;
         }
@@ -61,7 +59,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override object Read(IReadContext context)
         {
-            var type = context.Current.Name.KeyedType.AsType();
+            var type = context.Current.Name.Classification.AsType();
             var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {

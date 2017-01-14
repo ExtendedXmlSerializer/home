@@ -34,31 +34,31 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     public interface IElementName
     {
         string DisplayName { get; }
-        TypeInfo KeyedType { get; }
+        TypeInfo Classification { get; }
     }
 
     public class ElementName : IEquatable<ElementName>, IElementName
     {
-        public ElementName(Type referencedType) : this(referencedType.GetTypeInfo()) {}
-        public ElementName(TypeInfo referencedType) : this(referencedType, referencedType.Name) {}
+        public ElementName(Type classification) : this(classification.GetTypeInfo()) {}
+        public ElementName(TypeInfo classification) : this(classification, classification.Name) {}
 
-        public ElementName(Type referencedType, string name) : this(referencedType.GetTypeInfo(), name) {}
+        public ElementName(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
 
-        public ElementName(TypeInfo referencedType, string name)
+        public ElementName(TypeInfo classification, string name)
         {
-            KeyedType = referencedType;
+            Classification = classification;
             DisplayName = name;
         }
 
         public string DisplayName { get; }
-        public TypeInfo KeyedType { get; }
+        public TypeInfo Classification { get; }
 
-        public bool Equals(ElementName other) => Equals(KeyedType, other.KeyedType);
+        public bool Equals(ElementName other) => Equals(Classification, other.Classification);
 
         public override bool Equals(object obj) => 
             !ReferenceEquals(null, obj) && (obj is ElementName && Equals((ElementName) obj));
 
-        public override int GetHashCode() => KeyedType?.GetHashCode() ?? 0;
+        public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
 
         public static bool operator ==(ElementName left, ElementName right) => left.Equals(right);
 

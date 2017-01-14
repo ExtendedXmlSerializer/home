@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         protected override void Write(IWriteContext context, DictionaryEntry instance)
         {
-            var element = (IDictionaryElement) context.Current;
+            var element = (IDictionaryItem) context.Current;
             using (var child = context.Start(element.Key))
             {
                 _writer.Write(child, instance.Key);

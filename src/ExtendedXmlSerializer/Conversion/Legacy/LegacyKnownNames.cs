@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyKnownElements : IEnumerable<IElementName>
+    sealed class LegacyKnownNames : IEnumerable<IElementName>
     {
         public IEnumerator<IElementName> GetEnumerator()
         {

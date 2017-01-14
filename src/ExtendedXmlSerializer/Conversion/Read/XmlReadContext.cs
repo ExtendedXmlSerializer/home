@@ -36,8 +36,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
     public class XmlReadContext : IReadContext
     {
         private readonly IElementSelector _elements;
-        private readonly IMembers _store;
-        private readonly IMemberElements _members;
+        private readonly IElementMembers _store;
+        private readonly IMembers _members;
         private readonly ICollectionItemTypeLocator _locator;
         private readonly IElementTypes _types;
         private readonly INameConverter _names;
@@ -47,11 +47,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         XmlReadContext(IElementSelector elements, XElement container)
             : this(
-                elements, Members.Members.Default, CollectionItemTypeLocator.Default, ElementTypes.Default, NameConverter.Default,
+                elements, ElementMembers.Default, CollectionItemTypeLocator.Default, ElementTypes.Default,
+                NameConverter.Default,
                 container, elements.Get(ElementTypes.Default.Get(container)),
-                Members.Members.Default, CollectionItemTypeLocator.Default, ElementTypes.Default, Namespaces.Default) {}
+                ElementMembers.Default, CollectionItemTypeLocator.Default, ElementTypes.Default,
+                Namespaces.Default) {}
 
-        public XmlReadContext(IElementSelector elements, IMembers store, ICollectionItemTypeLocator locator, IElementTypes types,
+        public XmlReadContext(IElementSelector elements, IElementMembers store, ICollectionItemTypeLocator locator,
+                              IElementTypes types,
                               INameConverter namespaces, XElement container, IElement element, params object[] services)
             : this(elements, store, locator, types, namespaces, container, element)
         {
@@ -61,11 +64,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        private XmlReadContext(IElementSelector elements, IMembers store, ICollectionItemTypeLocator locator, IElementTypes types,
+        private XmlReadContext(IElementSelector elements, IElementMembers store, ICollectionItemTypeLocator locator,
+                               IElementTypes types,
                                INameConverter namespaces, XElement container, IElement element)
-            : this(elements, store, store.Get(element.Name.KeyedType), locator, types, namespaces, container, element) {}
+            : this(
+                elements, store, store.Get(element.Name.Classification), locator, types, namespaces, container, element) {}
 
-        XmlReadContext(IElementSelector elements, IMembers store, IMemberElements members, ICollectionItemTypeLocator locator,
+        XmlReadContext(IElementSelector elements, IElementMembers store, IMembers members,
+                       ICollectionItemTypeLocator locator,
                        IElementTypes types, INameConverter names, XElement container, IElement element)
         {
             _elements = elements;
@@ -97,7 +103,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IEnumerable<IReadContext> Items()
         {
-            var elementType = ((ICollectionElement) Current).ElementType;
+            var elementType = ((ICollectionElement) Current).Item.ElementType;
             foreach (var child in _container.Elements())
             {
                 yield return Create(child, elementType);
@@ -105,13 +111,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         private XmlReadContext Create(XElement child, TypeInfo elementType = null) =>
-            new XmlReadContext(_elements, _store, _locator, _types, _names, _types.Initialized(child, elementType), _elements.Get(_types.Get(child)));
+            new XmlReadContext(_elements, _store, _locator, _types, _names, _types.Initialized(child, elementType),
+                               _elements.Get(_types.Get(child)));
 
         public IEnumerable<IReadContext> ChildrenOf(IElementName name)
         {
             foreach (var child in _container.Elements(_names.Get(name)))
             {
-                yield return Create(child, Current.Name.KeyedType);
+                yield return Create(child, Current.Name.Classification);
             }
         }
 
@@ -140,11 +147,13 @@ namespace ExtendedXmlSerialization.Conversion.Read
         NameConverter() : this(Namespaces.Default) {}
 
         private readonly INamespaces _namespaces;
+
         public NameConverter(INamespaces namespaces)
         {
             _namespaces = namespaces;
         }
 
-        public XName Get(IElementName parameter) => XName.Get(parameter.DisplayName, _namespaces.Get(parameter.KeyedType));
+        public XName Get(IElementName parameter)
+            => XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification));
     }
 }

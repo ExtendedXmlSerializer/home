@@ -22,34 +22,43 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class AdditionalTypeConverters : ITypeConverters
+    sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        public static AdditionalTypeConverters Default { get; } = new AdditionalTypeConverters();
-        AdditionalTypeConverters() {}
+        public static ConverterOptions Default { get; } = new ConverterOptions();
+        ConverterOptions() {}
 
-        public IEnumerable<ITypeConverter> Get(IConverter parameter)
+        public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return new LegacyDictionaryTypeConverter(parameter);
-            yield return new ArrayTypeConverter(parameter);
-            yield return new LegacyEnumerableTypeConverter(parameter);
+            yield return KnownConverters.Default;
+            yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
+            yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
+            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter)); 
+            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
+            /*,
+            yield return new ConverterOption<IMemberElement>(new LegacyEnumerableTypeConverter(root))*/
+        }
 
+        /*public IEnumerable<ITypeConverter> Get(IConverter parameter)
+        {
             /*var factory = new ReadOnlyCollectionMemberConverterFactory(parameter, new EnumeratingReader(parameter));
             var composite = new ConverterSelector(new LegacyAssignableMemberElementFactory(parameter), factory);
             var members = new Members.Members(composite);
-            yield return new LegacyInstanceTypeConverter(members);*/
-        }
+            yield return new LegacyInstanceTypeConverter(members);#1#
+        }*/
 
         sealed class LegacyEnumerableTypeConverter : TypeConverter
         {
             public LegacyEnumerableTypeConverter(IConverter converter)
                 : base(
-                    IsEnumerableTypeSpecification.Default, new ListReader(converter),
+                    IsCollectionTypeSpecification.Default, new ListReader(converter),
                     new EnumerableBodyWriter(LegacyElementNames.Default, converter)
                 ) {}
         }

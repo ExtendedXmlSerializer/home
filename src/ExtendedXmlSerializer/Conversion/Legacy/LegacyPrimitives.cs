@@ -21,13 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.Primitives;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyPrimitives : IEnumerable<ITypeConverter>
+    /*class LegacyPrimitives : IEnumerable<ITypeConverter>
     {
         public static LegacyPrimitives Default { get; } = new LegacyPrimitives();
         LegacyPrimitives() {}
@@ -56,5 +54,32 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }*/
+
+    public class KnownConverters : Conversion.KnownConverters
+    {
+        public static new KnownConverters Default { get; } = new KnownConverters();
+
+        KnownConverters() : base(
+            BooleanTypeConverter.Default,
+            CharacterTypeConverter.Default,
+            ByteTypeConverter.Default,
+            UnsignedByteTypeConverter.Default,
+            ShortTypeConverter.Default,
+            UnsignedShortTypeConverter.Default,
+            IntegerTypeConverter.Default,
+            UnsignedIntegerTypeConverter.Default,
+            LongTypeConverter.Default,
+            UnsignedLongTypeConverter.Default,
+            FloatTypeConverter.Default,
+            DoubleTypeConverter.Default,
+            DecimalTypeConverter.Default,
+            EnumerationTypeConverter.Default,
+            DateTimeTypeConverter.Default,
+            DateTimeOffsetTypeConverter.Default,
+            StringTypeConverter.Default,
+            GuidTypeConverter.Default,
+            TimeSpanTypeConverter.Default
+        ) {}
     }
 }

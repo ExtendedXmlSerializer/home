@@ -32,7 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IMembers members, IConverterSelector selector) : base(members, selector)
+        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IElementMembers members,
+                                        IMemberConverterSelector selector) : base(members, selector)
         {
             _tools = tools;
         }
@@ -40,7 +41,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         protected override object Activate(IReadContext context)
         {
             var result = base.Activate(context);
-            var type = context.Current.Name.KeyedType;
+            var type = context.Current.Name.Classification;
             var configuration = _tools.GetConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {

@@ -40,7 +40,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
         {
             var element = context.Get<XElement>();
             element.Value = _encryption.Decrypt(element.Value);
-            return base.Read(context);
+            var result = base.Read(context);
+            return result;
         }
     }
 }

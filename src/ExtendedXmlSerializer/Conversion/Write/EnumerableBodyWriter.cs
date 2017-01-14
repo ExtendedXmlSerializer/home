@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             foreach (var item in instance)
             {
                 var name = _names.Get(item.GetType().GetTypeInfo());
-                using (var child = context.Start(new CollectionItemElement(name, elementType)))
+                using (var child = context.Start(new CollectionItem(name, elementType)))
                 {
                     _item.Write(child, item);
                 }

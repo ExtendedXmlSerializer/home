@@ -28,16 +28,31 @@ namespace ExtendedXmlSerialization.Core.Sources
     public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
         where TParameter : class where TResult : class
     {
+        private readonly IParameterizedSource<TParameter, TResult> _source;
+
+        public Selector(params IOption<TParameter, TResult>[] options)
+            : this(new OptionSelector<TParameter, TResult>(options.ToImmutableArray())) {}
+
+        public Selector(IParameterizedSource<TParameter, TResult> source)
+        {
+            _source = source;
+        }
+
+        protected override TResult Create(TParameter parameter) => _source.Get(parameter);
+    }
+
+    public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+    {
         private readonly ImmutableArray<IOption<TParameter, TResult>> _candidates;
 
-        public Selector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
+        public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
 
-        public Selector(ImmutableArray<IOption<TParameter, TResult>> candidates)
+        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> candidates)
         {
             _candidates = candidates;
         }
 
-        protected override TResult Create(TParameter parameter)
+        public TResult Get(TParameter parameter)
         {
             var length = _candidates.Length;
             for (int i = 0; i < length; i++)
@@ -48,7 +63,7 @@ namespace ExtendedXmlSerialization.Core.Sources
                     return candidate.Get(parameter);
                 }
             }
-            return null;
+            return default(TResult);
         }
     }
 }
