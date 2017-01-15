@@ -68,7 +68,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             Current = element;
             _container = container;
             _name = name;
-            Add(element);
+            Add(container);
         }
 
         public string DisplayName => _name.DisplayName;

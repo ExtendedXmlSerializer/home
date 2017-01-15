@@ -23,7 +23,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -44,7 +43,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
         }
 
         protected override IMembers Create(TypeInfo parameter) =>
-            new Members(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member).ToImmutableArray());
+            new Members(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
 
         IEnumerable<Sorting> Yield(TypeInfo parameter)
         {
@@ -84,8 +83,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order,
                                 metadata.MetadataToken);
 
-            var member = new MemberInformation(metadata, memberType.GetTypeInfo().AccountForNullable(), assignable);
-            var element = _selector.Get(member);
+            var information = new MemberInformation(metadata, memberType.GetTypeInfo().AccountForNullable(), assignable);
+            var element = _selector.Get(information);
             if (element != null)
             {
                 var result = new Sorting(element, sort);

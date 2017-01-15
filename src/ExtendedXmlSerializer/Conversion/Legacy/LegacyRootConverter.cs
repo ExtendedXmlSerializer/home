@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
@@ -33,10 +34,13 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         private readonly ISerializationToolsFactory _tools;
 
         public LegacyRootConverter(ISerializationToolsFactory tools)
-            : this(tools, new RootSelector(new SelectorFactory(new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(tools))), new LegacyConverterOptions(tools)))) {}
+            : this(tools, new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(tools)))) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
-            : base(LegacyElements.Default, selector, new SelectingConverter(new NullableAwareSelector(selector)))
+        LegacyRootConverter(ISerializationToolsFactory tools, IElementSelector elements)
+            : this(elements, tools, new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools, elements)))) {}
+
+        LegacyRootConverter(IElementSelector elements, ISerializationToolsFactory tools, IRootSelector selector)
+            : base(elements, selector, new SelectingConverter(new NullableAwareSelector(selector)))
         {
             _tools = tools;
         }

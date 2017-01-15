@@ -31,9 +31,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
     public class ReadOnlyCollectionMemberOption : MemberOptionBase
     {
         public static ReadOnlyCollectionMemberOption Default { get; } = new ReadOnlyCollectionMemberOption();
-
-        ReadOnlyCollectionMemberOption()
-            : this(GetterFactory.Default, AddDelegates.Default) {}
+        ReadOnlyCollectionMemberOption() : this(GetterFactory.Default, AddDelegates.Default) {}
 
         private readonly IGetterFactory _getter;
         private readonly IAddDelegates _add;
@@ -50,8 +48,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             if (add != null)
             {
                 var getter = _getter.Get(parameter.Metadata);
-                var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata,
-                                                                 parameter.MemberType, add, getter);
+                var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, parameter.MemberType, add,
+                                                                 getter);
                 return result;
             }
             return null;
@@ -69,8 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
                 _specification = specification;
             }
 
-            public bool IsSatisfiedBy(MemberInformation parameter)
-                => _specification.IsSatisfiedBy(parameter.Metadata.DeclaringType.GetTypeInfo());
+            public bool IsSatisfiedBy(MemberInformation parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
         }
     }
 }

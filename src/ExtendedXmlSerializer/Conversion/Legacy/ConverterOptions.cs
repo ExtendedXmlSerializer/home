@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             public LegacyEnumerableTypeConverter(IConverter converter)
                 : base(
                     IsCollectionTypeSpecification.Default, new ListReader(converter),
-                    new EnumerableBodyWriter(LegacyElementNames.Default, converter)
+                    new EnumerableBodyWriter(LegacyElements.Default, converter)
                 ) {}
         }
     }

@@ -141,7 +141,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         ICollectionItem ICollectionElement.Item => Item;
     }
 
-    public class CollectionElement : CollectionElementBase<ICollectionItem>, ICollectionElement
+    public class CollectionElement : CollectionElementBase<ICollectionItem>
     {
         public CollectionElement(IElementName name, IMembers members, ICollectionItem item)
             : base(name, members, item) {}

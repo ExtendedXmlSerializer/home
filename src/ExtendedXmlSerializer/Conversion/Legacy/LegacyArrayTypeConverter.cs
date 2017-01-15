@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     sealed class LegacyArrayTypeConverter : Converter
     {
         public LegacyArrayTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : base(new ArrayReader(converter), new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElementNames.Default, converter))) {}
+            : base(new ArrayReader(converter), new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElements.Default, converter))) {}
     }
 }

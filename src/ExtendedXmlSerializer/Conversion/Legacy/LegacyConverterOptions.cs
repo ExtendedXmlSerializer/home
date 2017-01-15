@@ -30,17 +30,21 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
         private readonly ISerializationToolsFactory _tools;
-        public LegacyConverterOptions(ISerializationToolsFactory tools)
+        private readonly IElementSelector _elements;
+
+        public LegacyConverterOptions(ISerializationToolsFactory tools, IElementSelector elements)
         {
             _tools = tools;
+            _elements = elements;
         }
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
+            yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter));
-            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter));
+            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter, _elements));
         }
     }
 }

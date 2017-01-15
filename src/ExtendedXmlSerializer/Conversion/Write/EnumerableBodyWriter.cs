@@ -22,34 +22,29 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly IElementNameSelector _names;
+        private readonly IElementSelector _selector;
         private readonly IWriter _item;
-        private readonly ICollectionItemTypeLocator _locator;
 
-        public EnumerableBodyWriter(IWriter item) : this(ElementNames.Default, item) {}
+        public EnumerableBodyWriter(IWriter item) : this(Elements.Default, item) {}
 
-        public EnumerableBodyWriter(IElementNameSelector names, IWriter item) : this(names, item, CollectionItemTypeLocator.Default) {}
-
-        public EnumerableBodyWriter(IElementNameSelector names, IWriter item, ICollectionItemTypeLocator locator)
+        public EnumerableBodyWriter(IElementSelector selector, IWriter item)
         {
-            _names = names;
+            _selector = selector;
             _item = item;
-            _locator = locator;
         }
 
         protected override void Write(IWriteContext context, IEnumerable instance)
         {
-            var current = (ICollectionElement) context.Element;
             foreach (var item in instance)
             {
-                using (var child = context.Start(current.Item))
+                using (var child = context.Start(_selector.Get(item.GetType().GetTypeInfo())))
                 {
                     _item.Write(child, item);
                 }

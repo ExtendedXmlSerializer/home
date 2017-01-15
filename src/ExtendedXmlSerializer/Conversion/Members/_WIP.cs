@@ -44,12 +44,14 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
     public interface IMemberConverterSelector : ISelector<IMemberElement, IConverter> {}
 
-    class MemberConverterSelector : Selector<IMemberElement, IConverter>, IMemberConverterSelector
+    public class MemberConverterSelector : Selector<IMemberElement, IConverter>, IMemberConverterSelector
     {
-        public MemberConverterSelector(IConverter converter) : base(
-            new ReadOnlyCollectionMemberConverterOption(new Converter(new EnumeratingReader(converter), converter)),
+        public MemberConverterSelector(IConverter converter) : this(
+            new ReadOnlyCollectionMemberConverterOption(converter),
             new MemberConverterOption(converter)
         ) {}
+
+        public MemberConverterSelector(params IOption<IMemberElement, IConverter>[] options) : base(options) {}
 
         protected override IConverter Create(IMemberElement parameter)
         {
@@ -71,7 +73,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _converter = converter;
         }
 
-        protected override IConverter Create(IReadOnlyCollectionMemberElement parameter) => _converter;
+        protected override IConverter Create(IReadOnlyCollectionMemberElement parameter)
+            => new Converter(new EnumeratingReader(_converter), new ElementWriter(parameter, _converter));
     }
 
     public interface IMemberElementSelector : ISelector<MemberInformation, IMemberElement> {}

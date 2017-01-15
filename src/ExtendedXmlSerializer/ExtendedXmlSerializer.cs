@@ -63,7 +63,7 @@ namespace ExtendedXmlSerialization
         /// </summary>
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
-        public string Serialize(object o) => new Serializer(Converter).Serialize(o);
+        public string Serialize(object o) => new LegacySerializer(Converter).Serialize(o);
 
         /// <summary>
         /// Deserializes the XML document

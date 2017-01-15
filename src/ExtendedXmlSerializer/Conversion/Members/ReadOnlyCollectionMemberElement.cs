@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
     public interface IReadOnlyCollectionMemberElement : IMemberElement {}
 
-    public class ReadOnlyCollectionMemberElement : MemberElement
+    public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
     {
         public ReadOnlyCollectionMemberElement(IElementName name, MemberInfo metadata, TypeInfo element,
                                                Action<object, object> add, Func<object, object> getter)

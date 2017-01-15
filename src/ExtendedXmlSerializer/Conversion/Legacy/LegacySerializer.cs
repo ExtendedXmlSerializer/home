@@ -32,7 +32,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacySerializer : Serializer
     {
+        readonly private static TypeInfo Type = typeof(LegacySerializer).GetTypeInfo();
+
         private readonly TypeInfo _type;
+
+        public LegacySerializer(IConverter converter) : this(converter, Type) {}
 
         public LegacySerializer(IConverter converter, TypeInfo type) : base(converter)
         {

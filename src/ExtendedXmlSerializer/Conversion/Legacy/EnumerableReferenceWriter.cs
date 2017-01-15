@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
@@ -40,19 +39,16 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override void Write(IWriteContext context, object instance)
         {
-            var elementType = CollectionItemTypeLocator.Default.Get(instance.GetType().GetTypeInfo());
-            if (elementType != null)
+            var element = (ICollectionElement) context.Element;
+            var configuration = _tools.GetConfiguration(element.Item.DeclaredType.AsType());
+            if (configuration?.IsObjectReference ?? false)
             {
-                var configuration = _tools.GetConfiguration(elementType.AsType());
-                if (configuration?.IsObjectReference ?? false)
+                var references = context.Get<WriteReferences>();
+                foreach (var item in (IEnumerable) instance)
                 {
-                    var references = context.Get<WriteReferences>();
-                    foreach (var item in (IEnumerable) instance)
+                    if (!references.Contains(item) && !references.Reserved.Contains(item))
                     {
-                        if (!references.Contains(item) && !references.Reserved.Contains(item))
-                        {
-                            references.Reserved.Add(item);
-                        }
+                        references.Reserved.Add(item);
                     }
                 }
             }

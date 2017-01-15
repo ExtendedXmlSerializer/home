@@ -35,15 +35,18 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public LegacyInstanceTypeConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
 
         LegacyInstanceTypeConverter(IMemberConverterSelector selector)
-            : base(new InstanceBodyReader(selector), new TypeEmittingWriter(new InstanceBodyWriter(LegacyElements.Default, selector))) {}
+            : base(
+                new InstanceBodyReader(selector),
+                new TypeEmittingWriter(new InstanceBodyWriter(LegacyElements.Default, selector))) {}
 
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : this(tools, new MemberConverterSelector(converter)) {}
+        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter, IElementSelector elements)
+            : this(tools, new LegacyMemberConverterSelector(tools, converter), elements) {}
 
-        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IMemberConverterSelector selector)
+        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IMemberConverterSelector selector, IElementSelector elements)
             : base(
                 new LegacyInstanceBodyReader(tools, selector),
-                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(LegacyElements.Default, selector)))) {}
+                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(elements, selector)))
+            ) {}
 
         private sealed class Writer : DecoratedWriter
         {
@@ -66,7 +69,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
                         var objectId = configuration.GetObjectId(instance);
 
-                        var item = !(context.Element is IMemberElement);
+                        var item = !(context.Parent?.Element is IMemberElement);
                         if (item && references.Reserved.Contains(instance))
                         {
                             references.Reserved.Remove(instance);
@@ -90,6 +93,51 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
                 base.Write(context, instance);
             }
+        }
+    }
+
+    class MemberConverterSelector : Members.MemberConverterSelector
+    {
+        public MemberConverterSelector(IConverter converter)
+            : base(new ReadOnlyCollectionMemberConverterOption(converter), new MemberConverterOption(converter)) {}
+
+        sealed class MemberConverterOption : ConverterOptionBase<IMemberElement>
+        {
+            private readonly IConverter _converter;
+
+            public MemberConverterOption(IConverter converter)
+            {
+                _converter = converter;
+            }
+
+            protected override IConverter Create(IMemberElement parameter) =>
+                new Converter(_converter,
+                              new InstanceValidatingWriter(new ElementWriter(parameter,
+                                                                             new MemberTypeEmittingWriter(_converter))));
+        }
+    }
+
+    class LegacyMemberConverterSelector : Members.MemberConverterSelector
+    {
+        public LegacyMemberConverterSelector(ISerializationToolsFactory tools, IConverter converter)
+            : base(
+                new ReadOnlyCollectionMemberConverterOption(converter),
+                new LegacyMemberOption(tools, new MemberConverterOption(converter))) {}
+
+        sealed class MemberConverterOption : ConverterOptionBase<IMemberElement>
+        {
+            private readonly IConverter _converter;
+
+            public MemberConverterOption(IConverter converter)
+            {
+                _converter = converter;
+            }
+
+            protected override IConverter Create(IMemberElement parameter) =>
+                new Converter(_converter,
+                              new InstanceValidatingWriter(new ElementWriter(parameter,
+                                                                             new LegacyMemberTypeEmittingWriter(
+                                                                                 _converter))));
         }
     }
 }
