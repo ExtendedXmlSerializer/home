@@ -25,6 +25,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -34,16 +35,18 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         readonly private static TypeInfo Type = typeof(LegacySerializer).GetTypeInfo();
 
+        private readonly IElementSelector _selector;
         private readonly TypeInfo _type;
 
-        public LegacySerializer(IConverter converter) : this(converter, Type) {}
+        public LegacySerializer(IConverter converter, IElementSelector selector) : this(converter, selector, Type) {}
 
-        public LegacySerializer(IConverter converter, TypeInfo type) : base(converter)
+        public LegacySerializer(IConverter converter, IElementSelector selector, TypeInfo type) : base(converter)
         {
+            _selector = selector;
             _type = type;
         }
 
-        protected override IWriteContext CreateWriteContext(XmlWriter writer) => new LegacyXmlWriteContext(writer);
+        protected override IWriteContext CreateWriteContext(XmlWriter writer) => new LegacyXmlWriteContext(_selector, writer);
 
         protected override IReadContext CreateContext(Stream stream)
         {

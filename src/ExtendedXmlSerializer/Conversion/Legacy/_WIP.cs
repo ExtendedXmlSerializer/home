@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -32,6 +33,15 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         LegacyElements() : this(LegacyElementMembers.Default) {}
 
         public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members) {}
+    }
+
+    sealed class LegacyElementsTooling : WeakCacheBase<ISerializationToolsFactory, IElementSelector>
+    {
+        public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
+        LegacyElementsTooling() {}
+
+        protected override IElementSelector Create(ISerializationToolsFactory parameter)
+            => new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(parameter)));
     }
 
     class LegacyElementMembers : ElementMembers
