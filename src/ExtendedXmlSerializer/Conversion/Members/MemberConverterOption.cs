@@ -36,6 +36,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
         protected override IConverter Create(IMemberElement parameter) =>
             new Converter(_converter,
-                          new InstanceValidatingWriter(new ElementWriter(parameter, _converter)));
+                          new ValidatingAssignedWriter(new ElementWriter(parameter, _converter)));
     }
 }

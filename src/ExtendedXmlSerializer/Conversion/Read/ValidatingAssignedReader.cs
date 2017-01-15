@@ -25,9 +25,9 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class ValueValidatingReader : DecoratedReader
+    public class ValidatingAssignedReader : DecoratedReader
     {
-        public ValueValidatingReader(IReader reader) : base(reader) {}
+        public ValidatingAssignedReader(IReader reader) : base(reader) {}
 
         public override object Read(IReadContext context) =>
             context.Read().NullIfEmpty() != null ? base.Read(context) : null;

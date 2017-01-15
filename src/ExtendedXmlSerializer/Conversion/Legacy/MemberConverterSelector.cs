@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
             protected override IConverter Create(IMemberElement parameter) =>
                 new Converter(_converter,
-                              new InstanceValidatingWriter(new ElementWriter(parameter,
+                              new ValidatingAssignedWriter(new ElementWriter(parameter,
                                                                              new MemberTypeEmittingWriter(_converter))));
         }
     }

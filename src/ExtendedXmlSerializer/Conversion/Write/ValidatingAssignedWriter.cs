@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class InstanceValidatingWriter : DecoratedWriter
+    public class ValidatingAssignedWriter : DecoratedWriter
     {
-        public InstanceValidatingWriter(IWriter writer) : base(writer) {}
+        public ValidatingAssignedWriter(IWriter writer) : base(writer) {}
 
         public override void Write(IWriteContext context, object instance)
         {

@@ -42,6 +42,6 @@ namespace ExtendedXmlSerialization.Conversion.Primitives
             : this(TypeEqualitySpecification<T>.Default, writer, reader) {}
 
         protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
-            : base(specification, new ValueValidatingReader(reader), new InstanceValidatingWriter(writer)) {}
+            : base(specification, new ValidatingAssignedReader(reader), new ValidatingAssignedWriter(writer)) {}
     }
 }

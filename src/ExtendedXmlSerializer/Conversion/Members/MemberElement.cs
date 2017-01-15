@@ -41,6 +41,13 @@ namespace ExtendedXmlSerialization.Conversion.Members
         }
 
         public override object Get(object instance) => _getter(instance);
-        public override void Assign(object instance, object value) => _setter(instance, value);
+
+        public override void Assign(object instance, object value)
+        {
+            if (value != null)
+            {
+                _setter(instance, value);
+            }
+        }
     }
 }
