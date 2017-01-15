@@ -25,33 +25,25 @@ using System.Globalization;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyInstanceTypeConverter : TypeConverter
+    sealed class LegacyInstanceTypeConverter : Converter
     {
-        public LegacyInstanceTypeConverter(IConverter converter)
-            : this(LegacyElementMembers.Default, new MemberConverterSelector(converter)) {}
+        public LegacyInstanceTypeConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
+
+        LegacyInstanceTypeConverter(IMemberConverterSelector selector)
+            : base(new InstanceBodyReader(selector), new TypeEmittingWriter(new InstanceBodyWriter(LegacyElements.Default, selector))) {}
 
         public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : this(tools, new LegacyElementMembers(new LegacyMemberElementSelector(tools)), new MemberConverterSelector(converter)) {}
+            : this(tools, new MemberConverterSelector(converter)) {}
 
-        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IElementMembers members,
-                                    IMemberConverterSelector selector)
-            : this(
-                new LegacyInstanceBodyReader(tools, members, selector),
-                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(members, selector)))) {}
-
-        public LegacyInstanceTypeConverter(IElementMembers members, IMemberConverterSelector selector)
-            : this(
-                new InstanceBodyReader(members, selector),
-                new TypeEmittingWriter(new InstanceBodyWriter(members, selector))) {}
-
-        LegacyInstanceTypeConverter(IReader reader, IWriter writer)
-            : base(IsActivatedTypeSpecification.Default, reader, writer) {}
+        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IMemberConverterSelector selector)
+            : base(
+                new LegacyInstanceBodyReader(tools, selector),
+                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(LegacyElements.Default, selector)))) {}
 
         private sealed class Writer : DecoratedWriter
         {
@@ -74,7 +66,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
                         var objectId = configuration.GetObjectId(instance);
 
-                        var item = !(context.Current is IMemberElement);
+                        var item = !(context.Element is IMemberElement);
                         if (item && references.Reserved.Contains(instance))
                         {
                             references.Reserved.Remove(instance);

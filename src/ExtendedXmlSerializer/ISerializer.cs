@@ -22,13 +22,11 @@
 // SOFTWARE.
 
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
 
 namespace ExtendedXmlSerialization
@@ -55,9 +53,11 @@ namespace ExtendedXmlSerialization
         {
             using (var writer = XmlWriter.Create(stream))
             {
-                _converter.Write(new LegacyXmlWriteContext(writer, new Root(instance.GetType().GetTypeInfo())), instance);
+                _converter.Write(CreateWriteContext(writer), instance);
             }
         }
+
+        protected virtual IWriteContext CreateWriteContext(XmlWriter writer) => new XmlWriteContext(writer);
 
         public object Deserialize(Stream stream)
         {

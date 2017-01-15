@@ -32,8 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
     {
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IElementMembers members,
-                                        IMemberConverterSelector selector) : base(members, selector)
+        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IMemberConverterSelector selector)
+            : base(selector)
         {
             _tools = tools;
         }

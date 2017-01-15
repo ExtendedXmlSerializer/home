@@ -25,44 +25,13 @@ using ExtendedXmlSerialization.Conversion.Primitives;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    /*class LegacyPrimitives : IEnumerable<ITypeConverter>
-    {
-        public static LegacyPrimitives Default { get; } = new LegacyPrimitives();
-        LegacyPrimitives() {}
-
-        public IEnumerator<ITypeConverter> GetEnumerator()
-        {
-            yield return LegacyBooleanTypeConverter.Default;
-            yield return LegacyCharacterTypeConverter.Default;
-            yield return ByteTypeConverter.Default;
-            yield return UnsignedByteTypeConverter.Default;
-            yield return ShortTypeConverter.Default;
-            yield return UnsignedShortTypeConverter.Default;
-            yield return IntegerTypeConverter.Default;
-            yield return UnsignedIntegerTypeConverter.Default;
-            yield return LongTypeConverter.Default;
-            yield return UnsignedLongTypeConverter.Default;
-            yield return FloatTypeConverter.Default;
-            yield return DoubleTypeConverter.Default;
-            yield return DecimalTypeConverter.Default;
-            yield return EnumerationTypeConverter.Default;
-            yield return DateTimeTypeConverter.Default;
-            yield return DateTimeOffsetTypeConverter.Default;
-            yield return StringTypeConverter.Default;
-            yield return GuidTypeConverter.Default;
-            yield return TimeSpanTypeConverter.Default;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }*/
-
     public class KnownConverters : Conversion.KnownConverters
     {
         public static new KnownConverters Default { get; } = new KnownConverters();
 
         KnownConverters() : base(
-            BooleanTypeConverter.Default,
-            CharacterTypeConverter.Default,
+            LegacyBooleanTypeConverter.Default,
+            LegacyCharacterTypeConverter.Default,
             ByteTypeConverter.Default,
             UnsignedByteTypeConverter.Default,
             ShortTypeConverter.Default,

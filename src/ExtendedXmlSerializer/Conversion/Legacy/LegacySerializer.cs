@@ -23,8 +23,10 @@
 
 using System.IO;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -36,6 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         {
             _type = type;
         }
+
+        protected override IWriteContext CreateWriteContext(XmlWriter writer) => new LegacyXmlWriteContext(writer);
 
         protected override IReadContext CreateContext(Stream stream)
         {

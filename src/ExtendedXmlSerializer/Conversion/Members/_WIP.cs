@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -46,7 +47,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
     class MemberConverterSelector : Selector<IMemberElement, IConverter>, IMemberConverterSelector
     {
         public MemberConverterSelector(IConverter converter) : base(
-            new ConverterOption<IReadOnlyCollectionMemberElement>(new MemberConverter(new EnumeratingReader(converter), converter)),
+            new ReadOnlyCollectionMemberConverterOption(new Converter(new EnumeratingReader(converter), converter)),
             new MemberConverterOption(converter)
         ) {}
 
@@ -59,6 +60,18 @@ namespace ExtendedXmlSerialization.Conversion.Members
             }
             return result;
         }
+    }
+
+    public class ReadOnlyCollectionMemberConverterOption : ConverterOptionBase<IReadOnlyCollectionMemberElement>
+    {
+        private readonly IConverter _converter;
+
+        public ReadOnlyCollectionMemberConverterOption(IConverter converter)
+        {
+            _converter = converter;
+        }
+
+        protected override IConverter Create(IReadOnlyCollectionMemberElement parameter) => _converter;
     }
 
     public interface IMemberElementSelector : ISelector<MemberInformation, IMemberElement> {}

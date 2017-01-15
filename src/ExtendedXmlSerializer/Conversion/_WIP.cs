@@ -33,6 +33,7 @@ namespace ExtendedXmlSerialization.Conversion
     public class ConverterOption<T> : ConverterOptionBase<T> where T : IElement
     {
         private readonly IConverter _converter;
+
         public ConverterOption(IConverter converter)
         {
             _converter = converter;
@@ -99,32 +100,30 @@ namespace ExtendedXmlSerialization.Conversion
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
             yield return KnownConverters.Default;
-            yield return new ConverterOption<IDictionaryElement>(new DictionaryTypeConverter(parameter));
+            yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
-            yield return new ConverterOption<ICollectionElement>(new EnumerableTypeConverter(parameter)); 
-            yield return new ConverterOption<IActivatedElement>(new InstanceTypeConverter(parameter));
+            yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
+            yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
         }
 
-        class DictionaryTypeConverter : Converter
+        class DictionaryConverter : Converter
         {
-            public DictionaryTypeConverter(IConverter converter)
+            public DictionaryConverter(IConverter converter)
                 : base(new DictionaryReader(converter), new DictionaryBodyWriter(converter)) {}
         }
 
-        class EnumerableTypeConverter : Converter
+        class EnumerableConverter : Converter
         {
-            public EnumerableTypeConverter(IConverter converter)
+            public EnumerableConverter(IConverter converter)
                 : base(new ListReader(converter), new EnumerableBodyWriter(converter)) {}
         }
 
-        class InstanceTypeConverter : Converter
+        class InstanceConverter : Converter
         {
-            public InstanceTypeConverter(IConverter converter)
-                : this(ElementMembers.Default, new MemberConverterSelector(converter)) {}
+            public InstanceConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
 
-            public InstanceTypeConverter(IElementMembers members, IMemberConverterSelector selector)
-                : base(new InstanceBodyReader(members, selector),
-                       new InstanceBodyWriter(members, selector)) {}
+            public InstanceConverter(IMemberConverterSelector selector)
+                : base(new InstanceBodyReader(selector), new InstanceBodyWriter(selector)) {}
         }
     }
 

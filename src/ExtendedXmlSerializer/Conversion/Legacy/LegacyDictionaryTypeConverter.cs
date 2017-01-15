@@ -21,18 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyDictionaryTypeConverter : TypeConverter
+    class LegacyDictionaryTypeConverter : Converter
     {
         public LegacyDictionaryTypeConverter(IConverter converter)
-            : base(
-                IsAssignableSpecification<IDictionary>.Default, new DictionaryReader(converter),
-                new DictionaryBodyWriter(converter)) {}
+            : base(new DictionaryReader(converter), new DictionaryBodyWriter(converter)) {}
     }
 }

@@ -72,13 +72,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     {
         private readonly IElementNameSelector _names;
 
-        protected ElementOptionBase(params IElementNameOption[] names)
-            : this(AlwaysSpecification<MemberInfo>.Default, names) {}
-
-        protected ElementOptionBase(ISpecification<TypeInfo> specification, params IElementNameOption[] names)
-            : this(specification, new ElementNames(names)) {}
-
-        protected ElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, ElementNames.Default) {}
+        protected ElementOptionBase(IElementNameSelector names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
 
         protected ElementOptionBase(ISpecification<TypeInfo> specification, IElementNameSelector names)
             : base(specification)
@@ -96,11 +90,14 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         TypeInfo DeclaredType { get; }
     }
 
-    public interface ICollectionElement : ICollectionElement<ICollectionItem> {}
-
-    public interface ICollectionElement<out T> : IElement where T : ICollectionItem
+    public interface ICollectionElement : IElement
     {
-        T Item { get; }
+        ICollectionItem Item { get; }
+    }
+
+    public interface ICollectionElement<out T> : ICollectionElement where T : ICollectionItem
+    {
+        new T Item { get; }
     }
 
     public interface IActivatedElement : IMemberedElement {}
@@ -140,6 +137,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
         }
 
         public T Item { get; }
+
+        ICollectionItem ICollectionElement.Item => Item;
     }
 
     public class CollectionElement : CollectionElementBase<ICollectionItem>, ICollectionElement
@@ -148,21 +147,11 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
             : base(name, members, item) {}
     }
 
-    public interface ICollectionItem : IElement
+    public interface ICollectionItem : IDeclaredTypeElement {}
+
+    public class CollectionItem : DeclaredTypeElementBase, ICollectionItem
     {
-        TypeInfo ElementType { get; }
-    }
-
-    public class CollectionItem : Element, ICollectionItem
-    {
-        public CollectionItem(TypeInfo elementType) : this(ItemProperty.Default, elementType) {}
-
-        public CollectionItem(IElementName name, TypeInfo elementType) : base(name)
-        {
-            ElementType = elementType;
-        }
-
-        public TypeInfo ElementType { get; }
+        public CollectionItem(IElementName name, TypeInfo elementType) : base(name, elementType) {}
     }
 
     public interface IDictionaryItem : ICollectionItem
@@ -176,7 +165,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
     {
         public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
 
-        public DictionaryItem(IDictionaryKeyElement key, IDictionaryValueElement value) : base(DictionaryEntryType)
+        public DictionaryItem(IDictionaryKeyElement key, IDictionaryValueElement value)
+            : base(ItemProperty.Default, DictionaryEntryType)
         {
             Value = value;
             Key = key;
@@ -194,74 +184,96 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
     public interface IElementNameProvider : IParameterizedSource<MemberInfo, IElementName> {}
 
-    class Elements : OptionSelector<TypeInfo, IElement>, IElementSelector
+    class Elements : Selector<TypeInfo, IElement>, IElementSelector
     {
         public static Elements Default { get; } = new Elements();
+        Elements() : this(ElementNames.Default, ElementMembers.Default) {}
 
-        Elements() : this(
-            DictionaryElementOption.Default,
-            ArrayElementOption.Default,
-            CollectionElementOption.Default,
-            ActivatedElementOption.Default) {}
+        protected Elements(IElementNameSelector names, IElementMembers members) : this(
+            new DictionaryElementOption(names, members),
+            new ArrayElementOption(names),
+            new CollectionElementOption(names, members),
+            new ActivatedElementOption(names, members),
+            new ElementOption(names)) {}
 
         protected Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
     }
 
     public abstract class CollectionElementOptionBase : ActivatedElementOptionBase
     {
-        readonly private static ElementNames Names = new ElementNames(EnumerableNameOption.Default,
-                                                                      DefaultElementNameOption.Default);
+        private readonly ICollectionItemFactory _items;
 
-        private readonly ICollectionItemTypeLocator _locator;
+        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
+                                              IElementNameSelector names, IElementMembers members)
+            : this(specification, names, members, new CollectionItemFactory(names)) {}
 
-        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification)
-            : this(CollectionItemTypeLocator.Default, specification, ElementMembers.Default) {}
-
-        protected CollectionElementOptionBase(ICollectionItemTypeLocator locator,
-                                              ISpecification<TypeInfo> specification, IElementMembers members)
-            : base(specification, members, Names)
+        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
+                                              IElementNameSelector names, IElementMembers members,
+                                              ICollectionItemFactory items)
+            : base(specification, names, members)
         {
-            _locator = locator;
+            _items = items;
         }
 
         protected override IElement CreateElement(TypeInfo parameter, IElementName name, IMembers members)
-            => Create(parameter, name, members, _locator.Get(parameter));
+            => Create(parameter, name, members, _items.Get(parameter));
 
         protected abstract IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           TypeInfo elementType);
+                                           ICollectionItem item);
     }
 
-    /*public class ElementOption : ElementOptionBase
+    public class ElementOption : ElementOptionBase
     {
-        public static ElementOption Default { get; } = new ElementOption();
-        ElementOption() : base(DefaultElementNameOption.Default) {}
+        public ElementOption(IElementNameSelector names) : base(names) {}
 
         protected override IElement Create(TypeInfo parameter, IElementName name) => new Element(name);
-    }*/
+    }
 
     public class ArrayElementOption : ElementOptionBase
     {
-        public static ArrayElementOption Default { get; } = new ArrayElementOption();
-        private ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}
+        private readonly ICollectionItemFactory _items;
 
-        private readonly ICollectionItemTypeLocator _locator;
+        public ArrayElementOption(IElementNameSelector names) : this(names, new CollectionItemFactory(names)) {}
 
-        public ArrayElementOption(ICollectionItemTypeLocator locator)
-            : base(IsArraySpecification.Default, EnumerableNameOption.Default)
+        public ArrayElementOption(IElementNameSelector names, ICollectionItemFactory items)
+            : base(IsArraySpecification.Default, names)
         {
-            _locator = locator;
+            _items = items;
         }
 
         protected override IElement Create(TypeInfo parameter, IElementName name)
-            => new ArrayElement(name, new CollectionItem(_locator.Get(parameter)));
+            => new ArrayElement(name, _items.Get(parameter));
+    }
+
+    public interface ICollectionItemFactory : IParameterizedSource<TypeInfo, ICollectionItem> {}
+
+    class CollectionItemFactory : ICollectionItemFactory
+    {
+        private readonly ICollectionItemTypeLocator _locator;
+        private readonly IElementNameSelector _names;
+        public CollectionItemFactory(IElementNameSelector names) : this(CollectionItemTypeLocator.Default, names) {}
+
+        public CollectionItemFactory(ICollectionItemTypeLocator locator, IElementNameSelector names)
+        {
+            _locator = locator;
+            _names = names;
+        }
+
+        public ICollectionItem Get(TypeInfo parameter)
+        {
+            var elementType = _locator.Get(parameter);
+            var name = _names.Get(elementType);
+            var result = new CollectionItem(name, elementType);
+            return result;
+        }
     }
 
     public abstract class ActivatedElementOptionBase : ElementOptionBase
     {
         private readonly IElementMembers _members;
 
-        protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementMembers members,
-                                             IElementNameSelector names)
+        protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNameSelector names,
+                                             IElementMembers members)
             : base(specification, names)
         {
             _members = members;
@@ -275,11 +287,11 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
     public class ActivatedElementOption : ActivatedElementOptionBase
     {
-        public static ActivatedElementOption Default { get; } = new ActivatedElementOption();
-        ActivatedElementOption() : this(ElementMembers.Default, ElementNames.Default) {}
+        /*public static ActivatedElementOption Default { get; } = new ActivatedElementOption();
+        ActivatedElementOption() : this(ElementMembers.Default, ElementNames.Default) {}*/
 
-        public ActivatedElementOption(IElementMembers members, IElementNameSelector names)
-            : base(IsActivatedTypeSpecification.Default, members, names) {}
+        public ActivatedElementOption(IElementNameSelector names, IElementMembers members)
+            : base(IsActivatedTypeSpecification.Default, names, members) {}
 
         protected override IElement CreateElement(TypeInfo parameter, IElementName name, IMembers members)
             => new ActivatedElement(name, members);
@@ -287,30 +299,30 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
     public class CollectionElementOption : CollectionElementOptionBase
     {
-        public static CollectionElementOption Default { get; } = new CollectionElementOption();
-        CollectionElementOption() : base(IsCollectionTypeSpecification.Default) {}
+        public CollectionElementOption(IElementNameSelector names, IElementMembers members)
+            : base(IsCollectionTypeSpecification.Default, names, members) {}
 
         protected override IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           TypeInfo elementType)
-            => new CollectionElement(name, members, new CollectionItem(elementType));
+                                           ICollectionItem item)
+            => new CollectionElement(name, members, item);
     }
 
     class DictionaryElementOption : CollectionElementOptionBase
     {
-        public static DictionaryElementOption Default { get; } = new DictionaryElementOption();
-
-        DictionaryElementOption() : this(DictionaryPairTypesLocator.Default) {}
-
         private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryElementOption(IDictionaryPairTypesLocator locator)
-            : base(IsDictionaryTypeSpecification.Default)
+        public DictionaryElementOption(IElementNameSelector names, IElementMembers members)
+            : this(names, members, DictionaryPairTypesLocator.Default) {}
+
+        public DictionaryElementOption(IElementNameSelector names, IElementMembers members,
+                                       IDictionaryPairTypesLocator locator)
+            : base(IsDictionaryTypeSpecification.Default, names, members)
         {
             _locator = locator;
         }
 
         protected override IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           TypeInfo elementType)
+                                           ICollectionItem elementType)
         {
             var pair = _locator.Get(collectionType);
             var item = new DictionaryItem(new DictionaryKeyElement(pair.KeyType),

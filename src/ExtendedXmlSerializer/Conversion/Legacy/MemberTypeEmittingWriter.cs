@@ -23,7 +23,6 @@
 
 using System.Collections;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
@@ -38,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            var declaredType = ((IMemberElement) context.Current).DeclaredType;
+            var declaredType = context.Element.EffectiveType();
             var primitive = declaredType.IsPrimitive || declaredType.IsValueType ||
                             Equals(declaredType, TypeString);
             var result = Equals(declaredType, TypeObject) ||

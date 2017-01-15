@@ -43,27 +43,32 @@ namespace ExtendedXmlSerialization.Core.Sources
 
     public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
     {
-        private readonly ImmutableArray<IOption<TParameter, TResult>> _candidates;
+        private readonly ImmutableArray<IOption<TParameter, TResult>> _options;
+        readonly private static TResult Default = default(TResult);
 
         public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
 
-        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> candidates)
+        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> options)
         {
-            _candidates = candidates;
+            _options = options;
         }
 
         public TResult Get(TParameter parameter)
         {
-            var length = _candidates.Length;
+            var length = _options.Length;
             for (int i = 0; i < length; i++)
             {
-                var candidate = _candidates[i];
-                if (candidate.IsSatisfiedBy(parameter))
+                var option = _options[i];
+                if (option.IsSatisfiedBy(parameter))
                 {
-                    return candidate.Get(parameter);
+                    var result = option.Get(parameter);
+                    if (!Equals(result, Default))
+                    {
+                        return result;
+                    }
                 }
             }
-            return default(TResult);
+            return Default;
         }
     }
 }

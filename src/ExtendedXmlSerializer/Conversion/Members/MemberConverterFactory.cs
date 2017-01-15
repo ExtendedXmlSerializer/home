@@ -34,11 +34,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
             _converter = converter;
         }
 
-        protected override IConverter Create(IMemberElement parameter)
-        {
-            var writer = new InstanceValidatingWriter(new ElementWriter(parameter, _converter));
-            var result = new MemberConverter(_converter, writer);
-            return result;
-        }
+        protected override IConverter Create(IMemberElement parameter) =>
+            new Converter(_converter,
+                          new InstanceValidatingWriter(new ElementWriter(parameter, _converter)));
     }
 }

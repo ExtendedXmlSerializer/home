@@ -22,27 +22,32 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     class InstanceBodyWriter : WriterBase
     {
-        private readonly IElementMembers _members;
+        private readonly IElementSelector _elements;
         private readonly IMemberConverterSelector _selector;
-        
-        public InstanceBodyWriter(IElementMembers members, IMemberConverterSelector selector)
+
+        public InstanceBodyWriter(IMemberConverterSelector selector) : this(Elements.Default, selector) {}
+
+        public InstanceBodyWriter(IElementSelector elements, IMemberConverterSelector selector)
         {
-            _members = members;
+            _elements = elements;
             _selector = selector;
         }
 
         public override void Write(IWriteContext context, object instance)
         {
-            var members = _members.Get(instance.GetType().GetTypeInfo());
+            var type = instance.GetType().GetTypeInfo();
+            var element = Equals(type, context.Element.EffectiveType()) ? context.Element : _elements.Get(type);
+            var members =  ((IMemberedElement)element).Members;
             foreach (var member in members)
             {
-                _selector.Get(member).Write(context, instance);
+                _selector.Get(member).Write(context, member.Get(instance));
             }
         }
     }

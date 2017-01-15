@@ -26,16 +26,12 @@ using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyElements : Elements
+    sealed class LegacyElements : Elements
     {
         public static new LegacyElements Default { get; } = new LegacyElements();
-        private LegacyElements() : this(LegacyElementMembers.Default) {}
+        LegacyElements() : this(LegacyElementMembers.Default) {}
 
-        public LegacyElements(IElementMembers members) : base(
-            DictionaryElementOption.Default,
-            ArrayElementOption.Default,
-            CollectionElementOption.Default,
-            new ActivatedElementOption(members, LegacyElementNames.Default)) {}
+        public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members) {}
     }
 
     class LegacyElementMembers : ElementMembers

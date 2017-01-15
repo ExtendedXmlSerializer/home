@@ -35,9 +35,9 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            if (!(context.Current is IMemberElement))
+            if (!(context.Element is IMemberElement))
             {
-                var declared = (context.Current as IDeclaredTypeElement)?.DeclaredType;
+                var declared = (context.Element as IDeclaredTypeElement)?.DeclaredType;
                 var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
                 return result;
             }

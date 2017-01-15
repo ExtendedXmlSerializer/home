@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -28,16 +29,13 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     class InstanceBodyReader : ReaderBase
     {
-        private readonly IElementMembers _members;
         private readonly IMemberConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IElementMembers members, IMemberConverterSelector selector)
-            : this(members, selector, Activators.Default) {}
+        public InstanceBodyReader(IMemberConverterSelector selector) : this(selector, Activators.Default) {}
 
-        public InstanceBodyReader(IElementMembers members, IMemberConverterSelector selector, IActivators activators)
+        public InstanceBodyReader(IMemberConverterSelector selector, IActivators activators)
         {
-            _members = members;
             _selector = selector;
             _activators = activators;
         }
@@ -45,15 +43,19 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public override object Read(IReadContext context)
         {
             var result = Activate(context);
-            var members = _members.Get(context.Current.Name.Classification);
-            foreach (var child in context)
+            var element = context.Current as IMemberedElement;
+            if (element != null)
             {
-                var member = members.Get(child.Current.Name.DisplayName);
-                if (member != null)
+                var members = element.Members;
+                foreach (var child in context)
                 {
-                    var reader = _selector.Get(member);
-                    member.Assign(result, reader.Read(child));
-                    
+                    var member = members.Get(child.DisplayName);
+                    if (member != null)
+                    {
+                        var reader = _selector.Get(member);
+                        var value = reader.Read(child);
+                        member.Assign(result, value);
+                    }
                 }
             }
             return result;
@@ -61,6 +63,5 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         protected virtual object Activate(IReadContext context)
             => _activators.Activate<object>(context.Current.Name.Classification.AsType());
-
     }
 }

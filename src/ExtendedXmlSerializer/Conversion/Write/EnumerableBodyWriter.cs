@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -47,11 +46,10 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         protected override void Write(IWriteContext context, IEnumerable instance)
         {
-            var elementType = _locator.Get(instance.GetType().GetTypeInfo());
+            var current = (ICollectionElement) context.Element;
             foreach (var item in instance)
             {
-                var name = _names.Get(item.GetType().GetTypeInfo());
-                using (var child = context.Start(new CollectionItem(name, elementType)))
+                using (var child = context.Start(current.Item))
                 {
                     _item.Write(child, item);
                 }

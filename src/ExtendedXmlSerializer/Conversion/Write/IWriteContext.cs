@@ -34,6 +34,10 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         void Write(IElementName name, string value);
 
-        IElement Current { get; }
+        IWriteContext Parent { get; }
+
+        IElement Element { get; }
     }
+
+    
 }

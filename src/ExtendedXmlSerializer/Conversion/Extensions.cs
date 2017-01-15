@@ -32,7 +32,19 @@ using ExtendedXmlSerialization.Conversion.TypeModel;
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
-    {
+    {/*
+        public static IElement Unwrapped(this IElement @this) => @this.Unwrapped<IElement>();
+
+        public static T Unwrapped<T>(this IElement @this) where T : IElement
+        {
+            var element = (@this as IElementAware)?.Element ?? @this;
+            var result = (T) element;
+            return result;
+        }*/
+
+        public static TypeInfo EffectiveType(this IElement @this)
+            => (@this as IDeclaredTypeElement)?.DeclaredType ?? @this.Name.Classification;
+
         public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
 
         public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
@@ -49,16 +61,6 @@ namespace ExtendedXmlSerialization.Conversion
 
         public static object AnnotationAll(this XElement @this, Type type)
             => @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
-
-        public static XElement Initialized(this IElementTypes @this, XElement element, TypeInfo type)
-        {
-            if (type != null && @this.Get(element) == null)
-            {
-                element.Annotated(type);
-            }
-            return element;
-        }
-
 
         public static TypeInfo AccountForNullable(this TypeInfo @this)
             => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;

@@ -22,16 +22,13 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyArrayTypeConverter : TypeConverter
+    sealed class LegacyArrayTypeConverter : Converter
     {
         public LegacyArrayTypeConverter(ISerializationToolsFactory tools, IConverter converter)
-            : base(
-                IsArraySpecification.Default, new ArrayReader(converter),
-                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElementNames.Default, converter))) {}
+            : base(new ArrayReader(converter), new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElementNames.Default, converter))) {}
     }
 }

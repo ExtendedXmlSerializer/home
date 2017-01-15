@@ -27,9 +27,12 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class RootSelector : IRootSelector
     {
+        public static RootSelector Default { get; } = new RootSelector();
+        RootSelector() : this(SelectorFactory.Default) {}
+
         private readonly ISelectorFactory _factory;
         private ISelector _selector;
-
+        
         public RootSelector(ISelectorFactory factory)
         {
             _factory = factory;

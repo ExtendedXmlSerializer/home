@@ -21,9 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -31,10 +29,7 @@ namespace ExtendedXmlSerialization.Conversion
     public class RootConverter : Converter
     {
         public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(Elements.Default, SelectorFactory.Default) {}
-
-        public RootConverter(IElementSelector elements, ISelectorFactory factory)
-            : this(elements, new RootSelector(factory)) {}
+        RootConverter() : this(Elements.Default, RootSelector.Default) {}
 
         public RootConverter(IElementSelector elements, IRootSelector selector)
             : this(
@@ -44,26 +39,6 @@ namespace ExtendedXmlSerialization.Conversion
             : base(converter, new ElementWriter(elements.Get, converter))
         {
             selector.Execute(converter);
-        }
-    }
-
-    public class SelectingConverter : ConverterBase
-    {
-        private readonly ISelector _selector;
-
-        public SelectingConverter(ISelector selector)
-        {
-            _selector = selector;
-        }
-
-        public override void Write(IWriteContext context, object instance)
-            => _selector.Get(instance.GetType().GetTypeInfo()).Write(context, instance);
-
-        public override object Read(IReadContext context)
-        {
-            var converter = _selector.Get(context.Current.Name.Classification);
-            var result = converter.Read(context);
-            return result;
         }
     }
 }

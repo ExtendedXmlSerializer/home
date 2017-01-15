@@ -27,15 +27,17 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext : IEnumerable<IReadContext>, IServiceRepository
+    public interface IReadContext : IEnumerable<IReadContext>, IElementName, IServiceRepository
     {
+        /*IReadContext Parent { get; }*/
+
         IElement Current { get; }
 
         IReadContext Member(IElement element);
 
         IEnumerable<IReadContext> Items();
 
-        IEnumerable<IReadContext> ChildrenOf(IElementName name);
+        /*IEnumerable<IReadContext> ChildrenOf(IElementName name);*/
 
         string Read();
 

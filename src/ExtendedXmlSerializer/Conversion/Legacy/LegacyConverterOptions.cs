@@ -37,7 +37,6 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter));

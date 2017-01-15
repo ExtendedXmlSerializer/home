@@ -42,17 +42,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter)); 
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
-            /*,
-            yield return new ConverterOption<IMemberElement>(new LegacyEnumerableTypeConverter(root))*/
         }
-
-        /*public IEnumerable<ITypeConverter> Get(IConverter parameter)
-        {
-            /*var factory = new ReadOnlyCollectionMemberConverterFactory(parameter, new EnumeratingReader(parameter));
-            var composite = new ConverterSelector(new LegacyAssignableMemberElementFactory(parameter), factory);
-            var members = new Members.Members(composite);
-            yield return new LegacyInstanceTypeConverter(members);#1#
-        }*/
 
         sealed class LegacyEnumerableTypeConverter : TypeConverter
         {
