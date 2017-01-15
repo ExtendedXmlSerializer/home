@@ -36,12 +36,14 @@ namespace ExtendedXmlSerialization.Conversion
         private readonly IElementSelector _elements;
         private readonly IParameterizedSource<IConverter, IEnumerable<IConverterOption>> _options;
 
-        public SelectorFactory(IElementSelector elements, IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
+        public SelectorFactory(IElementSelector elements,
+                               IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
         {
             _elements = elements;
             _options = options;
         }
 
-        public ISelector Get(IConverter parameter) => new Selector(_elements, new ConverterSelector(_options.Get(parameter).ToArray()));
+        public ISelector Get(IConverter parameter)
+            => new Selector(_elements, new ConverterSelector(_options.Get(parameter).ToArray()));
     }
 }

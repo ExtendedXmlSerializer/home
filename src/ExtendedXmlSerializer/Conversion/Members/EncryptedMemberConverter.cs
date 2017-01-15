@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
     public class EncryptedMemberConverter : DecoratedConverter
     {
         private readonly IPropertyEncryption _encryption;
-        
+
         public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
         {
             _encryption = encryption;

@@ -32,7 +32,8 @@ using ExtendedXmlSerialization.Conversion.TypeModel;
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
-    {/*
+    {
+/*
         public static IElement Unwrapped(this IElement @this) => @this.Unwrapped<IElement>();
 
         public static T Unwrapped<T>(this IElement @this) where T : IElement

@@ -21,47 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
     public interface IElement
     {
         IElementName Name { get; }
-    }
-
-    public interface IElementName
-    {
-        string DisplayName { get; }
-        TypeInfo Classification { get; }
-    }
-
-    public class ElementName : IEquatable<ElementName>, IElementName
-    {
-        public ElementName(Type classification) : this(classification.GetTypeInfo()) {}
-        public ElementName(TypeInfo classification) : this(classification, classification.Name) {}
-
-        public ElementName(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
-
-        public ElementName(TypeInfo classification, string name)
-        {
-            Classification = classification;
-            DisplayName = name;
-        }
-
-        public string DisplayName { get; }
-        public TypeInfo Classification { get; }
-
-        public bool Equals(ElementName other) => Equals(Classification, other.Classification);
-
-        public override bool Equals(object obj) => 
-            !ReferenceEquals(null, obj) && (obj is ElementName && Equals((ElementName) obj));
-
-        public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
-
-        public static bool operator ==(ElementName left, ElementName right) => left.Equals(right);
-
-        public static bool operator !=(ElementName left, ElementName right) => !left.Equals(right);
     }
 }

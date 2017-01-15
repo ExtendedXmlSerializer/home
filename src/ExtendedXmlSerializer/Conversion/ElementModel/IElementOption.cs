@@ -21,28 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.TypeModel
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    /*public class IsEnumerableTypeSpecification : IsAssignableSpecification<IEnumerable>
-    {
-        public static new IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
-        IsEnumerableTypeSpecification() {}
-    }*/
-
-    public class IsDictionaryTypeSpecification : AnySpecification<TypeInfo>
-    {
-        public static IsDictionaryTypeSpecification Default { get; } = new IsDictionaryTypeSpecification();
-        IsDictionaryTypeSpecification() : base(IsAssignableSpecification<IDictionary>.Default, new IsAssignableGenericSpecification(typeof(IDictionary<,>))) {}
-    }
-
-    public class IsCollectionTypeSpecification : AnySpecification<TypeInfo>
-    {
-        public static IsCollectionTypeSpecification Default { get; } = new IsCollectionTypeSpecification();
-        IsCollectionTypeSpecification() : base(IsAssignableSpecification<IList>.Default, new IsAssignableGenericSpecification(typeof(ICollection<>))) {}
-    }
+    public interface IElementOption : IOption<TypeInfo, IElement> {}
 }

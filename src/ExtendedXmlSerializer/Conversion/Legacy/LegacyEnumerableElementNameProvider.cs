@@ -21,10 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
@@ -34,28 +31,5 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             new LegacyEnumerableElementNameProvider();
 
         LegacyEnumerableElementNameProvider() : base(LegacyEnumerableTypeFormatter.Default) {}
-    }
-
-    class LegacyEnumerableTypeFormatter : ITypeFormatter
-    {
-        public static LegacyEnumerableTypeFormatter Default { get; } = new LegacyEnumerableTypeFormatter();
-        LegacyEnumerableTypeFormatter() : this(CollectionItemTypeLocator.Default) {}
-
-        private readonly ICollectionItemTypeLocator _locator;
-
-        public LegacyEnumerableTypeFormatter(ICollectionItemTypeLocator locator)
-        {
-            _locator = locator;
-        }
-
-        public string Format(TypeInfo type)
-        {
-            var arguments = type.GetGenericArguments();
-            var name = arguments.Any()
-                ? string.Join(string.Empty, arguments.Select(p => p.Name))
-                : _locator.Get(type).Name;
-            var result = $"ArrayOf{name}";
-            return result;
-        }
     }
 }

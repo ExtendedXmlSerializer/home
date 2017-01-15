@@ -38,6 +38,4 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         IElement Element { get; }
     }
-
-    
 }

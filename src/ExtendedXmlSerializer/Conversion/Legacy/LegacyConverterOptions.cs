@@ -43,8 +43,11 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
-            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter, _elements));
-            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter, _elements));
+            yield return
+                new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter, _elements))
+                ;
+            yield return
+                new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter, _elements));
         }
     }
 }

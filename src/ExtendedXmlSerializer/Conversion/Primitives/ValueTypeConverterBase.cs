@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Primitives
     public abstract class ValueTypeConverterBase<T> : TypeConverter
     {
         protected ValueTypeConverterBase(Func<T, string> serialize,
-                                             Func<string, T> deserialize)
+                                         Func<string, T> deserialize)
             : this(
                 new ValueWriter<T>(serialize),
                 new ValueReader<T>(deserialize)

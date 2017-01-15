@@ -27,5 +27,5 @@ using ExtendedXmlSerialization.Core.Sources;
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     public interface IMembers : IEnumerable<IMemberElement>,
-                                       IParameterizedSource<string, IMemberElement> {}
+                                IParameterizedSource<string, IMemberElement> {}
 }

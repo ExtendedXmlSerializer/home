@@ -28,8 +28,6 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IElementNameOption : IOption<MemberInfo, IElementName> {}
-
     public abstract class ElementNameOptionBase : Option<MemberInfo, IElementName>, IElementNameOption
     {
         protected ElementNameOptionBase(Func<MemberInfo, IElementName> source)

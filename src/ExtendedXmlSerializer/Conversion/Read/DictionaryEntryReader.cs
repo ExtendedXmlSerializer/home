@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
         private readonly IReader _reader;
-        
+
         public DictionaryEntryReader(IReader reader)
         {
             _reader = reader;
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var element = (IDictionaryElement)context.Current;
+            var element = (IDictionaryElement) context.Current;
             var item = element.Item;
             foreach (var child in context.Items())
             {

@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
-            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter)); 
+            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
         }
 

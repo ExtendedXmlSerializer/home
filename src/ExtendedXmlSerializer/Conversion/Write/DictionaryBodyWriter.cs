@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
     class DictionaryBodyWriter : WriterBase<IDictionary>
     {
         private readonly IWriter _writer;
-        
+
         public DictionaryBodyWriter(IWriter item)
         {
             _writer = new DictionaryEntryWriter(item);

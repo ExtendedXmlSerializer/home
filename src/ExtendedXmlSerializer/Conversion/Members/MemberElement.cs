@@ -27,25 +27,13 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public abstract class MemberElementBase : DeclaredTypeElementBase, IMemberElement
-    {
-        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType) : base(name, memberType)
-        {
-            Metadata = metadata;
-        }
-
-        public MemberInfo Metadata { get; }
-
-        public abstract object Get(object instance);
-        public abstract void Assign(object instance, object value);
-    }
-
     public class MemberElement : MemberElementBase
     {
         private readonly Action<object, object> _setter;
         private readonly Func<object, object> _getter;
 
-        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter, Func<object, object> getter)
+        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter,
+                             Func<object, object> getter)
             : base(name, metadata, memberType)
         {
             _setter = setter;

@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -177,23 +176,5 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 return value;
             }
         }
-    }
-
-    public interface INameConverter : IParameterizedSource<IElementName, XName> {}
-
-    class NameConverter : INameConverter
-    {
-        public static NameConverter Default { get; } = new NameConverter();
-        NameConverter() : this(Namespaces.Default) {}
-
-        private readonly INamespaces _namespaces;
-
-        public NameConverter(INamespaces namespaces)
-        {
-            _namespaces = namespaces;
-        }
-
-        public XName Get(IElementName parameter)
-            => XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification));
     }
 }

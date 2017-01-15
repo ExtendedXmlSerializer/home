@@ -46,7 +46,8 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             _type = type;
         }
 
-        protected override IWriteContext CreateWriteContext(XmlWriter writer) => new LegacyXmlWriteContext(_selector, writer);
+        protected override IWriteContext CreateWriteContext(XmlWriter writer)
+            => new LegacyXmlWriteContext(_selector, writer);
 
         protected override IReadContext CreateContext(Stream stream)
         {

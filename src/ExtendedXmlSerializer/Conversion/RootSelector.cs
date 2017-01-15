@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion
 
         private readonly ISelectorFactory _factory;
         private ISelector _selector;
-        
+
         public RootSelector(ISelectorFactory factory)
         {
             _factory = factory;

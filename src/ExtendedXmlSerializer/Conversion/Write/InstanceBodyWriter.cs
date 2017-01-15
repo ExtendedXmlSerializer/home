@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         {
             var type = instance.GetType().GetTypeInfo();
             var element = Equals(type, context.Element.EffectiveType()) ? context.Element : _elements.Get(type);
-            var members =  ((IMemberedElement)element).Members;
+            var members = ((IMemberedElement) element).Members;
             foreach (var member in members)
             {
                 _selector.Get(member).Write(context, member.Get(instance));

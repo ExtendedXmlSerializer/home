@@ -23,38 +23,10 @@
 
 using ExtendedXmlSerialization.Conversion.Members;
 
-namespace ExtendedXmlSerialization.Conversion.Legacy
+namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
+    public interface IMemberedElement : IElement
     {
-        private readonly ISerializationToolsFactory _tools;
-        private readonly IConverterOption _option;
-        
-        public LegacyMemberOption(ISerializationToolsFactory tools, IConverterOption option)
-        {
-            _tools = tools;
-            _option = option;
-        }
-
-        protected override IConverter Create(IMemberElement parameter)
-        {
-            var result = _option.Get(parameter);
-            if (result != null)
-            {
-                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
-                if (configuration != null)
-                {
-                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
-                    {
-                        var algorithm = _tools.EncryptionAlgorithm;
-                        if (algorithm != null)
-                        {
-                            return new EncryptedMemberConverter(algorithm, result);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
+        IMembers Members { get; }
     }
 }

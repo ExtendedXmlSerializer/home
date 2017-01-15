@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,19 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    sealed class LegacyElements : Elements
-    {
-        public static new LegacyElements Default { get; } = new LegacyElements();
-        LegacyElements() : this(LegacyElementMembers.Default) {}
-
-        public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members) {}
-    }
-
     sealed class LegacyElementsTooling : WeakCacheBase<ISerializationToolsFactory, IElementSelector>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
@@ -42,20 +33,5 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         protected override IElementSelector Create(ISerializationToolsFactory parameter)
             => new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(parameter)));
-    }
-
-    class LegacyElementMembers : ElementMembers
-    {
-        public static new LegacyElementMembers Default { get; } = new LegacyElementMembers();
-        LegacyElementMembers() : this(MemberElementSelector.Default) {}
-        public LegacyElementMembers(IMemberElementSelector selector) : base(selector) {}
-    }
-
-    class LegacyMemberElementSelector : MemberElementSelector
-    {
-        public LegacyMemberElementSelector(ISerializationToolsFactory tools)
-            : base(
-                new MemberOption(new LegacyGetterFactory(tools), new LegacySetterFactory(tools, SetterFactory.Default)),
-                ReadOnlyCollectionMemberOption.Default) {}
     }
 }

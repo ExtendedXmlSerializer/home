@@ -28,7 +28,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public interface IElementNameSelector : ISelector<MemberInfo, IElementName> {}
     public class ElementNames : Selector<MemberInfo, IElementName>, IElementNameSelector
     {
         public static ElementNames Default { get; } = new ElementNames();
@@ -36,8 +35,8 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
 
         protected ElementNames(IEnumerable<IElementName> names)
             : this(
-                new KnownElementNames(names), 
-                ElementNameOption<Enum>.Default, 
+                new KnownElementNames(names),
+                ElementNameOption<Enum>.Default,
                 EnumerableNameOption.Default,
                 DefaultElementNameOption.Default) {}
 
