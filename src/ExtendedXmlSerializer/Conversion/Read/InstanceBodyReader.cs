@@ -62,6 +62,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         protected virtual object Activate(IReadContext context)
-            => _activators.Activate<object>(context.Current.Name.Classification.AsType());
+            => _activators.Activate<object>(context.Classification.AsType());
     }
 }

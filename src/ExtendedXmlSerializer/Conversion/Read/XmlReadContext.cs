@@ -36,14 +36,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IElementTypes _types;
         private readonly INameConverter _names;
         private readonly XElement _container;
-        private readonly IElementName _name;
 
-        public XmlReadContext(XElement container) : this(Elements.Default, container) {}
-
-        XmlReadContext(IElementSelector selector, XElement container)
+        public XmlReadContext(XElement container)
             : this(
-                selector, ElementTypes.Default, NameConverter.Default, container,
-                selector.Get(ElementTypes.Default.Get(container)), ElementTypes.Default) {}
+                Elements.Default, ElementTypes.Default, NameConverter.Default, container,
+                Elements.Default.Get(ElementTypes.Default.Get(container)), ElementTypes.Default) {}
 
         public XmlReadContext(IElementSelector selector, IElementTypes types, INameConverter namespaces,
                               XElement container, IElement element, params object[] services)
@@ -56,26 +53,26 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         private XmlReadContext(IElementSelector selector, IElementTypes types, INameConverter names, XElement container,
-                               IElement element) : this(selector, types, names, container, element, element.Name) {}
+                               IElement element)
+            : this(selector, types, names, container, element, element.Name.DisplayName, element.Name.Classification) {}
 
         XmlReadContext(IElementSelector selector, IElementTypes types, INameConverter names, XElement container,
-                       IElement element, IElementName name)
+                       IElement element, string displayName, TypeInfo classification)
         {
             _selector = selector;
             _types = types;
             _names = names;
             Current = element;
+            DisplayName = displayName;
+            Classification = classification;
             _container = container;
-            _name = name;
             Add(container);
         }
 
-        public string DisplayName => _name.DisplayName;
+        public string DisplayName { get; }
 
-        public TypeInfo Classification => _name.Classification;
+        public TypeInfo Classification { get; }
 
-
-        /*public IReadContext Parent { get; }*/
         public IElement Current { get; }
 
         public object GetService(Type serviceType) => _container.AnnotationAll(serviceType);
@@ -88,37 +85,20 @@ namespace ExtendedXmlSerialization.Conversion.Read
         {
             var name = _names.Get(element.Name);
             var native = _container.Element(name);
-            var result = Create(native, element.EffectiveType());
+            var type = (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification;
+            var result = Create(native, type);
             return result;
         }
 
         public IEnumerable<IReadContext> Items()
         {
-            var collection = (ICollectionElement) _selector.Get(Current.EffectiveType());
+            var collection = (ICollectionElement) _selector.Get(Classification);
             var elementType = collection.Item.DeclaredType;
             foreach (var child in _container.Elements())
             {
                 yield return Create(child, elementType);
             }
         }
-
-        /*private XmlReadContext Create(XElement source, TypeInfo elementType = null)
-        {
-            var container = Initialized(source, elementType ?? Current.EffectiveType());
-            var typeInfo = _types.Get(container);
-            var element = _selector.Get(typeInfo);
-            return Create(element, container);
-        }*/
-
-        /*private XmlReadContext Create(IElement element, XElement source)
-        {
-            var child = CreateChild(element, source);
-            var declared = element as IDeclaredTypeElement;
-            var result = declared != null
-                ? child.CreateChild(_selector.Get(declared.DeclaredType), source)
-                : child;
-            return result;
-        }*/
 
         private TypeInfo Initialized(XElement source, TypeInfo declared)
         {
@@ -131,26 +111,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
             return info;
         }
 
-        private XmlReadContext Create(XElement source, TypeInfo declared, IElementName name = null)
+        private XmlReadContext Create(XElement source, TypeInfo declared, string displayName = null)
         {
             var info = Initialized(source, declared);
             var element = _selector.Get(info);
-            return Create(source, element, name ?? element.Name);
+            var result = new XmlReadContext(_selector, _types, _names, source, element,
+                                            displayName ?? element.Name.DisplayName, info);
+            return result;
         }
-
-        private XmlReadContext Create(XElement source, IElement element, IElementName name)
-        {
-            var child = new XmlReadContext(_selector, _types, _names, source, element, name);
-            return child;
-        }
-
-        /*public IEnumerable<IReadContext> ChildrenOf(IElementName name)
-        {
-            foreach (var child in _container.Elements(_names.Get(name)))
-            {
-                yield return Create(child, Current.Name.Classification);
-            }
-        }*/
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -162,7 +130,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 var member = members.Get(source.Name.LocalName);
                 if (member != null)
                 {
-                    yield return Create(source, member.DeclaredType, member.Name);
+                    yield return Create(source, member.DeclaredType, member.Name.DisplayName);
                 }
             }
         }

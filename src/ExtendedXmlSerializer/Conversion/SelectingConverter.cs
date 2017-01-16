@@ -45,8 +45,7 @@ namespace ExtendedXmlSerialization.Conversion
 
         public override object Read(IReadContext context)
         {
-            var type = context.Current.EffectiveType();
-            var converter = _selector.Get(type) ?? _selector.Get(context.Current.Name.Classification);
+            var converter = _selector.Get(context.Classification);
             var result = converter.Read(context);
             return result;
         }

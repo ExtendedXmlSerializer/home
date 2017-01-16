@@ -33,19 +33,6 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
-/*
-        public static IElement Unwrapped(this IElement @this) => @this.Unwrapped<IElement>();
-
-        public static T Unwrapped<T>(this IElement @this) where T : IElement
-        {
-            var element = (@this as IElementAware)?.Element ?? @this;
-            var result = (T) element;
-            return result;
-        }*/
-
-        public static TypeInfo EffectiveType(this IElement @this)
-            => (@this as IDeclaredTypeElement)?.DeclaredType ?? @this.Name.Classification;
-
         public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
 
         public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
