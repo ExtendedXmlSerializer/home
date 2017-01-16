@@ -24,8 +24,8 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Legacy;
-using Defaults = ExtendedXmlSerialization.Conversion.Legacy.Defaults;
+using ExtendedXmlSerialization.Legacy;
+using Defaults = ExtendedXmlSerialization.Legacy.Defaults;
 
 namespace ExtendedXmlSerialization
 {

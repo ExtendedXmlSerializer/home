@@ -26,7 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {

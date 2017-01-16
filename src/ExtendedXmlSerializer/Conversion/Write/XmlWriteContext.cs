@@ -25,8 +25,8 @@ using System;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {

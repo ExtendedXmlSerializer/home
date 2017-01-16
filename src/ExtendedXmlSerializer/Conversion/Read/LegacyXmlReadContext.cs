@@ -23,9 +23,9 @@
 
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel.Members;
-using ExtendedXmlSerialization.Conversion.Legacy;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {

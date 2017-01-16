@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {

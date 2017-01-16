@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Primitives;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {

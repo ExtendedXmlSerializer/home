@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {

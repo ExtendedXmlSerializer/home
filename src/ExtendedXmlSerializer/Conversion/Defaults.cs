@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
