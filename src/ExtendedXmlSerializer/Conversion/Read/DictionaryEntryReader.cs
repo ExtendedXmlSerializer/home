@@ -51,6 +51,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        object Read(IReadContext context, IElement element) => _reader.Read(context.Member(element));
+        object Read(IReadContext context, IContainerElement element) => _reader.Read(context.Member(element));
     }
 }

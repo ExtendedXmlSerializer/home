@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         private readonly INamespaces _namespaces;
         private readonly XmlWriter _writer;
         private readonly ImmutableArray<object> _services;
-        private readonly IDisposable _finish, _disposable;
+        private readonly IDisposable _finish;
 
         public XmlWriteContext(XmlWriter writer) : this(writer, writer) {}
 
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         protected XmlWriteContext(IElementSelector selector, INamespaces namespaces, XmlWriter writer,
                                   params object[] services)
             : this(
-                null, null, selector, namespaces, writer, null, services.ToImmutableArray(),
+                null, null, null, selector, namespaces, writer, null, services.ToImmutableArray(),
                 new DelegatedDisposable(writer.WriteEndElement)) {}
 
         /*private XmlWriteContext(IElementSelector selector, INamespaces namespaces,
@@ -57,11 +57,12 @@ namespace ExtendedXmlSerialization.Conversion.Write
                 (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification, selector, namespaces,
                 writer, element, services, finish, disposable) {}*/
 
-        XmlWriteContext(string displayName, TypeInfo effectiveType, IElementSelector selector,
+        XmlWriteContext(IContainerElement container, string displayName, TypeInfo effectiveType,
+                        IElementSelector selector,
                         INamespaces namespaces, XmlWriter writer,
-                        IElement element, ImmutableArray<object> services, IDisposable finish,
-                        IDisposable disposable = null)
+                        IElement element, ImmutableArray<object> services, IDisposable finish)
         {
+            Container = container;
             DisplayName = displayName;
             Classification = effectiveType;
             Element = element;
@@ -70,9 +71,9 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _writer = writer;
             _services = services;
             _finish = finish;
-            _disposable = disposable;
         }
 
+        public IContainerElement Container { get; }
         public string DisplayName { get; }
         public TypeInfo Classification { get; }
         public IElement Element { get; }
@@ -94,17 +95,16 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public IWriteContext Start(IElement element)
         {
-            var declared = element as IDeclaredTypeElement;
+            var declared = element as IContainerElement;
             var effective = declared?.DeclaredType ?? element.Name.Classification;
             var name = element.Name.DisplayName;
             var ns = _namespaces.Get(effective);
             _writer.WriteStartElement(name, ns);
 
             var subject = declared != null ? _selector.Get(declared.DeclaredType) : element;
-            var context = new XmlWriteContext(name, effective, _selector, _namespaces, _writer, subject, _services,
-                                              _finish, _finish);
-            var parent = declared ?? Element as IDeclaredTypeElement;
-            var result = parent != null ? (IWriteContext) new XmlWriteContainerContext(parent, context) : context;
+            var container = declared ?? Element as IContainerElement;
+            var result = new XmlWriteContext(container, name, effective, _selector, _namespaces, _writer, subject,
+                                             _services, _finish);
             return result;
         }
 
@@ -113,6 +113,6 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public void Write(IElementName element, string value)
             => _writer.WriteAttributeString(element.DisplayName, value);
 
-        public virtual void Dispose() => _disposable?.Dispose();
+        public virtual void Dispose() => _finish.Dispose();
     }
 }

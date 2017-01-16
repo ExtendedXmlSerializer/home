@@ -21,12 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class XmlReadMemberContext : XmlReadContainerContext<IMemberElement>, IReadMemberContext
+    public class XmlReadMemberContext : XmlReadContext<IMemberElement>, IReadMemberContext
     {
-        public XmlReadMemberContext(IMemberElement container, IReadContext context) : base(container, context) {}
+        public XmlReadMemberContext(IMemberElement container, IElementSelector selector, IElementTypes types,
+                                    INameConverter names, XElement data, IElement element, string displayName)
+            : base(container, selector, types, names, data, element, displayName) {}
     }
 }

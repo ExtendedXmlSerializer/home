@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContainerContext<out T> : IReadContainerContext where T : IDeclaredTypeElement
+    public interface IReadContainerContext<out T> : IReadContainerContext where T : IContainerElement
     {
         new T Container { get; }
     }
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         IElement Element { get; }
 
-        IReadContext Member(IElement element);
+        IReadContext Member(IContainerElement element);
 
         IEnumerable<IReadContext> Items();
 

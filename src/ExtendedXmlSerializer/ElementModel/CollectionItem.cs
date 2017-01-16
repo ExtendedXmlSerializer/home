@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class CollectionItem : DeclaredTypeElementBase, ICollectionItem
+    public class CollectionItem : ContainerElementBase, ICollectionItem
     {
         public CollectionItem(IElementName name, TypeInfo elementType) : base(name, elementType) {}
     }

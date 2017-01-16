@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public interface IReadContainerContext : IReadContext
     {
-        IDeclaredTypeElement Container { get; }
+        IContainerElement Container { get; }
     }
 }

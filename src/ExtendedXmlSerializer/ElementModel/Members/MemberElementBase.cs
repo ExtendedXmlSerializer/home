@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public abstract class MemberElementBase : DeclaredTypeElementBase, IMemberElement
+    public abstract class MemberElementBase : ContainerElementBase, IMemberElement
     {
         protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType)
             : base(name, memberType)

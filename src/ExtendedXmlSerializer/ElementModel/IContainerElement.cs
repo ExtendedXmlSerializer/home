@@ -21,37 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.ElementModel
 {
-    class XmlWriteContainerContext : IWriteContainerContext
+    public interface IContainerElement : IElement
     {
-        private readonly IWriteContext _context;
-        public IDeclaredTypeElement Container { get; }
-
-        public XmlWriteContainerContext(IDeclaredTypeElement container, IWriteContext context)
-        {
-            _context = context;
-            Container = container;
-        }
-
-        public object GetService(Type serviceType) => _context.GetService(serviceType);
-
-        public string DisplayName => _context.DisplayName;
-
-        public TypeInfo Classification => _context.Classification;
-
-        public void Dispose() => _context.Dispose();
-
-        public IWriteContext Start(IElement element) => _context.Start(element);
-
-        public void Write(string text) => _context.Write(text);
-
-        public void Write(IElementName name, string value) => _context.Write(name, value);
-
-        public IElement Element => _context.Element;
+        TypeInfo DeclaredType { get; }
     }
 }

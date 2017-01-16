@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface ICollectionItem : IDeclaredTypeElement {}
+    public interface ICollectionItem : IContainerElement {}
 }
