@@ -34,30 +34,24 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public XmlReadContext(XElement data) : base(data) {}
 
-        public XmlReadContext(IElementSelector selector, IElementTypes types, INameConverter namespaces, XElement data,
-                              IElement element, params object[] services)
-            : base(selector, types, namespaces, data, element, services) {}
+        public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
+            : base(factory, element, data, services) {}
 
-        public XmlReadContext(IContainerElement container, IElementSelector selector, IElementTypes types,
-                              INameConverter names, XElement data, IElement element, string displayName)
-            : base(container, selector, types, names, data, element, displayName) {}
+        public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
+                              XElement data, string displayName)
+            : base(factory, container, element, data, displayName) {}
     }
 
     public abstract class XmlReadContext<T> : IReadContainerContext<T> where T : class, IContainerElement
     {
-        private readonly IElementSelector _selector;
-        private readonly IElementTypes _types;
-        private readonly INameConverter _names;
+        private readonly IXmlReadContextFactory _factory;
         private readonly XElement _data;
 
         public XmlReadContext(XElement data)
-            : this(
-                Elements.Default, ElementTypes.Default, NameConverter.Default, data,
-                Elements.Default.Get(ElementTypes.Default.Get(data))) {}
+            : this(XmlReadContextFactory.Default, Elements.Default.Get(ElementTypes.Default.Get(data)), data) {}
 
-        public XmlReadContext(IElementSelector selector, IElementTypes types, INameConverter namespaces, XElement data,
-                              IElement element, params object[] services)
-            : this(null, selector, types, namespaces, data, element, element.Name.DisplayName)
+        public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
+            : this(factory, null, element, data, element.Name.DisplayName)
         {
             for (int i = 0; i < services.Length; i++)
             {
@@ -65,21 +59,22 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
         }
 
-        protected XmlReadContext(T container, IElementSelector selector, IElementTypes types, INameConverter names,
-                                 XElement data, IElement element, string displayName)
-            : this(container, selector, types, names, data, element, displayName, element.Name.Classification) {}
+        protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data)
+            : this(factory, container, element, data, element.Name.DisplayName) {}
 
-        XmlReadContext(T container, IElementSelector selector, IElementTypes types, INameConverter names, XElement data,
-                       IElement element, string displayName, TypeInfo classification)
+        protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
+                                 string displayName)
+            : this(factory, container, element, data, displayName, element.Name.Classification) {}
+
+        XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
+                       string displayName, TypeInfo classification)
         {
-            _selector = selector;
-            _types = types;
-            _names = names;
             Container = container;
+            _factory = factory;
+            _data = data;
             Element = element;
             DisplayName = displayName;
             Classification = classification;
-            _data = data;
             Add(data);
         }
 
@@ -98,41 +93,16 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public string Read() => _data.Value;
 
-        public IReadContext Member(IContainerElement element)
-        {
-            var name = _names.Get(element.Name);
-            var native = _data.Element(name);
-            var result = native != null ? Create(element, native) : null;
-            return result;
-        }
+        public IReadContext Member(IContainerElement element) => _factory.Element(element, _data);
 
         public IEnumerable<IReadContext> Items()
         {
             var container = ((ICollectionElement) Element).Item;
             foreach (var child in _data.Elements())
             {
-                yield return Create(container, child);
+                yield return _factory.Create(container, child);
             }
         }
-
-        private TypeInfo Initialized(XElement source, TypeInfo declared)
-        {
-            var info = _types.Get(source);
-            if (info == null)
-            {
-                source.Annotated(declared);
-                return declared;
-            }
-            return info;
-        }
-
-        private IReadContext Create(IContainerElement container, XElement data)
-            => Create(container, Create(data, container.DeclaredType), data);
-
-        private IElement Create(XElement data, TypeInfo declared) => _selector.Get(Initialized(data, declared));
-
-        private IReadContext Create(IContainerElement container, IElement element, XElement data) =>
-            new XmlReadContext(container, _selector, _types, _names, data, element, element.Name.DisplayName);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -144,22 +114,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 var member = members.Get(source.Name.LocalName);
                 if (member != null)
                 {
-                    var element = Create(source, member.DeclaredType);
-                    yield return
-                        new XmlReadMemberContext(member, _selector, _types, _names, source, element,
-                                                 member.Name.DisplayName);
+                    yield return (IReadMemberContext) _factory.Create(member, source);
                 }
             }
         }
 
-        public string this[IElementName name]
-        {
-            get
-            {
-                var xName = _names.Get(name);
-                var value = _data.Attribute(xName)?.Value;
-                return value;
-            }
-        }
+        public string this[IElementName name] => _factory.Value(name, _data);
     }
 }

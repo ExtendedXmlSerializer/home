@@ -21,19 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    sealed class LegacyXmlReadContext : XmlReadContext
+    public interface IXmlReadContextFactory
     {
-        public LegacyXmlReadContext(XElement element, TypeInfo type)
-            : base(XmlReadContextFactory.Default, LegacyElements.Default.Get(type), element,
+        IReadContext Create(IContainerElement container, XElement data);
 
-                   // Services:
-                   new ReadReferences()
-            ) {}
+        IReadContext Element(IContainerElement container, XElement data);
+
+        string Value(IElementName name, XElement data);
     }
 }
