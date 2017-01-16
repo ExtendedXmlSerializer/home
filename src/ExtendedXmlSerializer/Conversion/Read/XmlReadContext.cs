@@ -27,51 +27,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class XmlReadMemberContext : XmlReadContainerContext<IMemberElement>, IReadMemberContext
-    {
-        public XmlReadMemberContext(IMemberElement container, IReadContext context) : base(container, context) {}
-    }
-
-    public class XmlReadContainerContext<T> : IReadContainerContext<T> where T : IDeclaredTypeElement
-    {
-        private readonly IReadContext _context;
-
-        public XmlReadContainerContext(T container, IReadContext context)
-        {
-            _context = context;
-            Container = container;
-        }
-
-        public T Container { get; }
-        IDeclaredTypeElement IReadContainerContext.Container => Container;
-
-        public IEnumerator<IReadMemberContext> GetEnumerator() => _context.GetEnumerator();
-
-        public string DisplayName => _context.DisplayName;
-
-        public TypeInfo Classification => _context.Classification;
-
-        public object GetService(Type serviceType) => _context.GetService(serviceType);
-
-        public void Add(object service) => _context.Add(service);
-
-        public IElement Element => _context.Element;
-
-        public IReadContext Member(IElement element) => _context.Member(element);
-
-        public IEnumerable<IReadContext> Items() => _context.Items();
-
-        public string Read() => _context.Read();
-
-        public string this[IElementName name] => _context[name];
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
     public class XmlReadContext : IReadContext
     {
         private readonly IElementSelector _selector;

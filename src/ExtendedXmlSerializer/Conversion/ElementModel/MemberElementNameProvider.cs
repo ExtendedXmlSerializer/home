@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Conversion.ElementModel
                        member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
                        member.Name;
             var result = new ElementName(member.DeclaringType.GetTypeInfo(), name);
-                // member, member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable()
+            // member, member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable()
             return result;
         }
     }

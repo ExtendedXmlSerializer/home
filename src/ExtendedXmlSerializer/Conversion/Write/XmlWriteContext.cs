@@ -30,33 +30,6 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    class XmlWriteContainerContext : IWriteContainerContext
-    {
-        private readonly IWriteContext _context;
-        public IDeclaredTypeElement Container { get; }
-        public XmlWriteContainerContext(IDeclaredTypeElement container, IWriteContext context)
-        {
-            _context = context;
-            Container = container;
-        }
-
-        public object GetService(Type serviceType) => _context.GetService(serviceType);
-
-        public string DisplayName => _context.DisplayName;
-
-        public TypeInfo Classification => _context.Classification;
-
-        public void Dispose() => _context.Dispose();
-
-        public IWriteContext Start(IElement element) => _context.Start(element);
-
-        public void Write(string text) => _context.Write(text);
-
-        public void Write(IElementName name, string value) => _context.Write(name, value);
-
-        public IElement Element => _context.Element;
-    }
-
     class XmlWriteContext : IWriteContext
     {
         private readonly IElementSelector _selector;
@@ -131,7 +104,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var context = new XmlWriteContext(name, effective, _selector, _namespaces, _writer, subject, _services,
                                               _finish, _finish);
             var parent = declared ?? Element as IDeclaredTypeElement;
-            var result = parent != null ? (IWriteContext)new XmlWriteContainerContext(parent, context) : context;
+            var result = parent != null ? (IWriteContext) new XmlWriteContainerContext(parent, context) : context;
             return result;
         }
 

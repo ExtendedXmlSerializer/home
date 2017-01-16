@@ -21,26 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion.Read
 {
-    /*public interface IWriteContainerContext<out T> : IWriteContainerContext where T : IDeclaredTypeElement
+    public class XmlReadMemberContext : XmlReadContainerContext<IMemberElement>, IReadMemberContext
     {
-        new T Container { get; }
-    }*/
-
-    /*public interface IWriteMemberContext : IWriteContainerContext<IMemberElement> {}*/
-
-    public interface IWriteContext : IServiceProvider, IElementName, IDisposable
-    {
-        IWriteContext Start(IElement element);
-
-        void Write(string text);
-
-        void Write(IElementName name, string value);
-
-        IElement Element { get; }
+        public XmlReadMemberContext(IMemberElement container, IReadContext context) : base(container, context) {}
     }
 }

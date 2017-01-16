@@ -22,25 +22,36 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    /*public interface IWriteContainerContext<out T> : IWriteContainerContext where T : IDeclaredTypeElement
+    class XmlWriteContainerContext : IWriteContainerContext
     {
-        new T Container { get; }
-    }*/
+        private readonly IWriteContext _context;
+        public IDeclaredTypeElement Container { get; }
 
-    /*public interface IWriteMemberContext : IWriteContainerContext<IMemberElement> {}*/
+        public XmlWriteContainerContext(IDeclaredTypeElement container, IWriteContext context)
+        {
+            _context = context;
+            Container = container;
+        }
 
-    public interface IWriteContext : IServiceProvider, IElementName, IDisposable
-    {
-        IWriteContext Start(IElement element);
+        public object GetService(Type serviceType) => _context.GetService(serviceType);
 
-        void Write(string text);
+        public string DisplayName => _context.DisplayName;
 
-        void Write(IElementName name, string value);
+        public TypeInfo Classification => _context.Classification;
 
-        IElement Element { get; }
+        public void Dispose() => _context.Dispose();
+
+        public IWriteContext Start(IElement element) => _context.Start(element);
+
+        public void Write(string text) => _context.Write(text);
+
+        public void Write(IElementName name, string value) => _context.Write(name, value);
+
+        public IElement Element => _context.Element;
     }
 }

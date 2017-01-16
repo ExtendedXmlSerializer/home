@@ -21,27 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContainerContext<out T> : IReadContainerContext where T : IDeclaredTypeElement
+    public class XmlReadContainerContext<T> : IReadContainerContext<T> where T : IDeclaredTypeElement
     {
-        new T Container { get; }
-    }
+        private readonly IReadContext _context;
 
-    public interface IReadContext : IEnumerable<IReadMemberContext>, IElementName, IServiceRepository
-    {
-        IElement Element { get; }
+        public XmlReadContainerContext(T container, IReadContext context)
+        {
+            _context = context;
+            Container = container;
+        }
 
-        IReadContext Member(IElement element);
+        public T Container { get; }
+        IDeclaredTypeElement IReadContainerContext.Container => Container;
 
-        IEnumerable<IReadContext> Items();
+        public IEnumerator<IReadMemberContext> GetEnumerator() => _context.GetEnumerator();
 
-        string Read();
+        public string DisplayName => _context.DisplayName;
 
-        string this[IElementName name] { get; }
+        public TypeInfo Classification => _context.Classification;
+
+        public object GetService(Type serviceType) => _context.GetService(serviceType);
+
+        public void Add(object service) => _context.Add(service);
+
+        public IElement Element => _context.Element;
+
+        public IReadContext Member(IElement element) => _context.Member(element);
+
+        public IEnumerable<IReadContext> Items() => _context.Items();
+
+        public string Read() => _context.Read();
+
+        public string this[IElementName name] => _context[name];
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
