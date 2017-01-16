@@ -21,15 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.ElementModel
 {
     public class Element : IElement
     {
-        public Element(IElementName name)
+        public Element(IElementName name) : this(name.DisplayName, name.Classification) {}
+
+        public Element(string displayName, TypeInfo classification)
         {
-            Name = name;
+            DisplayName = displayName;
+            Classification = classification;
         }
 
-        public IElementName Name { get; }
+        public string DisplayName { get; }
+        public TypeInfo Classification { get; }
     }
 }

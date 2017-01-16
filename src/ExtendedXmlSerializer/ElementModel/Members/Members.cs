@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
         private readonly IDictionary<string, IMemberElement> _lookup;
 
         public Members(IEnumerable<IMemberElement> items) : this(items.ToImmutableArray()) {}
-        public Members(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.Name.DisplayName)) {}
+        public Members(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.DisplayName)) {}
 
         public Members(ImmutableArray<IMemberElement> items, IDictionary<string, IMemberElement> lookup)
         {

@@ -96,8 +96,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public IWriteContext Start(IElement element)
         {
             var declared = element as IContainerElement;
-            var effective = declared?.DeclaredType ?? element.Name.Classification;
-            var name = element.Name.DisplayName;
+            var effective = declared?.DeclaredType ?? element.Classification;
+            var name = element.DisplayName;
             var ns = _namespaces.Get(effective);
             _writer.WriteStartElement(name, ns);
 

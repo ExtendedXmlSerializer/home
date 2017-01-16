@@ -44,9 +44,10 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var result = Activate(context);
             foreach (var child in context)
             {
-                var reader = _selector.Get(child.Container);
+                var member = child.Container;
+                var reader = _selector.Get(member);
                 var value = reader.Read(child);
-                child.Container.Assign(result, value);
+                member.Assign(result, value);
             }
             return result;
         }

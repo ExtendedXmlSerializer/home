@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Conversion
 
         protected override IConverter Create(IElement parameter)
         {
-            var type = parameter.Name.Classification;
+            var type = parameter.Classification;
             foreach (var converter in _converters)
             {
                 if (converter.IsSatisfiedBy(type))

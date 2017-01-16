@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IReadContext Element(IContainerElement container, XElement data)
         {
-            var name = _converter.Get(container.Name);
+            var name = _converter.Get(container);
             var native = data.Element(name);
             var result = native != null ? Create(container, native) : null;
             return result;
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private IElement Create(XElement data, TypeInfo declared) => _selector.Get(Initialized(data, declared));
 
         private IReadContext Create(IContainerElement container, IElement element, XElement data) =>
-            new XmlReadContext(this, container, element, data, element.Name.DisplayName);
+            new XmlReadContext(this, container, element, data, element.DisplayName);
 
         public string Value(IElementName name, XElement data)
         {

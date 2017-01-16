@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             : this(XmlReadContextFactory.Default, Elements.Default.Get(ElementTypes.Default.Get(data)), data) {}
 
         public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
-            : this(factory, null, element, data, element.Name.DisplayName)
+            : this(factory, null, element, data, element.DisplayName)
         {
             for (int i = 0; i < services.Length; i++)
             {
@@ -60,11 +60,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data)
-            : this(factory, container, element, data, element.Name.DisplayName) {}
+            : this(factory, container, element, data, element.DisplayName) {}
 
         protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
                                  string displayName)
-            : this(factory, container, element, data, displayName, element.Name.Classification) {}
+            : this(factory, container, element, data, displayName, element.Classification) {}
 
         XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
                        string displayName, TypeInfo classification)
