@@ -42,9 +42,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
     public interface IReadContext : IEnumerable<IReadMemberContext>, IElementName, IServiceRepository
     {
-        /*IReadContext Parent { get; }*/
-
-        IElement Current { get; }
+        IElement Element { get; }
 
         IReadContext Member(IElement element);
 

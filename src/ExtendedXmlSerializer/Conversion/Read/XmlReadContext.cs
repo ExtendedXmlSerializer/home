@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public void Add(object service) => _context.Add(service);
 
-        public IElement Current => _context.Current;
+        public IElement Element => _context.Element;
 
         public IReadContext Member(IElement element) => _context.Member(element);
 
@@ -104,7 +104,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _selector = selector;
             _types = types;
             _names = names;
-            Current = element;
+            Element = element;
             DisplayName = displayName;
             Classification = classification;
             _container = container;
@@ -115,7 +115,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public TypeInfo Classification { get; }
 
-        public IElement Current { get; }
+        public IElement Element { get; }
 
         public object GetService(Type serviceType) => _container.AnnotationAll(serviceType);
 
@@ -138,8 +138,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IEnumerable<IReadContext> Items()
         {
-            var collection = (ICollectionElement) _selector.Get(Classification);
-            var elementType = collection.Item.DeclaredType;
+            var elementType = ((ICollectionElement) Element).Item.DeclaredType;
             foreach (var child in _container.Elements())
             {
                 yield return Create(child, elementType);
@@ -162,7 +161,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var info = Initialized(source, declared);
             var element = _selector.Get(info);
             var result = new XmlReadContext(_selector, _types, _names, source, element,
-                                            displayName ?? element.Name.DisplayName, info);
+                                            displayName ?? element.Name.DisplayName, element.Name.Classification);
             return result;
         }
 
@@ -170,7 +169,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IEnumerator<IReadMemberContext> GetEnumerator()
         {
-            var members = ((IMemberedElement) Current).Members;
+            var members = ((IMemberedElement) Element).Members;
             foreach (var source in _container.Elements())
             {
                 var member = members.Get(source.Name.LocalName);

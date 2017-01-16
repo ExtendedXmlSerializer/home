@@ -30,6 +30,33 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
+    class XmlWriteContainerContext : IWriteContainerContext
+    {
+        private readonly IWriteContext _context;
+        public IDeclaredTypeElement Container { get; }
+        public XmlWriteContainerContext(IDeclaredTypeElement container, IWriteContext context)
+        {
+            _context = context;
+            Container = container;
+        }
+
+        public object GetService(Type serviceType) => _context.GetService(serviceType);
+
+        public string DisplayName => _context.DisplayName;
+
+        public TypeInfo Classification => _context.Classification;
+
+        public void Dispose() => _context.Dispose();
+
+        public IWriteContext Start(IElement element) => _context.Start(element);
+
+        public void Write(string text) => _context.Write(text);
+
+        public void Write(IElementName name, string value) => _context.Write(name, value);
+
+        public IElement Element => _context.Element;
+    }
+
     class XmlWriteContext : IWriteContext
     {
         private readonly IElementSelector _selector;
@@ -46,23 +73,22 @@ namespace ExtendedXmlSerialization.Conversion.Write
         protected XmlWriteContext(IElementSelector selector, INamespaces namespaces, XmlWriter writer,
                                   params object[] services)
             : this(
-                null, null, null, selector, namespaces, writer, null, services.ToImmutableArray(),
+                null, null, selector, namespaces, writer, null, services.ToImmutableArray(),
                 new DelegatedDisposable(writer.WriteEndElement)) {}
 
-        private XmlWriteContext(IWriteContext parent, IElementSelector selector, INamespaces namespaces,
+        /*private XmlWriteContext(IElementSelector selector, INamespaces namespaces,
                                 XmlWriter writer, IElement element, ImmutableArray<object> services, IDisposable finish,
                                 IDisposable disposable = null)
             : this(
-                parent, element.Name.DisplayName,
+                element.Name.DisplayName,
                 (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification, selector, namespaces,
-                writer, element, services, finish, disposable) {}
+                writer, element, services, finish, disposable) {}*/
 
-        XmlWriteContext(IWriteContext parent, string displayName, TypeInfo effectiveType, IElementSelector selector,
+        XmlWriteContext(string displayName, TypeInfo effectiveType, IElementSelector selector,
                         INamespaces namespaces, XmlWriter writer,
                         IElement element, ImmutableArray<object> services, IDisposable finish,
                         IDisposable disposable = null)
         {
-            Parent = parent;
             DisplayName = displayName;
             Classification = effectiveType;
             Element = element;
@@ -74,7 +100,6 @@ namespace ExtendedXmlSerialization.Conversion.Write
             _disposable = disposable;
         }
 
-        public IWriteContext Parent { get; }
         public string DisplayName { get; }
         public TypeInfo Classification { get; }
         public IElement Element { get; }
@@ -102,14 +127,11 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var ns = _namespaces.Get(effective);
             _writer.WriteStartElement(name, ns);
 
-            var context = new XmlWriteContext(this, name, effective, _selector, _namespaces, _writer, element, _services,
-                                              _finish,
-                                              _finish);
-            var result = declared != null
-                ? new XmlWriteContext(context, _selector, _namespaces, _writer, _selector.Get(declared.DeclaredType),
-                                      _services, _finish, context)
-                : context;
-
+            var subject = declared != null ? _selector.Get(declared.DeclaredType) : element;
+            var context = new XmlWriteContext(name, effective, _selector, _namespaces, _writer, subject, _services,
+                                              _finish, _finish);
+            var parent = declared ?? Element as IDeclaredTypeElement;
+            var result = parent != null ? (IWriteContext)new XmlWriteContainerContext(parent, context) : context;
             return result;
         }
 

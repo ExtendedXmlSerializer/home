@@ -21,13 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {
-    public class CollectionElement : CollectionElementBase<ICollectionItem>
+    public class CollectionElement : CollectionElementBase<ICollectionItem>, IDeclaredTypeElement
     {
         public CollectionElement(IElementName name, IMembers members, ICollectionItem item)
             : base(name, members, item) {}
+
+        public TypeInfo DeclaredType => Item.DeclaredType;
     }
 }

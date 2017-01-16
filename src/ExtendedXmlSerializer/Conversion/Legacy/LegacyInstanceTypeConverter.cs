@@ -71,8 +71,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
                         var objectId = configuration.GetObjectId(instance);
 
-                        var item = !(context.Parent?.Element is IMemberElement);
-                        if (item && references.Reserved.Contains(instance))
+                        if (context.Subject<IMemberElement>() == null && references.Reserved.Contains(instance))
                         {
                             references.Reserved.Remove(instance);
                         }

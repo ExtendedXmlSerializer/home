@@ -21,30 +21,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*namespace ExtendedXmlSerialization.Configuration.Write
-{
-    public class CustomSerializationExtension : WritingExtensionBase
-    {
-        private readonly IInstruction _instruction;
-
-        public CustomSerializationExtension(IInstruction instruction)
-        {
-            _instruction = instruction;
-        }
-
-        public override bool IsSatisfiedBy(ISerialization services)
-        {
-            var instance = services.Current.Instance;
-            var configuration = services.GetValid<ISerializationToolsFactory>().GetConfiguration(instance.GetType());
-            if (configuration?.IsCustomSerializer ?? false)
-            {
-                _instruction.Execute(services);
-                configuration.WriteObject(services.GetValid<XmlWriter>(), instance);
-                return false;
-            }
-            return true;
-        }
-
-        public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Members, this);
-    }
-}*/

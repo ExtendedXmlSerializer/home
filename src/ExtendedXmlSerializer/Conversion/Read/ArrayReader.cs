@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var element = (ICollectionElement) context.Current;
+            var element = (ICollectionElement) context.Element;
             var result = list.ToArray(element.Item.DeclaredType.AsType());
             return result;
         }

@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var element = (IDictionaryElement) context.Current;
+            var element = (IDictionaryElement) context.Element;
             var item = element.Item;
             foreach (var child in context.Items())
             {

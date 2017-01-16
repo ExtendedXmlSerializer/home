@@ -26,12 +26,17 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
+        public static T Subject<T>(this IWriteContext context) where T : class, IElement =>
+            context.Element as T ?? (context as IWriteContainerContext)?.Container as T;
+
         public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
 
         public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
