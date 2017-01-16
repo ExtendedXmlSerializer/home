@@ -43,20 +43,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public override object Read(IReadContext context)
         {
             var result = Activate(context);
-            var element = context.Current as IMemberedElement;
-            if (element != null)
+            foreach (var child in context)
             {
-                var members = element.Members;
-                foreach (var child in context)
-                {
-                    var member = members.Get(child.DisplayName);
-                    if (member != null)
-                    {
-                        var reader = _selector.Get(member);
-                        var value = reader.Read(child);
-                        member.Assign(result, value);
-                    }
-                }
+                var reader = _selector.Get(child.Container);
+                var value = reader.Read(child);
+                child.Container.Assign(result, value);
             }
             return result;
         }

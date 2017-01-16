@@ -27,9 +27,51 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
+    public class XmlReadMemberContext : XmlReadContainerContext<IMemberElement>, IReadMemberContext
+    {
+        public XmlReadMemberContext(IMemberElement container, IReadContext context) : base(container, context) {}
+    }
+
+    public class XmlReadContainerContext<T> : IReadContainerContext<T> where T : IDeclaredTypeElement
+    {
+        private readonly IReadContext _context;
+
+        public XmlReadContainerContext(T container, IReadContext context)
+        {
+            _context = context;
+            Container = container;
+        }
+
+        public T Container { get; }
+        IDeclaredTypeElement IReadContainerContext.Container => Container;
+
+        public IEnumerator<IReadMemberContext> GetEnumerator() => _context.GetEnumerator();
+
+        public string DisplayName => _context.DisplayName;
+
+        public TypeInfo Classification => _context.Classification;
+
+        public object GetService(Type serviceType) => _context.GetService(serviceType);
+
+        public void Add(object service) => _context.Add(service);
+
+        public IElement Current => _context.Current;
+
+        public IReadContext Member(IElement element) => _context.Member(element);
+
+        public IEnumerable<IReadContext> Items() => _context.Items();
+
+        public string Read() => _context.Read();
+
+        public string this[IElementName name] => _context[name];
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
     public class XmlReadContext : IReadContext
     {
         private readonly IElementSelector _selector;
@@ -85,9 +127,13 @@ namespace ExtendedXmlSerialization.Conversion.Read
         {
             var name = _names.Get(element.Name);
             var native = _container.Element(name);
-            var type = (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification;
-            var result = Create(native, type);
-            return result;
+            if (native != null)
+            {
+                var type = (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification;
+                var result = Create(native, type);
+                return result;
+            }
+            return null;
         }
 
         public IEnumerable<IReadContext> Items()
@@ -122,7 +168,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IEnumerator<IReadContext> GetEnumerator()
+        public IEnumerator<IReadMemberContext> GetEnumerator()
         {
             var members = ((IMemberedElement) Current).Members;
             foreach (var source in _container.Elements())
@@ -130,7 +176,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 var member = members.Get(source.Name.LocalName);
                 if (member != null)
                 {
-                    yield return Create(source, member.DeclaredType, member.Name.DisplayName);
+                    var context = Create(source, member.DeclaredType, member.Name.DisplayName);
+                    yield return new XmlReadMemberContext(member, context);
                 }
             }
         }

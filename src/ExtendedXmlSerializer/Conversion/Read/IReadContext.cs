@@ -23,11 +23,24 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext : IEnumerable<IReadContext>, IElementName, IServiceRepository
+    public interface IReadContainerContext : IReadContext
+    {
+        IDeclaredTypeElement Container { get; }
+    }
+
+    public interface IReadContainerContext<out T> : IReadContainerContext where T : IDeclaredTypeElement
+    {
+        new T Container { get; }
+    }
+
+    public interface IReadMemberContext : IReadContainerContext<IMemberElement> {}
+
+    public interface IReadContext : IEnumerable<IReadMemberContext>, IElementName, IServiceRepository
     {
         /*IReadContext Parent { get; }*/
 
@@ -36,8 +49,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
         IReadContext Member(IElement element);
 
         IEnumerable<IReadContext> Items();
-
-        /*IEnumerable<IReadContext> ChildrenOf(IElementName name);*/
 
         string Read();
 
