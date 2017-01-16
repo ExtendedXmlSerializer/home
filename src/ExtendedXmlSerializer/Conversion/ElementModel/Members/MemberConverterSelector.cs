@@ -23,13 +23,25 @@
 
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    class MemberElementSelector : OptionSelector<MemberInformation, IMemberElement>, IMemberElementSelector
+    public class MemberConverterSelector : Selector<IMemberElement, IConverter>, IMemberConverterSelector
     {
-        public static MemberElementSelector Default { get; } = new MemberElementSelector();
-        MemberElementSelector() : this(MemberOption.Default, ReadOnlyCollectionMemberOption.Default) {}
+        public MemberConverterSelector(IConverter converter) : this(
+            new ReadOnlyCollectionMemberConverterOption(converter),
+            new MemberConverterOption(converter)
+        ) {}
 
-        public MemberElementSelector(params IOption<MemberInformation, IMemberElement>[] options) : base(options) {}
+        public MemberConverterSelector(params IOption<IMemberElement, IConverter>[] options) : base(options) {}
+
+        protected override IConverter Create(IMemberElement parameter)
+        {
+            var result = base.Create(parameter);
+            if (result == null)
+            {
+                // TODO: Warning? Throw?
+            }
+            return result;
+        }
     }
 }

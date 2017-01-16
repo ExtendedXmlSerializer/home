@@ -21,32 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public sealed class Members : IMembers
-    {
-        private readonly IImmutableList<IMemberElement> _items;
-        private readonly IDictionary<string, IMemberElement> _lookup;
-
-        public Members(IEnumerable<IMemberElement> items) : this(items.ToImmutableArray()) {}
-        public Members(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.Name.DisplayName)) {}
-
-        public Members(ImmutableArray<IMemberElement> items, IDictionary<string, IMemberElement> lookup)
-        {
-            _items = items;
-            _lookup = lookup;
-        }
-
-        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
-
-        public IEnumerator<IMemberElement> GetEnumerator() => _items.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+    public interface IMembers : IEnumerable<IMemberElement>,
+                                IParameterizedSource<string, IMemberElement> {}
 }

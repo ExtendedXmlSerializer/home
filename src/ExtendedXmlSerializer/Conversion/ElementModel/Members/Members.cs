@@ -21,35 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq.Expressions;
-using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class GetterFactory : IGetterFactory
+    public sealed class Members : IMembers
     {
-        public static GetterFactory Default { get; } = new GetterFactory();
-        GetterFactory() {}
+        private readonly IImmutableList<IMemberElement> _items;
+        private readonly IDictionary<string, IMemberElement> _lookup;
 
-        public Func<object, object> Get(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
+        public Members(IEnumerable<IMemberElement> items) : this(items.ToImmutableArray()) {}
+        public Members(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.Name.DisplayName)) {}
 
-        static Func<object, object> Get(Type type, string name)
+        public Members(ImmutableArray<IMemberElement> items, IDictionary<string, IMemberElement> lookup)
         {
-            // Object (type object) from witch the data are retrieved
-            var itemObject = Expression.Parameter(typeof(object), "item");
-
-            // Object casted to specific type using the operator "as".
-            var itemCasted = Expression.Convert(itemObject, type);
-
-            // Property from casted object
-            var property = Expression.PropertyOrField(itemCasted, name);
-
-            // Because we use this function also for value type we need to add conversion to object
-            var conversion = Expression.Convert(property, typeof(object));
-            var lambda = Expression.Lambda<Func<object, object>>(conversion, itemObject);
-            var result = lambda.Compile();
-            return result;
+            _items = items;
+            _lookup = lookup;
         }
+
+        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
+
+        public IEnumerator<IMemberElement> GetEnumerator() => _items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

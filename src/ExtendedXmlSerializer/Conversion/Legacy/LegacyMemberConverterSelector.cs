@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.ElementModel.Members;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyMemberConverterSelector : Members.MemberConverterSelector
+    class LegacyMemberConverterSelector : ElementModel.Members.MemberConverterSelector
     {
         public LegacyMemberConverterSelector(ISerializationToolsFactory tools, IConverter converter)
             : base(

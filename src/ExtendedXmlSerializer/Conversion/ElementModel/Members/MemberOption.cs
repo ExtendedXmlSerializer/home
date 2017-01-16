@@ -21,11 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public interface IMembers : IEnumerable<IMemberElement>,
-                                IParameterizedSource<string, IMemberElement> {}
+    public class MemberOption : MemberOptionBase
+    {
+        public static MemberOption Default { get; } = new MemberOption();
+        MemberOption() : this(GetterFactory.Default, SetterFactory.Default) {}
+
+        private readonly IGetterFactory _getter;
+        private readonly ISetterFactory _setter;
+
+        public MemberOption(IGetterFactory getter, ISetterFactory setter)
+            : base(new DelegatedSpecification<MemberInformation>(x => x.Assignable))
+        {
+            _getter = getter;
+            _setter = setter;
+        }
+
+        protected override IMemberElement Create(MemberInformation parameter, IElementName name)
+        {
+            var getter = _getter.Get(parameter.Metadata);
+            var setter = _setter.Get(parameter.Metadata);
+            var result = new MemberElement(name, parameter.Metadata, parameter.MemberType, setter, getter);
+            return result;
+        }
+    }
 }

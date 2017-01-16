@@ -21,33 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class MemberElement : MemberElementBase
+    public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberElement>, IMemberOption
     {
-        private readonly Action<object, object> _setter;
-        private readonly Func<object, object> _getter;
+        private readonly IElementNameProvider _provider;
 
-        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter,
-                             Func<object, object> getter)
-            : base(name, metadata, memberType)
+        protected MemberOptionBase(ISpecification<MemberInformation> specification)
+            : this(specification, MemberElementNameProvider.Default) {}
+
+        protected MemberOptionBase(ISpecification<MemberInformation> specification, IElementNameProvider provider)
+            : base(specification)
         {
-            _setter = setter;
-            _getter = getter;
+            _provider = provider;
         }
 
-        public override object Get(object instance) => _getter(instance);
+        public override IMemberElement Get(MemberInformation parameter)
+            => Create(parameter, _provider.Get(parameter.Metadata));
 
-        public override void Assign(object instance, object value)
-        {
-            if (value != null)
-            {
-                _setter(instance, value);
-            }
-        }
+        protected abstract IMemberElement Create(MemberInformation parameter, IElementName name);
     }
 }

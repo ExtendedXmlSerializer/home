@@ -21,21 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Write;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class MemberConverterOption : ConverterOptionBase<IMemberElement>
-    {
-        private readonly IConverter _converter;
-
-        public MemberConverterOption(IConverter converter)
-        {
-            _converter = converter;
-        }
-
-        protected override IConverter Create(IMemberElement parameter) =>
-            new Converter(_converter,
-                          new ValidatingAssignedWriter(new ElementWriter(parameter, _converter)));
-    }
+    public interface IElementMembers : IParameterizedSource<TypeInfo, IMembers> {}
 }

@@ -21,7 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Members
+using System.Reflection;
+
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public interface IReadOnlyCollectionMemberElement : IMemberElement {}
+    public interface IMemberElement : IDeclaredTypeElement
+    {
+        MemberInfo Metadata { get; }
+
+        object Get(object instance);
+
+        void Assign(object instance, object value);
+    }
 }

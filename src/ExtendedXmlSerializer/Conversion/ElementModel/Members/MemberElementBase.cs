@@ -21,27 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class EncryptedMemberConverter : DecoratedConverter
+    public abstract class MemberElementBase : DeclaredTypeElementBase, IMemberElement
     {
-        private readonly IPropertyEncryption _encryption;
-
-        public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
+        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType)
+            : base(name, memberType)
         {
-            _encryption = encryption;
+            Metadata = metadata;
         }
 
-        public override object Read(IReadContext context)
-        {
-            var element = context.Get<XElement>();
-            element.Value = _encryption.Decrypt(element.Value);
-            var result = base.Read(context);
-            return result;
-        }
+        public MemberInfo Metadata { get; }
+
+        public abstract object Get(object instance);
+        public abstract void Assign(object instance, object value);
     }
 }

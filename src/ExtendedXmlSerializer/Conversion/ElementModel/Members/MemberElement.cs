@@ -21,17 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public interface IMemberElement : IDeclaredTypeElement
+    public class MemberElement : MemberElementBase
     {
-        MemberInfo Metadata { get; }
+        private readonly Action<object, object> _setter;
+        private readonly Func<object, object> _getter;
 
-        object Get(object instance);
+        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter,
+                             Func<object, object> getter)
+            : base(name, metadata, memberType)
+        {
+            _setter = setter;
+            _getter = getter;
+        }
 
-        void Assign(object instance, object value);
+        public override object Get(object instance) => _getter(instance);
+
+        public override void Assign(object instance, object value)
+        {
+            if (value != null)
+            {
+                _setter(instance, value);
+            }
+        }
     }
 }

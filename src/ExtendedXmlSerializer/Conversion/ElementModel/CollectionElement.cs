@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.ElementModel
 {

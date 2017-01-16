@@ -28,7 +28,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
     public class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
     {

@@ -22,30 +22,10 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    struct Sort : IComparable<Sort>
-    {
-        public Sort(int? assigned, int value)
-        {
-            Assigned = assigned;
-            Value = value;
-        }
-
-        int? Assigned { get; }
-        int Value { get; }
-
-        public int CompareTo(Sort other)
-        {
-            var right = !other.Assigned.HasValue;
-            if (!Assigned.HasValue && right)
-            {
-                return Value.CompareTo(other.Value);
-            }
-            var compare = Assigned.GetValueOrDefault(-1).CompareTo(other.Assigned.GetValueOrDefault(-1));
-            var result = right ? -compare : compare;
-            return result;
-        }
-    }
+    public interface ISetterFactory : IParameterizedSource<MemberInfo, Action<object, object>> {}
 }

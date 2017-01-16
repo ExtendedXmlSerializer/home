@@ -21,28 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberElement>, IMemberOption
+    public class EncryptedMemberConverter : DecoratedConverter
     {
-        private readonly IElementNameProvider _provider;
+        private readonly IPropertyEncryption _encryption;
 
-        protected MemberOptionBase(ISpecification<MemberInformation> specification)
-            : this(specification, MemberElementNameProvider.Default) {}
-
-        protected MemberOptionBase(ISpecification<MemberInformation> specification, IElementNameProvider provider)
-            : base(specification)
+        public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
         {
-            _provider = provider;
+            _encryption = encryption;
         }
 
-        public override IMemberElement Get(MemberInformation parameter)
-            => Create(parameter, _provider.Get(parameter.Metadata));
-
-        protected abstract IMemberElement Create(MemberInformation parameter, IElementName name);
+        public override object Read(IReadContext context)
+        {
+            var element = context.Get<XElement>();
+            element.Value = _encryption.Decrypt(element.Value);
+            var result = base.Read(context);
+            return result;
+        }
     }
 }

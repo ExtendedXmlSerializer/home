@@ -23,7 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {

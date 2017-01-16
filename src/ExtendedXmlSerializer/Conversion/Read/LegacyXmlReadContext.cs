@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel.Members;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 LegacyElements.Default.Get(type),
 
                 // Services:
-                new ReadReferences(), Members.ElementMembers.Default, CollectionItemTypeLocator.Default,
+                new ReadReferences(), ElementMembers.Default, CollectionItemTypeLocator.Default,
                 LegacyElementTypes.Default, LegacyNamespaces.Default
             ) {}
     }

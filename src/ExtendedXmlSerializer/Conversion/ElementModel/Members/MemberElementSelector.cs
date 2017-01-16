@@ -21,27 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
+    class MemberElementSelector : OptionSelector<MemberInformation, IMemberElement>, IMemberElementSelector
     {
-        public ReadOnlyCollectionMemberElement(IElementName name, MemberInfo metadata, TypeInfo element,
-                                               Action<object, object> add, Func<object, object> getter)
-            : base(name, metadata, element, add, getter) {}
+        public static MemberElementSelector Default { get; } = new MemberElementSelector();
+        MemberElementSelector() : this(MemberOption.Default, ReadOnlyCollectionMemberOption.Default) {}
 
-        public override void Assign(object instance, object value)
-        {
-            var collection = Get(instance);
-            foreach (var element in value.AsValid<IEnumerable>())
-            {
-                base.Assign(collection, element);
-            }
-        }
+        public MemberElementSelector(params IOption<MemberInformation, IMemberElement>[] options) : base(options) {}
     }
 }

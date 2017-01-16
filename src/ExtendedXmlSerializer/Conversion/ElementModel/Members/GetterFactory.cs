@@ -21,31 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using System.Linq.Expressions;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class MemberOption : MemberOptionBase
+    public class GetterFactory : IGetterFactory
     {
-        public static MemberOption Default { get; } = new MemberOption();
-        MemberOption() : this(GetterFactory.Default, SetterFactory.Default) {}
+        public static GetterFactory Default { get; } = new GetterFactory();
+        GetterFactory() {}
 
-        private readonly IGetterFactory _getter;
-        private readonly ISetterFactory _setter;
+        public Func<object, object> Get(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
 
-        public MemberOption(IGetterFactory getter, ISetterFactory setter)
-            : base(new DelegatedSpecification<MemberInformation>(x => x.Assignable))
+        static Func<object, object> Get(Type type, string name)
         {
-            _getter = getter;
-            _setter = setter;
-        }
+            // Object (type object) from witch the data are retrieved
+            var itemObject = Expression.Parameter(typeof(object), "item");
 
-        protected override IMemberElement Create(MemberInformation parameter, IElementName name)
-        {
-            var getter = _getter.Get(parameter.Metadata);
-            var setter = _setter.Get(parameter.Metadata);
-            var result = new MemberElement(name, parameter.Metadata, parameter.MemberType, setter, getter);
+            // Object casted to specific type using the operator "as".
+            var itemCasted = Expression.Convert(itemObject, type);
+
+            // Property from casted object
+            var property = Expression.PropertyOrField(itemCasted, name);
+
+            // Because we use this function also for value type we need to add conversion to object
+            var conversion = Expression.Convert(property, typeof(object));
+            var lambda = Expression.Lambda<Func<object, object>>(conversion, itemObject);
+            var result = lambda.Compile();
             return result;
         }
     }

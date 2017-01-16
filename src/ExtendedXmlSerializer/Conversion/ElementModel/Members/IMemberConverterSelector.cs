@@ -21,21 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class ReadOnlyCollectionMemberConverterOption : ConverterOptionBase<IReadOnlyCollectionMemberElement>
-    {
-        private readonly IConverter _converter;
-
-        public ReadOnlyCollectionMemberConverterOption(IConverter converter)
-        {
-            _converter = converter;
-        }
-
-        protected override IConverter Create(IReadOnlyCollectionMemberElement parameter)
-            => new Converter(new EnumeratingReader(_converter), new ElementWriter(parameter, _converter));
-    }
+    public interface IMemberConverterSelector : ISelector<IMemberElement, IConverter> {}
 }

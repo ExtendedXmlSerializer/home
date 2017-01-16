@@ -21,27 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public class MemberConverterSelector : Selector<IMemberElement, IConverter>, IMemberConverterSelector
-    {
-        public MemberConverterSelector(IConverter converter) : this(
-            new ReadOnlyCollectionMemberConverterOption(converter),
-            new MemberConverterOption(converter)
-        ) {}
-
-        public MemberConverterSelector(params IOption<IMemberElement, IConverter>[] options) : base(options) {}
-
-        protected override IConverter Create(IMemberElement parameter)
-        {
-            var result = base.Create(parameter);
-            if (result == null)
-            {
-                // TODO: Warning? Throw?
-            }
-            return result;
-        }
-    }
+    public interface IReadOnlyCollectionMemberElement : IMemberElement {}
 }

@@ -25,7 +25,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
     class SetterFactory : ISetterFactory
     {

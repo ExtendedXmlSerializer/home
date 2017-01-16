@@ -21,9 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public interface IMemberOption : IOption<MemberInformation, IMemberElement> {}
+    struct Sort : IComparable<Sort>
+    {
+        public Sort(int? assigned, int value)
+        {
+            Assigned = assigned;
+            Value = value;
+        }
+
+        int? Assigned { get; }
+        int Value { get; }
+
+        public int CompareTo(Sort other)
+        {
+            var right = !other.Assigned.HasValue;
+            if (!Assigned.HasValue && right)
+            {
+                return Value.CompareTo(other.Value);
+            }
+            var compare = Assigned.GetValueOrDefault(-1).CompareTo(other.Assigned.GetValueOrDefault(-1));
+            var result = right ? -compare : compare;
+            return result;
+        }
+    }
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.ElementModel.Members
 {
-    public struct MemberInformation
-    {
-        public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
-        {
-            Metadata = metadata;
-            MemberType = memberType;
-            Assignable = assignable;
-        }
-
-        public MemberInfo Metadata { get; }
-        public TypeInfo MemberType { get; }
-        public bool Assignable { get; }
-    }
+    public interface IMemberElementSelector : ISelector<MemberInformation, IMemberElement> {}
 }
