@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            var declaredType = context.Element.EffectiveType();
+            var declaredType = context.Classification;
             var primitive = declaredType.IsPrimitive || declaredType.IsValueType ||
                             Equals(declaredType, TypeString);
             var result = Equals(declaredType, TypeObject) ||

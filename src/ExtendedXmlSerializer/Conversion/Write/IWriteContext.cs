@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public interface IWriteContext : IServiceProvider, IDisposable
+    public interface IWriteContext : IServiceProvider, IElementName, IDisposable
     {
         IWriteContext Start(IElement element);
 

@@ -46,14 +46,25 @@ namespace ExtendedXmlSerialization.Conversion.Write
         protected XmlWriteContext(IElementSelector selector, INamespaces namespaces, XmlWriter writer,
                                   params object[] services)
             : this(
-                null, selector, namespaces, writer, null, services.ToImmutableArray(),
+                null, null, null, selector, namespaces, writer, null, services.ToImmutableArray(),
                 new DelegatedDisposable(writer.WriteEndElement)) {}
 
-        XmlWriteContext(IWriteContext parent, IElementSelector selector, INamespaces namespaces, XmlWriter writer,
+        private XmlWriteContext(IWriteContext parent, IElementSelector selector, INamespaces namespaces,
+                                XmlWriter writer, IElement element, ImmutableArray<object> services, IDisposable finish,
+                                IDisposable disposable = null)
+            : this(
+                parent, element.Name.DisplayName,
+                (element as IDeclaredTypeElement)?.DeclaredType ?? element.Name.Classification, selector, namespaces,
+                writer, element, services, finish, disposable) {}
+
+        XmlWriteContext(IWriteContext parent, string displayName, TypeInfo effectiveType, IElementSelector selector,
+                        INamespaces namespaces, XmlWriter writer,
                         IElement element, ImmutableArray<object> services, IDisposable finish,
                         IDisposable disposable = null)
         {
             Parent = parent;
+            DisplayName = displayName;
+            Classification = effectiveType;
             Element = element;
             _selector = selector;
             _namespaces = namespaces;
@@ -64,6 +75,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
         }
 
         public IWriteContext Parent { get; }
+        public string DisplayName { get; }
+        public TypeInfo Classification { get; }
         public IElement Element { get; }
 
         public object GetService(Type serviceType)
@@ -83,12 +96,15 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
         public IWriteContext Start(IElement element)
         {
-            var ns = _namespaces.Get(element.EffectiveType());
-            _writer.WriteStartElement(element.Name.DisplayName, ns);
-
-            var context = new XmlWriteContext(this, _selector, _namespaces, _writer, element, _services, _finish,
-                                              _finish);
             var declared = element as IDeclaredTypeElement;
+            var effective = declared?.DeclaredType ?? element.Name.Classification;
+            var name = element.Name.DisplayName;
+            var ns = _namespaces.Get(effective);
+            _writer.WriteStartElement(name, ns);
+
+            var context = new XmlWriteContext(this, name, effective, _selector, _namespaces, _writer, element, _services,
+                                              _finish,
+                                              _finish);
             var result = declared != null
                 ? new XmlWriteContext(context, _selector, _namespaces, _writer, _selector.Get(declared.DeclaredType),
                                       _services, _finish, context)

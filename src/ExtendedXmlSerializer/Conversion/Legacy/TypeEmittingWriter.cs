@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             if (!(parent is IMemberElement))
             {
                 var declared = (parent as ICollectionElement)?.Item.DeclaredType ??
-                               (parent as IDeclaredTypeElement)?.EffectiveType();
+                               context.Classification;
                 var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
                 return result;
             }

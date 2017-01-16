@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public override void Write(IWriteContext context, object instance)
         {
             var type = instance.GetType().GetTypeInfo();
-            var element = Equals(type, context.Element.EffectiveType()) ? context.Element : _elements.Get(type);
+            var element = Equals(type, context.Classification) ? context.Element : _elements.Get(type);
             var members = ((IMemberedElement) element).Members;
             foreach (var member in members)
             {
