@@ -23,19 +23,20 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyAdditionalTypeConverters : ITypeConverters
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly ITypes _types;
 
-        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools) : this(tools, Types.Default) {}
+        public LegacyAdditionalTypeConverters(ExtendedXmlSerializerConfig config) : this(config, Types.Default) {}
 
-        public LegacyAdditionalTypeConverters(ISerializationToolsFactory tools, ITypes types)
+        public LegacyAdditionalTypeConverters(ExtendedXmlSerializerConfig config, ITypes types)
         {
-            _tools = tools;
+            _config = config;
             _types = types;
         }
 
@@ -44,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             yield return new LegacyDictionaryTypeConverter(_types, parameter);
             yield return new ArrayTypeConverter(_types, parameter);
             yield return new LegacyEnumerableTypeConverter(_types, parameter);
-            yield return new LegacyInstanceTypeConverter(_tools, _types, parameter);
+            yield return new LegacyInstanceTypeConverter(_config, _types, parameter);
         }
     }
 }

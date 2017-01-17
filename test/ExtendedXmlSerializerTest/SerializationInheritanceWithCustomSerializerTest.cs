@@ -30,15 +30,12 @@ namespace ExtendedXmlSerialization.Test
     {
         public SerializationInheritanceWithCustomSerializerTest()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                Configurations = new List<IExtendedXmlSerializerConfig>
-                {
-                    new TestClassInheritanceWithCustomSerializerBaseConfig(),
-                    new TestClassInheritanceWithCustomSerializerAConfig(),
-                    new TestClassInheritanceWithCustomSerializerBConfig()
-                }
-            };
+                cfg.ConfigType<TestClassInheritanceWithCustomSerializerBase>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBaseConfig());
+                cfg.ConfigType<TestClassInheritanceWithCustomSerializerA>().CustomSerializer(new TestClassInheritanceWithCustomSerializerAConfig());
+                cfg.ConfigType<TestClassInheritanceWithCustomSerializerB>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBConfig());
+            });
         }
 
         [Fact]

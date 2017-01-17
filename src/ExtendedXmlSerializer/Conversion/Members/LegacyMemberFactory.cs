@@ -23,17 +23,18 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     class LegacyMemberFactory : IMemberFactory
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly IMemberFactory _factory;
 
-        public LegacyMemberFactory(ISerializationToolsFactory tools, IMemberFactory factory)
+        public LegacyMemberFactory(ExtendedXmlSerializerConfig config, IMemberFactory factory)
         {
-            _tools = tools;
+            _config = config;
             _factory = factory;
         }
 
@@ -43,17 +44,16 @@ namespace ExtendedXmlSerialization.Conversion.Members
             var assignableMember = result as IAssignableMember;
             if (assignableMember != null)
             {
-                var configuration = _tools.GetConfiguration(metadata.DeclaringType);
-                if (configuration != null)
+                var configuration = _config.GetTypeConfig(metadata.DeclaringType);
+
+                var propertyConfig = configuration?.GetPropertyConfig(metadata.Name);
+                if (propertyConfig != null && propertyConfig.IsEncrypt)
                 {
-                    if (configuration.CheckPropertyEncryption(metadata.Name))
+                    var algorithm = _config.EncryptionAlgorithm;
+                    if (algorithm != null)
                     {
-                        var algorithm = _tools.EncryptionAlgorithm;
-                        if (algorithm != null)
-                        {
-                            return new EncryptedMember(algorithm, assignableMember);
-                            // value = algorithm.Decrypt(value);
-                        }
+                        return new EncryptedMember(algorithm, assignableMember);
+                        // value = algorithm.Decrypt(value);
                     }
                 }
             }

@@ -23,8 +23,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
-using ExtendedXmlSerialization.Autofac;
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {
@@ -33,26 +31,28 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
         public static void RunSimpleConfig()
         {
             Program.PrintHeader("Serialization reference object");
-            var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.Configurations.Add(new PersonConfig());
-            toolsFactory.EncryptionAlgorithm = new Base64PropertyEncryption(); 
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
+            
+            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(cfg =>
+            {
+                cfg.ConfigType<Person>().Property(p => p.Password).Encrypt();
+                cfg.EncryptionAlgorithm = new Base64PropertyEncryption();
+            });
 
             Run(serializer);
         }
-        public static void RunAutofacConfig()
-        {
-            Program.PrintHeader("Serialization reference object - autofac config");
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
-            builder.RegisterType<Base64PropertyEncryption>().As<IPropertyEncryption>().SingleInstance();
-            var containter = builder.Build();
-
-            var serializer = containter.Resolve<IExtendedXmlSerializer>();
-            Run(serializer);
-        }
+//        public static void RunAutofacConfig()
+//        {
+//            Program.PrintHeader("Serialization reference object - autofac config");
+//
+//            var builder = new ContainerBuilder();
+//            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
+//            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
+//            builder.RegisterType<Base64PropertyEncryption>().As<IPropertyEncryption>().SingleInstance();
+//            var containter = builder.Build();
+//
+//            var serializer = containter.Resolve<IExtendedXmlSerializer>();
+//            Run(serializer);
+//        }
 
         private static void Run(IExtendedXmlSerializer serializer)
         {

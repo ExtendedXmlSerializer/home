@@ -27,31 +27,31 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>
-    {
-        public TestClassWithSerializerConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
-
-        public TestClassWithSerializer Deserialize(XElement element)
-        {
-            var xElement = element.Element("String");
-            var xElement1 = element.Element("Int");
-            if (xElement != null && xElement1 != null)
-            {
-                string strValue = xElement.Value;
-
-                int intValue = Convert.ToInt32(xElement1.Value);
-                return new TestClassWithSerializer(strValue, intValue);
-            }
-            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
-        }
-
-        public void Serializer(XmlWriter writer, TestClassWithSerializer obj)
-        {
-            writer.WriteElementString("String", obj.PropStr);
-            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
-        }
-    }
+//    public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>
+//    {
+//        public TestClassWithSerializerConfig()
+//        {
+//            CustomSerializer(Serializer, XmlDeserialize);
+//        }
+//
+//        public TestClassWithSerializer XmlDeserialize(XElement element)
+//        {
+//            var xElement = element.Element("String");
+//            var xElement1 = element.Element("Int");
+//            if (xElement != null && xElement1 != null)
+//            {
+//                string strValue = xElement.Value;
+//
+//                int intValue = Convert.ToInt32(xElement1.Value);
+//                return new TestClassWithSerializer(strValue, intValue);
+//            }
+//            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+//        }
+//
+//        public void Serializer(XmlWriter writer, TestClassWithSerializer obj)
+//        {
+//            writer.WriteElementString("String", obj.PropStr);
+//            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+//        }
+//    }
 }

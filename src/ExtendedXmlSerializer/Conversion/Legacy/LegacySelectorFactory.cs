@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.NewConfiguration;
+
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacySelectorFactory : AlteredSelectorFactory
     {
-        public LegacySelectorFactory(ISerializationToolsFactory tools)
-            : base(new SelectorFactory(LegacyPrimitives.Default, new LegacyAdditionalTypeConverters(tools)),
+        public LegacySelectorFactory(ExtendedXmlSerializerConfig config)
+            : base(new SelectorFactory(LegacyPrimitives.Default, new LegacyAdditionalTypeConverters(config)),
                    NullableSelectorAlteration.Default) {}
     }
 }

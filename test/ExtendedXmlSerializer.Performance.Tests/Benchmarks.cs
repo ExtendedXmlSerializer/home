@@ -53,7 +53,8 @@ namespace ExtendedXmlSerialization.Performance.Tests
     {
         private readonly TestClassOtherClass _obj = new TestClassOtherClass();
         private readonly string _xml;
-        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer(new SimpleSerializationToolsFactory());
+        //TODO for Michael DeMond I don't know if it is version 1 or 2 ?
+        private readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 
         public ExtendedXmlSerializerV2Test()
         {

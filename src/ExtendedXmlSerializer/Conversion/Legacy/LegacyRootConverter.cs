@@ -25,21 +25,22 @@ using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyRootConverter : DecoratedConverter
     {
-        private readonly ISerializationToolsFactory _factory;
+        private readonly ExtendedXmlSerializerConfig _config;
 
-        public LegacyRootConverter(ISerializationToolsFactory factory, IConverter converter) : base(converter)
+        public LegacyRootConverter(ExtendedXmlSerializerConfig config, IConverter converter) : base(converter)
         {
-            _factory = factory;
+            _config = config;
         }
 
         public override void Write(XmlWriter writer, object instance)
         {
-            var configuration = _factory.GetConfiguration(instance.GetType());
+            var configuration = _config.GetTypeConfig(instance.GetType());
             if (configuration != null)
             {
                 if (configuration.Version > 0)
@@ -60,7 +61,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
 
         public override object Read(XElement element, Typed? hint = null)
         {
-            var configuration = _factory.GetConfiguration(hint);
+            var configuration = _config.GetTypeConfig(hint);
             if (configuration != null)
             {
                 // Run migrator if exists

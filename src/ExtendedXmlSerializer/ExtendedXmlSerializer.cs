@@ -24,9 +24,9 @@
 using System;
 using System.IO;
 using System.Text;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization
 {
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        private ISerializationToolsFactory _serializationToolsFactory;
+        private ExtendedXmlSerializerConfig config = new ExtendedXmlSerializerConfig();
         public const string Type = "type";
         public const string Ref = "ref";
         public const string Version = "ver";
@@ -47,23 +47,13 @@ namespace ExtendedXmlSerialization
 
         public ExtendedXmlSerializer() : this(null) {}
 
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
+        public ExtendedXmlSerializer(Action<ExtendedXmlSerializerConfig> config)
         {
-            SerializationToolsFactory = toolsFactory;
+            config?.Invoke(this.config);
+            //TODO for Michael DeMond connect to new serializer (andremove old?)
+            Serializer = this.config != null ? new LegacySerializer(this.config) : Conversion.Write.Serializer.Default;
         }
 
-        /// <summary>
-        /// Gets or sets <see cref="ISerializationToolsFactory"/>
-        /// </summary>
-        public ISerializationToolsFactory SerializationToolsFactory
-        {
-            get { return _serializationToolsFactory; }
-            set
-            {
-                _serializationToolsFactory = value;
-                Serializer = value != null ? new LegacySerializer(_serializationToolsFactory) : Conversion.Write.Serializer.Default;
-            }
-        }
 
         private ISerializer Serializer { get; set; } = Conversion.Write.Serializer.Default;
 
@@ -91,7 +81,7 @@ namespace ExtendedXmlSerialization
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
         {
-            var deserializer = new LegacyDeserializer(SerializationToolsFactory ?? Defaults.Tools, type);
+            var deserializer = new LegacyDeserializer(config, type);
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
             {
                 var result = deserializer.Deserialize(stream);

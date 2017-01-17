@@ -26,6 +26,7 @@ using System.IO;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Legacy;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -34,8 +35,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly Typed? _type;
         private readonly IReader _reader;
 
-        public LegacyDeserializer(ISerializationToolsFactory tools, Type type)
-            : this(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools), type) {}
+        public LegacyDeserializer(ExtendedXmlSerializerConfig config, Type type)
+            : this(new LegacyRootConverters(new LegacySelectorFactory(config)).Get(config), type) {}
 
         public LegacyDeserializer(IReader reader, Typed? type = null)
         {
@@ -56,7 +57,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         private readonly IDeserializer _deserializer;
 
-        public LegacyDeserializer(ISerializationToolsFactory tools) : this(new LegacyDeserializer(tools, typeof(T))) {}
+        public LegacyDeserializer(ExtendedXmlSerializerConfig config) : this(new LegacyDeserializer(config, typeof(T))) {}
 
         public LegacyDeserializer(IDeserializer deserializer)
         {

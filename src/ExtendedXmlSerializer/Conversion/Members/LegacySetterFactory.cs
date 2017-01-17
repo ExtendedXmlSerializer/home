@@ -23,35 +23,35 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
     class LegacySetterFactory : ISetterFactory
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly ISetterFactory _factory;
 
-        public LegacySetterFactory(ISerializationToolsFactory tools, ISetterFactory factory)
+        public LegacySetterFactory(ExtendedXmlSerializerConfig config, ISetterFactory factory)
         {
-            _tools = tools;
+            _config = config;
             _factory = factory;
         }
 
         public Action<object, object> Get(MemberInfo parameter)
         {
             var result = _factory.Get(parameter);
-            var configuration = _tools.GetConfiguration(parameter.DeclaringType);
-            if (configuration != null)
+            var configuration = _config.GetTypeConfig(parameter.DeclaringType);
+            var propertyConfig = configuration?.GetPropertyConfig(parameter.Name);
+            if (propertyConfig != null && propertyConfig.IsEncrypt)
             {
-                if (configuration.CheckPropertyEncryption(parameter.Name))
+                var algorithm = _config.EncryptionAlgorithm;
+                if (algorithm != null)
                 {
-                    var algorithm = _tools.EncryptionAlgorithm;
-                    if (algorithm != null)
-                    {
-                        return new Decrypt(algorithm, result).Assign;
-                    }
+                    return new Decrypt(algorithm, result).Assign;
                 }
             }
+
             return result;
         }
 

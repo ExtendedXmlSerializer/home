@@ -27,23 +27,24 @@ using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyInstanceTypeConverter : TypeConverter
     {
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ITypes types, IConverter converter)
-            : this(tools, IsActivatedTypeSpecification.Default, types, converter) {}
+        public LegacyInstanceTypeConverter(ExtendedXmlSerializerConfig config, ITypes types, IConverter converter)
+            : this(config, IsActivatedTypeSpecification.Default, types, converter) {}
 
-        protected LegacyInstanceTypeConverter(ISerializationToolsFactory tools, ISpecification<TypeInfo> specification,
+        protected LegacyInstanceTypeConverter(ExtendedXmlSerializerConfig config, ISpecification<TypeInfo> specification,
                                               ITypes types,
                                               IConverter converter)
             : this(
                 specification,
-                new InstanceMembers(new LegacyMemberFactory(tools,
+                new InstanceMembers(new LegacyMemberFactory(config,
                                                             new MemberFactory(converter,
                                                                               new EnumeratingReader(types, converter),
-                                                                              new LegacyGetterFactory(tools,
+                                                                              new LegacyGetterFactory(config,
                                                                                                       GetterFactory
                                                                                                           .Default)))),
                 types,

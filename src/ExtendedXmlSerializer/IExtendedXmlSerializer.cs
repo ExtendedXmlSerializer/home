@@ -52,10 +52,5 @@ namespace ExtendedXmlSerialization
         /// <param name="xml">The XML document</param>
         /// <returns>deserialized object</returns>
         T Deserialize<T>(string xml);
-
-        /// <summary>
-        /// Gets or sets <see cref="ISerializationToolsFactory"/>
-        /// </summary>
-        ISerializationToolsFactory SerializationToolsFactory { get; set; }
     }
 }

@@ -24,27 +24,28 @@
 using System.Xml;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class CustomElementWriter : ElementWriter
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
-            : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(configuration))) {}
+        public CustomElementWriter(IExtendedXmlSerializerConfigType typeConfig)
+            : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(typeConfig))) {}
 
         public CustomElementWriter(INames names, IWriter writer) : base(names.Get, writer) {}
 
         sealed class CustomElementBodyWriter : WriterBase
         {
-            private readonly IExtendedXmlSerializerConfig _configuration;
+            private readonly IExtendedXmlSerializerConfigType _typeConfig;
 
-            public CustomElementBodyWriter(IExtendedXmlSerializerConfig configuration)
+            public CustomElementBodyWriter(IExtendedXmlSerializerConfigType typeConfig)
             {
-                _configuration = configuration;
+                _typeConfig = typeConfig;
             }
 
             public override void Write(XmlWriter writer, object instance)
-                => _configuration.WriteObject(writer, instance);
+                => _typeConfig.WriteObject(writer, instance);
         }
     }
 }

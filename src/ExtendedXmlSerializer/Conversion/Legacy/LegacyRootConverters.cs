@@ -24,14 +24,15 @@
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyRootConverters : RootConverters<ISerializationToolsFactory>
+    class LegacyRootConverters : RootConverters<ExtendedXmlSerializerConfig>
     {
         public LegacyRootConverters(ISelectorFactory factory) : base(Types.Default, factory) {}
 
-        protected override IConverter Create(ISerializationToolsFactory parameter)
+        protected override IConverter Create(ExtendedXmlSerializerConfig parameter)
         {
             var converter = base.Create(parameter);
             var root = new Converter(new RootReader(converter), new RootWriter(converter));

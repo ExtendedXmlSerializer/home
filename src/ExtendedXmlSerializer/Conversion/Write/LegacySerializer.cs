@@ -21,13 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerialization.Conversion.Legacy;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     class LegacySerializer : Serializer
     {
-        public LegacySerializer(ISerializationToolsFactory tools)
-            : base(new LegacyRootConverters(new LegacySelectorFactory(tools)).Get(tools)) {}
+        public LegacySerializer(ExtendedXmlSerializerConfig config)
+            : base(new LegacyRootConverters(new LegacySelectorFactory(config)).Get(config)) {}
     }
 }
