@@ -21,10 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -33,20 +31,19 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(ITypes types, IReader reader)
-            : this(types, reader, Activators.Default, AddDelegates.Default) {}
+        public ListReader(IReader reader) : this(reader, Activators.Default, AddDelegates.Default) {}
 
-        public ListReader(ITypes types, IReader reader, IActivators activators, IAddDelegates add)
-            : base(types, reader)
+        public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
         {
             _activators = activators;
             _add = add;
         }
 
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        protected override object Create(IReadContext context, IEnumerable enumerable)
         {
-            var result = _activators.Activate<object>(new Typed(listType));
-            var list = result as IList ?? new ListAdapter(result, _add.Get(listType));
+            var type = context.Current.EffectiveType();
+            var result = _activators.Activate<object>(type.AsType());
+            var list = result as IList ?? new ListAdapter(result, _add.Get(type));
             foreach (var item in enumerable)
             {
                 list.Add(item);

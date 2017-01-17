@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using ExtendedXmlSerialization.Conversion.TypeModel;
 
@@ -29,9 +28,16 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class ArrayReader : ListReaderBase
     {
-        public ArrayReader(ITypes types, IReader reader) : base(types, reader) {}
+        private readonly ICollectionItemTypeLocator _locator;
 
-        protected override object Create(Type listType, IEnumerable enumerable, Type elementType)
+        public ArrayReader(IReader reader) : this(CollectionItemTypeLocator.Default, reader) {}
+
+        public ArrayReader(ICollectionItemTypeLocator locator, IReader reader) : base(reader)
+        {
+            _locator = locator;
+        }
+
+        protected override object Create(IReadContext context, IEnumerable enumerable)
         {
             var list = new ArrayList();
             foreach (var item in enumerable)
@@ -39,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var result = list.ToArray(elementType);
+            var result = list.ToArray(_locator.Get(context.Current.Name.Classification).AsType());
             return result;
         }
     }

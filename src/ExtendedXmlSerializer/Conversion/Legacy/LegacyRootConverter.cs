@@ -21,53 +21,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Globalization;
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class LegacyRootConverter : DecoratedConverter
+    sealed class LegacyRootConverter : RootConverter
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly ISerializationToolsFactory _tools;
 
-        public LegacyRootConverter(ExtendedXmlSerializerConfig config, IConverter converter) : base(converter)
+        public LegacyRootConverter(ISerializationToolsFactory tools)
+            : this(tools, LegacyElementsTooling.Default.Get(tools)) {}
+
+        LegacyRootConverter(ISerializationToolsFactory tools, IElementSelector elements)
+            : this(
+                elements, tools,
+                new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools, elements)))) {}
+
+        LegacyRootConverter(IElementSelector elements, ISerializationToolsFactory tools, IRootSelector selector)
+            : base(elements, selector, new SelectingConverter(new NullableAwareSelector(selector)))
         {
-            _config = config;
+            _tools = tools;
         }
 
-        public override void Write(XmlWriter writer, object instance)
+        public override void Write(IWriteContext context, object instance)
         {
-            var configuration = _config.GetTypeConfig(instance.GetType());
+            var type = instance.GetType();
+            var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {
-                if (configuration.Version > 0)
-                {
-                    writer.WriteAttributeString(ExtendedXmlSerializer.Version,
-                                                configuration.Version.ToString(CultureInfo.InvariantCulture));
-                }
-
                 if (configuration.IsCustomSerializer)
                 {
-                    new CustomElementWriter(configuration).Write(writer, instance);
+                    new CustomElementWriter(configuration).Write(context, instance);
                     return;
                 }
             }
 
-            base.Write(writer, instance);
+            base.Write(context, instance);
         }
 
-        public override object Read(XElement element, Typed? hint = null)
+        public override object Read(IReadContext context)
         {
-            var configuration = _config.GetTypeConfig(hint);
+            var type = context.Current.Name.Classification.AsType();
+            var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {
+                var element = context.Get<XElement>();
                 // Run migrator if exists
                 if (configuration.Version > 0)
                 {
-                    configuration.Map(hint, element);
+                    configuration.Map(type, element);
                 }
 
                 if (configuration.IsCustomSerializer)
@@ -75,8 +81,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
                     return configuration.ReadObject(element);
                 }
             }
-
-            return base.Read(element, hint);
+            return base.Read(context);
         }
     }
 }

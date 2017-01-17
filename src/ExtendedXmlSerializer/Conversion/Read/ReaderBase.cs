@@ -21,20 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
-
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public abstract class ReaderBase : IReader
     {
-        public abstract object Read(XElement element, Typed? hint = null);
+        public abstract object Read(IReadContext context);
     }
 
     public abstract class ReaderBase<T> : IReader<T>
     {
-        object IReader.Read(XElement element, Typed? hint) => Read(element, hint);
+        object IReader.Read(IReadContext context) => Read(context);
 
-        public abstract T Read(XElement element, Typed? hint = null);
+        public abstract T Read(IReadContext context);
     }
 }

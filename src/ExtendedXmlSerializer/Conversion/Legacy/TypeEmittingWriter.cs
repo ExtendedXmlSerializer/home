@@ -21,45 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections;
 using System.Reflection;
-using System.Xml;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class TypeEmittingWriter : DecoratedWriter
+    class TypeEmittingWriter : TypeEmittingWriterBase
     {
-        readonly private static ISpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
+        public TypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        private readonly ISpecification<TypeInfo> _specification;
-
-        public TypeEmittingWriter(IWriter writer) : this(Specification, writer) {}
-
-        public TypeEmittingWriter(ISpecification<TypeInfo> specification, IWriter writer) : base(writer)
+        protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            _specification = specification;
-        }
-
-        public override void Write(XmlWriter writer, object instance)
-        {
-            var type = new Typed(instance.GetType());
-            var tracker = Tracker.Default.Get(writer);
-            if (_specification.IsSatisfiedBy(type) && tracker.Add(instance))
+            var parent = context.Parent?.Element;
+            if (!(parent is IMemberElement))
             {
-                writer.WriteAttributeString(ExtendedXmlSerializer.Type,
-                                            LegacyTypeFormatter.Default.Format(type));
+                var declared = (parent as ICollectionElement)?.Item.DeclaredType ??
+                               (parent as IDeclaredTypeElement)?.EffectiveType();
+                var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
+                return result;
             }
-
-            base.Write(writer, instance);
+            return false;
         }
 
-        sealed class Tracker : WeakCache<XmlWriter, HashSet<object>>
-        {
-            public static Tracker Default { get; } = new Tracker();
-            Tracker() : base(_ => new HashSet<object>()) {}
-        }
+        protected virtual bool CheckInstance(IWriteContext context, object instance) => !(instance is IEnumerable);
     }
 }

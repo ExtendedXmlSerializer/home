@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Core
 {
     public sealed class AllInterfaces
     {
-        readonly Func<Type, IEnumerable<Type>> _selector;
+        readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
         public static AllInterfaces Instance { get; } = new AllInterfaces();
 
@@ -39,10 +39,10 @@ namespace ExtendedXmlSerialization.Core
             _selector = Yield;
         }
 
-        public IEnumerable<Type> Yield(Type parameter) =>
+        public IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
             new[] {parameter}
-                .Concat(parameter.GetTypeInfo().ImplementedInterfaces.SelectMany(_selector))
-                .Where(x => x.GetTypeInfo().IsInterface)
+                .Concat(parameter.ImplementedInterfaces.Select(x => x.GetTypeInfo()).SelectMany(_selector))
+                .Where(x => x.IsInterface)
                 .Distinct();
     }
 }

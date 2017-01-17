@@ -25,31 +25,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    sealed class Members : IMembers
+    public sealed class Members : IMembers
     {
-        private readonly ImmutableArray<IMember> _items;
-        private readonly IDictionary<XName, IMember> _lookup;
+        private readonly IImmutableList<IMemberElement> _items;
+        private readonly IDictionary<string, IMemberElement> _lookup;
 
-        public Members(IEnumerable<IMember> items) : this(items.ToImmutableArray()) {}
-        public Members(ImmutableArray<IMember> items) : this(items, items.ToDictionary(x => x.Name)) {}
+        public Members(IEnumerable<IMemberElement> items) : this(items.ToImmutableArray()) {}
+        public Members(ImmutableArray<IMemberElement> items) : this(items, items.ToDictionary(x => x.Name.DisplayName)) {}
 
-        public Members(ImmutableArray<IMember> items, IDictionary<XName, IMember> lookup)
+        public Members(ImmutableArray<IMemberElement> items, IDictionary<string, IMemberElement> lookup)
         {
             _items = items;
             _lookup = lookup;
         }
 
-        public IMember Get(XName parameter)
-        {
-            IMember result;
-            return _lookup.TryGetValue(parameter, out result) ? result : null;
-        }
+        public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
 
-        public IEnumerator<IMember> GetEnumerator() => ((IEnumerable<IMember>) _items).GetEnumerator();
+        public IEnumerator<IMemberElement> GetEnumerator() => _items.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
@@ -30,7 +29,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public ValueValidatingReader(IReader reader) : base(reader) {}
 
-        public override object Read(XElement element, Typed? hint = null) =>
-            element.Value.NullIfEmpty() != null ? base.Read(element, hint) : null;
+        public override object Read(IReadContext context) =>
+            context.Read().NullIfEmpty() != null ? base.Read(context) : null;
     }
 }

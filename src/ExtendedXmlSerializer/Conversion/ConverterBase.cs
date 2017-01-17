@@ -21,15 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public abstract class ConverterBase : IConverter
     {
-        public abstract void Write(XmlWriter writer, object instance);
-        public abstract object Read(XElement element, Typed? hint = null);
+        public abstract void Write(IWriteContext context, object instance);
+        public abstract object Read(IReadContext context);
     }
 }

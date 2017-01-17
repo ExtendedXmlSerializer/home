@@ -22,24 +22,15 @@
 // SOFTWARE.
 
 using System;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    sealed class EnumReader : ReaderBase
+    class EnumReader : ReaderBase
     {
         public static EnumReader Default { get; } = new EnumReader();
         EnumReader() {}
 
-        public override object Read(XElement element, Typed? hint = null)
-        {
-            if (hint.HasValue)
-            {
-                return Enum.Parse(hint, element.Value);
-            }
-            throw new InvalidOperationException(
-                $"An attempt was made to read element as an enumeration, but no type was specified.");
-        }
+        public override object Read(IReadContext context)
+            => Enum.Parse(context.Current.EffectiveType().AsType(), context.Read());
     }
 }

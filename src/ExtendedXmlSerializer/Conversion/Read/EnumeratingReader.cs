@@ -22,32 +22,23 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
-        private readonly ITypes _types;
         private readonly IReader _reader;
 
-        public EnumeratingReader(ITypes types, IReader reader)
+        public EnumeratingReader(IReader reader)
         {
-            _types = types;
             _reader = reader;
         }
 
-        public override IEnumerable Read(XElement element, Typed? hint = null)
+        public override IEnumerable Read(IReadContext context)
         {
-            var elementType = hint.GetValueOrDefault().Info;
-            foreach (var child in element.Elements())
+            foreach (var child in context.Items())
             {
-                var itemType = _types.Get(child)?.GetTypeInfo() ?? elementType;
-                var item = _reader.Read(child, itemType);
-                yield return item;
+                yield return _reader.Read(child);
             }
         }
     }

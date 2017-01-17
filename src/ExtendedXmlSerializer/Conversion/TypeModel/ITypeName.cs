@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.TypeModel
 {
-    public interface ITypeName : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, XName> {}
+    public interface ITypeName : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, IElement> {}
 }

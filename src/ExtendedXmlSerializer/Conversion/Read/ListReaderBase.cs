@@ -21,39 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public abstract class ListReaderBase : ReaderBase
     {
-        private readonly ITypes _types;
         private readonly IEnumeratingReader _reader;
-        private readonly IElementTypeLocator _locator;
 
-        protected ListReaderBase(ITypes types, IReader reader)
-            : this(types, new EnumeratingReader(types, reader), ElementTypeLocator.Default) {}
+        protected ListReaderBase(IReader reader) : this(new EnumeratingReader(reader)) {}
 
-        protected ListReaderBase(ITypes types, IEnumeratingReader reader, IElementTypeLocator locator)
+        protected ListReaderBase(IEnumeratingReader reader)
         {
-            _types = types;
             _reader = reader;
-            _locator = locator;
         }
 
-        public sealed override object Read(XElement element, Typed? hint = null)
+        public sealed override object Read(IReadContext context)
         {
-            var type = hint ?? _types.Get(element);
-            var elementType = _locator.Locate(type);
-            var enumerable = _reader.Read(element, elementType);
-            var result = Create(type, enumerable, elementType);
+            var enumerable = _reader.Read(context);
+            var result = Create(context, enumerable);
             return result;
         }
 
-        protected abstract object Create(Type listType, IEnumerable enumerable, Type elementType);
+        protected abstract object Create(IReadContext context, IEnumerable enumerable);
     }
 }

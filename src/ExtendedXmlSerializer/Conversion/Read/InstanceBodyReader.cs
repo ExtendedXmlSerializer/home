@@ -21,60 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     class InstanceBodyReader : ReaderBase
     {
-        private readonly IInstanceMembers _members;
-        private readonly ITypes _types;
+        private readonly IMemberConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IInstanceMembers members, ITypes types, IActivators activators)
+        public InstanceBodyReader(IMemberConverterSelector selector) : this(selector, Activators.Default) {}
+
+        public InstanceBodyReader(IMemberConverterSelector selector, IActivators activators)
         {
-            _members = members;
-            _types = types;
+            _selector = selector;
             _activators = activators;
         }
 
-        public override object Read(XElement element, Typed? hint = null)
+        public override object Read(IReadContext context)
         {
-            var type = hint ?? _types.Get(element);
-            var result = type.HasValue ? Create(element, type.Value) : null;
-            return result;
-        }
-
-        protected virtual object Create(XElement element, Typed type)
-        {
-            var result = _activators.Activate<object>(type);
-            OnRead(element, result, type);
-            return result;
-        }
-
-        protected virtual void OnRead(XElement element, object result, Typed type)
-        {
-            var members = _members.Get(type);
-            foreach (var child in element.Elements())
+            var result = Activate(context);
+            var element = context.Current as IMemberedElement;
+            if (element != null)
             {
-                var member = members.Get(child.Name);
-                if (member != null)
+                var members = element.Members;
+                foreach (var child in context)
                 {
-                    Apply(result, member, member.Read(child, _types.Get(child)));
+                    var member = members.Get(child.DisplayName);
+                    if (member != null)
+                    {
+                        var reader = _selector.Get(member);
+                        var value = reader.Read(child);
+                        member.Assign(result, value);
+                    }
                 }
             }
+            return result;
         }
 
-        protected virtual void Apply(object instance, IMember member, object value)
-        {
-            if (value != null)
-            {
-                var assignable = member as IAssignableMember;
-                assignable?.Set(instance, value);
-            }
-        }
+        protected virtual object Activate(IReadContext context)
+            => _activators.Activate<object>(context.Current.Name.Classification.AsType());
     }
 }

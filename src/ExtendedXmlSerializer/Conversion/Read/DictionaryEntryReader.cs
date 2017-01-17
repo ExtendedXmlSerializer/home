@@ -21,53 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
     {
-        readonly private static DictionaryPairTypesLocator Locator =
-            new DictionaryPairTypesLocator(typeof(KeyValuePair<,>));
-
-        private readonly ITypes _types;
         private readonly IReader _reader;
-        private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryEntryReader(ITypes types, IReader reader)
-            : this(types, reader, Locator) {}
-
-        public DictionaryEntryReader(ITypes types, IReader reader, IDictionaryPairTypesLocator locator)
+        public DictionaryEntryReader(IReader reader)
         {
-            _types = types;
             _reader = reader;
-            _locator = locator;
         }
 
-        public override IEnumerable Read(XElement element, Typed? hint = null) => Entries(element, hint);
+        public override IEnumerable Read(IReadContext context) => Entries(context);
 
-        IEnumerable<DictionaryEntry> Entries(XContainer element, Type dictionaryType)
+        IEnumerable<DictionaryEntry> Entries(IReadContext context)
         {
-            var pair = _locator.Get(dictionaryType);
-            foreach (var child in element.Elements(LegacyNames.Item))
+            var element = (IDictionaryElement) context.Current;
+            var item = element.Item;
+            foreach (var child in context.Items())
             {
-                var key = Read(child, LegacyNames.Key, pair.KeyType);
-                var value = Read(child, LegacyNames.Value, pair.ValueType);
-                yield return new DictionaryEntry(key, value);
+                var key = Read(child, item.Key);
+                var value = Read(child, item.Value);
+                var entry = new DictionaryEntry(key, value);
+                yield return entry;
             }
         }
 
-        object Read(XContainer element, XName name, Type type)
-        {
-            var child = element.Element(name);
-            var result = _reader.Read(child, _types.Get(child) ?? type);
-            return result;
-        }
+        object Read(IReadContext context, IElement element) => _reader.Read(context.Member(element));
     }
 }

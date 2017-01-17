@@ -22,19 +22,51 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.TypeModel;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
+/*
+        public static IElement Unwrapped(this IElement @this) => @this.Unwrapped<IElement>();
+
+        public static T Unwrapped<T>(this IElement @this) where T : IElement
+        {
+            var element = (@this as IElementAware)?.Element ?? @this;
+            var result = (T) element;
+            return result;
+        }*/
+
+        public static TypeInfo EffectiveType(this IElement @this)
+            => (@this as IDeclaredTypeElement)?.DeclaredType ?? @this.Name.Classification;
+
+        public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
+
+        public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
+            target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
+
+        public static TypeInfo ToTypeInfo(this MemberInfo @this)
+            => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+
+        public static T Annotated<T>(this XElement @this, T item)
+        {
+            @this.AddAnnotation(item);
+            return item;
+        }
+
+        public static object AnnotationAll(this XElement @this, Type type)
+            => @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
+
         public static TypeInfo AccountForNullable(this TypeInfo @this)
             => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
-        public static Type AccountForNullable(this Type @this) => Nullable.GetUnderlyingType(@this) ?? @this;
 
-        public static T Activate<T>(this IActivators @this, Typed type) => (T) @this.Get(type).Invoke();
+        public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
     }
 }

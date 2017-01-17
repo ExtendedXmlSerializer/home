@@ -32,6 +32,9 @@ namespace ExtendedXmlSerialization.Core
 {
     public static class Extensions
     {
+        public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
+            => key != null && target.ContainsKey(key) ? target[key] : default(TValue);
+
         public static IEnumerable<T> Append<T>(this T @this, params T[] second) => @this.Append(second.AsEnumerable());
 
         public static IEnumerable<T> Append<T>(this T @this, ImmutableArray<T> second)
@@ -48,12 +51,12 @@ namespace ExtendedXmlSerialization.Core
 
         public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 
-        public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, T element)
+        /*public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, T element)
         {
             foreach (var element1 in @this)
                 yield return element1;
             yield return element;
-        }
+        }*/
 
         public static IEnumerable<T> Yield<T>(this T @this)
         {
@@ -62,7 +65,7 @@ namespace ExtendedXmlSerialization.Core
 
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
-        public static T Self<T>( this T @this ) => @this;
+        public static T Self<T>(this T @this) => @this;
         public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)

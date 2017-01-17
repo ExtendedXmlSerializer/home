@@ -22,30 +22,27 @@
 // SOFTWARE.
 
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.NewConfiguration;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
-    class CustomElementWriter : ElementWriter
+    sealed class CustomElementWriter : ElementWriter
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfigType typeConfig)
-            : this(AllNames.Default, new TypeEmittingWriter(new CustomElementBodyWriter(typeConfig))) {}
+        public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
+            : base(LegacyElements.Default.Get, new TypeEmittingWriter(new BodyWriter(configuration))) {}
 
-        public CustomElementWriter(INames names, IWriter writer) : base(names.Get, writer) {}
-
-        sealed class CustomElementBodyWriter : WriterBase
+        sealed class BodyWriter : WriterBase
         {
-            private readonly IExtendedXmlSerializerConfigType _typeConfig;
+            private readonly IExtendedXmlSerializerConfig _configuration;
 
-            public CustomElementBodyWriter(IExtendedXmlSerializerConfigType typeConfig)
+            public BodyWriter(IExtendedXmlSerializerConfig configuration)
             {
-                _typeConfig = typeConfig;
+                _configuration = configuration;
             }
 
-            public override void Write(XmlWriter writer, object instance)
-                => _typeConfig.WriteObject(writer, instance);
+            public override void Write(IWriteContext context, object instance)
+                => _configuration.WriteObject(context.Get<XmlWriter>(), instance);
         }
     }
 }

@@ -22,14 +22,13 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.TypeModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class ArrayTypeConverter : TypeConverter
+    public class ArrayTypeConverter : Converter
     {
-        public ArrayTypeConverter(ITypes types, IConverter converter)
-            : base(IsArraySpecification.Default, new ArrayReader(types, converter), new EnumerableBodyWriter(converter)) {}
+        public ArrayTypeConverter(IConverter converter)
+            : base(new ArrayReader(converter), new EnumerableBodyWriter(converter)) {}
     }
 }

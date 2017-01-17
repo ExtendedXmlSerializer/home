@@ -22,31 +22,32 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly IWriter _writer;
+        private readonly IElementSelector _selector;
+        private readonly IWriter _item;
 
-        public EnumerableBodyWriter(IWriter itemWriter)
-            : this(AllNames.Default, itemWriter) {}
+        public EnumerableBodyWriter(IWriter item) : this(Elements.Default, item) {}
 
-        public EnumerableBodyWriter(INames names, IWriter itemWriter)
-            : this(new ElementWriter(names.Get, itemWriter)) {}
-
-        EnumerableBodyWriter(ElementWriter writer)
+        public EnumerableBodyWriter(IElementSelector selector, IWriter item)
         {
-            _writer = writer;
+            _selector = selector;
+            _item = item;
         }
 
-        protected override void Write(XmlWriter writer, IEnumerable instance)
+        protected override void Write(IWriteContext context, IEnumerable instance)
         {
             foreach (var item in instance)
             {
-                _writer.Write(writer, item);
+                using (var child = context.Start(_selector.Get(item.GetType().GetTypeInfo())))
+                {
+                    _item.Write(child, item);
+                }
             }
         }
     }

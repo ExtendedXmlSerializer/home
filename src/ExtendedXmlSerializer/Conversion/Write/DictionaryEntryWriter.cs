@@ -21,37 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
-using System.Reflection;
-using System.Xml;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     sealed class DictionaryEntryWriter : WriterBase<DictionaryEntry>
     {
-        readonly private static Func<TypeInfo, XName>
-            Key = LegacyNames.Key.Accept,
-            Value = LegacyNames.Value.Accept;
-
-        private readonly IWriter _key;
-        private readonly IWriter _value;
+        private readonly IWriter _writer;
 
         public DictionaryEntryWriter(IWriter writer)
-            : this(new ElementWriter(Key, writer), new ElementWriter(Value, writer)) {}
-
-        public DictionaryEntryWriter(IWriter key, IWriter value)
         {
-            _key = key;
-            _value = value;
+            _writer = writer;
         }
 
-        protected override void Write(XmlWriter writer, DictionaryEntry instance)
+        protected override void Write(IWriteContext context, DictionaryEntry instance)
         {
-            _key.Write(writer, instance.Key);
-            _value.Write(writer, instance.Value);
+            var element = context.Element as IDictionaryItem ?? context.Parent.Element as IDictionaryItem;
+            using (var child = context.Start(element.Key))
+            {
+                _writer.Write(child, instance.Key);
+            }
+
+            using (var child = context.Start(element.Value))
+            {
+                _writer.Write(child, instance.Value);
+            }
         }
     }
 }

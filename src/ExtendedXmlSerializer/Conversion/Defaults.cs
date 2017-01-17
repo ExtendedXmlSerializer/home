@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Defaults
     {
-        public static IConverter RootConverter { get; } = RootConverters.Default.Get(new object());
+        public static IImmutableList<IElementName> Names { get; } = new KnownNames().ToImmutableArray();
     }
 }

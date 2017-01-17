@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class UnsignedLongTypeConverter : PrimitiveTypeConverterBase<ulong>
+    public class UnsignedLongTypeConverter : ValueTypeConverterBase<ulong>
     {
         public static UnsignedLongTypeConverter Default { get; } = new UnsignedLongTypeConverter();
         UnsignedLongTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt64) {}

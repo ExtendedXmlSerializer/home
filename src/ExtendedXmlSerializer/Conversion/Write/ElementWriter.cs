@@ -23,19 +23,29 @@
 
 using System;
 using System.Reflection;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class ElementWriter : ElementWriterBase
+    public class ElementWriter : DecoratedWriter
     {
-        private readonly Func<TypeInfo, XName> _name;
+        private readonly Func<TypeInfo, IElement> _element;
 
-        public ElementWriter(Func<TypeInfo, XName> name, IWriter writer) : base(writer)
+        public ElementWriter(IElement element, IWriter writer) : this(element.Accept, writer) {}
+
+        public ElementWriter(Func<TypeInfo, IElement> element, IWriter writer) : base(writer)
         {
-            _name = name;
+            _element = element;
         }
 
-        protected override XName Get(TypeInfo info) => _name(info);
+        public override void Write(IWriteContext context, object instance)
+        {
+            var element = _element(instance.GetType().GetTypeInfo());
+            using (var child = context.Start(element))
+            {
+                base.Write(child, instance);
+            }
+        }
     }
 }

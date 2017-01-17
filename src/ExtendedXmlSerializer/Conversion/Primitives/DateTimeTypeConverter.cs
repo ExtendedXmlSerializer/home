@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class DateTimeTypeConverter : PrimitiveTypeConverterBase<DateTime>
+    public class DateTimeTypeConverter : ValueTypeConverterBase<DateTime>
     {
         public static DateTimeTypeConverter Default { get; } = new DateTimeTypeConverter();
 

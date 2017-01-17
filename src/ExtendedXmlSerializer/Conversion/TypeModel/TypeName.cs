@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
     class TypeName : ITypeName
     {
         private readonly ISpecification<TypeInfo> _specification;
-        private readonly IParameterizedSource<TypeInfo, XName> _source;
+        private readonly IParameterizedSource<TypeInfo, IElement> _source;
 
-        public TypeName(ISpecification<TypeInfo> specification, IParameterizedSource<TypeInfo, XName> source)
+        public TypeName(ISpecification<TypeInfo> specification, IParameterizedSource<TypeInfo, IElement> source)
         {
             _specification = specification;
             _source = source;
@@ -41,6 +41,6 @@ namespace ExtendedXmlSerialization.Conversion.TypeModel
 
         public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
 
-        public XName Get(TypeInfo parameter) => _source.Get(parameter);
+        public IElement Get(TypeInfo parameter) => _source.Get(parameter);
     }
 }

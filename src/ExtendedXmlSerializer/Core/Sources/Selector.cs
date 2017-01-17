@@ -28,25 +28,47 @@ namespace ExtendedXmlSerialization.Core.Sources
     public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
         where TParameter : class where TResult : class
     {
-        private readonly ImmutableArray<ICandidate<TParameter, TResult>> _candidates;
+        private readonly IParameterizedSource<TParameter, TResult> _source;
 
-        public Selector(params ICandidate<TParameter, TResult>[] candidates) : this(candidates.ToImmutableArray()) {}
+        public Selector(params IOption<TParameter, TResult>[] options)
+            : this(new OptionSelector<TParameter, TResult>(options.ToImmutableArray())) {}
 
-        public Selector(ImmutableArray<ICandidate<TParameter, TResult>> candidates)
+        public Selector(IParameterizedSource<TParameter, TResult> source)
         {
-            _candidates = candidates;
+            _source = source;
         }
 
-        protected override TResult Create(TParameter parameter)
+        protected override TResult Create(TParameter parameter) => _source.Get(parameter);
+    }
+
+    public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+    {
+        private readonly ImmutableArray<IOption<TParameter, TResult>> _options;
+        readonly private static TResult Default = default(TResult);
+
+        public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
+
+        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> options)
         {
-            foreach (var candidate in _candidates)
+            _options = options;
+        }
+
+        public TResult Get(TParameter parameter)
+        {
+            var length = _options.Length;
+            for (int i = 0; i < length; i++)
             {
-                if (candidate.IsSatisfiedBy(parameter))
+                var option = _options[i];
+                if (option.IsSatisfiedBy(parameter))
                 {
-                    return candidate.Get(parameter);
+                    var result = option.Get(parameter);
+                    if (!Equals(result, Default))
+                    {
+                        return result;
+                    }
                 }
             }
-            return null;
+            return Default;
         }
     }
 }

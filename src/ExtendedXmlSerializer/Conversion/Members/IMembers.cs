@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-    public interface IMembers : IParameterizedSource<XName, IMember>, IEnumerable<IMember> {}
+    public interface IMembers : IEnumerable<IMemberElement>,
+                                IParameterizedSource<string, IMemberElement> {}
 }

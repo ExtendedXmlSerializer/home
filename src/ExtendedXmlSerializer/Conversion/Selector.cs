@@ -21,15 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class Selector : Selector<TypeInfo, IConverter>, ISelector
+    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector
     {
-        public Selector(IEnumerable<ITypeConverter> candidates) : base(candidates.ToArray()) {}
+        private readonly IElementSelector _elements;
+        private readonly IConverterSelector _converters;
+
+        public Selector(IElementSelector elements, IConverterSelector converters)
+        {
+            _elements = elements;
+            _converters = converters;
+        }
+
+        protected override IConverter Create(TypeInfo parameter)
+        {
+            var element = _elements.Get(parameter);
+            var result = _converters.Get(element);
+            return result;
+        }
     }
 }

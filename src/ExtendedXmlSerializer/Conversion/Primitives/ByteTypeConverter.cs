@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class ByteTypeConverter : PrimitiveTypeConverterBase<sbyte>
+    public class ByteTypeConverter : ValueTypeConverterBase<sbyte>
     {
         public static ByteTypeConverter Default { get; } = new ByteTypeConverter();
         ByteTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToSByte) {}
