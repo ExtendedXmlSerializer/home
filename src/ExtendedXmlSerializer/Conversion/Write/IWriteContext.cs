@@ -22,13 +22,16 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public interface IWriteContext : IServiceProvider, IElementName, IDisposable
+    public interface IWriteContext : IElementName, IDisposable, IServiceProvider
     {
-        IWriteContext Start(IElement element);
+        IWriteContext New(IContainerElement container);
+
+        IWriteContext Emit(TypeInfo instanceType);
 
         void Write(string text);
 

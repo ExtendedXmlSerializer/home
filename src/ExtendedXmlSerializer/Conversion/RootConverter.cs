@@ -22,21 +22,19 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public class RootConverter : Converter
     {
         public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(Elements.Default, RootSelector.Default) {}
+        RootConverter() : this(RootSelector.Default) {}
 
-        public RootConverter(IElementSelector elements, IRootSelector selector)
-            : this(
-                elements, selector, new SelectingConverter(new NullableAwareSelector(selector))) {}
+        public RootConverter(IRootSelector selector)
+            : this(selector, new SelectingConverter(new NullableAwareSelector(selector))) {}
 
-        public RootConverter(IElementSelector elements, IRootSelector selector, IConverter converter)
-            : base(converter, new ElementWriter(elements.Get, converter))
+        public RootConverter(IRootSelector selector, IConverter converter)
+            : base(converter, new ElementWriter(converter))
         {
             selector.Execute(converter);
         }

@@ -24,7 +24,6 @@
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
@@ -32,8 +31,8 @@ namespace ExtendedXmlSerialization.Legacy
     {
         private readonly ISerializationToolsFactory _tools;
 
-        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IMemberConverterSelector selector)
-            : base(selector)
+        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IReader reader)
+            : base(reader)
         {
             _tools = tools;
         }

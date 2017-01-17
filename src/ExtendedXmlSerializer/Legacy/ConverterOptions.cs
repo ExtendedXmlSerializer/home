@@ -27,6 +27,7 @@ using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Legacy
@@ -43,6 +44,8 @@ namespace ExtendedXmlSerialization.Legacy
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
+            yield return new ReadOnlyCollectionMemberConverterOption(parameter);
+            yield return new MemberConverterOption(parameter);
         }
 
         sealed class LegacyEnumerableTypeConverter : TypeConverter
@@ -50,8 +53,15 @@ namespace ExtendedXmlSerialization.Legacy
             public LegacyEnumerableTypeConverter(IConverter converter)
                 : base(
                     IsCollectionTypeSpecification.Default, new ListReader(converter),
-                    new EnumerableBodyWriter(LegacyElements.Default, converter)
+                    new EnumerableBodyWriter(converter)
                 ) {}
+        }
+
+        sealed class MemberConverterOption : ConverterOption<IMemberElement>
+        {
+            public MemberConverterOption(IConverter converter) : base(
+                new Converter(converter,
+                              new ValidatingAssignedWriter(new ElementWriter(new MemberTypeEmittingWriter(converter))))) {}
         }
     }
 }

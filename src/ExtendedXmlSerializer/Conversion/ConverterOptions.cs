@@ -42,6 +42,8 @@ namespace ExtendedXmlSerialization.Conversion
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
+            yield return new ReadOnlyCollectionMemberConverterOption(parameter);
+            yield return new MemberConverterOption(parameter);
         }
 
         class DictionaryConverter : Converter
@@ -58,10 +60,8 @@ namespace ExtendedXmlSerialization.Conversion
 
         class InstanceConverter : Converter
         {
-            public InstanceConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
-
-            public InstanceConverter(IMemberConverterSelector selector)
-                : base(new InstanceBodyReader(selector), new InstanceBodyWriter(selector)) {}
+            public InstanceConverter(IConverter converter)
+                : base(new InstanceBodyReader(converter), new InstanceBodyWriter(converter)) {}
         }
     }
 }

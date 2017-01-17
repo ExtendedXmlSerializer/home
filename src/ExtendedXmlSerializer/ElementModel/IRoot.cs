@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IRoot : IElement {}
+    public interface IRoot : IContainerElement {}
 }

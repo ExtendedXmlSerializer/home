@@ -21,28 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class ElementWriter : DecoratedWriter
     {
-        private readonly Func<TypeInfo, IElement> _element;
-
-        public ElementWriter(IElement element, IWriter writer) : this(element.Accept, writer) {}
-
-        public ElementWriter(Func<TypeInfo, IElement> element, IWriter writer) : base(writer)
-        {
-            _element = element;
-        }
+        public ElementWriter(IWriter writer) : base(writer) {}
 
         public override void Write(IWriteContext context, object instance)
         {
-            var element = _element(instance.GetType().GetTypeInfo());
-            using (var child = context.Start(element))
+            using (var child = context.Emit(instance.GetType().GetTypeInfo()))
             {
                 base.Write(child, instance);
             }

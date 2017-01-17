@@ -29,22 +29,20 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
     public class EnumerableBodyWriter : WriterBase<IEnumerable>
     {
-        private readonly IElementSelector _selector;
         private readonly IWriter _item;
 
-        public EnumerableBodyWriter(IWriter item) : this(Elements.Default, item) {}
-
-        public EnumerableBodyWriter(IElementSelector selector, IWriter item)
+        public EnumerableBodyWriter(IWriter item)
         {
-            _selector = selector;
             _item = item;
         }
 
         protected override void Write(IWriteContext context, IEnumerable instance)
         {
+            var container = ((ICollectionElement) context.Element).Item;
+            var element = context.New(container);
             foreach (var item in instance)
             {
-                using (var child = context.Start(_selector.Get(item.GetType().GetTypeInfo())))
+                using (var child = element.Emit(item.GetType().GetTypeInfo()))
                 {
                     _item.Write(child, item);
                 }

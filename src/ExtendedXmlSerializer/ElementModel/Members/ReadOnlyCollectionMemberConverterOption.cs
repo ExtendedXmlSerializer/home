@@ -37,6 +37,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
         }
 
         protected override IConverter Create(IReadOnlyCollectionMemberElement parameter)
-            => new Converter(new EnumeratingReader(_converter), new ElementWriter(parameter, _converter));
+            => new Converter(new EnumeratingReader(_converter), new ElementWriter(_converter));
     }
 }

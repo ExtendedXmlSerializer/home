@@ -24,17 +24,15 @@
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyEnumerableTypeConverter : Converter
     {
-        public LegacyEnumerableTypeConverter(ISerializationToolsFactory tools, IConverter converter,
-                                             IElementSelector elements)
+        public LegacyEnumerableTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(
                 new ListReader(converter),
-                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(elements, converter))
+                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(converter))
             ) {}
     }
 }

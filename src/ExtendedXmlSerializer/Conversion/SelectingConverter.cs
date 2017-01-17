@@ -22,8 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -38,16 +40,29 @@ namespace ExtendedXmlSerialization.Conversion
 
         public override void Write(IWriteContext context, object instance)
         {
-            var info = instance.GetType().GetTypeInfo();
-            var converter = _selector.Get(info);
+            var converter = _selector.Get(context.Element) ?? _selector.Get(instance.GetType().GetTypeInfo());
             converter.Write(context, instance);
         }
 
         public override object Read(IReadContext context)
         {
-            var converter = _selector.Get(context.Classification);
-            var result = converter.Read(context);
-            return result;
+            var container = (context as IReadContainerContext).Container;
+            if (container != null)
+            {
+                // HACK: Fix this.
+                var converter = _selector.Get(container) ?? _selector.Get(context.Element);
+                var ctx = new XmlReadContext(XmlReadContextFactory.Default, null, context.Element,
+                                             context.Get<XElement>(), context.DisplayName);
+                var result = converter.Read(ctx);
+                return result;
+            }
+            else
+            {
+                var converter = _selector.Get(context.Element);
+                var result = converter.Read(context);
+                return result;
+            }
+            
         }
     }
 }

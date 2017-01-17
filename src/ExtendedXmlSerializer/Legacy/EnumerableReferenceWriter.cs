@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
@@ -40,8 +39,8 @@ namespace ExtendedXmlSerialization.Legacy
 
         public override void Write(IWriteContext context, object instance)
         {
-            var element = context.Subject<ICollectionElement>();
-            var configuration = _tools.GetConfiguration(element.Item.DeclaredType.AsType());
+            var element = ((ICollectionElement)context.Element).Item.DeclaredType.AsType();
+            var configuration = _tools.GetConfiguration(element);
             if (configuration?.IsObjectReference ?? false)
             {
                 var references = context.Get<WriteReferences>();

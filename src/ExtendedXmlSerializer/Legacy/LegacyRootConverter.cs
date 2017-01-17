@@ -38,12 +38,10 @@ namespace ExtendedXmlSerialization.Legacy
             : this(tools, LegacyElementsTooling.Default.Get(tools)) {}
 
         LegacyRootConverter(ISerializationToolsFactory tools, IElementSelector elements)
-            : this(
-                elements, tools,
-                new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools, elements)))) {}
+            : this(tools, new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools)))) {}
 
-        LegacyRootConverter(IElementSelector elements, ISerializationToolsFactory tools, IRootSelector selector)
-            : base(elements, selector, new SelectingConverter(new NullableAwareSelector(selector)))
+        LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
+            : base(selector, new SelectingConverter(new NullableAwareSelector(selector)))
         {
             _tools = tools;
         }

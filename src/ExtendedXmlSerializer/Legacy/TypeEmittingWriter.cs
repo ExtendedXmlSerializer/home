@@ -34,10 +34,9 @@ namespace ExtendedXmlSerialization.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            var container = context.Container;
-            if (!(container is IMemberElement))
+            if (!(context.Container is IMemberElement))
             {
-                var declared = container?.DeclaredType;
+                var declared = context.Container.DeclaredType;
                 var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
                 return result;
             }

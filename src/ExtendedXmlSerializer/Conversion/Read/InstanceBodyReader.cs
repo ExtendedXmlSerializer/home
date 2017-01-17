@@ -21,21 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    class InstanceBodyReader : ReaderBase
+    class InstanceBodyReader : DecoratedReader
     {
-        private readonly IMemberConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IMemberConverterSelector selector) : this(selector, Activators.Default) {}
+        public InstanceBodyReader(IReader reader) : this(reader, Activators.Default) {}
 
-        public InstanceBodyReader(IMemberConverterSelector selector, IActivators activators)
+        public InstanceBodyReader(IReader reader, IActivators activators) : base(reader)
         {
-            _selector = selector;
             _activators = activators;
         }
 
@@ -44,9 +41,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var result = Activate(context);
             foreach (var child in context)
             {
+                var value = base.Read(child);
                 var member = child.Container;
-                var reader = _selector.Get(member);
-                var value = reader.Read(child);
                 member.Assign(result, value);
             }
             return result;

@@ -23,20 +23,20 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
         private readonly ISerializationToolsFactory _tools;
-        private readonly IElementSelector _elements;
 
-        public LegacyConverterOptions(ISerializationToolsFactory tools, IElementSelector elements)
+        public LegacyConverterOptions(ISerializationToolsFactory tools)
         {
             _tools = tools;
-            _elements = elements;
         }
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
@@ -45,10 +45,21 @@ namespace ExtendedXmlSerialization.Legacy
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
             yield return
-                new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter, _elements))
+                new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter))
                 ;
             yield return
-                new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter, _elements));
+                new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter));
+
+            yield return new ReadOnlyCollectionMemberConverterOption(parameter);
+            yield return new LegacyMemberOption(_tools, new MemberConverterOption(parameter));
+        }
+
+        sealed class MemberConverterOption : ConverterOption<IMemberElement>
+        {
+            public MemberConverterOption(IConverter converter) : base(
+                new Converter(converter,
+                              new ValidatingAssignedWriter(
+                                  new ElementWriter(new LegacyMemberTypeEmittingWriter(converter))))) {}
         }
     }
 }

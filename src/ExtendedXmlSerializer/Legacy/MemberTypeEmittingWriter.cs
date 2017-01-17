@@ -37,9 +37,8 @@ namespace ExtendedXmlSerialization.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            var declaredType = context.Classification;
-            var primitive = declaredType.IsPrimitive || declaredType.IsValueType ||
-                            Equals(declaredType, TypeString);
+            var declaredType = context.Container.DeclaredType;
+            var primitive = declaredType.IsPrimitive || declaredType.IsValueType || Equals(declaredType, TypeString);
             var result = Equals(declaredType, TypeObject) ||
                          !primitive && (!Equals(declaredType, type) || CheckInstance(context, instance));
             return result;

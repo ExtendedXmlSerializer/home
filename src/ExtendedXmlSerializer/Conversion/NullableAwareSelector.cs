@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -35,5 +36,6 @@ namespace ExtendedXmlSerialization.Conversion
         }
 
         public IConverter Get(TypeInfo parameter) => _selector.Get(parameter.AccountForNullable());
+        public IConverter Get(IElement parameter) => _selector.Get(parameter);
     }
 }

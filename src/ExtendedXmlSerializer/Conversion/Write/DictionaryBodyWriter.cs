@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
@@ -30,20 +31,31 @@ namespace ExtendedXmlSerialization.Conversion.Write
     {
         private readonly IWriter _writer;
 
-        public DictionaryBodyWriter(IWriter item)
+        public DictionaryBodyWriter(IWriter writer)
         {
-            _writer = new DictionaryEntryWriter(item);
+            _writer = writer;
         }
 
         protected override void Write(IWriteContext context, IDictionary instance)
         {
-            var item = ((IDictionaryElement) context.Element).Item;
-
+            var container = ((IDictionaryElement) context.Element).Item;
+            var element = context.New(container);
             foreach (DictionaryEntry entry in instance)
             {
-                using (var child = context.Start(item))
+                using (var child = element.Emit(container.DeclaredType))
                 {
-                    _writer.Write(child, entry);
+                    var k = child.New(container.Key);
+                    var v = child.New(container.Value);
+
+                    using (var sub = k.Emit(entry.Key.GetType().GetTypeInfo()))
+                    {
+                        _writer.Write(sub, entry.Key);
+                    }
+
+                    using (var sub = v.Emit(entry.Value.GetType().GetTypeInfo()))
+                    {
+                        _writer.Write(sub, entry.Value);
+                    }
                 }
             }
         }

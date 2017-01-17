@@ -44,5 +44,8 @@ namespace ExtendedXmlSerialization.Conversion
             var result = _converters.Get(element);
             return result;
         }
+
+        public IConverter Get(IElement parameter) => _converters.Get(parameter);
+        //public IConverter Get(TypeInfo parameter) => _elements.Get(parameter);
     }
 }

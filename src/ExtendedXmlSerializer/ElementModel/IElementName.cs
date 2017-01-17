@@ -25,9 +25,15 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementName
+    public interface IElementName : IDisplayAware, IClassification {}
+
+    public interface IDisplayAware
     {
         string DisplayName { get; }
+    }
+
+    public interface IClassification
+    {
         TypeInfo Classification { get; }
     }
 }

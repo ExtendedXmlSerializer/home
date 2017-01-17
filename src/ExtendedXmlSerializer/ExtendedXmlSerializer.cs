@@ -64,10 +64,11 @@ namespace ExtendedXmlSerialization
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
         public string Serialize(object o)
-            =>
-                new LegacySerializer(Converter,
-                                     _tools != null ? LegacyElementsTooling.Default.Get(_tools) : LegacyElements.Default)
-                    .Serialize(o);
+        {
+            var selector = _tools != null ? LegacyElementsTooling.Default.Get(_tools) : LegacyElements.Default;
+            var result = new LegacySerializer(selector, Converter).Serialize(o);
+            return result;
+        }
 
         /// <summary>
         /// Deserializes the XML document
@@ -76,10 +77,7 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-            =>
-                new LegacySerializer(Converter,
-                                     _tools != null ? LegacyElementsTooling.Default.Get(_tools) : LegacyElements.Default,
-                                     type.GetTypeInfo()).Deserialize(xml);
+            => new LegacySerializer(Converter, type.GetTypeInfo()).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

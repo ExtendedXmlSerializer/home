@@ -33,22 +33,15 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyInstanceTypeConverter : Converter
     {
-        public LegacyInstanceTypeConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
-
-        LegacyInstanceTypeConverter(IMemberConverterSelector selector)
+        public LegacyInstanceTypeConverter(IConverter converter)
             : base(
-                new InstanceBodyReader(selector),
-                new TypeEmittingWriter(new InstanceBodyWriter(LegacyElements.Default, selector))) {}
+                new InstanceBodyReader(converter),
+                new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter,
-                                           IElementSelector elements)
-            : this(tools, new LegacyMemberConverterSelector(tools, converter), elements) {}
-
-        LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IMemberConverterSelector selector,
-                                    IElementSelector elements)
+        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(
-                new LegacyInstanceBodyReader(tools, selector),
-                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(elements, selector)))
+                new LegacyInstanceBodyReader(tools, converter),
+                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(converter)))
             ) {}
 
         private sealed class Writer : DecoratedWriter
@@ -72,7 +65,7 @@ namespace ExtendedXmlSerialization.Legacy
 
                         var objectId = configuration.GetObjectId(instance);
 
-                        if (context.Subject<IMemberElement>() == null && references.Reserved.Contains(instance))
+                        if (!(context.Container is IMemberElement) && references.Reserved.Contains(instance))
                         {
                             references.Reserved.Remove(instance);
                         }
