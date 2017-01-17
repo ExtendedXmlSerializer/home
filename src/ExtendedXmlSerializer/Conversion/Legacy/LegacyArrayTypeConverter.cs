@@ -23,14 +23,15 @@
 
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyArrayTypeConverter : Converter
     {
-        public LegacyArrayTypeConverter(ISerializationToolsFactory tools, IConverter converter)
+        public LegacyArrayTypeConverter(ExtendedXmlSerializerConfig config, IConverter converter)
             : base(
                 new ArrayReader(converter),
-                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(LegacyElements.Default, converter))) {}
+                new EnumerableReferenceWriter(config, new EnumerableBodyWriter(LegacyElements.Default, converter))) {}
     }
 }

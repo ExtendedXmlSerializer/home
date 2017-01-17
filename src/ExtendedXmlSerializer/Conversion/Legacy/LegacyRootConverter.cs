@@ -26,22 +26,23 @@ using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyRootConverter : RootConverter
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _tools;
 
-        public LegacyRootConverter(ISerializationToolsFactory tools)
-            : this(tools, LegacyElementsTooling.Default.Get(tools)) {}
+        public LegacyRootConverter(ExtendedXmlSerializerConfig config)
+            : this(config, LegacyElementsTooling.Default.Get(config)) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IElementSelector elements)
+        LegacyRootConverter(ExtendedXmlSerializerConfig config, IElementSelector elements)
             : this(
-                elements, tools,
-                new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools, elements)))) {}
+                elements, config,
+                new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(config, elements)))) {}
 
-        LegacyRootConverter(IElementSelector elements, ISerializationToolsFactory tools, IRootSelector selector)
+        LegacyRootConverter(IElementSelector elements, ExtendedXmlSerializerConfig tools, IRootSelector selector)
             : base(elements, selector, new SelectingConverter(new NullableAwareSelector(selector)))
         {
             _tools = tools;
@@ -50,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public override void Write(IWriteContext context, object instance)
         {
             var type = instance.GetType();
-            var configuration = _tools.GetConfiguration(type);
+            var configuration = _tools.GetTypeConfig(type);
             if (configuration != null)
             {
                 if (configuration.IsCustomSerializer)
@@ -66,7 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         public override object Read(IReadContext context)
         {
             var type = context.Current.Name.Classification.AsType();
-            var configuration = _tools.GetConfiguration(type);
+            var configuration = _tools.GetTypeConfig(type);
             if (configuration != null)
             {
                 var element = context.Get<XElement>();

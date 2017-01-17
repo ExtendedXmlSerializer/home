@@ -22,14 +22,15 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(ISerializationToolsFactory tools)
+        public LegacyMemberElementSelector(ExtendedXmlSerializerConfig config)
             : base(
-                new MemberOption(new LegacyGetterFactory(tools), new LegacySetterFactory(tools, SetterFactory.Default)),
+                new MemberOption(new LegacyGetterFactory(config), new LegacySetterFactory(config, SetterFactory.Default)),
                 ReadOnlyCollectionMemberOption.Default) {}
     }
 }

@@ -23,15 +23,16 @@
 
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyMemberConverterSelector : Members.MemberConverterSelector
     {
-        public LegacyMemberConverterSelector(ISerializationToolsFactory tools, IConverter converter)
+        public LegacyMemberConverterSelector(ExtendedXmlSerializerConfig config, IConverter converter)
             : base(
                 new ReadOnlyCollectionMemberConverterOption(converter),
-                new LegacyMemberOption(tools, new MemberConverterOption(converter))) {}
+                new LegacyMemberOption(config, new MemberConverterOption(converter))) {}
 
         sealed class MemberConverterOption : ConverterOptionBase<IMemberElement>
         {

@@ -25,22 +25,23 @@ using System.Collections;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class EnumerableReferenceWriter : DecoratedWriter
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
 
-        public EnumerableReferenceWriter(ISerializationToolsFactory tools, IWriter writer) : base(writer)
+        public EnumerableReferenceWriter(ExtendedXmlSerializerConfig config, IWriter writer) : base(writer)
         {
-            _tools = tools;
+            _config = config;
         }
 
         public override void Write(IWriteContext context, object instance)
         {
             var element = (ICollectionElement) context.Element;
-            var configuration = _tools.GetConfiguration(element.Item.DeclaredType.AsType());
+            var configuration = _config.GetTypeConfig(element.Item.DeclaredType.AsType());
             if (configuration?.IsObjectReference ?? false)
             {
                 var references = context.Get<WriteReferences>();

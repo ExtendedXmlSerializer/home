@@ -7,6 +7,8 @@ namespace ExtendedXmlSerialization.NewConfiguration
         IExtendedXmlSerializerConfigProperty<T, TProperty>, IExtendedXmlSerializerConfigProperty
     {
         public ExtendedXmlSerializerConfigType<T> ConfigType { get; set; }
+        public Expression<Func<T, TProperty>> PropertyExpression { get; set; }
+    
         public bool IsObjectReference { get; set; }
         public bool IsAttribute { get; set; }
         public bool IsEncrypt { get; set; }
@@ -20,6 +22,8 @@ namespace ExtendedXmlSerialization.NewConfiguration
         public IExtendedXmlSerializerConfigProperty<T, TProperty> ObjectReference()
         {
             IsObjectReference = true;
+            ConfigType.IsObjectReference = true;
+            ConfigType.GetObjectId = p => PropertyExpression.Compile()((T) p).ToString();
             return this;
         }
 

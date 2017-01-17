@@ -25,37 +25,37 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     class LegacyGetterFactory : IGetterFactory
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly IGetterFactory _factory;
 
-        public LegacyGetterFactory(ISerializationToolsFactory tools) : this(tools, GetterFactory.Default) {}
+        public LegacyGetterFactory(ExtendedXmlSerializerConfig config) : this(config, GetterFactory.Default) {}
 
-        public LegacyGetterFactory(ISerializationToolsFactory tools, IGetterFactory factory)
+        public LegacyGetterFactory(ExtendedXmlSerializerConfig config, IGetterFactory factory)
         {
-            _tools = tools;
+            _config = config;
             _factory = factory;
         }
 
         public Func<object, object> Get(MemberInfo parameter)
         {
             var result = _factory.Get(parameter);
-            var configuration = _tools.GetConfiguration(parameter.DeclaringType);
-            if (configuration != null)
+            var configuration = _config.GetTypeConfig(parameter.DeclaringType);
+            var propertyConfig = configuration?.GetPropertyConfig(parameter.Name);
+            if (propertyConfig != null && propertyConfig.IsEncrypt)
             {
-                if (configuration.CheckPropertyEncryption(parameter.Name))
+                var algorithm = _config.EncryptionAlgorithm;
+                if (algorithm != null)
                 {
-                    var algorithm = _tools.EncryptionAlgorithm;
-                    if (algorithm != null)
-                    {
-                        return new Encrypt(algorithm, result).Get;
-                    }
+                    return new Encrypt(algorithm, result).Get;
                 }
             }
+
             return result;
         }
 

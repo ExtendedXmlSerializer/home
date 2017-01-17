@@ -15,6 +15,8 @@ namespace ExtendedXmlSerialization.NewConfiguration
         void WriteObject(XmlWriter writer, object obj);
 
         bool IsCustomSerializer { get; set; }
+        bool IsObjectReference { get; set; }
+        Func<object, string> GetObjectId { get; set; }
     }
 
     internal class ExtendedXmlSerializerConfigType<T> : IExtendedXmlSerializerConfigType<T>, IExtendedXmlSerializerConfigType
@@ -75,11 +77,13 @@ namespace ExtendedXmlSerialization.NewConfiguration
 
 
         public bool IsCustomSerializer { get; set; }
+        public bool IsObjectReference { get; set; }
+        public Func<object, string> GetObjectId { get; set; }
 
         private readonly Dictionary<string, IExtendedXmlSerializerConfigProperty> _cache = new Dictionary<string, IExtendedXmlSerializerConfigProperty>();
         public IExtendedXmlSerializerConfigProperty<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> property)
         {
-            var propertyConfig = new ExtendedXmlSerializerConfigProperty<T, TProperty> {ConfigType = this};
+            var propertyConfig = new ExtendedXmlSerializerConfigProperty<T, TProperty> {ConfigType = this, PropertyExpression = property};
             //TODO maybe something smarter.
             var path = property.Body.ToString();
             var binding = path.Substring(path.IndexOf(".", StringComparison.OrdinalIgnoreCase) + 1);

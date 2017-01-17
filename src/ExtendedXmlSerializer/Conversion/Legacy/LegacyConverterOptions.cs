@@ -24,17 +24,18 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly IElementSelector _elements;
 
-        public LegacyConverterOptions(ISerializationToolsFactory tools, IElementSelector elements)
+        public LegacyConverterOptions(ExtendedXmlSerializerConfig config, IElementSelector elements)
         {
-            _tools = tools;
+            _config = config;
             _elements = elements;
         }
 
@@ -42,12 +43,12 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
         {
             yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
+            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_config, parameter));
             yield return
-                new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter, _elements))
+                new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_config, parameter, _elements))
                 ;
             yield return
-                new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter, _elements));
+                new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_config, parameter, _elements));
         }
     }
 }

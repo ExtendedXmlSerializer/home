@@ -22,17 +22,18 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Conversion.Legacy
 {
     sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
         private readonly IConverterOption _option;
 
-        public LegacyMemberOption(ISerializationToolsFactory tools, IConverterOption option)
+        public LegacyMemberOption(ExtendedXmlSerializerConfig config, IConverterOption option)
         {
-            _tools = tools;
+            _config = config;
             _option = option;
         }
 
@@ -41,19 +42,18 @@ namespace ExtendedXmlSerialization.Conversion.Legacy
             var result = _option.Get(parameter);
             if (result != null)
             {
-                var configuration = _tools.GetConfiguration(parameter.Metadata.DeclaringType);
-                if (configuration != null)
+                var configuration = _config.GetTypeConfig(parameter.Metadata.DeclaringType);
+                var propertyConfiguration = configuration?.GetPropertyConfig(parameter.Metadata.Name);
+                if (propertyConfiguration != null && propertyConfiguration.IsEncrypt)
                 {
-                    if (configuration.CheckPropertyEncryption(parameter.Metadata.Name))
+                    var algorithm = _config.EncryptionAlgorithm;
+                    if (algorithm != null)
                     {
-                        var algorithm = _tools.EncryptionAlgorithm;
-                        if (algorithm != null)
-                        {
-                            return new EncryptedMemberConverter(algorithm, result);
-                        }
+                        return new EncryptedMemberConverter(algorithm, result);
                     }
                 }
             }
+
             return result;
         }
     }
