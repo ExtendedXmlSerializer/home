@@ -35,20 +35,6 @@ namespace ExtendedXmlSerialization.Test.TestObject
         }
     }
 
-    public class TestClassGenericTwo<T, K>
-    {
-        public T GenericProp { get; set; }
-        public K GenericProp2 { get; set; }
-        public String Normal { get; set; }
-
-        public void Init(T genericValue, K genericValue2)
-        {
-            Normal = "normal";
-            GenericProp = genericValue;
-            GenericProp2 = genericValue2;
-        }
-    }
-
     public class TestClassGenericThree<T, TK, TL>
     {
         public T GenericProp { get; set; }

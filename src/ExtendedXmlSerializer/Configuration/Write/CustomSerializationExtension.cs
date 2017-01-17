@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration.Write
+/*namespace ExtendedXmlSerialization.Configuration.Write
 {
-    /*public class CustomSerializationExtension : WritingExtensionBase
+    public class CustomSerializationExtension : WritingExtensionBase
     {
         private readonly IInstruction _instruction;
 
@@ -46,5 +46,5 @@ namespace ExtendedXmlSerialization.Configuration.Write
         }
 
         public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Members, this);
-    }*/
-}
+    }
+}*/

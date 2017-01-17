@@ -21,9 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Configuration.Write
+/*namespace ExtendedXmlSerialization.Configuration.Write
 {
-/*
         public class VersionExtension : WritingExtensionBase
         {
             public static VersionExtension Default { get; } = new VersionExtension();
@@ -48,5 +47,4 @@ namespace ExtendedXmlSerialization.Configuration.Write
                 return base.IsSatisfiedBy(services);
             }
         }
-    */
-}
+}*/

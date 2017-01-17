@@ -4,6 +4,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 {
     class Program
     {
+        // ReSharper disable once UnusedMember.Local
         static void Main(string[] args)
         {
             var switcher = new BenchmarkSwitcher(new[]

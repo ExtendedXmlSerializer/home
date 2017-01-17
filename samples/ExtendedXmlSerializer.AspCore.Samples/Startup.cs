@@ -80,10 +80,10 @@ namespace ExtendedXmlSerialization.AspCore.Samples
             builder.Populate(services);
             builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
             builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
-            this.ApplicationContainer = builder.Build();
+            ApplicationContainer = builder.Build();
 
             // Create the IServiceProvider based on the container.
-            return new AutofacServiceProvider(this.ApplicationContainer);
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ namespace ExtendedXmlSerialization.AspCore.Samples
             {
                 // If you want to dispose of resources that have been resolved in the
                 // application container, register for the "ApplicationStopped" event.
-                appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
+                appLifetime.ApplicationStopped.Register(ApplicationContainer.Dispose);
             }
         }
     }

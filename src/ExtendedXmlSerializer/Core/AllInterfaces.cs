@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,18 +30,19 @@ namespace ExtendedXmlSerialization.Core
 {
     public sealed class AllInterfaces
     {
-        readonly Func<Type, IEnumerable<Type>> selector;
+        readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
         public static AllInterfaces Instance { get; } = new AllInterfaces();
+
         AllInterfaces()
         {
-            selector = Yield;
+            _selector = Yield;
         }
 
-        public IEnumerable<Type> Yield( Type parameter ) =>
-            new[] { parameter }
-                .Concat( parameter.GetTypeInfo().ImplementedInterfaces.SelectMany( selector ) )
-                .Where( x => x.GetTypeInfo().IsInterface )
+        public IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
+            new[] {parameter}
+                .Concat(parameter.ImplementedInterfaces.Select(x => x.GetTypeInfo()).SelectMany(_selector))
+                .Where(x => x.IsInterface)
                 .Distinct();
     }
 }
