@@ -22,15 +22,22 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class ElementNameProviderBase : WeakCacheBase<MemberInfo, IElementName>, IElementNameProvider
+    public class MemberNameProvider : NameProviderBase
     {
-        protected override IElementName Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
+        public static MemberNameProvider Default { get; } = new MemberNameProvider();
+        MemberNameProvider() {}
 
-        protected abstract IElementName Create(TypeInfo type, MemberInfo member);
+        protected override string Create(TypeInfo type, MemberInfo member)
+        {
+            var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+                         member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
+                         member.Name;
+            return result;
+        }
     }
 }

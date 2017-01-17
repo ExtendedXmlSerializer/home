@@ -4,6 +4,6 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class Root : ContainerElementBase, IRoot
     {
-        public Root(IElementName name, TypeInfo declaredType) : base(name, declaredType) {}
+        public Root(TypeInfo declaredType) : base(declaredType) {}
     }
 }

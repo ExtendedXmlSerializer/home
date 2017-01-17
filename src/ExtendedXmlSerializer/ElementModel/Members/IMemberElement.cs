@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public interface IMemberElement : IContainerElement
+    public interface IMemberElement : IContainerElement, IDisplayAware
     {
         MemberInfo Metadata { get; }
 

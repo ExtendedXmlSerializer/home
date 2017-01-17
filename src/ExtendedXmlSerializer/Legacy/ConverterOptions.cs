@@ -39,13 +39,13 @@ namespace ExtendedXmlSerialization.Legacy
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
             yield return new ReadOnlyCollectionMemberConverterOption(parameter);
             yield return new MemberConverterOption(parameter);
+            yield return KnownConverters.Default;
         }
 
         sealed class LegacyEnumerableTypeConverter : TypeConverter

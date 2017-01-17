@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 
@@ -31,6 +32,6 @@ namespace ExtendedXmlSerialization.Legacy
         public static new LegacyElements Default { get; } = new LegacyElements();
         LegacyElements() : this(LegacyElementMembers.Default) {}
 
-        public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members) {}
+        public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members, Defaults.Names.Select(x => x.Classification)) {}
     }
 }

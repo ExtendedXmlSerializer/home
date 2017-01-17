@@ -26,6 +26,6 @@ namespace ExtendedXmlSerialization.ElementModel
     public class DefaultElementNameOption : ElementNameOptionBase
     {
         public static DefaultElementNameOption Default { get; } = new DefaultElementNameOption();
-        DefaultElementNameOption() : base(ElementNameProvider.Default.Get) {}
+        DefaultElementNameOption() : base(NameProvider.Default.Get) {}
     }
 }

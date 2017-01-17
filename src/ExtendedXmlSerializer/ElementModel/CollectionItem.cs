@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class CollectionItem : ContainerElementBase, ICollectionItem
     {
-        public CollectionItem(IElementName name, TypeInfo elementType) : base(name, elementType) {}
+        public CollectionItem(TypeInfo elementType) : base(elementType) {}
     }
 }

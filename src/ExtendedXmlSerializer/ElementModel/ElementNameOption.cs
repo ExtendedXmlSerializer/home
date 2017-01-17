@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -30,9 +29,6 @@ namespace ExtendedXmlSerialization.ElementModel
     public class ElementNameOption<T> : ElementNameOptionBase
     {
         public static ElementNameOption<T> Default { get; } = new ElementNameOption<T>();
-
-        ElementNameOption()
-            : base(
-                IsAssignableSpecification<T>.Default.Adapt(), x => new ElementName(x.ToTypeInfo())) {}
+        ElementNameOption() : base(IsAssignableSpecification<T>.Default.Adapt(), x => x.Name) {}
     }
 }

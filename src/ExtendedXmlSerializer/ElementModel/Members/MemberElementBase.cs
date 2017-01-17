@@ -27,15 +27,16 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
     public abstract class MemberElementBase : ContainerElementBase, IMemberElement
     {
-        protected MemberElementBase(IElementName name, MemberInfo metadata, TypeInfo memberType)
-            : base(name, memberType)
+        protected MemberElementBase(string displayName, MemberInfo metadata, TypeInfo memberType) : base(memberType)
         {
             Metadata = metadata;
+            DisplayName = displayName;
         }
 
         public MemberInfo Metadata { get; }
 
         public abstract object Get(object instance);
         public abstract void Assign(object instance, object value);
+        public string DisplayName { get; }
     }
 }

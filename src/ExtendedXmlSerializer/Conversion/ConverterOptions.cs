@@ -37,13 +37,13 @@ namespace ExtendedXmlSerialization.Conversion
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
             yield return new ReadOnlyCollectionMemberConverterOption(parameter);
             yield return new MemberConverterOption(parameter);
+            yield return KnownConverters.Default;
         }
 
         class DictionaryConverter : Converter

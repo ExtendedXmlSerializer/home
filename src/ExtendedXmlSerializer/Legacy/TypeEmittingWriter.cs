@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Legacy
         {
             if (!(context.Container is IMemberElement))
             {
-                var declared = context.Container.DeclaredType;
+                var declared = context.Container.Classification;
                 var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
                 return result;
             }

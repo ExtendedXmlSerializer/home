@@ -27,6 +27,8 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class DictionaryValueElement : ContainerElementBase, IDictionaryValueElement
     {
-        public DictionaryValueElement(TypeInfo valueType) : base(ValueProperty.Default, valueType) {}
+        readonly private static string DefaultDisplayName = ValueProperty.Default.DisplayName;
+        public DictionaryValueElement(TypeInfo valueType) : base(valueType) {}
+        public string DisplayName => DefaultDisplayName;
     }
 }

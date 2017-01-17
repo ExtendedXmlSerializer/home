@@ -29,11 +29,10 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class CollectionElementOption : CollectionElementOptionBase
     {
-        public CollectionElementOption(IElementNameSelector names, IElementMembers members)
+        public CollectionElementOption(IElementNames names, IElementMembers members)
             : base(IsCollectionTypeSpecification.Default, names, members) {}
 
-        protected override IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           ICollectionItem item)
-            => new CollectionElement(name, members, item);
+        protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item)
+            => new CollectionElement(name, collectionType, members, item);
     }
 }

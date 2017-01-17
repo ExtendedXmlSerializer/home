@@ -33,10 +33,10 @@ namespace ExtendedXmlSerialization.Conversion
         public static SelectorFactory Default { get; } = new SelectorFactory();
         SelectorFactory() : this(Elements.Default, ConverterOptions.Default) {}
 
-        private readonly IElementSelector _elements;
+        private readonly IElements _elements;
         private readonly IParameterizedSource<IConverter, IEnumerable<IConverterOption>> _options;
 
-        public SelectorFactory(IElementSelector elements,
+        public SelectorFactory(IElements elements,
                                IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
         {
             _elements = elements;

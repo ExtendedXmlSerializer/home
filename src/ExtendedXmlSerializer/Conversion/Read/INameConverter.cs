@@ -27,5 +27,5 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface INameConverter : IParameterizedSource<IElementName, XName> {}
+    public interface INameConverter : IParameterizedSource<IClassification, XName> {}
 }

@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.ElementModel.Members
         private readonly Action<object, object> _setter;
         private readonly Func<object, object> _getter;
 
-        public MemberElement(IElementName name, MemberInfo metadata, TypeInfo memberType, Action<object, object> setter,
-                             Func<object, object> getter)
-            : base(name, metadata, memberType)
+        public MemberElement(string displayName, MemberInfo metadata, TypeInfo memberType,
+                             Action<object, object> setter,
+                             Func<object, object> getter) : base(displayName, metadata, memberType)
         {
             _setter = setter;
             _getter = getter;

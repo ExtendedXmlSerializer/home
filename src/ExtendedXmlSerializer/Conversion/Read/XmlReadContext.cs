@@ -38,11 +38,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
             : base(factory, element, data, services) {}
 
         public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
-                              XElement data, string displayName)
-            : base(factory, container, element, data, displayName) {}
+                              XElement data)
+            : base(factory, container, element, data) {}
     }
 
-    public abstract class XmlReadContext<T> : IReadContainerContext<T> where T : class, IContainerElement
+    public abstract class XmlReadContext<T> : IReadContext<T> where T : class, IContainerElement
     {
         private readonly IXmlReadContextFactory _factory;
         private readonly XElement _data;
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             : this(XmlReadContextFactory.Default, Elements.Default.Get(ElementTypes.Default.Get(data)), data) {}
 
         public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
-            : this(factory, null, element, data, element.DisplayName)
+            : this(factory, null, element, data)
         {
             for (int i = 0; i < services.Length; i++)
             {
@@ -60,30 +60,23 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data)
-            : this(factory, container, element, data, element.DisplayName) {}
-
-        protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
-                                 string displayName)
-            : this(factory, container, element, data, displayName, element.Classification) {}
+            : this(factory, container, element, data, element.Classification) {}
 
         XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
-                       string displayName, TypeInfo classification)
+                       TypeInfo classification)
         {
             Container = container;
             _factory = factory;
             _data = data;
             Element = element;
-            DisplayName = displayName;
             Classification = classification;
             Add(data);
         }
 
-        public string DisplayName { get; }
-
         public TypeInfo Classification { get; }
 
         public T Container { get; }
-        IContainerElement IReadContainerContext.Container => Container;
+        IContainerElement IReadContext.Container => Container;
 
         public IElement Element { get; }
 

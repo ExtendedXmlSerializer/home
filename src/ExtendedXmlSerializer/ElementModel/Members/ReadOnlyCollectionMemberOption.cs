@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
             _add = add;
         }
 
-        protected override IMemberElement Create(MemberInformation parameter, IElementName name)
+        protected override IMemberElement Create(MemberInformation parameter, string name)
         {
             var add = _add.Get(parameter.MemberType);
             if (add != null)

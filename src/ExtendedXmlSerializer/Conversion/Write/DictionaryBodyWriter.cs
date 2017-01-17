@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
             var element = context.New(container);
             foreach (DictionaryEntry entry in instance)
             {
-                using (var child = element.Emit(container.DeclaredType))
+                using (var child = element.Emit(container.Classification))
                 {
                     var k = child.New(container.Key);
                     var v = child.New(container.Value);

@@ -33,10 +33,9 @@ namespace ExtendedXmlSerialization.ElementModel
     public class EnumerableNameOption : ElementNameOptionBase
     {
         public static EnumerableNameOption Default { get; } = new EnumerableNameOption();
-        EnumerableNameOption() : this(LegacyEnumerableElementNameProvider.Default.Get) {}
+        EnumerableNameOption() : this(LegacyEnumerableNameProvider.Default.Get) {}
 
-        public EnumerableNameOption(Func<MemberInfo, IElementName> source)
-            : base(Specification.Instance, source) {}
+        public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
 
         sealed class Specification : ISpecification<MemberInfo>
         {

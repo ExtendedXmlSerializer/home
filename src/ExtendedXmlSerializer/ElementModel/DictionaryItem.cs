@@ -30,11 +30,10 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
 
-        public DictionaryItem(IDictionaryKeyElement key, IDictionaryValueElement value)
-            : base(ItemProperty.Default, DictionaryEntryType)
+        public DictionaryItem(IDictionaryKeyElement key, IDictionaryValueElement value) : base(DictionaryEntryType)
         {
-            Value = value;
             Key = key;
+            Value = value;
         }
 
         public IDictionaryKeyElement Key { get; }

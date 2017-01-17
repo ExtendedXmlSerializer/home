@@ -29,10 +29,10 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector
     {
-        private readonly IElementSelector _elements;
+        private readonly IElements _elements;
         private readonly IConverterSelector _converters;
 
-        public Selector(IElementSelector elements, IConverterSelector converters)
+        public Selector(IElements elements, IConverterSelector converters)
         {
             _elements = elements;
             _converters = converters;

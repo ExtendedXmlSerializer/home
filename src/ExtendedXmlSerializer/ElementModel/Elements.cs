@@ -21,22 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    class Elements : Selector<TypeInfo, IElement>, IElementSelector
+    class Elements : Selector<TypeInfo, IElement>, IElements
     {
         public static Elements Default { get; } = new Elements();
-        Elements() : this(ElementNames.Default, ElementMembers.Default) {}
+        Elements() : this(ElementNames.Default, ElementMembers.Default, Defaults.Names.Select(x => x.Classification)) {}
 
-        protected Elements(IElementNameSelector names, IElementMembers members) : this(
+        protected Elements(IElementNames names, IElementMembers members, IEnumerable<TypeInfo> registered) : this(
+            new ElementOption(
+                new AnySpecification<TypeInfo>(new DelegatedSpecification<TypeInfo>(registered.Contains),
+                                               IsAssignableSpecification<Enum>.Default), names),
             new DictionaryElementOption(names, members),
             new ArrayElementOption(names),
             new CollectionElementOption(names, members),
-            new ActivatedElementOption(names, members),
+            new ActivatedElementOption(names, members), 
             new ElementOption(names)) {}
 
         protected Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}

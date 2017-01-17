@@ -21,25 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ElementModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Legacy
 {
-    public class MemberElementNameProvider : ElementNameProviderBase
+    sealed class LegacyEnumerableNameProvider : NameProvider
     {
-        public static MemberElementNameProvider Default { get; } = new MemberElementNameProvider();
-        MemberElementNameProvider() {}
+        public new static LegacyEnumerableNameProvider Default { get; } =
+            new LegacyEnumerableNameProvider();
 
-        protected override IElementName Create(TypeInfo type, MemberInfo member)
-        {
-            var name = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-                       member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
-                       member.Name;
-            var result = new ElementName(member.DeclaringType.GetTypeInfo(), name);
-            // member, member.GetMemberType().GetTypeInfo().AccountForNullable(), member.IsWritable()
-            return result;
-        }
+        LegacyEnumerableNameProvider() : base(LegacyEnumerableTypeFormatter.Default) {}
     }
 }

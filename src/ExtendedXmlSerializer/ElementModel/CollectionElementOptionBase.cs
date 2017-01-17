@@ -32,21 +32,20 @@ namespace ExtendedXmlSerialization.ElementModel
         private readonly ICollectionItemFactory _items;
 
         protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
-                                              IElementNameSelector names, IElementMembers members)
-            : this(specification, names, members, new CollectionItemFactory(names)) {}
+                                              IElementNames names, IElementMembers members)
+            : this(specification, names, members, CollectionItemFactory.Default) {}
 
         protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
-                                              IElementNameSelector names, IElementMembers members,
+                                              IElementNames names, IElementMembers members,
                                               ICollectionItemFactory items)
             : base(specification, names, members)
         {
             _items = items;
         }
 
-        protected override IElement CreateElement(TypeInfo parameter, IElementName name, IMembers members)
-            => Create(parameter, name, members, _items.Get(parameter));
+        protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)
+            => Create(name, parameter, members, _items.Get(parameter));
 
-        protected abstract IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           ICollectionItem item);
+        protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item);
     }
 }

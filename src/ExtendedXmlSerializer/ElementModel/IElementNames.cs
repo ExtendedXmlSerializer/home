@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class Element : IElement
-    {
-        public Element(IElementName name) : this(name.DisplayName, name.Classification) {}
-
-        public Element(string displayName, TypeInfo classification)
-        {
-            DisplayName = displayName;
-            Classification = classification;
-        }
-
-        public string DisplayName { get; }
-        public TypeInfo Classification { get; }
-    }
+    public interface IElementNames : ISelector<MemberInfo, string> {}
 }

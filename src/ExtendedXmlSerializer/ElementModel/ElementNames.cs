@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementNames : Selector<MemberInfo, IElementName>, IElementNameSelector
+    public class ElementNames : Selector<MemberInfo, string>, IElementNames
     {
         public static ElementNames Default { get; } = new ElementNames();
         private ElementNames() : this(Defaults.Names) {}

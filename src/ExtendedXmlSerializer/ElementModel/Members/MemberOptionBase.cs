@@ -28,12 +28,12 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
     public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberElement>, IMemberOption
     {
-        private readonly IElementNameProvider _provider;
+        private readonly INameProvider _provider;
 
         protected MemberOptionBase(ISpecification<MemberInformation> specification)
-            : this(specification, MemberElementNameProvider.Default) {}
+            : this(specification, MemberNameProvider.Default) {}
 
-        protected MemberOptionBase(ISpecification<MemberInformation> specification, IElementNameProvider provider)
+        protected MemberOptionBase(ISpecification<MemberInformation> specification, INameProvider provider)
             : base(specification)
         {
             _provider = provider;
@@ -42,6 +42,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
         public override IMemberElement Get(MemberInformation parameter)
             => Create(parameter, _provider.Get(parameter.Metadata));
 
-        protected abstract IMemberElement Create(MemberInformation parameter, IElementName name);
+        protected abstract IMemberElement Create(MemberInformation parameter, string name);
     }
 }

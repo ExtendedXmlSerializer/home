@@ -31,6 +31,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
         EnumReader() {}
 
         public override object Read(IReadContext context)
-            => Enum.Parse(context.Classification.AsType(), context.Read());
+            => Enum.Parse(context.Element.Classification.AsType(), context.Read());
     }
 }

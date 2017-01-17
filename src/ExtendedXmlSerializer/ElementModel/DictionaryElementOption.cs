@@ -31,23 +31,22 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryElementOption(IElementNameSelector names, IElementMembers members)
+        public DictionaryElementOption(IElementNames names, IElementMembers members)
             : this(names, members, DictionaryPairTypesLocator.Default) {}
 
-        public DictionaryElementOption(IElementNameSelector names, IElementMembers members,
+        public DictionaryElementOption(IElementNames names, IElementMembers members,
                                        IDictionaryPairTypesLocator locator)
             : base(IsDictionaryTypeSpecification.Default, names, members)
         {
             _locator = locator;
         }
 
-        protected override IElement Create(TypeInfo collectionType, IElementName name, IMembers members,
-                                           ICollectionItem elementType)
+        protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem elementType)
         {
             var pair = _locator.Get(collectionType);
             var item = new DictionaryItem(new DictionaryKeyElement(pair.KeyType),
                                           new DictionaryValueElement(pair.ValueType));
-            var result = new DictionaryElement(name, members, item);
+            var result = new DictionaryElement(name, collectionType, members, item);
             return result;
         }
     }

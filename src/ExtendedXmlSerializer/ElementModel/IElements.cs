@@ -22,30 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementNameProvider : ElementNameProviderBase
-    {
-        public static ElementNameProvider Default { get; } = new ElementNameProvider();
-        ElementNameProvider() : this(TypeFormatter.Default) {}
-
-        private readonly ITypeFormatter _formatter;
-
-        public ElementNameProvider(ITypeFormatter formatter)
-        {
-            _formatter = formatter;
-        }
-
-        protected override IElementName Create(TypeInfo type, MemberInfo member)
-        {
-            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var name = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(type);
-            var result = new ElementName(type, name);
-            return result;
-        }
-    }
+    public interface IElements : ISelector<TypeInfo, IElement> {}
 }

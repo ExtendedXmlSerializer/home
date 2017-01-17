@@ -33,12 +33,12 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public static XmlReadContextFactory Default { get; } = new XmlReadContextFactory();
         XmlReadContextFactory() : this(Elements.Default, ElementTypes.Default, NameConverter.Default) {}
 
-        private readonly IElementSelector _selector;
+        private readonly IElements _selector;
         private readonly IElementTypes _types;
         private readonly INameConverter _converter;
 
 
-        public XmlReadContextFactory(IElementSelector selector, IElementTypes types, INameConverter converter)
+        public XmlReadContextFactory(IElements selector, IElementTypes types, INameConverter converter)
         {
             _selector = selector;
             _types = types;
@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public IReadContext Create(IContainerElement container, XElement data)
         {
-            var element = Create(data, container.DeclaredType);
+            var element = Create(data, container.Classification);
             var member = container as IMemberElement;
             if (member != null)
             {
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private IElement Create(XElement data, TypeInfo declared) => _selector.Get(Initialized(data, declared));
 
         private IReadContext Create(IContainerElement container, IElement element, XElement data) =>
-            new XmlReadContext(this, container, element, data, element.DisplayName);
+            new XmlReadContext(this, container, element, data);
 
         public string Value(IElementName name, XElement data)
         {

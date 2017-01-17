@@ -26,12 +26,12 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsTooling : WeakCacheBase<ISerializationToolsFactory, IElementSelector>
+    sealed class LegacyElementsTooling : WeakCacheBase<ISerializationToolsFactory, IElements>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
         LegacyElementsTooling() {}
 
-        protected override IElementSelector Create(ISerializationToolsFactory parameter)
+        protected override IElements Create(ISerializationToolsFactory parameter)
             => new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(parameter)));
     }
 }

@@ -29,18 +29,18 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public abstract class ElementOptionBase : OptionBase<TypeInfo, IElement>, IElementOption
     {
-        private readonly IElementNameSelector _names;
+        private readonly IElementNames _names;
 
-        protected ElementOptionBase(IElementNameSelector names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
+        protected ElementOptionBase(IElementNames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
 
-        protected ElementOptionBase(ISpecification<TypeInfo> specification, IElementNameSelector names)
+        protected ElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names)
             : base(specification)
         {
             _names = names;
         }
 
-        public override IElement Get(TypeInfo parameter) => Create(parameter, _names.Get(parameter));
+        public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-        protected abstract IElement Create(TypeInfo parameter, IElementName name);
+        protected abstract IElement Create(string name, TypeInfo classification);
     }
 }

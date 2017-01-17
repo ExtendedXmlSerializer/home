@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,12 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ElementModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IReadContainerContext : IReadContext
+    public abstract class NamedElementBase : ElementBase, IDisplayAware
     {
-        IContainerElement Container { get; }
+        protected NamedElementBase(string displayName, TypeInfo classification) : base(classification)
+        {
+            DisplayName = displayName;
+        }
+
+        public string DisplayName { get; }
+    }
+
+    class Element : NamedElementBase 
+{
+        public Element(string displayName, TypeInfo classification) : base(displayName, classification) {}
+    }
+
+    public abstract class ElementBase : IElement
+    {
+        protected ElementBase(TypeInfo classification)
+        {
+            Classification = classification;
+        }
+
+        public TypeInfo Classification { get; }
     }
 }

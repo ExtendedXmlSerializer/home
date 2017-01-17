@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Legacy
         public LegacyRootConverter(ISerializationToolsFactory tools)
             : this(tools, LegacyElementsTooling.Default.Get(tools)) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IElementSelector elements)
+        LegacyRootConverter(ISerializationToolsFactory tools, IElements elements)
             : this(tools, new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools)))) {}
 
         LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Legacy
 
         public override object Read(IReadContext context)
         {
-            var type = context.Classification.AsType();
+            var type = context.Element.Classification.AsType();
             var configuration = _tools.GetConfiguration(type);
             if (configuration != null)
             {

@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization
         }
 
         protected virtual IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
-            => new XmlWriteContext(writer, new Root(ElementNames.Default.Get(type), type));
+            => new XmlWriteContext(writer, new Root(type));
 
         public object Deserialize(Stream stream)
         {

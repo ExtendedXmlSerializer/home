@@ -21,12 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IContainerElement : IElement
-    {
-        TypeInfo DeclaredType { get; }
-    }
+    public interface IContainerElement : IElement {}
 }

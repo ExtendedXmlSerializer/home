@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Legacy
         protected override object Activate(IReadContext context)
         {
             var result = base.Activate(context);
-            var type = context.Classification;
+            var type = context.Element.Classification;
             var configuration = _tools.GetConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {

@@ -22,13 +22,15 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
     public class ElementOption : ElementOptionBase
     {
-        public ElementOption(IElementNameSelector names) : base(names) {}
+        public ElementOption(IElementNames names) : base(names) {}
+        public ElementOption(ISpecification<TypeInfo> specification, IElementNames names) : base(specification, names) {}
 
-        protected override IElement Create(TypeInfo parameter, IElementName name) => new Element(name);
+        protected override IElement Create(string name, TypeInfo classification) => new Element(name, classification);
     }
 }

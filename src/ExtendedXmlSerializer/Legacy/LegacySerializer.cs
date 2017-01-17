@@ -36,14 +36,14 @@ namespace ExtendedXmlSerialization.Legacy
     {
         readonly private static TypeInfo Type = typeof(LegacySerializer).GetTypeInfo();
 
-        private readonly IElementSelector _selector;
+        private readonly IElements _selector;
         private readonly TypeInfo _type;
 
-        public LegacySerializer(IElementSelector selector, IConverter converter) : this(selector, converter, Type) {}
+        public LegacySerializer(IElements selector, IConverter converter) : this(selector, converter, Type) {}
 
         public LegacySerializer(IConverter converter, TypeInfo type) : this(LegacyElements.Default, converter, type) {}
 
-        public LegacySerializer(IElementSelector selector, IConverter converter, TypeInfo type) : base(converter)
+        public LegacySerializer(IElements selector, IConverter converter, TypeInfo type) : base(converter)
         {
             _selector = selector;
             _type = type;
@@ -51,8 +51,8 @@ namespace ExtendedXmlSerialization.Legacy
 
         protected override IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
             =>
-                new XmlWriteContext(_selector, LegacyNamespaces.Default, writer,
-                                    new Root(LegacyElementNames.Default.Get(type), type), new WriteReferences(), writer);
+                new XmlWriteContext(_selector, LegacyNamespaces.Default, writer, new Root(type), new WriteReferences(),
+                                    writer);
 
 /*public LegacyXmlWriteContext(IElementSelector selector, XmlWriter writer)
             : base(selector, ) {}*/

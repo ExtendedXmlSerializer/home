@@ -22,9 +22,15 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementNameProvider : IParameterizedSource<MemberInfo, IElementName> {}
+    public abstract class NameProviderBase : WeakCacheBase<MemberInfo, string>, INameProvider
+    {
+        protected override string Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
+
+        protected abstract string Create(TypeInfo type, MemberInfo member);
+    }
 }

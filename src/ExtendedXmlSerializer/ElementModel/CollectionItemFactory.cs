@@ -28,22 +28,16 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     class CollectionItemFactory : ICollectionItemFactory
     {
-        private readonly ICollectionItemTypeLocator _locator;
-        private readonly IElementNameSelector _names;
-        public CollectionItemFactory(IElementNameSelector names) : this(CollectionItemTypeLocator.Default, names) {}
+        public static CollectionItemFactory Default { get; } = new CollectionItemFactory();
+        CollectionItemFactory() : this(CollectionItemTypeLocator.Default) {}
 
-        public CollectionItemFactory(ICollectionItemTypeLocator locator, IElementNameSelector names)
+        private readonly ICollectionItemTypeLocator _locator;
+        
+        public CollectionItemFactory(ICollectionItemTypeLocator locator)
         {
             _locator = locator;
-            _names = names;
         }
 
-        public ICollectionItem Get(TypeInfo parameter)
-        {
-            var elementType = _locator.Get(parameter);
-            var name = _names.Get(elementType);
-            var result = new CollectionItem(name, elementType);
-            return result;
-        }
+        public ICollectionItem Get(TypeInfo parameter) => new CollectionItem(_locator.Get(parameter));
     }
 }

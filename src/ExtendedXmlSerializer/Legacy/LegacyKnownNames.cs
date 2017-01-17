@@ -49,6 +49,7 @@ namespace ExtendedXmlSerialization.Legacy
             yield return new ElementName(typeof(DateTimeOffset), "dateTimeOffset");
             yield return new ElementName(typeof(string), "string");
             yield return new ElementName(typeof(Guid), "guid");
+            yield return new ElementName(typeof(DictionaryEntry), ItemProperty.Default.DisplayName);
             yield return new ElementName(typeof(TimeSpan), "TimeSpan");
         }
 

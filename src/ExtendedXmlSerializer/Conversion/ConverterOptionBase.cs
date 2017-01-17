@@ -42,6 +42,10 @@ namespace ExtendedXmlSerialization.Conversion
 
         protected abstract IConverter Create(T parameter);
 
-        public bool IsSatisfiedBy(IElement parameter) => _specification.IsSatisfiedBy(parameter);
+        public bool IsSatisfiedBy(IElement parameter)
+        {
+            var isSatisfiedBy = _specification.IsSatisfiedBy(parameter);
+            return isSatisfiedBy;
+        }
     }
 }

@@ -31,16 +31,16 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         private readonly IElementMembers _members;
 
-        protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNameSelector names,
+        protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
                                              IElementMembers members)
             : base(specification, names)
         {
             _members = members;
         }
 
-        protected override IElement Create(TypeInfo parameter, IElementName name)
-            => CreateElement(parameter, name, _members.Get(parameter));
+        protected override IElement Create(string name, TypeInfo parameter)
+            => CreateElement(name, parameter, _members.Get(parameter));
 
-        protected abstract IElement CreateElement(TypeInfo parameter, IElementName name, IMembers members);
+        protected abstract IElement CreateElement(string name, TypeInfo parameter, IMembers members);
     }
 }

@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
             _setter = setter;
         }
 
-        protected override IMemberElement Create(MemberInformation parameter, IElementName name)
+        protected override IMemberElement Create(MemberInformation parameter, string name)
         {
             var getter = _getter.Get(parameter.Metadata);
             var setter = _setter.Get(parameter.Metadata);

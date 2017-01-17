@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             }
 
             var element = (ICollectionElement) context.Element;
-            var result = list.ToArray(element.Item.DeclaredType.AsType());
+            var result = list.ToArray(element.Item.Classification.AsType());
             return result;
         }
     }

@@ -46,13 +46,12 @@ namespace ExtendedXmlSerialization.Conversion
 
         public override object Read(IReadContext context)
         {
-            var container = (context as IReadContainerContext).Container;
-            if (container != null)
+            if (context.Container != null)
             {
                 // HACK: Fix this.
-                var converter = _selector.Get(container) ?? _selector.Get(context.Element);
+                var converter = _selector.Get(context.Container) ?? _selector.Get(context.Element);
                 var ctx = new XmlReadContext(XmlReadContextFactory.Default, null, context.Element,
-                                             context.Get<XElement>(), context.DisplayName);
+                                             context.Get<XElement>());
                 var result = converter.Read(ctx);
                 return result;
             }

@@ -30,15 +30,15 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         private readonly ICollectionItemFactory _items;
 
-        public ArrayElementOption(IElementNameSelector names) : this(names, new CollectionItemFactory(names)) {}
+        public ArrayElementOption(IElementNames names) : this(names, CollectionItemFactory.Default) {}
 
-        public ArrayElementOption(IElementNameSelector names, ICollectionItemFactory items)
+        public ArrayElementOption(IElementNames names, ICollectionItemFactory items)
             : base(IsArraySpecification.Default, names)
         {
             _items = items;
         }
 
-        protected override IElement Create(TypeInfo parameter, IElementName name)
-            => new ArrayElement(name, _items.Get(parameter));
+        protected override IElement Create(string name, TypeInfo parameter)
+            => new ArrayElement(name, parameter, _items.Get(parameter));
     }
 }
