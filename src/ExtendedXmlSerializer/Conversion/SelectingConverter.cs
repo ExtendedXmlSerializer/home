@@ -28,9 +28,9 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class SelectingConverter : ConverterBase
     {
-        private readonly ISelector _selector;
+        private readonly IConverterSelector _selector;
 
-        public SelectingConverter(ISelector selector)
+        public SelectingConverter(IConverterSelector selector)
         {
             _selector = selector;
         }

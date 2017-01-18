@@ -40,35 +40,4 @@ namespace ExtendedXmlSerialization.Core.Sources
 
         protected override TResult Create(TParameter parameter) => _source.Get(parameter);
     }
-
-    public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
-    {
-        private readonly ImmutableArray<IOption<TParameter, TResult>> _options;
-        readonly private static TResult Default = default(TResult);
-
-        public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
-
-        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> options)
-        {
-            _options = options;
-        }
-
-        public TResult Get(TParameter parameter)
-        {
-            var length = _options.Length;
-            for (int i = 0; i < length; i++)
-            {
-                var option = _options[i];
-                if (option.IsSatisfiedBy(parameter))
-                {
-                    var result = option.Get(parameter);
-                    if (!Equals(result, Default))
-                    {
-                        return result;
-                    }
-                }
-            }
-            return Default;
-        }
-    }
 }

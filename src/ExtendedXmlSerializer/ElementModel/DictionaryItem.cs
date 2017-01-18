@@ -21,22 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Reflection;
+using System;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
     public class DictionaryItem : CollectionItem, IDictionaryItem
     {
-        public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
+        private readonly Func<IElement> _key, _value;
 
-        public DictionaryItem(IDictionaryKeyElement key, IDictionaryValueElement value) : base(DictionaryEntryType)
+        public DictionaryItem(IActivatedElement entry, Func<IElement> key, Func<IElement> value) : base(entry.Self)
         {
-            Key = key;
-            Value = value;
+            _key = key;
+            _value = value;
         }
 
-        public IDictionaryKeyElement Key { get; }
-        public IDictionaryValueElement Value { get; }
+        public IElement Key => _key();
+        public IElement Value => _value();
     }
 }

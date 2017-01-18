@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Legacy
         LegacyElementsTooling() {}
 
         protected override IElements Create(ISerializationToolsFactory parameter)
-            => new LegacyElements(new LegacyElementMembers(new LegacyMemberElementSelector(parameter)));
+            => new LegacyElements(new LegacyElementsSource(parameter));
     }
 }

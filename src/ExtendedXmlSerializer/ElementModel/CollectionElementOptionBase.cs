@@ -31,13 +31,12 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         private readonly ICollectionItemFactory _items;
 
-        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
+        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
                                               IElementNames names, IElementMembers members)
-            : this(specification, names, members, CollectionItemFactory.Default) {}
+            : this(specification, names, members, new CollectionItemFactory(elements)) {}
 
-        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification,
-                                              IElementNames names, IElementMembers members,
-                                              ICollectionItemFactory items)
+        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
+                                              IElementMembers members, ICollectionItemFactory items)
             : base(specification, names, members)
         {
             _items = items;

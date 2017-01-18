@@ -27,11 +27,6 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public abstract class ElementBase : IElement
     {
-        protected ElementBase(TypeInfo classification)
-        {
-            Classification = classification;
-        }
-
-        public TypeInfo Classification { get; }
+        public abstract TypeInfo Classification { get; }
     }
 }

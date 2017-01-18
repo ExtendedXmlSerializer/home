@@ -27,8 +27,8 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
     class MemberElementSelector : OptionSelector<MemberInformation, IMemberElement>, IMemberElementSelector
     {
-        public static MemberElementSelector Default { get; } = new MemberElementSelector();
-        MemberElementSelector() : this(MemberOption.Default, ReadOnlyCollectionMemberOption.Default) {}
+        public MemberElementSelector(IElements elements)
+            : this(new MemberOption(elements), new ReadOnlyCollectionMemberOption(elements)) {}
 
         public MemberElementSelector(params IOption<MemberInformation, IMemberElement>[] options) : base(options) {}
     }

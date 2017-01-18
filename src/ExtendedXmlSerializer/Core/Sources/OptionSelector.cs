@@ -21,31 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class Selector : WeakCacheBase<TypeInfo, IConverter>, ISelector
+    public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
     {
-        private readonly IElements _elements;
-        private readonly IConverterSelector _converters;
+        private readonly ImmutableArray<IOption<TParameter, TResult>> _options;
+        readonly private static TResult Default = default(TResult);
 
-        public Selector(IElements elements, IConverterSelector converters)
+        public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
+
+        public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> options)
         {
-            _elements = elements;
-            _converters = converters;
+            _options = options;
         }
 
-        protected override IConverter Create(TypeInfo parameter)
+        public TResult Get(TParameter parameter)
         {
-            var element = _elements.Get(parameter);
-            var result = _converters.Get(element);
-            return result;
+            var length = _options.Length;
+            for (int i = 0; i < length; i++)
+            {
+                var option = _options[i];
+                if (option.IsSatisfiedBy(parameter))
+                {
+                    var result = option.Get(parameter);
+                    if (!Equals(result, Default))
+                    {
+                        return result;
+                    }
+                }
+            }
+            return Default;
         }
-
-        public IConverter Get(IElement parameter) => _converters.Get(parameter);
-        //public IConverter Get(TypeInfo parameter) => _elements.Get(parameter);
     }
 }

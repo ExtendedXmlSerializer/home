@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Legacy
             return result;
         }
 
-        
+
         protected virtual bool CheckInstance(IWriteContext context, object instance)
         {
             return !(instance is IEnumerable);

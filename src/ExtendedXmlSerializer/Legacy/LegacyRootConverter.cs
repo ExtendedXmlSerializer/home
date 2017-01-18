@@ -26,7 +26,6 @@ using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
@@ -35,12 +34,9 @@ namespace ExtendedXmlSerialization.Legacy
         private readonly ISerializationToolsFactory _tools;
 
         public LegacyRootConverter(ISerializationToolsFactory tools)
-            : this(tools, LegacyElementsTooling.Default.Get(tools)) {}
+            : this(tools, new RootSelector(new SelectorFactory(new LegacyConverterOptions(tools)))) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IElements elements)
-            : this(tools, new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools)))) {}
-
-        LegacyRootConverter(ISerializationToolsFactory tools, ISelector selector) : base(selector)
+        LegacyRootConverter(ISerializationToolsFactory tools, IConverterSelector selector) : base(selector)
         {
             _tools = tools;
         }

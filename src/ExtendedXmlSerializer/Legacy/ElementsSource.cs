@@ -21,14 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ElementModel.Members;
+using System.Linq;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacyElementMembers : ElementMembers
+    class ElementsSource : ElementModel.ElementsSource
     {
-        public static new LegacyElementMembers Default { get; } = new LegacyElementMembers();
-        LegacyElementMembers() : this(MemberElementSelector.Default) {}
-        public LegacyElementMembers(IMemberElementSelector selector) : base(selector) {}
+        public new static ElementsSource Default { get; } = new ElementsSource();
+
+        protected ElementsSource()
+            : base(
+                LegacyElementNames.Default, Defaults.Names.Select(x => x.Classification),
+                DictionaryEntryElement.DictionaryEntryType) {}
     }
 }

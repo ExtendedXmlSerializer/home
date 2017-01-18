@@ -31,10 +31,9 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
+    public sealed class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
     {
-        public static ElementMembers Default { get; } = new ElementMembers();
-        ElementMembers() : this(MemberElementSelector.Default) {}
+        public ElementMembers(IElements elements) : this(new MemberElementSelector(elements)) {}
 
         private readonly IMemberElementSelector _selector;
 

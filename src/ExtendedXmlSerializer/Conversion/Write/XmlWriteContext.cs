@@ -108,14 +108,16 @@ namespace ExtendedXmlSerialization.Conversion.Write
             => _writer.WriteAttributeString(element.DisplayName, value);
 
         public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
-            => Create(parameter, _selector.Get(instanceType));
+            => Create(parameter, _selector.Load(parameter, instanceType));
 
         private XmlWriteContext Create(IContainerElement container, IElement element)
-            => Create(container, element, container);
+            => Create(this, container, element, container);
 
-        public IContext Select() => Create(Container, Element, Element);
+        public IContext Select() => Create(Parent, Container, Element, Element);
 
-        private XmlWriteContext Create(IContainerElement container, IElement element, IElement selected)
-            => new XmlWriteContext(this, _selector, _namespaces, container, element, selected, _writer, _services, _finish);
+        private XmlWriteContext Create(IContext parent, IContainerElement container, IElement element, IElement selected)
+            =>
+                new XmlWriteContext(parent, _selector, _namespaces, container, element, selected, _writer, _services,
+                                    _finish);
     }
 }

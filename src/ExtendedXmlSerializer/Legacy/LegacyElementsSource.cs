@@ -21,11 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
+
+namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class KeyProperty : FrameworkPropertyBase
+    sealed class LegacyElementsSource : ElementsSource
     {
-        public static KeyProperty Default { get; } = new KeyProperty();
-        KeyProperty() : base("Key") {}
+        private readonly ISerializationToolsFactory _tools;
+        
+        public LegacyElementsSource(ISerializationToolsFactory tools)
+        {
+            _tools = tools;
+        }
+
+        protected override IMemberElementSelector CreateMembers(IElements parameter)
+            => new LegacyMemberElementSelector(_tools, parameter);
     }
 }

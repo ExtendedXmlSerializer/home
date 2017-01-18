@@ -21,7 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface ISelector : IConverterSelector {}
+    abstract class ElementsSourceBase : IAlteration<IElements>
+    {
+        public IElements Get(IElements parameter)
+        {
+            var options = CreateOptions(parameter);
+            var result = new Elements(options.ToArray());
+            return result;
+        }
+
+        protected abstract IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter);
+
+        sealed class Elements : Selector<TypeInfo, IElement>, IElements
+        {
+            public Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
+        }
+    }
 }

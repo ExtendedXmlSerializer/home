@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -29,14 +30,17 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
     public class ReadOnlyCollectionMemberOption : MemberOptionBase
     {
-        public static ReadOnlyCollectionMemberOption Default { get; } = new ReadOnlyCollectionMemberOption();
-        ReadOnlyCollectionMemberOption() : this(GetterFactory.Default, AddDelegates.Default) {}
-
+        private readonly IElements _elements;
         private readonly IGetterFactory _getter;
         private readonly IAddDelegates _add;
 
-        public ReadOnlyCollectionMemberOption(IGetterFactory getter, IAddDelegates add) : base(Specification.Instance)
+        public ReadOnlyCollectionMemberOption(IElements elements)
+            : this(elements, GetterFactory.Default, AddDelegates.Default) {}
+
+        public ReadOnlyCollectionMemberOption(IElements elements, IGetterFactory getter, IAddDelegates add)
+            : base(Specification.Instance)
         {
+            _elements = elements;
             _getter = getter;
             _add = add;
         }
@@ -47,8 +51,8 @@ namespace ExtendedXmlSerialization.ElementModel.Members
             if (add != null)
             {
                 var getter = _getter.Get(parameter.Metadata);
-                var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, parameter.MemberType, add,
-                                                                 getter);
+                var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
+                                                                 _elements.Build(parameter.MemberType));
                 return result;
             }
             return null;

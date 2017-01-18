@@ -28,6 +28,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
@@ -50,12 +51,8 @@ namespace ExtendedXmlSerialization.Legacy
         }
 
         protected override IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
-            =>
-                new XmlWriteContext(_selector, LegacyNamespaces.Default, writer, new Root(type), new WriteReferences(),
-                                    writer);
-
-/*public LegacyXmlWriteContext(IElementSelector selector, XmlWriter writer)
-            : base(selector, ) {}*/
+            => new XmlWriteContext(_selector, LegacyNamespaces.Default, writer, new Root(_selector.Build(type)),
+                                   new WriteReferences(), writer);
 
         protected override IReadContext CreateContext(Stream stream)
         {

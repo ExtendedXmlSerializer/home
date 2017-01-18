@@ -26,16 +26,16 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class RootSelector : ISelector
+    public class RootSelector : IConverterSelector
     {
         public static RootSelector Default { get; } = new RootSelector();
         RootSelector() : this(SelectorFactory.Default) {}
 
-        readonly ISelector _selector;
+        readonly IConverterSelector _selector;
 
         public RootSelector(ISelectorFactory factory) : this(factory, x => new SelectingConverter(x)) {}
 
-        public RootSelector(ISelectorFactory factory, Func<ISelector, IConverter> converter)
+        public RootSelector(ISelectorFactory factory, Func<IConverterSelector, IConverter> converter)
         {
             _selector = factory.Get(converter(this));
         }

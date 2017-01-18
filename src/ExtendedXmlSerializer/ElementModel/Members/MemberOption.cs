@@ -21,30 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
     public class MemberOption : MemberOptionBase
     {
-        public static MemberOption Default { get; } = new MemberOption();
-        MemberOption() : this(GetterFactory.Default, SetterFactory.Default) {}
-
         private readonly IGetterFactory _getter;
         private readonly ISetterFactory _setter;
+        private readonly IElements _elements;
 
-        public MemberOption(IGetterFactory getter, ISetterFactory setter)
+        public MemberOption(IElements elements) : this(elements, GetterFactory.Default, SetterFactory.Default) {}
+
+        public MemberOption(IElements elements, IGetterFactory getter, ISetterFactory setter)
             : base(new DelegatedSpecification<MemberInformation>(x => x.Assignable))
         {
             _getter = getter;
             _setter = setter;
+            _elements = elements;
         }
 
         protected override IMemberElement Create(MemberInformation parameter, string name)
         {
             var getter = _getter.Get(parameter.Metadata);
             var setter = _setter.Get(parameter.Metadata);
-            var result = new MemberElement(name, parameter.Metadata, parameter.MemberType, setter, getter);
+            var result = new MemberElement(name, parameter.Metadata, setter, getter,
+                                           _elements.Build(parameter.MemberType));
             return result;
         }
     }

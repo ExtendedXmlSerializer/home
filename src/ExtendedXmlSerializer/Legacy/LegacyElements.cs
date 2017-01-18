@@ -21,18 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyElements : Elements
     {
         public static new LegacyElements Default { get; } = new LegacyElements();
-        LegacyElements() : this(LegacyElementMembers.Default) {}
+        LegacyElements() : base(ElementsSource.Default) {}
 
-        public LegacyElements(IElementMembers members)
-            : base(LegacyElementNames.Default, members, Defaults.Names.Select(x => x.Classification)) {}
+        public LegacyElements(IAlteration<IElements> source) : base(source) {}
     }
 }

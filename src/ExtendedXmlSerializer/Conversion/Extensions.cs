@@ -78,6 +78,9 @@ namespace ExtendedXmlSerialization.Conversion
 
         public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
 
+        public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
+            => Equals(instanceType, container.Classification) ? container.Element : @this.Get(instanceType);
+
         public static TypeInfo GetDeclaredType(this IContainerElement target, IClassification classification)
         {
             if (Equals(classification.Classification, TypeObject))

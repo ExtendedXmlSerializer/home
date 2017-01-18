@@ -23,5 +23,8 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IContainerElement : IElement {}
+    public interface IContainerElement : IElement
+    {
+        IElement Element { get; }
+    }
 }

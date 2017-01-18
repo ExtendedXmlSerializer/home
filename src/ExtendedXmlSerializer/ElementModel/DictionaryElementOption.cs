@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -29,15 +30,25 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     class DictionaryElementOption : CollectionElementOptionBase
     {
+        private readonly IElements _elements;
+        private readonly IActivatedElement _entry;
         private readonly IDictionaryPairTypesLocator _locator;
 
-        public DictionaryElementOption(IElementNames names, IElementMembers members)
-            : this(names, members, DictionaryPairTypesLocator.Default) {}
+        public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members)
+            : this(elements, names, members, DictionaryPairTypesLocator.Default) {}
 
-        public DictionaryElementOption(IElementNames names, IElementMembers members,
+        public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
                                        IDictionaryPairTypesLocator locator)
-            : base(IsDictionaryTypeSpecification.Default, names, members)
+            : this(
+                elements, names, members,
+                new DictionaryEntryElement(members.Get(DictionaryEntryElement.DictionaryEntryType)), locator) {}
+
+        public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
+                                       IActivatedElement entry, IDictionaryPairTypesLocator locator)
+            : base(IsDictionaryTypeSpecification.Default, elements, names, members)
         {
+            _elements = elements;
+            _entry = entry;
             _locator = locator;
         }
 
@@ -45,8 +56,7 @@ namespace ExtendedXmlSerialization.ElementModel
                                            ICollectionItem elementType)
         {
             var pair = _locator.Get(collectionType);
-            var item = new DictionaryItem(new DictionaryKeyElement(pair.KeyType),
-                                          new DictionaryValueElement(pair.ValueType));
+            var item = new DictionaryItem(_entry, _elements.Build(pair.KeyType), _elements.Build(pair.ValueType));
             var result = new DictionaryElement(name, collectionType, members, item);
             return result;
         }

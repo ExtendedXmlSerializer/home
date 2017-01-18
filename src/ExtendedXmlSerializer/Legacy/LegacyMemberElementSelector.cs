@@ -21,15 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(ISerializationToolsFactory tools)
+        public LegacyMemberElementSelector(ISerializationToolsFactory tools) : this(tools, LegacyElements.Default) {}
+
+        public LegacyMemberElementSelector(ISerializationToolsFactory tools, IElements elements)
             : base(
-                new MemberOption(new LegacyGetterFactory(tools), new LegacySetterFactory(tools, SetterFactory.Default)),
-                ReadOnlyCollectionMemberOption.Default) {}
+                new MemberOption(elements, new LegacyGetterFactory(tools),
+                                 new LegacySetterFactory(tools, SetterFactory.Default)),
+                new ReadOnlyCollectionMemberOption(elements)) {}
     }
 }

@@ -30,7 +30,8 @@ namespace ExtendedXmlSerialization.ElementModel
     {
         private readonly ICollectionItemFactory _items;
 
-        public ArrayElementOption(IElementNames names) : this(names, CollectionItemFactory.Default) {}
+        public ArrayElementOption(IElementNames names, IElements elements)
+            : this(names, new CollectionItemFactory(elements)) {}
 
         public ArrayElementOption(IElementNames names, ICollectionItemFactory items)
             : base(IsArraySpecification.Default, names)

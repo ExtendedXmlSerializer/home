@@ -25,8 +25,8 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public interface IDictionaryItem : ICollectionItem
     {
-        IDictionaryKeyElement Key { get; }
+        IElement Key { get; }
 
-        IDictionaryValueElement Value { get; }
+        IElement Value { get; }
     }
 }

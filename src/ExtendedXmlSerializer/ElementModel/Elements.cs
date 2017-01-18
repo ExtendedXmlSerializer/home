@@ -21,33 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    class Elements : Selector<TypeInfo, IElement>, IElements
+    class Elements : IElements
     {
-        readonly private static TypeInfo[] Except = {DictionaryItem.DictionaryEntryType};
         public static Elements Default { get; } = new Elements();
-        Elements() : this(ElementNames.Default, ElementMembers.Default, Defaults.Names.Select(x => x.Classification)) {}
+        Elements() : this(ElementsSource.Default) {}
 
-        protected Elements(IElementNames names, IElementMembers members, IEnumerable<TypeInfo> registered) : this(
-            new ElementOption(
-                new AnySpecification<TypeInfo>(new DelegatedSpecification<TypeInfo>(registered.Except(Except).Contains),
-                                               IsAssignableSpecification<Enum>.Default), names),
-            new DictionaryElementOption(names, members),
-            new ArrayElementOption(names),
-            new CollectionElementOption(names, members),
-            new ActivatedElementOption(names, members),
-            new ElementOption(names)) {}
+        private readonly IParameterizedSource<TypeInfo, IElement> _source;
 
-        protected Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
+        public Elements(IAlteration<IElements> source)
+        {
+            _source = source.Get(this);
+        }
+
+        public IElement Get(TypeInfo parameter) => _source.Get(parameter);
     }
 }

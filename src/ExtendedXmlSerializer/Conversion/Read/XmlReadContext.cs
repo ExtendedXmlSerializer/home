@@ -88,8 +88,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         public string Read() => _data.Value;
 
-        public IReadContext Member(IContainerElement element) => _factory.Element(element, _data);
-
         public IEnumerable<IReadContext> Items()
         {
             var container = ((ICollectionElement) Element).Item;

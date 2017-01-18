@@ -21,14 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class DictionaryValueElement : ContainerElementBase, IDictionaryValueElement
+    public class DictionaryEntryElement : ActivatedElement
     {
-        readonly private static string DefaultDisplayName = ValueProperty.Default.DisplayName;
-        public DictionaryValueElement(TypeInfo valueType) : base(valueType) {}
-        public string DisplayName => DefaultDisplayName;
+        public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
+
+        public DictionaryEntryElement(IMembers members)
+            : base(ItemProperty.Default.DisplayName, DictionaryEntryType, members) {}
     }
 }
