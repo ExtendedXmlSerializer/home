@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Legacy
 
         public override void Write(IWriteContext context, object instance)
         {
-            var element = ((ICollectionElement)context.Element).Item.Classification.AsType();
+            var element = ((ICollectionElement) context.Element).Item.Classification.AsType();
             var configuration = _tools.GetConfiguration(element);
             if (configuration?.IsObjectReference ?? false)
             {

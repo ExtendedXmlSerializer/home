@@ -21,19 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.ElementModel
 {
     public interface IElementName : IDisplayAware, IClassification {}
-
-    public interface IDisplayAware
-    {
-        string DisplayName { get; }
-    }
-
-    public interface IClassification
-    {
-        TypeInfo Classification { get; }
-    }
 }

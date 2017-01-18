@@ -21,30 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.TypeModel;
-
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public class DictionaryReader : ListReaderBase
+    public interface IDisplayAware
     {
-        private readonly IActivators _activators;
-
-        public DictionaryReader(IReader reader) : this(reader, Activators.Default) {}
-
-        public DictionaryReader(IReader reader, IActivators activators) : base(new DictionaryEntryReader(reader))
-        {
-            _activators = activators;
-        }
-
-        protected override object Create(IReadContext context, IEnumerable enumerable)
-        {
-            var result = _activators.Activate<IDictionary>(context.Element.Classification.AsType());
-            foreach (DictionaryEntry item in enumerable)
-            {
-                result.Add(item.Key, item.Value);
-            }
-            return result;
-        }
+        string DisplayName { get; }
     }
 }

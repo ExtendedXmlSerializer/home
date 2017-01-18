@@ -41,7 +41,8 @@ namespace ExtendedXmlSerialization.ElementModel
             _locator = locator;
         }
 
-        protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem elementType)
+        protected override IElement Create(string name, TypeInfo collectionType, IMembers members,
+                                           ICollectionItem elementType)
         {
             var pair = _locator.Get(collectionType);
             var item = new DictionaryItem(new DictionaryKeyElement(pair.KeyType),

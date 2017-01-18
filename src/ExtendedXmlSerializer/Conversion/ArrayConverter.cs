@@ -21,20 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Conversion.Write
+namespace ExtendedXmlSerialization.Conversion
 {
-    public class ElementWriter : DecoratedWriter
+    public class ArrayConverter : Converter
     {
-        public ElementWriter(IWriter writer) : base(writer) {}
-
-        public override void Write(IWriteContext context, object instance)
-        {
-            using (var child = context.Emit(instance.GetType().GetTypeInfo()))
-            {
-                base.Write(child, instance);
-            }
-        }
+        public ArrayConverter(IConverter converter)
+            : base(new ArrayReader(converter), new EnumerableBodyWriter(converter)) {}
     }
 }

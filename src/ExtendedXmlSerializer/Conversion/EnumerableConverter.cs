@@ -21,7 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
+
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface ISelector : IConverterSelector {}
+    class EnumerableConverter : Converter
+    {
+        public EnumerableConverter(IConverter converter)
+            : base(new ListReader(converter), new EnumerableBodyWriter(converter)) {}
+    }
 }

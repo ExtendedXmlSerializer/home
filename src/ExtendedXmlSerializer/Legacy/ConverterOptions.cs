@@ -23,12 +23,10 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
@@ -39,29 +37,30 @@ namespace ExtendedXmlSerialization.Legacy
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
-            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(parameter));
+            yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
+            yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
+            yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
-            yield return new ReadOnlyCollectionMemberConverterOption(parameter);
-            yield return new MemberConverterOption(parameter);
+            var element = new ElementSelectingConverter(parameter);
+            yield return new ReadOnlyCollectionMemberConverterOption(element);
+            yield return new MemberConverterOption(element);
             yield return KnownConverters.Default;
         }
 
-        sealed class LegacyEnumerableTypeConverter : TypeConverter
+        /*sealed class LegacyEnumerableTypeConverter : TypeConverter
         {
             public LegacyEnumerableTypeConverter(IConverter converter)
                 : base(
                     IsCollectionTypeSpecification.Default, new ListReader(converter),
                     new EnumerableBodyWriter(converter)
                 ) {}
-        }
+        }*/
 
         sealed class MemberConverterOption : ConverterOption<IMemberElement>
         {
             public MemberConverterOption(IConverter converter) : base(
                 new Converter(converter,
-                              new ValidatingAssignedWriter(new ElementWriter(new MemberTypeEmittingWriter(converter))))) {}
+                              new ValidatingAssignedWriter(new Emitter(new MemberTypeEmittingWriter(converter))))) {}
         }
     }
 }

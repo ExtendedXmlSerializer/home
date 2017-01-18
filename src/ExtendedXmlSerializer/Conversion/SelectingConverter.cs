@@ -21,11 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -38,30 +35,10 @@ namespace ExtendedXmlSerialization.Conversion
             _selector = selector;
         }
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            var converter = _selector.Get(context.Element) ?? _selector.Get(instance.GetType().GetTypeInfo());
-            converter.Write(context, instance);
-        }
+        public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-        public override object Read(IReadContext context)
-        {
-            if (context.Container != null)
-            {
-                // HACK: Fix this.
-                var converter = _selector.Get(context.Container) ?? _selector.Get(context.Element);
-                var ctx = new XmlReadContext(XmlReadContextFactory.Default, null, context.Element,
-                                             context.Get<XElement>());
-                var result = converter.Read(ctx);
-                return result;
-            }
-            else
-            {
-                var converter = _selector.Get(context.Element);
-                var result = converter.Read(context);
-                return result;
-            }
-            
-        }
+        private IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
+
+        public override object Read(IReadContext context) => Select(context).Read(context);
     }
 }

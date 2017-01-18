@@ -32,14 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
         new T Container { get; }
     }
 
-    public interface IReadContext : IEnumerable<IReadMemberContext>, IServiceRepository
+    public interface IReadContext : IContext, IEnumerable<IReadMemberContext>, IServiceRepository
     {
-        IContainerElement Container { get; }
-
-        IElement Element { get; }
-
-        IReadContext Member(IContainerElement element);
-
         IEnumerable<IReadContext> Items();
 
         string Read();

@@ -41,10 +41,11 @@ namespace ExtendedXmlSerialization.Legacy
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return new ReadOnlyCollectionMemberConverterOption(parameter);
-            yield return new LegacyMemberOption(_tools, new MemberConverterOption(parameter));
+            var element = new ElementSelectingConverter(parameter);
+            yield return new ReadOnlyCollectionMemberConverterOption(element);
+            yield return new LegacyMemberOption(_tools, new MemberConverterOption(element));
             yield return KnownConverters.Default;
-            yield return new ConverterOption<IDictionaryElement>(new LegacyDictionaryTypeConverter(parameter));
+            yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
             yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter));
             yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter));
@@ -54,8 +55,7 @@ namespace ExtendedXmlSerialization.Legacy
         {
             public MemberConverterOption(IConverter converter) : base(
                 new Converter(converter,
-                              new ValidatingAssignedWriter(
-                                  new ElementWriter(new LegacyMemberTypeEmittingWriter(converter))))) {}
+                              new ValidatingAssignedWriter(new Emitter(new LegacyMemberTypeEmittingWriter(converter))))) {}
         }
     }
 }

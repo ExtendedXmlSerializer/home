@@ -28,7 +28,8 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class CollectionElementBase<T> : ActivatedElement, ICollectionElement<T> where T : ICollectionItem
     {
-        public CollectionElementBase(string displayName, TypeInfo classification, IMembers members, T item) : base(displayName, classification, members)
+        public CollectionElementBase(string displayName, TypeInfo classification, IMembers members, T item)
+            : base(displayName, classification, members)
         {
             Item = item;
         }

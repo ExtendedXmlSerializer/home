@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IRootSelector : ISelector, ICommand<IConverter> {}
+    class Element : NamedElementBase
+    {
+        public Element(string displayName, TypeInfo classification) : base(displayName, classification) {}
+    }
 }

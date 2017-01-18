@@ -27,7 +27,8 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class ArrayElement : NamedElementBase, IArrayElement
     {
-        public ArrayElement(string displayName, TypeInfo classification, ICollectionItem item) : base(displayName, classification)
+        public ArrayElement(string displayName, TypeInfo classification, ICollectionItem item)
+            : base(displayName, classification)
         {
             Item = item;
         }

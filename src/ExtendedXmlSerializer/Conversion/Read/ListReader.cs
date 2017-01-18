@@ -31,7 +31,9 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(IReader reader) : this(reader, Activators.Default, AddDelegates.Default) {}
+        public ListReader(IReader reader) : this(reader, AddDelegates.Default) {}
+
+        public ListReader(IReader reader, IAddDelegates add) : this(reader, Activators.Default, add) {}
 
         public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
         {

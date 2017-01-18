@@ -34,9 +34,7 @@ namespace ExtendedXmlSerialization.Legacy
     sealed class LegacyInstanceTypeConverter : Converter
     {
         public LegacyInstanceTypeConverter(IConverter converter)
-            : base(
-                new InstanceBodyReader(converter),
-                new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
+            : base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
         public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(

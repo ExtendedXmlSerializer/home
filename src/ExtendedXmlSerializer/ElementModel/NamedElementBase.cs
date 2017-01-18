@@ -22,20 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public class NullableAwareSelector : ISelector
+    public abstract class NamedElementBase : ElementBase, IDisplayAware
     {
-        private readonly ISelector _selector;
-
-        public NullableAwareSelector(ISelector selector)
+        protected NamedElementBase(string displayName, TypeInfo classification) : base(classification)
         {
-            _selector = selector;
+            DisplayName = displayName;
         }
 
-        public IConverter Get(TypeInfo parameter) => _selector.Get(parameter.AccountForNullable());
-        public IConverter Get(IElement parameter) => _selector.Get(parameter);
+        public string DisplayName { get; }
     }
 }

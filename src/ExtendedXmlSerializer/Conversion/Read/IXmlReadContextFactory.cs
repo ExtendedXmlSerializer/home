@@ -28,10 +28,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
 {
     public interface IXmlReadContextFactory
     {
-        IReadContext Create(IContainerElement container, XElement data);
+        IReadContext Create(IReadContext context, IContainerElement container, XElement data);
 
         IReadContext Element(IContainerElement container, XElement data);
 
         string Value(IElementName name, XElement data);
+        IContext Select(IReadContext context, XElement data);
     }
 }

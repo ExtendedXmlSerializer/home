@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ElementModel
         CollectionItemFactory() : this(CollectionItemTypeLocator.Default) {}
 
         private readonly ICollectionItemTypeLocator _locator;
-        
+
         public CollectionItemFactory(ICollectionItemTypeLocator locator)
         {
             _locator = locator;

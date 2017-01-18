@@ -34,17 +34,18 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     class Elements : Selector<TypeInfo, IElement>, IElements
     {
+        readonly private static TypeInfo[] Except = {DictionaryItem.DictionaryEntryType};
         public static Elements Default { get; } = new Elements();
         Elements() : this(ElementNames.Default, ElementMembers.Default, Defaults.Names.Select(x => x.Classification)) {}
 
         protected Elements(IElementNames names, IElementMembers members, IEnumerable<TypeInfo> registered) : this(
             new ElementOption(
-                new AnySpecification<TypeInfo>(new DelegatedSpecification<TypeInfo>(registered.Contains),
+                new AnySpecification<TypeInfo>(new DelegatedSpecification<TypeInfo>(registered.Except(Except).Contains),
                                                IsAssignableSpecification<Enum>.Default), names),
             new DictionaryElementOption(names, members),
             new ArrayElementOption(names),
             new CollectionElementOption(names, members),
-            new ActivatedElementOption(names, members), 
+            new ActivatedElementOption(names, members),
             new ElementOption(names)) {}
 
         protected Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}

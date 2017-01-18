@@ -24,6 +24,7 @@
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
@@ -34,7 +35,7 @@ namespace ExtendedXmlSerialization.Legacy
 
         protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
         {
-            if (!(context.Container is IMemberElement))
+            if (!(context.Container is IMemberElement) && !(context.Container is IDictionaryItem))
             {
                 var declared = context.Container.Classification;
                 var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);

@@ -25,21 +25,6 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class NamedElementBase : ElementBase, IDisplayAware
-    {
-        protected NamedElementBase(string displayName, TypeInfo classification) : base(classification)
-        {
-            DisplayName = displayName;
-        }
-
-        public string DisplayName { get; }
-    }
-
-    class Element : NamedElementBase 
-{
-        public Element(string displayName, TypeInfo classification) : base(displayName, classification) {}
-    }
-
     public abstract class ElementBase : IElement
     {
         protected ElementBase(TypeInfo classification)

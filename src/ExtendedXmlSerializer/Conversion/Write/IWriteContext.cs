@@ -27,18 +27,14 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public interface IWriteContext : IDisposable, IServiceProvider
+    public interface IWriteContext : IContext
     {
-        IWriteContext New(IContainerElement container);
+        IWriteContext New(IContainerElement container, TypeInfo instanceType);
 
-        IWriteContext Emit(TypeInfo instanceType);
+        IDisposable Emit();
 
         void Write(string text);
 
         void Write(IElementName name, string value);
-
-        IContainerElement Container { get; }
-
-        IElement Element { get; }
     }
 }

@@ -25,15 +25,20 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    class InstanceBodyWriter : DecoratedWriter
+    class InstanceBodyWriter : WriterBase
     {
-        public InstanceBodyWriter(IWriter writer) : base(writer) {}
+        private readonly IWriter _writer;
+
+        public InstanceBodyWriter(IWriter writer)
+        {
+            _writer = writer;
+        }
 
         public override void Write(IWriteContext context, object instance)
         {
-            foreach (var member in ((IMemberedElement)context.Element).Members)
+            foreach (var member in ((IMemberedElement) context.Element).Members)
             {
-                base.Write(context.New(member), member.Get(instance));
+                _writer.New(context, member, member.Get(instance));
             }
         }
     }

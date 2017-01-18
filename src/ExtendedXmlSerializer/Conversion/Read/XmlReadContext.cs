@@ -24,7 +24,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ElementModel;
 
@@ -40,6 +39,9 @@ namespace ExtendedXmlSerialization.Conversion.Read
         public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
                               XElement data)
             : base(factory, container, element, data) {}
+
+        public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
+                              IElement selected, XElement data) : base(factory, container, element, selected, data) {}
     }
 
     public abstract class XmlReadContext<T> : IReadContext<T> where T : class, IContainerElement
@@ -47,11 +49,12 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IXmlReadContextFactory _factory;
         private readonly XElement _data;
 
-        public XmlReadContext(XElement data)
+        protected XmlReadContext(XElement data)
             : this(XmlReadContextFactory.Default, Elements.Default.Get(ElementTypes.Default.Get(data)), data) {}
 
-        public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
-            : this(factory, null, element, data)
+        protected XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data,
+                                 params object[] services)
+            : this(factory, null, element, element, data)
         {
             for (int i = 0; i < services.Length; i++)
             {
@@ -60,25 +63,24 @@ namespace ExtendedXmlSerialization.Conversion.Read
         }
 
         protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data)
-            : this(factory, container, element, data, element.Classification) {}
+            : this(factory, container, element, container, data) {}
 
-        XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data,
-                       TypeInfo classification)
+        protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, IElement selected,
+                                 XElement data)
         {
             Container = container;
             _factory = factory;
             _data = data;
             Element = element;
-            Classification = classification;
+            Selected = selected;
             Add(data);
         }
 
-        public TypeInfo Classification { get; }
-
         public T Container { get; }
-        IContainerElement IReadContext.Container => Container;
+        IContainerElement IContext.Container => Container;
 
         public IElement Element { get; }
+        public IElement Selected { get; }
 
         public object GetService(Type serviceType) => _data.AnnotationAll(serviceType);
 
@@ -93,7 +95,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var container = ((ICollectionElement) Element).Item;
             foreach (var child in _data.Elements())
             {
-                yield return _factory.Create(container, child);
+                yield return _factory.Create(this, container, child);
             }
         }
 
@@ -107,11 +109,12 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 var member = members.Get(source.Name.LocalName);
                 if (member != null)
                 {
-                    yield return (IReadMemberContext) _factory.Create(member, source);
+                    yield return (IReadMemberContext) _factory.Create(this, member, source);
                 }
             }
         }
 
         public string this[IElementName name] => _factory.Value(name, _data);
+        public IContext Select() => _factory.Select(this, _data);
     }
 }

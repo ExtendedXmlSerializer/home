@@ -49,21 +49,30 @@ namespace ExtendedXmlSerialization.Conversion.Write
                 selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
                 new DelegatedDisposable(writer.WriteEndElement)) {}
 
-        XmlWriteContext(IElements selector, INamespaces namespaces, IContainerElement container, IElement element,
-                        XmlWriter writer,
-                        ImmutableArray<object> services, IDisposable finish)
+        private XmlWriteContext(IElements selector, INamespaces namespaces,
+                                IContainerElement container, IElement element,
+                                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
+            : this(null, selector, namespaces, container, element, container, writer, services, finish) {}
+
+        XmlWriteContext(IContext parent, IElements selector, INamespaces namespaces,
+                        IContainerElement container, IElement element, IElement selected,
+                        XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
         {
             _selector = selector;
             _namespaces = namespaces;
+            Parent = parent;
             Container = container;
             Element = element;
+            Selected = selected;
             _writer = writer;
             _services = services;
             _finish = finish;
         }
 
+        public IContext Parent { get; }
         public IContainerElement Container { get; }
         public IElement Element { get; }
+        public IElement Selected { get; }
 
         public object GetService(Type serviceType)
         {
@@ -80,18 +89,17 @@ namespace ExtendedXmlSerialization.Conversion.Write
             return null;
         }
 
-        public IWriteContext Emit(TypeInfo instanceType)
+        public IDisposable Emit()
         {
             var ns = _namespaces.Get(Element.Classification);
-            var element = _selector.Get(instanceType);
-            var name = (Container as IDisplayAware)?.DisplayName ?? (element as IDisplayAware)?.DisplayName;
+            var name = (Container as IDisplayAware)?.DisplayName ?? (Element as IDisplayAware)?.DisplayName;
             if (name != null)
             {
                 _writer.WriteStartElement(name, ns);
-                var result = new XmlWriteContext(_selector, _namespaces, Container, element, _writer, _services, _finish);
-                return result;
+                return _finish;
             }
-            throw new SerializationException($"Display name not found for element '{Element}'");
+            throw new SerializationException(
+                $"Display name not found for element '{Element}' in a container of '{Container}.'");
         }
 
         public void Write(string text) => _writer.WriteString(text);
@@ -99,9 +107,15 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public void Write(IElementName element, string value)
             => _writer.WriteAttributeString(element.DisplayName, value);
 
-        public virtual void Dispose() => _finish.Dispose();
+        public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
+            => Create(parameter, _selector.Get(instanceType));
 
-        public IWriteContext New(IContainerElement parameter)
-            => new XmlWriteContext(_selector, _namespaces, parameter, parameter, _writer, _services, _finish);
+        private XmlWriteContext Create(IContainerElement container, IElement element)
+            => Create(container, element, container);
+
+        public IContext Select() => Create(Container, Element, Element);
+
+        private XmlWriteContext Create(IContainerElement container, IElement element, IElement selected)
+            => new XmlWriteContext(this, _selector, _namespaces, container, element, selected, _writer, _services, _finish);
     }
 }

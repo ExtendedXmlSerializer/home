@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class CustomElementWriter : ElementWriter
+    sealed class CustomElementWriter : Emitter
     {
         public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
             : base(new TypeEmittingWriter(new BodyWriter(configuration))) {}

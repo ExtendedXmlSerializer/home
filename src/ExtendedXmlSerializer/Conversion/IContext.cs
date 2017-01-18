@@ -21,15 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using System;
+using ExtendedXmlSerialization.ElementModel;
 
-namespace ExtendedXmlSerialization.Legacy
+namespace ExtendedXmlSerialization.Conversion
 {
-    class LegacyDictionaryTypeConverter : Converter
+    public interface IContext : IServiceProvider
     {
-        public LegacyDictionaryTypeConverter(IConverter converter)
-            : base(new DictionaryReader(converter), new DictionaryBodyWriter(converter)) {}
+        IContainerElement Container { get; }
+
+        IElement Element { get; }
+
+        IContext Select();
+
+        IElement Selected { get; }
     }
 }

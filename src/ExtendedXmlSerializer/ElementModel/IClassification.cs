@@ -21,36 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ElementModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Read
+namespace ExtendedXmlSerialization.ElementModel
 {
-    public class DictionaryEntryReader : ReaderBase<IEnumerable>, IEnumeratingReader
+    public interface IClassification
     {
-        private readonly IReader _reader;
-
-        public DictionaryEntryReader(IReader reader)
-        {
-            _reader = reader;
-        }
-
-        public override IEnumerable Read(IReadContext context) => Entries(context);
-
-        IEnumerable<DictionaryEntry> Entries(IReadContext context)
-        {
-            var element = (IDictionaryElement) context.Element;
-            var item = element.Item;
-            foreach (var child in context.Items())
-            {
-                var key = Read(child, item.Key);
-                var value = Read(child, item.Value);
-                var entry = new DictionaryEntry(key, value);
-                yield return entry;
-            }
-        }
-
-        object Read(IReadContext context, IContainerElement element) => _reader.Read(context.Member(element));
+        TypeInfo Classification { get; }
     }
 }

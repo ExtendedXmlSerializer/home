@@ -40,8 +40,7 @@ namespace ExtendedXmlSerialization.Legacy
         LegacyRootConverter(ISerializationToolsFactory tools, IElements elements)
             : this(tools, new RootSelector(new SelectorFactory(elements, new LegacyConverterOptions(tools)))) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IRootSelector selector)
-            : base(selector, new SelectingConverter(new NullableAwareSelector(selector)))
+        LegacyRootConverter(ISerializationToolsFactory tools, ISelector selector) : base(selector)
         {
             _tools = tools;
         }

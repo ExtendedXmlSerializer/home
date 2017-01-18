@@ -32,6 +32,7 @@ namespace ExtendedXmlSerialization.Legacy
         public static new LegacyElements Default { get; } = new LegacyElements();
         LegacyElements() : this(LegacyElementMembers.Default) {}
 
-        public LegacyElements(IElementMembers members) : base(LegacyElementNames.Default, members, Defaults.Names.Select(x => x.Classification)) {}
+        public LegacyElements(IElementMembers members)
+            : base(LegacyElementNames.Default, members, Defaults.Names.Select(x => x.Classification)) {}
     }
 }

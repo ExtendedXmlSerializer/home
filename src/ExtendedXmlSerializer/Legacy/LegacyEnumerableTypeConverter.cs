@@ -31,8 +31,7 @@ namespace ExtendedXmlSerialization.Legacy
     {
         public LegacyEnumerableTypeConverter(ISerializationToolsFactory tools, IConverter converter)
             : base(
-                new ListReader(converter),
-                new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(converter))
+                new ListReader(converter), new EnumerableReferenceWriter(tools, new EnumerableBodyWriter(converter))
             ) {}
     }
 }

@@ -36,8 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IElements _selector;
         private readonly IElementTypes _types;
         private readonly INameConverter _converter;
-
-
+        
         public XmlReadContextFactory(IElements selector, IElementTypes types, INameConverter converter)
         {
             _selector = selector;
@@ -45,13 +44,14 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _converter = converter;
         }
 
-        private TypeInfo Initialized(XElement source, TypeInfo declared)
+        private TypeInfo Initialized(IContext context, IClassification classification, XElement data)
         {
-            var info = _types.Get(source);
+            var info = _types.Get(data);
             if (info == null)
             {
-                source.Annotated(declared);
-                return declared;
+                var result = context.Container.GetDeclaredType(classification);
+                data.Annotated(result);
+                return result;
             }
             return info;
         }
@@ -60,27 +60,22 @@ namespace ExtendedXmlSerialization.Conversion.Read
         {
             var name = _converter.Get(container);
             var native = data.Element(name);
-            var result = native != null ? Create(container, native) : null;
+            var result = native != null ? Create(null, container, native) : null;
             return result;
         }
 
-        public IReadContext Create(IContainerElement container, XElement data)
+        public IReadContext Create(IReadContext context, IContainerElement container, XElement data)
         {
-            var element = Create(data, container.Classification);
+            var element = _selector.Get(Initialized(context, container, data));
             var member = container as IMemberElement;
             if (member != null)
             {
                 return new XmlReadMemberContext(this, member, element, data);
             }
 
-            var result = Create(container, element, data);
+            var result = new XmlReadContext(this, container, element, data);
             return result;
         }
-
-        private IElement Create(XElement data, TypeInfo declared) => _selector.Get(Initialized(data, declared));
-
-        private IReadContext Create(IContainerElement container, IElement element, XElement data) =>
-            new XmlReadContext(this, container, element, data);
 
         public string Value(IElementName name, XElement data)
         {
@@ -88,5 +83,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
             var value = data.Attribute(xName)?.Value;
             return value;
         }
+
+        public IContext Select(IReadContext context, XElement data) =>
+            new XmlReadContext(this, context.Container, context.Element, context.Element, data);
     }
 }

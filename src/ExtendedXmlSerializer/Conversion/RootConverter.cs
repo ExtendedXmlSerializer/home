@@ -30,13 +30,8 @@ namespace ExtendedXmlSerialization.Conversion
         public static RootConverter Default { get; } = new RootConverter();
         RootConverter() : this(RootSelector.Default) {}
 
-        public RootConverter(IRootSelector selector)
-            : this(selector, new SelectingConverter(new NullableAwareSelector(selector))) {}
+        public RootConverter(ISelector selector) : this(new SelectingConverter(selector)) {}
 
-        public RootConverter(IRootSelector selector, IConverter converter)
-            : base(converter, new ElementWriter(converter))
-        {
-            selector.Execute(converter);
-        }
+        protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
     }
 }

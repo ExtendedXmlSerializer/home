@@ -21,26 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class RootSelector : IRootSelector
+    public class RootSelector : ISelector
     {
         public static RootSelector Default { get; } = new RootSelector();
         RootSelector() : this(SelectorFactory.Default) {}
 
-        private readonly ISelectorFactory _factory;
-        private ISelector _selector;
+        readonly ISelector _selector;
 
-        public RootSelector(ISelectorFactory factory)
+        public RootSelector(ISelectorFactory factory) : this(factory, x => new SelectingConverter(x)) {}
+
+        public RootSelector(ISelectorFactory factory, Func<ISelector, IConverter> converter)
         {
-            _factory = factory;
+            _selector = factory.Get(converter(this));
         }
 
-        public IConverter Get(TypeInfo parameter) => _selector?.Get(parameter);
-        public IConverter Get(IElement parameter) => _selector?.Get(parameter);
-        public void Execute(IConverter parameter) => _selector = _factory.Get(parameter);
+        public IConverter Get(IElement parameter) => _selector.Get(parameter);
     }
 }
