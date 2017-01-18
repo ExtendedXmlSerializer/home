@@ -30,10 +30,12 @@ namespace ExtendedXmlSerialization.Conversion.Read
     sealed class LegacyXmlReadContext : XmlReadContext
     {
         public LegacyXmlReadContext(XElement element, TypeInfo type)
-            : base(XmlReadContextFactory.Default, LegacyElements.Default.Get(type), element,
+            : base(
+                new XmlReadContextFactory(LegacyElements.Default, LegacyElementTypes.Default, NameConverter.Default),
+                LegacyElements.Default.Get(type), element,
 
-                   // Services:
-                   new ReadReferences()
+                // Services:
+                new ReadReferences()
             ) {}
     }
 }

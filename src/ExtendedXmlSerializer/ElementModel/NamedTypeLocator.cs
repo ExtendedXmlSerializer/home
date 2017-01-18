@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.ElementModel
             var localName = parameter.LocalName;
             var ns = parameter.NamespaceName;
             var length = _elements.Length;
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var element = _elements[i];
                 var info = element.Classification;

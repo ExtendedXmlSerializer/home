@@ -33,8 +33,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
     public sealed class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
     {
-        public ElementMembers(IElements elements) : this(new MemberElementSelector(elements)) {}
-
         private readonly IMemberElementSelector _selector;
 
         public ElementMembers(IMemberElementSelector selector)

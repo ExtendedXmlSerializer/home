@@ -36,7 +36,5 @@ namespace ExtendedXmlSerialization.Core.Sources
             => new FixedSource<TParameter, TResult>(@this, parameter);
 
         public static ISource<T> Singleton<T>(this ISource<T> @this) => new SingletonSource<T>(@this.Get);
-
-        public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.Get;
     }
 }

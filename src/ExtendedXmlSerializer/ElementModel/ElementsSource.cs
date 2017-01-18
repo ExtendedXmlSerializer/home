@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization.ElementModel
         {
             public Specification(IEnumerable<TypeInfo> known, params TypeInfo[] except)
                 : base(
-                    new AnySpecification<TypeInfo>(new DelegatedSpecification<TypeInfo>(known.Except(except).Contains),
+                    new AnySpecification<TypeInfo>(new ContainsSpecification<TypeInfo>(known.Except(except).ToArray()),
                                                    IsAssignableSpecification<Enum>.Default)) {}
         }
     }

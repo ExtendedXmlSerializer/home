@@ -78,7 +78,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
         {
             var info = serviceType.GetTypeInfo();
             var length = _services.Length;
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var service = _services[i];
                 if (info.IsInstanceOfType(service))

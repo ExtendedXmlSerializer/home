@@ -54,12 +54,12 @@ namespace ExtendedXmlSerialization.Core
 
         private int FindIndex(object obj, out bool found)
         {
-            int hashCode = RuntimeHelpers.GetHashCode(obj);
-            int num1 = 1 + (hashCode & int.MaxValue) % (_currentSize - 2);
+            var hashCode = RuntimeHelpers.GetHashCode(obj);
+            var num1 = 1 + (hashCode & int.MaxValue) % (_currentSize - 2);
             while (true)
             {
-                int num2 = (hashCode & int.MaxValue) % _currentSize * 4;
-                for (int index = num2; index < num2 + 4; ++index)
+                var num2 = (hashCode & int.MaxValue) % _currentSize * 4;
+                for (var index = num2; index < num2 + 4; ++index)
                 {
                     var o = _objs[index];
                     if (o == null)
@@ -87,13 +87,13 @@ namespace ExtendedXmlSerialization.Core
             if (obj == null)
                 throw new ArgumentNullException("obj", ("ArgumentNull_Obj"));
             bool found;
-            int index = FindIndex(obj, out found);
+            var index = FindIndex(obj, out found);
             long id;
             if (!found)
             {
                 _objs[index] = obj;
-                long[] ids = _ids;
-                int currentCount = _currentCount;
+                var ids = _ids;
+                var currentCount = _currentCount;
                 _currentCount = currentCount + 1;
                 long num = currentCount;
                 ids[index] = num;
@@ -130,25 +130,25 @@ namespace ExtendedXmlSerialization.Core
 
         private void Rehash()
         {
-            int index1 = 0;
-            int currentSize = _currentSize;
+            var index1 = 0;
+            var currentSize = _currentSize;
             while (index1 < Sizes.Length && Sizes[index1] <= currentSize)
                 ++index1;
             if (index1 == Sizes.Length)
                 throw new SerializationException("Serialization_TooManyElements");
             _currentSize = Sizes[index1];
-            long[] numArray = new long[_currentSize * 4];
-            object[] objArray = new object[_currentSize * 4];
-            long[] ids = _ids;
-            object[] objs = _objs;
+            var numArray = new long[_currentSize * 4];
+            var objArray = new object[_currentSize * 4];
+            var ids = _ids;
+            var objs = _objs;
             _ids = numArray;
             _objs = objArray;
-            for (int index2 = 0; index2 < objs.Length; ++index2)
+            for (var index2 = 0; index2 < objs.Length; ++index2)
             {
                 if (objs[index2] != null)
                 {
                     bool found;
-                    int element = FindIndex(objs[index2], out found);
+                    var element = FindIndex(objs[index2], out found);
                     _objs[element] = objs[index2];
                     _ids[element] = ids[index2];
                 }

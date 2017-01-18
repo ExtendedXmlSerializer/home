@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Legacy
 {
     abstract class TypeEmittingWriterBase : DecoratedWriter
     {
-        public TypeEmittingWriterBase(IWriter writer) : base(writer) {}
+        protected TypeEmittingWriterBase(IWriter writer) : base(writer) {}
 
         public override void Write(IWriteContext context, object instance)
         {

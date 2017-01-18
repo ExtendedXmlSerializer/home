@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.TypeModel
 // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
 // https://github.com/dotnet/corefx/issues/8806
 // https://github.com/dotnet/corefx/issues/8910
-            foreach (RuntimeLibrary runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
+            foreach (var runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
             {
                 try
                 {
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerialization.TypeModel
                 catch (System.IO.FileNotFoundException) {}
             }
 #else
-            foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var c in AppDomain.CurrentDomain.GetAssemblies())
             {
                 type = c.GetType(typeName)?.GetTypeInfo();
                 if (type != null)

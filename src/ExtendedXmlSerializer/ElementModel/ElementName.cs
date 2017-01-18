@@ -28,9 +28,6 @@ namespace ExtendedXmlSerialization.ElementModel
 {
     public class ElementName : IEquatable<ElementName>, IElementName
     {
-        public ElementName(Type classification) : this(classification.GetTypeInfo()) {}
-        public ElementName(TypeInfo classification) : this(classification, classification.Name) {}
-
         public ElementName(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
 
         public ElementName(TypeInfo classification, string name)
@@ -44,8 +41,7 @@ namespace ExtendedXmlSerialization.ElementModel
 
         public bool Equals(ElementName other) => Equals(Classification, other.Classification);
 
-        public override bool Equals(object obj) =>
-            !ReferenceEquals(null, obj) && (obj is ElementName && Equals((ElementName) obj));
+        public override bool Equals(object obj) =>  !ReferenceEquals(null, obj) && obj is ElementName && Equals((ElementName) obj);
 
         public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
 

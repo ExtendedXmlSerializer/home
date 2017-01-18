@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
                                  params object[] services)
             : this(factory, null, element, element, data)
         {
-            for (int i = 0; i < services.Length; i++)
+            for (var i = 0; i < services.Length; i++)
             {
                 Add(services[i]);
             }

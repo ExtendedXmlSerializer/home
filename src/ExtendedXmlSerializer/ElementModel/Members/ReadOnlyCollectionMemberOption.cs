@@ -65,7 +65,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
             private readonly ISpecification<TypeInfo> _specification;
 
 
-            public Specification(ISpecification<TypeInfo> specification)
+            Specification(ISpecification<TypeInfo> specification)
             {
                 _specification = specification;
             }

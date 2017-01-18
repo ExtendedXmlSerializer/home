@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Core.Sources
         public TResult Get(TParameter parameter)
         {
             var length = _options.Length;
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var option = _options[i];
                 if (option.IsSatisfiedBy(parameter))

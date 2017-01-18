@@ -55,8 +55,6 @@ namespace ExtendedXmlSerialization.Conversion
                 @this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
                             instance);
 
-        public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
-
         public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
             target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 

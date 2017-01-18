@@ -28,8 +28,6 @@ namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(ISerializationToolsFactory tools) : this(tools, LegacyElements.Default) {}
-
         public LegacyMemberElementSelector(ISerializationToolsFactory tools, IElements elements)
             : base(
                 new MemberOption(elements, new LegacyGetterFactory(tools),
