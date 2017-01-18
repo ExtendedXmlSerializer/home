@@ -27,16 +27,18 @@ using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        private readonly ISerializationToolsFactory _tools;
-
-        public LegacyConverterOptions(ISerializationToolsFactory tools)
+        private readonly ExtendedXmlSerializerConfig _config;
+        
+        public LegacyConverterOptions(ExtendedXmlSerializerConfig config)
         {
-            _tools = tools;
+            _config = config;
+            
         }
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
@@ -46,9 +48,9 @@ namespace ExtendedXmlSerialization.Legacy
             yield return new LegacyMemberOption(_tools, new MemberConverterOption(element));
             yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_tools, parameter));
-            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_tools, parameter));
-            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_tools, parameter));
+            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_config, parameter));
+            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_config, parameter));
+            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_config, parameter));
         }
 
         sealed class MemberConverterOption : ConverterOption<IMemberElement>

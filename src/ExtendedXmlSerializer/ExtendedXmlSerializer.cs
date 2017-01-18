@@ -26,6 +26,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Legacy;
 using Defaults = ExtendedXmlSerialization.Legacy.Defaults;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization
 {
@@ -34,27 +35,17 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        private ISerializationToolsFactory _tools;
+        private ExtendedXmlSerializerConfig _config = new ExtendedXmlSerializerConfig();
 
-        public ExtendedXmlSerializer() : this(null) {}
+        public ExtendedXmlSerializer() : this(null) { }
 
-        public ExtendedXmlSerializer(ISerializationToolsFactory toolsFactory)
+        public ExtendedXmlSerializer(Action<ExtendedXmlSerializerConfig> config)
         {
-            SerializationToolsFactory = toolsFactory;
+            config?.Invoke(this._config);
+            //TODO for Michael DeMond connect to new serializer (andremove old?)
+            Converter = this._config != null ? new LegacyRootConverter(this._config) : Defaults.Root;
         }
 
-        /// <summary>
-        /// Gets or sets <see cref="ISerializationToolsFactory"/>
-        /// </summary>
-        public ISerializationToolsFactory SerializationToolsFactory
-        {
-            get { return _tools; }
-            set
-            {
-                _tools = value;
-                Converter = _tools != null ? new LegacyRootConverter(_tools) : Defaults.Root;
-            }
-        }
 
         private IConverter Converter { get; set; } = Defaults.Root;
 
@@ -64,11 +55,10 @@ namespace ExtendedXmlSerialization
         /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
         /// <returns>xml document in string</returns>
         public string Serialize(object o)
-        {
-            var selector = _tools != null ? LegacyElementsTooling.Default.Get(_tools) : LegacyElements.Default;
-            var result = new LegacySerializer(selector, Converter).Serialize(o);
-            return result;
-        }
+            =>
+                new LegacySerializer(Converter,
+                                     this._config != null ? LegacyElementsTooling.Default.Get(this._config) : LegacyElements.Default)
+                    .Serialize(o);
 
         /// <summary>
         /// Deserializes the XML document
@@ -77,7 +67,10 @@ namespace ExtendedXmlSerialization
         /// <param name="type">The type of returned object</param>
         /// <returns>deserialized object</returns>
         public object Deserialize(string xml, Type type)
-            => new LegacySerializer(Converter, type.GetTypeInfo()).Deserialize(xml);
+            =>
+                new LegacySerializer(Converter,
+                                     this._config != null ? LegacyElementsTooling.Default.Get(this._config) : LegacyElements.Default,
+                                     type.GetTypeInfo()).Deserialize(xml);
 
         /// <summary>
         /// Deserializes the XML document

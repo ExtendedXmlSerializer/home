@@ -30,10 +30,12 @@ namespace ExtendedXmlSerialization.Test
     {
         public SerializationReferenceTest()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassReferenceConfig(), new InterfaceReferenceConfig() }
-            };
+                //cfg.ConfigType<TestClassConcreteReference>().Property(p => p.Id).ObjectReference();
+                cfg.ConfigType<TestClassReference>().Property(p => p.Id).ObjectReference();
+                cfg.ConfigType<IReference>().Property(p => p.Id).ObjectReference();
+            });
         }
 
         [Fact]

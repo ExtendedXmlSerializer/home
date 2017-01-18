@@ -20,8 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 using System;
-using Autofac;
-using ExtendedXmlSerialization.Autofac;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
@@ -30,24 +28,24 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
         public static void RunSimpleConfig()
         {
             Program.PrintHeader("Deserialization old version of xml");
-            var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.Configurations.Add(new TestClassConfig());
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
+
+            ExtendedXmlSerializer serializer =
+                new ExtendedXmlSerializer(cfg => cfg.ConfigType<TestClass>().AddMigration(new TestClassSerialiser()));
 
             Run(serializer);
         }        
-        public static void RunAutofacConfig()
-        {
-            Program.PrintHeader("Deserialization old version of xml - autofac config");
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
-            var containter = builder.Build();
-
-            var serializer = containter.Resolve<IExtendedXmlSerializer>();
-            Run(serializer);
-        }
+//        public static void RunAutofacConfig()
+//        {
+//            Program.PrintHeader("Deserialization old version of xml - autofac config");
+//
+//            var builder = new ContainerBuilder();
+//            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
+//            builder.RegisterType<TestClassConfig>().As<ExtendedXmlSerializerConfig<TestClass>>().SingleInstance();
+//            var containter = builder.Build();
+//
+//            var serializer = containter.Resolve<IExtendedXmlSerializer>();
+//            Run(serializer);
+//        }
 
         private static void Run(IExtendedXmlSerializer serializer)
         {

@@ -19,12 +19,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+using System.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.NewConfiguration;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-    // ReSharper disable once UnusedTypeParameter
-    public interface IObjectReferenceConfiguration<T>
+    public class TestClassSerializer : IExtendedXmlSerializerCustomSerializer<TestClass>
     {
-        void ExtractToList(string name);
+        public TestClass Deserialize(XElement element)
+        {
+            return new TestClass(element.Element("String").Value);
+        }
+
+        public void Serializer(XmlWriter writer, TestClass obj)
+        {
+            writer.WriteElementString("String", obj.PropStr);
+        }
     }
 }

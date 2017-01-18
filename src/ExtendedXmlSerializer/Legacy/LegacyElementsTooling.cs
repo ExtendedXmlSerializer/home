@@ -23,15 +23,16 @@
 
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsTooling : WeakCacheBase<ISerializationToolsFactory, IElements>
+    sealed class LegacyElementsTooling : WeakCacheBase<ExtendedXmlSerializerConfig, IElements>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
         LegacyElementsTooling() {}
 
-        protected override IElements Create(ISerializationToolsFactory parameter)
+        protected override IElements Create(ExtendedXmlSerializerConfig parameter)
             => new LegacyElements(new LegacyElementsSource(parameter));
     }
 }

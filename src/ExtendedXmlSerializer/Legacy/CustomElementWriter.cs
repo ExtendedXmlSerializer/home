@@ -24,19 +24,20 @@
 using System.Xml;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class CustomElementWriter : Emitter
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfig configuration)
+        public CustomElementWriter(IExtendedXmlSerializerConfigType configuration)
             : base(new TypeEmittingWriter(new BodyWriter(configuration))) {}
 
         sealed class BodyWriter : WriterBase
         {
-            private readonly IExtendedXmlSerializerConfig _configuration;
+            private readonly IExtendedXmlSerializerConfigType _configuration;
 
-            public BodyWriter(IExtendedXmlSerializerConfig configuration)
+            public BodyWriter(IExtendedXmlSerializerConfigType configuration)
             {
                 _configuration = configuration;
             }

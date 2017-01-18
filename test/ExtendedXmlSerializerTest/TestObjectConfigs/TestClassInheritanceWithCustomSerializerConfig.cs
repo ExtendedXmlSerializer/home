@@ -21,18 +21,14 @@
 // SOFTWARE.
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassInheritanceWithCustomSerializerBaseConfig: ExtendedXmlSerializerConfig<TestClassInheritanceWithCustomSerializerBase>
+    public class TestClassInheritanceWithCustomSerializerBaseConfig: IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
     {
-        public TestClassInheritanceWithCustomSerializerBaseConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
-
-        private TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
+        public TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
         {
             return new TestClassInheritanceWithCustomSerializerBase()
             {
@@ -40,20 +36,15 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
             };
         }
 
-        private void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerBase obj)
+        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerBase obj)
         {
             xmlWriter.WriteAttributeString("First" , obj.FirstProperty);
         }
     }
 
-    public class TestClassInheritanceWithCustomSerializerAConfig : ExtendedXmlSerializerConfig<TestClassInheritanceWithCustomSerializerA>
+    public class TestClassInheritanceWithCustomSerializerAConfig : IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerA>
     {
-        public TestClassInheritanceWithCustomSerializerAConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
-
-        private TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
+        public TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
         {
             return new TestClassInheritanceWithCustomSerializerA()
             {
@@ -62,21 +53,16 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
             };
         }
 
-        private void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerA obj)
+        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerA obj)
         {
             xmlWriter.WriteAttributeString("First", obj.FirstProperty);
             xmlWriter.WriteAttributeString("Second", obj.SecondProperty);
         }
     }
 
-    public class TestClassInheritanceWithCustomSerializerBConfig : ExtendedXmlSerializerConfig<TestClassInheritanceWithCustomSerializerB>
+    public class TestClassInheritanceWithCustomSerializerBConfig : IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerB>
     {
-        public TestClassInheritanceWithCustomSerializerBConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
-
-        private TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
+        public TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
         {
             return new TestClassInheritanceWithCustomSerializerB()
             {
@@ -85,7 +71,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
             };
         }
 
-        private void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerB obj)
+        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerB obj)
         {
             xmlWriter.WriteAttributeString("First", obj.FirstProperty);
             xmlWriter.WriteAttributeString("Third", obj.ThirdProperty);

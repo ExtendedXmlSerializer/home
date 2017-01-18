@@ -28,6 +28,7 @@ using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
@@ -36,17 +37,17 @@ namespace ExtendedXmlSerialization.Legacy
         public LegacyInstanceTypeConverter(IConverter converter)
             : base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
-        public LegacyInstanceTypeConverter(ISerializationToolsFactory tools, IConverter converter)
+        public LegacyInstanceTypeConverter(ExtendedXmlSerializerConfig config, IConverter converter)
             : base(
-                new LegacyInstanceBodyReader(tools, converter),
-                new LegacyTypeEmittingWriter(new Writer(tools, new InstanceBodyWriter(converter)))
+                new LegacyInstanceBodyReader(config, converter),
+                new LegacyTypeEmittingWriter(new Writer(config, new InstanceBodyWriter(converter)))
             ) {}
 
         private sealed class Writer : DecoratedWriter
         {
-            private readonly ISerializationToolsFactory _tools;
+            private readonly ExtendedXmlSerializerConfig _tools;
 
-            public Writer(ISerializationToolsFactory tools, IWriter writer) : base(writer)
+            public Writer(ExtendedXmlSerializerConfig tools, IWriter writer) : base(writer)
             {
                 _tools = tools;
             }
@@ -54,7 +55,7 @@ namespace ExtendedXmlSerialization.Legacy
             public override void Write(IWriteContext context, object instance)
             {
                 var type = instance.GetType();
-                var configuration = _tools.GetConfiguration(type);
+                var configuration = _tools.GetTypeConfig(type);
                 if (configuration != null)
                 {
                     if (configuration.IsObjectReference)

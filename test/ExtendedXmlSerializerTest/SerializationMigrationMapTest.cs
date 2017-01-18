@@ -31,10 +31,9 @@ namespace ExtendedXmlSerialization.Test
     {
         public SerializationMigrationMapTest()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassWithMapConfig() }
-            };
+            Serializer =
+                new ExtendedXmlSerializer(
+                    cfg => cfg.ConfigType<TestClassWithMap>().AddMigration(new TestClassWithMapMigrator()));
         }
 
         [Fact]

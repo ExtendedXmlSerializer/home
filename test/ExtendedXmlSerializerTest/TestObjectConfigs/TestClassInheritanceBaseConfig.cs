@@ -23,11 +23,11 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassInheritanceBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceBase>
-    {
-        public TestClassInheritanceBaseConfig()
-        {
-            ObjectReference(obj=>obj.Id).ExtractToList("Sensors");
-        }
-    }
+//    public class TestClassInheritanceBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceBase>
+//    {
+//        public TestClassInheritanceBaseConfig()
+//        {
+//            ObjectReference(obj=>obj.Id).ExtractToList("Sensors");
+//        }
+//    }
 }

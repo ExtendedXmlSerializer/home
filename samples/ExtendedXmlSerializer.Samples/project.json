@@ -8,9 +8,6 @@
         "ExtendedXmlSerializer": {
             "target": "project"
         },
-        "ExtendedXmlSerializer.Autofac": {
-            "target": "project"
-        },
         "NETStandard.Library": "1.6.1"
     },
 

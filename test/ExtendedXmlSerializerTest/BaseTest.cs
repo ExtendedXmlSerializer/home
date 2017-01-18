@@ -22,13 +22,15 @@
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.Test.Tools;
 
 namespace ExtendedXmlSerialization.Test
 {
     public class BaseTest
     {
-        protected ExtendedXmlSerializer Serializer { get; } = new ExtendedXmlSerializer();
+        protected ExtendedXmlSerializer Serializer { get; set; } = new ExtendedXmlSerializer();
+
 #if NET451
         private const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #else

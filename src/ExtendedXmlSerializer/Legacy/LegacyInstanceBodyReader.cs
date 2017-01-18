@@ -23,25 +23,26 @@
 
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyInstanceBodyReader : InstanceBodyReader
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _config;
 
-        public LegacyInstanceBodyReader(ISerializationToolsFactory tools, IReader reader)
+        public LegacyInstanceBodyReader(ExtendedXmlSerializerConfig config, IReader reader)
             : base(reader)
         {
-            _tools = tools;
+            _config = config;
         }
 
         protected override object Activate(IReadContext context)
         {
             var result = base.Activate(context);
             var type = context.Element.Classification;
-            var configuration = _tools.GetConfiguration(type.AsType());
+            var configuration = _config.GetTypeConfig(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {
                 var prefix = type.FullName + Defaults.Underscore;

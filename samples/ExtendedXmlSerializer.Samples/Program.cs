@@ -41,13 +41,13 @@ namespace ExtendedXmlSerialization.Samples
         {
             SimpleSamples.Run();
             CustomSerializatorSamples.RunSimpleConfig();
-            CustomSerializatorSamples.RunAutofacConfig();
+           // CustomSerializatorSamples.RunAutofacConfig();
             MigrationMapSamples.RunSimpleConfig();
-            MigrationMapSamples.RunAutofacConfig();
+            //MigrationMapSamples.RunAutofacConfig();
             ObjectReferenceSamples.RunSimpleConfig();
-            ObjectReferenceSamples.RunAutofacConfig();
+           // ObjectReferenceSamples.RunAutofacConfig();
             EncryptSamples.RunSimpleConfig();
-            EncryptSamples.RunAutofacConfig();
+            //EncryptSamples.RunAutofacConfig();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();

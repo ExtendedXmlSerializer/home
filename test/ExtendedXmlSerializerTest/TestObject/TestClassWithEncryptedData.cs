@@ -10,15 +10,6 @@ namespace ExtendedXmlSerialization.Test.TestObject
         public decimal Salary { get; set; }
     }
 
-    public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-    {
-        public TestClassWithEncryptedDataConfig()
-        {
-            Encrypt(p=>p.Password);
-            Encrypt(p=>p.Salary);
-        }
-    }
-
     public class Base64PropertyEncryption : IPropertyEncryption
     {
         public string Encrypt(string value)

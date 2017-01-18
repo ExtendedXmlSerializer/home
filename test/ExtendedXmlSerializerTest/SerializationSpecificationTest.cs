@@ -19,44 +19,36 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System.Collections.Generic;
-using System.IO;
+
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
     public class SerializationSpecificationTest : BaseTest
     {
+        public static void MigrationBase(XElement xElement)
+        {
+            xElement.Element("Property").Name = "ChangedProperty";
+        }
+        private void AMigration(XElement xElement)
+        {
+            MigrationBase(xElement);
+            xElement.Element("OtherProperty").Name = "OtherChangedProperty";
+        }
+        private void BMigration(XElement xElement)
+        {
+            MigrationBase(xElement);
+        }
         public SerializationSpecificationTest()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                Configurations = new List<IExtendedXmlSerializerConfig>
-                {
-                    new TestClassInheritanceWithMigrationsBaseConfig(),
-                    new TestClassInheritanceWithMigrationsAConfig(),
-                    new TestClassInheritanceWithMigrationsBConfig()
-                }
-            };
-        }
-        private static readonly IExtendedXmlSerializerConfig
-            Stream = new ExtendedXmlSerializerConfig<object>(type => type == typeof(MemoryStream)),
-            Null = new ExtendedXmlSerializerConfig<object>(type => type == null),
-            Eight = new ExtendedXmlSerializerConfig<object>(type => type.Name.Length == 8);
-
-        [Fact]
-        public void VerifySpecification()
-        {
-            var sut = new SimpleSerializationToolsFactory
-            {
-                Configurations = new List<IExtendedXmlSerializerConfig> {Null, Stream, Eight}
-            };
-
-            Assert.Equal(Stream, sut.GetConfiguration(typeof(MemoryStream)));
-            Assert.Equal(Null, sut.GetConfiguration(null));
-            Assert.Equal(Eight, sut.GetConfiguration(typeof(BaseTest)));
+                cfg.ConfigType<TestClassInheritanceWithMigrationsBase>().AddMigration(MigrationBase);
+                cfg.ConfigType<TestClassInheritanceWithMigrationsA>().AddMigration(AMigration);
+                cfg.ConfigType<TestClassInheritanceWithMigrationsB>().AddMigration(BMigration);
+            });
         }
 
         [Fact]

@@ -21,8 +21,6 @@
 // SOFTWARE.
 using System;
 using System.Collections.Generic;
-using Autofac;
-using ExtendedXmlSerialization.Autofac;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
@@ -31,24 +29,25 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
         public static void RunSimpleConfig()
         {
             Program.PrintHeader("Serialization reference object");
-            var toolsFactory = new SimpleSerializationToolsFactory();
-            toolsFactory.Configurations.Add(new PersonConfig());
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(toolsFactory);
+
+            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(
+                cfg => cfg.ConfigType<Person>().Property(p => p.Id).ObjectReference()
+            );
 
             Run(serializer);
         }
-        public static void RunAutofacConfig()
-        {
-            Program.PrintHeader("Serialization reference object - autofac config");
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
-            var containter = builder.Build();
-
-            var serializer = containter.Resolve<IExtendedXmlSerializer>();
-            Run(serializer);
-        }
+//        public static void RunAutofacConfig()
+//        {
+//            Program.PrintHeader("Serialization reference object - autofac config");
+//
+//            var builder = new ContainerBuilder();
+//            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
+//            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
+//            var containter = builder.Build();
+//
+//            var serializer = containter.Resolve<IExtendedXmlSerializer>();
+//            Run(serializer);
+//        }
 
         private static void Run(IExtendedXmlSerializer serializer)
         {

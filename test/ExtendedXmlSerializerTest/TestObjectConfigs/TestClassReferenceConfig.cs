@@ -23,27 +23,27 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassReferenceConfig : ExtendedXmlSerializerConfig<TestClassReference>
-    {
-        public TestClassReferenceConfig()
-        {
-            ObjectReference(obj => obj.Id);
-        }
-    }
-
-    public class TestClassConcreteReferenceConfig : ExtendedXmlSerializerConfig<TestClassConcreteReference>
-    {
-        public TestClassConcreteReferenceConfig()
-        {
-            ObjectReference(obj => obj.Id);
-        }
-    }
-
-    public class InterfaceReferenceConfig : ExtendedXmlSerializerConfig<IReference>
-    {
-        public InterfaceReferenceConfig()
-        {
-            ObjectReference(obj => obj.Id);
-        }
-    }
+//    public class TestClassReferenceConfig : ExtendedXmlSerializerConfig<TestClassReference>
+//    {
+//        public TestClassReferenceConfig()
+//        {
+//            ObjectReference(obj => obj.Id);
+//        }
+//    }
+//
+//    public class TestClassConcreteReferenceConfig : ExtendedXmlSerializerConfig<TestClassConcreteReference>
+//    {
+//        public TestClassConcreteReferenceConfig()
+//        {
+//            ObjectReference(obj => obj.Id);
+//        }
+//    }
+//
+//    public class InterfaceReferenceConfig : ExtendedXmlSerializerConfig<IReference>
+//    {
+//        public InterfaceReferenceConfig()
+//        {
+//            ObjectReference(obj => obj.Id);
+//        }
+//    }
 }

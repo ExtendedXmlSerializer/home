@@ -8,11 +8,14 @@ namespace ExtendedXmlSerialization.Test
     {
         public SerializationPropertyEncrypt()
         {
-            Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
+            Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                Configurations = new List<IExtendedXmlSerializerConfig> { new TestClassWithEncryptedDataConfig(), new TestClassWithEncryptedDataConfig() },
-                EncryptionAlgorithm = new Base64PropertyEncryption()
-            };
+                cfg.ConfigType<TestClassWithEncryptedData>()
+                    .Property(p=>p.Password).Encrypt()
+                    .Property(p=>p.Salary).Encrypt();
+
+                cfg.EncryptionAlgorithm = new Base64PropertyEncryption();
+            });
         }
 
         [Fact]

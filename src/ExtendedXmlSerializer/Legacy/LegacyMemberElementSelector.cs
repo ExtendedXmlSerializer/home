@@ -23,15 +23,16 @@
 
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(ISerializationToolsFactory tools, IElements elements)
+        public LegacyMemberElementSelector(ExtendedXmlSerializerConfig config, IElements elements)
             : base(
-                new MemberOption(elements, new LegacyGetterFactory(tools),
-                                 new LegacySetterFactory(tools, SetterFactory.Default)),
+                new MemberOption(elements, new LegacyGetterFactory(config),
+                                 new LegacySetterFactory(config, SetterFactory.Default)),
                 new ReadOnlyCollectionMemberOption(elements)) {}
     }
 }
