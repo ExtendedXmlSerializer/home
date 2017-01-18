@@ -35,11 +35,11 @@ namespace ExtendedXmlSerialization.Legacy
         private readonly ExtendedXmlSerializerConfig _tools;
 
         public LegacyRootConverter(ExtendedXmlSerializerConfig config)
-            : this(tools, new RootSelector(new SelectorFactory(new LegacyConverterOptions(tools)))) {}
+            : this(config, new RootSelector(new SelectorFactory(new LegacyConverterOptions(config)))) {}
 
-        LegacyRootConverter(ISerializationToolsFactory tools, IConverterSelector selector) : base(selector)
+        LegacyRootConverter(ExtendedXmlSerializerConfig config, IConverterSelector selector) : base(selector)
         {
-            _tools = tools;
+            _tools = config;
         }
 
         public override void Write(IWriteContext context, object instance)

@@ -23,14 +23,15 @@
 
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyElementsSource : ElementsSource
     {
-        private readonly ISerializationToolsFactory _tools;
+        private readonly ExtendedXmlSerializerConfig _tools;
         
-        public LegacyElementsSource(ISerializationToolsFactory tools)
+        public LegacyElementsSource(ExtendedXmlSerializerConfig tools)
         {
             _tools = tools;
         }

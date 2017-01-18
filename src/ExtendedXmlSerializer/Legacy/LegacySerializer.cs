@@ -35,19 +35,11 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacySerializer : Serializer
     {
-        readonly private static TypeInfo Type = typeof(LegacySerializer).GetTypeInfo();
-
         private readonly IElements _selector;
-        private readonly TypeInfo _type;
 
-        public LegacySerializer(IElements selector, IConverter converter) : this(selector, converter, Type) {}
-
-        public LegacySerializer(IConverter converter, TypeInfo type) : this(LegacyElements.Default, converter, type) {}
-
-        public LegacySerializer(IElements selector, IConverter converter, TypeInfo type) : base(converter)
+        public LegacySerializer(IElements selector, IConverter converter) : base(converter)
         {
             _selector = selector;
-            _type = type;
         }
 
         protected override IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
@@ -58,8 +50,15 @@ namespace ExtendedXmlSerialization.Legacy
         {
             var text = new StreamReader(stream).ReadToEnd();
             var document = XDocument.Parse(text);
-            var result = new LegacyXmlReadContext(document.Root, _type);
+            var result = new LegacyXmlReadContext(document.Root, SerializerTypes.Default.Get(this));
             return result;
         }
+    }
+
+    // HACK: This is to get working in current state.  This will be removed at some point.
+    sealed class SerializerTypes : WeakCache<ISerializer, TypeInfo>
+    {
+        public static SerializerTypes Default { get; } = new SerializerTypes();
+        SerializerTypes() : base(x => null) {}
     }
 }

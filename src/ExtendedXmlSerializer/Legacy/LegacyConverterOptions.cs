@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Legacy
         {
             var element = new ElementSelectingConverter(parameter);
             yield return new ReadOnlyCollectionMemberConverterOption(element);
-            yield return new LegacyMemberOption(_tools, new MemberConverterOption(element));
+            yield return new LegacyMemberOption(_config, new MemberConverterOption(element));
             yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
             yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_config, parameter));

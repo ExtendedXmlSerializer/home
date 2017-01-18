@@ -22,17 +22,20 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsTooling : WeakCacheBase<ExtendedXmlSerializerConfig, IElements>
+    sealed class LegacyElementsTooling : WeakCacheBase<ExtendedXmlSerializerConfig, ISerializer>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
         LegacyElementsTooling() {}
 
-        protected override IElements Create(ExtendedXmlSerializerConfig parameter)
-            => new LegacyElements(new LegacyElementsSource(parameter));
+        protected override ISerializer Create(ExtendedXmlSerializerConfig parameter)
+        {
+            var legacyElements = new LegacyElements(new LegacyElementsSource(parameter));
+            var result = new LegacySerializer(legacyElements, new LegacyRootConverter(parameter));
+            return result;
+        }
     }
 }
