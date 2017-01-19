@@ -3,7 +3,7 @@ using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
-namespace ExtendedXmlSerialization.Test.NewConfiguration
+namespace ExtendedXmlSerialization.Test.Configuration
 {
     public class ConfigurationTypeTest
     {
