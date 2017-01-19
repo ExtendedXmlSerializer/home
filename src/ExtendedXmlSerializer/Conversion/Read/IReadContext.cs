@@ -22,22 +22,19 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext : IEnumerable<IReadContext>, IElementName, IServiceRepository
+    public interface IReadContext<out T> : IReadContext where T : IContainerElement
     {
-        /*IReadContext Parent { get; }*/
+        new T Container { get; }
+    }
 
-        IElement Current { get; }
-
-        IReadContext Member(IElement element);
-
+    public interface IReadContext : IContext, IEnumerable<IReadMemberContext>, IServiceRepository
+    {
         IEnumerable<IReadContext> Items();
-
-        /*IEnumerable<IReadContext> ChildrenOf(IElementName name);*/
 
         string Read();
 

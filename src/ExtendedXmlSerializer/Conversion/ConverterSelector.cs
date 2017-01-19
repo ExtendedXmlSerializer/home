@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class ConverterSelector : OptionSelector<IElement, IConverter>, IConverterSelector
+    public class ConverterSelector : Selector<IElement, IConverter>, IConverterSelector
     {
         public ConverterSelector(params IConverterOption[] options) : base(options) {}
     }

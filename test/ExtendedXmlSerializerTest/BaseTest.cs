@@ -22,7 +22,6 @@
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.Test.Tools;
 
 namespace ExtendedXmlSerialization.Test

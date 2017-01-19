@@ -26,27 +26,34 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
     public static class Extensions
     {
-/*
-        public static IElement Unwrapped(this IElement @this) => @this.Unwrapped<IElement>();
+        readonly private static TypeInfo TypeObject = typeof(object).GetTypeInfo();
 
-        public static T Unwrapped<T>(this IElement @this) where T : IElement
+        public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
+            => Emit(@this, context, container, instance, instance.GetType().GetTypeInfo());
+
+        public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance,
+                                TypeInfo instanceType)
         {
-            var element = (@this as IElementAware)?.Element ?? @this;
-            var result = (T) element;
-            return result;
-        }*/
+            var child = context.New(container, instanceType);
+            using (child.Emit())
+            {
+                @this.Write(child, instance);
+            }
+        }
 
-        public static TypeInfo EffectiveType(this IElement @this)
-            => (@this as IDeclaredTypeElement)?.DeclaredType ?? @this.Name.Classification;
-
-        public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',', ';');
+        public static void New(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
+            =>
+                @this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
+                            instance);
 
         public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
             target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
@@ -68,5 +75,28 @@ namespace ExtendedXmlSerialization.Conversion
 
 
         public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
+
+        public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
+            => Equals(instanceType, container.Classification) ? container.Element : @this.Get(instanceType);
+
+        public static TypeInfo GetDeclaredType(this IContainerElement target, IClassification classification)
+        {
+            if (Equals(classification.Classification, TypeObject))
+            {
+                var member = classification as IMemberElement;
+                if (member != null)
+                {
+                    var property = target.GetType().GetRuntimeProperty(member.Metadata.Name);
+                    if (property != null)
+                    {
+                        var instance = GetterFactory.Default.Get(property).Invoke(target);
+                        var result = (instance as IClassification)?.Classification ?? instance as TypeInfo;
+                        return result;
+                    }
+                }
+            }
+
+            return classification.Classification;
+        }
     }
 }

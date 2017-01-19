@@ -21,47 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    class InstanceBodyReader : ReaderBase
+    class InstanceBodyReader : DecoratedReader
     {
-        private readonly IMemberConverterSelector _selector;
         private readonly IActivators _activators;
 
-        public InstanceBodyReader(IMemberConverterSelector selector) : this(selector, Activators.Default) {}
+        public InstanceBodyReader(IReader reader) : this(reader, Activators.Default) {}
 
-        public InstanceBodyReader(IMemberConverterSelector selector, IActivators activators)
+        public InstanceBodyReader(IReader reader, IActivators activators) : base(reader)
         {
-            _selector = selector;
             _activators = activators;
         }
 
         public override object Read(IReadContext context)
         {
             var result = Activate(context);
-            var element = context.Current as IMemberedElement;
-            if (element != null)
+            foreach (var child in context)
             {
-                var members = element.Members;
-                foreach (var child in context)
-                {
-                    var member = members.Get(child.DisplayName);
-                    if (member != null)
-                    {
-                        var reader = _selector.Get(member);
-                        var value = reader.Read(child);
-                        member.Assign(result, value);
-                    }
-                }
+                var value = base.Read(child);
+                var member = child.Container;
+                member.Assign(result, value);
             }
             return result;
         }
 
         protected virtual object Activate(IReadContext context)
-            => _activators.Activate<object>(context.Current.Name.Classification.AsType());
+            => _activators.Activate<object>(context.Element.Classification.AsType());
     }
 }

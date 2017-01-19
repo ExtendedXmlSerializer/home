@@ -10,7 +10,7 @@ namespace ExtendedXmlSerialization.Test.NewConfiguration
         [Fact]
         public void TestClassWithEncryptedData()
         {
-            Action<ExtendedXmlSerialization.NewConfiguration.IExtendedXmlSerializerConfig> func =
+            Action<IExtendedXmlSerializerConfig> func =
                 cfg =>
                 {
                     cfg.ConfigType<TestClassWithEncryptedData>()

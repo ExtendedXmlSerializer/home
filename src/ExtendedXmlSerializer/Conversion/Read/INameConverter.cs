@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface INameConverter : IParameterizedSource<IElementName, XName> {}
+    public interface INameConverter : IParameterizedSource<IClassification, XName> {}
 }

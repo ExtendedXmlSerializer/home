@@ -22,7 +22,8 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.ElementModel;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
             _namespaces = namespaces;
         }
 
-        public XName Get(IElementName parameter)
-            => XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification));
+        public XName Get(IClassification parameter)
+            => XName.Get(parameter.AsValid<IDisplayAware>().DisplayName, _namespaces.Get(parameter.Classification));
     }
 }

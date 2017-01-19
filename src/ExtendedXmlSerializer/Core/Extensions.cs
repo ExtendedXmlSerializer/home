@@ -23,9 +23,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core
@@ -35,60 +33,19 @@ namespace ExtendedXmlSerialization.Core
         public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
             => key != null && target.ContainsKey(key) ? target[key] : default(TValue);
 
-        public static IEnumerable<T> Append<T>(this T @this, params T[] second) => @this.Append(second.AsEnumerable());
-
-        public static IEnumerable<T> Append<T>(this T @this, ImmutableArray<T> second)
-            => @this.Append_(second.ToArray());
-
-        public static IEnumerable<T> Append<T>(this T @this, IEnumerable<T> second) => @this.Append_(second);
-
-        static IEnumerable<T> Append_<T>(this T @this, IEnumerable<T> second)
-        {
-            yield return @this;
-            foreach (var element1 in second)
-                yield return element1;
-        }
-
         public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
-
-        /*public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, T element)
-        {
-            foreach (var element1 in @this)
-                yield return element1;
-            yield return element;
-        }*/
-
-        public static IEnumerable<T> Yield<T>(this T @this)
-        {
-            yield return @this;
-        }
 
         public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
         public static T Self<T>(this T @this) => @this;
-        public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 
         public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
             => new SpecificationAdapter<T>(@this);
-
-        public static Type GetMemberType(this MemberInfo memberInfo) =>
-            (memberInfo as MethodInfo)?.ReturnType ??
-            (memberInfo as PropertyInfo)?.PropertyType ??
-            (memberInfo as FieldInfo)?.FieldType ??
-            (memberInfo as TypeInfo)?.AsType();
-
-        public static bool IsWritable(this MemberInfo memberInfo) =>
-            (memberInfo as PropertyInfo)?.CanWrite ??
-            !(memberInfo as FieldInfo)?.IsInitOnly ?? false;
-
 
         public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
 
         public static T Get<T>(this IServiceProvider @this)
             => @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
-
-        public static T GetValid<T>(this IServiceProvider @this)
-            => @this is T ? (T) @this : @this.GetService(typeof(T)).AsValid<T>();
 
         public static T AsValid<T>(this object @this, string message = null)
         {

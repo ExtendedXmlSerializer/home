@@ -21,14 +21,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*namespace ExtendedXmlSerialization.Configuration.Write
-{
-    class DefaultMemberValueAssignedExtension : MemberValueAssignedExtension
-    {
-        public new static DefaultMemberValueAssignedExtension Default { get; } =
-            new DefaultMemberValueAssignedExtension();
-        DefaultMemberValueAssignedExtension() {}
-
-        protected override bool IsAssigned(IWriteContext context) => typeof(Enum).IsAssignableFrom(context.Member?.MemberType) || base.IsAssigned(context);
-    }
-}*/

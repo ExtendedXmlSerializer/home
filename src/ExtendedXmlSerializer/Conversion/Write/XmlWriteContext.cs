@@ -25,52 +25,60 @@ using System;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     class XmlWriteContext : IWriteContext
     {
-        private readonly IElementSelector _selector;
+        private readonly IElements _selector;
         private readonly INamespaces _namespaces;
         private readonly XmlWriter _writer;
         private readonly ImmutableArray<object> _services;
-        private readonly IDisposable _finish, _disposable;
+        private readonly IDisposable _finish;
 
-        public XmlWriteContext(XmlWriter writer) : this(writer, writer) {}
+        public XmlWriteContext(XmlWriter writer, IRoot root) : this(writer, root, writer) {}
 
-        public XmlWriteContext(XmlWriter writer, params object[] services)
-            : this(Elements.Default, Namespaces.Default, writer, services) {}
+        public XmlWriteContext(XmlWriter writer, IRoot root, params object[] services)
+            : this(Elements.Default, Namespaces.Default, writer, root, services) {}
 
-        protected XmlWriteContext(IElementSelector selector, INamespaces namespaces, XmlWriter writer,
-                                  params object[] services)
+        public XmlWriteContext(IElements selector, INamespaces namespaces, XmlWriter writer, IRoot root,
+                               params object[] services)
             : this(
-                null, selector, namespaces, writer, null, services.ToImmutableArray(),
+                selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
                 new DelegatedDisposable(writer.WriteEndElement)) {}
 
-        XmlWriteContext(IWriteContext parent, IElementSelector selector, INamespaces namespaces, XmlWriter writer,
-                        IElement element, ImmutableArray<object> services, IDisposable finish,
-                        IDisposable disposable = null)
+        private XmlWriteContext(IElements selector, INamespaces namespaces,
+                                IContainerElement container, IElement element,
+                                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
+            : this(null, selector, namespaces, container, element, container, writer, services, finish) {}
+
+        XmlWriteContext(IContext parent, IElements selector, INamespaces namespaces,
+                        IContainerElement container, IElement element, IElement selected,
+                        XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
         {
-            Parent = parent;
-            Element = element;
             _selector = selector;
             _namespaces = namespaces;
+            Parent = parent;
+            Container = container;
+            Element = element;
+            Selected = selected;
             _writer = writer;
             _services = services;
             _finish = finish;
-            _disposable = disposable;
         }
 
-        public IWriteContext Parent { get; }
+        public IContext Parent { get; }
+        public IContainerElement Container { get; }
         public IElement Element { get; }
+        public IElement Selected { get; }
 
         public object GetService(Type serviceType)
         {
             var info = serviceType.GetTypeInfo();
             var length = _services.Length;
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 var service = _services[i];
                 if (info.IsInstanceOfType(service))
@@ -81,20 +89,17 @@ namespace ExtendedXmlSerialization.Conversion.Write
             return null;
         }
 
-        public IWriteContext Start(IElement element)
+        public IDisposable Emit()
         {
-            var ns = _namespaces.Get(element.EffectiveType());
-            _writer.WriteStartElement(element.Name.DisplayName, ns);
-
-            var context = new XmlWriteContext(this, _selector, _namespaces, _writer, element, _services, _finish,
-                                              _finish);
-            var declared = element as IDeclaredTypeElement;
-            var result = declared != null
-                ? new XmlWriteContext(context, _selector, _namespaces, _writer, _selector.Get(declared.DeclaredType),
-                                      _services, _finish, context)
-                : context;
-
-            return result;
+            var ns = _namespaces.Get(Element.Classification);
+            var name = (Container as IDisplayAware)?.DisplayName ?? (Element as IDisplayAware)?.DisplayName;
+            if (name != null)
+            {
+                _writer.WriteStartElement(name, ns);
+                return _finish;
+            }
+            throw new SerializationException(
+                $"Display name not found for element '{Element}' in a container of '{Container}.'");
         }
 
         public void Write(string text) => _writer.WriteString(text);
@@ -102,6 +107,17 @@ namespace ExtendedXmlSerialization.Conversion.Write
         public void Write(IElementName element, string value)
             => _writer.WriteAttributeString(element.DisplayName, value);
 
-        public virtual void Dispose() => _disposable?.Dispose();
+        public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
+            => Create(parameter, _selector.Load(parameter, instanceType));
+
+        private XmlWriteContext Create(IContainerElement container, IElement element)
+            => Create(this, container, element, container);
+
+        public IContext Select() => Create(Parent, Container, Element, Element);
+
+        private XmlWriteContext Create(IContext parent, IContainerElement container, IElement element, IElement selected)
+            =>
+                new XmlWriteContext(parent, _selector, _namespaces, container, element, selected, _writer, _services,
+                                    _finish);
     }
 }

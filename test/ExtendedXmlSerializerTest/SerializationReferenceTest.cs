@@ -21,7 +21,6 @@
 // SOFTWARE.
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Test.TestObject;
-using ExtendedXmlSerialization.Test.TestObjectConfigs;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test

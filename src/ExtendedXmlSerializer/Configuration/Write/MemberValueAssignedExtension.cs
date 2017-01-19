@@ -21,29 +21,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*namespace ExtendedXmlSerialization.Configuration.Write
-{
-    class MemberValueAssignedExtension : WritingExtensionBase
-    {
-        public static MemberValueAssignedExtension Default { get; } = new MemberValueAssignedExtension();
-        protected MemberValueAssignedExtension() : this(DefaultValues.Default.Get) {}
-
-        private readonly Func<Type, object> _values;
-
-        public MemberValueAssignedExtension(Func<Type, object> values)
-        {
-            _values = values;
-        }
-
-        public override bool IsSatisfiedBy(ISerialization services) => services.Current.Member != null && IsAssigned(services.Current);
-
-        protected virtual bool IsAssigned(IWriteContext context)
-        {
-            var defaultValue = _values(context.Member?.MemberType);
-            var result = !Equals(context.Value(), defaultValue);
-            return result;
-        }
-
-        public override void Accept(IExtensionRegistry registry) => registry.RegisterSpecification(ProcessState.Member, this);
-    }
-}*/

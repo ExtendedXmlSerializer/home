@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -31,7 +31,9 @@ namespace ExtendedXmlSerialization.Conversion.Read
         private readonly IActivators _activators;
         private readonly IAddDelegates _add;
 
-        public ListReader(IReader reader) : this(reader, Activators.Default, AddDelegates.Default) {}
+        public ListReader(IReader reader) : this(reader, AddDelegates.Default) {}
+
+        public ListReader(IReader reader, IAddDelegates add) : this(reader, Activators.Default, add) {}
 
         public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
         {
@@ -41,7 +43,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
         protected override object Create(IReadContext context, IEnumerable enumerable)
         {
-            var type = context.Current.EffectiveType();
+            var type = context.Element.Classification;
             var result = _activators.Activate<object>(type.AsType());
             var list = result as IList ?? new ListAdapter(result, _add.Get(type));
             foreach (var item in enumerable)

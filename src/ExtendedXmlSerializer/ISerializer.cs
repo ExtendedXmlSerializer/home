@@ -22,11 +22,14 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
 
 
 namespace ExtendedXmlSerialization
@@ -43,21 +46,26 @@ namespace ExtendedXmlSerialization
         public static Serializer Default { get; } = new Serializer();
         Serializer() : this(RootConverter.Default) {}
         private readonly IConverter _converter;
+        private readonly IElements _elements;
 
-        public Serializer(IConverter converter)
+        public Serializer(IConverter converter) : this(converter, Elements.Default) {}
+
+        public Serializer(IConverter converter, IElements elements)
         {
             _converter = converter;
+            _elements = elements;
         }
 
         public void Serialize(Stream stream, object instance)
         {
             using (var writer = XmlWriter.Create(stream))
             {
-                _converter.Write(CreateWriteContext(writer), instance);
+                _converter.Write(CreateWriteContext(writer, instance.GetType().GetTypeInfo()), instance);
             }
         }
 
-        protected virtual IWriteContext CreateWriteContext(XmlWriter writer) => new XmlWriteContext(writer);
+        protected virtual IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
+            => new XmlWriteContext(writer, new Root(_elements.Build(type)));
 
         public object Deserialize(Stream stream)
         {

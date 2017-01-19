@@ -22,20 +22,13 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
     public class ArrayReader : ListReaderBase
     {
-        private readonly ICollectionItemTypeLocator _locator;
-
-        public ArrayReader(IReader reader) : this(CollectionItemTypeLocator.Default, reader) {}
-
-        public ArrayReader(ICollectionItemTypeLocator locator, IReader reader) : base(reader)
-        {
-            _locator = locator;
-        }
+        public ArrayReader(IReader reader) : base(reader) {}
 
         protected override object Create(IReadContext context, IEnumerable enumerable)
         {
@@ -45,7 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.Read
                 list.Add(item);
             }
 
-            var result = list.ToArray(_locator.Get(context.Current.Name.Classification).AsType());
+            var element = (ICollectionElement) context.Element;
+            var result = list.ToArray(element.Item.Classification.AsType());
             return result;
         }
     }

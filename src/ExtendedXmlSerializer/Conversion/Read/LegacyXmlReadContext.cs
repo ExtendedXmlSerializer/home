@@ -23,8 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Legacy;
-using ExtendedXmlSerialization.Conversion.TypeModel;
+using ExtendedXmlSerialization.Legacy;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -32,14 +31,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
     {
         public LegacyXmlReadContext(XElement element, TypeInfo type)
             : base(
-                LegacyElements.Default,
-                LegacyElementTypes.Default,
-                NameConverter.Default, element,
-                LegacyElements.Default.Get(type),
+                new XmlReadContextFactory(LegacyElements.Default, LegacyElementTypes.Default, NameConverter.Default),
+                LegacyElements.Default.Get(type), element,
 
                 // Services:
-                new ReadReferences(), Members.ElementMembers.Default, CollectionItemTypeLocator.Default,
-                LegacyElementTypes.Default, LegacyNamespaces.Default
+                new ReadReferences()
             ) {}
     }
 }

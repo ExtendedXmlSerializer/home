@@ -21,33 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
     class InstanceBodyWriter : WriterBase
     {
-        private readonly IElementSelector _elements;
-        private readonly IMemberConverterSelector _selector;
+        private readonly IWriter _writer;
 
-        public InstanceBodyWriter(IMemberConverterSelector selector) : this(Elements.Default, selector) {}
-
-        public InstanceBodyWriter(IElementSelector elements, IMemberConverterSelector selector)
+        public InstanceBodyWriter(IWriter writer)
         {
-            _elements = elements;
-            _selector = selector;
+            _writer = writer;
         }
 
         public override void Write(IWriteContext context, object instance)
         {
-            var type = instance.GetType().GetTypeInfo();
-            var element = Equals(type, context.Element.EffectiveType()) ? context.Element : _elements.Get(type);
-            var members = ((IMemberedElement) element).Members;
-            foreach (var member in members)
+            foreach (var member in ((IMemberedElement) context.Element).Members)
             {
-                _selector.Get(member).Write(context, member.Get(instance));
+                _writer.New(context, member, member.Get(instance));
             }
         }
     }

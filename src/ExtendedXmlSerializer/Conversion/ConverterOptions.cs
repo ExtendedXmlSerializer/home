@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.ElementModel;
-using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -37,31 +37,20 @@ namespace ExtendedXmlSerialization.Conversion
 
         public IEnumerable<IConverterOption> Get(IConverter parameter)
         {
-            yield return KnownConverters.Default;
             yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new ArrayTypeConverter(parameter));
+            yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
             yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
             yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
-        }
-
-        class DictionaryConverter : Converter
-        {
-            public DictionaryConverter(IConverter converter)
-                : base(new DictionaryReader(converter), new DictionaryBodyWriter(converter)) {}
-        }
-
-        class EnumerableConverter : Converter
-        {
-            public EnumerableConverter(IConverter converter)
-                : base(new ListReader(converter), new EnumerableBodyWriter(converter)) {}
+            var element = new ElementSelectingConverter(parameter);
+            yield return new ReadOnlyCollectionMemberConverterOption(element);
+            yield return new MemberConverterOption(element);
+            yield return KnownConverters.Default;
         }
 
         class InstanceConverter : Converter
         {
-            public InstanceConverter(IConverter converter) : this(new MemberConverterSelector(converter)) {}
-
-            public InstanceConverter(IMemberConverterSelector selector)
-                : base(new InstanceBodyReader(selector), new InstanceBodyWriter(selector)) {}
+            public InstanceConverter(IConverter converter)
+                : base(new InstanceBodyReader(converter), new InstanceBodyWriter(converter)) {}
         }
     }
 }

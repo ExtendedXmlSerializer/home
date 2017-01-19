@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 
@@ -29,26 +28,17 @@ namespace ExtendedXmlSerialization.Conversion
 {
     public class SelectingConverter : ConverterBase
     {
-        private readonly ISelector _selector;
+        private readonly IConverterSelector _selector;
 
-        public SelectingConverter(ISelector selector)
+        public SelectingConverter(IConverterSelector selector)
         {
             _selector = selector;
         }
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            var info = instance.GetType().GetTypeInfo();
-            var converter = _selector.Get(info);
-            converter.Write(context, instance);
-        }
+        public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-        public override object Read(IReadContext context)
-        {
-            var type = context.Current.EffectiveType();
-            var converter = _selector.Get(type) ?? _selector.Get(context.Current.Name.Classification);
-            var result = converter.Read(context);
-            return result;
-        }
+        private IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
+
+        public override object Read(IReadContext context) => Select(context).Read(context);
     }
 }

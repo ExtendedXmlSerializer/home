@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.ElementModel;
 using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -29,16 +28,10 @@ namespace ExtendedXmlSerialization.Conversion
     public class RootConverter : Converter
     {
         public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(Elements.Default, RootSelector.Default) {}
+        RootConverter() : this(RootSelector.Default) {}
 
-        public RootConverter(IElementSelector elements, IRootSelector selector)
-            : this(
-                elements, selector, new SelectingConverter(new NullableAwareSelector(selector))) {}
+        public RootConverter(IConverterSelector selector) : this(new SelectingConverter(selector)) {}
 
-        public RootConverter(IElementSelector elements, IRootSelector selector, IConverter converter)
-            : base(converter, new ElementWriter(elements.Get, converter))
-        {
-            selector.Execute(converter);
-        }
+        protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
     }
 }
