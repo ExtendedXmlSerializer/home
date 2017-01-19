@@ -25,17 +25,17 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public abstract class OptionBase<TParameter, TResult> : IOption<TParameter, TResult>
-    {
-        private readonly ISpecification<TParameter> _specification;
+	public abstract class OptionBase<TParameter, TResult> : IOption<TParameter, TResult>
+	{
+		readonly ISpecification<TParameter> _specification;
 
-        protected OptionBase(ISpecification<TParameter> specification)
-        {
-            _specification = specification;
-        }
+		protected OptionBase(ISpecification<TParameter> specification)
+		{
+			_specification = specification;
+		}
 
-        public abstract TResult Get(TParameter parameter);
+		public abstract TResult Get(TParameter parameter);
 
-        public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
-    }
+		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
+	}
 }

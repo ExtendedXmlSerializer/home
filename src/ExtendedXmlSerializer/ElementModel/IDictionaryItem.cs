@@ -23,10 +23,10 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IDictionaryItem : ICollectionItem
-    {
-        IElement Key { get; }
+	public interface IDictionaryItem : ICollectionItem
+	{
+		IElement Key { get; }
 
-        IElement Value { get; }
-    }
+		IElement Value { get; }
+	}
 }

@@ -30,37 +30,37 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
-    {
-        public static ConverterOptions Default { get; } = new ConverterOptions();
-        ConverterOptions() {}
+	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
+	{
+		public static ConverterOptions Default { get; } = new ConverterOptions();
+		ConverterOptions() {}
 
-        public IEnumerable<IConverterOption> Get(IConverter parameter)
-        {
-            yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
-            yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
-            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
-            var element = new ElementSelectingConverter(parameter);
-            yield return new ReadOnlyCollectionMemberConverterOption(element);
-            yield return new MemberConverterOption(element);
-            yield return KnownConverters.Default;
-        }
+		public IEnumerable<IConverterOption> Get(IConverter parameter)
+		{
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
+			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
+			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
+			yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(parameter));
+			var element = new ElementSelectingConverter(parameter);
+			yield return new ReadOnlyCollectionMemberConverterOption(element);
+			yield return new MemberConverterOption(element);
+			yield return KnownConverters.Default;
+		}
 
-        /*sealed class LegacyEnumerableTypeConverter : TypeConverter
-        {
-            public LegacyEnumerableTypeConverter(IConverter converter)
-                : base(
-                    IsCollectionTypeSpecification.Default, new ListReader(converter),
-                    new EnumerableBodyWriter(converter)
-                ) {}
-        }*/
+		/*sealed class LegacyEnumerableTypeConverter : TypeConverter
+		{
+		    public LegacyEnumerableTypeConverter(IConverter converter)
+		        : base(
+		            IsCollectionTypeSpecification.Default, new ListReader(converter),
+		            new EnumerableBodyWriter(converter)
+		        ) {}
+		}*/
 
-        sealed class MemberConverterOption : ConverterOption<IMemberElement>
-        {
-            public MemberConverterOption(IConverter converter) : base(
-                new Converter(converter,
-                              new ValidatingAssignedWriter(new Emitter(new MemberTypeEmittingWriter(converter))))) {}
-        }
-    }
+		sealed class MemberConverterOption : ConverterOption<IMemberElement>
+		{
+			public MemberConverterOption(IConverter converter) : base(
+				new Converter(converter,
+				              new ValidatingAssignedWriter(new Emitter(new MemberTypeEmittingWriter(converter))))) {}
+		}
+	}
 }

@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class MemberConverterOption : ConverterOption<IMemberElement>
-    {
-        public MemberConverterOption(IConverter converter)
-            : base(new Converter(converter, new ValidatingAssignedWriter(new Emitter(converter)))) {}
-    }
+	public class MemberConverterOption : ConverterOption<IMemberElement>
+	{
+		public MemberConverterOption(IConverter converter)
+			: base(new Converter(converter, new ValidatingAssignedWriter(new Emitter(converter)))) {}
+	}
 }

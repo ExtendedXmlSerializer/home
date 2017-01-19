@@ -26,16 +26,16 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class CollectionElementBase<T> : ActivatedElement, ICollectionElement<T> where T : ICollectionItem
-    {
-        public CollectionElementBase(string displayName, TypeInfo classification, IMembers members, T item)
-            : base(displayName, classification, members)
-        {
-            Item = item;
-        }
+	public class CollectionElementBase<T> : ActivatedElement, ICollectionElement<T> where T : ICollectionItem
+	{
+		public CollectionElementBase(string displayName, TypeInfo classification, IMembers members, T item)
+			: base(displayName, classification, members)
+		{
+			Item = item;
+		}
 
-        public T Item { get; }
+		public T Item { get; }
 
-        ICollectionItem ICollectionElement.Item => Item;
-    }
+		ICollectionItem ICollectionElement.Item => Item;
+	}
 }

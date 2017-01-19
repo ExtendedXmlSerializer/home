@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IActivatedElement : IMemberedElement {}
+	public interface IActivatedElement : IMemberedElement {}
 }

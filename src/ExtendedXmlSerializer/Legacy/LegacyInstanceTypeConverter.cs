@@ -32,61 +32,61 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyInstanceTypeConverter : Converter
-    {
-        public LegacyInstanceTypeConverter(IConverter converter)
-            : base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
+	sealed class LegacyInstanceTypeConverter : Converter
+	{
+		public LegacyInstanceTypeConverter(IConverter converter)
+			: base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
-        public LegacyInstanceTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
-            : base(
-                new LegacyInstanceBodyReader(config, converter),
-                new LegacyTypeEmittingWriter(new Writer(config, new InstanceBodyWriter(converter)))
-            ) {}
+		public LegacyInstanceTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
+			: base(
+				new LegacyInstanceBodyReader(config, converter),
+				new LegacyTypeEmittingWriter(new Writer(config, new InstanceBodyWriter(converter)))
+			) {}
 
-        private sealed class Writer : DecoratedWriter
-        {
-            private readonly IInternalExtendedXmlConfiguration _tools;
+		sealed class Writer : DecoratedWriter
+		{
+			readonly IInternalExtendedXmlConfiguration _tools;
 
-            public Writer(IInternalExtendedXmlConfiguration tools, IWriter writer) : base(writer)
-            {
-                _tools = tools;
-            }
+			public Writer(IInternalExtendedXmlConfiguration tools, IWriter writer) : base(writer)
+			{
+				_tools = tools;
+			}
 
-            public override void Write(IWriteContext context, object instance)
-            {
-                var type = instance.GetType();
-                var configuration = _tools.GetTypeConfiguration(type);
-                if (configuration != null)
-                {
-                    if (configuration.IsObjectReference)
-                    {
-                        var references = context.Get<WriteReferences>();
+			public override void Write(IWriteContext context, object instance)
+			{
+				var type = instance.GetType();
+				var configuration = _tools.GetTypeConfiguration(type);
+				if (configuration != null)
+				{
+					if (configuration.IsObjectReference)
+					{
+						var references = context.Get<WriteReferences>();
 
-                        var objectId = configuration.GetObjectId(instance);
+						var objectId = configuration.GetObjectId(instance);
 
-                        if (!(context.Container is IMemberElement) && references.Reserved.Contains(instance))
-                        {
-                            references.Reserved.Remove(instance);
-                        }
-                        else if (references.Contains(instance) || references.Reserved.Contains(instance))
-                        {
-                            context.Write(ReferenceProperty.Default, objectId);
-                            return;
-                        }
+						if (!(context.Container is IMemberElement) && references.Reserved.Contains(instance))
+						{
+							references.Reserved.Remove(instance);
+						}
+						else if (references.Contains(instance) || references.Reserved.Contains(instance))
+						{
+							context.Write(ReferenceProperty.Default, objectId);
+							return;
+						}
 
-                        context.Write(IdentifierProperty.Default, objectId);
-                        references.Add(instance);
-                    }
+						context.Write(IdentifierProperty.Default, objectId);
+						references.Add(instance);
+					}
 
-                    if (configuration.Version > 0)
-                    {
-                        context.Write(VersionProperty.Default,
-                                      configuration.Version.ToString(CultureInfo.InvariantCulture));
-                    }
-                }
+					if (configuration.Version > 0)
+					{
+						context.Write(VersionProperty.Default,
+						              configuration.Version.ToString(CultureInfo.InvariantCulture));
+					}
+				}
 
-                base.Write(context, instance);
-            }
-        }
-    }
+				base.Write(context, instance);
+			}
+		}
+	}
 }

@@ -28,16 +28,16 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class DictionaryAddDelegates : IAddDelegates
-    {
-        readonly private static Action<object, object> Action = Add;
-        public static DictionaryAddDelegates Default { get; } = new DictionaryAddDelegates();
-        DictionaryAddDelegates() {}
+	public class DictionaryAddDelegates : IAddDelegates
+	{
+		readonly static Action<object, object> Action = Add;
+		public static DictionaryAddDelegates Default { get; } = new DictionaryAddDelegates();
+		DictionaryAddDelegates() {}
 
-        public Action<object, object> Get(TypeInfo parameter) => Action;
+		public Action<object, object> Get(TypeInfo parameter) => Action;
 
-        private static void Add(object arg1, object arg2) => Add((IDictionary) arg1, (DictionaryEntry) arg2);
+		static void Add(object arg1, object arg2) => Add((IDictionary) arg1, (DictionaryEntry) arg2);
 
-        static void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
-    }
+		static void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
+	}
 }

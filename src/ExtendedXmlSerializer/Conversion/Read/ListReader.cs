@@ -26,31 +26,31 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class ListReader : ListReaderBase
-    {
-        private readonly IActivators _activators;
-        private readonly IAddDelegates _add;
+	public class ListReader : ListReaderBase
+	{
+		readonly IActivators _activators;
+		readonly IAddDelegates _add;
 
-        public ListReader(IReader reader) : this(reader, AddDelegates.Default) {}
+		public ListReader(IReader reader) : this(reader, AddDelegates.Default) {}
 
-        public ListReader(IReader reader, IAddDelegates add) : this(reader, Activators.Default, add) {}
+		public ListReader(IReader reader, IAddDelegates add) : this(reader, Activators.Default, add) {}
 
-        public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
-        {
-            _activators = activators;
-            _add = add;
-        }
+		public ListReader(IReader reader, IActivators activators, IAddDelegates add) : base(reader)
+		{
+			_activators = activators;
+			_add = add;
+		}
 
-        protected override object Create(IReadContext context, IEnumerable enumerable)
-        {
-            var type = context.Element.Classification;
-            var result = _activators.Activate<object>(type.AsType());
-            var list = result as IList ?? new ListAdapter(result, _add.Get(type));
-            foreach (var item in enumerable)
-            {
-                list.Add(item);
-            }
-            return result;
-        }
-    }
+		protected override object Create(IReadContext context, IEnumerable enumerable)
+		{
+			var type = context.Element.Classification;
+			var result = _activators.Activate<object>(type.AsType());
+			var list = result as IList ?? new ListAdapter(result, _add.Get(type));
+			foreach (var item in enumerable)
+			{
+				list.Add(item);
+			}
+			return result;
+		}
+	}
 }

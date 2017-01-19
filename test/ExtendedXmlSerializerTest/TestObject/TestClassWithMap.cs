@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,25 +20,26 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-   public class TestClassMapFromPrimitive
-   {
-       public string Wezel1 { get; set; }
-       public int Wartosc { get; set; }
-   }
+	public class TestClassMapFromPrimitive
+	{
+		public string Wezel1 { get; set; }
+		public int Wartosc { get; set; }
+	}
 
-    public class TestClassWithMap
-    {
-        public void Init()
-        {
-            ZmianaWartosci = "Stara";
-            NowyWezel = "test";
-            PropClass = new TestClassMapFromPrimitive {Wartosc = 12, Wezel1 = "WartoscWezlas"};
-        }
+	public class TestClassWithMap
+	{
+		public void Init()
+		{
+			ZmianaWartosci = "Stara";
+			NowyWezel = "test";
+			PropClass = new TestClassMapFromPrimitive {Wartosc = 12, Wezel1 = "WartoscWezlas"};
+		}
 
-        public string ZmianaWartosci { get; set; }
-        public string NowyWezel { get; set; }
-        public TestClassMapFromPrimitive PropClass { get; set; }
-    }
+		public string ZmianaWartosci { get; set; }
+		public string NowyWezel { get; set; }
+		public TestClassMapFromPrimitive PropClass { get; set; }
+	}
 }

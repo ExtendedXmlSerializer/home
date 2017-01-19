@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,54 +25,58 @@ using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassInheritanceBase
-    {
-        public int Id { get; set; }
+	public class TestClassInheritanceBase
+	{
+		public int Id { get; set; }
 
-        public virtual void Init()
-        {
-            Id = 1;
-        }
-    }
-    public class TestClassInheritance:TestClassInheritanceBase
-    {
-        public int Id2 { get; set; }
-        public override void Init()
-        {
-            Id = 2;
-            Id2 = 3;
-        }
-    }
+		public virtual void Init()
+		{
+			Id = 1;
+		}
+	}
 
-    public class TestClassInheritanceWithOrderBase
-    {
-        [XmlElement(Order = 2)]
-        public int Id { get; set; }
+	public class TestClassInheritance : TestClassInheritanceBase
+	{
+		public int Id2 { get; set; }
 
-        public virtual void Init()
-        {
-            Id = 1;
-        }
-    }
-    public class TestClassInheritanceWithOrder : TestClassInheritanceWithOrderBase
-    {
-        [XmlElement(Order = 1)]
-        public int Id2 { get; set; }
-        public override void Init()
-        {
-            Id = 2;
-            Id2 = 3;
-        }
-    }
+		public override void Init()
+		{
+			Id = 2;
+			Id2 = 3;
+		}
+	}
 
-    public interface IInterfaceWithOrder
-    {
-        int Id { get; set; }
-    }
+	public class TestClassInheritanceWithOrderBase
+	{
+		[XmlElement(Order = 2)]
+		public int Id { get; set; }
 
-    public class TestClassInterfaceInheritanceWithOrder : IInterfaceWithOrder
-    {
-        public int Id2 { get; set; }
-        public int Id { get; set; }
-    }
+		public virtual void Init()
+		{
+			Id = 1;
+		}
+	}
+
+	public class TestClassInheritanceWithOrder : TestClassInheritanceWithOrderBase
+	{
+		[XmlElement(Order = 1)]
+		public int Id2 { get; set; }
+
+		public override void Init()
+		{
+			Id = 2;
+			Id2 = 3;
+		}
+	}
+
+	public interface IInterfaceWithOrder
+	{
+		int Id { get; set; }
+	}
+
+	public class TestClassInterfaceInheritanceWithOrder : IInterfaceWithOrder
+	{
+		public int Id2 { get; set; }
+		public int Id { get; set; }
+	}
 }

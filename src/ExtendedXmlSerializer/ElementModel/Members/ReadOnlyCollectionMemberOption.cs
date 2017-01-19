@@ -28,49 +28,49 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class ReadOnlyCollectionMemberOption : MemberOptionBase
-    {
-        private readonly IElements _elements;
-        private readonly IGetterFactory _getter;
-        private readonly IAddDelegates _add;
+	public class ReadOnlyCollectionMemberOption : MemberOptionBase
+	{
+		readonly IElements _elements;
+		readonly IGetterFactory _getter;
+		readonly IAddDelegates _add;
 
-        public ReadOnlyCollectionMemberOption(IElements elements)
-            : this(elements, GetterFactory.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IElements elements)
+			: this(elements, GetterFactory.Default, AddDelegates.Default) {}
 
-        public ReadOnlyCollectionMemberOption(IElements elements, IGetterFactory getter, IAddDelegates add)
-            : base(Specification.Instance)
-        {
-            _elements = elements;
-            _getter = getter;
-            _add = add;
-        }
+		public ReadOnlyCollectionMemberOption(IElements elements, IGetterFactory getter, IAddDelegates add)
+			: base(Specification.Instance)
+		{
+			_elements = elements;
+			_getter = getter;
+			_add = add;
+		}
 
-        protected override IMemberElement Create(MemberInformation parameter, string name)
-        {
-            var add = _add.Get(parameter.MemberType);
-            if (add != null)
-            {
-                var getter = _getter.Get(parameter.Metadata);
-                var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
-                                                                 _elements.Build(parameter.MemberType));
-                return result;
-            }
-            return null;
-        }
+		protected override IMemberElement Create(MemberInformation parameter, string name)
+		{
+			var add = _add.Get(parameter.MemberType);
+			if (add != null)
+			{
+				var getter = _getter.Get(parameter.Metadata);
+				var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
+				                                                 _elements.Build(parameter.MemberType));
+				return result;
+			}
+			return null;
+		}
 
-        sealed class Specification : ISpecification<MemberInformation>
-        {
-            public static Specification Instance { get; } = new Specification();
-            Specification() : this(IsCollectionTypeSpecification.Default) {}
-            private readonly ISpecification<TypeInfo> _specification;
+		sealed class Specification : ISpecification<MemberInformation>
+		{
+			public static Specification Instance { get; } = new Specification();
+			Specification() : this(IsCollectionTypeSpecification.Default) {}
+			readonly ISpecification<TypeInfo> _specification;
 
 
-            Specification(ISpecification<TypeInfo> specification)
-            {
-                _specification = specification;
-            }
+			Specification(ISpecification<TypeInfo> specification)
+			{
+				_specification = specification;
+			}
 
-            public bool IsSatisfiedBy(MemberInformation parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
-        }
-    }
+			public bool IsSatisfiedBy(MemberInformation parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
+		}
+	}
 }

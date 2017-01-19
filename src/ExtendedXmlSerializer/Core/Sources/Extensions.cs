@@ -25,16 +25,16 @@ using System;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public static class Extensions
-    {
-        public static Func<TResult> Build<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
-                                                               TParameter parameter)
-            => @this.Fix(parameter).Singleton().Get;
+	public static class Extensions
+	{
+		public static Func<TResult> Build<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
+		                                                       TParameter parameter)
+			=> @this.Fix(parameter).Singleton().Get;
 
-        public static ISource<TResult> Fix<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
-                                                                TParameter parameter)
-            => new FixedSource<TParameter, TResult>(@this, parameter);
+		public static ISource<TResult> Fix<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
+		                                                        TParameter parameter)
+			=> new FixedSource<TParameter, TResult>(@this, parameter);
 
-        public static ISource<T> Singleton<T>(this ISource<T> @this) => new SingletonSource<T>(@this.Get);
-    }
+		public static ISource<T> Singleton<T>(this ISource<T> @this) => new SingletonSource<T>(@this.Get);
+	}
 }

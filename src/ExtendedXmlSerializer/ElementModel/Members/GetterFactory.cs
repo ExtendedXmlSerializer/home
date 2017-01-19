@@ -27,29 +27,29 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class GetterFactory : IGetterFactory
-    {
-        public static GetterFactory Default { get; } = new GetterFactory();
-        GetterFactory() {}
+	public class GetterFactory : IGetterFactory
+	{
+		public static GetterFactory Default { get; } = new GetterFactory();
+		GetterFactory() {}
 
-        public Func<object, object> Get(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
+		public Func<object, object> Get(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
 
-        static Func<object, object> Get(Type type, string name)
-        {
-            // Object (type object) from witch the data are retrieved
-            var itemObject = Expression.Parameter(typeof(object), "item");
+		static Func<object, object> Get(Type type, string name)
+		{
+			// Object (type object) from witch the data are retrieved
+			var itemObject = Expression.Parameter(typeof(object), "item");
 
-            // Object casted to specific type using the operator "as".
-            var itemCasted = Expression.Convert(itemObject, type);
+			// Object casted to specific type using the operator "as".
+			var itemCasted = Expression.Convert(itemObject, type);
 
-            // Property from casted object
-            var property = Expression.PropertyOrField(itemCasted, name);
+			// Property from casted object
+			var property = Expression.PropertyOrField(itemCasted, name);
 
-            // Because we use this function also for value type we need to add conversion to object
-            var conversion = Expression.Convert(property, typeof(object));
-            var lambda = Expression.Lambda<Func<object, object>>(conversion, itemObject);
-            var result = lambda.Compile();
-            return result;
-        }
-    }
+			// Because we use this function also for value type we need to add conversion to object
+			var conversion = Expression.Convert(property, typeof(object));
+			var lambda = Expression.Lambda<Func<object, object>>(conversion, itemObject);
+			var result = lambda.Compile();
+			return result;
+		}
+	}
 }

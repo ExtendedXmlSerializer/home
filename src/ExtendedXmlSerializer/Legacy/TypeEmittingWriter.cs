@@ -29,21 +29,21 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class TypeEmittingWriter : TypeEmittingWriterBase
-    {
-        public TypeEmittingWriter(IWriter writer) : base(writer) {}
+	class TypeEmittingWriter : TypeEmittingWriterBase
+	{
+		public TypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
-        {
-            if (!(context.Container is IMemberElement) && !(context.Container is IDictionaryItem))
-            {
-                var declared = context.Container.Classification;
-                var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
-                return result;
-            }
-            return false;
-        }
+		protected override bool Emit(IWriteContext context, object instance, TypeInfo type)
+		{
+			if (!(context.Container is IMemberElement) && !(context.Container is IDictionaryItem))
+			{
+				var declared = context.Container.Classification;
+				var result = declared == null || !Equals(declared, type) || CheckInstance(context, instance);
+				return result;
+			}
+			return false;
+		}
 
-        protected virtual bool CheckInstance(IWriteContext context, object instance) => !(instance is IEnumerable);
-    }
+		protected virtual bool CheckInstance(IWriteContext context, object instance) => !(instance is IEnumerable);
+	}
 }

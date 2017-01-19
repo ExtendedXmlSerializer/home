@@ -27,35 +27,35 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
-        private readonly IConverterOption _option;
+	sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
+		readonly IConverterOption _option;
 
-        public LegacyMemberOption(IInternalExtendedXmlConfiguration config, IConverterOption option)
-        {
-            _config = config;
-            _option = option;
-        }
+		public LegacyMemberOption(IInternalExtendedXmlConfiguration config, IConverterOption option)
+		{
+			_config = config;
+			_option = option;
+		}
 
-        protected override IConverter Create(IMemberElement parameter)
-        {
-            var result = _option.Get(parameter);
-            if (result != null)
-            {
-                var configuration = _config.GetTypeConfiguration(parameter.Metadata.DeclaringType);
-                var propertyConfiguration = configuration?.GetPropertyConfiguration(parameter.Metadata.Name);
-                if (propertyConfiguration != null && propertyConfiguration.IsEncrypt)
-                {
-                    var algorithm = _config.EncryptionAlgorithm;
-                    if (algorithm != null)
-                    {
-                        return new EncryptedMemberConverter(algorithm, result);
-                    }
-                }
-            }
+		protected override IConverter Create(IMemberElement parameter)
+		{
+			var result = _option.Get(parameter);
+			if (result != null)
+			{
+				var configuration = _config.GetTypeConfiguration(parameter.Metadata.DeclaringType);
+				var propertyConfiguration = configuration?.GetPropertyConfiguration(parameter.Metadata.Name);
+				if (propertyConfiguration != null && propertyConfiguration.IsEncrypt)
+				{
+					var algorithm = _config.EncryptionAlgorithm;
+					if (algorithm != null)
+					{
+						return new EncryptedMemberConverter(algorithm, result);
+					}
+				}
+			}
 
-            return result;
-        }
-    }
+			return result;
+		}
+	}
 }

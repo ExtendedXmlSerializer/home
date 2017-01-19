@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,271 +30,274 @@ using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 {
-    internal class TypeDefinition
-    {
-        readonly Lazy<IEnumerable<PropertieDefinition>> _properties;
+	class TypeDefinition
+	{
+		readonly Lazy<IEnumerable<PropertieDefinition>> _properties;
 
-        public TypeDefinition(Type type)
-        {
-            Type = type;
-            Name = type.Name;
+		public TypeDefinition(Type type)
+		{
+			Type = type;
+			Name = type.Name;
 
-            var typeInfo = type.GetTypeInfo();
-            var isGenericType = typeInfo.IsGenericType;
-            if (isGenericType)
-            {
-                Type[] types = type.GetGenericArguments();
+			var typeInfo = type.GetTypeInfo();
+			var isGenericType = typeInfo.IsGenericType;
+			if (isGenericType)
+			{
+				var types = type.GetGenericArguments();
 
-                if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                {
-                    Type = type.GetGenericArguments()[0];
-                }
+				if (type.GetGenericTypeDefinition() == typeof(Nullable<>))
+				{
+					Type = type.GetGenericArguments()[0];
+				}
 
-                Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
-            }
-            
-            FullName = type.FullName;
+				Name = Name.Replace("`" + types.Length, "Of" + string.Join("", types.Select(p => p.Name)));
+			}
 
-            GetPrimitiveInfo(Type);
+			FullName = type.FullName;
 
-            IsArray = typeInfo.IsArray;
+			GetPrimitiveInfo(Type);
 
-            IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
+			IsArray = typeInfo.IsArray;
 
-            if (IsEnumerable)
-            {
-                IsDictionary = typeof(IDictionary).IsAssignableFrom(type);
+			IsEnumerable = !IsPrimitive && typeof(IEnumerable).IsAssignableFrom(type);
 
-                var elementType = ElementTypeLocator.Default.Locate(type);
-                if (isGenericType)
-                {
-                    GenericArguments = type.GetGenericArguments();
-                }
-                else if ( elementType != null )
-                {
-                    GenericArguments = new[] { elementType };
-                }
+			if (IsEnumerable)
+			{
+				IsDictionary = typeof(IDictionary).IsAssignableFrom(type);
 
-                Name = IsArray || isGenericType ? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}" : type.Name;
+				var elementType = ElementTypeLocator.Default.Locate(type);
+				if (isGenericType)
+				{
+					GenericArguments = type.GetGenericArguments();
+				}
+				else if (elementType != null)
+				{
+					GenericArguments = new[] {elementType};
+				}
 
-                if (IsDictionary)
-                {
-                    MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
-                }
-                else if (elementType != null && !IsArray)
-                {
-                    MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
-                }
-            }
+				Name = IsArray || isGenericType
+					? $"ArrayOf{string.Join(string.Empty, GenericArguments.Select(p => p.Name))}"
+					: type.Name;
 
-            XmlRootAttribute attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>();
-            if (attribute != null)
-            {
-                Name = attribute.ElementName;
-            }
+				if (IsDictionary)
+				{
+					MethodAddToDictionary = ObjectAccessors.CreateMethodAddToDictionary(type);
+				}
+				else if (elementType != null && !IsArray)
+				{
+					MethodAddToCollection = ObjectAccessors.CreateMethodAddCollection(type, elementType);
+				}
+			}
 
-            IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
-                !IsPrimitive &&
-                !typeInfo.IsEnum && type != typeof(string) &&
-                //not generic or generic but not List<> and Set<>
-                (!isGenericType || !IsEnumerable);
-            _properties = new Lazy<IEnumerable<PropertieDefinition>>( GetPropertieToSerialze );
-            
-            ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
-        }
+			var attribute = typeInfo.GetCustomAttribute<XmlRootAttribute>();
+			if (attribute != null)
+			{
+				Name = attribute.ElementName;
+			}
 
-        public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
-        public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
+			IsObjectToSerialize = // !typeInfo.IsPrimitive && !typeInfo.IsValueType &&
+				!IsPrimitive &&
+				!typeInfo.IsEnum && type != typeof(string) &&
+				//not generic or generic but not List<> and Set<>
+				(!isGenericType || !IsEnumerable);
+			_properties = new Lazy<IEnumerable<PropertieDefinition>>(GetPropertieToSerialze);
+
+			ObjectActivator = ObjectAccessors.CreateObjectActivator(type, IsPrimitive);
+		}
+
+		public ObjectAccessors.AddItemToCollection MethodAddToCollection { get; set; }
+		public ObjectAccessors.AddItemToDictionary MethodAddToDictionary { get; set; }
 
 
-        private IEnumerable<PropertieDefinition> GetPropertieToSerialze()
-        {
-            var result = new List<PropertieDefinition>();
-            if ( IsObjectToSerialize )
-            {
-                int order;
-            
-                foreach (PropertyInfo propertyInfo in Type.GetProperties())
-                {
-                    var elementType = ElementTypeLocator.Default.Locate( propertyInfo.PropertyType );
-                    var getMethod = propertyInfo.GetGetMethod(true);
-                    if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
-                       !propertyInfo.CanWrite && elementType == null || ( !propertyInfo.GetSetMethod(true)?.IsPublic ?? false ) ||
-                        propertyInfo.GetIndexParameters().Length > 0)
-                    {
-                        continue;
-                    }
+		IEnumerable<PropertieDefinition> GetPropertieToSerialze()
+		{
+			var result = new List<PropertieDefinition>();
+			if (IsObjectToSerialize)
+			{
+				int order;
 
-                    bool ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                    if (ignore)
-                    {
-                        continue;
-                    }
+				foreach (var propertyInfo in Type.GetProperties())
+				{
+					var elementType = ElementTypeLocator.Default.Locate(propertyInfo.PropertyType);
+					var getMethod = propertyInfo.GetGetMethod(true);
+					if (!propertyInfo.CanRead || getMethod.IsStatic || !getMethod.IsPublic ||
+					    !propertyInfo.CanWrite && elementType == null || (!propertyInfo.GetSetMethod(true)?.IsPublic ?? false) ||
+					    propertyInfo.GetIndexParameters().Length > 0)
+					{
+						continue;
+					}
 
-                    var name = string.Empty;
-                    order = -1;
-                    var xmlElement = propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
-                    if (xmlElement != null)
-                    {
-                        name = xmlElement.ElementName;
-                        order = xmlElement.Order;
-                    }
-                    var property = new PropertieDefinition(Type, propertyInfo, name);
-                    property.MetadataToken = propertyInfo.MetadataToken;
-                    if (order != -1)
-                    {
-                        property.Order = order;
-                    }
-                    result.Add(property);
-                }
+					var ignore = propertyInfo.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
+					if (ignore)
+					{
+						continue;
+					}
 
-                var fields = Type.GetFields();
-                foreach (FieldInfo field in fields)
-                {
-                
-                    if (field.IsLiteral && !field.IsInitOnly)
-                    {
-                        continue;
-                    }
-                    if (field.IsInitOnly || field.IsStatic)
-                    {
-                        continue;
-                    }
-                    bool ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
-                    if (ignore)
-                    {
-                        continue;
-                    }
-                    var name = string.Empty;
-                    order = -1;
-                    var xmlElement = field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
-                    if (xmlElement != null)
-                    {
-                        name = xmlElement.ElementName;
-                        order = xmlElement.Order;
-                    }
+					var name = string.Empty;
+					order = -1;
+					var xmlElement =
+						propertyInfo.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+					if (xmlElement != null)
+					{
+						name = xmlElement.ElementName;
+						order = xmlElement.Order;
+					}
+					var property = new PropertieDefinition(Type, propertyInfo, name);
+					property.MetadataToken = propertyInfo.MetadataToken;
+					if (order != -1)
+					{
+						property.Order = order;
+					}
+					result.Add(property);
+				}
 
-                    var property = new PropertieDefinition(Type, field, name);
-                    property.MetadataToken = field.MetadataToken;
-                    if (order != -1)
-                    {
-                        property.Order = order;
-                    }
-                    result.Add(property);
-                }
-            
-                result.Sort((p1, p2) =>
-                    {
-                        if (p1.Order == -1 || p2.Order == -1)
-                        {
-                            if (p1.Order > -1)
-                            {
-                                return -1;
-                            }
-                            if (p2.Order > -1)
-                            {
-                                return 1;
-                            }
-                            return p1.MetadataToken.CompareTo(p2.MetadataToken);
-                        }
+				var fields = Type.GetFields();
+				foreach (var field in fields)
+				{
+					if (field.IsLiteral && !field.IsInitOnly)
+					{
+						continue;
+					}
+					if (field.IsInitOnly || field.IsStatic)
+					{
+						continue;
+					}
+					var ignore = field.GetCustomAttributes(false).Any(a => a is XmlIgnoreAttribute);
+					if (ignore)
+					{
+						continue;
+					}
+					var name = string.Empty;
+					order = -1;
+					var xmlElement =
+						field.GetCustomAttributes(false).FirstOrDefault(a => a is XmlElementAttribute) as XmlElementAttribute;
+					if (xmlElement != null)
+					{
+						name = xmlElement.ElementName;
+						order = xmlElement.Order;
+					}
 
-                        return p1.Order.CompareTo(p2.Order);
-                    }
-                );
-            }
-            return result;
-        }
+					var property = new PropertieDefinition(Type, field, name);
+					property.MetadataToken = field.MetadataToken;
+					if (order != -1)
+					{
+						property.Order = order;
+					}
+					result.Add(property);
+				}
 
-        public bool IsPrimitive { get; private set; }
-        public bool IsArray { get; private set; }
-        public bool IsEnumerable { get; private set; }
-        public bool IsDictionary { get; private set; }
-        public Type[] GenericArguments { get; set; }
+				result.Sort((p1, p2) =>
+				            {
+					            if (p1.Order == -1 || p2.Order == -1)
+					            {
+						            if (p1.Order > -1)
+						            {
+							            return -1;
+						            }
+						            if (p2.Order > -1)
+						            {
+							            return 1;
+						            }
+						            return p1.MetadataToken.CompareTo(p2.MetadataToken);
+					            }
 
-        public IEnumerable<PropertieDefinition> Properties => _properties.Value;
-        public Type Type { get; private set; }
-        public string Name { get; private set; }
-        public string FullName { get; private set; }
-        public bool IsObjectToSerialize { get; private set; }
-        public bool IsEnum { get; private set; }
+					            return p1.Order.CompareTo(p2.Order);
+				            }
+				);
+			}
+			return result;
+		}
 
-        public string PrimitiveName { get; private set; }
-        public TypeCode TypeCode { get; set; }
-        public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
+		public bool IsPrimitive { get; private set; }
+		public bool IsArray { get; }
+		public bool IsEnumerable { get; }
+		public bool IsDictionary { get; }
+		public Type[] GenericArguments { get; set; }
 
-        public PropertieDefinition GetProperty(string name)
-        {
-            return Properties.FirstOrDefault(p => p.Name == name);
-        }
+		public IEnumerable<PropertieDefinition> Properties => _properties.Value;
+		public Type Type { get; }
+		public string Name { get; }
+		public string FullName { get; private set; }
+		public bool IsObjectToSerialize { get; }
+		public bool IsEnum { get; private set; }
 
-        private void GetPrimitiveInfo(Type type)
-        {
-            IsEnum = type.GetTypeInfo().IsEnum;
+		public string PrimitiveName { get; private set; }
+		public TypeCode TypeCode { get; set; }
+		public ObjectAccessors.ObjectActivator ObjectActivator { get; private set; }
 
-            TypeCode = Type.GetTypeCode(type);
+		public PropertieDefinition GetProperty(string name)
+		{
+			return Properties.FirstOrDefault(p => p.Name == name);
+		}
 
-            switch (TypeCode)
-            {
-                case TypeCode.Boolean:
-                    PrimitiveName = "boolean";
-                    break;
-                case TypeCode.Char:
-                    PrimitiveName = "char";
-                    break;
-                case TypeCode.SByte:
-                    PrimitiveName = "byte";
-                    break;
-                case TypeCode.Byte:
-                    PrimitiveName = "unsignedByte";
-                    break;
-                case TypeCode.Int16:
-                    PrimitiveName = "short";
-                    break;
-                case TypeCode.UInt16:
-                    PrimitiveName = "unsignedShort";
-                    break;
-                case TypeCode.Int32:
-                    PrimitiveName = "int";
-                    break;
-                case TypeCode.UInt32:
-                    PrimitiveName = "unsignedInt";
-                    break;
-                case TypeCode.Int64:
-                    PrimitiveName = "long";
-                    break;
-                case TypeCode.UInt64:
-                    PrimitiveName = "unsignedLong";
-                    break;
-                case TypeCode.Single:
-                    PrimitiveName = "float";
-                    break;
-                case TypeCode.Double:
-                    PrimitiveName = "double";
-                    break;
-                case TypeCode.Decimal:
-                    PrimitiveName = "decimal";
-                    break;
-                case TypeCode.DateTime:
-                    PrimitiveName = "dateTime";
-                    break;
-                case TypeCode.String:
-                    PrimitiveName = "string";
-                    break;
-                default:
-                    if (type == typeof(Guid))
-                    {
-                        PrimitiveName = "guid";
+		void GetPrimitiveInfo(Type type)
+		{
+			IsEnum = type.GetTypeInfo().IsEnum;
 
-                        break;
-                    }
-                    if (type == typeof(TimeSpan))
-                    {
-                        PrimitiveName = "TimeSpan";
-                    }
+			TypeCode = Type.GetTypeCode(type);
 
-                    break;
-            }
-            IsPrimitive = !string.IsNullOrEmpty(PrimitiveName);          
-        }
-    }
+			switch (TypeCode)
+			{
+				case TypeCode.Boolean:
+					PrimitiveName = "boolean";
+					break;
+				case TypeCode.Char:
+					PrimitiveName = "char";
+					break;
+				case TypeCode.SByte:
+					PrimitiveName = "byte";
+					break;
+				case TypeCode.Byte:
+					PrimitiveName = "unsignedByte";
+					break;
+				case TypeCode.Int16:
+					PrimitiveName = "short";
+					break;
+				case TypeCode.UInt16:
+					PrimitiveName = "unsignedShort";
+					break;
+				case TypeCode.Int32:
+					PrimitiveName = "int";
+					break;
+				case TypeCode.UInt32:
+					PrimitiveName = "unsignedInt";
+					break;
+				case TypeCode.Int64:
+					PrimitiveName = "long";
+					break;
+				case TypeCode.UInt64:
+					PrimitiveName = "unsignedLong";
+					break;
+				case TypeCode.Single:
+					PrimitiveName = "float";
+					break;
+				case TypeCode.Double:
+					PrimitiveName = "double";
+					break;
+				case TypeCode.Decimal:
+					PrimitiveName = "decimal";
+					break;
+				case TypeCode.DateTime:
+					PrimitiveName = "dateTime";
+					break;
+				case TypeCode.String:
+					PrimitiveName = "string";
+					break;
+				default:
+					if (type == typeof(Guid))
+					{
+						PrimitiveName = "guid";
+
+						break;
+					}
+					if (type == typeof(TimeSpan))
+					{
+						PrimitiveName = "TimeSpan";
+					}
+
+					break;
+			}
+			IsPrimitive = !string.IsNullOrEmpty(PrimitiveName);
+		}
+	}
 }

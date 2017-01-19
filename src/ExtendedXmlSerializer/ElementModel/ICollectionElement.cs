@@ -23,13 +23,13 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface ICollectionElement : IElement
-    {
-        ICollectionItem Item { get; }
-    }
+	public interface ICollectionElement : IElement
+	{
+		ICollectionItem Item { get; }
+	}
 
-    public interface ICollectionElement<out T> : ICollectionElement where T : ICollectionItem
-    {
-        new T Item { get; }
-    }
+	public interface ICollectionElement<out T> : ICollectionElement where T : ICollectionItem
+	{
+		new T Item { get; }
+	}
 }

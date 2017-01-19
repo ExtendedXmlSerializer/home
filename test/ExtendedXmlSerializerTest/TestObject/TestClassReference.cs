@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,61 +20,64 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassReferenceWithDictionary
-    {
-        public IReference Parent { get; set; }
+	public class TestClassReferenceWithDictionary
+	{
+		public IReference Parent { get; set; }
 
-        public Dictionary<int, IReference> All { get; set; }
-    }
+		public Dictionary<int, IReference> All { get; set; }
+	}
 
-    public class TestClassReferenceWithList
-    {
-        public IReference Parent { get; set; }
+	public class TestClassReferenceWithList
+	{
+		public IReference Parent { get; set; }
 
-        public List<IReference> All { get; set; }
-    }
-    public interface IReference
-    {
-        int Id { get; set; }
-    }
-    public class TestClassReference : IReference
-    {
-        public int Id { get; set; }
-        public IReference CyclicReference { get; set; }
-        public IReference ObjectA { get; set; }
+		public List<IReference> All { get; set; }
+	}
 
-        public IReference ReferenceToObjectA { get; set; }
+	public interface IReference
+	{
+		int Id { get; set; }
+	}
 
-        public List<IReference> Lists { get; set; }
-    }
+	public class TestClassReference : IReference
+	{
+		public int Id { get; set; }
+		public IReference CyclicReference { get; set; }
+		public IReference ObjectA { get; set; }
 
-    public class TestClassConcreteReferenceWithDictionary
-    {
-        public TestClassConcreteReference Parent { get; set; }
+		public IReference ReferenceToObjectA { get; set; }
 
-        public Dictionary<int, TestClassConcreteReference> All { get; set; }
-    }
+		public List<IReference> Lists { get; set; }
+	}
+
+	public class TestClassConcreteReferenceWithDictionary
+	{
+		public TestClassConcreteReference Parent { get; set; }
+
+		public Dictionary<int, TestClassConcreteReference> All { get; set; }
+	}
 
 
-    public class TestClassConcreteReferenceWithList
-    {
-        public TestClassConcreteReference Parent { get; set; }
+	public class TestClassConcreteReferenceWithList
+	{
+		public TestClassConcreteReference Parent { get; set; }
 
-        public List<TestClassConcreteReference> All { get; set; }
-    }
+		public List<TestClassConcreteReference> All { get; set; }
+	}
 
-    public class TestClassConcreteReference : IReference
-    {
-        public int Id { get; set; }
-        public TestClassConcreteReference CyclicReference { get; set; }
-        public TestClassConcreteReference ObjectA { get; set; }
+	public class TestClassConcreteReference : IReference
+	{
+		public int Id { get; set; }
+		public TestClassConcreteReference CyclicReference { get; set; }
+		public TestClassConcreteReference ObjectA { get; set; }
 
-        public TestClassConcreteReference ReferenceToObjectA { get; set; }
+		public TestClassConcreteReference ReferenceToObjectA { get; set; }
 
-        public List<TestClassConcreteReference> Lists { get; set; }
-    }
+		public List<TestClassConcreteReference> Lists { get; set; }
+	}
 }

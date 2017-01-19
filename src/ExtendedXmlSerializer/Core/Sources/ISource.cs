@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface ISource<out T>
-    {
-        T Get();
-    }
+	public interface ISource<out T>
+	{
+		T Get();
+	}
 }

@@ -26,19 +26,19 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class SelectingConverter : ConverterBase
-    {
-        private readonly IConverterSelector _selector;
+	public class SelectingConverter : ConverterBase
+	{
+		readonly IConverterSelector _selector;
 
-        public SelectingConverter(IConverterSelector selector)
-        {
-            _selector = selector;
-        }
+		public SelectingConverter(IConverterSelector selector)
+		{
+			_selector = selector;
+		}
 
-        public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
+		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-        private IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
+		IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
 
-        public override object Read(IReadContext context) => Select(context).Read(context);
-    }
+		public override object Read(IReadContext context) => Select(context).Read(context);
+	}
 }

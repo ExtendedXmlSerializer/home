@@ -27,24 +27,24 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    class CollectionItemFactory : ICollectionItemFactory
-    {
-        private readonly ICollectionItemTypeLocator _locator;
-        private readonly IElements _elements;
+	class CollectionItemFactory : ICollectionItemFactory
+	{
+		readonly ICollectionItemTypeLocator _locator;
+		readonly IElements _elements;
 
-        public CollectionItemFactory(IElements elements) : this(CollectionItemTypeLocator.Default, elements) {}
+		public CollectionItemFactory(IElements elements) : this(CollectionItemTypeLocator.Default, elements) {}
 
-        public CollectionItemFactory(ICollectionItemTypeLocator locator, IElements elements)
-        {
-            _locator = locator;
-            _elements = elements;
-        }
+		public CollectionItemFactory(ICollectionItemTypeLocator locator, IElements elements)
+		{
+			_locator = locator;
+			_elements = elements;
+		}
 
-        public ICollectionItem Get(TypeInfo parameter)
-        {
-            var info = _locator.Get(parameter);
-            var result = new CollectionItem(_elements.Build(info));
-            return result;
-        }
-    }
+		public ICollectionItem Get(TypeInfo parameter)
+		{
+			var info = _locator.Get(parameter);
+			var result = new CollectionItem(_elements.Build(info));
+			return result;
+		}
+	}
 }

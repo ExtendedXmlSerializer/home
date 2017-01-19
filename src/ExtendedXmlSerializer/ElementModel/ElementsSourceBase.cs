@@ -28,20 +28,20 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    abstract class ElementsSourceBase : IAlteration<IElements>
-    {
-        public IElements Get(IElements parameter)
-        {
-            var options = CreateOptions(parameter);
-            var result = new Elements(options.ToArray());
-            return result;
-        }
+	abstract class ElementsSourceBase : IAlteration<IElements>
+	{
+		public IElements Get(IElements parameter)
+		{
+			var options = CreateOptions(parameter);
+			var result = new Elements(options.ToArray());
+			return result;
+		}
 
-        protected abstract IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter);
+		protected abstract IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter);
 
-        sealed class Elements : Selector<TypeInfo, IElement>, IElements
-        {
-            public Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
-        }
-    }
+		sealed class Elements : Selector<TypeInfo, IElement>, IElements
+		{
+			public Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
+		}
+	}
 }

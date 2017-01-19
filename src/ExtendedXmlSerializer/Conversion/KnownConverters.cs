@@ -27,52 +27,52 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class KnownConverters : ConverterOptionBase<IElement>
-    {
-        public static KnownConverters Default { get; } = new KnownConverters();
+	public class KnownConverters : ConverterOptionBase<IElement>
+	{
+		public static KnownConverters Default { get; } = new KnownConverters();
 
-        KnownConverters() : this(
-            BooleanTypeConverter.Default,
-            CharacterTypeConverter.Default,
-            ByteTypeConverter.Default,
-            UnsignedByteTypeConverter.Default,
-            ShortTypeConverter.Default,
-            UnsignedShortTypeConverter.Default,
-            IntegerTypeConverter.Default,
-            UnsignedIntegerTypeConverter.Default,
-            LongTypeConverter.Default,
-            UnsignedLongTypeConverter.Default,
-            FloatTypeConverter.Default,
-            DoubleTypeConverter.Default,
-            DecimalTypeConverter.Default,
-            EnumerationTypeConverter.Default,
-            DateTimeTypeConverter.Default,
-            DateTimeOffsetTypeConverter.Default,
-            StringTypeConverter.Default,
-            GuidTypeConverter.Default,
-            TimeSpanTypeConverter.Default
-        ) {}
+		KnownConverters() : this(
+			BooleanTypeConverter.Default,
+			CharacterTypeConverter.Default,
+			ByteTypeConverter.Default,
+			UnsignedByteTypeConverter.Default,
+			ShortTypeConverter.Default,
+			UnsignedShortTypeConverter.Default,
+			IntegerTypeConverter.Default,
+			UnsignedIntegerTypeConverter.Default,
+			LongTypeConverter.Default,
+			UnsignedLongTypeConverter.Default,
+			FloatTypeConverter.Default,
+			DoubleTypeConverter.Default,
+			DecimalTypeConverter.Default,
+			EnumerationTypeConverter.Default,
+			DateTimeTypeConverter.Default,
+			DateTimeOffsetTypeConverter.Default,
+			StringTypeConverter.Default,
+			GuidTypeConverter.Default,
+			TimeSpanTypeConverter.Default
+		) {}
 
-        private readonly ImmutableArray<ITypeConverter> _converters;
+		readonly ImmutableArray<ITypeConverter> _converters;
 
-        public KnownConverters(params ITypeConverter[] converters) : this(converters.ToImmutableArray()) {}
+		public KnownConverters(params ITypeConverter[] converters) : this(converters.ToImmutableArray()) {}
 
-        public KnownConverters(ImmutableArray<ITypeConverter> converters)
-        {
-            _converters = converters;
-        }
+		public KnownConverters(ImmutableArray<ITypeConverter> converters)
+		{
+			_converters = converters;
+		}
 
-        protected override IConverter Create(IElement parameter)
-        {
-            var type = parameter.Classification;
-            foreach (var converter in _converters)
-            {
-                if (converter.IsSatisfiedBy(type))
-                {
-                    return converter;
-                }
-            }
-            return null;
-        }
-    }
+		protected override IConverter Create(IElement parameter)
+		{
+			var type = parameter.Classification;
+			foreach (var converter in _converters)
+			{
+				if (converter.IsSatisfiedBy(type))
+				{
+					return converter;
+				}
+			}
+			return null;
+		}
+	}
 }

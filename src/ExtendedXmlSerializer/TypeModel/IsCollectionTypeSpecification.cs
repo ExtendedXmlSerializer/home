@@ -28,12 +28,12 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public class IsCollectionTypeSpecification : AnySpecification<TypeInfo>
-    {
-        public static IsCollectionTypeSpecification Default { get; } = new IsCollectionTypeSpecification();
+	public class IsCollectionTypeSpecification : AnySpecification<TypeInfo>
+	{
+		public static IsCollectionTypeSpecification Default { get; } = new IsCollectionTypeSpecification();
 
-        IsCollectionTypeSpecification()
-            : base(IsAssignableSpecification<IList>.Default, new IsAssignableGenericSpecification(typeof(ICollection<>))
-            ) {}
-    }
+		IsCollectionTypeSpecification()
+			: base(IsAssignableSpecification<IList>.Default, new IsAssignableGenericSpecification(typeof(ICollection<>))
+			) {}
+	}
 }

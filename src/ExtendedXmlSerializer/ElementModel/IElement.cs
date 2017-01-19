@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElement : IClassification {}
+	public interface IElement : IClassification {}
 }

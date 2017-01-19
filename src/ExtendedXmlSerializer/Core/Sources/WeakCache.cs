@@ -25,16 +25,16 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
-        where TKey : class where TValue : class
-    {
-        private readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
+		where TKey : class where TValue : class
+	{
+		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-        public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
-        {
-            _callback = callback;
-        }
+		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
+		{
+			_callback = callback;
+		}
 
-        protected override TValue Create(TKey parameter) => _callback(parameter);
-    }
+		protected override TValue Create(TKey parameter) => _callback(parameter);
+	}
 }

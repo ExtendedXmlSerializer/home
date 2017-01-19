@@ -25,12 +25,12 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public interface IMemberElement : IContainerElement, IDisplayAware
-    {
-        MemberInfo Metadata { get; }
+	public interface IMemberElement : IContainerElement, IDisplayAware
+	{
+		MemberInfo Metadata { get; }
 
-        object Get(object instance);
+		object Get(object instance);
 
-        void Assign(object instance, object value);
-    }
+		void Assign(object instance, object value);
+	}
 }

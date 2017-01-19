@@ -23,16 +23,16 @@
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class Emitter : DecoratedWriter
-    {
-        public Emitter(IWriter writer) : base(writer) {}
+	public class Emitter : DecoratedWriter
+	{
+		public Emitter(IWriter writer) : base(writer) {}
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            using (context.Emit())
-            {
-                base.Write(context, instance);
-            }
-        }
-    }
+		public override void Write(IWriteContext context, object instance)
+		{
+			using (context.Emit())
+			{
+				base.Write(context, instance);
+			}
+		}
+	}
 }

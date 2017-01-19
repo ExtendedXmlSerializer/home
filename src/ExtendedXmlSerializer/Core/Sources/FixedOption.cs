@@ -25,15 +25,15 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
-    {
-        private readonly TResult _instance;
+	public class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
+	{
+		readonly TResult _instance;
 
-        public FixedOption(ISpecification<TParameter> specification, TResult instance) : base(specification)
-        {
-            _instance = instance;
-        }
+		public FixedOption(ISpecification<TParameter> specification, TResult instance) : base(specification)
+		{
+			_instance = instance;
+		}
 
-        public override TResult Get(TParameter parameter) => _instance;
-    }
+		public override TResult Get(TParameter parameter) => _instance;
+	}
 }

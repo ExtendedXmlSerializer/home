@@ -26,29 +26,29 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
-    {
-        private readonly Type _genericType;
+	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
+	{
+		readonly Type _genericType;
 
-        public IsAssignableGenericSpecification(Type genericType)
-        {
-            _genericType = genericType;
-        }
+		public IsAssignableGenericSpecification(Type genericType)
+		{
+			_genericType = genericType;
+		}
 
-        // ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
-        public bool IsSatisfiedBy(TypeInfo parameter)
-        {
-            var interfaceTypes = parameter.GetInterfaces();
+		// ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
+		public bool IsSatisfiedBy(TypeInfo parameter)
+		{
+			var interfaceTypes = parameter.GetInterfaces();
 
-            foreach (var it in interfaceTypes.Append(parameter.AsType()))
-            {
-                if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == _genericType)
-                    return true;
-            }
+			foreach (var it in interfaceTypes.Append(parameter.AsType()))
+			{
+				if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == _genericType)
+					return true;
+			}
 
-            var baseType = parameter.BaseType?.GetTypeInfo();
-            var result = baseType != null && IsSatisfiedBy(baseType);
-            return result;
-        }
-    }
+			var baseType = parameter.BaseType?.GetTypeInfo();
+			var result = baseType != null && IsSatisfiedBy(baseType);
+			return result;
+		}
+	}
 }

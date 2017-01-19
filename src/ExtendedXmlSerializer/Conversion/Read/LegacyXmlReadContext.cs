@@ -27,15 +27,15 @@ using ExtendedXmlSerialization.Legacy;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    sealed class LegacyXmlReadContext : XmlReadContext
-    {
-        public LegacyXmlReadContext(XElement element, TypeInfo type)
-            : base(
-                new XmlReadContextFactory(LegacyElements.Default, LegacyElementTypes.Default, NameConverter.Default),
-                LegacyElements.Default.Get(type), element,
+	sealed class LegacyXmlReadContext : XmlReadContext
+	{
+		public LegacyXmlReadContext(XElement element, TypeInfo type)
+			: base(
+				new XmlReadContextFactory(LegacyElements.Default, LegacyElementTypes.Default, NameConverter.Default),
+				LegacyElements.Default.Get(type), element,
 
-                // Services:
-                new ReadReferences()
-            ) {}
-    }
+				// Services:
+				new ReadReferences()
+			) {}
+	}
 }

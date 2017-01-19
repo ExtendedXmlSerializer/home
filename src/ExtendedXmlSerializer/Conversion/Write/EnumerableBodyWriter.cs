@@ -26,22 +26,22 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class EnumerableBodyWriter : WriterBase<IEnumerable>
-    {
-        private readonly IWriter _item;
+	public class EnumerableBodyWriter : WriterBase<IEnumerable>
+	{
+		readonly IWriter _item;
 
-        public EnumerableBodyWriter(IWriter item)
-        {
-            _item = item;
-        }
+		public EnumerableBodyWriter(IWriter item)
+		{
+			_item = item;
+		}
 
-        protected override void Write(IWriteContext context, IEnumerable instance)
-        {
-            var container = ((ICollectionElement) context.Element).Item;
-            foreach (var item in instance)
-            {
-                _item.Emit(context, container, item);
-            }
-        }
-    }
+		protected override void Write(IWriteContext context, IEnumerable instance)
+		{
+			var container = ((ICollectionElement) context.Element).Item;
+			foreach (var item in instance)
+			{
+				_item.Emit(context, container, item);
+			}
+		}
+	}
 }

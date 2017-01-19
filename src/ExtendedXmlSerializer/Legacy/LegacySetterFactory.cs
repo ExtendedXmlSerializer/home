@@ -28,50 +28,50 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacySetterFactory : ISetterFactory
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
-        private readonly ISetterFactory _factory;
+	class LegacySetterFactory : ISetterFactory
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
+		readonly ISetterFactory _factory;
 
-        public LegacySetterFactory(IInternalExtendedXmlConfiguration config, ISetterFactory factory)
-        {
-            _config = config;
-            _factory = factory;
-        }
+		public LegacySetterFactory(IInternalExtendedXmlConfiguration config, ISetterFactory factory)
+		{
+			_config = config;
+			_factory = factory;
+		}
 
-        public Action<object, object> Get(MemberInfo parameter)
-        {
-            var result = _factory.Get(parameter);
-            var configuration = _config.GetTypeConfiguration(parameter.DeclaringType);
-            var propertyConfig = configuration?.GetPropertyConfiguration(parameter.Name);
-            if (propertyConfig != null && propertyConfig.IsEncrypt)
-            {
-                var algorithm = _config.EncryptionAlgorithm;
-                if (algorithm != null)
-                {
-                    return new Decrypt(algorithm, result).Assign;
-                }
-            }
-          
-            return result;
-        }
+		public Action<object, object> Get(MemberInfo parameter)
+		{
+			var result = _factory.Get(parameter);
+			var configuration = _config.GetTypeConfiguration(parameter.DeclaringType);
+			var propertyConfig = configuration?.GetPropertyConfiguration(parameter.Name);
+			if (propertyConfig != null && propertyConfig.IsEncrypt)
+			{
+				var algorithm = _config.EncryptionAlgorithm;
+				if (algorithm != null)
+				{
+					return new Decrypt(algorithm, result).Assign;
+				}
+			}
 
-        sealed class Decrypt
-        {
-            private readonly IPropertyEncryption _encryption;
-            private readonly Action<object, object> _source;
+			return result;
+		}
 
-            public Decrypt(IPropertyEncryption encryption, Action<object, object> source)
-            {
-                _encryption = encryption;
-                _source = source;
-            }
+		sealed class Decrypt
+		{
+			readonly IPropertyEncryption _encryption;
+			readonly Action<object, object> _source;
 
-            public void Assign(object instance, object value)
-            {
-                var text = _encryption.Decrypt(value as string ?? value.ToString());
-                _source(instance, text);
-            }
-        }
-    }
+			public Decrypt(IPropertyEncryption encryption, Action<object, object> source)
+			{
+				_encryption = encryption;
+				_source = source;
+			}
+
+			public void Assign(object instance, object value)
+			{
+				var text = _encryption.Decrypt(value as string ?? value.ToString());
+				_source(instance, text);
+			}
+		}
+	}
 }

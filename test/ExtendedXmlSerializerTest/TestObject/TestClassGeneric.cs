@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,40 +20,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-using System;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassGeneric<T>
-    {
-        public T GenericProp { get; set; }
-        public String Normal { get; set; }
+	public class TestClassGeneric<T>
+	{
+		public T GenericProp { get; set; }
+		public string Normal { get; set; }
 
-        public void Init(T genericValue)
-        {
-            Normal = "normal";
-            GenericProp = genericValue;
-        }
-    }
+		public void Init(T genericValue)
+		{
+			Normal = "normal";
+			GenericProp = genericValue;
+		}
+	}
 
-    public class TestClassGenericThree<T, TK, TL>
-    {
-        public T GenericProp { get; set; }
-        public TK GenericProp2 { get; set; }
-        public TL GenericProp3 { get; set; }
-        public String Normal { get; set; }
+	public class TestClassGenericThree<T, TK, TL>
+	{
+		public T GenericProp { get; set; }
+		public TK GenericProp2 { get; set; }
+		public TL GenericProp3 { get; set; }
+		public string Normal { get; set; }
 
-        public void Init(T genericValue, TK genericValue2, TL genericValue3)
-        {
-            Normal = "normal";
-            GenericProp = genericValue;
-            GenericProp2 = genericValue2;
-            GenericProp3 = genericValue3;
-        }
-    }
+		public void Init(T genericValue, TK genericValue2, TL genericValue3)
+		{
+			Normal = "normal";
+			GenericProp = genericValue;
+			GenericProp2 = genericValue2;
+			GenericProp3 = genericValue3;
+		}
+	}
 
-    public class TestClassPropGeneric
-    {
-        public TestClassGenericThree<string, int, decimal> PropGenric { get; set; }
-    }
+	public class TestClassPropGeneric
+	{
+		public TestClassGenericThree<string, int, decimal> PropGenric { get; set; }
+	}
 }

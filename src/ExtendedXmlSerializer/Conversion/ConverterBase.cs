@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public abstract class ConverterBase : IConverter
-    {
-        public abstract void Write(IWriteContext context, object instance);
-        public abstract object Read(IReadContext context);
-    }
+	public abstract class ConverterBase : IConverter
+	{
+		public abstract void Write(IWriteContext context, object instance);
+		public abstract object Read(IReadContext context);
+	}
 }

@@ -25,15 +25,15 @@ using System;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public sealed class DelegatedDisposable : IDisposable
-    {
-        private readonly Action _callback;
+	public sealed class DelegatedDisposable : IDisposable
+	{
+		readonly Action _callback;
 
-        public DelegatedDisposable(Action callback)
-        {
-            _callback = callback;
-        }
+		public DelegatedDisposable(Action callback)
+		{
+			_callback = callback;
+		}
 
-        public void Dispose() => _callback();
-    }
+		public void Dispose() => _callback();
+	}
 }

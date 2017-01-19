@@ -25,14 +25,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class TypeEqualitySpecification<T> : TypeEqualitySpecification
-    {
-        public static TypeEqualitySpecification<T> Default { get; } = new TypeEqualitySpecification<T>();
-        TypeEqualitySpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+	public class TypeEqualitySpecification<T> : TypeEqualitySpecification
+	{
+		public static TypeEqualitySpecification<T> Default { get; } = new TypeEqualitySpecification<T>();
+		TypeEqualitySpecification() : base(typeof(T).GetTypeInfo()) {}
+	}
 
-    public class TypeEqualitySpecification : DelegatedSpecification<TypeInfo>
-    {
-        public TypeEqualitySpecification(TypeInfo type) : base(type.Equals) {}
-    }
+	public class TypeEqualitySpecification : DelegatedSpecification<TypeInfo>
+	{
+		public TypeEqualitySpecification(TypeInfo type) : base(type.Equals) {}
+	}
 }

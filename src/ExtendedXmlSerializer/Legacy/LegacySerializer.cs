@@ -33,32 +33,32 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacySerializer : Serializer
-    {
-        private readonly IElements _selector;
+	sealed class LegacySerializer : Serializer
+	{
+		readonly IElements _selector;
 
-        public LegacySerializer(IElements selector, IConverter converter) : base(converter)
-        {
-            _selector = selector;
-        }
+		public LegacySerializer(IElements selector, IConverter converter) : base(converter)
+		{
+			_selector = selector;
+		}
 
-        protected override IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
-            => new XmlWriteContext(_selector, LegacyNamespaces.Default, writer, new Root(_selector.Build(type)),
-                                   new WriteReferences(), writer);
+		protected override IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
+			=> new XmlWriteContext(_selector, LegacyNamespaces.Default, writer, new Root(_selector.Build(type)),
+			                       new WriteReferences(), writer);
 
-        protected override IReadContext CreateContext(Stream stream)
-        {
-            var text = new StreamReader(stream).ReadToEnd();
-            var document = XDocument.Parse(text);
-            var result = new LegacyXmlReadContext(document.Root, SerializerTypes.Default.Get(this));
-            return result;
-        }
-    }
+		protected override IReadContext CreateContext(Stream stream)
+		{
+			var text = new StreamReader(stream).ReadToEnd();
+			var document = XDocument.Parse(text);
+			var result = new LegacyXmlReadContext(document.Root, SerializerTypes.Default.Get(this));
+			return result;
+		}
+	}
 
-    // HACK: This is to get working in current state.  This will be removed at some point.
-    sealed class SerializerTypes : WeakCache<ISerializer, TypeInfo>
-    {
-        public static SerializerTypes Default { get; } = new SerializerTypes();
-        SerializerTypes() : base(x => null) {}
-    }
+	// HACK: This is to get working in current state.  This will be removed at some point.
+	sealed class SerializerTypes : WeakCache<ISerializer, TypeInfo>
+	{
+		public static SerializerTypes Default { get; } = new SerializerTypes();
+		SerializerTypes() : base(x => null) {}
+	}
 }

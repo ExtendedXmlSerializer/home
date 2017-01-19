@@ -27,5 +27,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementTypes : IParameterizedSource<XElement, TypeInfo> {}
+	public interface IElementTypes : IParameterizedSource<XElement, TypeInfo> {}
 }

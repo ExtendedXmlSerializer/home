@@ -25,17 +25,17 @@ using System;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    class SingletonSource<T> : ISource<T>
-    {
-        private readonly Lazy<T> _source;
+	class SingletonSource<T> : ISource<T>
+	{
+		readonly Lazy<T> _source;
 
-        public SingletonSource(Func<T> source) : this(new Lazy<T>(source)) {}
+		public SingletonSource(Func<T> source) : this(new Lazy<T>(source)) {}
 
-        SingletonSource(Lazy<T> source)
-        {
-            _source = source;
-        }
+		SingletonSource(Lazy<T> source)
+		{
+			_source = source;
+		}
 
-        public T Get() => _source.Value;
-    }
+		public T Get() => _source.Value;
+	}
 }

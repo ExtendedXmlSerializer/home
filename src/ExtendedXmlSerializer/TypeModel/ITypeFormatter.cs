@@ -25,8 +25,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public interface ITypeFormatter
-    {
-        string Format(TypeInfo type);
-    }
+	public interface ITypeFormatter
+	{
+		string Format(TypeInfo type);
+	}
 }

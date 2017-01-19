@@ -28,22 +28,22 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class CustomElementWriter : Emitter
-    {
-        public CustomElementWriter(IExtendedXmlTypeConfiguration configuration)
-            : base(new TypeEmittingWriter(new BodyWriter(configuration))) {}
+	sealed class CustomElementWriter : Emitter
+	{
+		public CustomElementWriter(IExtendedXmlTypeConfiguration configuration)
+			: base(new TypeEmittingWriter(new BodyWriter(configuration))) {}
 
-        sealed class BodyWriter : WriterBase
-        {
-            private readonly IExtendedXmlTypeConfiguration _configuration;
+		sealed class BodyWriter : WriterBase
+		{
+			readonly IExtendedXmlTypeConfiguration _configuration;
 
-            public BodyWriter(IExtendedXmlTypeConfiguration configuration)
-            {
-                _configuration = configuration;
-            }
+			public BodyWriter(IExtendedXmlTypeConfiguration configuration)
+			{
+				_configuration = configuration;
+			}
 
-            public override void Write(IWriteContext context, object instance)
-                => _configuration.WriteObject(context.Get<XmlWriter>(), instance);
-        }
-    }
+			public override void Write(IWriteContext context, object instance)
+				=> _configuration.WriteObject(context.Get<XmlWriter>(), instance);
+		}
+	}
 }

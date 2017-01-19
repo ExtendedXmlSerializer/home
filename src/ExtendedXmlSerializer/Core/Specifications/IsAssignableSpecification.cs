@@ -25,14 +25,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class IsAssignableSpecification<T> : IsAssignableSpecification
-    {
-        public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-        protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
-    }
+	public class IsAssignableSpecification<T> : IsAssignableSpecification
+	{
+		public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
+		protected IsAssignableSpecification() : base(typeof(T).GetTypeInfo()) {}
+	}
 
-    public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
-    {
-        public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
-    }
+	public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
+	{
+		public IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+	}
 }

@@ -26,13 +26,13 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class ElementSelectingConverter : DecoratedConverter
-    {
-        public ElementSelectingConverter(IConverter converter) : base(converter) {}
+	public class ElementSelectingConverter : DecoratedConverter
+	{
+		public ElementSelectingConverter(IConverter converter) : base(converter) {}
 
-        public override void Write(IWriteContext context, object instance)
-            => base.Write((IWriteContext) context.Select(), instance);
+		public override void Write(IWriteContext context, object instance)
+			=> base.Write((IWriteContext) context.Select(), instance);
 
-        public override object Read(IReadContext context) => base.Read((IReadContext) context.Select());
-    }
+		public override object Read(IReadContext context) => base.Read((IReadContext) context.Select());
+	}
 }

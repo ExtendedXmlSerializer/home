@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public interface ISpecification<in T>
-    {
-        bool IsSatisfiedBy(T parameter);
-    }
+	public interface ISpecification<in T>
+	{
+		bool IsSatisfiedBy(T parameter);
+	}
 }

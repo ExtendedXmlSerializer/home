@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,29 +20,30 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassFromHashSet
-    {
-        public string PropString { get; set; }
-        public int PropInt { get; set; }
-    }
+	public class TestClassFromHashSet
+	{
+		public string PropString { get; set; }
+		public int PropInt { get; set; }
+	}
 
-    public class TestClassWithHashSet
-    {
-        public void Init()
-        {
-            ListStr = new HashSet<string> {"str1", "str2"};
-            ListObj = new HashSet<TestClassFromList>
-            {
-                new TestClassFromList {PropString = "s1", PropInt = 1},
-                new TestClassFromList {PropString = "s2", PropInt = 2}
-            };
-        }
+	public class TestClassWithHashSet
+	{
+		public void Init()
+		{
+			ListStr = new HashSet<string> {"str1", "str2"};
+			ListObj = new HashSet<TestClassFromList>
+			          {
+				          new TestClassFromList {PropString = "s1", PropInt = 1},
+				          new TestClassFromList {PropString = "s2", PropInt = 2}
+			          };
+		}
 
-        public HashSet<string> ListStr { get; set; }
-        public HashSet<TestClassFromList> ListObj { get; set; }
-    }
+		public HashSet<string> ListStr { get; set; }
+		public HashSet<TestClassFromList> ListObj { get; set; }
+	}
 }

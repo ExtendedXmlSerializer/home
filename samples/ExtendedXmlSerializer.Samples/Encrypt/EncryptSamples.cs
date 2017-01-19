@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +27,21 @@ using System.Linq;
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {
-    public class EncryptSamples
-    {
-        public static void RunSimpleConfig()
-        {
-            Program.PrintHeader("Serialization reference object");
-            
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(cfg =>
-            {
-                cfg.ConfigureType<Person>().Property(p => p.Password).Encrypt();
-                cfg.EncryptionAlgorithm = new Base64PropertyEncryption();
-            });
+	public class EncryptSamples
+	{
+		public static void RunSimpleConfig()
+		{
+			Program.PrintHeader("Serialization reference object");
 
-            Run(serializer);
-        }
+			var serializer = new ExtendedXmlSerializer(cfg =>
+			                                           {
+				                                           cfg.ConfigureType<Person>().Property(p => p.Password).Encrypt();
+				                                           cfg.EncryptionAlgorithm = new Base64PropertyEncryption();
+			                                           });
+
+			Run(serializer);
+		}
+
 //        public static void RunAutofacConfig()
 //        {
 //            Program.PrintHeader("Serialization reference object - autofac config");
@@ -54,19 +56,20 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 //            Run(serializer);
 //        }
 
-        private static void Run(IExtendedXmlSerializer serializer)
-        {
-            var list = new List<Person>
-            {
-                new Person {Name = "John", Password = "Ab238ds2"},
-                new Person {Name = "Oliver", Password = "df89nmXhdf"}
-            };
-          
-            var xml = serializer.Serialize(list);
-            Console.WriteLine(xml);
+		static void Run(IExtendedXmlSerializer serializer)
+		{
+			var list = new List<Person>
+			           {
+				           new Person {Name = "John", Password = "Ab238ds2"},
+				           new Person {Name = "Oliver", Password = "df89nmXhdf"}
+			           };
 
-            var obj2 = serializer.Deserialize<List<Person>>(xml);
-            Console.WriteLine("Employees count = " + obj2.Count + " - passwords "+ string.Join(", ", obj2.Select(p=>p.Password)));
-        }
-    }
+			var xml = serializer.Serialize(list);
+			Console.WriteLine(xml);
+
+			var obj2 = serializer.Deserialize<List<Person>>(xml);
+			Console.WriteLine("Employees count = " + obj2.Count + " - passwords " +
+			                  string.Join(", ", obj2.Select(p => p.Password)));
+		}
+	}
 }

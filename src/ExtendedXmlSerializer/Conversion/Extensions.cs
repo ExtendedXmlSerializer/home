@@ -33,70 +33,70 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public static class Extensions
-    {
-        readonly private static TypeInfo TypeObject = typeof(object).GetTypeInfo();
+	public static class Extensions
+	{
+		readonly static TypeInfo TypeObject = typeof(object).GetTypeInfo();
 
-        public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
-            => Emit(@this, context, container, instance, instance.GetType().GetTypeInfo());
+		public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
+			=> Emit(@this, context, container, instance, instance.GetType().GetTypeInfo());
 
-        public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance,
-                                TypeInfo instanceType)
-        {
-            var child = context.New(container, instanceType);
-            using (child.Emit())
-            {
-                @this.Write(child, instance);
-            }
-        }
+		public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance,
+		                        TypeInfo instanceType)
+		{
+			var child = context.New(container, instanceType);
+			using (child.Emit())
+			{
+				@this.Write(child, instance);
+			}
+		}
 
-        public static void New(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
-            =>
-                @this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
-                            instance);
+		public static void New(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
+			=>
+				@this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
+				            instance);
 
-        public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
-            target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
+		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
+			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 
-        public static TypeInfo ToTypeInfo(this MemberInfo @this)
-            => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+		public static TypeInfo ToTypeInfo(this MemberInfo @this)
+			=> @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
 
-        public static T Annotated<T>(this XElement @this, T item)
-        {
-            @this.AddAnnotation(item);
-            return item;
-        }
+		public static T Annotated<T>(this XElement @this, T item)
+		{
+			@this.AddAnnotation(item);
+			return item;
+		}
 
-        public static object AnnotationAll(this XElement @this, Type type)
-            => @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
+		public static object AnnotationAll(this XElement @this, Type type)
+			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
 
-        public static TypeInfo AccountForNullable(this TypeInfo @this)
-            => Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+		public static TypeInfo AccountForNullable(this TypeInfo @this)
+			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
 
-        public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
+		public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
 
-        public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
-            => Equals(instanceType, container.Classification) ? container.Element : @this.Get(instanceType);
+		public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
+			=> Equals(instanceType, container.Classification) ? container.Element : @this.Get(instanceType);
 
-        public static TypeInfo GetDeclaredType(this IContainerElement target, IClassification classification)
-        {
-            if (Equals(classification.Classification, TypeObject))
-            {
-                var member = classification as IMemberElement;
-                if (member != null)
-                {
-                    var property = target.GetType().GetRuntimeProperty(member.Metadata.Name);
-                    if (property != null)
-                    {
-                        var instance = GetterFactory.Default.Get(property).Invoke(target);
-                        var result = (instance as IClassification)?.Classification ?? instance as TypeInfo;
-                        return result;
-                    }
-                }
-            }
+		public static TypeInfo GetDeclaredType(this IContainerElement target, IClassification classification)
+		{
+			if (Equals(classification.Classification, TypeObject))
+			{
+				var member = classification as IMemberElement;
+				if (member != null)
+				{
+					var property = target.GetType().GetRuntimeProperty(member.Metadata.Name);
+					if (property != null)
+					{
+						var instance = GetterFactory.Default.Get(property).Invoke(target);
+						var result = (instance as IClassification)?.Classification ?? instance as TypeInfo;
+						return result;
+					}
+				}
+			}
 
-            return classification.Classification;
-        }
-    }
+			return classification.Classification;
+		}
+	}
 }

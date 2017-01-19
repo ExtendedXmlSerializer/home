@@ -25,9 +25,9 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class UnsignedByteTypeConverter : ValueTypeConverterBase<byte>
-    {
-        public static UnsignedByteTypeConverter Default { get; } = new UnsignedByteTypeConverter();
-        UnsignedByteTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
-    }
+	public class UnsignedByteTypeConverter : ValueTypeConverterBase<byte>
+	{
+		public static UnsignedByteTypeConverter Default { get; } = new UnsignedByteTypeConverter();
+		UnsignedByteTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
+	}
 }

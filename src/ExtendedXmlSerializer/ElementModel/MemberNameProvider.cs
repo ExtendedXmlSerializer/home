@@ -27,17 +27,17 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class MemberNameProvider : NameProviderBase
-    {
-        public static MemberNameProvider Default { get; } = new MemberNameProvider();
-        MemberNameProvider() {}
+	public class MemberNameProvider : NameProviderBase
+	{
+		public static MemberNameProvider Default { get; } = new MemberNameProvider();
+		MemberNameProvider() {}
 
-        protected override string Create(TypeInfo type, MemberInfo member)
-        {
-            var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-                         member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
-                         member.Name;
-            return result;
-        }
-    }
+		protected override string Create(TypeInfo type, MemberInfo member)
+		{
+			var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			             member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
+			             member.Name;
+			return result;
+		}
+	}
 }

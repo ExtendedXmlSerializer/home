@@ -23,16 +23,16 @@
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public abstract class WriterBase : IWriter
-    {
-        public abstract void Write(IWriteContext context, object instance);
-    }
+	public abstract class WriterBase : IWriter
+	{
+		public abstract void Write(IWriteContext context, object instance);
+	}
 
-    public abstract class WriterBase<T> : IWriter
-    {
-        protected abstract void Write(IWriteContext context, T instance);
+	public abstract class WriterBase<T> : IWriter
+	{
+		protected abstract void Write(IWriteContext context, T instance);
 
-        void IWriter.Write(IWriteContext context, object instance)
-            => Write(context, (T) instance);
-    }
+		void IWriter.Write(IWriteContext context, object instance)
+			=> Write(context, (T) instance);
+	}
 }

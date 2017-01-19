@@ -28,56 +28,56 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class XmlReadContextFactory : IXmlReadContextFactory
-    {
-        public static XmlReadContextFactory Default { get; } = new XmlReadContextFactory();
-        XmlReadContextFactory() : this(Elements.Default, ElementTypes.Default, NameConverter.Default) {}
+	public class XmlReadContextFactory : IXmlReadContextFactory
+	{
+		public static XmlReadContextFactory Default { get; } = new XmlReadContextFactory();
+		XmlReadContextFactory() : this(Elements.Default, ElementTypes.Default, NameConverter.Default) {}
 
-        private readonly IElements _selector;
-        private readonly IElementTypes _types;
-        private readonly INameConverter _converter;
+		readonly IElements _selector;
+		readonly IElementTypes _types;
+		readonly INameConverter _converter;
 
-        public XmlReadContextFactory(IElements selector, IElementTypes types, INameConverter converter)
-        {
-            _selector = selector;
-            _types = types;
-            _converter = converter;
-        }
+		public XmlReadContextFactory(IElements selector, IElementTypes types, INameConverter converter)
+		{
+			_selector = selector;
+			_types = types;
+			_converter = converter;
+		}
 
-        private TypeInfo Initialized(IContext context, IClassification classification, XElement data)
-        {
-            var info = _types.Get(data);
-            if (info == null)
-            {
-                var result = context.Container.GetDeclaredType(classification);
-                data.Annotated(result);
-                return result;
-            }
-            return info;
-        }
+		TypeInfo Initialized(IContext context, IClassification classification, XElement data)
+		{
+			var info = _types.Get(data);
+			if (info == null)
+			{
+				var result = context.Container.GetDeclaredType(classification);
+				data.Annotated(result);
+				return result;
+			}
+			return info;
+		}
 
-        public IReadContext Create(IReadContext context, IContainerElement container, XElement data)
-        {
-            var typeInfo = Initialized(context, container, data);
-            var element = _selector.Load(container, typeInfo);
-            var member = container as IMemberElement;
-            if (member != null)
-            {
-                return new XmlReadMemberContext(this, member, element, data);
-            }
+		public IReadContext Create(IReadContext context, IContainerElement container, XElement data)
+		{
+			var typeInfo = Initialized(context, container, data);
+			var element = _selector.Load(container, typeInfo);
+			var member = container as IMemberElement;
+			if (member != null)
+			{
+				return new XmlReadMemberContext(this, member, element, data);
+			}
 
-            var result = new XmlReadContext(this, container, element, data);
-            return result;
-        }
+			var result = new XmlReadContext(this, container, element, data);
+			return result;
+		}
 
-        public string Value(IElementName name, XElement data)
-        {
-            var xName = _converter.Get(name);
-            var value = data.Attribute(xName)?.Value;
-            return value;
-        }
+		public string Value(IElementName name, XElement data)
+		{
+			var xName = _converter.Get(name);
+			var value = data.Attribute(xName)?.Value;
+			return value;
+		}
 
-        public IContext Select(IReadContext context, XElement data) =>
-            new XmlReadContext(this, context.Container, context.Element, context.Element, data);
-    }
+		public IContext Select(IReadContext context, XElement data) =>
+			new XmlReadContext(this, context.Container, context.Element, context.Element, data);
+	}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public interface ICollectionItemTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
+	public interface ICollectionItemTypeLocator : IParameterizedSource<TypeInfo, TypeInfo> {}
 }

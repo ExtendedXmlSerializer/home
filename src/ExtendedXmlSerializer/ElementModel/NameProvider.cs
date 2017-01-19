@@ -28,23 +28,23 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class NameProvider : NameProviderBase
-    {
-        public static NameProvider Default { get; } = new NameProvider();
-        NameProvider() : this(TypeFormatter.Default) {}
+	public class NameProvider : NameProviderBase
+	{
+		public static NameProvider Default { get; } = new NameProvider();
+		NameProvider() : this(TypeFormatter.Default) {}
 
-        private readonly ITypeFormatter _formatter;
+		readonly ITypeFormatter _formatter;
 
-        public NameProvider(ITypeFormatter formatter)
-        {
-            _formatter = formatter;
-        }
+		public NameProvider(ITypeFormatter formatter)
+		{
+			_formatter = formatter;
+		}
 
-        protected override string Create(TypeInfo type, MemberInfo member)
-        {
-            var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
-            var result = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(type);
-            return result;
-        }
-    }
+		protected override string Create(TypeInfo type, MemberInfo member)
+		{
+			var attribute = type.GetCustomAttribute<XmlRootAttribute>(false);
+			var result = attribute?.ElementName.NullIfEmpty() ?? _formatter.Format(type);
+			return result;
+		}
+	}
 }

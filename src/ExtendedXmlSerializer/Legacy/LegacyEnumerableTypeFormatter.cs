@@ -27,26 +27,26 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacyEnumerableTypeFormatter : ITypeFormatter
-    {
-        public static LegacyEnumerableTypeFormatter Default { get; } = new LegacyEnumerableTypeFormatter();
-        LegacyEnumerableTypeFormatter() : this(CollectionItemTypeLocator.Default) {}
+	class LegacyEnumerableTypeFormatter : ITypeFormatter
+	{
+		public static LegacyEnumerableTypeFormatter Default { get; } = new LegacyEnumerableTypeFormatter();
+		LegacyEnumerableTypeFormatter() : this(CollectionItemTypeLocator.Default) {}
 
-        private readonly ICollectionItemTypeLocator _locator;
+		readonly ICollectionItemTypeLocator _locator;
 
-        public LegacyEnumerableTypeFormatter(ICollectionItemTypeLocator locator)
-        {
-            _locator = locator;
-        }
+		public LegacyEnumerableTypeFormatter(ICollectionItemTypeLocator locator)
+		{
+			_locator = locator;
+		}
 
-        public string Format(TypeInfo type)
-        {
-            var arguments = type.GetGenericArguments();
-            var name = arguments.Any()
-                ? string.Join(string.Empty, arguments.Select(p => p.Name))
-                : _locator.Get(type).Name;
-            var result = $"ArrayOf{name}";
-            return result;
-        }
-    }
+		public string Format(TypeInfo type)
+		{
+			var arguments = type.GetGenericArguments();
+			var name = arguments.Any()
+				? string.Join(string.Empty, arguments.Select(p => p.Name))
+				: _locator.Get(type).Name;
+			var result = $"ArrayOf{name}";
+			return result;
+		}
+	}
 }

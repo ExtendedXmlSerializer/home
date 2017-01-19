@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    sealed class IdentifierProperty : FrameworkPropertyBase
-    {
-        public static IdentifierProperty Default { get; } = new IdentifierProperty();
-        IdentifierProperty() : base("id") {}
-    }
+	sealed class IdentifierProperty : FrameworkPropertyBase
+	{
+		public static IdentifierProperty Default { get; } = new IdentifierProperty();
+		IdentifierProperty() : base("id") {}
+	}
 }

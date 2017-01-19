@@ -29,18 +29,18 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementNames : Selector<MemberInfo, string>, IElementNames
-    {
-        public static ElementNames Default { get; } = new ElementNames();
-        private ElementNames() : this(Defaults.Names) {}
+	public class ElementNames : Selector<MemberInfo, string>, IElementNames
+	{
+		public static ElementNames Default { get; } = new ElementNames();
+		ElementNames() : this(Defaults.Names) {}
 
-        protected ElementNames(IEnumerable<IElementName> names)
-            : this(
-                new KnownElementNames(names),
-                ElementNameOption<Enum>.Default,
-                EnumerableNameOption.Default,
-                DefaultElementNameOption.Default) {}
+		protected ElementNames(IEnumerable<IElementName> names)
+			: this(
+				new KnownElementNames(names),
+				ElementNameOption<Enum>.Default,
+				EnumerableNameOption.Default,
+				DefaultElementNameOption.Default) {}
 
-        public ElementNames(params IElementNameOption[] options) : base(options) {}
-    }
+		public ElementNames(params IElementNameOption[] options) : base(options) {}
+	}
 }

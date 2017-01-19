@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElements : Elements
-    {
-        public static new LegacyElements Default { get; } = new LegacyElements();
-        LegacyElements() : base(ElementsSource.Default) {}
+	sealed class LegacyElements : Elements
+	{
+		public new static LegacyElements Default { get; } = new LegacyElements();
+		LegacyElements() : base(ElementsSource.Default) {}
 
-        public LegacyElements(IAlteration<IElements> source) : base(source) {}
-    }
+		public LegacyElements(IAlteration<IElements> source) : base(source) {}
+	}
 }

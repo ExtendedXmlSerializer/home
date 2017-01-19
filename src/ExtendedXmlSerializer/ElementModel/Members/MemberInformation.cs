@@ -25,17 +25,17 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public struct MemberInformation
-    {
-        public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
-        {
-            Metadata = metadata;
-            MemberType = memberType;
-            Assignable = assignable;
-        }
+	public struct MemberInformation
+	{
+		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
+		{
+			Metadata = metadata;
+			MemberType = memberType;
+			Assignable = assignable;
+		}
 
-        public MemberInfo Metadata { get; }
-        public TypeInfo MemberType { get; }
-        public bool Assignable { get; }
-    }
+		public MemberInfo Metadata { get; }
+		public TypeInfo MemberType { get; }
+		public bool Assignable { get; }
+	}
 }

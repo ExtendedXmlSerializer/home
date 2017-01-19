@@ -25,9 +25,9 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyNamedTypeLocator : NamedTypeLocator
-    {
-        public new static LegacyNamedTypeLocator Default { get; } = new LegacyNamedTypeLocator();
-        LegacyNamedTypeLocator() : base(Defaults.Names, LegacyNamespaces.Default) {}
-    }
+	sealed class LegacyNamedTypeLocator : NamedTypeLocator
+	{
+		public new static LegacyNamedTypeLocator Default { get; } = new LegacyNamedTypeLocator();
+		LegacyNamedTypeLocator() : base(Defaults.Names, LegacyNamespaces.Default) {}
+	}
 }

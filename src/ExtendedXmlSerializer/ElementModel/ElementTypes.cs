@@ -27,40 +27,40 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementTypes : IElementTypes
-    {
-        public static ElementTypes Default { get; } = new ElementTypes();
-        ElementTypes() : this(NamedTypeLocator.Default, TypeParser.Default) {}
+	public class ElementTypes : IElementTypes
+	{
+		public static ElementTypes Default { get; } = new ElementTypes();
+		ElementTypes() : this(NamedTypeLocator.Default, TypeParser.Default) {}
 
-        private readonly INamedTypeLocator _types;
-        private readonly ITypeParser _parser;
+		readonly INamedTypeLocator _types;
+		readonly ITypeParser _parser;
 
-        public ElementTypes(INamedTypeLocator types, ITypeParser parser)
-        {
-            _parser = parser;
-            _types = types;
-        }
+		public ElementTypes(INamedTypeLocator types, ITypeParser parser)
+		{
+			_parser = parser;
+			_types = types;
+		}
 
-        public TypeInfo Get(XElement parameter)
-        {
-            var stored = parameter.Annotation<TypeInfo>();
-            if (stored == null)
-            {
-                var result = _types.Get(parameter.Name) ?? FromAttribute(parameter);
-                if (result != null)
-                {
-                    parameter.AddAnnotation(result);
-                    return result;
-                }
-            }
-            return stored;
-        }
+		public TypeInfo Get(XElement parameter)
+		{
+			var stored = parameter.Annotation<TypeInfo>();
+			if (stored == null)
+			{
+				var result = _types.Get(parameter.Name) ?? FromAttribute(parameter);
+				if (result != null)
+				{
+					parameter.AddAnnotation(result);
+					return result;
+				}
+			}
+			return stored;
+		}
 
-        private TypeInfo FromAttribute(XElement parameter)
-        {
-            var value = parameter.Attribute(TypeProperty.Default.DisplayName)?.Value;
-            var result = value != null ? _parser.Get(value) : null;
-            return result;
-        }
-    }
+		TypeInfo FromAttribute(XElement parameter)
+		{
+			var value = parameter.Attribute(TypeProperty.Default.DisplayName)?.Value;
+			var result = value != null ? _parser.Get(value) : null;
+			return result;
+		}
+	}
 }

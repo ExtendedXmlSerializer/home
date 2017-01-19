@@ -27,10 +27,10 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class NameProviderBase : WeakCacheBase<MemberInfo, string>, INameProvider
-    {
-        protected override string Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
+	public abstract class NameProviderBase : WeakCacheBase<MemberInfo, string>, INameProvider
+	{
+		protected override string Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
 
-        protected abstract string Create(TypeInfo type, MemberInfo member);
-    }
+		protected abstract string Create(TypeInfo type, MemberInfo member);
+	}
 }

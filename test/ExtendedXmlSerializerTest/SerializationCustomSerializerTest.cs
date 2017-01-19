@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,40 +30,42 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationCustomSerializerTest : BaseTest
-    {
-        public TestClassWithSerializer XmlDeserialize(XElement element)
-        {
-            var xElement = element.Element("String");
-            var xElement1 = element.Element("Int");
-            if (xElement != null && xElement1 != null)
-            {
-                string strValue = xElement.Value;
+	public class SerializationCustomSerializerTest : BaseTest
+	{
+		public TestClassWithSerializer XmlDeserialize(XElement element)
+		{
+			var xElement = element.Element("String");
+			var xElement1 = element.Element("Int");
+			if (xElement != null && xElement1 != null)
+			{
+				var strValue = xElement.Value;
 
-                int intValue = Convert.ToInt32(xElement1.Value);
-                return new TestClassWithSerializer(strValue, intValue);
-            }
-            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
-        }
+				var intValue = Convert.ToInt32(xElement1.Value);
+				return new TestClassWithSerializer(strValue, intValue);
+			}
+			throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+		}
 
-        public void XmlSerializer(XmlWriter writer, TestClassWithSerializer obj)
-        {
-            writer.WriteElementString("String", obj.PropStr);
-            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
-        }
+		public void XmlSerializer(XmlWriter writer, TestClassWithSerializer obj)
+		{
+			writer.WriteElementString("String", obj.PropStr);
+			writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+		}
 
-        public SerializationCustomSerializerTest()
-        {
-            Serializer = new ExtendedXmlSerializer(cfg => cfg.ConfigureType<TestClassWithSerializer>().CustomSerializer(XmlSerializer, XmlDeserialize));
-        }
+		public SerializationCustomSerializerTest()
+		{
+			Serializer =
+				new ExtendedXmlSerializer(
+					cfg => cfg.ConfigureType<TestClassWithSerializer>().CustomSerializer(XmlSerializer, XmlDeserialize));
+		}
 
-        [Fact]
-        public void TestClassWithSerializer()
-        {
-            var obj = new TestClassWithSerializer("String", 17);
+		[Fact]
+		public void TestClassWithSerializer()
+		{
+			var obj = new TestClassWithSerializer("String", 17);
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
-        }
-    }
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Resources.TestClassWithSerializer.xml", obj);
+		}
+	}
 }

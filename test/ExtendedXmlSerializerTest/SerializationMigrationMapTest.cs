@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,67 +28,67 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationMigrationMapTest : BaseTest
-    {
-        public SerializationMigrationMapTest()
-        {
-            Serializer =
-                new ExtendedXmlSerializer(
-                    cfg => cfg.ConfigureType<TestClassWithMap>().AddMigration(new TestClassWithMapMigrator()));
-        }
+	public class SerializationMigrationMapTest : BaseTest
+	{
+		public SerializationMigrationMapTest()
+		{
+			Serializer =
+				new ExtendedXmlSerializer(
+					cfg => cfg.ConfigureType<TestClassWithMap>().AddMigration(new TestClassWithMapMigrator()));
+		}
 
-        [Fact]
-        public void MapVersion2()
-        {
-            var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV2.xml");
-            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
+		[Fact]
+		public void MapVersion2()
+		{
+			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV2.xml");
+			var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
 
-            Assert.Equal(klasa.NowyWezel, "test");
-            Assert.Equal(klasa.ZmianaWartosci, "Stara");
-            Assert.NotNull(klasa.PropClass);
-            Assert.Equal(klasa.PropClass.Wartosc, 12);
-            Assert.Equal(klasa.PropClass.Wezel1, "WartoscWezlas");
-        }
+			Assert.Equal(klasa.NowyWezel, "test");
+			Assert.Equal(klasa.ZmianaWartosci, "Stara");
+			Assert.NotNull(klasa.PropClass);
+			Assert.Equal(klasa.PropClass.Wartosc, 12);
+			Assert.Equal(klasa.PropClass.Wezel1, "WartoscWezlas");
+		}
 
-        [Fact]
-        public void MapVersion1()
-        {
-            var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV1.xml");
+		[Fact]
+		public void MapVersion1()
+		{
+			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV1.xml");
 
-            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
-            Assert.Equal(klasa.NowyWezel, "test");
-            Assert.Equal(klasa.ZmianaWartosci, "Stara");
-            Assert.NotNull(klasa.PropClass);
-            Assert.Equal(klasa.PropClass.Wartosc, 1);
-            Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
-        }
+			var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
+			Assert.Equal(klasa.NowyWezel, "test");
+			Assert.Equal(klasa.ZmianaWartosci, "Stara");
+			Assert.NotNull(klasa.PropClass);
+			Assert.Equal(klasa.PropClass.Wartosc, 1);
+			Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
+		}
 
-        [Fact]
-        public void MapVersion0()
-        {
-            var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV0.xml");
+		[Fact]
+		public void MapVersion0()
+		{
+			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV0.xml");
 
-            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
-            Assert.Equal(klasa.NowyWezel, "Wartosc");
-            Assert.Equal(klasa.ZmianaWartosci, "Nowa");
-            Assert.NotNull(klasa.PropClass);
-            Assert.Equal(klasa.PropClass.Wartosc, 1);
-            Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
+			var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
+			Assert.Equal(klasa.NowyWezel, "Wartosc");
+			Assert.Equal(klasa.ZmianaWartosci, "Nowa");
+			Assert.NotNull(klasa.PropClass);
+			Assert.Equal(klasa.PropClass.Wartosc, 1);
+			Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
+		}
 
-        }
-        [Fact]
-        public void MapVersionXmlWithOutVersion()
-        {
-            var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapWithoutVer.xml");
+		[Fact]
+		public void MapVersionXmlWithOutVersion()
+		{
+			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapWithoutVer.xml");
 
-            var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
-            Assert.Equal(klasa.NowyWezel, "Wartosc");
-            Assert.Equal(klasa.ZmianaWartosci, "Nowa");
-            Assert.NotNull(klasa.PropClass);
-            Assert.Equal(klasa.PropClass.Wartosc, 1);
-            Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
+			var klasa = Serializer.Deserialize<TestClassWithMap>(xml);
+			Assert.Equal(klasa.NowyWezel, "Wartosc");
+			Assert.Equal(klasa.ZmianaWartosci, "Nowa");
+			Assert.NotNull(klasa.PropClass);
+			Assert.Equal(klasa.PropClass.Wartosc, 1);
+			Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
+		}
 
-        }
 //TODO XUNIT
 //        [Fact]
 //        [ExpectedException("System.Xml.XmlException", ExpectedMessage = "DeserializatorXml: Nieznany numer wersji 99 dla typu ExtendedXmlSerialization.Test.TestObject.TestClassWithMap.")]
@@ -96,5 +97,5 @@ namespace ExtendedXmlSerialization.Test
 //            var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Resources.TestClassWithMapV99.xml");
 //            ExtendedXmlSerializer.Deserialize<TestClassWithMap>(xml);
 //        }
-    }
+	}
 }

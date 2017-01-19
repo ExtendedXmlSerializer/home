@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +25,13 @@ using System;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy
 {
-    /// <summary>
-    /// The factory for creating tools used during serialization.
-    /// </summary>
-    public interface ISerializationToolsFactory
-    {
-        IExtendedXmlSerializerConfig GetConfiguration(Type type);
+	/// <summary>
+	/// The factory for creating tools used during serialization.
+	/// </summary>
+	public interface ISerializationToolsFactory
+	{
+		IExtendedXmlSerializerConfig GetConfiguration(Type type);
 
-        IPropertyEncryption EncryptionAlgorithm { get; }
-    }
+		IPropertyEncryption EncryptionAlgorithm { get; }
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +35,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 	public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
 	{
 		const string Add = "Add";
-		
+
 		public static AddMethodLocator Default { get; } = new AddMethodLocator();
 		AddMethodLocator() {}
 
@@ -51,7 +52,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 				var parameters = method?.GetParameters();
 				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
 				{
-					return method;						
+					return method;
 				}
 			}
 			return null;

@@ -25,15 +25,15 @@ using System;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class ValueReader<T> : ReaderBase<T>
-    {
-        private readonly Func<string, T> _deserialize;
+	public class ValueReader<T> : ReaderBase<T>
+	{
+		readonly Func<string, T> _deserialize;
 
-        public ValueReader(Func<string, T> deserialize)
-        {
-            _deserialize = deserialize;
-        }
+		public ValueReader(Func<string, T> deserialize)
+		{
+			_deserialize = deserialize;
+		}
 
-        public override T Read(IReadContext context) => _deserialize(context.Read());
-    }
+		public override T Read(IReadContext context) => _deserialize(context.Read());
+	}
 }

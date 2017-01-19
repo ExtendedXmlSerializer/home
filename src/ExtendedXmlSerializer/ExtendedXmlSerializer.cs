@@ -28,63 +28,64 @@ using ExtendedXmlSerialization.Legacy;
 
 namespace ExtendedXmlSerialization
 {
-    /// <summary>
-    /// Extended Xml Serializer
-    /// </summary>
-    public class ExtendedXmlSerializer : IExtendedXmlSerializer
-    {
-        readonly private ExtendedXmlConfiguration _config = new ExtendedXmlConfiguration();
+	/// <summary>
+	/// Extended Xml Serializer
+	/// </summary>
+	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	{
+		readonly ExtendedXmlConfiguration _config = new ExtendedXmlConfiguration();
 
-        public ExtendedXmlSerializer() : this(null) { }
+		public ExtendedXmlSerializer() : this(null) {}
 
-        public ExtendedXmlSerializer(Action<ExtendedXmlConfiguration> config)
-        {
-            config?.Invoke(_config);
-        }
+		public ExtendedXmlSerializer(Action<ExtendedXmlConfiguration> config)
+		{
+			config?.Invoke(_config);
+		}
 
 
-        /// <summary>
-        /// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
-        /// </summary>
-        /// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
-        /// <returns>xml document in string</returns>
-        public string Serialize(object o)
-        {
-            var serializer = _config != null ? LegacyElementsTooling.Default.Get(_config) : Serializer.Default; 
-            var result = serializer.Serialize(o);
-            return result;
-        }
+		/// <summary>
+		/// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
+		/// </summary>
+		/// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
+		/// <returns>xml document in string</returns>
+		public string Serialize(object o)
+		{
+			var serializer = _config != null ? LegacyElementsTooling.Default.Get(_config) : Serializer.Default;
+			var result = serializer.Serialize(o);
+			return result;
+		}
 
-        /// <summary>
-        /// Deserializes the XML document
-        /// </summary>
-        /// <param name="xml">The XML document</param>
-        /// <param name="type">The type of returned object</param>
-        /// <returns>deserialized object</returns>
-        public object Deserialize(string xml, Type type)
-        {
-            var serializer = _config != null ? Assigned(type.GetTypeInfo()) : Serializer.Default;
+		/// <summary>
+		/// Deserializes the XML document
+		/// </summary>
+		/// <param name="xml">The XML document</param>
+		/// <param name="type">The type of returned object</param>
+		/// <returns>deserialized object</returns>
+		public object Deserialize(string xml, Type type)
+		{
+			var serializer = _config != null ? Assigned(type.GetTypeInfo()) : Serializer.Default;
 
-            var result = serializer.Deserialize(xml);
-            return result;
-        }
+			var result = serializer.Deserialize(xml);
+			return result;
+		}
 
-        private ISerializer Assigned(TypeInfo type)
-        {
-            var result = LegacyElementsTooling.Default.Get(_config);
-            SerializerTypes.Default.Add(result, type); // TODO: This is very bad and is only used currently to get things working.
-            return result;
-        }
+		ISerializer Assigned(TypeInfo type)
+		{
+			var result = LegacyElementsTooling.Default.Get(_config);
+			SerializerTypes.Default.Add(result, type);
+				// TODO: This is very bad and is only used currently to get things working.
+			return result;
+		}
 
-        /// <summary>
-        /// Deserializes the XML document
-        /// </summary>
-        /// <typeparam name="T">The type of returned object</typeparam>
-        /// <param name="xml">The XML document</param>
-        /// <returns>deserialized object</returns>
-        public T Deserialize<T>(string xml)
-        {
-            return (T) Deserialize(xml, typeof(T));
-        }
-    }
+		/// <summary>
+		/// Deserializes the XML document
+		/// </summary>
+		/// <typeparam name="T">The type of returned object</typeparam>
+		/// <param name="xml">The XML document</param>
+		/// <returns>deserialized object</returns>
+		public T Deserialize<T>(string xml)
+		{
+			return (T) Deserialize(xml, typeof(T));
+		}
+	}
 }

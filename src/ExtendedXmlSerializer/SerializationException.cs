@@ -25,8 +25,8 @@ using System;
 
 namespace ExtendedXmlSerialization
 {
-    public class SerializationException : Exception
-    {
-        public SerializationException(string message) : base(message) {}
-    }
+	public class SerializationException : Exception
+	{
+		public SerializationException(string message) : base(message) {}
+	}
 }

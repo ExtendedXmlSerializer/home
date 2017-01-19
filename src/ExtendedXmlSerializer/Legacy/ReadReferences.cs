@@ -25,5 +25,5 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class ReadReferences : Dictionary<string, object> {}
+	sealed class ReadReferences : Dictionary<string, object> {}
 }

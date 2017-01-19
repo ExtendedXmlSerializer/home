@@ -25,19 +25,19 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
-        where TParameter : class where TResult : class
-    {
-        private readonly IParameterizedSource<TParameter, TResult> _source;
+	public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
+		where TParameter : class where TResult : class
+	{
+		readonly IParameterizedSource<TParameter, TResult> _source;
 
-        public Selector(params IOption<TParameter, TResult>[] options)
-            : this(new OptionSelector<TParameter, TResult>(options.ToImmutableArray())) {}
+		public Selector(params IOption<TParameter, TResult>[] options)
+			: this(new OptionSelector<TParameter, TResult>(options.ToImmutableArray())) {}
 
-        public Selector(IParameterizedSource<TParameter, TResult> source)
-        {
-            _source = source;
-        }
+		public Selector(IParameterizedSource<TParameter, TResult> source)
+		{
+			_source = source;
+		}
 
-        protected override TResult Create(TParameter parameter) => _source.Get(parameter);
-    }
+		protected override TResult Create(TParameter parameter) => _source.Get(parameter);
+	}
 }

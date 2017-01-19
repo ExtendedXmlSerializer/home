@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface IAlteration<T> : IParameterizedSource<T, T> {}
+	public interface IAlteration<T> : IParameterizedSource<T, T> {}
 }

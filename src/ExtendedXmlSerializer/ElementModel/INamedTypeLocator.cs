@@ -27,5 +27,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface INamedTypeLocator : IParameterizedSource<XName, TypeInfo> {}
+	public interface INamedTypeLocator : IParameterizedSource<XName, TypeInfo> {}
 }

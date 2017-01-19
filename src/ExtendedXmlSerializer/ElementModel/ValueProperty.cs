@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    sealed class ValueProperty : FrameworkPropertyBase
-    {
-        public static ValueProperty Default { get; } = new ValueProperty();
-        ValueProperty() : base("Value") {}
-    }
+	sealed class ValueProperty : FrameworkPropertyBase
+	{
+		public static ValueProperty Default { get; } = new ValueProperty();
+		ValueProperty() : base("Value") {}
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +25,18 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassPropertyInterfaceOfList
-    {
-        public void Init()
-        {
-            List = new List<string> {"Item1"};
-            Set = new HashSet<string> {"Item1"};
-            Dictionary = new Dictionary<string, string> {{"Key", "Value"}};
-        }
-        public IList<string> List { get; set; }
-        public IDictionary<string, string> Dictionary { get; set; }
+	public class TestClassPropertyInterfaceOfList
+	{
+		public void Init()
+		{
+			List = new List<string> {"Item1"};
+			Set = new HashSet<string> {"Item1"};
+			Dictionary = new Dictionary<string, string> {{"Key", "Value"}};
+		}
 
-        public ISet<string> Set { get; set; }
-    }
+		public IList<string> List { get; set; }
+		public IDictionary<string, string> Dictionary { get; set; }
+
+		public ISet<string> Set { get; set; }
+	}
 }

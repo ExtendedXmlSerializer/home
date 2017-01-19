@@ -28,34 +28,34 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public static class Extensions
-    {
-        public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
-            => key != null && target.ContainsKey(key) ? target[key] : default(TValue);
+	public static class Extensions
+	{
+		public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
+			=> key != null && target.ContainsKey(key) ? target[key] : default(TValue);
 
-        public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
+		public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 
-        public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
+		public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
-        public static T Self<T>(this T @this) => @this;
+		public static T Self<T>(this T @this) => @this;
 
-        public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
-            => new SpecificationAdapter<T>(@this);
+		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
+			=> new SpecificationAdapter<T>(@this);
 
-        public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
+		public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
 
-        public static T Get<T>(this IServiceProvider @this)
-            => @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
+		public static T Get<T>(this IServiceProvider @this)
+			=> @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
 
-        public static T AsValid<T>(this object @this, string message = null)
-        {
-            if (@this is T)
-            {
-                return (T) @this;
-            }
+		public static T AsValid<T>(this object @this, string message = null)
+		{
+			if (@this is T)
+			{
+				return (T) @this;
+			}
 
-            throw new InvalidOperationException(message ??
-                                                $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
-        }
-    }
+			throw new InvalidOperationException(message ??
+			                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
+		}
+	}
 }

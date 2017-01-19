@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 using ExtendedXmlSerialization.Samples.CustomSerializator;
 using ExtendedXmlSerialization.Samples.Encrypt;
@@ -28,29 +30,29 @@ using ExtendedXmlSerialization.Samples.Simple;
 
 namespace ExtendedXmlSerialization.Samples
 {
-    public class Program
-    {
-        public static void PrintHeader(string title)
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(title);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
+	public class Program
+	{
+		public static void PrintHeader(string title)
+		{
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine(title);
+			Console.ForegroundColor = ConsoleColor.White;
+		}
 
-        public static void Main(string[] args)
-        {
-            SimpleSamples.Run();
-            CustomSerializatorSamples.RunSimpleConfig();
-           // CustomSerializatorSamples.RunAutofacConfig();
-            MigrationMapSamples.RunSimpleConfig();
-            //MigrationMapSamples.RunAutofacConfig();
-            ObjectReferenceSamples.RunSimpleConfig();
-           // ObjectReferenceSamples.RunAutofacConfig();
-            EncryptSamples.RunSimpleConfig();
-            //EncryptSamples.RunAutofacConfig();
+		public static void Main(string[] args)
+		{
+			SimpleSamples.Run();
+			CustomSerializatorSamples.RunSimpleConfig();
+			// CustomSerializatorSamples.RunAutofacConfig();
+			MigrationMapSamples.RunSimpleConfig();
+			//MigrationMapSamples.RunAutofacConfig();
+			ObjectReferenceSamples.RunSimpleConfig();
+			// ObjectReferenceSamples.RunAutofacConfig();
+			EncryptSamples.RunSimpleConfig();
+			//EncryptSamples.RunAutofacConfig();
 
-            Console.WriteLine("Press any key...");
-            Console.ReadKey();
-        }
-    }
+			Console.WriteLine("Press any key...");
+			Console.ReadKey();
+		}
+	}
 }

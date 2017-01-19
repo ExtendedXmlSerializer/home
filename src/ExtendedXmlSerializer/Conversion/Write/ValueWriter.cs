@@ -25,15 +25,15 @@ using System;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class ValueWriter<T> : WriterBase<T>
-    {
-        private readonly Func<T, string> _serialize;
+	public class ValueWriter<T> : WriterBase<T>
+	{
+		readonly Func<T, string> _serialize;
 
-        public ValueWriter(Func<T, string> serialize)
-        {
-            _serialize = serialize;
-        }
+		public ValueWriter(Func<T, string> serialize)
+		{
+			_serialize = serialize;
+		}
 
-        protected override void Write(IWriteContext context, T instance) => context.Write(_serialize(instance));
-    }
+		protected override void Write(IWriteContext context, T instance) => context.Write(_serialize(instance));
+	}
 }

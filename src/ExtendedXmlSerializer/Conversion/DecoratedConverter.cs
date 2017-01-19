@@ -26,17 +26,17 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class DecoratedConverter : ConverterBase
-    {
-        private readonly IConverter _converter;
+	public class DecoratedConverter : ConverterBase
+	{
+		readonly IConverter _converter;
 
-        public DecoratedConverter(IConverter converter)
-        {
-            _converter = converter;
-        }
+		public DecoratedConverter(IConverter converter)
+		{
+			_converter = converter;
+		}
 
-        public override void Write(IWriteContext context, object instance) => _converter.Write(context, instance);
+		public override void Write(IWriteContext context, object instance) => _converter.Write(context, instance);
 
-        public override object Read(IReadContext context) => _converter.Read(context);
-    }
+		public override object Read(IReadContext context) => _converter.Read(context);
+	}
 }

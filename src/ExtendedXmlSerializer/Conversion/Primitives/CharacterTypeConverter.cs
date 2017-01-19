@@ -25,9 +25,9 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class CharacterTypeConverter : ValueTypeConverterBase<char>
-    {
-        public static CharacterTypeConverter Default { get; } = new CharacterTypeConverter();
-        CharacterTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
-    }
+	public class CharacterTypeConverter : ValueTypeConverterBase<char>
+	{
+		public static CharacterTypeConverter Default { get; } = new CharacterTypeConverter();
+		CharacterTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
+	}
 }

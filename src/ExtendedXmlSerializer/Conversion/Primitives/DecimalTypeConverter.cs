@@ -25,9 +25,9 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class DecimalTypeConverter : ValueTypeConverterBase<decimal>
-    {
-        public static DecimalTypeConverter Default { get; } = new DecimalTypeConverter();
-        DecimalTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
-    }
+	public class DecimalTypeConverter : ValueTypeConverterBase<decimal>
+	{
+		public static DecimalTypeConverter Default { get; } = new DecimalTypeConverter();
+		DecimalTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
+	}
 }

@@ -27,10 +27,10 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class XmlReadMemberContext : XmlReadContext<IMemberElement>, IReadMemberContext
-    {
-        public XmlReadMemberContext(IXmlReadContextFactory factory, IMemberElement container, IElement element,
-                                    XElement data)
-            : base(factory, container, element, data) {}
-    }
+	public class XmlReadMemberContext : XmlReadContext<IMemberElement>, IReadMemberContext
+	{
+		public XmlReadMemberContext(IXmlReadContextFactory factory, IMemberElement container, IElement element,
+		                            XElement data)
+			: base(factory, container, element, data) {}
+	}
 }

@@ -27,18 +27,18 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class SelectorFactory : ISelectorFactory
-    {
-        public static SelectorFactory Default { get; } = new SelectorFactory();
-        SelectorFactory() : this(ConverterOptions.Default) {}
+	public class SelectorFactory : ISelectorFactory
+	{
+		public static SelectorFactory Default { get; } = new SelectorFactory();
+		SelectorFactory() : this(ConverterOptions.Default) {}
 
-        private readonly IParameterizedSource<IConverter, IEnumerable<IConverterOption>> _options;
+		readonly IParameterizedSource<IConverter, IEnumerable<IConverterOption>> _options;
 
-        public SelectorFactory(IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
-        {
-            _options = options;
-        }
+		public SelectorFactory(IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
+		{
+			_options = options;
+		}
 
-        public IConverterSelector Get(IConverter parameter) => new ConverterSelector(_options.Get(parameter).ToArray());
-    }
+		public IConverterSelector Get(IConverter parameter) => new ConverterSelector(_options.Get(parameter).ToArray());
+	}
 }

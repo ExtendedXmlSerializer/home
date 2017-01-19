@@ -26,13 +26,13 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class ElementsSource : ElementModel.ElementsSource
-    {
-        public new static ElementsSource Default { get; } = new ElementsSource();
+	class ElementsSource : ElementModel.ElementsSource
+	{
+		public new static ElementsSource Default { get; } = new ElementsSource();
 
-        protected ElementsSource()
-            : base(
-                LegacyElementNames.Default, Defaults.Names.Select(x => x.Classification),
-                DictionaryEntryElement.DictionaryEntryType) {}
-    }
+		protected ElementsSource()
+			: base(
+				LegacyElementNames.Default, Defaults.Names.Select(x => x.Classification),
+				DictionaryEntryElement.DictionaryEntryType) {}
+	}
 }

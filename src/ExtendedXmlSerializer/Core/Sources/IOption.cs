@@ -25,6 +25,6 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface IOption<in TParameter, out TResult> : ISpecification<TParameter>,
-                                                           IParameterizedSource<TParameter, TResult> {}
+	public interface IOption<in TParameter, out TResult> : ISpecification<TParameter>,
+	                                                       IParameterizedSource<TParameter, TResult> {}
 }

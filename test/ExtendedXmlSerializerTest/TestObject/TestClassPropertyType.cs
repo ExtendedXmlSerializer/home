@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +23,28 @@
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public class TestClassPropertyType
-    {
-        private string _onlyGetProperty;
+	public class TestClassPropertyType
+	{
+		public string NormalProp { get; set; }
+		public string OnlyGetProp { get; set; }
 
-        public string NormalProp { get; set; }
-        public string OnlyGetProp => _onlyGetProperty;
-        public static string StaticProp { get; set; }
-        public virtual string VirtualProp { get; set; }
+		public static string StaticProp { get; set; }
+		public virtual string VirtualProp { get; set; }
 
-        public string NormalField;
-        public readonly string ReadonlyField = "6";
-        public const string ConstField = "7";
-        public static string StaticField;
+		public string NormalField;
+		readonly public string ReadonlyField = "6";
+		public const string ConstField = "7";
+		public static string StaticField;
 
 
-        public void Init()
-        {
-            NormalProp = "1";
-            _onlyGetProperty = "2";
-            StaticProp = "3";
-            VirtualProp = "4";
-            NormalField = "5";
-            StaticField = "8";
-        }
-    }
+		public void Init()
+		{
+			NormalProp = "1";
+			OnlyGetProp = "2";
+			StaticProp = "3";
+			VirtualProp = "4";
+			NormalField = "5";
+			StaticField = "8";
+		}
+	}
 }

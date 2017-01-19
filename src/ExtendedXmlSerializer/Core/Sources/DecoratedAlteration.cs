@@ -23,15 +23,15 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class DecoratedAlteration<T> : IAlteration<T>
-    {
-        private readonly IAlteration<T> _alteration;
+	public class DecoratedAlteration<T> : IAlteration<T>
+	{
+		readonly IAlteration<T> _alteration;
 
-        public DecoratedAlteration(IAlteration<T> alteration)
-        {
-            _alteration = alteration;
-        }
+		public DecoratedAlteration(IAlteration<T> alteration)
+		{
+			_alteration = alteration;
+		}
 
-        public T Get(T parameter) => _alteration.Get(parameter);
-    }
+		public T Get(T parameter) => _alteration.Get(parameter);
+	}
 }

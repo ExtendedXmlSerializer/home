@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,20 +28,21 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 {
-    public sealed class AllInterfaces
-    {
-        readonly Func<Type, IEnumerable<Type>> _selector;
+	public sealed class AllInterfaces
+	{
+		readonly Func<Type, IEnumerable<Type>> _selector;
 
-        public static AllInterfaces Instance { get; } = new AllInterfaces();
-        AllInterfaces()
-        {
-            _selector = Yield;
-        }
+		public static AllInterfaces Instance { get; } = new AllInterfaces();
 
-        public IEnumerable<Type> Yield( Type parameter ) =>
-            new[] { parameter }
-                .Concat( parameter.GetTypeInfo().ImplementedInterfaces.SelectMany( _selector ) )
-                .Where( x => x.GetTypeInfo().IsInterface )
-                .Distinct();
-    }
+		AllInterfaces()
+		{
+			_selector = Yield;
+		}
+
+		public IEnumerable<Type> Yield(Type parameter) =>
+			new[] {parameter}
+				.Concat(parameter.GetTypeInfo().ImplementedInterfaces.SelectMany(_selector))
+				.Where(x => x.GetTypeInfo().IsInterface)
+				.Distinct();
+	}
 }

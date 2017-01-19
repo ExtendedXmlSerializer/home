@@ -26,17 +26,17 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class DictionaryItem : CollectionItem, IDictionaryItem
-    {
-        private readonly Func<IElement> _key, _value;
+	public class DictionaryItem : CollectionItem, IDictionaryItem
+	{
+		readonly Func<IElement> _key, _value;
 
-        public DictionaryItem(IActivatedElement entry, Func<IElement> key, Func<IElement> value) : base(entry.Self)
-        {
-            _key = key;
-            _value = value;
-        }
+		public DictionaryItem(IActivatedElement entry, Func<IElement> key, Func<IElement> value) : base(entry.Self)
+		{
+			_key = key;
+			_value = value;
+		}
 
-        public IElement Key => _key();
-        public IElement Value => _value();
-    }
+		public IElement Key => _key();
+		public IElement Value => _value();
+	}
 }

@@ -26,18 +26,18 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    class Elements : IElements
-    {
-        public static Elements Default { get; } = new Elements();
-        Elements() : this(ElementsSource.Default) {}
+	class Elements : IElements
+	{
+		public static Elements Default { get; } = new Elements();
+		Elements() : this(ElementsSource.Default) {}
 
-        private readonly IParameterizedSource<TypeInfo, IElement> _source;
+		readonly IParameterizedSource<TypeInfo, IElement> _source;
 
-        public Elements(IAlteration<IElements> source)
-        {
-            _source = source.Get(this);
-        }
+		public Elements(IAlteration<IElements> source)
+		{
+			_source = source.Get(this);
+		}
 
-        public IElement Get(TypeInfo parameter) => _source.Get(parameter);
-    }
+		public IElement Get(TypeInfo parameter) => _source.Get(parameter);
+	}
 }

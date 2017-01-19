@@ -25,24 +25,24 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public abstract class ListReaderBase : ReaderBase
-    {
-        private readonly IEnumeratingReader _reader;
+	public abstract class ListReaderBase : ReaderBase
+	{
+		readonly IEnumeratingReader _reader;
 
-        protected ListReaderBase(IReader reader) : this(new EnumeratingReader(reader)) {}
+		protected ListReaderBase(IReader reader) : this(new EnumeratingReader(reader)) {}
 
-        protected ListReaderBase(IEnumeratingReader reader)
-        {
-            _reader = reader;
-        }
+		protected ListReaderBase(IEnumeratingReader reader)
+		{
+			_reader = reader;
+		}
 
-        public sealed override object Read(IReadContext context)
-        {
-            var enumerable = _reader.Read(context);
-            var result = Create(context, enumerable);
-            return result;
-        }
+		public sealed override object Read(IReadContext context)
+		{
+			var enumerable = _reader.Read(context);
+			var result = Create(context, enumerable);
+			return result;
+		}
 
-        protected abstract object Create(IReadContext context, IEnumerable enumerable);
-    }
+		protected abstract object Create(IReadContext context, IEnumerable enumerable);
+	}
 }

@@ -28,21 +28,21 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class EncryptedMemberConverter : DecoratedConverter
-    {
-        private readonly IPropertyEncryption _encryption;
+	public class EncryptedMemberConverter : DecoratedConverter
+	{
+		readonly IPropertyEncryption _encryption;
 
-        public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
-        {
-            _encryption = encryption;
-        }
+		public EncryptedMemberConverter(IPropertyEncryption encryption, IConverter member) : base(member)
+		{
+			_encryption = encryption;
+		}
 
-        public override object Read(IReadContext context)
-        {
-            var element = context.Get<XElement>();
-            element.Value = _encryption.Decrypt(element.Value);
-            var result = base.Read(context);
-            return result;
-        }
-    }
+		public override object Read(IReadContext context)
+		{
+			var element = context.Get<XElement>();
+			element.Value = _encryption.Decrypt(element.Value);
+			var result = base.Read(context);
+			return result;
+		}
+	}
 }

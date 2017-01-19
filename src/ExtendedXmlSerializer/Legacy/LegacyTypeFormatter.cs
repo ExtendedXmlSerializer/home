@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacyTypeFormatter : ITypeFormatter
-    {
-        public static LegacyTypeFormatter Default { get; } = new LegacyTypeFormatter();
-        LegacyTypeFormatter() {}
+	class LegacyTypeFormatter : ITypeFormatter
+	{
+		public static LegacyTypeFormatter Default { get; } = new LegacyTypeFormatter();
+		LegacyTypeFormatter() {}
 
-        public string Format(TypeInfo type) => type.FullName;
-    }
+		public string Format(TypeInfo type) => type.FullName;
+	}
 }

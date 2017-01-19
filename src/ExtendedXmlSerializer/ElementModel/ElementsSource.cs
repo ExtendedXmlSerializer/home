@@ -32,47 +32,47 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    class ElementsSource : ElementsSourceBase
-    {
-        private readonly IElementNames _names;
-        private readonly ISpecification<TypeInfo> _specification;
+	class ElementsSource : ElementsSourceBase
+	{
+		readonly IElementNames _names;
+		readonly ISpecification<TypeInfo> _specification;
 
-        public static ElementsSource Default { get; } = new ElementsSource();
+		public static ElementsSource Default { get; } = new ElementsSource();
 
-        ElementsSource()
-            : this(
-                ElementNames.Default, Defaults.Names.Select(x => x.Classification),
-                DictionaryEntryElement.DictionaryEntryType
-            ) {}
+		ElementsSource()
+			: this(
+				ElementNames.Default, Defaults.Names.Select(x => x.Classification),
+				DictionaryEntryElement.DictionaryEntryType
+			) {}
 
-        protected ElementsSource(IElementNames names, IEnumerable<TypeInfo> known, params TypeInfo[] except)
-            : this(names, new Specification(known, except)) {}
+		protected ElementsSource(IElementNames names, IEnumerable<TypeInfo> known, params TypeInfo[] except)
+			: this(names, new Specification(known, except)) {}
 
-        protected ElementsSource(IElementNames names, ISpecification<TypeInfo> specification)
-        {
-            _names = names;
-            _specification = specification;
-        }
+		protected ElementsSource(IElementNames names, ISpecification<TypeInfo> specification)
+		{
+			_names = names;
+			_specification = specification;
+		}
 
-        protected override IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
-        {
-            var members = new ElementMembers(CreateMembers(parameter));
-            yield return new ElementOption(_specification, _names);
-            yield return new DictionaryElementOption(parameter, _names, members);
-            yield return new ArrayElementOption(_names, parameter);
-            yield return new CollectionElementOption(parameter, _names, members);
-            yield return new ActivatedElementOption(_names, members);
-            yield return new ElementOption(_names);
-        }
+		protected override IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
+		{
+			var members = new ElementMembers(CreateMembers(parameter));
+			yield return new ElementOption(_specification, _names);
+			yield return new DictionaryElementOption(parameter, _names, members);
+			yield return new ArrayElementOption(_names, parameter);
+			yield return new CollectionElementOption(parameter, _names, members);
+			yield return new ActivatedElementOption(_names, members);
+			yield return new ElementOption(_names);
+		}
 
-        protected virtual IMemberElementSelector CreateMembers(IElements parameter) => new MemberElementSelector(parameter);
+		protected virtual IMemberElementSelector CreateMembers(IElements parameter) => new MemberElementSelector(parameter);
 
-        sealed class Specification : AnySpecification<TypeInfo>
-        {
-            public Specification(IEnumerable<TypeInfo> known, params TypeInfo[] except)
-                : base(
-                    new AnySpecification<TypeInfo>(new ContainsSpecification<TypeInfo>(known.Except(except).ToArray()),
-                                                   IsAssignableSpecification<Enum>.Default)) {}
-        }
-    }
+		sealed class Specification : AnySpecification<TypeInfo>
+		{
+			public Specification(IEnumerable<TypeInfo> known, params TypeInfo[] except)
+				: base(
+					new AnySpecification<TypeInfo>(new ContainsSpecification<TypeInfo>(known.Except(except).ToArray()),
+					                               IsAssignableSpecification<Enum>.Default)) {}
+		}
+	}
 }

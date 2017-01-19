@@ -27,24 +27,24 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class CollectionElementOptionBase : ActivatedElementOptionBase
-    {
-        private readonly ICollectionItemFactory _items;
+	public abstract class CollectionElementOptionBase : ActivatedElementOptionBase
+	{
+		readonly ICollectionItemFactory _items;
 
-        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
-                                              IElementNames names, IElementMembers members)
-            : this(specification, names, members, new CollectionItemFactory(elements)) {}
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
+		                                      IElementNames names, IElementMembers members)
+			: this(specification, names, members, new CollectionItemFactory(elements)) {}
 
-        protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
-                                              IElementMembers members, ICollectionItemFactory items)
-            : base(specification, names, members)
-        {
-            _items = items;
-        }
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
+		                                      IElementMembers members, ICollectionItemFactory items)
+			: base(specification, names, members)
+		{
+			_items = items;
+		}
 
-        protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)
-            => Create(name, parameter, members, _items.Get(parameter));
+		protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)
+			=> Create(name, parameter, members, _items.Get(parameter));
 
-        protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item);
-    }
+		protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item);
+	}
 }

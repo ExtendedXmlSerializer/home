@@ -26,20 +26,20 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class RootSelector : IConverterSelector
-    {
-        public static RootSelector Default { get; } = new RootSelector();
-        RootSelector() : this(SelectorFactory.Default) {}
+	public class RootSelector : IConverterSelector
+	{
+		public static RootSelector Default { get; } = new RootSelector();
+		RootSelector() : this(SelectorFactory.Default) {}
 
-        readonly IConverterSelector _selector;
+		readonly IConverterSelector _selector;
 
-        public RootSelector(ISelectorFactory factory) : this(factory, x => new SelectingConverter(x)) {}
+		public RootSelector(ISelectorFactory factory) : this(factory, x => new SelectingConverter(x)) {}
 
-        public RootSelector(ISelectorFactory factory, Func<IConverterSelector, IConverter> converter)
-        {
-            _selector = factory.Get(converter(this));
-        }
+		public RootSelector(ISelectorFactory factory, Func<IConverterSelector, IConverter> converter)
+		{
+			_selector = factory.Get(converter(this));
+		}
 
-        public IConverter Get(IElement parameter) => _selector.Get(parameter);
-    }
+		public IConverter Get(IElement parameter) => _selector.Get(parameter);
+	}
 }

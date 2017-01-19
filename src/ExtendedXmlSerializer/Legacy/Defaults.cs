@@ -28,13 +28,13 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    static class Defaults
-    {
-        public const string Underscore = "_";
+	static class Defaults
+	{
+		public const string Underscore = "_";
 
-        public static IEnumerable<IElementName> Names { get; } = new LegacyKnownNames().ToImmutableArray();
+		public static IEnumerable<IElementName> Names { get; } = new LegacyKnownNames().ToImmutableArray();
 
-        public static IConverter Root { get; }
-            = new RootConverter(new RootSelector(new SelectorFactory(ConverterOptions.Default)));
-    }
+		public static IConverter Root { get; }
+			= new RootConverter(new RootSelector(new SelectorFactory(ConverterOptions.Default)));
+	}
 }

@@ -26,27 +26,28 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementName : IEquatable<ElementName>, IElementName
-    {
-        public ElementName(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
+	public class ElementName : IEquatable<ElementName>, IElementName
+	{
+		public ElementName(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
 
-        public ElementName(TypeInfo classification, string name)
-        {
-            Classification = classification;
-            DisplayName = name;
-        }
+		public ElementName(TypeInfo classification, string name)
+		{
+			Classification = classification;
+			DisplayName = name;
+		}
 
-        public string DisplayName { get; }
-        public TypeInfo Classification { get; }
+		public string DisplayName { get; }
+		public TypeInfo Classification { get; }
 
-        public bool Equals(ElementName other) => Equals(Classification, other.Classification);
+		public bool Equals(ElementName other) => Equals(Classification, other.Classification);
 
-        public override bool Equals(object obj) =>  !ReferenceEquals(null, obj) && obj is ElementName && Equals((ElementName) obj);
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is ElementName && Equals((ElementName) obj);
 
-        public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
+		public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
 
-        public static bool operator ==(ElementName left, ElementName right) => left.Equals(right);
+		public static bool operator ==(ElementName left, ElementName right) => left.Equals(right);
 
-        public static bool operator !=(ElementName left, ElementName right) => !left.Equals(right);
-    }
+		public static bool operator !=(ElementName left, ElementName right) => !left.Equals(right);
+	}
 }

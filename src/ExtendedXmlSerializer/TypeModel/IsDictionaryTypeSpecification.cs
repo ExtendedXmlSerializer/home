@@ -28,19 +28,19 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    /*public class IsEnumerableTypeSpecification : IsAssignableSpecification<IEnumerable>
-    {
-        public static new IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
-        IsEnumerableTypeSpecification() {}
-    }*/
+	/*public class IsEnumerableTypeSpecification : IsAssignableSpecification<IEnumerable>
+	{
+	    public static new IsEnumerableTypeSpecification Default { get; } = new IsEnumerableTypeSpecification();
+	    IsEnumerableTypeSpecification() {}
+	}*/
 
-    public class IsDictionaryTypeSpecification : AnySpecification<TypeInfo>
-    {
-        public static IsDictionaryTypeSpecification Default { get; } = new IsDictionaryTypeSpecification();
+	public class IsDictionaryTypeSpecification : AnySpecification<TypeInfo>
+	{
+		public static IsDictionaryTypeSpecification Default { get; } = new IsDictionaryTypeSpecification();
 
-        IsDictionaryTypeSpecification()
-            : base(
-                IsAssignableSpecification<IDictionary>.Default,
-                new IsAssignableGenericSpecification(typeof(IDictionary<,>))) {}
-    }
+		IsDictionaryTypeSpecification()
+			: base(
+				IsAssignableSpecification<IDictionary>.Default,
+				new IsAssignableGenericSpecification(typeof(IDictionary<,>))) {}
+	}
 }

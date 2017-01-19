@@ -25,8 +25,8 @@ using System;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class Root : ContainerElementBase, IRoot
-    {
-        public Root(Func<IElement> element) : base(element) {}
-    }
+	public class Root : ContainerElementBase, IRoot
+	{
+		public Root(Func<IElement> element) : base(element) {}
+	}
 }

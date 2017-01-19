@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,38 +26,37 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy
 {
-    /// <summary>
-    /// The simple implementation of <see cref="ISerializationToolsFactory"/>
-    /// </summary>
-    public class SimpleSerializationToolsFactory : ISerializationToolsFactory
-    {
-        /// <summary>
-        /// Creates an instance of <see cref="ISerializationToolsFactory"/>
-        /// </summary>
-        public SimpleSerializationToolsFactory()
-        {
-            Configurations = new List<IExtendedXmlSerializerConfig>();
-        }
+	/// <summary>
+	/// The simple implementation of <see cref="ISerializationToolsFactory"/>
+	/// </summary>
+	public class SimpleSerializationToolsFactory : ISerializationToolsFactory
+	{
+		/// <summary>
+		/// Creates an instance of <see cref="ISerializationToolsFactory"/>
+		/// </summary>
+		public SimpleSerializationToolsFactory()
+		{
+			Configurations = new List<IExtendedXmlSerializerConfig>();
+		}
 
-        /// <summary>
-        /// Gets or sets list of <see cref="IExtendedXmlSerializerConfig"/>
-        /// </summary>
-        public List<IExtendedXmlSerializerConfig> Configurations { get; set; }
+		/// <summary>
+		/// Gets or sets list of <see cref="IExtendedXmlSerializerConfig"/>
+		/// </summary>
+		public List<IExtendedXmlSerializerConfig> Configurations { get; set; }
 
 
+		public IExtendedXmlSerializerConfig GetConfiguration(Type type)
+		{
+			foreach (var migrationMap in Configurations)
+			{
+				if (migrationMap.IsSatisfiedBy(type))
+				{
+					return migrationMap;
+				}
+			}
+			return null;
+		}
 
-        public IExtendedXmlSerializerConfig GetConfiguration(Type type)
-        {
-            foreach (var migrationMap in Configurations)
-            {
-                if (migrationMap.IsSatisfiedBy(type))
-                {
-                    return migrationMap;
-                }
-            }
-            return null;
-        }
-
-        public IPropertyEncryption EncryptionAlgorithm { get; set; }
-    }
+		public IPropertyEncryption EncryptionAlgorithm { get; set; }
+	}
 }

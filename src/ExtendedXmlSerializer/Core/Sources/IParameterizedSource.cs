@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface IParameterizedSource<in TParameter, out TResult>
-    {
-        TResult Get(TParameter parameter);
-    }
+	public interface IParameterizedSource<in TParameter, out TResult>
+	{
+		TResult Get(TParameter parameter);
+	}
 }

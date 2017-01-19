@@ -23,15 +23,15 @@
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class DecoratedReader : ReaderBase
-    {
-        private readonly IReader _reader;
+	public class DecoratedReader : ReaderBase
+	{
+		readonly IReader _reader;
 
-        public DecoratedReader(IReader reader)
-        {
-            _reader = reader;
-        }
+		public DecoratedReader(IReader reader)
+		{
+			_reader = reader;
+		}
 
-        public override object Read(IReadContext context) => _reader.Read(context);
-    }
+		public override object Read(IReadContext context) => _reader.Read(context);
+	}
 }

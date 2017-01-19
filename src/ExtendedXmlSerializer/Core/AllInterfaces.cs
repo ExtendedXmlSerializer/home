@@ -28,21 +28,21 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public sealed class AllInterfaces
-    {
-        readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
+	public sealed class AllInterfaces
+	{
+		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
-        public static AllInterfaces Instance { get; } = new AllInterfaces();
+		public static AllInterfaces Instance { get; } = new AllInterfaces();
 
-        AllInterfaces()
-        {
-            _selector = Yield;
-        }
+		AllInterfaces()
+		{
+			_selector = Yield;
+		}
 
-        public IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
-            new[] {parameter}
-                .Concat(parameter.ImplementedInterfaces.Select(x => x.GetTypeInfo()).SelectMany(_selector))
-                .Where(x => x.IsInterface)
-                .Distinct();
-    }
+		public IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
+			new[] {parameter}
+				.Concat(parameter.ImplementedInterfaces.Select(x => x.GetTypeInfo()).SelectMany(_selector))
+				.Where(x => x.IsInterface)
+				.Distinct();
+	}
 }

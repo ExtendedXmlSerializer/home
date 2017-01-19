@@ -28,50 +28,50 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyInstanceBodyReader : InstanceBodyReader
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
+	sealed class LegacyInstanceBodyReader : InstanceBodyReader
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
 
-        public LegacyInstanceBodyReader(IInternalExtendedXmlConfiguration config, IReader reader)
-            : base(reader)
-        {
-            _config = config;
-        }
+		public LegacyInstanceBodyReader(IInternalExtendedXmlConfiguration config, IReader reader)
+			: base(reader)
+		{
+			_config = config;
+		}
 
-        protected override object Activate(IReadContext context)
-        {
-            var result = base.Activate(context);
-            var type = context.Element.Classification;
-            var configuration = _config.GetTypeConfiguration(type.AsType());
-            if (configuration != null && configuration.IsObjectReference)
-            {
-                var prefix = type.FullName + Defaults.Underscore;
-                var refId = context[ReferenceProperty.Default];
-                var references = context.Get<ReadReferences>();
-                if (!string.IsNullOrEmpty(refId))
-                {
-                    var key = prefix + refId;
-                    if (references.ContainsKey(key))
-                    {
-                        return references[key];
-                    }
-                    references.Add(key, result);
-                }
-                else
-                {
-                    var objectId = context[IdentifierProperty.Default];
-                    if (!string.IsNullOrEmpty(objectId))
-                    {
-                        var key = prefix + objectId;
-                        if (references.ContainsKey(key))
-                        {
-                            return references[key];
-                        }
-                        references.Add(key, result);
-                    }
-                }
-            }
-            return result;
-        }
-    }
+		protected override object Activate(IReadContext context)
+		{
+			var result = base.Activate(context);
+			var type = context.Element.Classification;
+			var configuration = _config.GetTypeConfiguration(type.AsType());
+			if (configuration != null && configuration.IsObjectReference)
+			{
+				var prefix = type.FullName + Defaults.Underscore;
+				var refId = context[ReferenceProperty.Default];
+				var references = context.Get<ReadReferences>();
+				if (!string.IsNullOrEmpty(refId))
+				{
+					var key = prefix + refId;
+					if (references.ContainsKey(key))
+					{
+						return references[key];
+					}
+					references.Add(key, result);
+				}
+				else
+				{
+					var objectId = context[IdentifierProperty.Default];
+					if (!string.IsNullOrEmpty(objectId))
+					{
+						var key = prefix + objectId;
+						if (references.ContainsKey(key))
+						{
+							return references[key];
+						}
+						references.Add(key, result);
+					}
+				}
+			}
+			return result;
+		}
+	}
 }

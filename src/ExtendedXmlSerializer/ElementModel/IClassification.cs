@@ -25,8 +25,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IClassification
-    {
-        TypeInfo Classification { get; }
-    }
+	public interface IClassification
+	{
+		TypeInfo Classification { get; }
+	}
 }
