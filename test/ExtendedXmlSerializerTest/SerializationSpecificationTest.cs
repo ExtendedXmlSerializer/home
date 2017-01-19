@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,62 +27,68 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationSpecificationTest : BaseTest
-    {
-        public static void MigrationBase(XElement xElement)
-        {
-            xElement.Element("Property").Name = "ChangedProperty";
-        }
-        private void AMigration(XElement xElement)
-        {
-            MigrationBase(xElement);
-            xElement.Element("OtherProperty").Name = "OtherChangedProperty";
-        }
-        private void BMigration(XElement xElement)
-        {
-            MigrationBase(xElement);
-        }
-        public SerializationSpecificationTest()
-        {
-            Serializer = new ExtendedXmlSerializer(cfg =>
-            {
-                cfg.ConfigureType<TestClassInheritanceWithMigrationsBase>().AddMigration(MigrationBase);
-                cfg.ConfigureType<TestClassInheritanceWithMigrationsA>().AddMigration(AMigration);
-                cfg.ConfigureType<TestClassInheritanceWithMigrationsB>().AddMigration(BMigration);
-            });
-        }
+	public class SerializationSpecificationTest : BaseTest
+	{
+		public static void MigrationBase(XElement xElement)
+		{
+			xElement.Element("Property").Name = "ChangedProperty";
+		}
 
-        [Fact]
-        public void SpecificationForInheritance()
-        {
-            var objA =
-                Serializer.Deserialize<TestClassInheritanceWithMigrationsA>(@"<?xml version=""1.0"" encoding=""utf-8""?>
+		void AMigration(XElement xElement)
+		{
+			MigrationBase(xElement);
+			xElement.Element("OtherProperty").Name = "OtherChangedProperty";
+		}
+
+		void BMigration(XElement xElement)
+		{
+			MigrationBase(xElement);
+		}
+
+		public SerializationSpecificationTest()
+		{
+			Serializer = new ExtendedXmlSerializer(cfg =>
+			                                       {
+				                                       cfg.ConfigureType<TestClassInheritanceWithMigrationsBase>()
+				                                          .AddMigration(MigrationBase);
+				                                       cfg.ConfigureType<TestClassInheritanceWithMigrationsA>()
+				                                          .AddMigration(AMigration);
+				                                       cfg.ConfigureType<TestClassInheritanceWithMigrationsB>()
+				                                          .AddMigration(BMigration);
+			                                       });
+		}
+
+		[Fact]
+		public void SpecificationForInheritance()
+		{
+			var objA =
+				Serializer.Deserialize<TestClassInheritanceWithMigrationsA>(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsA"">
 <Property>1</Property>
 <OtherProperty>2</OtherProperty>
 </TestClassInheritanceWithMigrationsA>");
 
-            Assert.Equal(1, objA.ChangedProperty);
-            Assert.Equal(2, objA.OtherChangedProperty);
+			Assert.Equal(1, objA.ChangedProperty);
+			Assert.Equal(2, objA.OtherChangedProperty);
 
-            var objBase =
-                Serializer.Deserialize<TestClassInheritanceWithMigrationsBase>(
-                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+			var objBase =
+				Serializer.Deserialize<TestClassInheritanceWithMigrationsBase>(
+					@"<?xml version=""1.0"" encoding=""utf-8""?>
 <TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsBase"">
 <Property>1</Property>
 </TestClassInheritanceWithMigrationsA>");
 
-            Assert.Equal(1, objBase.ChangedProperty);
+			Assert.Equal(1, objBase.ChangedProperty);
 
-            var objB =
-                Serializer.Deserialize<TestClassInheritanceWithMigrationsB>(@"<?xml version=""1.0"" encoding=""utf-8""?>
+			var objB =
+				Serializer.Deserialize<TestClassInheritanceWithMigrationsB>(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <TestClassInheritanceWithMigrationsA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithMigrationsB"">
 <Property>1</Property>
 <ProprtyWithoutChanges>3</ProprtyWithoutChanges>
 </TestClassInheritanceWithMigrationsA>");
 
-            Assert.Equal(1, objB.ChangedProperty);
-            Assert.Equal(3, objB.ProprtyWithoutChanges);
-        }
-    }
+			Assert.Equal(1, objB.ChangedProperty);
+			Assert.Equal(3, objB.ProprtyWithoutChanges);
+		}
+	}
 }

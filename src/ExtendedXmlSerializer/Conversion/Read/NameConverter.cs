@@ -27,19 +27,19 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    class NameConverter : INameConverter
-    {
-        public static NameConverter Default { get; } = new NameConverter();
-        NameConverter() : this(Namespaces.Default) {}
+	class NameConverter : INameConverter
+	{
+		public static NameConverter Default { get; } = new NameConverter();
+		NameConverter() : this(Namespaces.Default) {}
 
-        private readonly INamespaces _namespaces;
+		readonly INamespaces _namespaces;
 
-        public NameConverter(INamespaces namespaces)
-        {
-            _namespaces = namespaces;
-        }
+		public NameConverter(INamespaces namespaces)
+		{
+			_namespaces = namespaces;
+		}
 
-        public XName Get(IClassification parameter)
-            => XName.Get(parameter.AsValid<IDisplayAware>().DisplayName, _namespaces.Get(parameter.Classification));
-    }
+		public XName Get(IClassification parameter)
+			=> XName.Get(parameter.AsValid<IDisplayAware>().DisplayName, _namespaces.Get(parameter.Classification));
+	}
 }

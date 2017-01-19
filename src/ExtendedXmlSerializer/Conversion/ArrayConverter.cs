@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class ArrayConverter : Converter
-    {
-        public ArrayConverter(IConverter converter)
-            : base(new ArrayReader(converter), new EnumerableBodyWriter(converter)) {}
-    }
+	public class ArrayConverter : Converter
+	{
+		public ArrayConverter(IConverter converter)
+			: base(new ArrayReader(converter), new EnumerableBodyWriter(converter)) {}
+	}
 }

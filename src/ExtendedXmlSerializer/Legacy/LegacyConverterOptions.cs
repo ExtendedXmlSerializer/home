@@ -31,33 +31,32 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
-        
-        public LegacyConverterOptions(IInternalExtendedXmlConfiguration config)
-        {
-            _config = config;
-            
-        }
+	sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
 
-        public IEnumerable<IConverterOption> Get(IConverter parameter)
-        {
-            var element = new ElementSelectingConverter(parameter);
-            yield return new ReadOnlyCollectionMemberConverterOption(element);
-            yield return new LegacyMemberOption(_config, new MemberConverterOption(element));
-            yield return KnownConverters.Default;
-            yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
-            yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_config, parameter));
-            yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_config, parameter));
-            yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_config, parameter));
-        }
+		public LegacyConverterOptions(IInternalExtendedXmlConfiguration config)
+		{
+			_config = config;
+		}
 
-        sealed class MemberConverterOption : ConverterOption<IMemberElement>
-        {
-            public MemberConverterOption(IConverter converter) : base(
-                new Converter(converter,
-                              new ValidatingAssignedWriter(new Emitter(new LegacyMemberTypeEmittingWriter(converter))))) {}
-        }
-    }
+		public IEnumerable<IConverterOption> Get(IConverter parameter)
+		{
+			var element = new ElementSelectingConverter(parameter);
+			yield return new ReadOnlyCollectionMemberConverterOption(element);
+			yield return new LegacyMemberOption(_config, new MemberConverterOption(element));
+			yield return KnownConverters.Default;
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
+			yield return new ConverterOption<IArrayElement>(new LegacyArrayTypeConverter(_config, parameter));
+			yield return new ConverterOption<ICollectionElement>(new LegacyEnumerableTypeConverter(_config, parameter));
+			yield return new ConverterOption<IActivatedElement>(new LegacyInstanceTypeConverter(_config, parameter));
+		}
+
+		sealed class MemberConverterOption : ConverterOption<IMemberElement>
+		{
+			public MemberConverterOption(IConverter converter) : base(
+				new Converter(converter,
+				              new ValidatingAssignedWriter(new Emitter(new LegacyMemberTypeEmittingWriter(converter))))) {}
+		}
+	}
 }

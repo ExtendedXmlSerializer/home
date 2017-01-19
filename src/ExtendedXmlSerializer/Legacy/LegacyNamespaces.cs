@@ -26,12 +26,12 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyNamespaces : INamespaces
-    {
-        public static LegacyNamespaces Default { get; } = new LegacyNamespaces();
-        LegacyNamespaces() {}
+	sealed class LegacyNamespaces : INamespaces
+	{
+		public static LegacyNamespaces Default { get; } = new LegacyNamespaces();
+		LegacyNamespaces() {}
 
-        public string Get(TypeInfo parameter) => string.Empty;
-        public string Get(string parameter) => string.Empty;
-    }
+		public string Get(TypeInfo parameter) => string.Empty;
+		public string Get(string parameter) => string.Empty;
+	}
 }

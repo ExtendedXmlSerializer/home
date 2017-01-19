@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementOption : IOption<TypeInfo, IElement> {}
+	public interface IElementOption : IOption<TypeInfo, IElement> {}
 }

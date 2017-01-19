@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,22 +20,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-    public class CustomSerializatorSamples
-    {
-        public static void RunSimpleConfig()
-        {
-            Program.PrintHeader("Custom serialization");
+	public class CustomSerializatorSamples
+	{
+		public static void RunSimpleConfig()
+		{
+			Program.PrintHeader("Custom serialization");
 
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(
-                cfg=> cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer())
-            );
+			var serializer = new ExtendedXmlSerializer(
+				cfg => cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer())
+			);
 
-            Run(serializer);
-        }
+			Run(serializer);
+		}
 
 //        public static void RunAutofacConfig()
 //        {
@@ -49,14 +51,14 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 //            Run(serializer);
 //        }
 
-        private static void Run(IExtendedXmlSerializer serializer)
-        {
-            var obj = new TestClass("Value");
-            var xml = serializer.Serialize(obj);
-            Console.WriteLine(xml);
+		static void Run(IExtendedXmlSerializer serializer)
+		{
+			var obj = new TestClass("Value");
+			var xml = serializer.Serialize(obj);
+			Console.WriteLine(xml);
 
-            var obj2 = serializer.Deserialize<TestClass>(xml);
-            Console.WriteLine("Obiect PropStr = " + obj2.PropStr);
-        }
-    }
+			var obj2 = serializer.Deserialize<TestClass>(xml);
+			Console.WriteLine("Obiect PropStr = " + obj2.PropStr);
+		}
+	}
 }

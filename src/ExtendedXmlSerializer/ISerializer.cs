@@ -31,55 +31,54 @@ using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 
-
 namespace ExtendedXmlSerialization
 {
-    public interface ISerializer
-    {
-        void Serialize(Stream stream, object instance);
+	public interface ISerializer
+	{
+		void Serialize(Stream stream, object instance);
 
-        object Deserialize(Stream stream);
-    }
+		object Deserialize(Stream stream);
+	}
 
-    public class Serializer : ISerializer
-    {
-        public static Serializer Default { get; } = new Serializer();
-        Serializer() : this(RootConverter.Default) {}
-        private readonly IConverter _converter;
-        private readonly IElements _elements;
+	public class Serializer : ISerializer
+	{
+		public static Serializer Default { get; } = new Serializer();
+		Serializer() : this(RootConverter.Default) {}
+		readonly IConverter _converter;
+		readonly IElements _elements;
 
-        public Serializer(IConverter converter) : this(converter, Elements.Default) {}
+		public Serializer(IConverter converter) : this(converter, Elements.Default) {}
 
-        public Serializer(IConverter converter, IElements elements)
-        {
-            _converter = converter;
-            _elements = elements;
-        }
+		public Serializer(IConverter converter, IElements elements)
+		{
+			_converter = converter;
+			_elements = elements;
+		}
 
-        public void Serialize(Stream stream, object instance)
-        {
-            using (var writer = XmlWriter.Create(stream))
-            {
-                _converter.Write(CreateWriteContext(writer, instance.GetType().GetTypeInfo()), instance);
-            }
-        }
+		public void Serialize(Stream stream, object instance)
+		{
+			using (var writer = XmlWriter.Create(stream))
+			{
+				_converter.Write(CreateWriteContext(writer, instance.GetType().GetTypeInfo()), instance);
+			}
+		}
 
-        protected virtual IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
-            => new XmlWriteContext(writer, new Root(_elements.Build(type)));
+		protected virtual IWriteContext CreateWriteContext(XmlWriter writer, TypeInfo type)
+			=> new XmlWriteContext(writer, new Root(_elements.Build(type)));
 
-        public object Deserialize(Stream stream)
-        {
-            var context = CreateContext(stream);
-            var result = _converter.Read(context);
-            return result;
-        }
+		public object Deserialize(Stream stream)
+		{
+			var context = CreateContext(stream);
+			var result = _converter.Read(context);
+			return result;
+		}
 
-        protected virtual IReadContext CreateContext(Stream stream)
-        {
-            var text = new StreamReader(stream).ReadToEnd();
-            var document = XDocument.Parse(text);
-            var context = new XmlReadContext(document.Root);
-            return context;
-        }
-    }
+		protected virtual IReadContext CreateContext(Stream stream)
+		{
+			var text = new StreamReader(stream).ReadToEnd();
+			var document = XDocument.Parse(text);
+			var context = new XmlReadContext(document.Root);
+			return context;
+		}
+	}
 }

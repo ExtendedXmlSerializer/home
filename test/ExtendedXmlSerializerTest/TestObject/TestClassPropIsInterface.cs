@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,33 +20,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-    public interface ITestInterface
-    {
-        string PropFromInterface { get; set; }
-    }
+	public interface ITestInterface
+	{
+		string PropFromInterface { get; set; }
+	}
 
-    public class TestClassInheritInterface1 : ITestInterface
-    {
-        public string PropFromInterface { get; set; }
-    }
+	public class TestClassInheritInterface1 : ITestInterface
+	{
+		public string PropFromInterface { get; set; }
+	}
 
-    public class TestClassInheritInterface2 : ITestInterface
-    {
-        public string PropFromInterface { get; set; }
-        public string PropFromClass { get; set; }
-    }
+	public class TestClassInheritInterface2 : ITestInterface
+	{
+		public string PropFromInterface { get; set; }
+		public string PropFromClass { get; set; }
+	}
 
-    public class TestClassPropIsInterface 
-    {
-        public void Init()
-        {
-            PropInter1 = new TestClassInheritInterface1 {PropFromInterface = "PropInter1"};
-            PropInter2 = new TestClassInheritInterface2 { PropFromInterface = "PropInter2", PropFromClass = "PropClass1"};
-        }
+	public class TestClassPropIsInterface
+	{
+		public void Init()
+		{
+			PropInter1 = new TestClassInheritInterface1 {PropFromInterface = "PropInter1"};
+			PropInter2 = new TestClassInheritInterface2 {PropFromInterface = "PropInter2", PropFromClass = "PropClass1"};
+		}
 
-        public ITestInterface PropInter1 { get; set; }
-        public ITestInterface PropInter2 { get; set; }
-    }
+		public ITestInterface PropInter1 { get; set; }
+		public ITestInterface PropInter2 { get; set; }
+	}
 }

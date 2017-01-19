@@ -29,19 +29,19 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public abstract class ValueTypeConverterBase<T> : TypeConverter
-    {
-        protected ValueTypeConverterBase(Func<T, string> serialize,
-                                         Func<string, T> deserialize)
-            : this(
-                new ValueWriter<T>(serialize),
-                new ValueReader<T>(deserialize)
-            ) {}
+	public abstract class ValueTypeConverterBase<T> : TypeConverter
+	{
+		protected ValueTypeConverterBase(Func<T, string> serialize,
+		                                 Func<string, T> deserialize)
+			: this(
+				new ValueWriter<T>(serialize),
+				new ValueReader<T>(deserialize)
+			) {}
 
-        protected ValueTypeConverterBase(IWriter writer, IReader reader)
-            : this(TypeEqualitySpecification<T>.Default, writer, reader) {}
+		protected ValueTypeConverterBase(IWriter writer, IReader reader)
+			: this(TypeEqualitySpecification<T>.Default, writer, reader) {}
 
-        protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
-            : base(specification, new ValidatingAssignedReader(reader), new ValidatingAssignedWriter(writer)) {}
-    }
+		protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
+			: base(specification, new ValidatingAssignedReader(reader), new ValidatingAssignedWriter(writer)) {}
+	}
 }

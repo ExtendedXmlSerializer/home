@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public interface IWriter
-    {
-        void Write(IWriteContext context, object instance);
-    }
+	public interface IWriter
+	{
+		void Write(IWriteContext context, object instance);
+	}
 }

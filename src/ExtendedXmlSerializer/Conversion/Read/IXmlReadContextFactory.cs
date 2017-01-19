@@ -26,12 +26,12 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IXmlReadContextFactory
-    {
-        IReadContext Create(IReadContext context, IContainerElement container, XElement data);
+	public interface IXmlReadContextFactory
+	{
+		IReadContext Create(IReadContext context, IContainerElement container, XElement data);
 
-        string Value(IElementName name, XElement data);
+		string Value(IElementName name, XElement data);
 
-        IContext Select(IReadContext context, XElement data);
-    }
+		IContext Select(IReadContext context, XElement data);
+	}
 }

@@ -27,21 +27,21 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public abstract class ConverterOptionBase<T> : IConverterOption where T : IElement
-    {
-        private readonly ISpecification<IElement> _specification;
+	public abstract class ConverterOptionBase<T> : IConverterOption where T : IElement
+	{
+		readonly ISpecification<IElement> _specification;
 
-        protected ConverterOptionBase() : this(IsTypeSpecification<T>.Default) {}
+		protected ConverterOptionBase() : this(IsTypeSpecification<T>.Default) {}
 
-        protected ConverterOptionBase(ISpecification<IElement> specification)
-        {
-            _specification = specification;
-        }
+		protected ConverterOptionBase(ISpecification<IElement> specification)
+		{
+			_specification = specification;
+		}
 
-        IConverter IParameterizedSource<IElement, IConverter>.Get(IElement parameter) => Create((T) parameter);
+		IConverter IParameterizedSource<IElement, IConverter>.Get(IElement parameter) => Create((T) parameter);
 
-        protected abstract IConverter Create(T parameter);
+		protected abstract IConverter Create(T parameter);
 
-        public bool IsSatisfiedBy(IElement parameter) => _specification.IsSatisfiedBy(parameter);
-    }
+		public bool IsSatisfiedBy(IElement parameter) => _specification.IsSatisfiedBy(parameter);
+	}
 }

@@ -28,12 +28,12 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class EnumerationTypeConverter : ValueTypeConverterBase<Enum>
-    {
-        public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
+	public class EnumerationTypeConverter : ValueTypeConverterBase<Enum>
+	{
+		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
 
-        EnumerationTypeConverter()
-            : base(IsAssignableSpecification<Enum>.Default, new ValueWriter<Enum>(x => x.ToString()), EnumReader.Default
-            ) {}
-    }
+		EnumerationTypeConverter()
+			: base(IsAssignableSpecification<Enum>.Default, new ValueWriter<Enum>(x => x.ToString()), EnumReader.Default
+			) {}
+	}
 }

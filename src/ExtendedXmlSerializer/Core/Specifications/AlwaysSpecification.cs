@@ -23,11 +23,11 @@
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class AlwaysSpecification<T> : ISpecification<T>
-    {
-        public static AlwaysSpecification<T> Default { get; } = new AlwaysSpecification<T>();
-        AlwaysSpecification() {}
+	public class AlwaysSpecification<T> : ISpecification<T>
+	{
+		public static AlwaysSpecification<T> Default { get; } = new AlwaysSpecification<T>();
+		AlwaysSpecification() {}
 
-        public bool IsSatisfiedBy(T parameter) => true;
-    }
+		public bool IsSatisfiedBy(T parameter) => true;
+	}
 }

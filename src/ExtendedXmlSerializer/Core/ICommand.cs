@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.Core
 {
-    public interface ICommand<in T>
-    {
-        void Execute(T parameter);
-    }
+	public interface ICommand<in T>
+	{
+		void Execute(T parameter);
+	}
 }

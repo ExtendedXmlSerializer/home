@@ -26,26 +26,26 @@ using System.Text;
 
 namespace ExtendedXmlSerialization
 {
-    public static class Extensions
-    {
-        public static string Serialize(this ISerializer @this, object instance)
-        {
-            using (var stream = new MemoryStream())
-            {
-                @this.Serialize(stream, instance);
-                stream.Seek(0, SeekOrigin.Begin);
-                var result = new StreamReader(stream).ReadToEnd();
-                return result;
-            }
-        }
+	public static class Extensions
+	{
+		public static string Serialize(this ISerializer @this, object instance)
+		{
+			using (var stream = new MemoryStream())
+			{
+				@this.Serialize(stream, instance);
+				stream.Seek(0, SeekOrigin.Begin);
+				var result = new StreamReader(stream).ReadToEnd();
+				return result;
+			}
+		}
 
-        public static object Deserialize(this ISerializer @this, string xml)
-        {
-            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
-            {
-                var result = @this.Deserialize(stream);
-                return result;
-            }
-        }
-    }
+		public static object Deserialize(this ISerializer @this, string xml)
+		{
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+			{
+				var result = @this.Deserialize(stream);
+				return result;
+			}
+		}
+	}
 }

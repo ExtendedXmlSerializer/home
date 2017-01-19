@@ -1,6 +1,7 @@
 // MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -26,58 +28,58 @@ using ExtendedXmlSerialization.Test.Tools;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class BaseTest
-    {
-        protected ExtendedXmlSerializer Serializer { get; set; } = new ExtendedXmlSerializer();
+	public class BaseTest
+	{
+		protected ExtendedXmlSerializer Serializer { get; set; } = new ExtendedXmlSerializer();
 
 #if NET451
-        private const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+		const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #else
         private const string CoreLib = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
 #endif
 
-        private static string SerializeObject(object toSerialize)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
-            using (StringWriter textWriter = new StringWriter())
-            {
-                xmlSerializer.Serialize(textWriter, toSerialize);
+		static string SerializeObject(object toSerialize)
+		{
+			var xmlSerializer = new XmlSerializer(toSerialize.GetType());
+			using (var textWriter = new StringWriter())
+			{
+				xmlSerializer.Serialize(textWriter, toSerialize);
 
-                return textWriter.ToString();
-            }
-        }
+				return textWriter.ToString();
+			}
+		}
 
-        public void CheckCompatibilityWithDefaultSerializator(object obj)
-        {
-            var standardXml = SerializeObject(obj);
-            var obj2 = Serializer.Deserialize(standardXml, obj.GetType());
-            XmlAssert.AreEqual(standardXml, SerializeObject(obj2));
-        }
+		public void CheckCompatibilityWithDefaultSerializator(object obj)
+		{
+			var standardXml = SerializeObject(obj);
+			var obj2 = Serializer.Deserialize(standardXml, obj.GetType());
+			XmlAssert.AreEqual(standardXml, SerializeObject(obj2));
+		}
 
-        public void CheckSerializationAndDeserialization(string xmlPath, object obj)
-        {
-            var xml = EmbeddedResources.Get(xmlPath);
-            xml = ReplaceVariable(xml);
-            var serialize = Serializer.Serialize(obj);
-            XmlAssert.AreEqual(xml, serialize);
-            var obj2 = Serializer.Deserialize(xml, obj.GetType());
-            XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
-        }
+		public void CheckSerializationAndDeserialization(string xmlPath, object obj)
+		{
+			var xml = EmbeddedResources.Get(xmlPath);
+			xml = ReplaceVariable(xml);
+			var serialize = Serializer.Serialize(obj);
+			XmlAssert.AreEqual(xml, serialize);
+			var obj2 = Serializer.Deserialize(xml, obj.GetType());
+			XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
+		}
 
-        private static string ReplaceVariable(string xml)
-        {
-            xml = xml.Replace("[CORELIB]", CoreLib);
-            xml = xml.Replace("[EXTENDEDXMLSERIALIZER_VERSION]",
-                typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
-            return xml;
-        }
+		static string ReplaceVariable(string xml)
+		{
+			xml = xml.Replace("[CORELIB]", CoreLib);
+			xml = xml.Replace("[EXTENDEDXMLSERIALIZER_VERSION]",
+			                  typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
+			return xml;
+		}
 
-        public void CheckSerializationAndDeserializationByXml(string xml, object obj)
-        {
-            xml = ReplaceVariable(xml);
-            XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
-            var obj2 = Serializer.Deserialize(xml, obj.GetType());
-            XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
-        }
-    }
+		public void CheckSerializationAndDeserializationByXml(string xml, object obj)
+		{
+			xml = ReplaceVariable(xml);
+			XmlAssert.AreEqual(xml, Serializer.Serialize(obj));
+			var obj2 = Serializer.Deserialize(xml, obj.GetType());
+			XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
+		}
+	}
 }

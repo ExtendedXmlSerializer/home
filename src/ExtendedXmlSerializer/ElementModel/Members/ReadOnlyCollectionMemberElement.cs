@@ -28,19 +28,19 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
-    {
-        public ReadOnlyCollectionMemberElement(string displayName, MemberInfo metadata, Action<object, object> add,
-                                               Func<object, object> getter, Func<IElement> element)
-            : base(displayName, metadata, add, getter, element) {}
+	public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
+	{
+		public ReadOnlyCollectionMemberElement(string displayName, MemberInfo metadata, Action<object, object> add,
+		                                       Func<object, object> getter, Func<IElement> element)
+			: base(displayName, metadata, add, getter, element) {}
 
-        public override void Assign(object instance, object value)
-        {
-            var collection = Get(instance);
-            foreach (var element in value.AsValid<IEnumerable>())
-            {
-                base.Assign(collection, element);
-            }
-        }
-    }
+		public override void Assign(object instance, object value)
+		{
+			var collection = Get(instance);
+			foreach (var element in value.AsValid<IEnumerable>())
+			{
+				base.Assign(collection, element);
+			}
+		}
+	}
 }

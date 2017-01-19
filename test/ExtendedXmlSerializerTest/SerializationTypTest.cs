@@ -26,100 +26,100 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationTypTest : BaseTest
-    {
-        [Fact]
-        public void ClassPrimitiveTypes()
-        {
-            var obj = new TestClassPrimitiveTypes();
-            obj.Init();
+	public class SerializationTypTest : BaseTest
+	{
+		[Fact]
+		public void ClassPrimitiveTypes()
+		{
+			var obj = new TestClassPrimitiveTypes();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypes.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypes.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void ClassPrimitiveTypesNullable()
-        {
-            var obj = new TestClassPrimitiveTypesNullable();
-            obj.Init();
+		[Fact]
+		public void ClassPrimitiveTypesNullable()
+		{
+			var obj = new TestClassPrimitiveTypesNullable();
+			obj.Init();
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullable.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullable.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void ClassPrimitiveTypesNullableSetNull()
-        {
-            var obj = new TestClassPrimitiveTypesNullable();
-            obj.InitNull();
+		[Fact]
+		public void ClassPrimitiveTypesNullableSetNull()
+		{
+			var obj = new TestClassPrimitiveTypesNullable();
+			obj.InitNull();
 
-            CheckSerializationAndDeserialization(
-                "ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullableSetNull.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Resources.TestClassPrimitiveTypesNullableSetNull.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void ClassWithList()
-        {
-            var obj = new TestClassWithList();
-            obj.Init();
+		[Fact]
+		public void ClassWithList()
+		{
+			var obj = new TestClassWithList();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithList.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithList.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void ClassWithHashSet()
-        {
-            var obj = new TestClassWithHashSet();
-            obj.Init();
+		[Fact]
+		public void ClassWithHashSet()
+		{
+			var obj = new TestClassWithHashSet();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithHashSet.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithHashSet.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void TestClassWithListWithClass()
-        {
-            var obj = new TestClassWithListWithClass();
-            obj.Init();
+		[Fact]
+		public void TestClassWithListWithClass()
+		{
+			var obj = new TestClassWithListWithClass();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithListWithClass.xml",
-                                                 obj);
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassWithListWithClass.xml",
+			                                     obj);
 //            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+		}
 
 
-        [Fact]
-        public void TestClassPropIsInterface()
-        {
-            var obj = new TestClassPropIsInterface();
-            obj.Init();
+		[Fact]
+		public void TestClassPropIsInterface()
+		{
+			var obj = new TestClassPropIsInterface();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPropIsInterface.xml", obj);
-            //CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassPropIsInterface.xml", obj);
+			//CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void TestClassGuid()
-        {
-            var obj = new TestClassGuid();
-            obj.Init();
+		[Fact]
+		public void TestClassGuid()
+		{
+			var obj = new TestClassGuid();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassGuid.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassGuid.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
 
-        [Fact]
-        public void TestClassTimeSpan()
-        {
-            var obj = new TestClassTimeSpan();
-            obj.Init();
+		[Fact]
+		public void TestClassTimeSpan()
+		{
+			var obj = new TestClassTimeSpan();
+			obj.Init();
 
-            CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassTimeSpan.xml", obj);
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
-    }
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Resources.TestClassTimeSpan.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
+	}
 }

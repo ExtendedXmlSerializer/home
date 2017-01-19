@@ -23,15 +23,15 @@
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public abstract class ReaderBase : IReader
-    {
-        public abstract object Read(IReadContext context);
-    }
+	public abstract class ReaderBase : IReader
+	{
+		public abstract object Read(IReadContext context);
+	}
 
-    public abstract class ReaderBase<T> : IReader<T>
-    {
-        object IReader.Read(IReadContext context) => Read(context);
+	public abstract class ReaderBase<T> : IReader<T>
+	{
+		object IReader.Read(IReadContext context) => Read(context);
 
-        public abstract T Read(IReadContext context);
-    }
+		public abstract T Read(IReadContext context);
+	}
 }

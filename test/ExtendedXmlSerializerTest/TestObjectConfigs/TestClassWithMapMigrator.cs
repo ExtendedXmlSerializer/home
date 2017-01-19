@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,41 +29,41 @@ using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassWithMapMigrator : IExtendedXmlTypeMigrator
-    {        
-        public static void MigrationV0(XElement node)
-        {
-            // Delete not exists node
-            node.Elements().Where(x => x.Name == "NieistniejacyWezel").Remove();
-            // Delete unused node
-            node.Elements().Where(x => x.Name == "NieprzydatnyWezel").Remove();
-            // Add new node
-            node.Add(new XElement("NowyWezel", "Wartosc"));
-            // Change value
-            var element = node.Element("ZmianaWartosci");
-            if (element != null)
-            {
-                element.Value = "Nowa";
-            }
-        }
+	public class TestClassWithMapMigrator : IExtendedXmlTypeMigrator
+	{
+		public static void MigrationV0(XElement node)
+		{
+			// Delete not exists node
+			node.Elements().Where(x => x.Name == "NieistniejacyWezel").Remove();
+			// Delete unused node
+			node.Elements().Where(x => x.Name == "NieprzydatnyWezel").Remove();
+			// Add new node
+			node.Add(new XElement("NowyWezel", "Wartosc"));
+			// Change value
+			var element = node.Element("ZmianaWartosci");
+			if (element != null)
+			{
+				element.Value = "Nowa";
+			}
+		}
 
-        public static void MigrationV1(XElement node)
-        {
-            var element = node.Element("MapToClass");
-            if (element != null)
-            {
-                var newElement = new XElement("PropClass", new XElement("Wezel1", element.Value),
-                    new XElement("Wartosc", "1"));
-                newElement.SetAttributeValue("type", "ExtendedXmlSerialization.Test.TestObject.TestClassMapFromPrimitive");
-                node.Add(newElement);
-                element.Remove();
-            }
-        }
+		public static void MigrationV1(XElement node)
+		{
+			var element = node.Element("MapToClass");
+			if (element != null)
+			{
+				var newElement = new XElement("PropClass", new XElement("Wezel1", element.Value),
+				                              new XElement("Wartosc", "1"));
+				newElement.SetAttributeValue("type", "ExtendedXmlSerialization.Test.TestObject.TestClassMapFromPrimitive");
+				node.Add(newElement);
+				element.Remove();
+			}
+		}
 
-        public IEnumerable<Action<XElement>> GetAllMigrations()
-        {
-            yield return MigrationV0;
-            yield return MigrationV1;
-        }
-    }
+		public IEnumerable<Action<XElement>> GetAllMigrations()
+		{
+			yield return MigrationV0;
+			yield return MigrationV1;
+		}
+	}
 }

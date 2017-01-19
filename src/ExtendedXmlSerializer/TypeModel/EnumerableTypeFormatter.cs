@@ -27,28 +27,28 @@ using ExtendedXmlSerialization.Conversion;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    class EnumerableTypeFormatter : ITypeFormatter
-    {
-        public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
-        EnumerableTypeFormatter() : this(TypeFormatter.Default, CollectionItemTypeLocator.Default) {}
+	class EnumerableTypeFormatter : ITypeFormatter
+	{
+		public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
+		EnumerableTypeFormatter() : this(TypeFormatter.Default, CollectionItemTypeLocator.Default) {}
 
-        private readonly ITypeFormatter _formatter;
-        private readonly ICollectionItemTypeLocator _locator;
+		readonly ITypeFormatter _formatter;
+		readonly ICollectionItemTypeLocator _locator;
 
-        public EnumerableTypeFormatter(ITypeFormatter formatter, ICollectionItemTypeLocator locator)
-        {
-            _formatter = formatter;
-            _locator = locator;
-        }
+		public EnumerableTypeFormatter(ITypeFormatter formatter, ICollectionItemTypeLocator locator)
+		{
+			_formatter = formatter;
+			_locator = locator;
+		}
 
-        public string Format(TypeInfo type)
-        {
-            var arguments = type.GetGenericArguments();
-            var name = arguments.Any()
-                ? string.Join(string.Empty, arguments.Select(p => p.Name))
-                : _formatter.Format(_locator.Get(type));
-            var result = $"{type.Name.ToStringArray('`')[0]}Of{name}";
-            return result;
-        }
-    }
+		public string Format(TypeInfo type)
+		{
+			var arguments = type.GetGenericArguments();
+			var name = arguments.Any()
+				? string.Join(string.Empty, arguments.Select(p => p.Name))
+				: _formatter.Format(_locator.Get(type));
+			var result = $"{type.Name.ToStringArray('`')[0]}Of{name}";
+			return result;
+		}
+	}
 }

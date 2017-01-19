@@ -25,8 +25,8 @@ using System;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public interface IServiceRepository : IServiceProvider
-    {
-        void Add(object service);
-    }
+	public interface IServiceRepository : IServiceProvider
+	{
+		void Add(object service);
+	}
 }

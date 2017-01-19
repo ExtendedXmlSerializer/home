@@ -26,16 +26,16 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class Option<TParameter, TResult> : OptionBase<TParameter, TResult>
-    {
-        private readonly Func<TParameter, TResult> _source;
+	public class Option<TParameter, TResult> : OptionBase<TParameter, TResult>
+	{
+		readonly Func<TParameter, TResult> _source;
 
-        public Option(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
-            : base(specification)
-        {
-            _source = source;
-        }
+		public Option(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
+			: base(specification)
+		{
+			_source = source;
+		}
 
-        public override TResult Get(TParameter parameter) => _source(parameter);
-    }
+		public override TResult Get(TParameter parameter) => _source(parameter);
+	}
 }

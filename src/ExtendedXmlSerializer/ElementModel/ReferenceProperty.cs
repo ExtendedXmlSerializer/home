@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    sealed class ReferenceProperty : FrameworkPropertyBase
-    {
-        public static ReferenceProperty Default { get; } = new ReferenceProperty();
-        ReferenceProperty() : base("ref") {}
-    }
+	sealed class ReferenceProperty : FrameworkPropertyBase
+	{
+		public static ReferenceProperty Default { get; } = new ReferenceProperty();
+		ReferenceProperty() : base("ref") {}
+	}
 }

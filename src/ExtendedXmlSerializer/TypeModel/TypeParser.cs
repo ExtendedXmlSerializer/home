@@ -26,53 +26,53 @@ using System.Collections.Concurrent;
 using System.Reflection;
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 using Microsoft.Extensions.DependencyModel;
-
+using System.IO;
 #endif
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public class TypeParser : ConcurrentDictionary<string, TypeInfo>, ITypeParser
-    {
-        public static TypeParser Default { get; } = new TypeParser();
-        TypeParser() {}
+	public class TypeParser : ConcurrentDictionary<string, TypeInfo>, ITypeParser
+	{
+		public static TypeParser Default { get; } = new TypeParser();
+		TypeParser() {}
 
-        private static readonly Func<string, TypeInfo> GetTypeFromNameDelegate = GetTypeFromName;
+		readonly static Func<string, TypeInfo> GetTypeFromNameDelegate = GetTypeFromName;
 
-        public TypeInfo Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
+		public TypeInfo Get(string parameter) => GetOrAdd(parameter, GetTypeFromNameDelegate);
 
-        private static TypeInfo GetTypeFromName(string typeName)
-        {
-            var type = Type.GetType(typeName)?.GetTypeInfo();
-            if (type != null)
-                return type;
+		static TypeInfo GetTypeFromName(string typeName)
+		{
+			var type = Type.GetType(typeName)?.GetTypeInfo();
+			if (type != null)
+				return type;
 #if NETSTANDARD1_6 || NETSTANDARD2_0
 // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
 // https://github.com/dotnet/corefx/issues/8806
 // https://github.com/dotnet/corefx/issues/8910
-            foreach (var runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
-            {
-                try
-                {
-                    var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
+			foreach (var runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
+			{
+				try
+				{
+					var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
 
-                    type = assembly.GetType(typeName)?.GetTypeInfo();
-                    if (type != null)
-                        return type;
-                }
-                catch (System.IO.FileNotFoundException) {}
-            }
+					type = assembly.GetType(typeName)?.GetTypeInfo();
+					if (type != null)
+						return type;
+				}
+				catch (FileNotFoundException) {}
+			}
 #else
-            foreach (var c in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = c.GetType(typeName)?.GetTypeInfo();
-                if (type != null)
-                {
-                    return type;
-                }
-            }
+			foreach (var c in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				type = c.GetType(typeName)?.GetTypeInfo();
+				if (type != null)
+				{
+					return type;
+				}
+			}
 #endif
 
-            throw new Exception("Unknown type " + typeName);
-        }
-    }
+			throw new Exception("Unknown type " + typeName);
+		}
+	}
 }

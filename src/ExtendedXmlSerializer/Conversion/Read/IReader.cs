@@ -23,13 +23,13 @@
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReader
-    {
-        object Read(IReadContext context);
-    }
+	public interface IReader
+	{
+		object Read(IReadContext context);
+	}
 
-    public interface IReader<out T> : IReader
-    {
-        new T Read(IReadContext context);
-    }
+	public interface IReader<out T> : IReader
+	{
+		new T Read(IReadContext context);
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,140 +28,142 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 {
-    internal static class ObjectAccessors
-    {
-        internal delegate object ObjectActivator();
+	static class ObjectAccessors
+	{
+		internal delegate object ObjectActivator();
 
-        internal delegate object PropertyGetter(object item);
+		internal delegate object PropertyGetter(object item);
 
-        internal delegate void PropertySetter(object item, object value);
-        
-        internal delegate void AddItemToCollection(object item, object value);
-        internal delegate void AddItemToDictionary(object item, object key, object value);
+		internal delegate void PropertySetter(object item, object value);
 
-        internal static ObjectActivator CreateObjectActivator(Type type, bool isPrimitive)
-        {
-            var typeInfo = type.GetTypeInfo();
-            //if isClass or struct but not abstract, enum or primitive
-            if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum && !typeInfo.IsPrimitive)
-            {
-                if (typeInfo.IsClass)
-                {
-                    //class must have constructor
-                    var constructor = type.GetConstructor(Type.EmptyTypes);
-                    if (constructor == null)
-                        return null;
-                }
+		internal delegate void AddItemToCollection(object item, object value);
 
-                var newExp = Expression.Convert(Expression.New(type), typeof(object));
+		internal delegate void AddItemToDictionary(object item, object key, object value);
 
-                var lambda = Expression.Lambda<ObjectActivator>(newExp);
+		internal static ObjectActivator CreateObjectActivator(Type type, bool isPrimitive)
+		{
+			var typeInfo = type.GetTypeInfo();
+			//if isClass or struct but not abstract, enum or primitive
+			if (!isPrimitive && (typeInfo.IsClass || typeInfo.IsValueType) && !typeInfo.IsAbstract && !typeInfo.IsEnum &&
+			    !typeInfo.IsPrimitive)
+			{
+				if (typeInfo.IsClass)
+				{
+					//class must have constructor
+					var constructor = type.GetConstructor(Type.EmptyTypes);
+					if (constructor == null)
+						return null;
+				}
 
-                return lambda.Compile();
-            }
-                
-            return null;
-        }
-        
-        internal static PropertyGetter CreatePropertyGetter(Type type, string propertyName)
-        {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+				var newExp = Expression.Convert(Expression.New(type), typeof(object));
 
-            // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
+				var lambda = Expression.Lambda<ObjectActivator>(newExp);
 
-            // Property from casted object
-            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
+				return lambda.Compile();
+			}
 
-            // Because we use this function also for value type we need to add conversion to object
-            Expression conversion = Expression.Convert(property, typeof(object));
+			return null;
+		}
 
-            LambdaExpression lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
+		internal static PropertyGetter CreatePropertyGetter(Type type, string propertyName)
+		{
+			// Object (type object) from witch the data are retrieved
+			var itemObject = Expression.Parameter(typeof(object), "item");
 
-            PropertyGetter compiled = (PropertyGetter)lambda.Compile();
-            return compiled;
-        }
+			// Object casted to specific type using the operator "as".
+			var itemCasted = Expression.Convert(itemObject, type);
 
-        internal static AddItemToDictionary CreateMethodAddToDictionary(Type type)
-        {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+			// Property from casted object
+			var property = Expression.PropertyOrField(itemCasted, propertyName);
 
-            // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
+			// Because we use this function also for value type we need to add conversion to object
+			Expression conversion = Expression.Convert(property, typeof(object));
 
-            var arguments = type.GetGenericArguments();
-            List<ParameterExpression> objParams = new List<ParameterExpression>();
-            //Add object as first param
-            objParams.Add(itemObject);
-            List<Expression> castedParams = new List<Expression>();
-            foreach (var argument in arguments)
-            {
-                ParameterExpression value = Expression.Parameter(typeof(object), "value");
-                objParams.Add(value);
-                castedParams.Add(Expression.Convert(value, argument));
-            }
+			var lambda = Expression.Lambda(typeof(PropertyGetter), conversion, itemObject);
 
-            MethodInfo method = type.GetMethod("Add");
+			var compiled = (PropertyGetter) lambda.Compile();
+			return compiled;
+		}
 
-            Expression conversion = Expression.Call(itemCasted, method, castedParams);
+		internal static AddItemToDictionary CreateMethodAddToDictionary(Type type)
+		{
+			// Object (type object) from witch the data are retrieved
+			var itemObject = Expression.Parameter(typeof(object), "item");
 
-            LambdaExpression lambda = Expression.Lambda(typeof(AddItemToDictionary), conversion, objParams);
+			// Object casted to specific type using the operator "as".
+			var itemCasted = Expression.Convert(itemObject, type);
 
-            AddItemToDictionary compiled = (AddItemToDictionary)lambda.Compile();
-            return compiled;
-        }
+			var arguments = type.GetGenericArguments();
+			var objParams = new List<ParameterExpression>();
+			//Add object as first param
+			objParams.Add(itemObject);
+			var castedParams = new List<Expression>();
+			foreach (var argument in arguments)
+			{
+				var value = Expression.Parameter(typeof(object), "value");
+				objParams.Add(value);
+				castedParams.Add(Expression.Convert(value, argument));
+			}
 
-        internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType)
-        {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+			var method = type.GetMethod("Add");
 
-            // Object casted to specific type using the operator "as".
-            UnaryExpression itemCasted = Expression.Convert(itemObject, type);
+			Expression conversion = Expression.Call(itemCasted, method, castedParams);
 
-            var parameterType = elementType ?? type.GetGenericArguments()[0];
+			var lambda = Expression.Lambda(typeof(AddItemToDictionary), conversion, objParams);
 
-            ParameterExpression value = Expression.Parameter(typeof(object), "value");
+			var compiled = (AddItemToDictionary) lambda.Compile();
+			return compiled;
+		}
 
-            Expression castedParam = Expression.Convert(value, parameterType);
+		internal static AddItemToCollection CreateMethodAddCollection(Type type, Type elementType)
+		{
+			// Object (type object) from witch the data are retrieved
+			var itemObject = Expression.Parameter(typeof(object), "item");
 
-            MethodInfo method = AddMethodLocator.Default.Locate(type, parameterType);
-            
-            Expression conversion = Expression.Call(itemCasted, method, castedParam);
+			// Object casted to specific type using the operator "as".
+			var itemCasted = Expression.Convert(itemObject, type);
 
-            LambdaExpression lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
+			var parameterType = elementType ?? type.GetGenericArguments()[0];
 
-            AddItemToCollection compiled = (AddItemToCollection)lambda.Compile();
-            return compiled;
-        }
+			var value = Expression.Parameter(typeof(object), "value");
 
-        internal static PropertySetter CreatePropertySetter(Type type, string propertyName)
-        {
-            // Object (type object) from witch the data are retrieved
-            ParameterExpression itemObject = Expression.Parameter(typeof(object), "item");
+			Expression castedParam = Expression.Convert(value, parameterType);
 
-            // Object casted to specific type using the operator "as".
-            Expression itemCasted = type.GetTypeInfo().IsValueType
-                ? Expression.Unbox(itemObject, type)
-                : Expression.Convert(itemObject, type);
-            // Property from casted object
-            MemberExpression property = Expression.PropertyOrField(itemCasted, propertyName);
+			var method = AddMethodLocator.Default.Locate(type, parameterType);
 
-            // Secound parameter - value to set
-            ParameterExpression value = Expression.Parameter(typeof(object), "value");
+			Expression conversion = Expression.Call(itemCasted, method, castedParam);
 
-            // Because we use this function also for value type we need to add conversion to object
-            Expression paramCasted = Expression.Convert(value, property.Type);
+			var lambda = Expression.Lambda(typeof(AddItemToCollection), conversion, itemObject, value);
 
-            // Assign value to property
-            BinaryExpression assign = Expression.Assign(property, paramCasted);
+			var compiled = (AddItemToCollection) lambda.Compile();
+			return compiled;
+		}
 
-            LambdaExpression lambda = Expression.Lambda(typeof(PropertySetter), assign, itemObject, value);
+		internal static PropertySetter CreatePropertySetter(Type type, string propertyName)
+		{
+			// Object (type object) from witch the data are retrieved
+			var itemObject = Expression.Parameter(typeof(object), "item");
 
-            PropertySetter compiled = (PropertySetter)lambda.Compile();
-            return compiled;
-        }
-    }
+			// Object casted to specific type using the operator "as".
+			Expression itemCasted = type.GetTypeInfo().IsValueType
+				? Expression.Unbox(itemObject, type)
+				: Expression.Convert(itemObject, type);
+			// Property from casted object
+			var property = Expression.PropertyOrField(itemCasted, propertyName);
+
+			// Secound parameter - value to set
+			var value = Expression.Parameter(typeof(object), "value");
+
+			// Because we use this function also for value type we need to add conversion to object
+			Expression paramCasted = Expression.Convert(value, property.Type);
+
+			// Assign value to property
+			var assign = Expression.Assign(property, paramCasted);
+
+			var lambda = Expression.Lambda(typeof(PropertySetter), assign, itemObject, value);
+
+			var compiled = (PropertySetter) lambda.Compile();
+			return compiled;
+		}
+	}
 }

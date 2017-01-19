@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,19 +27,19 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy
 {
-    public interface IExtendedXmlSerializerConfig
-    {
-        int Version { get; } // Consider making getter only, defined by implementation.
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
+	public interface IExtendedXmlSerializerConfig
+	{
+		int Version { get; } // Consider making getter only, defined by implementation.
+		void Map(Type targetType, XElement currentNode);
+		object ReadObject(XElement element);
+		void WriteObject(XmlWriter writer, object obj);
 
-        bool IsSatisfiedBy(Type type);
+		bool IsSatisfiedBy(Type type);
 
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        string ExtractedListName { get; set; }
-        string GetObjectId(object obj);
-        bool CheckPropertyEncryption(string propertyInfoName);
-    }
+		bool IsCustomSerializer { get; set; }
+		bool IsObjectReference { get; set; }
+		string ExtractedListName { get; set; }
+		string GetObjectId(object obj);
+		bool CheckPropertyEncryption(string propertyInfoName);
+	}
 }

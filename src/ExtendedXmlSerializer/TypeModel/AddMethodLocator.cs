@@ -27,30 +27,30 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public sealed class AddMethodLocator : ConcurrentDictionary<TypeInfo, MethodInfo>, IAddMethodLocator
-    {
-        const string Add = "Add";
+	public sealed class AddMethodLocator : ConcurrentDictionary<TypeInfo, MethodInfo>, IAddMethodLocator
+	{
+		const string Add = "Add";
 
-        public static AddMethodLocator Default { get; } = new AddMethodLocator();
-        AddMethodLocator() {}
+		public static AddMethodLocator Default { get; } = new AddMethodLocator();
+		AddMethodLocator() {}
 
-        public MethodInfo Locate(TypeInfo type, TypeInfo elementType)
-        {
-            return GetOrAdd(type, t => Get(type, elementType));
-        }
+		public MethodInfo Locate(TypeInfo type, TypeInfo elementType)
+		{
+			return GetOrAdd(type, t => Get(type, elementType));
+		}
 
-        static MethodInfo Get(TypeInfo type, TypeInfo elementType)
-        {
-            foreach (var candidate in AllInterfaces.Instance.Yield(type))
-            {
-                var method = candidate.GetMethod(Add);
-                var parameters = method?.GetParameters();
-                if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
-                {
-                    return method;
-                }
-            }
-            return null;
-        }
-    }
+		static MethodInfo Get(TypeInfo type, TypeInfo elementType)
+		{
+			foreach (var candidate in AllInterfaces.Instance.Yield(type))
+			{
+				var method = candidate.GetMethod(Add);
+				var parameters = method?.GetParameters();
+				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
+				{
+					return method;
+				}
+			}
+			return null;
+		}
+	}
 }

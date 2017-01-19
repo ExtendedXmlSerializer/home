@@ -27,21 +27,21 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    abstract class TypeEmittingWriterBase : DecoratedWriter
-    {
-        protected TypeEmittingWriterBase(IWriter writer) : base(writer) {}
+	abstract class TypeEmittingWriterBase : DecoratedWriter
+	{
+		protected TypeEmittingWriterBase(IWriter writer) : base(writer) {}
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            var type = instance.GetType().GetTypeInfo();
-            if (Emit(context, instance, type))
-            {
-                context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
-            }
+		public override void Write(IWriteContext context, object instance)
+		{
+			var type = instance.GetType().GetTypeInfo();
+			if (Emit(context, instance, type))
+			{
+				context.Write(TypeProperty.Default, LegacyTypeFormatter.Default.Format(type));
+			}
 
-            base.Write(context, instance);
-        }
+			base.Write(context, instance);
+		}
 
-        protected abstract bool Emit(IWriteContext context, object instance, TypeInfo type);
-    }
+		protected abstract bool Emit(IWriteContext context, object instance, TypeInfo type);
+	}
 }

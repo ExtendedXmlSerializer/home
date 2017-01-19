@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class StringTypeConverter : ValueTypeConverterBase<string>
-    {
-        readonly private static Func<string, string> Self = Self<string>.Default.Get;
+	public class StringTypeConverter : ValueTypeConverterBase<string>
+	{
+		readonly static Func<string, string> Self = Self<string>.Default.Get;
 
-        public static StringTypeConverter Default { get; } = new StringTypeConverter();
-        StringTypeConverter() : base(Self, Self) {}
-    }
+		public static StringTypeConverter Default { get; } = new StringTypeConverter();
+		StringTypeConverter() : base(Self, Self) {}
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +26,15 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationDifferentProperty : BaseTest
-    {
-        [Fact]
-        public void DifferentProperty()
-        {
-            var obj = new TestClassPropertyType();
-            obj.Init();
+	public class SerializationDifferentProperty : BaseTest
+	{
+		[Fact]
+		public void DifferentProperty()
+		{
+			var obj = new TestClassPropertyType();
+			obj.Init();
 
-            CheckCompatibilityWithDefaultSerializator(obj);
-        }
-    }
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
+	}
 }

@@ -26,14 +26,14 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface IContext : IServiceProvider
-    {
-        IContainerElement Container { get; }
+	public interface IContext : IServiceProvider
+	{
+		IContainerElement Container { get; }
 
-        IElement Element { get; }
+		IElement Element { get; }
 
-        IContext Select();
+		IContext Select();
 
-        IElement Selected { get; }
-    }
+		IElement Selected { get; }
+	}
 }

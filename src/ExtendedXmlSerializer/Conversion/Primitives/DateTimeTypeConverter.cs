@@ -26,13 +26,13 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class DateTimeTypeConverter : ValueTypeConverterBase<DateTime>
-    {
-        public static DateTimeTypeConverter Default { get; } = new DateTimeTypeConverter();
+	public class DateTimeTypeConverter : ValueTypeConverterBase<DateTime>
+	{
+		public static DateTimeTypeConverter Default { get; } = new DateTimeTypeConverter();
 
-        DateTimeTypeConverter()
-            : base(
-                x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind),
-                x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
-    }
+		DateTimeTypeConverter()
+			: base(
+				x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind),
+				x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
+	}
 }

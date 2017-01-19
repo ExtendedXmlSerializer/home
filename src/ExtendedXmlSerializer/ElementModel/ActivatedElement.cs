@@ -26,14 +26,14 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ActivatedElement : NamedElementBase, IActivatedElement
-    {
-        public ActivatedElement(string displayName, TypeInfo classification, IMembers members)
-            : base(displayName, classification)
-        {
-            Members = members;
-        }
+	public class ActivatedElement : NamedElementBase, IActivatedElement
+	{
+		public ActivatedElement(string displayName, TypeInfo classification, IMembers members)
+			: base(displayName, classification)
+		{
+			Members = members;
+		}
 
-        public IMembers Members { get; }
-    }
+		public IMembers Members { get; }
+	}
 }

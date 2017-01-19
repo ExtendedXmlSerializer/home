@@ -25,30 +25,30 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    class InstanceBodyReader : DecoratedReader
-    {
-        private readonly IActivators _activators;
+	class InstanceBodyReader : DecoratedReader
+	{
+		readonly IActivators _activators;
 
-        public InstanceBodyReader(IReader reader) : this(reader, Activators.Default) {}
+		public InstanceBodyReader(IReader reader) : this(reader, Activators.Default) {}
 
-        public InstanceBodyReader(IReader reader, IActivators activators) : base(reader)
-        {
-            _activators = activators;
-        }
+		public InstanceBodyReader(IReader reader, IActivators activators) : base(reader)
+		{
+			_activators = activators;
+		}
 
-        public override object Read(IReadContext context)
-        {
-            var result = Activate(context);
-            foreach (var child in context)
-            {
-                var value = base.Read(child);
-                var member = child.Container;
-                member.Assign(result, value);
-            }
-            return result;
-        }
+		public override object Read(IReadContext context)
+		{
+			var result = Activate(context);
+			foreach (var child in context)
+			{
+				var value = base.Read(child);
+				var member = child.Container;
+				member.Assign(result, value);
+			}
+			return result;
+		}
 
-        protected virtual object Activate(IReadContext context)
-            => _activators.Activate<object>(context.Element.Classification.AsType());
-    }
+		protected virtual object Activate(IReadContext context)
+			=> _activators.Activate<object>(context.Element.Classification.AsType());
+	}
 }

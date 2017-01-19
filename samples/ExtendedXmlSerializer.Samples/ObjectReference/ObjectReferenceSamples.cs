@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,23 +20,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
-    public class ObjectReferenceSamples
-    {
-        public static void RunSimpleConfig()
-        {
-            Program.PrintHeader("Serialization reference object");
+	public class ObjectReferenceSamples
+	{
+		public static void RunSimpleConfig()
+		{
+			Program.PrintHeader("Serialization reference object");
 
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(
-                cfg => cfg.ConfigureType<Person>().Property(p => p.Id).ObjectReference()
-            );
+			var serializer = new ExtendedXmlSerializer(
+				cfg => cfg.ConfigureType<Person>().Property(p => p.Id).ObjectReference()
+			);
 
-            Run(serializer);
-        }
+			Run(serializer);
+		}
+
 //        public static void RunAutofacConfig()
 //        {
 //            Program.PrintHeader("Serialization reference object - autofac config");
@@ -49,26 +52,26 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 //            Run(serializer);
 //        }
 
-        private static void Run(IExtendedXmlSerializer serializer)
-        {
-            var boss = new Person {Id = 1, Name = "John"};
-            boss.Boss = boss; //himself boss
-            var worker = new Person {Id = 2, Name = "Oliver"};
-            worker.Boss = boss;
-            var obj = new Company
-            {
-                Employees = new List<Person>
-                {
-                    worker,
-                    boss
-                }
-            };
-          
-            var xml = serializer.Serialize(obj);
-            Console.WriteLine(xml);
+		static void Run(IExtendedXmlSerializer serializer)
+		{
+			var boss = new Person {Id = 1, Name = "John"};
+			boss.Boss = boss; //himself boss
+			var worker = new Person {Id = 2, Name = "Oliver"};
+			worker.Boss = boss;
+			var obj = new Company
+			          {
+				          Employees = new List<Person>
+				                      {
+					                      worker,
+					                      boss
+				                      }
+			          };
 
-            var obj2 = serializer.Deserialize<Company>(xml);
-            Console.WriteLine("Employees count = " + obj2.Employees.Count);
-        }
-    }
+			var xml = serializer.Serialize(obj);
+			Console.WriteLine(xml);
+
+			var obj2 = serializer.Deserialize<Company>(xml);
+			Console.WriteLine("Employees count = " + obj2.Employees.Count);
+		}
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,48 +27,54 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SerializationInheritanceWithCustomSerializerTest : BaseTest
-    {
-        public SerializationInheritanceWithCustomSerializerTest()
-        {
-            Serializer = new ExtendedXmlSerializer(cfg =>
-            {
-                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerBase>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBaseConfig());
-                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerA>().CustomSerializer(new TestClassInheritanceWithCustomSerializerAConfig());
-                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerB>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBConfig());
-            });
-        }
+	public class SerializationInheritanceWithCustomSerializerTest : BaseTest
+	{
+		public SerializationInheritanceWithCustomSerializerTest()
+		{
+			Serializer = new ExtendedXmlSerializer(cfg =>
+			                                       {
+				                                       cfg.ConfigureType<TestClassInheritanceWithCustomSerializerBase>()
+				                                          .CustomSerializer(
+					                                          new TestClassInheritanceWithCustomSerializerBaseConfig());
+				                                       cfg.ConfigureType<TestClassInheritanceWithCustomSerializerA>()
+				                                          .CustomSerializer(new TestClassInheritanceWithCustomSerializerAConfig());
+				                                       cfg.ConfigureType<TestClassInheritanceWithCustomSerializerB>()
+				                                          .CustomSerializer(new TestClassInheritanceWithCustomSerializerBConfig());
+			                                       });
+		}
 
-        [Fact]
-        public void MigrationsForInheritance()
-        {
-            TestClassInheritanceWithCustomSerializerBase obj = new TestClassInheritanceWithCustomSerializerA
-            {
-                FirstProperty = "1",
-                SecondProperty = "2"
-            };
+		[Fact]
+		public void MigrationsForInheritance()
+		{
+			TestClassInheritanceWithCustomSerializerBase obj = new TestClassInheritanceWithCustomSerializerA
+			                                                   {
+				                                                   FirstProperty = "1",
+				                                                   SecondProperty = "2"
+			                                                   };
 
-            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClassInheritanceWithCustomSerializerA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerA"" First=""1"" Second=""2"" />", obj);
+			CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithCustomSerializerA type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerA"" First=""1"" Second=""2"" />",
+			                                          obj);
 
-            obj = new TestClassInheritanceWithCustomSerializerBase()
-            {
-                FirstProperty = "1"
-            };
+			obj = new TestClassInheritanceWithCustomSerializerBase
+			      {
+				      FirstProperty = "1"
+			      };
 
-            CheckSerializationAndDeserializationByXml(
-                    @"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClassInheritanceWithCustomSerializerBase type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerBase"" First=""1"" />", obj);
+			CheckSerializationAndDeserializationByXml(
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithCustomSerializerBase type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerBase"" First=""1"" />",
+				obj);
 
-            obj = new TestClassInheritanceWithCustomSerializerB()
-            {
-                FirstProperty = "1",
-                ThirdProperty = "3"
-            };
+			obj = new TestClassInheritanceWithCustomSerializerB
+			      {
+				      FirstProperty = "1",
+				      ThirdProperty = "3"
+			      };
 
-            CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClassInheritanceWithCustomSerializerB type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerB""  First=""1"" Third=""3"" />", obj);
-
-        }
-    }
+			CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClassInheritanceWithCustomSerializerB type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithCustomSerializerB""  First=""1"" Third=""3"" />",
+			                                          obj);
+		}
+	}
 }

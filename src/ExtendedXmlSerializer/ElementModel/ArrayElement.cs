@@ -25,14 +25,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ArrayElement : NamedElementBase, IArrayElement
-    {
-        public ArrayElement(string displayName, TypeInfo classification, ICollectionItem item)
-            : base(displayName, classification)
-        {
-            Item = item;
-        }
+	public class ArrayElement : NamedElementBase, IArrayElement
+	{
+		public ArrayElement(string displayName, TypeInfo classification, ICollectionItem item)
+			: base(displayName, classification)
+		{
+			Item = item;
+		}
 
-        public ICollectionItem Item { get; }
-    }
+		public ICollectionItem Item { get; }
+	}
 }

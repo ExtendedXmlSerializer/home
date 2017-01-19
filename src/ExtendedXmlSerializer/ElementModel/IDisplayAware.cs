@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IDisplayAware
-    {
-        string DisplayName { get; }
-    }
+	public interface IDisplayAware
+	{
+		string DisplayName { get; }
+	}
 }

@@ -27,12 +27,12 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacyMemberElementSelector : MemberElementSelector
-    {
-        public LegacyMemberElementSelector(IInternalExtendedXmlConfiguration config, IElements elements)
-            : base(
-                new MemberOption(elements, new LegacyGetterFactory(config),
-                                 new LegacySetterFactory(config, SetterFactory.Default)),
-                new ReadOnlyCollectionMemberOption(elements)) {}
-    }
+	class LegacyMemberElementSelector : MemberElementSelector
+	{
+		public LegacyMemberElementSelector(IInternalExtendedXmlConfiguration config, IElements elements)
+			: base(
+				new MemberOption(elements, new LegacyGetterFactory(config),
+				                 new LegacySetterFactory(config, SetterFactory.Default)),
+				new ReadOnlyCollectionMemberOption(elements)) {}
+	}
 }

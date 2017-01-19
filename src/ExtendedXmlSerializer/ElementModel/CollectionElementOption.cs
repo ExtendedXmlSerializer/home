@@ -27,12 +27,12 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class CollectionElementOption : CollectionElementOptionBase
-    {
-        public CollectionElementOption(IElements elements, IElementNames names, IElementMembers members)
-            : base(IsCollectionTypeSpecification.Default, elements, names, members) {}
+	public class CollectionElementOption : CollectionElementOptionBase
+	{
+		public CollectionElementOption(IElements elements, IElementNames names, IElementMembers members)
+			: base(IsCollectionTypeSpecification.Default, elements, names, members) {}
 
-        protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item)
-            => new CollectionElement(name, collectionType, members, item);
-    }
+		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item)
+			=> new CollectionElement(name, collectionType, members, item);
+	}
 }

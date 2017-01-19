@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface ISelectorFactory : IParameterizedSource<IConverter, IConverterSelector> {}
+	public interface ISelectorFactory : IParameterizedSource<IConverter, IConverterSelector> {}
 }

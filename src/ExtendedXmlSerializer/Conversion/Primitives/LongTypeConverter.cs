@@ -25,9 +25,9 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Primitives
 {
-    public class LongTypeConverter : ValueTypeConverterBase<long>
-    {
-        public static LongTypeConverter Default { get; } = new LongTypeConverter();
-        LongTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
-    }
+	public class LongTypeConverter : ValueTypeConverterBase<long>
+	{
+		public static LongTypeConverter Default { get; } = new LongTypeConverter();
+		LongTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
+	}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public interface IActivators : IParameterizedSource<Type, Func<object>> {}
+	public interface IActivators : IParameterizedSource<Type, Func<object>> {}
 }

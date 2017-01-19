@@ -27,13 +27,13 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public class IsActivatedTypeSpecification : ISpecification<TypeInfo>
-    {
-        public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
-        IsActivatedTypeSpecification() {}
+	public class IsActivatedTypeSpecification : ISpecification<TypeInfo>
+	{
+		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
+		IsActivatedTypeSpecification() {}
 
-        public bool IsSatisfiedBy(TypeInfo parameter)
-            => parameter.IsValueType ||
-               !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
-    }
+		public bool IsSatisfiedBy(TypeInfo parameter)
+			=> parameter.IsValueType ||
+			   !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
+	}
 }

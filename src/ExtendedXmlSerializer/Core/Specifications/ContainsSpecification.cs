@@ -25,8 +25,8 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class ContainsSpecification<T> : DelegatedSpecification<T>
-    {
-        public ContainsSpecification(ICollection<T> source) : base(source.Contains) {}
-    }
+	public class ContainsSpecification<T> : DelegatedSpecification<T>
+	{
+		public ContainsSpecification(ICollection<T> source) : base(source.Contains) {}
+	}
 }

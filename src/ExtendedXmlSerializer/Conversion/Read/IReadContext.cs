@@ -27,17 +27,17 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IReadContext<out T> : IReadContext where T : IContainerElement
-    {
-        new T Container { get; }
-    }
+	public interface IReadContext<out T> : IReadContext where T : IContainerElement
+	{
+		new T Container { get; }
+	}
 
-    public interface IReadContext : IContext, IEnumerable<IReadMemberContext>, IServiceRepository
-    {
-        IEnumerable<IReadContext> Items();
+	public interface IReadContext : IContext, IEnumerable<IReadMemberContext>, IServiceRepository
+	{
+		IEnumerable<IReadContext> Items();
 
-        string Read();
+		string Read();
 
-        string this[IElementName name] { get; }
-    }
+		string this[IElementName name] { get; }
+	}
 }

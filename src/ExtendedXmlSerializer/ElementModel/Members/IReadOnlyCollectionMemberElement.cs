@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public interface IReadOnlyCollectionMemberElement : IMemberElement {}
+	public interface IReadOnlyCollectionMemberElement : IMemberElement {}
 }

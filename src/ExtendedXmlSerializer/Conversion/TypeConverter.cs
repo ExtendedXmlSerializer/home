@@ -28,18 +28,18 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class TypeConverter : DecoratedConverter, ITypeConverter
-    {
-        private readonly ISpecification<TypeInfo> _specification;
+	public class TypeConverter : DecoratedConverter, ITypeConverter
+	{
+		readonly ISpecification<TypeInfo> _specification;
 
-        public TypeConverter(ISpecification<TypeInfo> specification, IReader reader, IWriter writer)
-            : this(specification, new Converter(reader, writer)) {}
+		public TypeConverter(ISpecification<TypeInfo> specification, IReader reader, IWriter writer)
+			: this(specification, new Converter(reader, writer)) {}
 
-        public TypeConverter(ISpecification<TypeInfo> specification, IConverter converter) : base(converter)
-        {
-            _specification = specification;
-        }
+		public TypeConverter(ISpecification<TypeInfo> specification, IConverter converter) : base(converter)
+		{
+			_specification = specification;
+		}
 
-        public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
-    }
+		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
+	}
 }

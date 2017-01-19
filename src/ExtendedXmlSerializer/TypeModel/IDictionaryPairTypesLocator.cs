@@ -27,5 +27,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public interface IDictionaryPairTypesLocator : IParameterizedSource<TypeInfo, DictionaryPairTypes> {}
+	public interface IDictionaryPairTypesLocator : IParameterizedSource<TypeInfo, DictionaryPairTypes> {}
 }

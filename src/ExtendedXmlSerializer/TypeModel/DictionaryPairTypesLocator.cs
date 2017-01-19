@@ -30,33 +30,33 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public class DictionaryPairTypesLocator : WeakCacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
-    {
-        public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
-        DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
+	public class DictionaryPairTypesLocator : WeakCacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
+	{
+		public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
+		DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
-        private readonly Type _type;
+		readonly Type _type;
 
-        public DictionaryPairTypesLocator(Type type)
-        {
-            _type = type;
-        }
+		public DictionaryPairTypesLocator(Type type)
+		{
+			_type = type;
+		}
 
-        protected override DictionaryPairTypes Create(TypeInfo parameter)
-        {
-            foreach (var it in parameter.GetInterfaces().Select(x => x.GetTypeInfo()).Append(parameter))
-            {
-                if (it.IsGenericType && it.GetGenericTypeDefinition() == _type)
-                {
-                    var arguments = it.GetGenericArguments();
-                    var mapping = new DictionaryPairTypes(arguments[0].GetTypeInfo(), arguments[1].GetTypeInfo());
-                    return mapping;
-                }
-            }
+		protected override DictionaryPairTypes Create(TypeInfo parameter)
+		{
+			foreach (var it in parameter.GetInterfaces().Select(x => x.GetTypeInfo()).Append(parameter))
+			{
+				if (it.IsGenericType && it.GetGenericTypeDefinition() == _type)
+				{
+					var arguments = it.GetGenericArguments();
+					var mapping = new DictionaryPairTypes(arguments[0].GetTypeInfo(), arguments[1].GetTypeInfo());
+					return mapping;
+				}
+			}
 
-            var baseType = parameter.BaseType?.GetTypeInfo();
-            var result = baseType != null ? Get(baseType) : null;
-            return result;
-        }
-    }
+			var baseType = parameter.BaseType?.GetTypeInfo();
+			var result = baseType != null ? Get(baseType) : null;
+			return result;
+		}
+	}
 }

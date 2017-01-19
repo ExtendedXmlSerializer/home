@@ -25,15 +25,15 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class NamedElementBase : ElementBase, IDisplayAware
-    {
-        protected NamedElementBase(string displayName, TypeInfo classification)
-        {
-            DisplayName = displayName;
-            Classification = classification;
-        }
+	public abstract class NamedElementBase : ElementBase, IDisplayAware
+	{
+		protected NamedElementBase(string displayName, TypeInfo classification)
+		{
+			DisplayName = displayName;
+			Classification = classification;
+		}
 
-        public override TypeInfo Classification { get; }
-        public string DisplayName { get; }
-    }
+		public override TypeInfo Classification { get; }
+		public string DisplayName { get; }
+	}
 }

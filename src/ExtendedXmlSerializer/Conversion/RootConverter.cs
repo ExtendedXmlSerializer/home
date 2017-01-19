@@ -25,13 +25,13 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class RootConverter : Converter
-    {
-        public static RootConverter Default { get; } = new RootConverter();
-        RootConverter() : this(RootSelector.Default) {}
+	public class RootConverter : Converter
+	{
+		public static RootConverter Default { get; } = new RootConverter();
+		RootConverter() : this(RootSelector.Default) {}
 
-        public RootConverter(IConverterSelector selector) : this(new SelectingConverter(selector)) {}
+		public RootConverter(IConverterSelector selector) : this(new SelectingConverter(selector)) {}
 
-        protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
-    }
+		protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
+	}
 }

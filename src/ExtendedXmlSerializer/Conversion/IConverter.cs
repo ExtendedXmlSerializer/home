@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface IConverter : IReader, IWriter {}
+	public interface IConverter : IReader, IWriter {}
 }

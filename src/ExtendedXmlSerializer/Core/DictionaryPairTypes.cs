@@ -25,15 +25,15 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core
 {
-    public class DictionaryPairTypes
-    {
-        public DictionaryPairTypes(TypeInfo keyType, TypeInfo valueType)
-        {
-            KeyType = keyType;
-            ValueType = valueType;
-        }
+	public class DictionaryPairTypes
+	{
+		public DictionaryPairTypes(TypeInfo keyType, TypeInfo valueType)
+		{
+			KeyType = keyType;
+			ValueType = valueType;
+		}
 
-        public TypeInfo KeyType { get; }
-        public TypeInfo ValueType { get; }
-    }
+		public TypeInfo KeyType { get; }
+		public TypeInfo ValueType { get; }
+	}
 }

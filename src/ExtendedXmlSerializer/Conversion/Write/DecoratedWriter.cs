@@ -23,16 +23,16 @@
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    public class DecoratedWriter : WriterBase
-    {
-        private readonly IWriter _writer;
+	public class DecoratedWriter : WriterBase
+	{
+		readonly IWriter _writer;
 
-        public DecoratedWriter(IWriter writer)
-        {
-            _writer = writer;
-        }
+		public DecoratedWriter(IWriter writer)
+		{
+			_writer = writer;
+		}
 
-        public override void Write(IWriteContext context, object instance)
-            => _writer.Write(context, instance);
-    }
+		public override void Write(IWriteContext context, object instance)
+			=> _writer.Write(context, instance);
+	}
 }

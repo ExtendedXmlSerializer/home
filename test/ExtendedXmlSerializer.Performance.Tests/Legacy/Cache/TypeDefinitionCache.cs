@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,66 +23,66 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-
 #if CORE
 using Microsoft.Extensions.DependencyModel;
+using System.IO;
+using System.Reflection;
 #endif
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 {
-    internal static class TypeDefinitionCache
-    {
-        private static readonly ConditionalWeakTable<Type, TypeDefinition> TypeDefinitions = new ConditionalWeakTable<Type, TypeDefinition>();
-        private static readonly ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
-        private static readonly Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
+	static class TypeDefinitionCache
+	{
+		readonly static ConditionalWeakTable<Type, TypeDefinition> TypeDefinitions =
+			new ConditionalWeakTable<Type, TypeDefinition>();
 
-        public static TypeDefinition GetDefinition(Type type)
-        {
-            return TypeDefinitions.GetValue( type, t => new TypeDefinition( t ) );
-        }
+		readonly static ConcurrentDictionary<string, Type> TypeCache = new ConcurrentDictionary<string, Type>();
+		readonly static Func<string, Type> GetTypeFromNameDelegate = GetTypeFromName;
 
-        public static Type GetType(string typeName)
-        {
-            return TypeCache.GetOrAdd( typeName, GetTypeFromNameDelegate );
-        }
+		public static TypeDefinition GetDefinition(Type type)
+		{
+			return TypeDefinitions.GetValue(type, t => new TypeDefinition(t));
+		}
 
-        private static Type GetTypeFromName(string typeName)
-        {
-            Type type = Type.GetType(typeName);
-            if (type != null)
-                return type;
+		public static Type GetType(string typeName)
+		{
+			return TypeCache.GetOrAdd(typeName, GetTypeFromNameDelegate);
+		}
+
+		static Type GetTypeFromName(string typeName)
+		{
+			var type = Type.GetType(typeName);
+			if (type != null)
+				return type;
 #if CORE
-            // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
-            // https://github.com/dotnet/corefx/issues/8806
-            // https://github.com/dotnet/corefx/issues/8910
-            foreach (RuntimeLibrary runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
-            {
-                try
-                {
-                    var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
-                
-                    type = assembly.GetType(typeName);
-                    if (type != null)
-                        return type;
-                }
-                catch (System.IO.FileNotFoundException)
-                {}
-            }
+// TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
+// https://github.com/dotnet/corefx/issues/8806
+// https://github.com/dotnet/corefx/issues/8910
+			foreach (var runtimeLibrary in DependencyContext.Default.RuntimeLibraries)
+			{
+				try
+				{
+					var assembly = Assembly.Load(new AssemblyName(runtimeLibrary.Name));
+
+					type = assembly.GetType(typeName);
+					if (type != null)
+						return type;
+				}
+				catch (FileNotFoundException) {}
+			}
 #else
-            foreach (Assembly c in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                type = c.GetType(typeName);
-                if (type != null)
-                {
-                    return type;
-                }
-            }
+			foreach (var c in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				type = c.GetType(typeName);
+				if (type != null)
+				{
+					return type;
+				}
+			}
 #endif
 
-            throw new Exception("Unknown type "+ typeName);
-        }
-
-    }
+			throw new Exception("Unknown type " + typeName);
+		}
+	}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,22 +20,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-    public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
-    {
-        public TestClass Deserialize(XElement element)
-        {
-            return new TestClass(element.Element("String").Value);
-        }
+	public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+	{
+		public TestClass Deserialize(XElement element)
+		{
+			return new TestClass(element.Element("String").Value);
+		}
 
-        public void Serializer(XmlWriter writer, TestClass obj)
-        {
-            writer.WriteElementString("String", obj.PropStr);
-        }
-    }
+		public void Serializer(XmlWriter writer, TestClass obj)
+		{
+			writer.WriteElementString("String", obj.PropStr);
+		}
+	}
 }

@@ -25,5 +25,5 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public interface IEnumeratingReader : IReader<IEnumerable> {}
+	public interface IEnumeratingReader : IReader<IEnumerable> {}
 }

@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {
-    public class Person
-    {
-        public string Name { get; set; }
-        public string Password { get; set; }
-    }
+	public class Person
+	{
+		public string Name { get; set; }
+		public string Password { get; set; }
+	}
 }

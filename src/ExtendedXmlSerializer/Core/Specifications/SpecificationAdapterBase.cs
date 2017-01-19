@@ -23,10 +23,10 @@
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public abstract class SpecificationAdapterBase<T> : ISpecification<object>
-    {
-        public bool IsSatisfiedBy(object parameter) => parameter is T && IsSatisfiedBy((T) parameter);
+	public abstract class SpecificationAdapterBase<T> : ISpecification<object>
+	{
+		public bool IsSatisfiedBy(object parameter) => parameter is T && IsSatisfiedBy((T) parameter);
 
-        protected abstract bool IsSatisfiedBy(T parameter);
-    }
+		protected abstract bool IsSatisfiedBy(T parameter);
+	}
 }

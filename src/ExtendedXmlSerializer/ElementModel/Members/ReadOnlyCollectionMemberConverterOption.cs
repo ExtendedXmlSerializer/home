@@ -27,9 +27,9 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-    public class ReadOnlyCollectionMemberConverterOption : ConverterOption<IReadOnlyCollectionMemberElement>
-    {
-        public ReadOnlyCollectionMemberConverterOption(IConverter converter)
-            : base(new Converter(new EnumeratingReader(converter), new Emitter(converter))) {}
-    }
+	public class ReadOnlyCollectionMemberConverterOption : ConverterOption<IReadOnlyCollectionMemberElement>
+	{
+		public ReadOnlyCollectionMemberConverterOption(IConverter converter)
+			: base(new Converter(new EnumeratingReader(converter), new Emitter(converter))) {}
+	}
 }

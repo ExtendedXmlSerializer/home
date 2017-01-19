@@ -25,15 +25,15 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class WriteReferences : HashSet<object>
-    {
-        public WriteReferences() : this(new HashSet<object>()) {}
+	sealed class WriteReferences : HashSet<object>
+	{
+		public WriteReferences() : this(new HashSet<object>()) {}
 
-        public WriteReferences(ICollection<object> reserved)
-        {
-            Reserved = reserved;
-        }
+		public WriteReferences(ICollection<object> reserved)
+		{
+			Reserved = reserved;
+		}
 
-        public ICollection<object> Reserved { get; }
-    }
+		public ICollection<object> Reserved { get; }
+	}
 }

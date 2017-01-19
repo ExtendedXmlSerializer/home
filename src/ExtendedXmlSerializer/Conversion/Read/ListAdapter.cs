@@ -26,92 +26,92 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    sealed class ListAdapter : IList
-    {
-        private readonly object _instance;
-        private readonly Action<object, object> _add;
+	sealed class ListAdapter : IList
+	{
+		readonly object _instance;
+		readonly Action<object, object> _add;
 
-        public ListAdapter(object instance, Action<object, object> add)
-        {
-            _instance = instance;
-            _add = add;
-        }
+		public ListAdapter(object instance, Action<object, object> add)
+		{
+			_instance = instance;
+			_add = add;
+		}
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotSupportedException();
-        }
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			throw new NotSupportedException();
+		}
 
-        void ICollection.CopyTo(Array array, int index)
-        {
-            throw new NotSupportedException();
-        }
+		void ICollection.CopyTo(Array array, int index)
+		{
+			throw new NotSupportedException();
+		}
 
-        int ICollection.Count
-        {
-            get { throw new NotSupportedException(); }
-        }
+		int ICollection.Count
+		{
+			get { throw new NotSupportedException(); }
+		}
 
-        object ICollection.SyncRoot
-        {
-            get { throw new NotSupportedException(); }
-        }
+		object ICollection.SyncRoot
+		{
+			get { throw new NotSupportedException(); }
+		}
 
-        bool ICollection.IsSynchronized
-        {
-            get { throw new NotSupportedException(); }
-        }
+		bool ICollection.IsSynchronized
+		{
+			get { throw new NotSupportedException(); }
+		}
 
-        int IList.Add(object value)
-        {
-            _add(_instance, value);
-            return 0;
-        }
+		int IList.Add(object value)
+		{
+			_add(_instance, value);
+			return 0;
+		}
 
-        bool IList.Contains(object value)
-        {
-            throw new NotSupportedException();
-        }
+		bool IList.Contains(object value)
+		{
+			throw new NotSupportedException();
+		}
 
-        void IList.Clear()
-        {
-            throw new NotSupportedException();
-        }
+		void IList.Clear()
+		{
+			throw new NotSupportedException();
+		}
 
-        int IList.IndexOf(object value)
-        {
-            throw new NotSupportedException();
-        }
+		int IList.IndexOf(object value)
+		{
+			throw new NotSupportedException();
+		}
 
-        void IList.Insert(int index, object value)
-        {
-            throw new NotSupportedException();
-        }
+		void IList.Insert(int index, object value)
+		{
+			throw new NotSupportedException();
+		}
 
-        void IList.Remove(object value)
-        {
-            throw new NotSupportedException();
-        }
+		void IList.Remove(object value)
+		{
+			throw new NotSupportedException();
+		}
 
-        void IList.RemoveAt(int index)
-        {
-            throw new NotSupportedException();
-        }
+		void IList.RemoveAt(int index)
+		{
+			throw new NotSupportedException();
+		}
 
-        object IList.this[int index]
-        {
-            get { throw new NotSupportedException(); }
-            set { throw new NotSupportedException(); }
-        }
+		object IList.this[int index]
+		{
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
 
-        bool IList.IsReadOnly
-        {
-            get { throw new NotSupportedException(); }
-        }
+		bool IList.IsReadOnly
+		{
+			get { throw new NotSupportedException(); }
+		}
 
-        bool IList.IsFixedSize
-        {
-            get { throw new NotSupportedException(); }
-        }
-    }
+		bool IList.IsFixedSize
+		{
+			get { throw new NotSupportedException(); }
+		}
+	}
 }

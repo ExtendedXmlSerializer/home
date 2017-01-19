@@ -25,12 +25,12 @@ using System;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    class EnumReader : ReaderBase
-    {
-        public static EnumReader Default { get; } = new EnumReader();
-        EnumReader() {}
+	class EnumReader : ReaderBase
+	{
+		public static EnumReader Default { get; } = new EnumReader();
+		EnumReader() {}
 
-        public override object Read(IReadContext context)
-            => Enum.Parse(context.Element.Classification.AsType(), context.Read());
-    }
+		public override object Read(IReadContext context)
+			=> Enum.Parse(context.Element.Classification.AsType(), context.Read());
+	}
 }

@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementOption : ElementOptionBase
-    {
-        public ElementOption(IElementNames names) : base(names) {}
-        public ElementOption(ISpecification<TypeInfo> specification, IElementNames names) : base(specification, names) {}
+	public class ElementOption : ElementOptionBase
+	{
+		public ElementOption(IElementNames names) : base(names) {}
+		public ElementOption(ISpecification<TypeInfo> specification, IElementNames names) : base(specification, names) {}
 
-        protected override IElement Create(string name, TypeInfo classification) => new Element(name, classification);
-    }
+		protected override IElement Create(string name, TypeInfo classification) => new Element(name, classification);
+	}
 }

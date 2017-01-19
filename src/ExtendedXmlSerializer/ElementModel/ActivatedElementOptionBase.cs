@@ -27,20 +27,20 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class ActivatedElementOptionBase : ElementOptionBase
-    {
-        private readonly IElementMembers _members;
+	public abstract class ActivatedElementOptionBase : ElementOptionBase
+	{
+		readonly IElementMembers _members;
 
-        protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
-                                             IElementMembers members)
-            : base(specification, names)
-        {
-            _members = members;
-        }
+		protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
+		                                     IElementMembers members)
+			: base(specification, names)
+		{
+			_members = members;
+		}
 
-        protected override IElement Create(string name, TypeInfo parameter)
-            => CreateElement(name, parameter, _members.Get(parameter));
+		protected override IElement Create(string name, TypeInfo parameter)
+			=> CreateElement(name, parameter, _members.Get(parameter));
 
-        protected abstract IElement CreateElement(string name, TypeInfo parameter, IMembers members);
-    }
+		protected abstract IElement CreateElement(string name, TypeInfo parameter, IMembers members);
+	}
 }

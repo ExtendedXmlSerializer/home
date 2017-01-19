@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,24 +20,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System;
 
 namespace ExtendedXmlSerialization.Samples.Simple
 {
-    public class SimpleSamples
-    {
-        public static void Run()
-        {
-            ExtendedXmlSerializer serializer = new ExtendedXmlSerializer();
-            Program.PrintHeader("Serialization");
-            var obj = new TestClass();
-            var xml = serializer.Serialize(obj);
-            Console.WriteLine(xml);
+	public class SimpleSamples
+	{
+		public static void Run()
+		{
+			var serializer = new ExtendedXmlSerializer();
+			Program.PrintHeader("Serialization");
+			var obj = new TestClass();
+			var xml = serializer.Serialize(obj);
+			Console.WriteLine(xml);
 
-            Program.PrintHeader("Deserialization");
-            var obj2 = serializer.Deserialize<TestClass>(xml);
-            Console.WriteLine("Obiect id = " + obj2.Id);
-
-        }
-    }
+			Program.PrintHeader("Deserialization");
+			var obj2 = serializer.Deserialize<TestClass>(xml);
+			Console.WriteLine("Obiect id = " + obj2.Id);
+		}
+	}
 }

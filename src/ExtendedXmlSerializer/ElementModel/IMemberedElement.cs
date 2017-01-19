@@ -25,8 +25,8 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IMemberedElement : IElement, IDisplayAware
-    {
-        IMembers Members { get; }
-    }
+	public interface IMemberedElement : IElement, IDisplayAware
+	{
+		IMembers Members { get; }
+	}
 }

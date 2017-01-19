@@ -25,15 +25,15 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class ConverterOption<T> : ConverterOptionBase<T> where T : IElement
-    {
-        private readonly IConverter _converter;
+	public class ConverterOption<T> : ConverterOptionBase<T> where T : IElement
+	{
+		readonly IConverter _converter;
 
-        public ConverterOption(IConverter converter)
-        {
-            _converter = converter;
-        }
+		public ConverterOption(IConverter converter)
+		{
+			_converter = converter;
+		}
 
-        protected override IConverter Create(T parameter) => _converter;
-    }
+		protected override IConverter Create(T parameter) => _converter;
+	}
 }

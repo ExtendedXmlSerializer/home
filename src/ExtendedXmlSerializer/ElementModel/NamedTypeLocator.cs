@@ -29,35 +29,35 @@ using ExtendedXmlSerialization.Conversion;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class NamedTypeLocator : INamedTypeLocator
-    {
-        public static NamedTypeLocator Default { get; } = new NamedTypeLocator();
-        NamedTypeLocator() : this(Defaults.Names, Namespaces.Default) {}
+	public class NamedTypeLocator : INamedTypeLocator
+	{
+		public static NamedTypeLocator Default { get; } = new NamedTypeLocator();
+		NamedTypeLocator() : this(Defaults.Names, Namespaces.Default) {}
 
-        private readonly ImmutableArray<IElementName> _elements;
-        private readonly INamespaces _namespaces;
+		readonly ImmutableArray<IElementName> _elements;
+		readonly INamespaces _namespaces;
 
-        public NamedTypeLocator(IEnumerable<IElementName> elements, INamespaces namespaces)
-        {
-            _elements = elements.ToImmutableArray();
-            _namespaces = namespaces;
-        }
+		public NamedTypeLocator(IEnumerable<IElementName> elements, INamespaces namespaces)
+		{
+			_elements = elements.ToImmutableArray();
+			_namespaces = namespaces;
+		}
 
-        public TypeInfo Get(XName parameter)
-        {
-            var localName = parameter.LocalName;
-            var ns = parameter.NamespaceName;
-            var length = _elements.Length;
-            for (var i = 0; i < length; i++)
-            {
-                var element = _elements[i];
-                var info = element.Classification;
-                if (ns == _namespaces.Get(info) && localName == element.DisplayName)
-                {
-                    return info;
-                }
-            }
-            return null;
-        }
-    }
+		public TypeInfo Get(XName parameter)
+		{
+			var localName = parameter.LocalName;
+			var ns = parameter.NamespaceName;
+			var length = _elements.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var element = _elements[i];
+				var info = element.Classification;
+				if (ns == _namespaces.Get(info) && localName == element.DisplayName)
+				{
+					return info;
+				}
+			}
+			return null;
+		}
+	}
 }

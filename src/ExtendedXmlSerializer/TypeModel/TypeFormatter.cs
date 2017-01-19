@@ -26,21 +26,21 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    class TypeFormatter : ITypeFormatter
-    {
-        public static TypeFormatter Default { get; } = new TypeFormatter();
-        TypeFormatter() {}
+	class TypeFormatter : ITypeFormatter
+	{
+		public static TypeFormatter Default { get; } = new TypeFormatter();
+		TypeFormatter() {}
 
-        public string Format(TypeInfo type)
-        {
-            if (type.IsGenericType)
-            {
-                var types = type.GetGenericArguments();
-                var names = string.Join(string.Empty, types.Select(p => p.Name));
-                var result = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-                return result;
-            }
-            return type.Name;
-        }
-    }
+		public string Format(TypeInfo type)
+		{
+			if (type.IsGenericType)
+			{
+				var types = type.GetGenericArguments();
+				var names = string.Join(string.Empty, types.Select(p => p.Name));
+				var result = type.Name.Replace($"`{types.Length}", $"Of{names}");
+				return result;
+			}
+			return type.Name;
+		}
+	}
 }

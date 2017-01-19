@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public interface ISelector<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult> {}
+	public interface ISelector<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult> {}
 }

@@ -28,12 +28,12 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class ElementNameOptionBase : Option<MemberInfo, string>, IElementNameOption
-    {
-        protected ElementNameOptionBase(Func<MemberInfo, string> source)
-            : this(AlwaysSpecification<MemberInfo>.Default, source) {}
+	public abstract class ElementNameOptionBase : Option<MemberInfo, string>, IElementNameOption
+	{
+		protected ElementNameOptionBase(Func<MemberInfo, string> source)
+			: this(AlwaysSpecification<MemberInfo>.Default, source) {}
 
-        protected ElementNameOptionBase(ISpecification<MemberInfo> specification, Func<MemberInfo, string> source)
-            : base(specification, source) {}
-    }
+		protected ElementNameOptionBase(ISpecification<MemberInfo> specification, Func<MemberInfo, string> source)
+			: base(specification, source) {}
+	}
 }

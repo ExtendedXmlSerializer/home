@@ -25,9 +25,9 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementNames : ElementNames
-    {
-        public new static LegacyElementNames Default { get; } = new LegacyElementNames();
-        LegacyElementNames() : base(Defaults.Names) {}
-    }
+	sealed class LegacyElementNames : ElementNames
+	{
+		public new static LegacyElementNames Default { get; } = new LegacyElementNames();
+		LegacyElementNames() : base(Defaults.Names) {}
+	}
 }

@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ElementNameOption<T> : ElementNameOptionBase
-    {
-        public static ElementNameOption<T> Default { get; } = new ElementNameOption<T>();
-        ElementNameOption() : base(IsAssignableSpecification<T>.Default.Adapt(), x => x.Name) {}
-    }
+	public class ElementNameOption<T> : ElementNameOptionBase
+	{
+		public static ElementNameOption<T> Default { get; } = new ElementNameOption<T>();
+		ElementNameOption() : base(IsAssignableSpecification<T>.Default.Adapt(), x => x.Name) {}
+	}
 }

@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public class IsArraySpecification : ISpecification<TypeInfo>
-    {
-        public static IsArraySpecification Default { get; } = new IsArraySpecification();
-        IsArraySpecification() {}
+	public class IsArraySpecification : ISpecification<TypeInfo>
+	{
+		public static IsArraySpecification Default { get; } = new IsArraySpecification();
+		IsArraySpecification() {}
 
-        public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsArray;
-    }
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsArray;
+	}
 }

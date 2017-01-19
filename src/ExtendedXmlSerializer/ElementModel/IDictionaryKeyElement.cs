@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IDictionaryKeyElement : IContainerElement, IDisplayAware {}
+	public interface IDictionaryKeyElement : IContainerElement, IDisplayAware {}
 }

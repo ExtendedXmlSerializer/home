@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,53 +26,56 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Performance.Tests.Legacy.Cache
 {
-    internal class PropertieDefinition
-    {
-        public PropertieDefinition(Type type, PropertyInfo propertyInfo, string name)
-        {
-            Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(propertyInfo.PropertyType);
-	        IsWritable = propertyInfo.CanWrite;
-            _getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
-            _propertySetter = CreateSetter( type, propertyInfo.Name );
-        }
+	class PropertieDefinition
+	{
+		public PropertieDefinition(Type type, PropertyInfo propertyInfo, string name)
+		{
+			Name = string.IsNullOrEmpty(name) ? propertyInfo.Name : name;
+			TypeDefinition = TypeDefinitionCache.GetDefinition(propertyInfo.PropertyType);
+			IsWritable = propertyInfo.CanWrite;
+			_getter = ObjectAccessors.CreatePropertyGetter(type, propertyInfo.Name);
+			_propertySetter = CreateSetter(type, propertyInfo.Name);
+		}
 
-        public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
-        {
-            Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
-            TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
-	        IsWritable = !fieldInfo.IsInitOnly;
-            _getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
-            _propertySetter = CreateSetter( type, fieldInfo.Name );
-        }
+		public PropertieDefinition(Type type, FieldInfo fieldInfo, string name)
+		{
+			Name = string.IsNullOrEmpty(name) ? fieldInfo.Name : name;
+			TypeDefinition = TypeDefinitionCache.GetDefinition(fieldInfo.FieldType);
+			IsWritable = !fieldInfo.IsInitOnly;
+			_getter = ObjectAccessors.CreatePropertyGetter(type, fieldInfo.Name);
+			_propertySetter = CreateSetter(type, fieldInfo.Name);
+		}
 
-        ObjectAccessors.PropertySetter CreateSetter( Type type, string name )
-        {
-            if ( IsWritable )
-            {
-                return ObjectAccessors.CreatePropertySetter(type, name);
-            }
+		ObjectAccessors.PropertySetter CreateSetter(Type type, string name)
+		{
+			if (IsWritable)
+			{
+				return ObjectAccessors.CreatePropertySetter(type, name);
+			}
 
-            var result = TypeDefinition.MethodAddToCollection != null ? new ObjectAccessors.PropertySetter( TypeDefinition.MethodAddToCollection ) : null;
-            return result;
-        }
+			var result = TypeDefinition.MethodAddToCollection != null
+				? new ObjectAccessors.PropertySetter(TypeDefinition.MethodAddToCollection)
+				: null;
+			return result;
+		}
 
-        private readonly ObjectAccessors.PropertyGetter _getter;
-        private readonly ObjectAccessors.PropertySetter _propertySetter;
-        
-        public string Name { get; private set; }
-        public TypeDefinition TypeDefinition { get; }
+		readonly ObjectAccessors.PropertyGetter _getter;
+		readonly ObjectAccessors.PropertySetter _propertySetter;
+
+		public string Name { get; private set; }
+		public TypeDefinition TypeDefinition { get; }
 		public bool IsWritable { get; }
-        public int Order { get; set; } = -1;
-        public int MetadataToken { get; set; }
-        public object GetValue(object obj)
-        {
-            return _getter(obj);
-        }
+		public int Order { get; set; } = -1;
+		public int MetadataToken { get; set; }
 
-        public void SetValue(object obj, object value)
-        {
-            _propertySetter?.Invoke(obj, value);
-        }
-    }
+		public object GetValue(object obj)
+		{
+			return _getter(obj);
+		}
+
+		public void SetValue(object obj, object value)
+		{
+			_propertySetter?.Invoke(obj, value);
+		}
+	}
 }

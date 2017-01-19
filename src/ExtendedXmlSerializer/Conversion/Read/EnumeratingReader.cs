@@ -25,21 +25,21 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
-    {
-        private readonly IReader _reader;
+	public class EnumeratingReader : ReaderBase<IEnumerable>, IEnumeratingReader
+	{
+		readonly IReader _reader;
 
-        public EnumeratingReader(IReader reader)
-        {
-            _reader = reader;
-        }
+		public EnumeratingReader(IReader reader)
+		{
+			_reader = reader;
+		}
 
-        public override IEnumerable Read(IReadContext context)
-        {
-            foreach (var child in context.Items())
-            {
-                yield return _reader.Read(child);
-            }
-        }
-    }
+		public override IEnumerable Read(IReadContext context)
+		{
+			foreach (var child in context.Items())
+			{
+				yield return _reader.Read(child);
+			}
+		}
+	}
 }

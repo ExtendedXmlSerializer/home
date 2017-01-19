@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +29,27 @@ using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-    public class TestClassSerialiser : IExtendedXmlTypeMigrator
-    {
-        public static void MigrationV0(XElement node)
-        {
-            var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
-            // Add new node
-            node.Add(new XElement("Name", typeElement.Value));
-            // Remove old node
-            typeElement.Remove();
-        }
+	public class TestClassSerialiser : IExtendedXmlTypeMigrator
+	{
+		public static void MigrationV0(XElement node)
+		{
+			var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
+			// Add new node
+			node.Add(new XElement("Name", typeElement.Value));
+			// Remove old node
+			typeElement.Remove();
+		}
 
-        public static void MigrationV1(XElement node)
-        {
-            // Add new node
-            node.Add(new XElement("Value", "Calculated"));
-        }
+		public static void MigrationV1(XElement node)
+		{
+			// Add new node
+			node.Add(new XElement("Value", "Calculated"));
+		}
 
-        public IEnumerable<Action<XElement>> GetAllMigrations()
-        {
-            yield return MigrationV0;
-            yield return MigrationV1;
-        }
-    }
+		public IEnumerable<Action<XElement>> GetAllMigrations()
+		{
+			yield return MigrationV0;
+			yield return MigrationV1;
+		}
+	}
 }

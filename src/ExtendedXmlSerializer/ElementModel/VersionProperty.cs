@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    sealed class VersionProperty : FrameworkPropertyBase
-    {
-        public static VersionProperty Default { get; } = new VersionProperty();
-        VersionProperty() : base("ver") {}
-    }
+	sealed class VersionProperty : FrameworkPropertyBase
+	{
+		public static VersionProperty Default { get; } = new VersionProperty();
+		VersionProperty() : base("ver") {}
+	}
 }

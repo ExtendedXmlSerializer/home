@@ -30,94 +30,94 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-    class XmlWriteContext : IWriteContext
-    {
-        private readonly IElements _selector;
-        private readonly INamespaces _namespaces;
-        private readonly XmlWriter _writer;
-        private readonly ImmutableArray<object> _services;
-        private readonly IDisposable _finish;
+	class XmlWriteContext : IWriteContext
+	{
+		readonly IElements _selector;
+		readonly INamespaces _namespaces;
+		readonly XmlWriter _writer;
+		readonly ImmutableArray<object> _services;
+		readonly IDisposable _finish;
 
-        public XmlWriteContext(XmlWriter writer, IRoot root) : this(writer, root, writer) {}
+		public XmlWriteContext(XmlWriter writer, IRoot root) : this(writer, root, writer) {}
 
-        public XmlWriteContext(XmlWriter writer, IRoot root, params object[] services)
-            : this(Elements.Default, Namespaces.Default, writer, root, services) {}
+		public XmlWriteContext(XmlWriter writer, IRoot root, params object[] services)
+			: this(Elements.Default, Namespaces.Default, writer, root, services) {}
 
-        public XmlWriteContext(IElements selector, INamespaces namespaces, XmlWriter writer, IRoot root,
-                               params object[] services)
-            : this(
-                selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
-                new DelegatedDisposable(writer.WriteEndElement)) {}
+		public XmlWriteContext(IElements selector, INamespaces namespaces, XmlWriter writer, IRoot root,
+		                       params object[] services)
+			: this(
+				selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
+				new DelegatedDisposable(writer.WriteEndElement)) {}
 
-        private XmlWriteContext(IElements selector, INamespaces namespaces,
-                                IContainerElement container, IElement element,
-                                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
-            : this(null, selector, namespaces, container, element, container, writer, services, finish) {}
+		XmlWriteContext(IElements selector, INamespaces namespaces,
+		                IContainerElement container, IElement element,
+		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
+			: this(null, selector, namespaces, container, element, container, writer, services, finish) {}
 
-        XmlWriteContext(IContext parent, IElements selector, INamespaces namespaces,
-                        IContainerElement container, IElement element, IElement selected,
-                        XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
-        {
-            _selector = selector;
-            _namespaces = namespaces;
-            Parent = parent;
-            Container = container;
-            Element = element;
-            Selected = selected;
-            _writer = writer;
-            _services = services;
-            _finish = finish;
-        }
+		XmlWriteContext(IContext parent, IElements selector, INamespaces namespaces,
+		                IContainerElement container, IElement element, IElement selected,
+		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
+		{
+			_selector = selector;
+			_namespaces = namespaces;
+			Parent = parent;
+			Container = container;
+			Element = element;
+			Selected = selected;
+			_writer = writer;
+			_services = services;
+			_finish = finish;
+		}
 
-        public IContext Parent { get; }
-        public IContainerElement Container { get; }
-        public IElement Element { get; }
-        public IElement Selected { get; }
+		public IContext Parent { get; }
+		public IContainerElement Container { get; }
+		public IElement Element { get; }
+		public IElement Selected { get; }
 
-        public object GetService(Type serviceType)
-        {
-            var info = serviceType.GetTypeInfo();
-            var length = _services.Length;
-            for (var i = 0; i < length; i++)
-            {
-                var service = _services[i];
-                if (info.IsInstanceOfType(service))
-                {
-                    return service;
-                }
-            }
-            return null;
-        }
+		public object GetService(Type serviceType)
+		{
+			var info = serviceType.GetTypeInfo();
+			var length = _services.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var service = _services[i];
+				if (info.IsInstanceOfType(service))
+				{
+					return service;
+				}
+			}
+			return null;
+		}
 
-        public IDisposable Emit()
-        {
-            var ns = _namespaces.Get(Element.Classification);
-            var name = (Container as IDisplayAware)?.DisplayName ?? (Element as IDisplayAware)?.DisplayName;
-            if (name != null)
-            {
-                _writer.WriteStartElement(name, ns);
-                return _finish;
-            }
-            throw new SerializationException(
-                $"Display name not found for element '{Element}' in a container of '{Container}.'");
-        }
+		public IDisposable Emit()
+		{
+			var ns = _namespaces.Get(Element.Classification);
+			var name = (Container as IDisplayAware)?.DisplayName ?? (Element as IDisplayAware)?.DisplayName;
+			if (name != null)
+			{
+				_writer.WriteStartElement(name, ns);
+				return _finish;
+			}
+			throw new SerializationException(
+				$"Display name not found for element '{Element}' in a container of '{Container}.'");
+		}
 
-        public void Write(string text) => _writer.WriteString(text);
+		public void Write(string text) => _writer.WriteString(text);
 
-        public void Write(IElementName element, string value)
-            => _writer.WriteAttributeString(element.DisplayName, value);
+		public void Write(IElementName element, string value)
+			=> _writer.WriteAttributeString(element.DisplayName, value);
 
-        public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
-            => Create(parameter, _selector.Load(parameter, instanceType));
+		public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
+			=> Create(parameter, _selector.Load(parameter, instanceType));
 
-        private XmlWriteContext Create(IContainerElement container, IElement element)
-            => Create(this, container, element, container);
+		XmlWriteContext Create(IContainerElement container, IElement element)
+			=> Create(this, container, element, container);
 
-        public IContext Select() => Create(Parent, Container, Element, Element);
+		public IContext Select() => Create(Parent, Container, Element, Element);
 
-        private XmlWriteContext Create(IContext parent, IContainerElement container, IElement element, IElement selected)
-            =>
-                new XmlWriteContext(parent, _selector, _namespaces, container, element, selected, _writer, _services,
-                                    _finish);
-    }
+		XmlWriteContext Create(IContext parent, IContainerElement container, IElement element, IElement selected)
+			=>
+				new XmlWriteContext(parent, _selector, _namespaces, container, element, selected, _writer, _services,
+				                    _finish);
+	}
 }

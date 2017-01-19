@@ -26,21 +26,21 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-    public class ArrayReader : ListReaderBase
-    {
-        public ArrayReader(IReader reader) : base(reader) {}
+	public class ArrayReader : ListReaderBase
+	{
+		public ArrayReader(IReader reader) : base(reader) {}
 
-        protected override object Create(IReadContext context, IEnumerable enumerable)
-        {
-            var list = new ArrayList();
-            foreach (var item in enumerable)
-            {
-                list.Add(item);
-            }
+		protected override object Create(IReadContext context, IEnumerable enumerable)
+		{
+			var list = new ArrayList();
+			foreach (var item in enumerable)
+			{
+				list.Add(item);
+			}
 
-            var element = (ICollectionElement) context.Element;
-            var result = list.ToArray(element.Item.Classification.AsType());
-            return result;
-        }
-    }
+			var element = (ICollectionElement) context.Element;
+			var result = list.ToArray(element.Item.Classification.AsType());
+			return result;
+		}
+	}
 }

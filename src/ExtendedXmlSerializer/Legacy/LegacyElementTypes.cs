@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementTypes : ElementTypes
-    {
-        public new static LegacyElementTypes Default { get; } = new LegacyElementTypes();
-        LegacyElementTypes() : base(LegacyNamedTypeLocator.Default, TypeParser.Default) {}
-    }
+	sealed class LegacyElementTypes : ElementTypes
+	{
+		public new static LegacyElementTypes Default { get; } = new LegacyElementTypes();
+		LegacyElementTypes() : base(LegacyNamedTypeLocator.Default, TypeParser.Default) {}
+	}
 }

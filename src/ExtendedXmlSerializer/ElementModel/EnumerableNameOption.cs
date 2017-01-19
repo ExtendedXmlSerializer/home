@@ -30,26 +30,26 @@ using ExtendedXmlSerialization.Legacy;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class EnumerableNameOption : ElementNameOptionBase
-    {
-        public static EnumerableNameOption Default { get; } = new EnumerableNameOption();
-        EnumerableNameOption() : this(LegacyEnumerableNameProvider.Default.Get) {}
+	public class EnumerableNameOption : ElementNameOptionBase
+	{
+		public static EnumerableNameOption Default { get; } = new EnumerableNameOption();
+		EnumerableNameOption() : this(LegacyEnumerableNameProvider.Default.Get) {}
 
-        public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
+		public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
 
-        sealed class Specification : ISpecification<MemberInfo>
-        {
-            readonly private static TypeInfo TypeInfo = typeof(IEnumerable).GetTypeInfo();
+		sealed class Specification : ISpecification<MemberInfo>
+		{
+			readonly static TypeInfo TypeInfo = typeof(IEnumerable).GetTypeInfo();
 
-            public static Specification Instance { get; } = new Specification();
-            Specification() {}
+			public static Specification Instance { get; } = new Specification();
+			Specification() {}
 
-            public bool IsSatisfiedBy(MemberInfo parameter)
-            {
-                var type = parameter.ToTypeInfo();
-                var result = type.IsArray || type.IsGenericType && TypeInfo.IsAssignableFrom(type);
-                return result;
-            }
-        }
-    }
+			public bool IsSatisfiedBy(MemberInfo parameter)
+			{
+				var type = parameter.ToTypeInfo();
+				var result = type.IsArray || type.IsGenericType && TypeInfo.IsAssignableFrom(type);
+				return result;
+			}
+		}
+	}
 }

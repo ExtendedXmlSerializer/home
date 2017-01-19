@@ -23,17 +23,17 @@
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class FixedSource<TParameter, TResult> : ISource<TResult>
-    {
-        readonly IParameterizedSource<TParameter, TResult> _source;
-        private readonly TParameter _parameter;
+	public class FixedSource<TParameter, TResult> : ISource<TResult>
+	{
+		readonly IParameterizedSource<TParameter, TResult> _source;
+		readonly TParameter _parameter;
 
-        public FixedSource(IParameterizedSource<TParameter, TResult> source, TParameter parameter)
-        {
-            _source = source;
-            _parameter = parameter;
-        }
+		public FixedSource(IParameterizedSource<TParameter, TResult> source, TParameter parameter)
+		{
+			_source = source;
+			_parameter = parameter;
+		}
 
-        public TResult Get() => _source.Get(_parameter);
-    }
+		public TResult Get() => _source.Get(_parameter);
+	}
 }

@@ -26,17 +26,17 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class ContainerElementBase : ElementBase, IContainerElement
-    {
-        private readonly Func<IElement> _element;
+	public abstract class ContainerElementBase : ElementBase, IContainerElement
+	{
+		readonly Func<IElement> _element;
 
-        protected ContainerElementBase(Func<IElement> element)
-        {
-            _element = element;
-        }
+		protected ContainerElementBase(Func<IElement> element)
+		{
+			_element = element;
+		}
 
-        public IElement Element => _element();
+		public IElement Element => _element();
 
-        public override TypeInfo Classification => Element.Classification;
-    }
+		public override TypeInfo Classification => Element.Classification;
+	}
 }

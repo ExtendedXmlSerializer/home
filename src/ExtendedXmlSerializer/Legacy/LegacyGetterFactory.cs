@@ -29,53 +29,53 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    class LegacyGetterFactory : IGetterFactory
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
-        private readonly IGetterFactory _factory;
+	class LegacyGetterFactory : IGetterFactory
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
+		readonly IGetterFactory _factory;
 
-        public LegacyGetterFactory(IInternalExtendedXmlConfiguration config) : this(config, GetterFactory.Default) {}
+		public LegacyGetterFactory(IInternalExtendedXmlConfiguration config) : this(config, GetterFactory.Default) {}
 
-        public LegacyGetterFactory(IInternalExtendedXmlConfiguration config, IGetterFactory factory)
-        {
-            _config = config;
-            _factory = factory;
-        }
+		public LegacyGetterFactory(IInternalExtendedXmlConfiguration config, IGetterFactory factory)
+		{
+			_config = config;
+			_factory = factory;
+		}
 
-        public Func<object, object> Get(MemberInfo parameter)
-        {
-            var result = _factory.Get(parameter);
-            var configuration = _config.GetTypeConfiguration(parameter.DeclaringType);
-            var propertyConfig = configuration?.GetPropertyConfiguration(parameter.Name);
-            if (propertyConfig != null && propertyConfig.IsEncrypt)
-            {
-                var algorithm = _config.EncryptionAlgorithm;
-                if (algorithm != null)
-                {
-                    return new Encrypt(algorithm, result).Get;
-                }
-            }
+		public Func<object, object> Get(MemberInfo parameter)
+		{
+			var result = _factory.Get(parameter);
+			var configuration = _config.GetTypeConfiguration(parameter.DeclaringType);
+			var propertyConfig = configuration?.GetPropertyConfiguration(parameter.Name);
+			if (propertyConfig != null && propertyConfig.IsEncrypt)
+			{
+				var algorithm = _config.EncryptionAlgorithm;
+				if (algorithm != null)
+				{
+					return new Encrypt(algorithm, result).Get;
+				}
+			}
 
-            return result;
-        }
+			return result;
+		}
 
-        sealed class Encrypt : IParameterizedSource<object, object>
-        {
-            private readonly IPropertyEncryption _encryption;
-            private readonly Func<object, object> _source;
+		sealed class Encrypt : IParameterizedSource<object, object>
+		{
+			readonly IPropertyEncryption _encryption;
+			readonly Func<object, object> _source;
 
-            public Encrypt(IPropertyEncryption encryption, Func<object, object> source)
-            {
-                _encryption = encryption;
-                _source = source;
-            }
+			public Encrypt(IPropertyEncryption encryption, Func<object, object> source)
+			{
+				_encryption = encryption;
+				_source = source;
+			}
 
-            public object Get(object parameter)
-            {
-                var value = _source(parameter);
-                var result = _encryption.Encrypt(value as string ?? value.ToString());
-                return result;
-            }
-        }
-    }
+			public object Get(object parameter)
+			{
+				var value = _source(parameter);
+				var result = _encryption.Encrypt(value as string ?? value.ToString());
+				return result;
+			}
+		}
+	}
 }

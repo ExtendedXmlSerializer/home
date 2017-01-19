@@ -25,8 +25,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    public interface IAddMethodLocator
-    {
-        MethodInfo Locate(TypeInfo type, TypeInfo elementType);
-    }
+	public interface IAddMethodLocator
+	{
+		MethodInfo Locate(TypeInfo type, TypeInfo elementType);
+	}
 }

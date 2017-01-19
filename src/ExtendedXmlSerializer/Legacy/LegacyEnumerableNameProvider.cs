@@ -25,11 +25,11 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyEnumerableNameProvider : NameProvider
-    {
-        public new static LegacyEnumerableNameProvider Default { get; } =
-            new LegacyEnumerableNameProvider();
+	sealed class LegacyEnumerableNameProvider : NameProvider
+	{
+		public new static LegacyEnumerableNameProvider Default { get; } =
+			new LegacyEnumerableNameProvider();
 
-        LegacyEnumerableNameProvider() : base(LegacyEnumerableTypeFormatter.Default) {}
-    }
+		LegacyEnumerableNameProvider() : base(LegacyEnumerableTypeFormatter.Default) {}
+	}
 }

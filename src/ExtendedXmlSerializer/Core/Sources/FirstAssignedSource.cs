@@ -25,26 +25,26 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
-    {
-        private readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;
+	public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	{
+		readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;
 
-        public FirstAssignedSource(params IParameterizedSource<TParameter, TResult>[] sources)
-        {
-            _sources = sources.ToImmutableArray();
-        }
+		public FirstAssignedSource(params IParameterizedSource<TParameter, TResult>[] sources)
+		{
+			_sources = sources.ToImmutableArray();
+		}
 
-        public TResult Get(TParameter parameter)
-        {
-            foreach (var source in _sources)
-            {
-                var result = source.Get(parameter);
-                if (!Equals(result, default(TResult)))
-                {
-                    return result;
-                }
-            }
-            return default(TResult);
-        }
-    }
+		public TResult Get(TParameter parameter)
+		{
+			foreach (var source in _sources)
+			{
+				var result = source.Get(parameter);
+				if (!Equals(result, default(TResult)))
+				{
+					return result;
+				}
+			}
+			return default(TResult);
+		}
+	}
 }

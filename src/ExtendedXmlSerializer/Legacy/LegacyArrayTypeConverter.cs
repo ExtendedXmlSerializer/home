@@ -28,11 +28,11 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyArrayTypeConverter : Converter
-    {
-        public LegacyArrayTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
-            : base(
-                new ArrayReader(converter),
-                new EnumerableReferenceWriter(config, new EnumerableBodyWriter(converter))) {}
-    }
+	sealed class LegacyArrayTypeConverter : Converter
+	{
+		public LegacyArrayTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
+			: base(
+				new ArrayReader(converter),
+				new EnumerableReferenceWriter(config, new EnumerableBodyWriter(converter))) {}
+	}
 }

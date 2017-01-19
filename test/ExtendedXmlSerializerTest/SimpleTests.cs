@@ -27,53 +27,53 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-    public class SimpleTests
-    {
-        [Fact]
-        public void PrimitiveWrite()
-        {
-            var stream = new MemoryStream();
-            Serializer.Default.Serialize(stream, 6776);
-            stream.Seek(0, SeekOrigin.Begin);
-            var actual = new StreamReader(stream).ReadToEnd();
-            Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>", actual);
-        }
+	public class SimpleTests
+	{
+		[Fact]
+		public void PrimitiveWrite()
+		{
+			var stream = new MemoryStream();
+			Serializer.Default.Serialize(stream, 6776);
+			stream.Seek(0, SeekOrigin.Begin);
+			var actual = new StreamReader(stream).ReadToEnd();
+			Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>", actual);
+		}
 
-        [Fact]
-        public void PrimitiveRead()
-        {
-            const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>";
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var actual = Serializer.Default.Deserialize(stream);
-            Assert.Equal(6776, actual);
-        }
+		[Fact]
+		public void PrimitiveRead()
+		{
+			const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>";
+			var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
+			var actual = Serializer.Default.Deserialize(stream);
+			Assert.Equal(6776, actual);
+		}
 
-        [Fact]
-        public void InstanceWrite()
-        {
-            var instance = new InstanceClass {PropertyName = "Hello World!"};
-            var stream = new MemoryStream();
-            Serializer.Default.Serialize(stream, instance);
-            stream.Seek(0, SeekOrigin.Begin);
-            var actual = new StreamReader(stream).ReadToEnd();
-            Assert.Equal(
-                @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
-                actual);
-        }
+		[Fact]
+		public void InstanceWrite()
+		{
+			var instance = new InstanceClass {PropertyName = "Hello World!"};
+			var stream = new MemoryStream();
+			Serializer.Default.Serialize(stream, instance);
+			stream.Seek(0, SeekOrigin.Begin);
+			var actual = new StreamReader(stream).ReadToEnd();
+			Assert.Equal(
+				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
+				actual);
+		}
 
-        [Fact]
-        public void InstanceRead()
-        {
-            const string data =
-                @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>";
-            var instance = new ExtendedXmlSerializer().Deserialize<InstanceClass>(data);
-            Assert.NotNull(instance);
-            Assert.Equal("Hello World!", instance.PropertyName);
-        }
+		[Fact]
+		public void InstanceRead()
+		{
+			const string data =
+				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>";
+			var instance = new ExtendedXmlSerializer().Deserialize<InstanceClass>(data);
+			Assert.NotNull(instance);
+			Assert.Equal("Hello World!", instance.PropertyName);
+		}
 
-        class InstanceClass
-        {
-            public string PropertyName { get; set; }
-        }
-    }
+		class InstanceClass
+		{
+			public string PropertyName { get; set; }
+		}
+	}
 }

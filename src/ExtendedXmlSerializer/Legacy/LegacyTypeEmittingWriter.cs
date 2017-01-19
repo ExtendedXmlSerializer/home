@@ -26,17 +26,17 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyTypeEmittingWriter : TypeEmittingWriter
-    {
-        public LegacyTypeEmittingWriter(IWriter writer) : base(writer) {}
+	sealed class LegacyTypeEmittingWriter : TypeEmittingWriter
+	{
+		public LegacyTypeEmittingWriter(IWriter writer) : base(writer) {}
 
-        protected override bool CheckInstance(IWriteContext context, object instance)
-        {
-            var references = context.Get<WriteReferences>();
-            var result = /*context.Current is EnumerableItemElement ?*/
-                !references.Contains(instance) /*&& !references.Reserved.Contains(instance)*/&&
-                base.CheckInstance(context, instance);
-            return result;
-        }
-    }
+		protected override bool CheckInstance(IWriteContext context, object instance)
+		{
+			var references = context.Get<WriteReferences>();
+			var result = /*context.Current is EnumerableItemElement ?*/
+				!references.Contains(instance) /*&& !references.Reserved.Contains(instance)*/&&
+				base.CheckInstance(context, instance);
+			return result;
+		}
+	}
 }

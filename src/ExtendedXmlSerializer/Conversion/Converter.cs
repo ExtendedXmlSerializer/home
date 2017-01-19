@@ -26,20 +26,20 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public class Converter : ConverterBase
-    {
-        private readonly IReader _reader;
-        private readonly IWriter _writer;
+	public class Converter : ConverterBase
+	{
+		readonly IReader _reader;
+		readonly IWriter _writer;
 
-        public Converter(IReader reader, IWriter writer)
-        {
-            _reader = reader;
-            _writer = writer;
-        }
+		public Converter(IReader reader, IWriter writer)
+		{
+			_reader = reader;
+			_writer = writer;
+		}
 
-        public override object Read(IReadContext context) => _reader.Read(context);
+		public override object Read(IReadContext context) => _reader.Read(context);
 
-        public override void Write(IWriteContext context, object instance)
-            => _writer.Write(context, instance);
-    }
+		public override void Write(IWriteContext context, object instance)
+			=> _writer.Write(context, instance);
+	}
 }

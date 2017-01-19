@@ -26,20 +26,20 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class ArrayElementOption : ElementOptionBase
-    {
-        private readonly ICollectionItemFactory _items;
+	public class ArrayElementOption : ElementOptionBase
+	{
+		readonly ICollectionItemFactory _items;
 
-        public ArrayElementOption(IElementNames names, IElements elements)
-            : this(names, new CollectionItemFactory(elements)) {}
+		public ArrayElementOption(IElementNames names, IElements elements)
+			: this(names, new CollectionItemFactory(elements)) {}
 
-        public ArrayElementOption(IElementNames names, ICollectionItemFactory items)
-            : base(IsArraySpecification.Default, names)
-        {
-            _items = items;
-        }
+		public ArrayElementOption(IElementNames names, ICollectionItemFactory items)
+			: base(IsArraySpecification.Default, names)
+		{
+			_items = items;
+		}
 
-        protected override IElement Create(string name, TypeInfo parameter)
-            => new ArrayElement(name, parameter, _items.Get(parameter));
-    }
+		protected override IElement Create(string name, TypeInfo parameter)
+			=> new ArrayElement(name, parameter, _items.Get(parameter));
+	}
 }

@@ -25,25 +25,25 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-    public class AllSpecification<T> : ISpecification<T>
-    {
-        readonly ImmutableArray<ISpecification<T>> _specifications;
+	public class AllSpecification<T> : ISpecification<T>
+	{
+		readonly ImmutableArray<ISpecification<T>> _specifications;
 
-        public AllSpecification(params ISpecification<T>[] specifications)
-        {
-            _specifications = specifications.ToImmutableArray();
-        }
+		public AllSpecification(params ISpecification<T>[] specifications)
+		{
+			_specifications = specifications.ToImmutableArray();
+		}
 
-        public bool IsSatisfiedBy(T parameter)
-        {
-            foreach (var specification in _specifications)
-            {
-                if (!specification.IsSatisfiedBy(parameter))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
+		public bool IsSatisfiedBy(T parameter)
+		{
+			foreach (var specification in _specifications)
+			{
+				if (!specification.IsSatisfiedBy(parameter))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 }

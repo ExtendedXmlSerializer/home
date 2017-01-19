@@ -1,6 +1,7 @@
 ﻿// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
@@ -26,55 +28,58 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassInheritanceWithCustomSerializerBaseConfig: IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
-    {
-        public TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
-        {
-            return new TestClassInheritanceWithCustomSerializerBase()
-            {
-                FirstProperty = xElement.Attribute("First").Value
-            };
-        }
+	public class TestClassInheritanceWithCustomSerializerBaseConfig :
+		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
+	{
+		public TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
+		{
+			return new TestClassInheritanceWithCustomSerializerBase
+			       {
+				       FirstProperty = xElement.Attribute("First").Value
+			       };
+		}
 
-        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerBase obj)
-        {
-            xmlWriter.WriteAttributeString("First" , obj.FirstProperty);
-        }
-    }
+		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerBase obj)
+		{
+			xmlWriter.WriteAttributeString("First", obj.FirstProperty);
+		}
+	}
 
-    public class TestClassInheritanceWithCustomSerializerAConfig : IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerA>
-    {
-        public TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
-        {
-            return new TestClassInheritanceWithCustomSerializerA()
-            {
-                FirstProperty = xElement.Attribute("First").Value,
-                SecondProperty = xElement.Attribute("Second").Value
-            };
-        }
+	public class TestClassInheritanceWithCustomSerializerAConfig :
+		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerA>
+	{
+		public TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
+		{
+			return new TestClassInheritanceWithCustomSerializerA
+			       {
+				       FirstProperty = xElement.Attribute("First").Value,
+				       SecondProperty = xElement.Attribute("Second").Value
+			       };
+		}
 
-        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerA obj)
-        {
-            xmlWriter.WriteAttributeString("First", obj.FirstProperty);
-            xmlWriter.WriteAttributeString("Second", obj.SecondProperty);
-        }
-    }
+		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerA obj)
+		{
+			xmlWriter.WriteAttributeString("First", obj.FirstProperty);
+			xmlWriter.WriteAttributeString("Second", obj.SecondProperty);
+		}
+	}
 
-    public class TestClassInheritanceWithCustomSerializerBConfig : IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerB>
-    {
-        public TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
-        {
-            return new TestClassInheritanceWithCustomSerializerB()
-            {
-                FirstProperty = xElement.Attribute("First").Value,
-                ThirdProperty = xElement.Attribute("Third").Value
-            };
-        }
+	public class TestClassInheritanceWithCustomSerializerBConfig :
+		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerB>
+	{
+		public TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
+		{
+			return new TestClassInheritanceWithCustomSerializerB
+			       {
+				       FirstProperty = xElement.Attribute("First").Value,
+				       ThirdProperty = xElement.Attribute("Third").Value
+			       };
+		}
 
-        public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerB obj)
-        {
-            xmlWriter.WriteAttributeString("First", obj.FirstProperty);
-            xmlWriter.WriteAttributeString("Third", obj.ThirdProperty);
-        }
-    }
+		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerB obj)
+		{
+			xmlWriter.WriteAttributeString("First", obj.FirstProperty);
+			xmlWriter.WriteAttributeString("Third", obj.ThirdProperty);
+		}
+	}
 }

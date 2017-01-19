@@ -25,12 +25,12 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    sealed class Namespaces : INamespaces
-    {
-        public static Namespaces Default { get; } = new Namespaces();
-        Namespaces() {}
+	sealed class Namespaces : INamespaces
+	{
+		public static Namespaces Default { get; } = new Namespaces();
+		Namespaces() {}
 
-        public string Get(TypeInfo parameter) => string.Empty;
-        public string Get(string parameter) => string.Empty;
-    }
+		public string Get(TypeInfo parameter) => string.Empty;
+		public string Get(string parameter) => string.Empty;
+	}
 }

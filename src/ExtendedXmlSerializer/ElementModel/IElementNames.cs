@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementNames : ISelector<MemberInfo, string> {}
+	public interface IElementNames : ISelector<MemberInfo, string> {}
 }

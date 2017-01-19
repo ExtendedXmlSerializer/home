@@ -25,31 +25,31 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-    public abstract class WeakCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
-                                                                                           where TValue : class
-    {
-        readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
-        readonly private ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+	public abstract class WeakCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
+	                                                                                       where TValue : class
+	{
+		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-        protected WeakCacheBase()
-        {
-            _callback = Create;
-        }
+		protected WeakCacheBase()
+		{
+			_callback = Create;
+		}
 
-        protected abstract TValue Create(TKey parameter);
+		protected abstract TValue Create(TKey parameter);
 
-        public bool Contains(TKey key)
-        {
-            TValue temp;
-            return _cache.TryGetValue(key, out temp);
-        }
+		public bool Contains(TKey key)
+		{
+			TValue temp;
+			return _cache.TryGetValue(key, out temp);
+		}
 
-        public void Add(TKey key, TValue value)
-        {
-            _cache.Remove(key);
-            _cache.Add(key, value);
-        }
+		public void Add(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, value);
+		}
 
-        public TValue Get(TKey key) => _cache.GetValue(key, _callback);
-    }
+		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
+	}
 }

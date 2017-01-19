@@ -30,53 +30,53 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyRootConverter : RootConverter
-    {
-        private readonly IInternalExtendedXmlConfiguration _tools;
+	sealed class LegacyRootConverter : RootConverter
+	{
+		readonly IInternalExtendedXmlConfiguration _tools;
 
-        public LegacyRootConverter(IInternalExtendedXmlConfiguration config)
-            : this(config, new RootSelector(new SelectorFactory(new LegacyConverterOptions(config)))) {}
+		public LegacyRootConverter(IInternalExtendedXmlConfiguration config)
+			: this(config, new RootSelector(new SelectorFactory(new LegacyConverterOptions(config)))) {}
 
-        LegacyRootConverter(IInternalExtendedXmlConfiguration config, IConverterSelector selector) : base(selector)
-        {
-            _tools = config;
-        }
+		LegacyRootConverter(IInternalExtendedXmlConfiguration config, IConverterSelector selector) : base(selector)
+		{
+			_tools = config;
+		}
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            var type = instance.GetType();
-            var configuration = _tools.GetTypeConfiguration(type);
-            if (configuration != null)
-            {
-                if (configuration.IsCustomSerializer)
-                {
-                    new CustomElementWriter(configuration).Write(context, instance);
-                    return;
-                }
-            }
+		public override void Write(IWriteContext context, object instance)
+		{
+			var type = instance.GetType();
+			var configuration = _tools.GetTypeConfiguration(type);
+			if (configuration != null)
+			{
+				if (configuration.IsCustomSerializer)
+				{
+					new CustomElementWriter(configuration).Write(context, instance);
+					return;
+				}
+			}
 
-            base.Write(context, instance);
-        }
+			base.Write(context, instance);
+		}
 
-        public override object Read(IReadContext context)
-        {
-            var type = context.Element.Classification.AsType();
-            var configuration = _tools.GetTypeConfiguration(type);
-            if (configuration != null)
-            {
-                var element = context.Get<XElement>();
-                // Run migrator if exists
-                if (configuration.Version > 0)
-                {
-                    configuration.Map(type, element);
-                }
+		public override object Read(IReadContext context)
+		{
+			var type = context.Element.Classification.AsType();
+			var configuration = _tools.GetTypeConfiguration(type);
+			if (configuration != null)
+			{
+				var element = context.Get<XElement>();
+				// Run migrator if exists
+				if (configuration.Version > 0)
+				{
+					configuration.Map(type, element);
+				}
 
-                if (configuration.IsCustomSerializer)
-                {
-                    return configuration.ReadObject(element);
-                }
-            }
-            return base.Read(context);
-        }
-    }
+				if (configuration.IsCustomSerializer)
+				{
+					return configuration.ReadObject(element);
+				}
+			}
+			return base.Read(context);
+		}
+	}
 }

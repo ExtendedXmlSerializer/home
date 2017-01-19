@@ -28,103 +28,103 @@ using System.Linq;
 
 namespace ExtendedXmlSerialization.Core
 {
-    /// <summary>
-    /// Attribution: http://stackoverflow.com/a/17853085/3602057
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class OrderedSet<T> : IList<T>
-    {
-        readonly private static T[] Items = new T[0];
-        private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
-        private readonly LinkedList<T> _linkedList;
+	/// <summary>
+	/// Attribution: http://stackoverflow.com/a/17853085/3602057
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class OrderedSet<T> : IList<T>
+	{
+		readonly static T[] Items = new T[0];
+		readonly IDictionary<T, LinkedListNode<T>> _dictionary;
+		readonly LinkedList<T> _linkedList;
 
-        public OrderedSet() : this(Items) {}
-        public OrderedSet(params T[] items) : this(EqualityComparer<T>.Default, items) {}
-        public OrderedSet(IEnumerable<T> items) : this(EqualityComparer<T>.Default, items) {}
+		public OrderedSet() : this(Items) {}
+		public OrderedSet(params T[] items) : this(EqualityComparer<T>.Default, items) {}
+		public OrderedSet(IEnumerable<T> items) : this(EqualityComparer<T>.Default, items) {}
 
-        public OrderedSet(IEqualityComparer<T> comparer, IEnumerable<T> items)
-        {
-            _dictionary = new Dictionary<T, LinkedListNode<T>>(comparer);
-            _linkedList = new LinkedList<T>();
+		public OrderedSet(IEqualityComparer<T> comparer, IEnumerable<T> items)
+		{
+			_dictionary = new Dictionary<T, LinkedListNode<T>>(comparer);
+			_linkedList = new LinkedList<T>();
 
-            var array = items.ToArray();
-            for (var i = 0; i < array.Length; i++)
-            {
-                Add(array[i]);
-            }
-        }
+			var array = items.ToArray();
+			for (var i = 0; i < array.Length; i++)
+			{
+				Add(array[i]);
+			}
+		}
 
-        public int Count => _dictionary.Count;
+		public int Count => _dictionary.Count;
 
-        public virtual bool IsReadOnly => _dictionary.IsReadOnly;
+		public virtual bool IsReadOnly => _dictionary.IsReadOnly;
 
-        void ICollection<T>.Add(T item) => Add(item);
+		void ICollection<T>.Add(T item) => Add(item);
 
-        public bool Add(T item)
-        {
-            if (_dictionary.ContainsKey(item)) return false;
-            LinkedListNode<T> node = _linkedList.AddLast(item);
-            _dictionary.Add(item, node);
-            return true;
-        }
+		public bool Add(T item)
+		{
+			if (_dictionary.ContainsKey(item)) return false;
+			var node = _linkedList.AddLast(item);
+			_dictionary.Add(item, node);
+			return true;
+		}
 
-        public void Clear()
-        {
-            _linkedList.Clear();
-            _dictionary.Clear();
-        }
+		public void Clear()
+		{
+			_linkedList.Clear();
+			_dictionary.Clear();
+		}
 
-        public bool Remove(T item)
-        {
-            LinkedListNode<T> node;
-            bool found = _dictionary.TryGetValue(item, out node);
-            if (!found) return false;
-            _dictionary.Remove(item);
-            _linkedList.Remove(node);
-            return true;
-        }
+		public bool Remove(T item)
+		{
+			LinkedListNode<T> node;
+			var found = _dictionary.TryGetValue(item, out node);
+			if (!found) return false;
+			_dictionary.Remove(item);
+			_linkedList.Remove(node);
+			return true;
+		}
 
-        public IEnumerator<T> GetEnumerator() => _linkedList.GetEnumerator();
+		public IEnumerator<T> GetEnumerator() => _linkedList.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public bool Contains(T item) => _dictionary.ContainsKey(item);
+		public bool Contains(T item) => _dictionary.ContainsKey(item);
 
-        public void CopyTo(T[] array, int arrayIndex) => _linkedList.CopyTo(array, arrayIndex);
+		public void CopyTo(T[] array, int arrayIndex) => _linkedList.CopyTo(array, arrayIndex);
 
-        public int IndexOf(T item)
-        {
-            var count = 0;
-            for (var node = _linkedList.First; node != null; node = node.Next, count++)
-            {
-                if (item.Equals(node.Value))
-                    return count;
-            }
-            return -1;
-        }
+		public int IndexOf(T item)
+		{
+			var count = 0;
+			for (var node = _linkedList.First; node != null; node = node.Next, count++)
+			{
+				if (item.Equals(node.Value))
+					return count;
+			}
+			return -1;
+		}
 
-        public void Insert(int index, T item)
-        {
-            if (index == 0)
-            {
-                _linkedList.AddFirst(item);
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-            // _linkedList.AddBefore(index)
-        }
+		public void Insert(int index, T item)
+		{
+			if (index == 0)
+			{
+				_linkedList.AddFirst(item);
+			}
+			else
+			{
+				throw new NotSupportedException();
+			}
+			// _linkedList.AddBefore(index)
+		}
 
-        public void RemoveAt(int index)
-        {
-            throw new NotSupportedException();
-        }
+		public void RemoveAt(int index)
+		{
+			throw new NotSupportedException();
+		}
 
-        T IList<T>.this[int index]
-        {
-            get { throw new NotSupportedException(); }
-            set { throw new NotSupportedException(); }
-        }
-    }
+		T IList<T>.this[int index]
+		{
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
+	}
 }

@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    class DictionaryConverter : Converter
-    {
-        public DictionaryConverter(IConverter converter)
-            : base(new ListReader(converter, DictionaryAddDelegates.Default), new DictionaryBodyWriter(converter)) {}
-    }
+	class DictionaryConverter : Converter
+	{
+		public DictionaryConverter(IConverter converter)
+			: base(new ListReader(converter, DictionaryAddDelegates.Default), new DictionaryBodyWriter(converter)) {}
+	}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-    public interface IConverterSelector : ISelector<IElement, IConverter> {}
+	public interface IConverterSelector : ISelector<IElement, IConverter> {}
 }

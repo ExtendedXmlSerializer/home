@@ -25,8 +25,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public abstract class ElementBase : IElement
-    {
-        public abstract TypeInfo Classification { get; }
-    }
+	public abstract class ElementBase : IElement
+	{
+		public abstract TypeInfo Classification { get; }
+	}
 }

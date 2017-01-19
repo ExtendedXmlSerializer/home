@@ -27,17 +27,17 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-    class Activators : WeakCacheBase<Type, Func<object>>, IActivators
-    {
-        public static Activators Default { get; } = new Activators();
-        Activators() {}
+	class Activators : WeakCacheBase<Type, Func<object>>, IActivators
+	{
+		public static Activators Default { get; } = new Activators();
+		Activators() {}
 
-        protected override Func<object> Create(Type parameter)
-        {
-            var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
-            var lambda = Expression.Lambda<Func<object>>(newExp);
-            var result = lambda.Compile();
-            return result;
-        }
-    }
+		protected override Func<object> Create(Type parameter)
+		{
+			var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
+			var lambda = Expression.Lambda<Func<object>>(newExp);
+			var result = lambda.Compile();
+			return result;
+		}
+	}
 }

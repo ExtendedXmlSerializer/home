@@ -29,12 +29,12 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public class KnownElementNames : ElementNameOptionBase
-    {
-        public KnownElementNames(IEnumerable<IElementName> elements)
-            : this(elements.ToDictionary(x => (MemberInfo) x.Classification, x => x.DisplayName)) {}
+	public class KnownElementNames : ElementNameOptionBase
+	{
+		public KnownElementNames(IEnumerable<IElementName> elements)
+			: this(elements.ToDictionary(x => (MemberInfo) x.Classification, x => x.DisplayName)) {}
 
-        public KnownElementNames(IDictionary<MemberInfo, string> names)
-            : base(new DelegatedSpecification<MemberInfo>(names.ContainsKey), names.TryGet) {}
-    }
+		public KnownElementNames(IDictionary<MemberInfo, string> names)
+			: base(new DelegatedSpecification<MemberInfo>(names.ContainsKey), names.TryGet) {}
+	}
 }

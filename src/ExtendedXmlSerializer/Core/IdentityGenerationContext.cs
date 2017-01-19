@@ -23,17 +23,17 @@
 
 namespace ExtendedXmlSerialization.Core
 {
-    public struct IdentityGenerationContext
-    {
-        public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
-        {
-            UniqueId = uniqueId;
-            Instance = instance;
-            FirstEncounter = firstEncounter;
-        }
+	public struct IdentityGenerationContext
+	{
+		public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
+		{
+			UniqueId = uniqueId;
+			Instance = instance;
+			FirstEncounter = firstEncounter;
+		}
 
-        public long UniqueId { get; }
-        public object Instance { get; }
-        public bool FirstEncounter { get; }
-    }
+		public long UniqueId { get; }
+		public object Instance { get; }
+		public bool FirstEncounter { get; }
+	}
 }

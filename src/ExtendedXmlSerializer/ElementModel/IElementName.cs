@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-    public interface IElementName : IDisplayAware, IClassification {}
+	public interface IElementName : IDisplayAware, IClassification {}
 }

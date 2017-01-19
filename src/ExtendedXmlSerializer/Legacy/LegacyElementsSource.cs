@@ -27,16 +27,16 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsSource : ElementsSource
-    {
-        private readonly IInternalExtendedXmlConfiguration _tools;
-        
-        public LegacyElementsSource(IInternalExtendedXmlConfiguration tools)
-        {
-            _tools = tools;
-        }
+	sealed class LegacyElementsSource : ElementsSource
+	{
+		readonly IInternalExtendedXmlConfiguration _tools;
 
-        protected override IMemberElementSelector CreateMembers(IElements parameter)
-            => new LegacyMemberElementSelector(_tools, parameter);
-    }
+		public LegacyElementsSource(IInternalExtendedXmlConfiguration tools)
+		{
+			_tools = tools;
+		}
+
+		protected override IMemberElementSelector CreateMembers(IElements parameter)
+			=> new LegacyMemberElementSelector(_tools, parameter);
+	}
 }

@@ -29,32 +29,32 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class EnumerableReferenceWriter : DecoratedWriter
-    {
-        private readonly IInternalExtendedXmlConfiguration _config;
+	sealed class EnumerableReferenceWriter : DecoratedWriter
+	{
+		readonly IInternalExtendedXmlConfiguration _config;
 
-        public EnumerableReferenceWriter(IInternalExtendedXmlConfiguration config, IWriter writer) : base(writer)
-        {
-            _config = config;
-        }
+		public EnumerableReferenceWriter(IInternalExtendedXmlConfiguration config, IWriter writer) : base(writer)
+		{
+			_config = config;
+		}
 
-        public override void Write(IWriteContext context, object instance)
-        {
-            var element = ((ICollectionElement) context.Element).Item.Classification.AsType();
-            var configuration = _config.GetTypeConfiguration(element);
-            if (configuration?.IsObjectReference ?? false)
-            {
-                var references = context.Get<WriteReferences>();
-                foreach (var item in (IEnumerable) instance)
-                {
-                    if (!references.Contains(item) && !references.Reserved.Contains(item))
-                    {
-                        references.Reserved.Add(item);
-                    }
-                }
-            }
+		public override void Write(IWriteContext context, object instance)
+		{
+			var element = ((ICollectionElement) context.Element).Item.Classification.AsType();
+			var configuration = _config.GetTypeConfiguration(element);
+			if (configuration?.IsObjectReference ?? false)
+			{
+				var references = context.Get<WriteReferences>();
+				foreach (var item in (IEnumerable) instance)
+				{
+					if (!references.Contains(item) && !references.Reserved.Contains(item))
+					{
+						references.Reserved.Add(item);
+					}
+				}
+			}
 
-            base.Write(context, instance);
-        }
-    }
+			base.Write(context, instance);
+		}
+	}
 }

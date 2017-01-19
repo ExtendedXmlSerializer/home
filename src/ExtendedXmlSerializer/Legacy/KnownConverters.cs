@@ -25,30 +25,30 @@ using ExtendedXmlSerialization.Conversion.Primitives;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    public class KnownConverters : Conversion.KnownConverters
-    {
-        public static new KnownConverters Default { get; } = new KnownConverters();
+	public class KnownConverters : Conversion.KnownConverters
+	{
+		public new static KnownConverters Default { get; } = new KnownConverters();
 
-        KnownConverters() : base(
-            LegacyBooleanTypeConverter.Default,
-            LegacyCharacterTypeConverter.Default,
-            ByteTypeConverter.Default,
-            UnsignedByteTypeConverter.Default,
-            ShortTypeConverter.Default,
-            UnsignedShortTypeConverter.Default,
-            IntegerTypeConverter.Default,
-            UnsignedIntegerTypeConverter.Default,
-            LongTypeConverter.Default,
-            UnsignedLongTypeConverter.Default,
-            FloatTypeConverter.Default,
-            DoubleTypeConverter.Default,
-            DecimalTypeConverter.Default,
-            EnumerationTypeConverter.Default,
-            DateTimeTypeConverter.Default,
-            DateTimeOffsetTypeConverter.Default,
-            StringTypeConverter.Default,
-            GuidTypeConverter.Default,
-            TimeSpanTypeConverter.Default
-        ) {}
-    }
+		KnownConverters() : base(
+			LegacyBooleanTypeConverter.Default,
+			LegacyCharacterTypeConverter.Default,
+			ByteTypeConverter.Default,
+			UnsignedByteTypeConverter.Default,
+			ShortTypeConverter.Default,
+			UnsignedShortTypeConverter.Default,
+			IntegerTypeConverter.Default,
+			UnsignedIntegerTypeConverter.Default,
+			LongTypeConverter.Default,
+			UnsignedLongTypeConverter.Default,
+			FloatTypeConverter.Default,
+			DoubleTypeConverter.Default,
+			DecimalTypeConverter.Default,
+			EnumerationTypeConverter.Default,
+			DateTimeTypeConverter.Default,
+			DateTimeOffsetTypeConverter.Default,
+			StringTypeConverter.Default,
+			GuidTypeConverter.Default,
+			TimeSpanTypeConverter.Default
+		) {}
+	}
 }
