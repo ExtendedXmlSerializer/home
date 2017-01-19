@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyEnumerableTypeConverter : Converter
     {
-        public LegacyEnumerableTypeConverter(ExtendedXmlSerializerConfig config, IConverter converter)
+        public LegacyEnumerableTypeConverter(IInternalExtendedXmlSerializerConfig config, IConverter converter)
             : base(
                 new ListReader(converter), new EnumerableReferenceWriter(config, new EnumerableBodyWriter(converter))
             ) {}

@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyElementsSource : ElementsSource
     {
-        private readonly ExtendedXmlSerializerConfig _tools;
+        private readonly IInternalExtendedXmlSerializerConfig _tools;
         
-        public LegacyElementsSource(ExtendedXmlSerializerConfig tools)
+        public LegacyElementsSource(IInternalExtendedXmlSerializerConfig tools)
         {
             _tools = tools;
         }

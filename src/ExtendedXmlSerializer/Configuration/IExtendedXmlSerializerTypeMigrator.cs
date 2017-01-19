@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.NewConfiguration
+namespace ExtendedXmlSerialization.Configuration
 {
     public interface IExtendedXmlSerializerTypeMigrator
     {

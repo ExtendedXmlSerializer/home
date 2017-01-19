@@ -23,17 +23,17 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     class LegacySetterFactory : ISetterFactory
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
         private readonly ISetterFactory _factory;
 
-        public LegacySetterFactory(ExtendedXmlSerializerConfig config, ISetterFactory factory)
+        public LegacySetterFactory(IInternalExtendedXmlSerializerConfig config, ISetterFactory factory)
         {
             _config = config;
             _factory = factory;

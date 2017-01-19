@@ -22,18 +22,18 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class EnumerableReferenceWriter : DecoratedWriter
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
 
-        public EnumerableReferenceWriter(ExtendedXmlSerializerConfig config, IWriter writer) : base(writer)
+        public EnumerableReferenceWriter(IInternalExtendedXmlSerializerConfig config, IWriter writer) : base(writer)
         {
             _config = config;
         }

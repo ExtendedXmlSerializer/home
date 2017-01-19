@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {

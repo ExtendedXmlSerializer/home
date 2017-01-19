@@ -23,20 +23,20 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyGetterFactory : IGetterFactory
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
         private readonly IGetterFactory _factory;
 
-        public LegacyGetterFactory(ExtendedXmlSerializerConfig config) : this(config, GetterFactory.Default) {}
+        public LegacyGetterFactory(IInternalExtendedXmlSerializerConfig config) : this(config, GetterFactory.Default) {}
 
-        public LegacyGetterFactory(ExtendedXmlSerializerConfig config, IGetterFactory factory)
+        public LegacyGetterFactory(IInternalExtendedXmlSerializerConfig config, IGetterFactory factory)
         {
             _config = config;
             _factory = factory;

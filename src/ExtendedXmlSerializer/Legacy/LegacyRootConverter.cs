@@ -22,22 +22,22 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyRootConverter : RootConverter
     {
-        private readonly ExtendedXmlSerializerConfig _tools;
+        private readonly IInternalExtendedXmlSerializerConfig _tools;
 
-        public LegacyRootConverter(ExtendedXmlSerializerConfig config)
+        public LegacyRootConverter(IInternalExtendedXmlSerializerConfig config)
             : this(config, new RootSelector(new SelectorFactory(new LegacyConverterOptions(config)))) {}
 
-        LegacyRootConverter(ExtendedXmlSerializerConfig config, IConverterSelector selector) : base(selector)
+        LegacyRootConverter(IInternalExtendedXmlSerializerConfig config, IConverterSelector selector) : base(selector)
         {
             _tools = config;
         }

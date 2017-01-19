@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(ExtendedXmlSerializerConfig config, IElements elements)
+        public LegacyMemberElementSelector(IInternalExtendedXmlSerializerConfig config, IElements elements)
             : base(
                 new MemberOption(elements, new LegacyGetterFactory(config),
                                  new LegacySetterFactory(config, SetterFactory.Default)),

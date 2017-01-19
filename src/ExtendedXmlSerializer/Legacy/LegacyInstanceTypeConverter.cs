@@ -22,13 +22,13 @@
 // SOFTWARE.
 
 using System.Globalization;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Legacy
         public LegacyInstanceTypeConverter(IConverter converter)
             : base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
-        public LegacyInstanceTypeConverter(ExtendedXmlSerializerConfig config, IConverter converter)
+        public LegacyInstanceTypeConverter(IInternalExtendedXmlSerializerConfig config, IConverter converter)
             : base(
                 new LegacyInstanceBodyReader(config, converter),
                 new LegacyTypeEmittingWriter(new Writer(config, new InstanceBodyWriter(converter)))
@@ -45,9 +45,9 @@ namespace ExtendedXmlSerialization.Legacy
 
         private sealed class Writer : DecoratedWriter
         {
-            private readonly ExtendedXmlSerializerConfig _tools;
+            private readonly IInternalExtendedXmlSerializerConfig _tools;
 
-            public Writer(ExtendedXmlSerializerConfig tools, IWriter writer) : base(writer)
+            public Writer(IInternalExtendedXmlSerializerConfig tools, IWriter writer) : base(writer)
             {
                 _tools = tools;
             }

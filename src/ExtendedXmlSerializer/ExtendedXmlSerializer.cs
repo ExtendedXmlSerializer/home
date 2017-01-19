@@ -23,8 +23,8 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Legacy;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization
 {

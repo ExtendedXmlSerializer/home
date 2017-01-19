@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace ExtendedXmlSerialization.NewConfiguration
+namespace ExtendedXmlSerialization.Configuration
 {
     public interface IExtendedXmlSerializerConfigProperty<T, TProperty>
     {

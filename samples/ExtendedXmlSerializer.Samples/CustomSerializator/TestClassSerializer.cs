@@ -21,7 +21,7 @@
 // SOFTWARE.
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.NewConfiguration;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.NewConfiguration
+namespace ExtendedXmlSerialization.Configuration
 {
-
-
-    public class ExtendedXmlSerializerConfig : IExtendedXmlSerializerConfig
+    public class ExtendedXmlSerializerConfig : IExtendedXmlSerializerConfig, IInternalExtendedXmlSerializerConfig
     {
         public bool AutoProperties { get; set; }
         public bool Namespaces { get; set; }
         public IPropertyEncryption EncryptionAlgorithm { get; set; }
 
-        internal IExtendedXmlSerializerConfigType GetTypeConfig(Type type)
+        IExtendedXmlSerializerConfigType IInternalExtendedXmlSerializerConfig.GetTypeConfig(Type type)
         {
             return _cache.ContainsKey(type) ? _cache[type] : null;
         }

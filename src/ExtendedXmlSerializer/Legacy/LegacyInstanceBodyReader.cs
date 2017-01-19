@@ -21,18 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.NewConfiguration;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyInstanceBodyReader : InstanceBodyReader
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
 
-        public LegacyInstanceBodyReader(ExtendedXmlSerializerConfig config, IReader reader)
+        public LegacyInstanceBodyReader(IInternalExtendedXmlSerializerConfig config, IReader reader)
             : base(reader)
         {
             _config = config;

@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsTooling : WeakCacheBase<ExtendedXmlSerializerConfig, ISerializer>
+    sealed class LegacyElementsTooling : WeakCacheBase<IInternalExtendedXmlSerializerConfig, ISerializer>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
         LegacyElementsTooling() {}
 
-        protected override ISerializer Create(ExtendedXmlSerializerConfig parameter)
+        protected override ISerializer Create(IInternalExtendedXmlSerializerConfig parameter)
         {
             var legacyElements = new LegacyElements(new LegacyElementsSource(parameter));
             var result = new LegacySerializer(legacyElements, new LegacyRootConverter(parameter));

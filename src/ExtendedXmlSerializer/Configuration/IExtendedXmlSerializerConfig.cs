@@ -1,4 +1,4 @@
-﻿namespace ExtendedXmlSerialization.NewConfiguration
+﻿namespace ExtendedXmlSerialization.Configuration
 {
     public interface IExtendedXmlSerializerConfig
     {

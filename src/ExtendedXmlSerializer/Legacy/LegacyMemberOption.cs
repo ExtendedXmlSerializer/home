@@ -21,18 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
         private readonly IConverterOption _option;
 
-        public LegacyMemberOption(ExtendedXmlSerializerConfig config, IConverterOption option)
+        public LegacyMemberOption(IInternalExtendedXmlSerializerConfig config, IConverterOption option)
         {
             _config = config;
             _option = option;

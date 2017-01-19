@@ -1,5 +1,5 @@
 ﻿using System;
-using ExtendedXmlSerialization.NewConfiguration;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 

@@ -21,7 +21,7 @@
 // SOFTWARE.
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.NewConfiguration;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs

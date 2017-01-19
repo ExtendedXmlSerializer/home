@@ -22,20 +22,20 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.NewConfiguration;
 
 namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        private readonly ExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlSerializerConfig _config;
         
-        public LegacyConverterOptions(ExtendedXmlSerializerConfig config)
+        public LegacyConverterOptions(IInternalExtendedXmlSerializerConfig config)
         {
             _config = config;
             

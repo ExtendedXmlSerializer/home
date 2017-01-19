@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.NewConfiguration
+namespace ExtendedXmlSerialization.Configuration
 {
     public interface IExtendedXmlSerializerConfigType<T>
     {
