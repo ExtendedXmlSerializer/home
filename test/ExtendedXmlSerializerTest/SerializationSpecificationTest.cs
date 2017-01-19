@@ -45,9 +45,9 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                cfg.ConfigType<TestClassInheritanceWithMigrationsBase>().AddMigration(MigrationBase);
-                cfg.ConfigType<TestClassInheritanceWithMigrationsA>().AddMigration(AMigration);
-                cfg.ConfigType<TestClassInheritanceWithMigrationsB>().AddMigration(BMigration);
+                cfg.ConfigureType<TestClassInheritanceWithMigrationsBase>().AddMigration(MigrationBase);
+                cfg.ConfigureType<TestClassInheritanceWithMigrationsA>().AddMigration(AMigration);
+                cfg.ConfigureType<TestClassInheritanceWithMigrationsB>().AddMigration(BMigration);
             });
         }
 

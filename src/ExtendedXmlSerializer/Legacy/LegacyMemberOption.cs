@@ -29,10 +29,10 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyMemberOption : ConverterOptionBase<IMemberElement>
     {
-        private readonly IInternalExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlConfiguration _config;
         private readonly IConverterOption _option;
 
-        public LegacyMemberOption(IInternalExtendedXmlSerializerConfig config, IConverterOption option)
+        public LegacyMemberOption(IInternalExtendedXmlConfiguration config, IConverterOption option)
         {
             _config = config;
             _option = option;
@@ -43,8 +43,8 @@ namespace ExtendedXmlSerialization.Legacy
             var result = _option.Get(parameter);
             if (result != null)
             {
-                var configuration = _config.GetTypeConfig(parameter.Metadata.DeclaringType);
-                var propertyConfiguration = configuration?.GetPropertyConfig(parameter.Metadata.Name);
+                var configuration = _config.GetTypeConfiguration(parameter.Metadata.DeclaringType);
+                var propertyConfiguration = configuration?.GetPropertyConfiguration(parameter.Metadata.Name);
                 if (propertyConfiguration != null && propertyConfiguration.IsEncrypt)
                 {
                     var algorithm = _config.EncryptionAlgorithm;

@@ -33,9 +33,9 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
     {
-        private readonly IInternalExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlConfiguration _config;
         
-        public LegacyConverterOptions(IInternalExtendedXmlSerializerConfig config)
+        public LegacyConverterOptions(IInternalExtendedXmlConfiguration config)
         {
             _config = config;
             

@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyGetterFactory : IGetterFactory
     {
-        private readonly IInternalExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlConfiguration _config;
         private readonly IGetterFactory _factory;
 
-        public LegacyGetterFactory(IInternalExtendedXmlSerializerConfig config) : this(config, GetterFactory.Default) {}
+        public LegacyGetterFactory(IInternalExtendedXmlConfiguration config) : this(config, GetterFactory.Default) {}
 
-        public LegacyGetterFactory(IInternalExtendedXmlSerializerConfig config, IGetterFactory factory)
+        public LegacyGetterFactory(IInternalExtendedXmlConfiguration config, IGetterFactory factory)
         {
             _config = config;
             _factory = factory;
@@ -45,8 +45,8 @@ namespace ExtendedXmlSerialization.Legacy
         public Func<object, object> Get(MemberInfo parameter)
         {
             var result = _factory.Get(parameter);
-            var configuration = _config.GetTypeConfig(parameter.DeclaringType);
-            var propertyConfig = configuration?.GetPropertyConfig(parameter.Name);
+            var configuration = _config.GetTypeConfiguration(parameter.DeclaringType);
+            var propertyConfig = configuration?.GetPropertyConfiguration(parameter.Name);
             if (propertyConfig != null && propertyConfig.IsEncrypt)
             {
                 var algorithm = _config.EncryptionAlgorithm;

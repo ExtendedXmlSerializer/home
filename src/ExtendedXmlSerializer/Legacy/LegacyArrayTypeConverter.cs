@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyArrayTypeConverter : Converter
     {
-        public LegacyArrayTypeConverter(IInternalExtendedXmlSerializerConfig config, IConverter converter)
+        public LegacyArrayTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
             : base(
                 new ArrayReader(converter),
                 new EnumerableReferenceWriter(config, new EnumerableBodyWriter(converter))) {}

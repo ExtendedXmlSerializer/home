@@ -32,12 +32,12 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyRootConverter : RootConverter
     {
-        private readonly IInternalExtendedXmlSerializerConfig _tools;
+        private readonly IInternalExtendedXmlConfiguration _tools;
 
-        public LegacyRootConverter(IInternalExtendedXmlSerializerConfig config)
+        public LegacyRootConverter(IInternalExtendedXmlConfiguration config)
             : this(config, new RootSelector(new SelectorFactory(new LegacyConverterOptions(config)))) {}
 
-        LegacyRootConverter(IInternalExtendedXmlSerializerConfig config, IConverterSelector selector) : base(selector)
+        LegacyRootConverter(IInternalExtendedXmlConfiguration config, IConverterSelector selector) : base(selector)
         {
             _tools = config;
         }
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Legacy
         public override void Write(IWriteContext context, object instance)
         {
             var type = instance.GetType();
-            var configuration = _tools.GetTypeConfig(type);
+            var configuration = _tools.GetTypeConfiguration(type);
             if (configuration != null)
             {
                 if (configuration.IsCustomSerializer)
@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.Legacy
         public override object Read(IReadContext context)
         {
             var type = context.Element.Classification.AsType();
-            var configuration = _tools.GetTypeConfig(type);
+            var configuration = _tools.GetTypeConfiguration(type);
             if (configuration != null)
             {
                 var element = context.Get<XElement>();

@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer =
                 new ExtendedXmlSerializer(
-                    cfg => cfg.ConfigType<TestClassWithMap>().AddMigration(new TestClassWithMapMigrator()));
+                    cfg => cfg.ConfigureType<TestClassWithMap>().AddMigration(new TestClassWithMapMigrator()));
         }
 
         [Fact]

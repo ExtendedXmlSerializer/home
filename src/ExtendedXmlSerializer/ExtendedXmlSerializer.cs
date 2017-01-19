@@ -33,11 +33,11 @@ namespace ExtendedXmlSerialization
     /// </summary>
     public class ExtendedXmlSerializer : IExtendedXmlSerializer
     {
-        readonly private ExtendedXmlSerializerConfig _config = new ExtendedXmlSerializerConfig();
+        readonly private ExtendedXmlConfiguration _config = new ExtendedXmlConfiguration();
 
         public ExtendedXmlSerializer() : this(null) { }
 
-        public ExtendedXmlSerializer(Action<ExtendedXmlSerializerConfig> config)
+        public ExtendedXmlSerializer(Action<ExtendedXmlConfiguration> config)
         {
             config?.Invoke(_config);
         }

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-    public class TestClassSerialiser : IExtendedXmlSerializerTypeMigrator
+    public class TestClassSerialiser : IExtendedXmlTypeMigrator
     {
         public static void MigrationV0(XElement node)
         {

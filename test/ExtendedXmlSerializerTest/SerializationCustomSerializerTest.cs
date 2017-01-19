@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.Test
 
         public SerializationCustomSerializerTest()
         {
-            Serializer = new ExtendedXmlSerializer(cfg => cfg.ConfigType<TestClassWithSerializer>().CustomSerializer(XmlSerializer, XmlDeserialize));
+            Serializer = new ExtendedXmlSerializer(cfg => cfg.ConfigureType<TestClassWithSerializer>().CustomSerializer(XmlSerializer, XmlDeserialize));
         }
 
         [Fact]

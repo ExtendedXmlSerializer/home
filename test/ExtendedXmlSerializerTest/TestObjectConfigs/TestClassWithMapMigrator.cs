@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassWithMapMigrator : IExtendedXmlSerializerTypeMigrator
+    public class TestClassWithMapMigrator : IExtendedXmlTypeMigrator
     {        
         public static void MigrationV0(XElement node)
         {

@@ -30,9 +30,9 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyInstanceBodyReader : InstanceBodyReader
     {
-        private readonly IInternalExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlConfiguration _config;
 
-        public LegacyInstanceBodyReader(IInternalExtendedXmlSerializerConfig config, IReader reader)
+        public LegacyInstanceBodyReader(IInternalExtendedXmlConfiguration config, IReader reader)
             : base(reader)
         {
             _config = config;
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Legacy
         {
             var result = base.Activate(context);
             var type = context.Element.Classification;
-            var configuration = _config.GetTypeConfig(type.AsType());
+            var configuration = _config.GetTypeConfiguration(type.AsType());
             if (configuration != null && configuration.IsObjectReference)
             {
                 var prefix = type.FullName + Defaults.Underscore;

@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Legacy
         public LegacyInstanceTypeConverter(IConverter converter)
             : base(new InstanceBodyReader(converter), new TypeEmittingWriter(new InstanceBodyWriter(converter))) {}
 
-        public LegacyInstanceTypeConverter(IInternalExtendedXmlSerializerConfig config, IConverter converter)
+        public LegacyInstanceTypeConverter(IInternalExtendedXmlConfiguration config, IConverter converter)
             : base(
                 new LegacyInstanceBodyReader(config, converter),
                 new LegacyTypeEmittingWriter(new Writer(config, new InstanceBodyWriter(converter)))
@@ -45,9 +45,9 @@ namespace ExtendedXmlSerialization.Legacy
 
         private sealed class Writer : DecoratedWriter
         {
-            private readonly IInternalExtendedXmlSerializerConfig _tools;
+            private readonly IInternalExtendedXmlConfiguration _tools;
 
-            public Writer(IInternalExtendedXmlSerializerConfig tools, IWriter writer) : base(writer)
+            public Writer(IInternalExtendedXmlConfiguration tools, IWriter writer) : base(writer)
             {
                 _tools = tools;
             }
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Legacy
             public override void Write(IWriteContext context, object instance)
             {
                 var type = instance.GetType();
-                var configuration = _tools.GetTypeConfig(type);
+                var configuration = _tools.GetTypeConfiguration(type);
                 if (configuration != null)
                 {
                     if (configuration.IsObjectReference)

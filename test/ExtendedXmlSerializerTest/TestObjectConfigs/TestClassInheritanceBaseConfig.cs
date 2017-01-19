@@ -22,7 +22,7 @@
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-//    public class TestClassInheritanceBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceBase>
+//    public class TestClassInheritanceBaseConfig : ExtendedXmlConfiguration<TestClassInheritanceBase>
 //    {
 //        public TestClassInheritanceBaseConfig()
 //        {

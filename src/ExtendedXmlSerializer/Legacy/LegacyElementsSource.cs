@@ -29,9 +29,9 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class LegacyElementsSource : ElementsSource
     {
-        private readonly IInternalExtendedXmlSerializerConfig _tools;
+        private readonly IInternalExtendedXmlConfiguration _tools;
         
-        public LegacyElementsSource(IInternalExtendedXmlSerializerConfig tools)
+        public LegacyElementsSource(IInternalExtendedXmlConfiguration tools)
         {
             _tools = tools;
         }

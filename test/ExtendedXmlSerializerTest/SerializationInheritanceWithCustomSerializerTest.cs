@@ -32,9 +32,9 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                cfg.ConfigType<TestClassInheritanceWithCustomSerializerBase>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBaseConfig());
-                cfg.ConfigType<TestClassInheritanceWithCustomSerializerA>().CustomSerializer(new TestClassInheritanceWithCustomSerializerAConfig());
-                cfg.ConfigType<TestClassInheritanceWithCustomSerializerB>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBConfig());
+                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerBase>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBaseConfig());
+                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerA>().CustomSerializer(new TestClassInheritanceWithCustomSerializerAConfig());
+                cfg.ConfigureType<TestClassInheritanceWithCustomSerializerB>().CustomSerializer(new TestClassInheritanceWithCustomSerializerBConfig());
             });
         }
 

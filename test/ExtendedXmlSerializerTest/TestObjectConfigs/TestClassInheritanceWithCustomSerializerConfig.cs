@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Test.TestObject;
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-    public class TestClassInheritanceWithCustomSerializerBaseConfig: IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
+    public class TestClassInheritanceWithCustomSerializerBaseConfig: IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
     {
         public TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
         {
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
         }
     }
 
-    public class TestClassInheritanceWithCustomSerializerAConfig : IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerA>
+    public class TestClassInheritanceWithCustomSerializerAConfig : IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerA>
     {
         public TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
         {
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
         }
     }
 
-    public class TestClassInheritanceWithCustomSerializerBConfig : IExtendedXmlSerializerCustomSerializer<TestClassInheritanceWithCustomSerializerB>
+    public class TestClassInheritanceWithCustomSerializerBConfig : IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerB>
     {
         public TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
         {

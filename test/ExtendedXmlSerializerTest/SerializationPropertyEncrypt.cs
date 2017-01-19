@@ -9,7 +9,7 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                cfg.ConfigType<TestClassWithEncryptedData>()
+                cfg.ConfigureType<TestClassWithEncryptedData>()
                     .Property(p=>p.Password).Encrypt()
                     .Property(p=>p.Salary).Encrypt();
 

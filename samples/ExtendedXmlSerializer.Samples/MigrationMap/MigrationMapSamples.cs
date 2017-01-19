@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
             Program.PrintHeader("Deserialization old version of xml");
 
             ExtendedXmlSerializer serializer =
-                new ExtendedXmlSerializer(cfg => cfg.ConfigType<TestClass>().AddMigration(new TestClassSerialiser()));
+                new ExtendedXmlSerializer(cfg => cfg.ConfigureType<TestClass>().AddMigration(new TestClassSerialiser()));
 
             Run(serializer);
         }        

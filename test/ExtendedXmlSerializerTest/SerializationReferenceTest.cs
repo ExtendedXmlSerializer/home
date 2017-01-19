@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.Test
         {
             Serializer = new ExtendedXmlSerializer(cfg =>
             {
-                //cfg.ConfigType<TestClassConcreteReference>().Property(p => p.Id).ObjectReference();
-                cfg.ConfigType<TestClassReference>().Property(p => p.Id).ObjectReference();
-                cfg.ConfigType<IReference>().Property(p => p.Id).ObjectReference();
+                //cfg.ConfigureType<TestClassConcreteReference>().Property(p => p.Id).ObjectReference();
+                cfg.ConfigureType<TestClassReference>().Property(p => p.Id).ObjectReference();
+                cfg.ConfigureType<IReference>().Property(p => p.Id).ObjectReference();
             });
         }
 

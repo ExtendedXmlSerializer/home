@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Legacy
 {
     class LegacyMemberElementSelector : MemberElementSelector
     {
-        public LegacyMemberElementSelector(IInternalExtendedXmlSerializerConfig config, IElements elements)
+        public LegacyMemberElementSelector(IInternalExtendedXmlConfiguration config, IElements elements)
             : base(
                 new MemberOption(elements, new LegacyGetterFactory(config),
                                  new LegacySetterFactory(config, SetterFactory.Default)),

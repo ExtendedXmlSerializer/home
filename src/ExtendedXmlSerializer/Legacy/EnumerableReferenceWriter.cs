@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class EnumerableReferenceWriter : DecoratedWriter
     {
-        private readonly IInternalExtendedXmlSerializerConfig _config;
+        private readonly IInternalExtendedXmlConfiguration _config;
 
-        public EnumerableReferenceWriter(IInternalExtendedXmlSerializerConfig config, IWriter writer) : base(writer)
+        public EnumerableReferenceWriter(IInternalExtendedXmlConfiguration config, IWriter writer) : base(writer)
         {
             _config = config;
         }
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.Legacy
         public override void Write(IWriteContext context, object instance)
         {
             var element = ((ICollectionElement) context.Element).Item.Classification.AsType();
-            var configuration = _config.GetTypeConfig(element);
+            var configuration = _config.GetTypeConfiguration(element);
             if (configuration?.IsObjectReference ?? false)
             {
                 var references = context.Get<WriteReferences>();

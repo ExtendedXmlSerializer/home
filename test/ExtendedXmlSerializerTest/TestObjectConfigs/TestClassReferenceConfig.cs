@@ -22,7 +22,7 @@
 
 namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 {
-//    public class TestClassReferenceConfig : ExtendedXmlSerializerConfig<TestClassReference>
+//    public class TestClassReferenceConfig : ExtendedXmlConfiguration<TestClassReference>
 //    {
 //        public TestClassReferenceConfig()
 //        {
@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 //        }
 //    }
 //
-//    public class TestClassConcreteReferenceConfig : ExtendedXmlSerializerConfig<TestClassConcreteReference>
+//    public class TestClassConcreteReferenceConfig : ExtendedXmlConfiguration<TestClassConcreteReference>
 //    {
 //        public TestClassConcreteReferenceConfig()
 //        {
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.TestObjectConfigs
 //        }
 //    }
 //
-//    public class InterfaceReferenceConfig : ExtendedXmlSerializerConfig<IReference>
+//    public class InterfaceReferenceConfig : ExtendedXmlConfiguration<IReference>
 //    {
 //        public InterfaceReferenceConfig()
 //        {

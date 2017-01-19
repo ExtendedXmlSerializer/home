@@ -6,20 +6,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-    internal interface IExtendedXmlSerializerConfigType
-    {
-        IExtendedXmlSerializerConfigProperty GetPropertyConfig(string name);
-        int Version { get; }
-        void Map(Type targetType, XElement currentNode);
-        object ReadObject(XElement element);
-        void WriteObject(XmlWriter writer, object obj);
-
-        bool IsCustomSerializer { get; set; }
-        bool IsObjectReference { get; set; }
-        Func<object, string> GetObjectId { get; set; }
-    }
-
-    internal class ExtendedXmlSerializerConfigType<T> : IExtendedXmlSerializerConfigType<T>, IExtendedXmlSerializerConfigType
+    internal class ExtendedXmlTypeConfiguration<T> : IExtendedXmlTypeConfiguration<T>, IExtendedXmlTypeConfiguration
     {
         /// <summary>
         /// Gets the dictionary of migartions
@@ -28,7 +15,7 @@ namespace ExtendedXmlSerialization.Configuration
         private Func<XElement, T> _deserialize;
         private Action<XmlWriter, T> _serializer;
 
-        public IExtendedXmlSerializerConfigProperty GetPropertyConfig(string name)
+        public IExtendedXmlPropertyConfiguration GetPropertyConfiguration(string name)
         {
             return _cache.ContainsKey(name) ? _cache[name] : null;
         }
@@ -80,10 +67,10 @@ namespace ExtendedXmlSerialization.Configuration
         public bool IsObjectReference { get; set; }
         public Func<object, string> GetObjectId { get; set; }
 
-        private readonly Dictionary<string, IExtendedXmlSerializerConfigProperty> _cache = new Dictionary<string, IExtendedXmlSerializerConfigProperty>();
-        public IExtendedXmlSerializerConfigProperty<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> property)
+        private readonly Dictionary<string, IExtendedXmlPropertyConfiguration> _cache = new Dictionary<string, IExtendedXmlPropertyConfiguration>();
+        public IExtendedXmlPropertyConfiguration<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> property)
         {
-            var propertyConfig = new ExtendedXmlSerializerConfigProperty<T, TProperty> {ConfigType = this, PropertyExpression = property};
+            var propertyConfig = new ExtendedXmlPropertyConfiguration<T, TProperty> {TypeConfiguration = this, PropertyExpression = property};
             //TODO maybe something smarter.
             var path = property.Body.ToString();
             var binding = path.Substring(path.IndexOf(".", StringComparison.OrdinalIgnoreCase) + 1);
@@ -92,7 +79,7 @@ namespace ExtendedXmlSerialization.Configuration
             return propertyConfig;
         }
 
-        public IExtendedXmlSerializerConfigType<T> CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize)
+        public IExtendedXmlTypeConfiguration<T> CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize)
         {
             IsCustomSerializer = true;
             _serializer = serializer;
@@ -100,7 +87,7 @@ namespace ExtendedXmlSerialization.Configuration
             return this;
         }
 
-        public IExtendedXmlSerializerConfigType<T> CustomSerializer(IExtendedXmlSerializerCustomSerializer<T> serializer)
+        public IExtendedXmlTypeConfiguration<T> CustomSerializer(IExtendedXmlCustomSerializer<T> serializer)
         {
             IsCustomSerializer = true;
             _serializer = serializer.Serializer;
@@ -108,13 +95,13 @@ namespace ExtendedXmlSerialization.Configuration
             return this;
         }
 
-        public IExtendedXmlSerializerConfigType<T> AddMigration(Action<XElement> migration)
+        public IExtendedXmlTypeConfiguration<T> AddMigration(Action<XElement> migration)
         {
             _migrations.Add(Version++, migration);
             return this;
         }
 
-        public IExtendedXmlSerializerConfigType<T> AddMigration(IExtendedXmlSerializerTypeMigrator migrator)
+        public IExtendedXmlTypeConfiguration<T> AddMigration(IExtendedXmlTypeMigrator migrator)
         {
             foreach (var allMigration in migrator.GetAllMigrations())
             {

@@ -30,14 +30,14 @@ namespace ExtendedXmlSerialization.Legacy
 {
     sealed class CustomElementWriter : Emitter
     {
-        public CustomElementWriter(IExtendedXmlSerializerConfigType configuration)
+        public CustomElementWriter(IExtendedXmlTypeConfiguration configuration)
             : base(new TypeEmittingWriter(new BodyWriter(configuration))) {}
 
         sealed class BodyWriter : WriterBase
         {
-            private readonly IExtendedXmlSerializerConfigType _configuration;
+            private readonly IExtendedXmlTypeConfiguration _configuration;
 
-            public BodyWriter(IExtendedXmlSerializerConfigType configuration)
+            public BodyWriter(IExtendedXmlTypeConfiguration configuration)
             {
                 _configuration = configuration;
             }

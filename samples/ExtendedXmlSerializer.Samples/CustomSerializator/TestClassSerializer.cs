@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-    public class TestClassSerializer : IExtendedXmlSerializerCustomSerializer<TestClass>
+    public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
     {
         public TestClass Deserialize(XElement element)
         {

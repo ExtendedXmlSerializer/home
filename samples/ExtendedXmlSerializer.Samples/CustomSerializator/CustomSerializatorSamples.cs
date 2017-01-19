@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
             Program.PrintHeader("Custom serialization");
 
             ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(
-                cfg=> cfg.ConfigType<TestClass>().CustomSerializer(new TestClassSerializer())
+                cfg=> cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer())
             );
 
             Run(serializer);

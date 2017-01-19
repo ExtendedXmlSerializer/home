@@ -26,12 +26,12 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Legacy
 {
-    sealed class LegacyElementsTooling : WeakCacheBase<IInternalExtendedXmlSerializerConfig, ISerializer>
+    sealed class LegacyElementsTooling : WeakCacheBase<IInternalExtendedXmlConfiguration, ISerializer>
     {
         public static LegacyElementsTooling Default { get; } = new LegacyElementsTooling();
         LegacyElementsTooling() {}
 
-        protected override ISerializer Create(IInternalExtendedXmlSerializerConfig parameter)
+        protected override ISerializer Create(IInternalExtendedXmlConfiguration parameter)
         {
             var legacyElements = new LegacyElements(new LegacyElementsSource(parameter));
             var result = new LegacySerializer(legacyElements, new LegacyRootConverter(parameter));

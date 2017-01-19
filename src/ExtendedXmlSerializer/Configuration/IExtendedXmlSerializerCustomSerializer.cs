@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-    public interface IExtendedXmlSerializerCustomSerializer<T>
+    public interface IExtendedXmlCustomSerializer<T>
     {
         T Deserialize(XElement xElement);
 

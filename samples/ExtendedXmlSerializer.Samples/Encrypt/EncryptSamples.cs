@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
             
             ExtendedXmlSerializer serializer = new ExtendedXmlSerializer(cfg =>
             {
-                cfg.ConfigType<Person>().Property(p => p.Password).Encrypt();
+                cfg.ConfigureType<Person>().Property(p => p.Password).Encrypt();
                 cfg.EncryptionAlgorithm = new Base64PropertyEncryption();
             });
 

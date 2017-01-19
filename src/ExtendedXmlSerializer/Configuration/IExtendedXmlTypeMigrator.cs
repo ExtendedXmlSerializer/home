@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-    public interface IExtendedXmlSerializerTypeMigrator
+    public interface IExtendedXmlTypeMigrator
     {
         IEnumerable<Action<XElement>> GetAllMigrations();
     }
