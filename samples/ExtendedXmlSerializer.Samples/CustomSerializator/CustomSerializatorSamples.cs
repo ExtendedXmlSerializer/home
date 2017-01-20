@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
@@ -31,7 +32,7 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 		{
 			Program.PrintHeader("Custom serialization");
 
-			var serializer = new ExtendedXmlSerializer(
+			var serializer = new ExtendedXmlConfiguration().Create(
 				cfg => cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer())
 			);
 

@@ -29,5 +29,7 @@ namespace ExtendedXmlSerialization.Configuration
 		IExtendedXmlConfiguration UseAutoProperties();
 		IExtendedXmlConfiguration UseNamespaces();
 		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
+
+		IExtendedXmlSerializer Create();
 	}
 }

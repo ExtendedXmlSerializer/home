@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 		{
 			Program.PrintHeader("Serialization reference object");
 
-			var serializer = new ExtendedXmlSerializer(
+			var serializer = new ExtendedXmlConfiguration().Create(
 				cfg => cfg.ConfigureType<Person>().Property(p => p.Id).ObjectReference()
 			);
 

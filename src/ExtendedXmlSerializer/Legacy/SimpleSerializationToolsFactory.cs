@@ -22,37 +22,41 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy
 {
-	public class TestClassWithEncryptedData
+	/// <summary>
+	/// The simple implementation of <see cref="ISerializationToolsFactory"/>
+	/// </summary>
+	public class SimpleSerializationToolsFactory : ISerializationToolsFactory
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		/// <summary>
+		/// Creates an instance of <see cref="ISerializationToolsFactory"/>
+		/// </summary>
+		public SimpleSerializationToolsFactory()
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
-
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			Configurations = new List<IExtendedXmlSerializerConfig>();
 		}
 
-		public string Decrypt(string value)
+		/// <summary>
+		/// Gets or sets list of <see cref="IExtendedXmlSerializerConfig"/>
+		/// </summary>
+		public List<IExtendedXmlSerializerConfig> Configurations { get; set; }
+
+
+		public IExtendedXmlSerializerConfig GetConfiguration(Type type)
 		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			foreach (var migrationMap in Configurations)
+			{
+				if (migrationMap.IsSatisfiedBy(type))
+				{
+					return migrationMap;
+				}
+			}
+			return null;
 		}
+
+		public IPropertyEncryption EncryptionAlgorithm { get; set; }
 	}
 }

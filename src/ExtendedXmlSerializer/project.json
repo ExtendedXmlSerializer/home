@@ -25,14 +25,21 @@
   ],
     "frameworks": {
         "net45": {
+            "buildOptions": {
+                "define": [ "CLASSIC" ]
+            },
             "frameworkAssemblies": {
                 "System.Data": "4.0.0.0",
                 "System.Xml": "4.0.0.0",
                 "System.Xml.Linq": "4.0.0.0",
-                "System.ComponentModel": "4.0.0.0"
+                "System.ComponentModel": "4.0.0.0",
+                "System.Reflection": "4.0.0.0"
             }
         },
         "netstandard1.6": {
+            "buildOptions": {
+                "define": [ "CORE" ]
+            },
             "dependencies": {
                 "System.Collections.NonGeneric": "4.3.0",
                 "NETStandard.Library": "1.6.1",

@@ -22,37 +22,39 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
+using System.Globalization;
+using System.Xml;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.Test.TestObject;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 {
-	public class TestClassWithEncryptedData
+	public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		public TestClassWithSerializerConfig()
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
-
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			CustomSerializer(Serializer, XmlDeserialize);
 		}
 
-		public string Decrypt(string value)
+		public TestClassWithSerializer XmlDeserialize(XElement element)
 		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			var xElement = element.Element("String");
+			var xElement1 = element.Element("Int");
+			if (xElement != null && xElement1 != null)
+			{
+				string strValue = xElement.Value;
+
+				int intValue = Convert.ToInt32(xElement1.Value);
+				return new TestClassWithSerializer(strValue, intValue);
+			}
+			throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+		}
+
+		public void Serializer(XmlWriter writer, TestClassWithSerializer obj)
+		{
+			writer.WriteElementString("String", obj.PropStr);
+			writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
 		}
 	}
 }

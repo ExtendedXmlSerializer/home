@@ -21,38 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.Test.TestObject;
+using Xunit;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy
 {
-	public class TestClassWithEncryptedData
+	public class SerializationStruct : BaseTest
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
+#if !NET451
+//TODO Set Single in struct on .net 4.5.1
+        [Fact]
+        public void Struct()
+        {
+            var vector2 = new System.Numerics.Vector2(1, 2);
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+            CheckSerializationAndDeserializationByXml(
+                @"<?xml version=""1.0"" encoding=""utf-8""?>
+<Vector2 type=""System.Numerics.Vector2""><X>1</X><Y>2</Y></Vector2>",
+                vector2);
+            CheckCompatibilityWithDefaultSerializator(vector2);
+            
+        }
+#endif
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
+		[Fact]
+		public void StructWithConst()
 		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
-
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			var obj = new TestStruct();
+			obj.Init();
+			CheckSerializationAndDeserializationByXml(
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestStruct type=""ExtendedXmlSerialization.Test.TestObject.TestStruct""><A>1</A><B>2</B></TestStruct>",
+				obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 	}
 }

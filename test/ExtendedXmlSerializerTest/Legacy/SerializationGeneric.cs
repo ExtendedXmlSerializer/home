@@ -21,38 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.Test.TestObject;
+using Xunit;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy
 {
-	public class TestClassWithEncryptedData
+	public class SerializationGeneric : BaseTest
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		[Fact]
+		public void TestClassGeneric()
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+			var obj = new TestClassGeneric<string>();
+			obj.Init("StringValue");
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassGeneric.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		public string Decrypt(string value)
+		[Fact]
+		public void TestClassGenericThree()
 		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			var obj = new TestClassGenericThree<string, int, TestClassPrimitiveTypes>();
+			obj.Init("StringValue", 1, new TestClassPrimitiveTypes());
+			obj.GenericProp3.Init();
+
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassGenericThree.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
+		}
+
+		[Fact]
+		public void TestClassPropGeneric()
+		{
+			var pop = new TestClassGenericThree<string, int, decimal>();
+			pop.Init("StringValue", 1, 4.4m);
+			var obj = new TestClassPropGeneric();
+			obj.PropGenric = pop;
+
+
+			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassPropGeneric.xml", obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 	}
 }

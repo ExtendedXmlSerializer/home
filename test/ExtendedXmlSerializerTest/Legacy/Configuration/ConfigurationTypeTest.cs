@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,37 +22,29 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Test.TestObject;
+using Xunit;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy.Configuration
 {
-	public class TestClassWithEncryptedData
+	public class ConfigurationTypeTest
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		[Fact]
+		public void TestClassWithEncryptedData()
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+			Action<IExtendedXmlConfiguration> func =
+				cfg =>
+				{
+					cfg.ConfigureType<TestClassWithEncryptedData>()
+					   .Property(p => p.Password).Encrypt()
+					   .Property(p => p.Salary).Encrypt();
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
-
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+					cfg.UseEncryptionAlgorithm(new Base64PropertyEncryption());
+				};
+			var configurer = new ExtendedXmlConfiguration();
+			func(configurer);
+			Assert.NotNull(configurer.EncryptionAlgorithm);
 		}
 	}
 }

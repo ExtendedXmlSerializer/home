@@ -22,37 +22,27 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy.Cache
 {
-	public class TestClassWithEncryptedData
+	public sealed class AllInterfaces
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
+		readonly Func<Type, IEnumerable<Type>> _selector;
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+		public static AllInterfaces Instance { get; } = new AllInterfaces();
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
+		AllInterfaces()
 		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			_selector = Yield;
 		}
 
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
-		}
+		public IEnumerable<Type> Yield(Type parameter) =>
+			new[] {parameter}
+				.Concat(parameter.GetTypeInfo().ImplementedInterfaces.SelectMany(_selector))
+				.Where(x => x.GetTypeInfo().IsInterface)
+				.Distinct();
 	}
 }

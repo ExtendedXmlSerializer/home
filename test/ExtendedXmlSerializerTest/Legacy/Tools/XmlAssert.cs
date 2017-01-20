@@ -21,38 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using System.Xml.Linq;
+using Xunit;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy.Tools
 {
-	public class TestClassWithEncryptedData
+	public static class XmlAssert
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		public static void AreEqual(string expected, string actual)
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
-
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			Assert.Equal(
+				XElement.Parse(expected).ToString(),
+				XElement.Parse(actual).ToString());
 		}
 
-		public string Decrypt(string value)
+		public static void AreEqual(XElement expected, XElement actual)
 		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			Assert.Equal(expected.ToString(), actual.ToString());
 		}
 	}
 }

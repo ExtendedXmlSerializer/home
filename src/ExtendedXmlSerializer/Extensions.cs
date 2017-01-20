@@ -21,14 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.IO;
 using System.Text;
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization
 {
 	public static class Extensions
 	{
-		public static string Serialize(this ISerializer @this, object instance)
+		public static IExtendedXmlSerializer Create<T>(this T @this, Action<T> configure) where T : IExtendedXmlConfiguration
+		{
+			configure(@this);
+			var result = new ExtendedXmlSerializer(@this);
+			return result;
+		}
+
+		public static string Serialize(this IExtendedXmlSerializer @this, object instance)
 		{
 			using (var stream = new MemoryStream())
 			{
@@ -39,11 +49,11 @@ namespace ExtendedXmlSerialization
 			}
 		}
 
-		public static object Deserialize(this ISerializer @this, string xml)
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml)
 		{
 			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
 			{
-				var result = @this.Deserialize(stream);
+				var result = @this.Deserialize(stream).AsValid<T>();
 				return result;
 			}
 		}

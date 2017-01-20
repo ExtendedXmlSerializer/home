@@ -22,37 +22,16 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy
 {
-	public class TestClassWithEncryptedData
+	/// <summary>
+	/// The factory for creating tools used during serialization.
+	/// </summary>
+	public interface ISerializationToolsFactory
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
+		IExtendedXmlSerializerConfig GetConfiguration(Type type);
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
-
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
-
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
-		}
+		IPropertyEncryption EncryptionAlgorithm { get; }
 	}
 }

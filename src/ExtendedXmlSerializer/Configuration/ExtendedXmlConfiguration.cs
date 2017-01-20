@@ -65,5 +65,7 @@ namespace ExtendedXmlSerialization.Configuration
 			EncryptionAlgorithm = propertyEncryption;
 			return this;
 		}
+
+		public IExtendedXmlSerializer Create() => new ExtendedXmlSerializer(this);
 	}
 }

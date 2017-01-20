@@ -26,14 +26,21 @@ using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.Legacy;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
+	sealed class EnumerableNameProvider : NameProvider
+	{
+		public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
+
+		EnumerableNameProvider() : base(EnumerableTypeFormatter.Default) {}
+	}
+
 	public class EnumerableNameOption : ElementNameOptionBase
 	{
 		public static EnumerableNameOption Default { get; } = new EnumerableNameOption();
-		EnumerableNameOption() : this(LegacyEnumerableNameProvider.Default.Get) {}
+		EnumerableNameOption() : this(EnumerableNameProvider.Default.Get) {}
 
 		public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
 

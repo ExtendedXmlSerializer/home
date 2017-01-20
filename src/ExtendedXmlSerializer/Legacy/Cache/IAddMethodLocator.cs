@@ -22,37 +22,40 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
+using System.Collections.Concurrent;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy.Cache
 {
-	public class TestClassWithEncryptedData
+	public interface IAddMethodLocator
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
+		MethodInfo Locate(Type type, Type elementType);
 	}
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
+	public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
 	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+		const string Add = "Add";
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
+		public static AddMethodLocator Default { get; } = new AddMethodLocator();
+		AddMethodLocator() {}
+
+		public MethodInfo Locate(Type type, Type elementType)
 		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
+			return GetOrAdd(type, t => Get(type, elementType));
 		}
 
-		public string Decrypt(string value)
+		static MethodInfo Get(Type type, Type elementType)
 		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			foreach (var candidate in AllInterfaces.Instance.Yield(type))
+			{
+				var method = candidate.GetMethod(Add);
+				var parameters = method?.GetParameters();
+				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
+				{
+					return method;
+				}
+			}
+			return null;
 		}
 	}
 }
