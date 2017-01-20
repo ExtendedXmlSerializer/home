@@ -22,38 +22,25 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
-#pragma warning disable 618
+using System.Xml;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy
 {
-	public class TestClassWithEncryptedData
+	[Obsolete(Support.Message)]
+	public interface IExtendedXmlSerializerConfig
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
+		int Version { get; } // Consider making getter only, defined by implementation.
+		void Map(Type targetType, XElement currentNode);
+		object ReadObject(XElement element);
+		void WriteObject(XmlWriter writer, object obj);
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+		bool IsSatisfiedBy(Type type);
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
-
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
-		}
+		bool IsCustomSerializer { get; set; }
+		bool IsObjectReference { get; set; }
+		string ExtractedListName { get; set; }
+		string GetObjectId(object obj);
+		bool CheckPropertyEncryption(string propertyInfoName);
 	}
 }

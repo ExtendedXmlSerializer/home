@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {
@@ -33,7 +34,7 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 		{
 			Program.PrintHeader("Serialization reference object");
 
-			var serializer = new ExtendedXmlSerializer(cfg =>
+			var serializer = new ExtendedXmlConfiguration().Create(cfg =>
 			                                           {
 				                                           cfg.ConfigureType<Person>().Property(p => p.Password).Encrypt();
 				                                           cfg.EncryptionAlgorithm = new Base64PropertyEncryption();

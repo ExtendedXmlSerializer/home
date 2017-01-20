@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Samples.Simple
 	{
 		public static void Run()
 		{
-			var serializer = new ExtendedXmlSerializer();
+			var serializer = ExtendedXmlSerializer.Default;
 			Program.PrintHeader("Serialization");
 			var obj = new TestClass();
 			var xml = serializer.Serialize(obj);

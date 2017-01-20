@@ -21,39 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
-#pragma warning disable 618
+using ExtendedXmlSerialization.Test.TestObject;
+using Xunit;
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Test.Legacy
 {
-	public class TestClassWithEncryptedData
+	public class SerializationDifferentProperty : BaseTest
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
-
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
+		public void DifferentProperty()
 		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+			var obj = new TestClassPropertyType();
+			obj.Init();
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
-
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
+			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 	}
 }

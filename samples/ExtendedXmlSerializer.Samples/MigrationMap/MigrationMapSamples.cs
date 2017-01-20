@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 			Program.PrintHeader("Deserialization old version of xml");
 
 			var serializer =
-				new ExtendedXmlSerializer(cfg => cfg.ConfigureType<TestClass>().AddMigration(new TestClassSerialiser()));
+				new ExtendedXmlConfiguration().Create(cfg => cfg.ConfigureType<TestClass>().AddMigration(new TestClassSerialiser()));
 
 			Run(serializer);
 		}

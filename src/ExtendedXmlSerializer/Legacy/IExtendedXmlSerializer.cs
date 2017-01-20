@@ -22,38 +22,41 @@
 // SOFTWARE.
 
 using System;
-using System.Text;
-using ExtendedXmlSerialization.Legacy;
-#pragma warning disable 618
 
-namespace ExtendedXmlSerialization.Test.TestObject
+namespace ExtendedXmlSerialization.Legacy
 {
-	public class TestClassWithEncryptedData
+	/// <summary>
+	/// Interface Extended Xml Serializer
+	/// </summary>
+	[Obsolete(Support.Message)]
+	public interface IExtendedXmlSerializer
 	{
-		public string Name { get; set; }
-		public string Password { get; set; }
-		public decimal Salary { get; set; }
-	}
+		/// <summary>
+		/// Serializes the specified <see cref="T:System.Object" /> and returns xml document in string
+		/// </summary>
+		/// <param name="o">The <see cref="T:System.Object" /> to serialize. </param>
+		/// <returns>xml document in string</returns>
+		string Serialize(object o);
 
-	public class TestClassWithEncryptedDataConfig : ExtendedXmlSerializerConfig<TestClassWithEncryptedData>
-	{
-		public TestClassWithEncryptedDataConfig()
-		{
-			Encrypt(p => p.Password);
-			Encrypt(p => p.Salary);
-		}
-	}
+		/// <summary>
+		/// Deserializes the XML document
+		/// </summary>
+		/// <param name="xml">The XML document</param>
+		/// <param name="type">The type of returned object</param>
+		/// <returns>deserialized object</returns>
+		object Deserialize(string xml, Type type);
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
-	{
-		public string Encrypt(string value)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
-		}
+		/// <summary>
+		/// Deserializes the XML document
+		/// </summary>
+		/// <typeparam name="T">The type of returned object</typeparam>
+		/// <param name="xml">The XML document</param>
+		/// <returns>deserialized object</returns>
+		T Deserialize<T>(string xml);
 
-		public string Decrypt(string value)
-		{
-			return Encoding.UTF8.GetString(Convert.FromBase64String(value));
-		}
+		/// <summary>
+		/// Gets or sets <see cref="ISerializationToolsFactory"/>
+		/// </summary>
+		ISerializationToolsFactory SerializationToolsFactory { get; set; }
 	}
 }

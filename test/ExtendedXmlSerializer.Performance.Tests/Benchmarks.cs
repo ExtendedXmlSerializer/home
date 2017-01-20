@@ -32,7 +32,9 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	{
 		readonly TestClassOtherClass _obj = new TestClassOtherClass();
 		readonly string _xml;
+#pragma warning disable 618
 		readonly Legacy.IExtendedXmlSerializer _serializer = new Legacy.ExtendedXmlSerializer();
+#pragma warning restore 618
 
 		public ExtendedXmlSerializerTest()
 		{
@@ -53,7 +55,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	{
 		readonly TestClassOtherClass _obj = new TestClassOtherClass();
 		readonly string _xml;
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+		readonly IExtendedXmlSerializer _serializer = ExtendedXmlSerializer.Default;
 
 		public ExtendedXmlSerializerV2Test()
 		{
