@@ -26,6 +26,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 {
@@ -34,16 +35,16 @@ namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerBase>
 	{
 		public TestClassInheritanceWithCustomSerializerBaseConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
+		{
+			CustomSerializer(Serializer, Deserialize);
+		}
 
 		public TestClassInheritanceWithCustomSerializerBase Deserialize(XElement xElement)
 		{
 			return new TestClassInheritanceWithCustomSerializerBase
-			       {
-				       FirstProperty = xElement.Attribute("First").Value
-			       };
+				   {
+					   FirstProperty = xElement.Attribute("First").Value
+				   };
 		}
 
 		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerBase obj)
@@ -57,17 +58,17 @@ namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerA>
 	{
 		public TestClassInheritanceWithCustomSerializerAConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
+		{
+			CustomSerializer(Serializer, Deserialize);
+		}
 
 		public TestClassInheritanceWithCustomSerializerA Deserialize(XElement xElement)
 		{
 			return new TestClassInheritanceWithCustomSerializerA
-			       {
-				       FirstProperty = xElement.Attribute("First").Value,
-				       SecondProperty = xElement.Attribute("Second").Value
-			       };
+				   {
+					   FirstProperty = xElement.Attribute("First").Value,
+					   SecondProperty = xElement.Attribute("Second").Value
+				   };
 		}
 
 		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerA obj)
@@ -82,17 +83,17 @@ namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 		IExtendedXmlCustomSerializer<TestClassInheritanceWithCustomSerializerB>
 	{
 		public TestClassInheritanceWithCustomSerializerBConfig()
-        {
-            CustomSerializer(Serializer, Deserialize);
-        }
+		{
+			CustomSerializer(Serializer, Deserialize);
+		}
 
 		public TestClassInheritanceWithCustomSerializerB Deserialize(XElement xElement)
 		{
 			return new TestClassInheritanceWithCustomSerializerB
-			       {
-				       FirstProperty = xElement.Attribute("First").Value,
-				       ThirdProperty = xElement.Attribute("Third").Value
-			       };
+				   {
+					   FirstProperty = xElement.Attribute("First").Value,
+					   ThirdProperty = xElement.Attribute("Third").Value
+				   };
 		}
 
 		public void Serializer(XmlWriter xmlWriter, TestClassInheritanceWithCustomSerializerB obj)

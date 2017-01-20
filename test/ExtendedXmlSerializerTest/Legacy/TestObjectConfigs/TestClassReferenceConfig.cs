@@ -24,6 +24,7 @@
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 {

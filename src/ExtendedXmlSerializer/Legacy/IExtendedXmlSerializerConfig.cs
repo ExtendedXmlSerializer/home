@@ -27,6 +27,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Legacy
 {
+	[Obsolete(Support.Message)]
 	public interface IExtendedXmlSerializerConfig
 	{
 		int Version { get; } // Consider making getter only, defined by implementation.

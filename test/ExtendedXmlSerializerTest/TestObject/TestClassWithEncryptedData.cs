@@ -24,6 +24,7 @@
 using System;
 using System.Text;
 using ExtendedXmlSerialization.Legacy;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {

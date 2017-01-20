@@ -28,15 +28,16 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 {
 	public class TestClassWithMapMigrator : ExtendedXmlSerializerConfig<TestClassWithMap>, IExtendedXmlTypeMigrator
 	{
 		public TestClassWithMapMigrator()
-        {
-            AddMigration(MigrationV0).AddMigration(MigrationV1);
-        }
+		{
+			AddMigration(MigrationV0).AddMigration(MigrationV1);
+		}
 
 		public static void MigrationV0(XElement node)
 		{
@@ -60,7 +61,7 @@ namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 			if (element != null)
 			{
 				var newElement = new XElement("PropClass", new XElement("Wezel1", element.Value),
-				                              new XElement("Wartosc", "1"));
+											  new XElement("Wartosc", "1"));
 				newElement.SetAttributeValue("type", "ExtendedXmlSerialization.Test.TestObject.TestClassMapFromPrimitive");
 				node.Add(newElement);
 				element.Remove();

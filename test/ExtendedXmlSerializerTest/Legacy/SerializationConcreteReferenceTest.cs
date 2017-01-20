@@ -26,6 +26,7 @@ using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
@@ -41,6 +42,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 				                                       cfg.ConfigureType<TestClassReference>().Property(p => p.Id).ObjectReference();
 				                                       cfg.ConfigureType<IReference>().Property(p => p.Id).ObjectReference();
 			                                       });*/
+
 			Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
 			                                       {
 				                                       Configurations =

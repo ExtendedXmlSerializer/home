@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Legacy;
-using ExtendedXmlSerialization.Test.TestObject;
-
-namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
+namespace ExtendedXmlSerialization.Legacy
 {
-	public class TestClassInheritanceBaseConfig : ExtendedXmlSerializerConfig<TestClassInheritanceBase>
+	public static class Support
 	{
-		public TestClassInheritanceBaseConfig()
-		{
-			ObjectReference( obj => obj.Id ).ExtractToList( "Sensors" );
-		}
+		public const string Message =
+			"This class has been marked for deletion for the next major release.  Please make use of the new Configuration API instead.  Documentation for this can be found at: https://github.com/wojtpl2/ExtendedXmlSerializer/wiki/Configuration-API";
 	}
 }

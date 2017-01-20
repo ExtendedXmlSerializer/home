@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
+#pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {

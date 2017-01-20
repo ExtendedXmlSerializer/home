@@ -21,8 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerialization.Legacy
 {
+	[Obsolete(Support.Message)]
 	public interface IPropertyEncryption
 	{
 		string Encrypt(string value);

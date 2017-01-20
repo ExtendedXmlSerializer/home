@@ -28,6 +28,7 @@ namespace ExtendedXmlSerialization.Legacy
 	/// <summary>
 	/// Interface Extended Xml Serializer
 	/// </summary>
+	[Obsolete(Support.Message)]
 	public interface IExtendedXmlSerializer
 	{
 		/// <summary>

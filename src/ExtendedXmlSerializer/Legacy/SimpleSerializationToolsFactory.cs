@@ -29,6 +29,7 @@ namespace ExtendedXmlSerialization.Legacy
 	/// <summary>
 	/// The simple implementation of <see cref="ISerializationToolsFactory"/>
 	/// </summary>
+	[Obsolete(Support.Message)]
 	public class SimpleSerializationToolsFactory : ISerializationToolsFactory
 	{
 		/// <summary>

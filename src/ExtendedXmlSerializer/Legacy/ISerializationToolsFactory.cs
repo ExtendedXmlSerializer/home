@@ -28,6 +28,7 @@ namespace ExtendedXmlSerialization.Legacy
 	/// <summary>
 	/// The factory for creating tools used during serialization.
 	/// </summary>
+	[Obsolete(Support.Message)]
 	public interface ISerializationToolsFactory
 	{
 		IExtendedXmlSerializerConfig GetConfiguration(Type type);

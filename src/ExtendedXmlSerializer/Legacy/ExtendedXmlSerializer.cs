@@ -36,6 +36,7 @@ namespace ExtendedXmlSerialization.Legacy
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
+	[Obsolete(Support.Message)]
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
 		const string Type = "type";

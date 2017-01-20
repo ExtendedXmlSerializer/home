@@ -28,6 +28,8 @@ using ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
+#pragma warning disable 618
+
 namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationSpecificationTest : BaseTest
