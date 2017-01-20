@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class CollectionElementOption : CollectionElementOptionBase
 	{
-		public CollectionElementOption(IElements elements, IElementNames names, IElementMembers members)
+		public CollectionElementOption(IElements elements, INames names, IElementMembers members)
 			: base(IsCollectionTypeSpecification.Default, elements, names, members) {}
 
 		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item)

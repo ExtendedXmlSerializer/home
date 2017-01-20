@@ -34,16 +34,16 @@ namespace ExtendedXmlSerialization.ElementModel
 		readonly IActivatedElement _entry;
 		readonly IDictionaryPairTypesLocator _locator;
 
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members)
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
 			: this(elements, names, members, DictionaryPairTypesLocator.Default) {}
 
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
 		                               IDictionaryPairTypesLocator locator)
 			: this(
 				elements, names, members,
 				new DictionaryEntryElement(members.Get(DictionaryEntryElement.DictionaryEntryType)), locator) {}
 
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
 		                               IActivatedElement entry, IDictionaryPairTypesLocator locator)
 			: base(IsDictionaryTypeSpecification.Default, elements, names, members)
 		{

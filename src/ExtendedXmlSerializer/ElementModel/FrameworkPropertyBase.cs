@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	abstract class FrameworkPropertyBase : ElementName
+	abstract class FrameworkPropertyBase : Name
 	{
 		readonly static TypeInfo Type = typeof(IExtendedXmlSerializer).GetTypeInfo();
 		protected FrameworkPropertyBase(string name) : base(Type, name) {}

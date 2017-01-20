@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
@@ -32,8 +33,14 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
 	{
+		readonly IConverterOption _known;
 		public static ConverterOptions Default { get; } = new ConverterOptions();
-		ConverterOptions() {}
+		ConverterOptions() : this(KnownConverters.Default) {}
+
+		public ConverterOptions(IConverterOption known)
+		{
+			_known = known;
+		}
 
 		public IEnumerable<IConverterOption> Get(IConverter parameter)
 		{
@@ -44,7 +51,7 @@ namespace ExtendedXmlSerialization.Conversion
 			var element = new ElementSelectingConverter(parameter);
 			yield return new ReadOnlyCollectionMemberConverterOption(element);
 			yield return new MemberConverterOption(element);
-			yield return KnownConverters.Default;
+			yield return _known;
 		}
 
 		class InstanceConverter : Converter

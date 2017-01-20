@@ -26,10 +26,10 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class Elements : IElements
+	public class Elements : IElements
 	{
 		public static Elements Default { get; } = new Elements();
-		Elements() : this(ElementsSource.Default) {}
+		Elements() : this(Conversion.Xml.ElementSource.Default) {}
 
 		readonly IParameterizedSource<TypeInfo, IElement> _source;
 

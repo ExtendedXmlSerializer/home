@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel
 	{
 		readonly IElementMembers _members;
 
-		protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
+		protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, INames names,
 		                                     IElementMembers members)
 			: base(specification, names)
 		{

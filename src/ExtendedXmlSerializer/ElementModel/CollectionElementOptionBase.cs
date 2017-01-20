@@ -32,10 +32,10 @@ namespace ExtendedXmlSerialization.ElementModel
 		readonly ICollectionItemFactory _items;
 
 		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
-		                                      IElementNames names, IElementMembers members)
+		                                      INames names, IElementMembers members)
 			: this(specification, names, members, new CollectionItemFactory(elements)) {}
 
-		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names,
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, INames names,
 		                                      IElementMembers members, ICollectionItemFactory items)
 			: base(specification, names, members)
 		{

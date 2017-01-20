@@ -27,8 +27,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 

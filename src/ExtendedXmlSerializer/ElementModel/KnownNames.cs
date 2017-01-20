@@ -27,28 +27,28 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class KnownNames : IEnumerable<IElementName>
+	public class KnownNames : IEnumerable<IName>
 	{
-		public virtual IEnumerator<IElementName> GetEnumerator()
+		public virtual IEnumerator<IName> GetEnumerator()
 		{
-			yield return new ElementName(typeof(bool), "boolean");
-			yield return new ElementName(typeof(char), "char");
-			yield return new ElementName(typeof(sbyte), "byte");
-			yield return new ElementName(typeof(byte), "unsignedByte");
-			yield return new ElementName(typeof(short), "short");
-			yield return new ElementName(typeof(ushort), "unsignedShort");
-			yield return new ElementName(typeof(int), "int");
-			yield return new ElementName(typeof(uint), "unsignedInt");
-			yield return new ElementName(typeof(long), "long");
-			yield return new ElementName(typeof(ulong), "unsignedLong");
-			yield return new ElementName(typeof(float), "float");
-			yield return new ElementName(typeof(double), "double");
-			yield return new ElementName(typeof(decimal), "decimal");
-			yield return new ElementName(typeof(DateTime), "dateTime");
-			yield return new ElementName(typeof(DateTimeOffset), "dateTimeOffset");
-			yield return new ElementName(typeof(string), "string");
-			yield return new ElementName(typeof(Guid), "guid");
-			yield return new ElementName(typeof(TimeSpan), "TimeSpan");
+			yield return new Name(typeof(bool), "boolean");
+			yield return new Name(typeof(char), "char");
+			yield return new Name(typeof(sbyte), "byte");
+			yield return new Name(typeof(byte), "unsignedByte");
+			yield return new Name(typeof(short), "short");
+			yield return new Name(typeof(ushort), "unsignedShort");
+			yield return new Name(typeof(int), "int");
+			yield return new Name(typeof(uint), "unsignedInt");
+			yield return new Name(typeof(long), "long");
+			yield return new Name(typeof(ulong), "unsignedLong");
+			yield return new Name(typeof(float), "float");
+			yield return new Name(typeof(double), "double");
+			yield return new Name(typeof(decimal), "decimal");
+			yield return new Name(typeof(DateTime), "dateTime");
+			yield return new Name(typeof(DateTimeOffset), "dateTimeOffset");
+			yield return new Name(typeof(string), "string");
+			yield return new Name(typeof(Guid), "guid");
+			yield return new Name(typeof(TimeSpan), "TimeSpan");
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

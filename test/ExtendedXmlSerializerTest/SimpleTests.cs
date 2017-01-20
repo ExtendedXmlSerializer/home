@@ -48,14 +48,11 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(6776, actual);
 		}
 
-		/*[Fact]
+		[Fact]
 		public void InstanceWrite()
 		{
 			var instance = new InstanceClass {PropertyName = "Hello World!"};
-			var stream = new MemoryStream();
-			ExtendedXmlSerializer.Default.Serialize(stream, instance);
-			stream.Seek(0, SeekOrigin.Begin);
-			var actual = new StreamReader(stream).ReadToEnd();
+			var actual = ExtendedXmlSerializer.Default.Serialize(instance);
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
 				actual);
@@ -74,6 +71,6 @@ namespace ExtendedXmlSerialization.Test
 		class InstanceClass
 		{
 			public string PropertyName { get; set; }
-		}*/
+		}
 	}
 }

@@ -29,11 +29,11 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public abstract class ElementOptionBase : OptionBase<TypeInfo, IElement>, IElementOption
 	{
-		readonly IElementNames _names;
+		readonly INames _names;
 
-		protected ElementOptionBase(IElementNames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
+		protected ElementOptionBase(INames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
 
-		protected ElementOptionBase(ISpecification<TypeInfo> specification, IElementNames names)
+		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names)
 			: base(specification)
 		{
 			_names = names;
