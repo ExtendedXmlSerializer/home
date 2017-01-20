@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationObjectProperty : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassWithObjectProperty()
 		{
 			var obj = new List<TestClassWithObjectProperty>

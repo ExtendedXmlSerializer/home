@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationArray : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ArrayOfObject()
 		{
 			var obj = new[]
@@ -41,11 +41,12 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			obj[1].Init();
 
 
-			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ObjectWithArrayProperty()
 		{
 			var obj = new TestClassWithArray();
@@ -54,7 +55,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void CollectionOfObject()
 		{
 			var obj = new Collection<TestClassPrimitiveTypes>
@@ -66,11 +67,12 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			obj[1].Init();
 
 
-			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClosedGenericCollectionOfObject()
 		{
 			var obj = new TestClassCollection
@@ -82,11 +84,12 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			obj[1].Init();
 
 
-			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.ClosedGenericCollectionOfObject.xml", obj);
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Legacy.Resources.ClosedGenericCollectionOfObject.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassWithReadOnlyCollectionProperty()
 		{
 			var obj = new TestClassWithReadOnlyCollectionProperty();
@@ -96,8 +99,9 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			obj.Items[1].Init();
 
 
-			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.ClassWithReadOnlyCollectionProperty.xml",
-			                                     obj);
+			CheckSerializationAndDeserialization(
+				"ExtendedXmlSerializerTest.Legacy.Resources.ClassWithReadOnlyCollectionProperty.xml",
+				obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 	}

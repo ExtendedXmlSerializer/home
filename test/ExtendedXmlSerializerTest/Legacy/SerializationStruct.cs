@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 	{
 #if !NET451
 //TODO Set Single in struct on .net 4.5.1
-        [Fact]
+        [Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
         public void Struct()
         {
             var vector2 = new System.Numerics.Vector2(1, 2);
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
         }
 #endif
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void StructWithConst()
 		{
 			var obj = new TestStruct();

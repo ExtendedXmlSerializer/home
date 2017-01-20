@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationPrimitiveTypTest : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeString()
 		{
 			var obj = "test";
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeBool()
 		{
 			const bool obj = true;
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeInt()
 		{
 			var obj = 456;
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeDecimal()
 		{
 			var obj = 8.4m;
@@ -68,7 +68,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeArrayOfInt()
 		{
 			var obj = new[] {1, 2, 3};
@@ -82,7 +82,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeList()
 		{
 			var obj = new List<int> {1, 2, 3};
@@ -96,7 +96,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeHashSet()
 		{
 			var obj = new HashSet<int> {1, 2, 3};
@@ -110,7 +110,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeGuid()
 		{
 			var obj = new Guid("7db85a35-1f66-4e5c-9c4a-33a937a9258b");
@@ -119,7 +119,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 				@"<?xml version=""1.0"" encoding=""utf-8""?><guid>7db85a35-1f66-4e5c-9c4a-33a937a9258b</guid>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeTimeStamp()
 		{
 			var obj = new TimeSpan(1, 2, 3, 4);
@@ -131,7 +131,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TimeSpan>P1DT2H3M4S</TimeSpan>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializeNullableTyp()
 		{
 			int? obj = 1;

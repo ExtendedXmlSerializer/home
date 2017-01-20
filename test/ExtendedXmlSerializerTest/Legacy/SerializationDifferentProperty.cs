@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationDifferentProperty : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void DifferentProperty()
 		{
 			var obj = new TestClassPropertyType();

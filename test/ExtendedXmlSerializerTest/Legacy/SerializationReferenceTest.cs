@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                       };
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationRefernece()
 		{
 			var obj = new TestClassReference();
@@ -67,7 +67,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassReference.xml", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationListWithReference()
 		{
 			var obj = new TestClassReferenceWithList();
@@ -85,7 +85,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassReferenceWithList.xml", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationDictionaryWithReference()
 		{
 			var obj = new TestClassReferenceWithDictionary();
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassReferenceWithDictionary.xml", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationListOfInterfaceReference()
 		{
 			var parent = new TestClassReference {Id = 1};

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationWithXmlAttributes : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void XmlElement()
 		{
 			var obj = new TestClassWithXmlElementAttribute {Id = 123};
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void XmlElementWithOrder()
 		{
 			var obj = new TestClassWithOrderParameters {A = "A", B = "B"};
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 </TestClassWithOrderParameters>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void XmlElementWithOrderExt()
 		{
 			var obj = new TestClassWithOrderParametersExt {A = "A", B = "B", C = "C", D = "D"};
@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 </TestClassWithOrderParametersExt>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassInheritanceWithOrder()
 		{
 			var obj = new TestClassInheritanceWithOrder();
@@ -79,7 +79,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 </TestClassInheritanceWithOrder>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassInterfaceInheritanceWithOrder()
 		{
 			var obj = new TestClassInterfaceInheritanceWithOrder {Id = 1, Id2 = 2};
@@ -91,7 +91,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 </TestClassInterfaceInheritanceWithOrder>", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void XmlRoot()
 		{
 			var obj = new TestClassWithXmlRootAttribute {Id = 123};

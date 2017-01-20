@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationInheritanceTest : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void InheritanceTest()
 		{
 			TestClassInheritanceBase baseClass = new TestClassInheritance();

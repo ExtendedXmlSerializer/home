@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                       };
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationRefernece()
 		{
 			var obj = new TestClassConcreteReference();
@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassConcreteReference.xml", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationListWithReference()
 		{
 			var obj = new TestClassConcreteReferenceWithList();
@@ -90,7 +90,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                     obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationDictionaryWithReference()
 		{
 			var obj = new TestClassConcreteReferenceWithDictionary();
@@ -109,7 +109,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 				"ExtendedXmlSerializerTest.Legacy.Resources.TestClassConcreteReferenceWithDictionary.xml", obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationListOfInterfaceReference()
 		{
 			var parent = new TestClassConcreteReference {Id = 1};

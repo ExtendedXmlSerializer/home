@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 												   };
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void MigrationsForInheritance()
 		{
 			TestClassInheritanceWithCustomSerializerBase obj = new TestClassInheritanceWithCustomSerializerA

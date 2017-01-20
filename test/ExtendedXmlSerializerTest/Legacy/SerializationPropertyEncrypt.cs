@@ -52,7 +52,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                       };
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void SerializationRefernece()
 		{
 			var obj = new TestClassWithEncryptedData();

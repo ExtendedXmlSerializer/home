@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                       };
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void MapVersion2()
 		{
 			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Legacy.Resources.TestClassWithMapV2.xml");
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			Assert.Equal(klasa.PropClass.Wezel1, "WartoscWezlas");
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void MapVersion1()
 		{
 			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Legacy.Resources.TestClassWithMapV1.xml");
@@ -70,7 +70,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void MapVersion0()
 		{
 			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Legacy.Resources.TestClassWithMapV0.xml");
@@ -83,7 +83,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			Assert.Equal(klasa.PropClass.Wezel1, "WartoscInna");
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void MapVersionXmlWithOutVersion()
 		{
 			var xml = EmbeddedResources.Get("ExtendedXmlSerializerTest.Legacy.Resources.TestClassWithMapWithoutVer.xml");
@@ -97,7 +97,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		}
 
 //TODO XUNIT
-//        [Fact]
+//        [Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 //        [ExpectedException("System.Xml.XmlException", ExpectedMessage = "DeserializatorXml: Nieznany numer wersji 99 dla typu ExtendedXmlSerialization.Test.TestObject.TestClassWithMap.")]
 //        public void MapVersion99Exception()
 //        {

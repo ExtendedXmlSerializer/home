@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationTypTest : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassPrimitiveTypes()
 		{
 			var obj = new TestClassPrimitiveTypes();
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassPrimitiveTypesNullable()
 		{
 			var obj = new TestClassPrimitiveTypesNullable();
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassPrimitiveTypesNullableSetNull()
 		{
 			var obj = new TestClassPrimitiveTypesNullable();
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassWithList()
 		{
 			var obj = new TestClassWithList();
@@ -70,7 +70,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassWithHashSet()
 		{
 			var obj = new TestClassWithHashSet();
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassWithListWithClass()
 		{
 			var obj = new TestClassWithListWithClass();
@@ -92,7 +92,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		}
 
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassPropIsInterface()
 		{
 			var obj = new TestClassPropIsInterface();
@@ -102,7 +102,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			//CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassGuid()
 		{
 			var obj = new TestClassGuid();
@@ -112,7 +112,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassTimeSpan()
 		{
 			var obj = new TestClassTimeSpan();

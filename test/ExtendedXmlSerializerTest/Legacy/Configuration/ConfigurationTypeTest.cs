@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.Test.Legacy.Configuration
 {
 	public class ConfigurationTypeTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassWithEncryptedData()
 		{
 			Action<IExtendedXmlConfiguration> func =

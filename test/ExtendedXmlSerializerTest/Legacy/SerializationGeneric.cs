@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationGeneric : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassGeneric()
 		{
 			var obj = new TestClassGeneric<string>();
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassGenericThree()
 		{
 			var obj = new TestClassGenericThree<string, int, TestClassPrimitiveTypes>();
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassPropGeneric()
 		{
 			var pop = new TestClassGenericThree<string, int, decimal>();

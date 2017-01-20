@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 {
 	public class SerializationPropertyInterfaceOfListTest : BaseTest
 	{
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void PropertyInterfaceOfList()
 		{
 			var obj = new TestClassPropertyInterfaceOfList();

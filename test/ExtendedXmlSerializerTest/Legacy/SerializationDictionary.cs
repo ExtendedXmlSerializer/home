@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			public Dictionary<int, string> Dictionary { get; set; }
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void DictionaryOfIntAndString()
 		{
 			var dict = new Dictionary<int, string>();
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 </ArrayOfInt32String>", dict);
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void PropertyDictionary()
 		{
 			var obj = new TestClass

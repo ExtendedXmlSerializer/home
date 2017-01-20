@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 					cfg => cfg.ConfigureType<TestClassWithSerializer>().CustomSerializer(XmlSerializer, XmlDeserialize));*/
 		}
 
-		[Fact]
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassWithSerializer()
 		{
 			var obj = new TestClassWithSerializer("String", 17);
