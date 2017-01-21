@@ -24,6 +24,7 @@
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.TypeModel
 {

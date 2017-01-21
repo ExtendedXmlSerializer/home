@@ -21,10 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System;
+using System.Collections.Concurrent;
+
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public interface IDisplayAware : IClassification
+	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IParameterizedSource<TKey, TValue>
 	{
-		string DisplayName { get; }
+		readonly Func<TKey, TValue> _create;
+
+		protected CacheBase()
+		{
+			_create = Create;
+		}
+
+		protected abstract TValue Create(TKey parameter);
+
+		public TValue Get(TKey key) => GetOrAdd(key, _create);
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Xml;
+using Xunit;
+
+namespace ExtendedXmlSerialization.Test.Conversion.Xml
 {
-	public interface IDisplayAware : IClassification
+	public class TypeContextsTests
 	{
-		string DisplayName { get; }
+		[Fact]
+		public void TestName()
+		{
+			var expected = typeof(Subject).GetTypeInfo();
+			var name = NamespaceFormatter.Default.Format(expected);
+			var type = TypeContexts.Default.Get(name).Invoke(TypeFormatter.Default.Format(expected));
+			Assert.Equal(expected, type);
+		}
+
+		sealed class Subject {}
 	}
 }

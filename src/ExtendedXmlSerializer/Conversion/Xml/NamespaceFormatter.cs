@@ -22,10 +22,37 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Runtime.Serialization.Formatters;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IElementNameConverter : IParameterizedSource<XName, TypeInfo> {}
+	public class NamespaceFormatter : ITypeFormatter
+	{
+		public static NamespaceFormatter Default { get; } = new NamespaceFormatter();
+		NamespaceFormatter() : this(FormatterAssemblyStyle.Simple) {}
+
+		public static NamespaceFormatter Full { get; } = new NamespaceFormatter(FormatterAssemblyStyle.Full);
+
+		readonly FormatterAssemblyStyle _style;
+
+		NamespaceFormatter(FormatterAssemblyStyle style)
+		{
+			_style = style;
+		}
+
+		public string Format(TypeInfo type) => $"clr-namespace:{type.Namespace};assembly={Name(type)}";
+
+		string Name(TypeInfo type)
+		{
+			var name = type.Assembly.GetName();
+			switch (_style)
+			{
+				case FormatterAssemblyStyle.Simple:
+					return name.Name;
+				default:
+					return name.FullName;
+			}
+		}
+	}
 }

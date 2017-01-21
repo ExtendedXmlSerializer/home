@@ -22,9 +22,15 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public interface ITypeParser : IParameterizedSource<string, TypeInfo> {}
+	public class FieldMemberSpecification : ISpecification<FieldInfo>
+	{
+		public static FieldMemberSpecification Default { get; } = new FieldMemberSpecification();
+		FieldMemberSpecification() {}
+
+		public bool IsSatisfiedBy(FieldInfo parameter) => parameter.IsInitOnly ? !parameter.IsLiteral : !parameter.IsStatic;
+	}
 }

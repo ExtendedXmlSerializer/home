@@ -27,7 +27,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-	public class SimpleTests
+	public class ExtendedXmlSerializerTests
 	{
 		[Fact]
 		public void PrimitiveWrite()
@@ -36,13 +36,13 @@ namespace ExtendedXmlSerialization.Test
 			ExtendedXmlSerializer.Default.Serialize(stream, 6776);
 			stream.Seek(0, SeekOrigin.Begin);
 			var actual = new StreamReader(stream).ReadToEnd();
-			Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>", actual);
+			Assert.Equal(@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>", actual);
 		}
 
 		[Fact]
 		public void PrimitiveRead()
 		{
-			const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int>6776</int>";
+			const string data = @"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>";
 			var stream = new MemoryStream(Encoding.UTF8.GetBytes(data));
 			var actual = ExtendedXmlSerializer.Default.Deserialize(stream);
 			Assert.Equal(6776, actual);
@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Test
 			var instance = new InstanceClass {PropertyName = "Hello World!"};
 			var actual = ExtendedXmlSerializer.Default.Serialize(instance);
 			Assert.Equal(
-				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>",
+				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests.InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests.InstanceClass>",
 				actual);
 		}
 
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerialization.Test
 		public void InstanceRead()
 		{
 			const string data =
-				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceClass><PropertyName>Hello World!</PropertyName></InstanceClass>";
+				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests.InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests.InstanceClass>";
 			var instance = ExtendedXmlSerializer.Default.Deserialize<InstanceClass>(data);
 			Assert.NotNull(instance);
 			Assert.Equal("Hello World!", instance.PropertyName);

@@ -21,47 +21,60 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ElementTypes : IElementTypes
 	{
 		public static ElementTypes Default { get; } = new ElementTypes();
-		ElementTypes() : this(ElementNameConverter.Default, TypeParser.Default) {}
+		ElementTypes() : this(NameConverter.Default) {}
 
-		readonly IElementNameConverter _types;
-		readonly ITypeParser _parser;
+		readonly INameConverter _name;
+		readonly XName _type;
 
-		public ElementTypes(IElementNameConverter types, ITypeParser parser)
+		public ElementTypes(INameConverter name) : this(name, name.Get(TypeProperty.Default)) {}
+
+		public ElementTypes(INameConverter name, XName type)
 		{
-			_parser = parser;
-			_types = types;
+			_type = type;
+			_name = name;
 		}
 
-		public TypeInfo Get(XElement parameter)
+		public TypeInfo Get(XElement parameter) => parameter.Annotation<TypeInfo>() ?? Resolve(parameter);
+
+		TypeInfo Resolve(XElement parameter)
 		{
-			var stored = parameter.Annotation<TypeInfo>();
-			if (stored == null)
+			var name = FromAttribute(parameter) ?? parameter.Name;
+
+			var result = _name.Get(name);
+			if (result != null)
 			{
-				var result = _types.Get(parameter.Name) ?? FromAttribute(parameter);
-				if (result != null)
-				{
-					parameter.AddAnnotation(result);
-					return result;
-				}
+				parameter.AddAnnotation(result);
+				return result;
 			}
-			return stored;
+			return null;
 		}
 
-		TypeInfo FromAttribute(XElement parameter)
+		XName FromAttribute(XElement parameter)
 		{
-			var value = parameter.Attribute(TypeProperty.Default.DisplayName)?.Value;
-			var result = value != null ? _parser.Get(value) : null;
-			return result;
+			var name = parameter.Attribute(_type)?.Value;
+			if (name != null)
+			{
+				var parts = name.ToStringArray(Defaults.NamespaceDelimiter.ToArray());
+				switch (parts.Length)
+				{
+					case 2:
+						var ns = parameter.Document.Root.GetNamespaceOfPrefix(parts[0])?.NamespaceName;
+						var result = XName.Get(parts[1], ns ?? string.Empty);
+						return result;
+				}
+				throw new SerializationException($"Could not parse XML name from {name}");
+			}
+			return null;
 		}
 	}
 }

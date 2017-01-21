@@ -21,26 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	class TypeFormatter : ITypeFormatter
-	{
-		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() {}
-
-		public string Format(TypeInfo type)
-		{
-			if (type.IsGenericType)
-			{
-				var types = type.GetGenericArguments();
-				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var result = type.Name.Replace($"`{types.Length}", $"Of{names}");
-				return result;
-			}
-			return type.Name;
-		}
-	}
+	public interface ITypes : IParameterizedSource<XName, TypeInfo> {}
 }

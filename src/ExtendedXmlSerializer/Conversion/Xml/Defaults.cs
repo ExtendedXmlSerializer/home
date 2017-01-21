@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class ElementNameConverter : IElementNameConverter
+	public static class Defaults
 	{
-		public static ElementNameConverter Default { get; } = new ElementNameConverter();
-		ElementNameConverter() : this(Defaults.Names, Namespaces.Default) {}
-
-		readonly ImmutableArray<IName> _elements;
-		readonly INamespaces _namespaces;
-
-		public ElementNameConverter(IEnumerable<IName> names, INamespaces namespaces)
-		{
-			_elements = names.ToImmutableArray();
-			_namespaces = namespaces;
-		}
-
-		public TypeInfo Get(XName parameter)
-		{
-			var localName = parameter.LocalName;
-			var ns = parameter.NamespaceName;
-			var length = _elements.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var element = _elements[i];
-				var info = element.Classification;
-				if (ns == _namespaces.Get(info) && localName == element.DisplayName)
-				{
-					return info;
-				}
-			}
-			return null;
-		}
+		public static ImmutableArray<char> PartDelimiter { get; } = ImmutableArray.Create(';');
+		public static ImmutableArray<char> NamespaceDelimiter { get; } = ImmutableArray.Create(':');
+		public static ImmutableArray<char> AssemblyDelimiter { get; } = ImmutableArray.Create('=');
 	}
 }

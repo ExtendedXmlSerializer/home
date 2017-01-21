@@ -92,11 +92,18 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IDisposable Emit()
 		{
-			var ns = _namespaces.Get(Element.Classification);
-			var name = (Container as IDisplayAware)?.DisplayName ?? (Element as IDisplayAware)?.DisplayName;
-			if (name != null)
+			var display = Container as IDisplayAware ?? Element as IDisplayAware;
+			if (display != null)
 			{
-				_writer.WriteStartElement(name, ns);
+				var ns = _namespaces.Get(display);
+				if (ns != null)
+				{
+					_writer.WriteStartElement(display.DisplayName, ns);
+				}
+				else
+				{
+					_writer.WriteStartElement(display.DisplayName);
+				}
 				return _finish;
 			}
 			throw new SerializationException(

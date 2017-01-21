@@ -21,11 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface INameConverter : IParameterizedSource<IClassification, XName> {}
+	public interface INameConverter : IParameterizedSource<IDisplayAware, XName>, IParameterizedSource<XName, TypeInfo> {}
 }

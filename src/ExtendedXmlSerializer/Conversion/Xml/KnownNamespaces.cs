@@ -21,10 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Collections.Generic;
+using System.Reflection;
+using System.Xml.Linq;
+
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IDisplayAware : IClassification
+	sealed class KnownNamespaces : Dictionary<Assembly, XName>
 	{
-		string DisplayName { get; }
+		public static KnownNamespaces Default { get; } = new KnownNamespaces();
+
+		KnownNamespaces() : base(new Dictionary<Assembly, XName>
+		                         {
+			                         {
+				                         typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
+				                         XName.Get("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
+			                         },
+			                         {
+				                         typeof(object).GetTypeInfo().Assembly,
+				                         XName.Get("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
+			                         }
+		                         }) {}
 	}
 }

@@ -28,6 +28,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public class KnownConverters : SelectedConverterOption
 	{
 		public static KnownConverters Default { get; } = new KnownConverters();
+
 		KnownConverters() : base(
 			BooleanTypeConverter.Default,
 			CharacterTypeConverter.Default,

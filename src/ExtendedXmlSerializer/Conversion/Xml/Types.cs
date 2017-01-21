@@ -21,28 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class NameConverter : INameConverter
+	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
-		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(Namespaces.Default, Types.Default) {}
+		public static Types Default { get; } = new Types();
+		Types() : this(Namespaces.Default, Conversion.Defaults.Names, TypeContexts.Default) {}
 
 		readonly INamespaces _namespaces;
-		readonly ITypes _types;
+		readonly ImmutableArray<IName> _known;
+		readonly ITypeContexts _sources;
 
-		public NameConverter(INamespaces namespaces, ITypes types)
+		public Types(INamespaces namespaces, ImmutableArray<IName> known, ITypeContexts sources)
 		{
 			_namespaces = namespaces;
-			_types = types;
+			_known = known;
+			_sources = sources;
 		}
 
-		public XName Get(IDisplayAware parameter) => XName.Get(parameter.DisplayName, _namespaces.Get(parameter));
+		protected override TypeInfo Create(XName parameter)
+			=> Known(parameter) ?? _sources.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 
-		public TypeInfo Get(XName parameter) => _types.Get(parameter);
+		TypeInfo Known(XName parameter)
+		{
+			var localName = parameter.LocalName;
+			var ns = parameter.NamespaceName;
+			var length = _known.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var name = _known[i];
+				if (ns == _namespaces.Get(name) && localName == name.DisplayName)
+				{
+					return name.Classification;
+				}
+			}
+			return null;
+		}
 	}
 }

@@ -21,10 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.TypeModel;
+
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IDisplayAware : IClassification
+	public class TypeFormatter : ITypeFormatter
 	{
-		string DisplayName { get; }
+		public static TypeFormatter Default { get; } = new TypeFormatter();
+		TypeFormatter() {}
+
+		public string Format(TypeInfo type)
+		{
+			if (type.IsGenericType)
+			{
+				var types = type.GetGenericArguments();
+				var names = string.Join(string.Empty, types.Select(p => p.Name));
+				var name = type.Name.Replace($"`{types.Length}", $"Of{names}");
+				return name;
+			}
+			var result = type.IsNested ? $"{type.DeclaringType.Name}.{type.Name}" : type.Name;
+			return result;
+		}
 	}
 }

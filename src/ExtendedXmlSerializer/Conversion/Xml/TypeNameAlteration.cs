@@ -21,10 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IDisplayAware : IClassification
+	public class TypeNameAlteration : IAlteration<string>
 	{
-		string DisplayName { get; }
+		const char OldChar = '.', NewChar = '+';
+
+		public static TypeNameAlteration Default { get; } = new TypeNameAlteration();
+		TypeNameAlteration() {}
+
+		public string Get(string parameter) => parameter.Replace(OldChar, NewChar);
 	}
 }

@@ -25,34 +25,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class ElementSource : IAlteration<IElements>
+	abstract class ElementSourceBase : IAlteration<IElements>
 	{
-		public static ElementSource Default { get; } = new ElementSource();
-
-		ElementSource()
-			: this(
-				Names.Default, PropertyMemberSpecification.Default, FieldMemberSpecification.Default,
-				Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.DictionaryEntryType
-			) {}
-
 		readonly INames _names;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 		readonly ISpecification<TypeInfo> _specification;
 
-		public ElementSource(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                     IEnumerable<TypeInfo> known, params TypeInfo[] except)
+		/*public static ElementSource Default { get; } = new ElementSource();
+
+		ElementSource()
+			: this(
+				Names.Default, PropertyMemberSpecification.Default, FieldMemberSpecification.Default,
+				Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.DictionaryEntryType
+			) {}*/
+
+		protected ElementSourceBase(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
+		                            IEnumerable<TypeInfo> known, params TypeInfo[] except)
 			: this(names, property, field, new Specification(known, except)) {}
 
-		protected ElementSource(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                        ISpecification<TypeInfo> specification)
+		protected ElementSourceBase(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
+		                            ISpecification<TypeInfo> specification)
 		{
 			_names = names;
 			_property = property;

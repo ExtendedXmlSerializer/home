@@ -21,10 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.TypeModel;
+
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public interface IDisplayAware : IClassification
+	sealed class EnumerableNameProvider : NameProvider
 	{
-		string DisplayName { get; }
+		public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
+
+		EnumerableNameProvider() : base(EnumerableTypeFormatter.Default) {}
 	}
 }

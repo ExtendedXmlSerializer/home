@@ -21,10 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
+
+namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public interface IDisplayAware : IClassification
+	public class PropertyMemberSpecification : ISpecification<PropertyInfo>
 	{
-		string DisplayName { get; }
+		public static PropertyMemberSpecification Default { get; } = new PropertyMemberSpecification();
+		PropertyMemberSpecification() {}
+
+		public bool IsSatisfiedBy(PropertyInfo parameter)
+		{
+			var getMethod = parameter.GetGetMethod(true);
+			var result = parameter.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
+			             !(!parameter.GetSetMethod(true)?.IsPublic ?? false) &&
+			             parameter.GetIndexParameters().Length <= 0;
+			return result;
+		}
 	}
 }

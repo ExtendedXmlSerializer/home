@@ -21,15 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Namespaces : INamespaces
+	public class Namespaces : WeakCacheBase<IClassification, string>, INamespaces
 	{
 		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() {}
+		Namespaces() : this(KnownNamespaces.Default, NamespaceFormatter.Default) {}
 
-		public string Get(TypeInfo parameter) => string.Empty;
+		readonly IDictionary<Assembly, XName> _known;
+		readonly ITypeFormatter _formatter;
+
+		public Namespaces(IDictionary<Assembly, XName> known, ITypeFormatter formatter)
+		{
+			_known = known;
+			_formatter = formatter;
+		}
+
+		protected override string Create(IClassification parameter)
+			=>
+				parameter is IMemberElement
+					? null
+					: (_known.TryGet(parameter.Classification.Assembly)?.NamespaceName ?? _formatter.Format(parameter.Classification));
 	}
 }

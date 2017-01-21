@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
@@ -45,21 +44,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_converter = converter;
 		}
 
-		TypeInfo Initialized(IContext context, IClassification classification, XElement data)
-		{
-			var info = _types.Get(data);
-			if (info == null)
-			{
-				var result = context.Container.GetDeclaredType(classification);
-				data.Annotated(result);
-				return result;
-			}
-			return info;
-		}
-
 		public IReadContext Create(IReadContext context, IContainerElement container, XElement data)
 		{
-			var typeInfo = Initialized(context, container, data);
+			var typeInfo = _types.Get(data) ?? container.Classification;
 			var element = _selector.Load(container, typeInfo);
 			var member = container as IMemberElement;
 			if (member != null)
