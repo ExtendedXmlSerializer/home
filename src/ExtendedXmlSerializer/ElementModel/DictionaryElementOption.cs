@@ -22,10 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -48,47 +46,7 @@ namespace ExtendedXmlSerialization.ElementModel
 		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
 		{
 			var item = _factory.Get(collectionType);
-			var result = new DictionaryElement(name, collectionType, item.Self, members);
-			return result;
-		}
-	}
-
-	public interface IDictionaryItemFactory : IParameterizedSource<TypeInfo, IElement> {}
-
-	public class DictionaryItemFactory : IDictionaryItemFactory
-	{
-		readonly IElements _elements;
-		readonly IGetterFactory _getter;
-		readonly ISetterFactory _setter;
-		readonly IDictionaryPairTypesLocator _locator;
-
-		public DictionaryItemFactory(IElements elements)
-			: this(elements, GetterFactory.Default, SetterFactory.Default, DictionaryPairTypesLocator.Default) {}
-
-		public DictionaryItemFactory(IElements elements, IGetterFactory getter, ISetterFactory setter,
-		                             IDictionaryPairTypesLocator locator)
-		{
-			_elements = elements;
-			_getter = getter;
-			_setter = setter;
-			_locator = locator;
-		}
-
-		public IElement Get(TypeInfo parameter)
-		{
-			var pair = _locator.Get(parameter);
-			var members = new Members.Members(CreateMember(nameof(DictionaryEntry.Key), pair.KeyType),
-			                                  CreateMember(nameof(DictionaryEntry.Value), pair.ValueType));
-			var result = new DictionaryItemElement(members);
-			return result;
-		}
-
-		IMemberElement CreateMember(string name, TypeInfo type)
-		{
-			var memberInfo = DictionaryItemElement.Name.Classification.GetProperty(name);
-			var setter = _setter.Get(memberInfo);
-			var getter = _getter.Get(memberInfo);
-			var result = new MemberElement(name, memberInfo, setter, getter, _elements.Build(type));
+			var result = new DictionaryElement(name, collectionType, new CollectionItem(item.Self), members);
 			return result;
 		}
 	}

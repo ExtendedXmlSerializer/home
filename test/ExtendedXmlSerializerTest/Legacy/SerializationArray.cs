@@ -35,12 +35,10 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		{
 			var obj = new[]
 			          {
-				          new TestClassPrimitiveTypes(),
-				          new TestClassPrimitiveTypes()
+				          TestClassPrimitiveTypes.Create(),
+				          TestClassPrimitiveTypes.Create()
 			          };
-			obj[0].Init();
-			obj[1].Init();
-
+			
 
 			CheckSerializationAndDeserialization(
 				"ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
@@ -61,13 +59,10 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		{
 			var obj = new Collection<TestClassPrimitiveTypes>
 			          {
-				          new TestClassPrimitiveTypes(),
-				          new TestClassPrimitiveTypes()
+				          TestClassPrimitiveTypes.Create(),
+				          TestClassPrimitiveTypes.Create()
 			          };
-			obj[0].Init();
-			obj[1].Init();
-
-
+			
 			CheckSerializationAndDeserialization(
 				"ExtendedXmlSerializerTest.Legacy.Resources.ArrayOfTestClassPrimitiveTypes.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
@@ -78,12 +73,9 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		{
 			var obj = new TestClassCollection
 			          {
-				          new TestClassPrimitiveTypes(),
-				          new TestClassPrimitiveTypes()
+				          TestClassPrimitiveTypes.Create(),
+				          TestClassPrimitiveTypes.Create()
 			          };
-			obj[0].Init();
-			obj[1].Init();
-
 
 			CheckSerializationAndDeserialization(
 				"ExtendedXmlSerializerTest.Legacy.Resources.ClosedGenericCollectionOfObject.xml", obj);
@@ -94,11 +86,9 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		public void ClassWithReadOnlyCollectionProperty()
 		{
 			var obj = new TestClassWithReadOnlyCollectionProperty();
-			obj.Items.Add(new TestClassPrimitiveTypes());
-			obj.Items.Add(new TestClassPrimitiveTypes());
-			obj.Items[0].Init();
-			obj.Items[1].Init();
-
+			obj.Items.Add(TestClassPrimitiveTypes.Create());
+			obj.Items.Add(TestClassPrimitiveTypes.Create());
+			
 
 			CheckSerializationAndDeserialization(
 				"ExtendedXmlSerializerTest.Legacy.Resources.ClassWithReadOnlyCollectionProperty.xml",

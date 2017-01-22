@@ -23,31 +23,24 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class MemberedCollectionElementBase : CollectionElementBase, IMemberedElement
+	public abstract class CollectionElementBase : ICollectionElement
 	{
-		protected MemberedCollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element, IMembers members)
-			: base(displayName, classification, element)
+		protected CollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element) : this(displayName, classification, new CollectionItem(element)) {}
+
+		protected CollectionElementBase(string displayName, TypeInfo classification, IContainerElement item)
 		{
-			Members = members;
+			DisplayName = displayName;
+			Classification = classification;
+			Element = item;
 		}
 
-		public IMembers Members { get; }
-	}
+		public string DisplayName { get; }
+		public TypeInfo Classification { get; }
+		IElement IContainerElement.Element => Element;
 
-	public abstract class CollectionElementBase : NamedElementBase, ICollectionElement
-	{
-		readonly Func<IElement> _element;
-
-		protected CollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element)
-			: base(displayName, classification)
-		{
-			_element = element;
-		}
-
-		public IElement Element => _element();
+		public IContainerElement Element { get; }
 	}
 }

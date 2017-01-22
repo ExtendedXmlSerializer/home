@@ -34,19 +34,6 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public static class Extensions
 	{
-		public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
-			=> Emit(@this, context, container, instance, instance.GetType().GetTypeInfo());
-
-		public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance,
-		                        TypeInfo instanceType)
-		{
-			var child = context.New(container, instanceType);
-			using (child.Emit())
-			{
-				@this.Write(child, instance);
-			}
-		}
-
 		public static void New(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
 			=>
 				@this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
@@ -57,12 +44,6 @@ namespace ExtendedXmlSerialization.Conversion
 
 		public static TypeInfo ToTypeInfo(this MemberInfo @this)
 			=> @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
-
-		public static T Annotated<T>(this XElement @this, T item)
-		{
-			@this.AddAnnotation(item);
-			return item;
-		}
 
 		public static object AnnotationAll(this XElement @this, Type type)
 			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);

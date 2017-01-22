@@ -49,6 +49,7 @@ namespace ExtendedXmlSerialization.ElementModel
 			yield return new Name("string", typeof(string));
 			yield return new Name("guid", typeof(Guid));
 			yield return new Name("TimeSpan", typeof(TimeSpan));
+			yield return new Name("Item", typeof(DictionaryEntry));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

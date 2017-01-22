@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -33,36 +32,20 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class ElementSource : IAlteration<IElements>
 	{
-		public static ElementSource Default { get; } = new ElementSource();
-
-		ElementSource()
-			: this(
-				Names.Default, PropertyMemberSpecification.Default, FieldMemberSpecification.Default,
-				Conversion.Defaults.Names.Select(x => x.Classification), DictionaryItemElement.Name.Classification
-			) {}
-
 		readonly INames _names;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
-		readonly ISpecification<TypeInfo> _specification;
 
-		public ElementSource(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                     IEnumerable<TypeInfo> known, params TypeInfo[] except)
-			: this(names, property, field, new Specification(known, except)) {}
-
-		protected ElementSource(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                        ISpecification<TypeInfo> specification)
+		public ElementSource(INames names, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_names = names;
 			_property = property;
 			_field = field;
-			_specification = specification;
 		}
 
 		protected virtual IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
 		{
 			var members = new ElementMembers(new MemberElementSelector(parameter), _property, _field);
-			yield return new ElementOption(_specification, _names);
 			yield return new DictionaryElementOption(parameter, _names, members);
 			yield return new ArrayElementOption(_names, parameter);
 			yield return new CollectionElementOption(parameter, _names, members);
@@ -76,14 +59,6 @@ namespace ExtendedXmlSerialization.ElementModel
 		sealed class Elements : Selector<TypeInfo, IElement>, IElements
 		{
 			public Elements(params IOption<TypeInfo, IElement>[] options) : base(options) {}
-		}
-
-		sealed class Specification : AnySpecification<TypeInfo>
-		{
-			public Specification(IEnumerable<TypeInfo> known, params TypeInfo[] except)
-				: base(
-					new AnySpecification<TypeInfo>(new ContainsSpecification<TypeInfo>(known.Except(except).ToArray()),
-					                               IsAssignableSpecification<Enum>.Default)) {}
 		}
 	}
 }

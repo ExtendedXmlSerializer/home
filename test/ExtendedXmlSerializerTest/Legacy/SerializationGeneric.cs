@@ -43,9 +43,8 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		public void TestClassGenericThree()
 		{
 			var obj = new TestClassGenericThree<string, int, TestClassPrimitiveTypes>();
-			obj.Init("StringValue", 1, new TestClassPrimitiveTypes());
-			obj.GenericProp3.Init();
-
+			obj.Init("StringValue", 1, TestClassPrimitiveTypes.Create());
+			
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassGenericThree.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}

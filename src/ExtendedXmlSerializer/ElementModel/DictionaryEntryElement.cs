@@ -27,12 +27,12 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class DictionaryItemElement : ActivatedElement
+	public class DictionaryEntryElement : ActivatedElement
 	{
 		public static IName Name { get; } = new Name("Item", typeof(DictionaryEntry).GetTypeInfo());
 
-		public DictionaryItemElement(IMembers members) : this(Name, members) {}
+		public DictionaryEntryElement(IMembers members) : this(Name, members) {}
 
-		public DictionaryItemElement(IName name, IMembers members) : base(name.DisplayName, name.Classification, members) {}
+		public DictionaryEntryElement(IName name, IMembers members) : base(name.DisplayName, name.Classification, members) {}
 	}
 }

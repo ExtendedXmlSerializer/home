@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
@@ -30,13 +29,12 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ElementSource : ElementModel.ElementSource
 	{
-		public new static ElementSource Default { get; } = new ElementSource();
+		public static ElementSource Default { get; } = new ElementSource();
 
 		ElementSource()
 			: base(
 				Names.Default, new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
-				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default),
-				Conversion.Defaults.Names.Select(x => x.Classification), DictionaryItemElement.Name.Classification
+				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
 			) {}
 	}
 }

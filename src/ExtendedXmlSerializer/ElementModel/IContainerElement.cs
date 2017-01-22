@@ -27,4 +27,9 @@ namespace ExtendedXmlSerialization.ElementModel
 	{
 		IElement Element { get; }
 	}
+
+	public interface IContainerElement<out T> : IContainerElement where T : IElement
+	{
+		new T Element { get; }
+	}
 }

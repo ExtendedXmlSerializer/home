@@ -33,40 +33,40 @@ namespace ExtendedXmlSerialization.Test.TestObject
 
 	public class TestClassPrimitiveTypes
 	{
-		public TestClassPrimitiveTypes Init()
+		public static TestClassPrimitiveTypes Create()
 		{
-			PropString = "TestString";
-			PropInt = -1;
-			PropuInt = 2234;
+			var result = new TestClassPrimitiveTypes
+			             {
+				             PropString = "TestString",
+				             PropInt = -1,
+				             PropuInt = 2234,
+				             PropDecimal = 3.346m,
+				             PropDecimalMinValue = decimal.MinValue,
+				             PropDecimalMaxValue = decimal.MaxValue,
+				             PropFloat = 7.4432f,
+				             PropFloatNaN = float.NaN,
+				             PropFloatPositiveInfinity = float.PositiveInfinity,
+				             PropFloatNegativeInfinity = float.NegativeInfinity,
+				             PropFloatMinValue = float.MinValue,
+				             PropFloatMaxValue = float.MaxValue,
+				             PropDouble = 3.4234,
+				             PropDoubleNaN = double.NaN,
+				             PropDoublePositiveInfinity = double.PositiveInfinity,
+				             PropDoubleNegativeInfinity = double.NegativeInfinity,
+				             PropDoubleMinValue = double.MinValue,
+				             PropDoubleMaxValue = double.MaxValue,
+				             PropEnum = TestEnum.EnumValue1,
+				             PropLong = 234234142,
+				             PropUlong = 2345352534,
+				             PropShort = 23,
+				             PropUshort = 2344,
+				             PropDateTime = new DateTime(2014, 01, 23),
+				             PropByte = 23,
+				             PropSbyte = 33,
+				             PropChar = 'g',
+			             };
 
-			PropDecimal = 3.346m;
-			PropDecimalMinValue = decimal.MinValue;
-			PropDecimalMaxValue = decimal.MaxValue;
-
-			PropFloat = 7.4432f;
-			PropFloatNaN = float.NaN;
-			PropFloatPositiveInfinity = float.PositiveInfinity;
-			PropFloatNegativeInfinity = float.NegativeInfinity;
-			PropFloatMinValue = float.MinValue;
-			PropFloatMaxValue = float.MaxValue;
-
-			PropDouble = 3.4234;
-			PropDoubleNaN = double.NaN;
-			PropDoublePositiveInfinity = double.PositiveInfinity;
-			PropDoubleNegativeInfinity = double.NegativeInfinity;
-			PropDoubleMinValue = double.MinValue;
-			PropDoubleMaxValue = double.MaxValue;
-
-			PropEnum = TestEnum.EnumValue1;
-			PropLong = 234234142;
-			PropUlong = 2345352534;
-			PropShort = 23;
-			PropUshort = 2344;
-			PropDateTime = new DateTime(2014, 01, 23);
-			PropByte = 23;
-			PropSbyte = 33;
-			PropChar = 'g';
-			return this;
+			return result;
 		}
 
 		public string PropString { get; set; }

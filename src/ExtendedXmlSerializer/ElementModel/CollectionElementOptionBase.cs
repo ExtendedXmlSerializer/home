@@ -25,7 +25,6 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
@@ -39,8 +38,7 @@ namespace ExtendedXmlSerialization.ElementModel
 			: this(specification, elements, names, CollectionItemTypeLocator.Default) {}
 
 		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names,
-		                                      ICollectionItemTypeLocator locator)
-			: base(specification, names)
+		                                      ICollectionItemTypeLocator locator) : base(specification, names)
 		{
 			_elements = elements;
 			_locator = locator;
@@ -50,26 +48,5 @@ namespace ExtendedXmlSerialization.ElementModel
 			=> Create(name, parameter, _elements.Build(_locator.Get(parameter)));
 
 		protected abstract IElement Create(string name, TypeInfo collectionType, Func<IElement> item);
-	}
-
-	public abstract class MemberedCollectionElementOptionBase : CollectionElementOptionBase
-	{
-		readonly IElementMembers _members;
-
-		protected MemberedCollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
-		                                              INames names, IElementMembers members)
-			: this(specification, elements, names, members, CollectionItemTypeLocator.Default) {}
-
-		protected MemberedCollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names,
-		                                              IElementMembers members, ICollectionItemTypeLocator items)
-			: base(specification, elements, names, items)
-		{
-			_members = members;
-		}
-
-		protected override IElement Create(string name, TypeInfo collectionType, Func<IElement> item) =>
-			Create(name, collectionType, _members.Get(collectionType), item);
-
-		protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> item);
 	}
 }

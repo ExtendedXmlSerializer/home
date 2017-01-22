@@ -30,11 +30,6 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IXmlReadContext : IReadContext
-	{
-		XElement Data { get; }
-	}
-
 	public class XmlReadContext : XmlReadContext<IContainerElement>
 	{
 		public XmlReadContext(XElement data) : base(data) {}
@@ -95,7 +90,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			var container = (ICollectionElement) Element;
 			foreach (var child in Data.Elements())
 			{
-				yield return _factory.Create(container, child);
+				yield return _factory.Create(container.Element, child);
 			}
 		}
 

@@ -21,28 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*using System.Collections.Generic;
-using System.Diagnostics;
-using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Xml;
-using Xunit;
+/*using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Conversion.Xml
 {
 	public class OptimizedXmlContextFactoryTests
 	{
 		[Fact]
-		public void VerifyOptimization()
-		{
-			var instance = new Dictionary<int, string>
-			               {
-				               {1, "First"},
-				               {2, "Second"},
-				               {3, "Other"}
-			               };
-			var serializer = new ExtendedXmlSerializer(OptimizedXmlContextFactory.Default, RootConverter.Default);
-			var data = serializer.Serialize(instance);
-			Debugger.Break();
-		}
+		public void VerifyOptimization() {}
 	}
 }*/

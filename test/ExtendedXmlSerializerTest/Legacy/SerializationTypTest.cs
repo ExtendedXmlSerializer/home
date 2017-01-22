@@ -32,9 +32,8 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassPrimitiveTypes()
 		{
-			var obj = new TestClassPrimitiveTypes();
-			obj.Init();
-
+			var obj = TestClassPrimitiveTypes.Create();
+			
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassPrimitiveTypes.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}

@@ -45,14 +45,15 @@ namespace ExtendedXmlSerialization.Conversion
 
 		public IEnumerable<IConverterOption> Get(IConverter parameter)
 		{
+			var element = new ElementSelectingConverter(parameter);
+			yield return new ReadOnlyCollectionMemberConverterOption(element);
+			yield return new MemberConverterOption(element);
+
+			yield return _known;
 			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
 			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
 			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
 			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
-			var element = new ElementSelectingConverter(parameter);
-			yield return new ReadOnlyCollectionMemberConverterOption(element);
-			yield return new MemberConverterOption(element);
-			yield return _known;
 		}
 
 		class InstanceConverter : Converter

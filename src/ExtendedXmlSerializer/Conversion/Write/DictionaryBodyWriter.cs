@@ -22,27 +22,13 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-	class DictionaryBodyWriter : WriterBase<IDictionary>
+	public class DictionaryBodyWriter : EnumerableBodyWriter<IDictionary>
 	{
-		readonly IWriter _writer;
+		public DictionaryBodyWriter(IWriter item) : base(item) {}
 
-		public DictionaryBodyWriter(IWriter writer)
-		{
-			_writer = writer;
-		}
-
-		protected override void Write(IWriteContext context, IDictionary instance)
-		{
-			var item = (IDictionaryElement) context.Element;
-			var element = context.New(item, DictionaryItemElement.Name.Classification);
-			foreach (DictionaryEntry entry in instance)
-			{
-				_writer.Emit(element, item, entry);
-			}
-		}
+		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}
 }
