@@ -33,9 +33,10 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
 	{
-		readonly IConverterOption _known;
 		public static ConverterOptions Default { get; } = new ConverterOptions();
 		ConverterOptions() : this(KnownConverters.Default) {}
+
+		readonly IConverterOption _known;
 
 		public ConverterOptions(IConverterOption known)
 		{

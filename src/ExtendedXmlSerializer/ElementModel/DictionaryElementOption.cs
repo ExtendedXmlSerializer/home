@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ElementModel
 		                               IDictionaryPairTypesLocator locator)
 			: this(
 				elements, names, members,
-				new DictionaryEntryElement(members.Get(DictionaryEntryElement.DictionaryEntryType)), locator) {}
+				new DictionaryEntryElement(members.Get(DictionaryEntryElement.Name.Classification)), locator) {}
 
 		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
 		                               IActivatedElement entry, IDictionaryPairTypesLocator locator)

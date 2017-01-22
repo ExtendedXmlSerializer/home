@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return result;
 		}
 
-		class TypeLoaderContext : CacheBase<string, TypeInfo>
+		sealed class TypeLoaderContext : CacheBase<string, TypeInfo>
 		{
 			readonly Assembly _assembly;
 			readonly string _ns;

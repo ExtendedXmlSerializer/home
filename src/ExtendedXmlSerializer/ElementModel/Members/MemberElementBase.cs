@@ -22,19 +22,15 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public abstract class MemberElementBase : ContainerElementBase, IMemberElement
 	{
-		protected MemberElementBase(string displayName, MemberInfo metadata, Func<IElement> element) : base(element)
+		protected MemberElementBase(string displayName, Func<IElement> element) : base(element)
 		{
-			Metadata = metadata;
 			DisplayName = displayName;
 		}
-
-		public MemberInfo Metadata { get; }
 
 		public abstract object Get(object instance);
 		public abstract void Assign(object instance, object value);

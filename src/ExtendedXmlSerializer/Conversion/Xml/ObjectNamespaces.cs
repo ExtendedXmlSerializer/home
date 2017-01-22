@@ -21,60 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class ElementTypes : IElementTypes
+	public class ObjectNamespaces : IObjectNamespaces
 	{
-		public static ElementTypes Default { get; } = new ElementTypes();
-		ElementTypes() : this(NameConverter.Default) {}
+		public ObjectNamespaces() : this(new Namespaces(new GeneratedPrefixProvider()).Get) {}
 
-		readonly INameConverter _name;
-		readonly XName _type;
+		readonly Func<TypeInfo, XName> _namespaces;
 
-		public ElementTypes(INameConverter name) : this(name, name.Get(TypeProperty.Default)) {}
-
-		public ElementTypes(INameConverter name, XName type)
+		public ObjectNamespaces(Func<TypeInfo, XName> namespaces)
 		{
-			_type = type;
-			_name = name;
+			_namespaces = namespaces;
 		}
 
-		public TypeInfo Get(XElement parameter) => parameter.Annotation<TypeInfo>() ?? Resolve(parameter);
-
-		TypeInfo Resolve(XElement parameter)
-		{
-			var name = FromAttribute(parameter) ?? parameter.Name;
-
-			var result = _name.Get(name);
-			if (result != null)
-			{
-				parameter.AddAnnotation(result);
-				return result;
-			}
-			return null;
-		}
-
-		XName FromAttribute(XElement parameter)
-		{
-			var name = parameter.Attribute(_type)?.Value;
-			if (name != null)
-			{
-				var parts = name.ToStringArray(Defaults.NamespaceDelimiter.ToArray());
-				switch (parts.Length)
-				{
-					case 2:
-						var ns = parameter.Document.Root.GetNamespaceOfPrefix(parts[0])?.NamespaceName;
-						var result = XName.Get(parts[1], ns ?? string.Empty);
-						return result;
-				}
-				throw new SerializationException($"Could not parse XML name from {name}");
-			}
-			return null;
-		}
+		public ImmutableArray<XName> Get(object parameter)
+			=> new ObjectTypeWalker(parameter)
+				.Get()
+				.Distinct()
+				.Select(_namespaces)
+				.Distinct()
+				.ToImmutableArray();
 	}
 }

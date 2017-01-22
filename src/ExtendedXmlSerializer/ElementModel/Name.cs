@@ -26,11 +26,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class Name : IEquatable<Name>, IName
+	public class Name : IEquatable<IName>, IName
 	{
-		public Name(Type classification, string name) : this(classification.GetTypeInfo(), name) {}
+		public Name(string name, Type classification) : this(name, classification.GetTypeInfo()) {}
 
-		public Name(TypeInfo classification, string name)
+		public Name(string name, TypeInfo classification)
 		{
 			Classification = classification;
 			DisplayName = name;
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.ElementModel
 		public string DisplayName { get; }
 		public TypeInfo Classification { get; }
 
-		public bool Equals(Name other) => Equals(Classification, other.Classification);
+		public bool Equals(IName other) => Equals(Classification, other?.Classification);
 
 		public override bool Equals(object obj)
 			=> !ReferenceEquals(null, obj) && obj is Name && Equals((Name) obj);

@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.ElementModel
 	abstract class FrameworkPropertyBase : Name
 	{
 		readonly static TypeInfo Type = typeof(IExtendedXmlSerializer).GetTypeInfo();
-		protected FrameworkPropertyBase(string name) : base(Type, name) {}
+		protected FrameworkPropertyBase(string name) : base(name, Type) {}
 	}
 }

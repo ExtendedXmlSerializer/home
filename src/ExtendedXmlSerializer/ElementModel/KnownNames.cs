@@ -31,24 +31,24 @@ namespace ExtendedXmlSerialization.ElementModel
 	{
 		public virtual IEnumerator<IName> GetEnumerator()
 		{
-			yield return new Name(typeof(bool), "boolean");
-			yield return new Name(typeof(char), "char");
-			yield return new Name(typeof(sbyte), "byte");
-			yield return new Name(typeof(byte), "unsignedByte");
-			yield return new Name(typeof(short), "short");
-			yield return new Name(typeof(ushort), "unsignedShort");
-			yield return new Name(typeof(int), "int");
-			yield return new Name(typeof(uint), "unsignedInt");
-			yield return new Name(typeof(long), "long");
-			yield return new Name(typeof(ulong), "unsignedLong");
-			yield return new Name(typeof(float), "float");
-			yield return new Name(typeof(double), "double");
-			yield return new Name(typeof(decimal), "decimal");
-			yield return new Name(typeof(DateTime), "dateTime");
-			yield return new Name(typeof(DateTimeOffset), "dateTimeOffset");
-			yield return new Name(typeof(string), "string");
-			yield return new Name(typeof(Guid), "guid");
-			yield return new Name(typeof(TimeSpan), "TimeSpan");
+			yield return new Name("boolean", typeof(bool));
+			yield return new Name("char", typeof(char));
+			yield return new Name("byte", typeof(sbyte));
+			yield return new Name("unsignedByte", typeof(byte));
+			yield return new Name("short", typeof(short));
+			yield return new Name("unsignedShort", typeof(ushort));
+			yield return new Name("int", typeof(int));
+			yield return new Name("unsignedInt", typeof(uint));
+			yield return new Name("long", typeof(long));
+			yield return new Name("unsignedLong", typeof(ulong));
+			yield return new Name("float", typeof(float));
+			yield return new Name("double", typeof(double));
+			yield return new Name("decimal", typeof(decimal));
+			yield return new Name("dateTime", typeof(DateTime));
+			yield return new Name("dateTimeOffset", typeof(DateTimeOffset));
+			yield return new Name("string", typeof(string));
+			yield return new Name("guid", typeof(Guid));
+			yield return new Name("TimeSpan", typeof(TimeSpan));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

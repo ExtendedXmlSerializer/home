@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ElementModel;
 
@@ -30,19 +29,16 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public class NameConverter : INameConverter
 	{
 		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(Namespaces.Default, Types.Default) {}
+		NameConverter() : this(Namespaces.Default) {}
 
 		readonly INamespaces _namespaces;
-		readonly ITypes _types;
 
-		public NameConverter(INamespaces namespaces, ITypes types)
+		public NameConverter(INamespaces namespaces)
 		{
 			_namespaces = namespaces;
-			_types = types;
 		}
 
-		public XName Get(IDisplayAware parameter) => XName.Get(parameter.DisplayName, _namespaces.Get(parameter));
-
-		public TypeInfo Get(XName parameter) => _types.Get(parameter);
+		public XName Get(IName parameter)
+			=> XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification).NamespaceName);
 	}
 }

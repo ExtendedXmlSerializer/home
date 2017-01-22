@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Collections.Generic;
+using System.Diagnostics;
+using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Xml;
+using Xunit;
+
+namespace ExtendedXmlSerialization.Test.Conversion.Xml
 {
-	public interface IDictionaryValueElement : IContainerElement, IDisplayAware {}
+	public class OptimizedXmlContextFactoryTests
+	{
+		[Fact]
+		public void VerifyOptimization()
+		{
+			var instance = new Dictionary<int, string>
+			               {
+				               {1, "First"},
+				               {2, "Second"},
+				               {3, "Other"}
+			               };
+			var serializer = new ExtendedXmlSerializer(OptimizedXmlContextFactory.Default, RootConverter.Default);
+			var data = serializer.Serialize(instance);
+			Debugger.Break();
+		}
+	}
 }

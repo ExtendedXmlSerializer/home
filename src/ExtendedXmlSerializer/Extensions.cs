@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization
 		public static IExtendedXmlSerializer Create<T>(this T @this, Action<T> configure) where T : IExtendedXmlConfiguration
 		{
 			configure(@this);
-			var result = new ExtendedXmlSerializer(@this);
+			var result = @this.Create();
 			return result;
 		}
 

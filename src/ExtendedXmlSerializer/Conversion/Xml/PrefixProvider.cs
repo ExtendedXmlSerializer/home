@@ -21,11 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	sealed class ValueProperty : FrameworkPropertyBase
+	class PrefixProvider : IPrefixProvider
 	{
-		public static ValueProperty Default { get; } = new ValueProperty();
-		ValueProperty() : base("Value") {}
+		public static PrefixProvider Default { get; } = new PrefixProvider();
+		PrefixProvider() : this("_") {}
+
+		readonly string _prefix;
+
+		public PrefixProvider(string prefix)
+		{
+			_prefix = prefix;
+		}
+
+		public string Get(string parameter) => _prefix;
 	}
 }

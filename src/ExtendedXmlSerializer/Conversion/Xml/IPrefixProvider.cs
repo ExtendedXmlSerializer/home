@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	sealed class ItemProperty : FrameworkPropertyBase
-	{
-		public static ItemProperty Default { get; } = new ItemProperty();
-		ItemProperty() : base("Item") {}
-	}
+	public interface IPrefixProvider : IParameterizedSource<string, string> {}
 }

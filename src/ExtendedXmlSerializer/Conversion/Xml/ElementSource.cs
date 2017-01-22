@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			: base(
 				Names.Default, new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
 				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default),
-				Conversion.Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.DictionaryEntryType
+				Conversion.Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.Name.Classification
 			) {}
 	}
 }

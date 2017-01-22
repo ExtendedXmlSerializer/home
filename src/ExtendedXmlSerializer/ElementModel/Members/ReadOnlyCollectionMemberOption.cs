@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 			if (add != null)
 			{
 				var getter = _getter.Get(parameter.Metadata);
-				var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
+				var result = new ReadOnlyCollectionMemberElement(name, add, getter,
 				                                                 _elements.Build(parameter.MemberType));
 				return result;
 			}

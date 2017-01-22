@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		{
 			var getter = _getter.Get(parameter.Metadata);
 			var setter = _setter.Get(parameter.Metadata);
-			var result = new MemberElement(name, parameter.Metadata, setter, getter,
+			var result = new MemberElement(name, setter, getter,
 			                               _elements.Build(parameter.MemberType));
 			return result;
 		}

@@ -26,30 +26,36 @@ using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Namespaces : WeakCacheBase<IClassification, string>, INamespaces
+	public class Namespaces : WeakCacheBase<TypeInfo, XName>, INamespaces
 	{
 		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(KnownNamespaces.Default, NamespaceFormatter.Default) {}
+		Namespaces() : this(PrefixProvider.Default) {}
 
 		readonly IDictionary<Assembly, XName> _known;
 		readonly ITypeFormatter _formatter;
+		readonly IPrefixProvider _prefix;
 
-		public Namespaces(IDictionary<Assembly, XName> known, ITypeFormatter formatter)
+		public Namespaces(IPrefixProvider prefix) : this(KnownNamespaces.Default, NamespaceFormatter.Default, prefix) {}
+
+		public Namespaces(IDictionary<Assembly, XName> known, ITypeFormatter formatter, IPrefixProvider prefix)
 		{
 			_known = known;
 			_formatter = formatter;
+			_prefix = prefix;
 		}
 
-		protected override string Create(IClassification parameter)
-			=>
-				parameter is IMemberElement
-					? null
-					: (_known.TryGet(parameter.Classification.Assembly)?.NamespaceName ?? _formatter.Format(parameter.Classification));
+		protected override XName Create(TypeInfo parameter)
+			=> _known.TryGet(parameter.Assembly) ?? Format(parameter);
+
+		XName Format(TypeInfo parameter)
+		{
+			var name = _formatter.Format(parameter);
+			var result = XName.Get(_prefix.Get(name), name);
+			return result;
+		}
 	}
 }

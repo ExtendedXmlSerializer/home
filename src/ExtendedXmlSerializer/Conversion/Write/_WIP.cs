@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.Conversion.Write
 {
-	public interface INameConverter : IParameterizedSource<IName, XName> {}
+	public class EmitDifferingInstanceTypeWriter : DecoratedWriter
+	{
+		public EmitDifferingInstanceTypeWriter(IWriter writer) : base(writer) {}
+
+		public override void Write(IWriteContext context, object instance)
+		{
+			var type = instance.GetType().GetTypeInfo();
+			if (!context.Container.Exact(type))
+			{
+				context.Write(TypeProperty.Default, type);
+			}
+			base.Write(context, instance);
+		}
+	}
 }

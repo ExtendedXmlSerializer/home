@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
@@ -30,24 +31,27 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlReadContextFactory : IXmlReadContextFactory
 	{
+		readonly static char[] Delimiters = Defaults.NamespaceDelimiter.ToArray();
+
 		public static XmlReadContextFactory Default { get; } = new XmlReadContextFactory();
-		XmlReadContextFactory() : this(Elements.Default, ElementTypes.Default, NameConverter.Default) {}
+		XmlReadContextFactory() : this(Elements.Default, Types.Default, NameConverter.Default) {}
 
-		readonly IElements _selector;
-		readonly IElementTypes _types;
+		readonly IElements _elements;
+		readonly ITypes _types;
 		readonly INameConverter _converter;
-
-		public XmlReadContextFactory(IElements selector, IElementTypes types, INameConverter converter)
+		
+		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter)
 		{
-			_selector = selector;
+			_elements = elements;
 			_types = types;
 			_converter = converter;
 		}
 
-		public IReadContext Create(IReadContext context, IContainerElement container, XElement data)
+		public IReadContext Create(IContainerElement container, XElement data)
 		{
-			var typeInfo = _types.Get(data) ?? container.Classification;
-			var element = _selector.Load(container, typeInfo);
+			var name = GetName(data);
+			var typeInfo = _types.Get(name) ?? container.Classification;
+			var element = _elements.Load(container, typeInfo);
 			var member = container as IMemberElement;
 			if (member != null)
 			{
@@ -58,6 +62,24 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return result;
 		}
 
+		XName GetName(XElement element)
+		{
+			var data = Value(TypeProperty.Default, element);
+			if (data != null)
+			{
+				var parts = data.ToStringArray(Delimiters);
+				switch (parts.Length)
+				{
+					case 2:
+						var ns = element.GetNamespaceOfPrefix(parts[0])?.NamespaceName ?? string.Empty;
+						var result = XName.Get(parts[1], ns);
+						return result;
+				}
+				throw new SerializationException($"Could not parse XML name from {data}");
+			}
+			return element.Name;
+		}
+
 		public string Value(IName name, XElement data)
 		{
 			var xName = _converter.Get(name);
@@ -65,7 +87,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return value;
 		}
 
-		public IContext Select(IReadContext context, XElement data) =>
-			new XmlReadContext(this, context.Container, context.Element, context.Element, data);
+		public IContext Select(IXmlReadContext context) =>
+			new XmlReadContext(this, context.Container, context.Element, context.Element, context.Data);
 	}
 }

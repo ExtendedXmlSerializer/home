@@ -35,6 +35,6 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
 		void Write(string text);
 
-		void Write(IName name, string value);
+		void Write(IName name, object value);
 	}
 }

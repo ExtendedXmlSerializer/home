@@ -21,10 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.IO;
+using System.Xml;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
+
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IDisplayAware : IClassification
+	public interface IXmlContextFactory
 	{
-		string DisplayName { get; }
+		IWriteContext Create(XmlWriter writer, object instance);
+
+		IReadContext Create(Stream stream);
 	}
 }

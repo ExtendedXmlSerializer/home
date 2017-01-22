@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class IntegerTypeConverter : ValueTypeConverterBase<int>
+	class GeneratedPrefixProvider : CacheBase<string, string>, IPrefixProvider
 	{
-		public static IntegerTypeConverter Default { get; } = new IntegerTypeConverter();
-		IntegerTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
+		protected override string Create(string parameter) => $"ns{Count + 1}";
 	}
 }

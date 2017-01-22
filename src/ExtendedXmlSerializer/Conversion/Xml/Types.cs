@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			for (var i = 0; i < length; i++)
 			{
 				var name = _known[i];
-				if (ns == _namespaces.Get(name) && localName == name.DisplayName)
+				if (ns == _namespaces.Get(name.Classification)?.NamespaceName && localName == name.DisplayName)
 				{
 					return name.Classification;
 				}

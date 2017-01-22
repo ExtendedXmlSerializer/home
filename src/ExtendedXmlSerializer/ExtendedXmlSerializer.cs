@@ -22,14 +22,9 @@
 // SOFTWARE.
 
 using System.IO;
-using System.Reflection;
 using System.Xml;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization
 {
@@ -39,41 +34,26 @@ namespace ExtendedXmlSerialization
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
 		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
-		ExtendedXmlSerializer() : this(new ExtendedXmlConfiguration()) {}
+		ExtendedXmlSerializer() : this(XmlContextFactory.Default, RootConverter.Default) {}
 
-		// ReSharper disable once NotAccessedField.Local
-		readonly IExtendedXmlConfiguration _configuration;
+		readonly IXmlContextFactory _factory;
 		readonly IConverter _converter;
-		readonly IElements _elements;
 
-		public ExtendedXmlSerializer(IExtendedXmlConfiguration configuration) : this(configuration, RootConverter.Default) {}
-
-		public ExtendedXmlSerializer(IExtendedXmlConfiguration configuration, IConverter converter) : this(configuration, converter, Elements.Default) {}
-
-		public ExtendedXmlSerializer(IExtendedXmlConfiguration configuration, IConverter converter, IElements elements)
+		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverter converter)
 		{
-			_configuration = configuration;
+			_factory = factory;
 			_converter = converter;
-			_elements = elements;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
 			using (var writer = XmlWriter.Create(stream))
 			{
-				var root = new Root(_elements.Build(instance.GetType().GetTypeInfo()));
-				var context = new XmlWriteContext(writer, root);
+				var context = _factory.Create(writer, instance);
 				_converter.Write(context, instance);
 			}
 		}
 
-		public object Deserialize(Stream stream)
-		{
-			var text = new StreamReader(stream).ReadToEnd();
-			var document = XDocument.Parse(text);
-			var context = new XmlReadContext(document.Root);
-			var result = _converter.Read(context);
-			return result;
-		}
+		public object Deserialize(Stream stream) => _converter.Read(_factory.Create(stream));
 	}
 }

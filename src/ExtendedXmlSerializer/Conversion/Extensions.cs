@@ -28,15 +28,12 @@ using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public static class Extensions
 	{
-		readonly static TypeInfo TypeObject = typeof(object).GetTypeInfo();
-
 		public static void Emit(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
 			=> Emit(@this, context, container, instance, instance.GetType().GetTypeInfo());
 
@@ -77,26 +74,9 @@ namespace ExtendedXmlSerialization.Conversion
 		public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
 
 		public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
-			=> Equals(instanceType, container.Classification) ? container.Element : @this.Get(instanceType);
+			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);
 
-		public static TypeInfo GetDeclaredType(this IContainerElement target, IClassification classification)
-		{
-			if (Equals(classification.Classification, TypeObject))
-			{
-				var member = classification as IMemberElement;
-				if (member != null)
-				{
-					var property = target.GetType().GetRuntimeProperty(member.Metadata.Name);
-					if (property != null)
-					{
-						var instance = GetterFactory.Default.Get(property).Invoke(target);
-						var result = (instance as IClassification)?.Classification ?? instance as TypeInfo;
-						return result;
-					}
-				}
-			}
-
-			return classification.Classification;
-		}
+		public static bool Exact(this IClassification @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());
+		public static bool Exact(this IClassification @this, TypeInfo type) => type.Equals(@this.Classification);
 	}
 }

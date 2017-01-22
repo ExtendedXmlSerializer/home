@@ -28,6 +28,7 @@ using System.Xml;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
@@ -53,15 +54,14 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		XmlWriteContext(IElements selector, INamespaces namespaces,
 		                IContainerElement container, IElement element,
 		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
-			: this(null, selector, namespaces, container, element, container, writer, services, finish) {}
+			: this(selector, namespaces, container, element, container, writer, services, finish) {}
 
-		XmlWriteContext(IContext parent, IElements selector, INamespaces namespaces,
+		XmlWriteContext(IElements selector, INamespaces namespaces,
 		                IContainerElement container, IElement element, IElement selected,
 		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
 		{
 			_selector = selector;
 			_namespaces = namespaces;
-			Parent = parent;
 			Container = container;
 			Element = element;
 			Selected = selected;
@@ -70,7 +70,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_finish = finish;
 		}
 
-		public IContext Parent { get; }
 		public IContainerElement Container { get; }
 		public IElement Element { get; }
 		public IElement Selected { get; }
@@ -92,40 +91,45 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IDisposable Emit()
 		{
-			var display = Container as IDisplayAware ?? Element as IDisplayAware;
+			var display = Container as IName ?? Element as IName;
 			if (display != null)
 			{
-				var ns = _namespaces.Get(display);
-				if (ns != null)
+				if (Container is IMemberElement)
 				{
-					_writer.WriteStartElement(display.DisplayName, ns);
+					_writer.WriteStartElement(display.DisplayName);
 				}
 				else
 				{
-					_writer.WriteStartElement(display.DisplayName);
+					var ns = _namespaces.Get(display.Classification);
+					_writer.WriteStartElement(display.DisplayName, ns.NamespaceName);
 				}
 				return _finish;
 			}
 			throw new SerializationException(
-				$"Display name not found for element '{Element}' in a container of '{Container}.'");
+				$"Display name not found for element '{Element}' within a container of '{Container}.'");
 		}
 
 		public void Write(string text) => _writer.WriteString(text);
 
-		public void Write(IName element, string value)
-			=> _writer.WriteAttributeString(element.DisplayName, value);
+		public void Write(IName name, object value)
+		{
+			var type = value as TypeInfo;
+			if (type != null) // TODO: Make this a selector.
+			{
+				_writer.WriteStartAttribute(name.DisplayName, _namespaces.Get(name.Classification).NamespaceName);
+				_writer.WriteQualifiedName(TypeFormatter.Default.Format(type), _namespaces.Get(type).NamespaceName);
+				_writer.WriteEndAttribute();
+			}
+		}
 
 		public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
 			=> Create(parameter, _selector.Load(parameter, instanceType));
 
-		XmlWriteContext Create(IContainerElement container, IElement element)
-			=> Create(this, container, element, container);
+		XmlWriteContext Create(IContainerElement container, IElement element) => Create(container, element, container);
 
-		public IContext Select() => Create(Parent, Container, Element, Element);
+		public IContext Select() => Create(Container, Element, Element);
 
-		XmlWriteContext Create(IContext parent, IContainerElement container, IElement element, IElement selected)
-			=>
-				new XmlWriteContext(parent, _selector, _namespaces, container, element, selected, _writer, _services,
-				                    _finish);
+		XmlWriteContext Create(IContainerElement container, IElement element, IElement selected)
+			=> new XmlWriteContext(_selector, _namespaces, container, element, selected, _writer, _services, _finish);
 	}
 }

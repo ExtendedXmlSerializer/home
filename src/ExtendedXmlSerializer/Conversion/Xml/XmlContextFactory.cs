@@ -21,11 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IElementTypes : IParameterizedSource<XElement, TypeInfo> {}
+	public class XmlContextFactory : IXmlContextFactory
+	{
+		public static XmlContextFactory Default { get; } = new XmlContextFactory();
+		XmlContextFactory() : this(Elements.Default) {}
+
+		readonly IElements _elements;
+
+		public XmlContextFactory(IElements elements)
+		{
+			_elements = elements;
+		}
+
+		public IWriteContext Create(XmlWriter writer, object instance)
+		{
+			var root = new Root(_elements.Build(instance.GetType().GetTypeInfo()));
+			var result = new XmlWriteContext(writer, root);
+			return result;
+		}
+
+		public IReadContext Create(Stream stream)
+		{
+			var text = new StreamReader(stream).ReadToEnd();
+			var document = XDocument.Parse(text);
+			var result = new XmlReadContext(document.Root);
+			return result;
+		}
+	}
 }

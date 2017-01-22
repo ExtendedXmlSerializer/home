@@ -21,30 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.Test.TestObject;
-using Xunit;
+using System.Collections.Immutable;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Test.Legacy.Configuration
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class ConfigurationTypeTest
-	{
-		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
-		public void TestClassWithEncryptedData()
-		{
-			Action<IExtendedXmlConfiguration> func =
-				cfg =>
-				{
-					cfg.ConfigureType<TestClassWithEncryptedData>()
-					   .Property(p => p.Password).Encrypt()
-					   .Property(p => p.Salary).Encrypt();
-
-					cfg.UseEncryptionAlgorithm(new Base64PropertyEncryption());
-				};
-			var configurer = new ExtendedXmlConfiguration();
-			func(configurer);
-			Assert.NotNull(configurer.EncryptionAlgorithm);
-		}
-	}
+	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<XName>> {}
 }

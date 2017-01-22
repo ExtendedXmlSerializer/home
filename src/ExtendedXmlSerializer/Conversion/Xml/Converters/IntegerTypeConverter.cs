@@ -21,11 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 {
-	public interface INameConverter : IParameterizedSource<IName, XName> {}
+	public class IntegerTypeConverter : ValueTypeConverterBase<int>
+	{
+		public static IntegerTypeConverter Default { get; } = new IntegerTypeConverter();
+		IntegerTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
+	}
 }

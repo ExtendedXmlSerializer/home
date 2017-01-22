@@ -21,11 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using System.IO;
+using System.Xml;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface INameConverter : IParameterizedSource<IName, XName> {}
+	public class OptimizedXmlContextFactory : IXmlContextFactory
+	{
+		public static OptimizedXmlContextFactory Default { get; } = new OptimizedXmlContextFactory();
+		OptimizedXmlContextFactory() : this(XmlContextFactory.Default) {}
+
+		readonly IXmlContextFactory _factory;
+
+		public OptimizedXmlContextFactory(IXmlContextFactory factory)
+		{
+			_factory = factory;
+		}
+
+		public IWriteContext Create(XmlWriter writer, object instance) =>
+			new OptimizedWriteContext(_factory.Create(writer, instance), writer, instance);
+
+		public IReadContext Create(Stream stream) => _factory.Create(stream);
+	}
 }

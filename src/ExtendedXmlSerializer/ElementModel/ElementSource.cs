@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.ElementModel
 		ElementSource()
 			: this(
 				Names.Default, PropertyMemberSpecification.Default, FieldMemberSpecification.Default,
-				Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.DictionaryEntryType
+				Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.Name.Classification
 			) {}
 
 		readonly INames _names;

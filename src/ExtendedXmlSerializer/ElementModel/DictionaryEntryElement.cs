@@ -29,9 +29,11 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class DictionaryEntryElement : ActivatedElement
 	{
-		public static TypeInfo DictionaryEntryType { get; } = typeof(DictionaryEntry).GetTypeInfo();
+		public static IName Name { get; } = new Name("Item", typeof(DictionaryEntry).GetTypeInfo());
 
-		public DictionaryEntryElement(IMembers members)
-			: base(ItemProperty.Default.DisplayName, DictionaryEntryType, members) {}
+		public DictionaryEntryElement(IMembers members) : this(Name, members) {}
+
+		public DictionaryEntryElement(IName name, IMembers members)
+			: base(name.DisplayName, name.Classification, members) {}
 	}
 }
