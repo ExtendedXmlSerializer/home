@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
@@ -30,8 +31,8 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public MemberElement(string displayName, Action<object, object> setter, Func<object, object> getter,
-		                     Func<IElement> element) : base(displayName, element)
+		public MemberElement(string displayName, MemberInfo metadata, Action<object, object> setter, Func<object, object> getter,
+		                     Func<IElement> element) : base(displayName, metadata, element)
 		{
 			_setter = setter;
 			_getter = getter;

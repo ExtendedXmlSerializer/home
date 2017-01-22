@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class Element : NamedElementBase
+	public class Element : NamedElementBase
 	{
 		public Element(string displayName, TypeInfo classification) : base(displayName, classification) {}
 	}

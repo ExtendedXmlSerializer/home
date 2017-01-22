@@ -37,18 +37,8 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
 		protected override void Write(IWriteContext context, IDictionary instance)
 		{
-			/*var container = ((IDictionaryElement) context.Element).Item;
-			var element = context.New(container, container.Classification);
-			foreach (DictionaryEntry entry in instance)
-			{
-			    using (element.Emit())
-			    {
-			        _writer.Emit(context, container.Key, entry.Key);
-			        _writer.Emit(context, container.Value, entry.Value);
-			    }
-			}*/
-			var item = ((IDictionaryElement) context.Element).Item;
-			var element = context.New(item, item.Classification);
+			var item = (IDictionaryElement) context.Element;
+			var element = context.New(item, DictionaryItemElement.Name.Classification);
 			foreach (DictionaryEntry entry in instance)
 			{
 				_writer.Emit(element, item, entry);

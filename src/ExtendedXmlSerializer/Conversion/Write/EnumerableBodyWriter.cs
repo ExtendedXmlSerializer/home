@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 
 		protected override void Write(IWriteContext context, IEnumerable instance)
 		{
-			var container = ((ICollectionElement) context.Element).Item;
+			var container = (ICollectionElement) context.Element;
 			foreach (var item in instance)
 			{
 				_item.Emit(context, container, item);

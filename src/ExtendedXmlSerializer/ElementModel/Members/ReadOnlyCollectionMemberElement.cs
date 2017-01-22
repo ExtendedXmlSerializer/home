@@ -23,15 +23,16 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
 	{
-		public ReadOnlyCollectionMemberElement(string displayName, Action<object, object> add,
+		public ReadOnlyCollectionMemberElement(string displayName, MemberInfo metadata, Action<object, object> add,
 		                                       Func<object, object> getter, Func<IElement> element)
-			: base(displayName, add, getter, element) {}
+			: base(displayName, metadata, add, getter, element) {}
 
 		public override void Assign(object instance, object value)
 		{

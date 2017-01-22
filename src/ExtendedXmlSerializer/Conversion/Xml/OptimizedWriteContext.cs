@@ -63,12 +63,24 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IDisposable Emit()
 		{
+			_writer.WriteStartDocument();
 			var result = _context.Emit();
-			var immutableArray = _namespaces.Get(_instance);
-			foreach (var info in immutableArray)
+			var names = _namespaces.Get(_instance);
+
+			for (var i = 0; i < names.Length; i++)
 			{
-				_writer.WriteAttributeString(Prefix, info.LocalName ?? string.Empty, string.Empty, info.NamespaceName);
+				var name = names[i];
+				switch (i)
+				{
+					case 0:
+						_writer.WriteAttributeString(Prefix, name.NamespaceName);
+						break;
+					default:
+						_writer.WriteAttributeString(Prefix, name.LocalName, string.Empty, name.NamespaceName);
+						break;
+				}
 			}
+
 			return result;
 		}
 

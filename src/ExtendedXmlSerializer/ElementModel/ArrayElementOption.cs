@@ -21,25 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class ArrayElementOption : ElementOptionBase
+	public class ArrayElementOption : CollectionElementOptionBase
 	{
-		readonly ICollectionItemFactory _items;
+		public ArrayElementOption(INames names, IElements elements) : base(IsArraySpecification.Default, elements, names) {}
 
-		public ArrayElementOption(INames names, IElements elements)
-			: this(names, new CollectionItemFactory(elements)) {}
-
-		public ArrayElementOption(INames names, ICollectionItemFactory items)
-			: base(IsArraySpecification.Default, names)
-		{
-			_items = items;
-		}
-
-		protected override IElement Create(string name, TypeInfo parameter)
-			=> new ArrayElement(name, parameter, _items.Get(parameter));
+		protected override IElement Create(string name, TypeInfo collectionType, Func<IElement> element)
+			=> new ArrayElement(name, collectionType, element);
 	}
 }

@@ -76,7 +76,9 @@ namespace ExtendedXmlSerialization.Conversion
 		public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
 			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);
 
-		public static bool Exact(this IClassification @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());
+		public static bool Exact(this IClassification @this, object instance)
+			=> Exact(@this, instance.GetType().GetTypeInfo());
+
 		public static bool Exact(this IClassification @this, TypeInfo type) => type.Equals(@this.Classification);
 	}
 }

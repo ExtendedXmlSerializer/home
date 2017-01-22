@@ -92,7 +92,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IEnumerable<IReadContext> Items()
 		{
-			var container = ((ICollectionElement) Element).Item;
+			var container = (ICollectionElement) Element;
 			foreach (var child in Data.Elements())
 			{
 				yield return _factory.Create(container, child);

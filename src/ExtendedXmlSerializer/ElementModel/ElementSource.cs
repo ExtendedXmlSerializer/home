@@ -25,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
@@ -39,7 +38,7 @@ namespace ExtendedXmlSerialization.ElementModel
 		ElementSource()
 			: this(
 				Names.Default, PropertyMemberSpecification.Default, FieldMemberSpecification.Default,
-				Defaults.Names.Select(x => x.Classification), DictionaryEntryElement.Name.Classification
+				Conversion.Defaults.Names.Select(x => x.Classification), DictionaryItemElement.Name.Classification
 			) {}
 
 		readonly INames _names;

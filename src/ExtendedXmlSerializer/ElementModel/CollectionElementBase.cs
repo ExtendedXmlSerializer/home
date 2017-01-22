@@ -21,21 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class CollectionElementBase<T> : ActivatedElement, ICollectionElement<T> where T : ICollectionItem
+	public abstract class MemberedCollectionElementBase : CollectionElementBase, IMemberedElement
 	{
-		public CollectionElementBase(string displayName, TypeInfo classification, IMembers members, T item)
-			: base(displayName, classification, members)
+		protected MemberedCollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element, IMembers members)
+			: base(displayName, classification, element)
 		{
-			Item = item;
+			Members = members;
 		}
 
-		public T Item { get; }
+		public IMembers Members { get; }
+	}
 
-		ICollectionItem ICollectionElement.Item => Item;
+	public abstract class CollectionElementBase : NamedElementBase, ICollectionElement
+	{
+		readonly Func<IElement> _element;
+
+		protected CollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element)
+			: base(displayName, classification)
+		{
+			_element = element;
+		}
+
+		public IElement Element => _element();
 	}
 }

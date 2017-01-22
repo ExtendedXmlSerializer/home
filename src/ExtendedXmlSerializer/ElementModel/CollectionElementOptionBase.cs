@@ -21,30 +21,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class CollectionElementOptionBase : ActivatedElementOptionBase
+	public abstract class CollectionElementOptionBase : ElementOptionBase
 	{
-		readonly ICollectionItemFactory _items;
+		readonly IElements _elements;
+		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
-		                                      INames names, IElementMembers members)
-			: this(specification, names, members, new CollectionItemFactory(elements)) {}
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names)
+			: this(specification, elements, names, CollectionItemTypeLocator.Default) {}
 
-		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, INames names,
-		                                      IElementMembers members, ICollectionItemFactory items)
-			: base(specification, names, members)
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names,
+		                                      ICollectionItemTypeLocator locator)
+			: base(specification, names)
 		{
-			_items = items;
+			_elements = elements;
+			_locator = locator;
 		}
 
-		protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)
-			=> Create(name, parameter, members, _items.Get(parameter));
+		protected override IElement Create(string name, TypeInfo parameter)
+			=> Create(name, parameter, _elements.Build(_locator.Get(parameter)));
 
-		protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item);
+		protected abstract IElement Create(string name, TypeInfo collectionType, Func<IElement> item);
+	}
+
+	public abstract class MemberedCollectionElementOptionBase : CollectionElementOptionBase
+	{
+		readonly IElementMembers _members;
+
+		protected MemberedCollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements,
+		                                              INames names, IElementMembers members)
+			: this(specification, elements, names, members, CollectionItemTypeLocator.Default) {}
+
+		protected MemberedCollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names,
+		                                              IElementMembers members, ICollectionItemTypeLocator items)
+			: base(specification, elements, names, items)
+		{
+			_members = members;
+		}
+
+		protected override IElement Create(string name, TypeInfo collectionType, Func<IElement> item) =>
+			Create(name, collectionType, _members.Get(collectionType), item);
+
+		protected abstract IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> item);
 	}
 }

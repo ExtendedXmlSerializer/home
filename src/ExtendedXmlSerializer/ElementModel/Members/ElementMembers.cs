@@ -38,8 +38,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		//public ElementMembers(IMemberElementSelector selector) : this(selector, PropertyMemberSpecification.Default, FieldMemberSpecification.Default) {}
-
 		public ElementMembers(IMemberElementSelector selector, ISpecification<PropertyInfo> property,
 		                      ISpecification<FieldInfo> field)
 		{

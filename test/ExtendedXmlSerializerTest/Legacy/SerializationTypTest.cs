@@ -26,6 +26,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationTypTest : BaseTest
 	{
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]

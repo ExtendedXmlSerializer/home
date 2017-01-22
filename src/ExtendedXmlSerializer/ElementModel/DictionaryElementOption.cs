@@ -21,43 +21,74 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class DictionaryElementOption : CollectionElementOptionBase
+	class DictionaryElementOption : MemberedCollectionElementOptionBase
 	{
-		readonly IElements _elements;
-		readonly IActivatedElement _entry;
-		readonly IDictionaryPairTypesLocator _locator;
+		readonly IDictionaryItemFactory _factory;
 
 		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
-			: this(elements, names, members, DictionaryPairTypesLocator.Default) {}
+			: this(elements, names, members, new DictionaryItemFactory(elements)) {}
 
 		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
-		                               IDictionaryPairTypesLocator locator)
-			: this(
-				elements, names, members,
-				new DictionaryEntryElement(members.Get(DictionaryEntryElement.Name.Classification)), locator) {}
-
-		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
-		                               IActivatedElement entry, IDictionaryPairTypesLocator locator)
+		                               IDictionaryItemFactory factory)
 			: base(IsDictionaryTypeSpecification.Default, elements, names, members)
 		{
+			_factory = factory;
+		}
+
+		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
+		{
+			var item = _factory.Get(collectionType);
+			var result = new DictionaryElement(name, collectionType, item.Self, members);
+			return result;
+		}
+	}
+
+	public interface IDictionaryItemFactory : IParameterizedSource<TypeInfo, IElement> {}
+
+	public class DictionaryItemFactory : IDictionaryItemFactory
+	{
+		readonly IElements _elements;
+		readonly IGetterFactory _getter;
+		readonly ISetterFactory _setter;
+		readonly IDictionaryPairTypesLocator _locator;
+
+		public DictionaryItemFactory(IElements elements)
+			: this(elements, GetterFactory.Default, SetterFactory.Default, DictionaryPairTypesLocator.Default) {}
+
+		public DictionaryItemFactory(IElements elements, IGetterFactory getter, ISetterFactory setter,
+		                             IDictionaryPairTypesLocator locator)
+		{
 			_elements = elements;
-			_entry = entry;
+			_getter = getter;
+			_setter = setter;
 			_locator = locator;
 		}
 
-		protected override IElement Create(string name, TypeInfo collectionType, IMembers members,
-		                                   ICollectionItem elementType)
+		public IElement Get(TypeInfo parameter)
 		{
-			var pair = _locator.Get(collectionType);
-			var item = new DictionaryItem(_entry, _elements.Build(pair.KeyType), _elements.Build(pair.ValueType));
-			var result = new DictionaryElement(name, collectionType, members, item);
+			var pair = _locator.Get(parameter);
+			var members = new Members.Members(CreateMember(nameof(DictionaryEntry.Key), pair.KeyType),
+			                                  CreateMember(nameof(DictionaryEntry.Value), pair.ValueType));
+			var result = new DictionaryItemElement(members);
+			return result;
+		}
+
+		IMemberElement CreateMember(string name, TypeInfo type)
+		{
+			var memberInfo = DictionaryItemElement.Name.Classification.GetProperty(name);
+			var setter = _setter.Get(memberInfo);
+			var getter = _getter.Get(memberInfo);
+			var result = new MemberElement(name, memberInfo, setter, getter, _elements.Build(type));
 			return result;
 		}
 	}

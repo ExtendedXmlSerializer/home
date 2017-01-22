@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel
 	public class Names : Selector<MemberInfo, string>, INames
 	{
 		public static Names Default { get; } = new Names();
-		Names() : this(Defaults.Names) {}
+		Names() : this(Conversion.Defaults.Names) {}
 
 		protected Names(IEnumerable<IName> names)
 			: this(

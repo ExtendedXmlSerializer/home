@@ -26,22 +26,23 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationStruct : BaseTest
 	{
 #if !NET451
 //TODO Set Single in struct on .net 4.5.1
-        [Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
-        public void Struct()
-        {
-            var vector2 = new System.Numerics.Vector2(1, 2);
+		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
+		public void Struct()
+		{
+			var vector2 = new System.Numerics.Vector2(1, 2);
 
-            CheckSerializationAndDeserializationByXml(
-                @"<?xml version=""1.0"" encoding=""utf-8""?>
+			CheckSerializationAndDeserializationByXml(
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
 <Vector2 type=""System.Numerics.Vector2""><X>1</X><Y>2</Y></Vector2>",
-                vector2);
-            CheckCompatibilityWithDefaultSerializator(vector2);
-            
-        }
+				vector2);
+			CheckCompatibilityWithDefaultSerializator(vector2);
+			
+		}
 #endif
 
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]

@@ -33,57 +33,67 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ObjectTypeWalker : ObjectWalkerBase<object, IEnumerable<TypeInfo>>, ISource<IEnumerable<TypeInfo>>
 	{
-		readonly IElements _types;
+		readonly ConditionMonitor _framework = new ConditionMonitor();
+
+		readonly IElements _elements;
+		readonly static TypeInfo FrameworkType = ElementModel.Defaults.FrameworkType;
 
 		public ObjectTypeWalker(object root) : this(Elements.Default, root) {}
 
-		public ObjectTypeWalker(IElements types, object root) : base(root)
+		public ObjectTypeWalker(IElements elements, object root) : base(root)
 		{
-			_types = types;
+			_elements = elements;
 		}
 
 		protected override IEnumerable<TypeInfo> Select(object input)
 		{
 			var parameter = input.GetType().GetTypeInfo();
 			yield return parameter;
-			var element = _types.Get(parameter);
+			
+			var element = _elements.Get(parameter);
 			var membered = element as IMemberedElement;
 			if (membered != null)
 			{
 				foreach (var member in membered.Members)
 				{
-					Check(member, member.Get(input));
+					if (Check(member, member.Get(input)))
+					{
+						yield return FrameworkType;
+					}
 				}
 			}
 
 			var collection = element as ICollectionElement;
 			if (collection != null)
 			{
-				var item = collection.Item as IDictionaryItem;
+				var item = collection as IDictionaryElement;
 				if (item != null)
 				{
 					foreach (DictionaryEntry entry in (IDictionary) input)
 					{
-						Check(item.Key, entry.Key);
-						Check(item.Value, entry.Value);
+						Schedule(entry.Key);
+						Schedule(entry.Value);
 					}
 				}
 				else
 				{
 					foreach (var i in (IEnumerable) input)
 					{
-						Check(collection.Item, i);
+						Schedule(i);
 					}
 				}
 			}
 		}
 
-		void Check(IClassification classification, object instance)
+		bool Check(IClassification classification, object instance)
 		{
 			if (!classification.Exact(instance))
 			{
 				Schedule(instance);
+				var result = _framework.Apply();
+				return  result;
 			}
+			return false;
 		}
 
 		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();

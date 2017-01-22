@@ -21,10 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public interface IMemberElement : IContainerElement, IName
 	{
+		MemberInfo Metadata { get; }
+
 		object Get(object instance);
 
 		void Assign(object instance, object value);
