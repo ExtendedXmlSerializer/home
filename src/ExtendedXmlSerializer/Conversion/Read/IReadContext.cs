@@ -38,6 +38,6 @@ namespace ExtendedXmlSerialization.Conversion.Read
 
 		string Read();
 
-		string this[IElementName name] { get; }
+		string this[IName name] { get; }
 	}
 }

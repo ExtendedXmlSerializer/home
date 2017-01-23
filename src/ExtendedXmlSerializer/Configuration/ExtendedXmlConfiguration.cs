@@ -23,11 +23,23 @@
 
 using System;
 using System.Collections.Generic;
+using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
+		readonly IXmlContextFactory _context;
+		readonly IConfiguredRootConverterFactory _factory;
+
+		public ExtendedXmlConfiguration() : this(XmlContextFactory.Default, ConfiguredRootConverterFactory.Default) {}
+
+		public ExtendedXmlConfiguration(IXmlContextFactory context, IConfiguredRootConverterFactory factory)
+		{
+			_context = context;
+			_factory = factory;
+		}
+
 		public bool AutoProperties { get; set; }
 		public bool Namespaces { get; set; }
 		public IPropertyEncryption EncryptionAlgorithm { get; set; }
@@ -66,6 +78,6 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IExtendedXmlSerializer Create() => new ExtendedXmlSerializer(this);
+		public IExtendedXmlSerializer Create() => new ExtendedXmlSerializer(_context, _factory.Get(this));
 	}
 }

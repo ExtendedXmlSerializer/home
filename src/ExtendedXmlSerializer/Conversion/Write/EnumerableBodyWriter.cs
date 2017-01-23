@@ -26,7 +26,12 @@ using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
 {
-	public class EnumerableBodyWriter : WriterBase<IEnumerable>
+	public class EnumerableBodyWriter : EnumerableBodyWriter<IEnumerable>
+	{
+		public EnumerableBodyWriter(IWriter item) : base(item) {}
+	}
+
+	public class EnumerableBodyWriter<T> : WriterBase<T> where T : class, IEnumerable
 	{
 		readonly IWriter _item;
 
@@ -35,12 +40,19 @@ namespace ExtendedXmlSerialization.Conversion.Write
 			_item = item;
 		}
 
-		protected override void Write(IWriteContext context, IEnumerable instance)
+		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
+
+		protected override void Write(IWriteContext context, T instance)
 		{
-			var container = ((ICollectionElement) context.Element).Item;
-			foreach (var item in instance)
+			var element = (ICollectionElement) context.Element;
+			var item = context.New(element.Element, element.Element.Classification);
+			var enumerator = Get(instance);
+			while (enumerator.MoveNext())
 			{
-				_item.Emit(context, container, item);
+				using (item.Emit())
+				{
+					_item.Write(item, enumerator.Current);
+				}
 			}
 		}
 	}

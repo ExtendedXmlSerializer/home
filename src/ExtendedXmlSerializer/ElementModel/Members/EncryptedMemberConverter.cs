@@ -21,10 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
@@ -37,12 +38,39 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 			_encryption = encryption;
 		}
 
-		public override object Read(IReadContext context)
+		public override object Read(IReadContext context) => base.Read(new DecryptedContext(_encryption, context));
+
+		sealed class DecryptedContext : IReadContext
 		{
-			var element = context.Get<XElement>();
-			element.Value = _encryption.Decrypt(element.Value);
-			var result = base.Read(context);
-			return result;
+			readonly IPropertyEncryption _encryption;
+			readonly IReadContext _context;
+
+			public DecryptedContext(IPropertyEncryption encryption, IReadContext context)
+			{
+				_encryption = encryption;
+				_context = context;
+			}
+
+			public object GetService(Type serviceType) => _context.GetService(serviceType);
+
+			public IContainerElement Container => _context.Container;
+
+			public IElement Element => _context.Element;
+
+			public IContext Select() => _context.Select();
+
+			public IElement Selected => _context.Selected;
+
+			public IEnumerator<IReadMemberContext> GetEnumerator() => _context.GetEnumerator();
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+			public void Add(object service) => _context.Add(service);
+
+			public IEnumerable<IReadContext> Items() => _context.Items();
+
+			public string Read() => _encryption.Decrypt(_context.Read());
+
+			public string this[IName name] => _context[name];
 		}
 	}
 }

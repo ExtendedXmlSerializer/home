@@ -28,16 +28,22 @@ using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public sealed class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
 	{
 		readonly IMemberElementSelector _selector;
+		readonly ISpecification<PropertyInfo> _property;
+		readonly ISpecification<FieldInfo> _field;
 
-		public ElementMembers(IMemberElementSelector selector)
+		public ElementMembers(IMemberElementSelector selector, ISpecification<PropertyInfo> property,
+		                      ISpecification<FieldInfo> field)
 		{
 			_selector = selector;
+			_property = property;
+			_field = field;
 		}
 
 		protected override IMembers Create(TypeInfo parameter) =>
@@ -47,11 +53,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		{
 			foreach (var property in parameter.GetProperties())
 			{
-				var getMethod = property.GetGetMethod(true);
-				if (property.CanRead && !getMethod.IsStatic && getMethod.IsPublic &&
-				    !(!property.GetSetMethod(true)?.IsPublic ?? false) &&
-				    property.GetIndexParameters().Length <= 0 &&
-				    !property.IsDefined(typeof(XmlIgnoreAttribute), false))
+				if (_property.IsSatisfiedBy(property))
 				{
 					var sorting = Create(property, property.PropertyType, property.CanWrite);
 					if (sorting != null)
@@ -63,11 +65,9 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 
 			foreach (var field in parameter.GetFields())
 			{
-				var readOnly = field.IsInitOnly;
-				if ((readOnly ? !field.IsLiteral : !field.IsStatic) &&
-				    !field.IsDefined(typeof(XmlIgnoreAttribute), false))
+				if (_field.IsSatisfiedBy(field))
 				{
-					var sorting = Create(field, field.FieldType, !readOnly);
+					var sorting = Create(field, field.FieldType, !field.IsInitOnly);
 					if (sorting != null)
 					{
 						yield return sorting.Value;

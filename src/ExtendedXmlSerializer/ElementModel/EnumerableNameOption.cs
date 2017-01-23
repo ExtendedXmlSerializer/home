@@ -26,17 +26,9 @@ using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	sealed class EnumerableNameProvider : NameProvider
-	{
-		public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
-
-		EnumerableNameProvider() : base(EnumerableTypeFormatter.Default) {}
-	}
-
 	public class EnumerableNameOption : ElementNameOptionBase
 	{
 		public static EnumerableNameOption Default { get; } = new EnumerableNameOption();

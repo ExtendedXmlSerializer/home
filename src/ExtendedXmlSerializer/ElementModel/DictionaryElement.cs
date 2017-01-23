@@ -26,9 +26,9 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class DictionaryElement : CollectionElementBase<IDictionaryItem>, IDictionaryElement
+	class DictionaryElement : MemberedCollectionElementBase, IDictionaryElement
 	{
-		public DictionaryElement(string displayName, TypeInfo classification, IMembers members, IDictionaryItem item)
-			: base(displayName, classification, members, item) {}
+		public DictionaryElement(string displayName, TypeInfo classification, IContainerElement item, IMembers members)
+			: base(displayName, classification, item, members) {}
 	}
 }

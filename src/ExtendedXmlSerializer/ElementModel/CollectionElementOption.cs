@@ -21,18 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class CollectionElementOption : CollectionElementOptionBase
+	public class CollectionElementOption : MemberedCollectionElementOptionBase
 	{
-		public CollectionElementOption(IElements elements, IElementNames names, IElementMembers members)
+		public CollectionElementOption(IElements elements, INames names, IElementMembers members)
 			: base(IsCollectionTypeSpecification.Default, elements, names, members) {}
 
-		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, ICollectionItem item)
-			=> new CollectionElement(name, collectionType, members, item);
+		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
+			=> new CollectionElement(name, collectionType, members, element);
 	}
 }

@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class ActivatedElementOption : ActivatedElementOptionBase
 	{
-		public ActivatedElementOption(IElementNames names, IElementMembers members)
+		public ActivatedElementOption(INames names, IElementMembers members)
 			: base(IsActivatedTypeSpecification.Default, names, members) {}
 
 		protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)

@@ -26,6 +26,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationDictionary : BaseTest
 	{
 		public class TestClass
@@ -43,18 +44,18 @@ namespace ExtendedXmlSerialization.Test.Legacy
 
 			CheckSerializationAndDeserializationByXml(@"<?xml version=""1.0"" encoding=""utf-8""?>
 <ArrayOfInt32String>
-    <Item>
-        <Key>1</Key>
-        <Value>First</Value>
-    </Item>
-    <Item>
-        <Key>2</Key>
-        <Value>Second</Value>
-    </Item>
-    <Item>
-        <Key>3</Key>
-        <Value>Other</Value>
-    </Item>
+	<Item>
+		<Key>1</Key>
+		<Value>First</Value>
+	</Item>
+	<Item>
+		<Key>2</Key>
+		<Value>Second</Value>
+	</Item>
+	<Item>
+		<Key>3</Key>
+		<Value>Other</Value>
+	</Item>
 </ArrayOfInt32String>", dict);
 		}
 
@@ -62,29 +63,29 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		public void PropertyDictionary()
 		{
 			var obj = new TestClass
-			          {
-				          Dictionary = new Dictionary<int, string>
-				                       {
-					                       {1, "First"},
-					                       {2, "Second"},
-					                       {3, "Other"}
-				                       }
-			          };
+					  {
+						  Dictionary = new Dictionary<int, string>
+									   {
+										   {1, "First"},
+										   {2, "Second"},
+										   {3, "Other"}
+									   }
+					  };
 
 			CheckSerializationAndDeserializationByXml(@"<TestClass type=""ExtendedXmlSerialization.Test.Legacy.SerializationDictionary+TestClass"">
   <Dictionary>
-    <Item>
-        <Key>1</Key>
-        <Value>First</Value>
-    </Item>
-    <Item>
-        <Key>2</Key>
-        <Value>Second</Value>
-    </Item>
-    <Item>
-        <Key>3</Key>
-        <Value>Other</Value>
-    </Item>
+	<Item>
+		<Key>1</Key>
+		<Value>First</Value>
+	</Item>
+	<Item>
+		<Key>2</Key>
+		<Value>Second</Value>
+	</Item>
+	<Item>
+		<Key>3</Key>
+		<Value>Other</Value>
+	</Item>
   </Dictionary>
 </TestClass>", obj);
 		}

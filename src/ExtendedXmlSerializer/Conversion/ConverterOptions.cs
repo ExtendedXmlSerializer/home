@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
@@ -33,18 +34,26 @@ namespace ExtendedXmlSerialization.Conversion
 	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
 	{
 		public static ConverterOptions Default { get; } = new ConverterOptions();
-		ConverterOptions() {}
+		ConverterOptions() : this(KnownConverters.Default) {}
+
+		readonly IConverterOption _known;
+
+		public ConverterOptions(IConverterOption known)
+		{
+			_known = known;
+		}
 
 		public IEnumerable<IConverterOption> Get(IConverter parameter)
 		{
+			var element = new ElementSelectingConverter(parameter);
+			yield return new ReadOnlyCollectionMemberConverterOption(element);
+			yield return new MemberConverterOption(element);
+
+			yield return _known;
 			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
 			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
 			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
 			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
-			var element = new ElementSelectingConverter(parameter);
-			yield return new ReadOnlyCollectionMemberConverterOption(element);
-			yield return new MemberConverterOption(element);
-			yield return KnownConverters.Default;
 		}
 
 		class InstanceConverter : Converter

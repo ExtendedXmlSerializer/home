@@ -27,6 +27,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationPrimitiveTypTest : BaseTest
 	{
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
@@ -125,7 +126,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			var obj = new TimeSpan(1, 2, 3, 4);
 #if !NET451
 //Serialization TimeSpan on .net 4.5.1 not work
-            CheckCompatibilityWithDefaultSerializator(obj);
+			CheckCompatibilityWithDefaultSerializator(obj);
 #endif
 			CheckSerializationAndDeserializationByXml(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TimeSpan>P1DT2H3M4S</TimeSpan>", obj);

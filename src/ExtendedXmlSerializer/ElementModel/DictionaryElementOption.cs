@@ -21,43 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class DictionaryElementOption : CollectionElementOptionBase
+	class DictionaryElementOption : MemberedCollectionElementOptionBase
 	{
-		readonly IElements _elements;
-		readonly IActivatedElement _entry;
-		readonly IDictionaryPairTypesLocator _locator;
+		readonly IDictionaryItemFactory _factory;
 
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members)
-			: this(elements, names, members, DictionaryPairTypesLocator.Default) {}
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
+			: this(elements, names, members, new DictionaryItemFactory(elements)) {}
 
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
-		                               IDictionaryPairTypesLocator locator)
-			: this(
-				elements, names, members,
-				new DictionaryEntryElement(members.Get(DictionaryEntryElement.DictionaryEntryType)), locator) {}
-
-		public DictionaryElementOption(IElements elements, IElementNames names, IElementMembers members,
-		                               IActivatedElement entry, IDictionaryPairTypesLocator locator)
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
+		                               IDictionaryItemFactory factory)
 			: base(IsDictionaryTypeSpecification.Default, elements, names, members)
 		{
-			_elements = elements;
-			_entry = entry;
-			_locator = locator;
+			_factory = factory;
 		}
 
-		protected override IElement Create(string name, TypeInfo collectionType, IMembers members,
-		                                   ICollectionItem elementType)
+		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
 		{
-			var pair = _locator.Get(collectionType);
-			var item = new DictionaryItem(_entry, _elements.Build(pair.KeyType), _elements.Build(pair.ValueType));
-			var result = new DictionaryElement(name, collectionType, members, item);
+			var item = _factory.Get(collectionType);
+			var result = new DictionaryElement(name, collectionType, new CollectionItem(item.Self), members);
 			return result;
 		}
 	}

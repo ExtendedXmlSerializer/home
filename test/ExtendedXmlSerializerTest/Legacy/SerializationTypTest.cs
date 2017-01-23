@@ -26,14 +26,14 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationTypTest : BaseTest
 	{
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void ClassPrimitiveTypes()
 		{
-			var obj = new TestClassPrimitiveTypes();
-			obj.Init();
-
+			var obj = TestClassPrimitiveTypes.Create();
+			
 			CheckSerializationAndDeserialization("ExtendedXmlSerializerTest.Legacy.Resources.TestClassPrimitiveTypes.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}

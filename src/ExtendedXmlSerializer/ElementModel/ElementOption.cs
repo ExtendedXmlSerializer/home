@@ -28,8 +28,8 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class ElementOption : ElementOptionBase
 	{
-		public ElementOption(IElementNames names) : base(names) {}
-		public ElementOption(ISpecification<TypeInfo> specification, IElementNames names) : base(specification, names) {}
+		public ElementOption(INames names) : base(names) {}
+		public ElementOption(ISpecification<TypeInfo> specification, INames names) : base(specification, names) {}
 
 		protected override IElement Create(string name, TypeInfo classification) => new Element(name, classification);
 	}

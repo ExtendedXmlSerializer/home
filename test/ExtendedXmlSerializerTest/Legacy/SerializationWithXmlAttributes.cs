@@ -26,6 +26,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationWithXmlAttributes : BaseTest
 	{
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
@@ -74,8 +75,8 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 			CheckSerializationAndDeserializationByXml(
 				@"<TestClassInheritanceWithOrder type=""ExtendedXmlSerialization.Test.TestObject.TestClassInheritanceWithOrder"">
-    <Id2>3</Id2>  
-    <Id>2</Id>
+	<Id2>3</Id2>  
+	<Id>2</Id>
 </TestClassInheritanceWithOrder>", obj);
 		}
 
@@ -86,8 +87,8 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			CheckCompatibilityWithDefaultSerializator(obj);
 			CheckSerializationAndDeserializationByXml(
 				@"<TestClassInterfaceInheritanceWithOrder type=""ExtendedXmlSerialization.Test.TestObject.TestClassInterfaceInheritanceWithOrder"">
-    <Id2>2</Id2>  
-    <Id>1</Id>
+	<Id2>2</Id2>  
+	<Id>1</Id>
 </TestClassInterfaceInheritanceWithOrder>", obj);
 		}
 

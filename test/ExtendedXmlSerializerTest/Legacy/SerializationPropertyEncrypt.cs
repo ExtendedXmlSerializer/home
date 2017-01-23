@@ -29,6 +29,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationPropertyEncrypt : BaseTest
 	{
 		public SerializationPropertyEncrypt()

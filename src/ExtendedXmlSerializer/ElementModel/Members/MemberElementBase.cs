@@ -30,14 +30,13 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 	{
 		protected MemberElementBase(string displayName, MemberInfo metadata, Func<IElement> element) : base(element)
 		{
-			Metadata = metadata;
 			DisplayName = displayName;
+			Metadata = metadata;
 		}
-
-		public MemberInfo Metadata { get; }
 
 		public abstract object Get(object instance);
 		public abstract void Assign(object instance, object value);
 		public string DisplayName { get; }
+		public MemberInfo Metadata { get; }
 	}
 }

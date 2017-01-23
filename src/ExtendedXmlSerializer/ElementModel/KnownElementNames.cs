@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class KnownElementNames : ElementNameOptionBase
 	{
-		public KnownElementNames(IEnumerable<IElementName> elements)
+		public KnownElementNames(IEnumerable<IName> elements)
 			: this(elements.ToDictionary(x => (MemberInfo) x.Classification, x => x.DisplayName)) {}
 
 		public KnownElementNames(IDictionary<MemberInfo, string> names)

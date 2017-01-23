@@ -34,6 +34,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Legacy
 {
+	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationCustomSerializerTest : BaseTest
 	{
 		public TestClassWithSerializer XmlDeserialize(XElement element)
