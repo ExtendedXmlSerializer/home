@@ -30,10 +30,9 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class DictionaryPairTypesLocator : WeakCacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
+	public class DictionaryPairTypesLocator : CacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
 	{
-		public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
-		DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
+		public DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
 		readonly Type _type;
 

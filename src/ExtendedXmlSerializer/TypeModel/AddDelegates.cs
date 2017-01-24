@@ -28,11 +28,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class AddDelegates : WeakCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
+	class AddDelegates : CacheBase<TypeInfo, Action<object, object>>, IAddDelegates
 	{
-		public static AddDelegates Default { get; } = new AddDelegates();
-		AddDelegates() : this(CollectionItemTypeLocator.Default, AddMethodLocator.Default) {}
-
 		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddMethodLocator _add;
 

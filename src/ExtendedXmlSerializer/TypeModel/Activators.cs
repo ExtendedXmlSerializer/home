@@ -27,11 +27,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class Activators : WeakCacheBase<Type, Func<object>>, IActivators
+	class Activators : CacheBase<Type, Func<object>>, IActivators
 	{
-		public static Activators Default { get; } = new Activators();
-		Activators() {}
-
 		protected override Func<object> Create(Type parameter)
 		{
 			var newExp = Expression.Convert(Expression.New(parameter), typeof(object));

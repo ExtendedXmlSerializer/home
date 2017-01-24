@@ -27,12 +27,17 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class ActivatedElementOption : ActivatedElementOptionBase
+	public class MemberedElementOption : ElementOptionBase
 	{
-		public ActivatedElementOption(INames names, IElementMembers members)
-			: base(IsActivatedTypeSpecification.Default, names, members) {}
+		readonly IElementMembers _members;
 
-		protected override IElement CreateElement(string name, TypeInfo parameter, IMembers members)
-			=> new ActivatedElement(name, parameter, members);
+		public MemberedElementOption(INames names, IElementMembers members)
+			: base(IsActivatedTypeSpecification.Default, names)
+		{
+			_members = members;
+		}
+
+		protected override IElement Create(string displayName, TypeInfo classification)
+			=> new MemberedElement(displayName, classification, _members.Get(classification));
 	}
 }

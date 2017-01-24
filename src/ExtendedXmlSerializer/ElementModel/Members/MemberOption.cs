@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
@@ -46,8 +45,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		{
 			var getter = _getter.Get(parameter.Metadata);
 			var setter = _setter.Get(parameter.Metadata);
-			var result = new MemberElement(name, parameter.Metadata, setter, getter,
-			                               _elements.Build(parameter.MemberType));
+			var result = new MemberElement(name, parameter.Metadata, setter, getter, _elements.Get(parameter.MemberType));
 			return result;
 		}
 	}

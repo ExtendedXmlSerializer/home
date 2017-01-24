@@ -21,26 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class ActivatedElementOptionBase : ElementOptionBase
+	public class DictionaryMembers : Members.Members
 	{
-		readonly IElementMembers _members;
+		public DictionaryMembers(IElement key, IElement value) : this(DictionaryEntryElement.Name.Classification, key, value) {}
 
-		protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, INames names,
-		                                     IElementMembers members)
-			: base(specification, names)
-		{
-			_members = members;
-		}
+		DictionaryMembers(TypeInfo classification, IElement key, IElement value)
+			: this(
+				classification.GetProperty(nameof(DictionaryEntry.Key)), classification.GetProperty(nameof(DictionaryEntry.Value)),
+				GetterFactory.Default, SetterFactory.Default, key, value) {}
 
-		protected override IElement Create(string name, TypeInfo parameter)
-			=> CreateElement(name, parameter, _members.Get(parameter));
-
-		protected abstract IElement CreateElement(string name, TypeInfo parameter, IMembers members);
+		DictionaryMembers(MemberInfo key, MemberInfo value, IGetterFactory getter, ISetterFactory setter,
+		                  IElement keyElement, IElement valueElement)
+			: base(
+				new MemberElement(key.Name, key, setter.Get(key), getter.Get(key), keyElement),
+				new MemberElement(value.Name, value, setter.Get(value), getter.Get(value), valueElement)
+			) {}
 	}
 }

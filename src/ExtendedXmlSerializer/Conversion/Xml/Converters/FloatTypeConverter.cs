@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class FloatTypeConverter : ValueTypeConverterBase<float>
 	{
 		public static FloatTypeConverter Default { get; } = new FloatTypeConverter();
-		FloatTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToSingle) {}
+		FloatTypeConverter() : base(XmlConvert.ToSingle, XmlConvert.ToString) {}
 	}
 }

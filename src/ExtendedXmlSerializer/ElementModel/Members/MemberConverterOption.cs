@@ -28,8 +28,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public class MemberConverterOption : ConverterOption<IMemberElement>
 	{
-		public MemberConverterOption(IConverter converter)
-			: base(
-				new Converter(converter, new ValidatingAssignedWriter(new Emitter(new EmitDifferingInstanceTypeWriter(converter))))) {}
+		public MemberConverterOption(IConverter converter) : base(new Converter(converter, new Emitter(converter))) {}
 	}
 }

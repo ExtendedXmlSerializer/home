@@ -25,6 +25,8 @@ using System.IO;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization
 {
@@ -33,11 +35,20 @@ namespace ExtendedXmlSerialization
 	/// </summary>
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
-		ExtendedXmlSerializer() : this(XmlContextFactory.Default, RootConverter.Default) {}
-
 		readonly IXmlContextFactory _factory;
 		readonly IConverter _converter;
+
+		public ExtendedXmlSerializer()
+			: this(new Namespaces(), new CollectionItemTypeLocator()) {}
+
+		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator)
+			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
+
+		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
+			: this(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts()), new RootConverter(add)) {}
+
+		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, ITypes types, IConverter converter)
+			: this(new XmlContextFactory(elements, namespaces, types), converter) {}
 
 		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverter converter)
 		{

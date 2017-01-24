@@ -27,9 +27,9 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class NameProviderBase : WeakCacheBase<MemberInfo, string>, INameProvider
+	public abstract class NameProviderBase : IParameterizedSource<MemberInfo, string>
 	{
-		protected override string Create(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
+		public string Get(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
 
 		protected abstract string Create(TypeInfo type, MemberInfo member);
 	}

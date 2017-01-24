@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel;
@@ -29,19 +30,19 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public abstract class ConverterOptionBase<T> : IConverterOption where T : IClassification
 	{
-		readonly ISpecification<IClassification> _specification;
+		readonly ISpecification<TypeInfo> _specification;
 
-		protected ConverterOptionBase() : this(IsTypeSpecification<T>.Default) {}
+		protected ConverterOptionBase() : this(IsAssignableSpecification<T>.Default) {}
 
-		protected ConverterOptionBase(ISpecification<IClassification> specification)
+		protected ConverterOptionBase(ISpecification<TypeInfo> specification)
 		{
 			_specification = specification;
 		}
 
-		IConverter IParameterizedSource<IClassification, IConverter>.Get(IClassification parameter) => Create((T) parameter);
+		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => Create(parameter);
 
-		protected abstract IConverter Create(T parameter);
+		protected abstract IConverter Create(TypeInfo parameter);
 
-		public bool IsSatisfiedBy(IClassification parameter) => _specification.IsSatisfiedBy(parameter);
+		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
 	}
 }

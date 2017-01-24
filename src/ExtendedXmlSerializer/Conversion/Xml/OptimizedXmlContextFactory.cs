@@ -25,23 +25,24 @@ using System.IO;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class OptimizedXmlContextFactory : IXmlContextFactory
 	{
-		public static OptimizedXmlContextFactory Default { get; } = new OptimizedXmlContextFactory();
-		OptimizedXmlContextFactory() : this(XmlContextFactory.Default) {}
-
+		readonly IElements _elements;
 		readonly IXmlContextFactory _factory;
+		public OptimizedXmlContextFactory(IElements elements, INamespaces namespaces, ITypes types) : this(elements, new XmlContextFactory(elements, namespaces, types)) {}
 
-		public OptimizedXmlContextFactory(IXmlContextFactory factory)
+		public OptimizedXmlContextFactory(IElements elements, IXmlContextFactory factory)
 		{
+			_elements = elements;
 			_factory = factory;
 		}
 
 		public IWriteContext Create(XmlWriter writer, object instance) =>
-			new OptimizedWriteContext(_factory.Create(writer, instance), writer, instance);
+			new OptimizedWriteContext(new ObjectNamespaces(_elements), _factory.Create(writer, instance), writer, instance);
 
 		public IReadContext Create(Stream stream) => _factory.Create(stream);
 	}

@@ -22,13 +22,14 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	class MemberElementSelector : OptionSelector<MemberInformation, IMemberElement>, IMemberElementSelector
 	{
-		public MemberElementSelector(IElements elements)
-			: this(new MemberOption(elements), new ReadOnlyCollectionMemberOption(elements)) {}
+		public MemberElementSelector(IElements elements, IAddDelegates add)
+			: this(new MemberOption(elements), new ReadOnlyCollectionMemberOption(elements, add)) {}
 
 		public MemberElementSelector(params IOption<MemberInformation, IMemberElement>[] options) : base(options) {}
 	}

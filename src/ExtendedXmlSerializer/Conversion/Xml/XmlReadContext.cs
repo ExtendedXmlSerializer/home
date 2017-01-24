@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlReadContext : XmlReadContext<IContainerElement>
 	{
-		public XmlReadContext(XElement data) : base(data) {}
+		public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data) : base(factory, element, data) {}
 
 		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
 		                      XElement data)
@@ -45,9 +45,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public abstract class XmlReadContext<T> : IReadContext<T>, IXmlReadContext where T : class, IContainerElement
 	{
 		readonly IXmlReadContextFactory _factory;
-
-		protected XmlReadContext(XElement data)
-			: this(XmlReadContextFactory.Default, Elements.Default.Get(Types.Default.Get(data.Name)), data) {}
 
 		protected XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
 			: this(factory, null, element, element, data)

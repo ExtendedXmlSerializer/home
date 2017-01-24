@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ConfiguredRootConverterFactory Default { get; } = new ConfiguredRootConverterFactory();
 		ConfiguredRootConverterFactory() {}
 
-		public IConverter Get(IExtendedXmlConfiguration parameter) => new RootConverter(RootSelector.Default);
+		public IConverter Get(IExtendedXmlConfiguration parameter) => new RootConverter();
 	}
 }

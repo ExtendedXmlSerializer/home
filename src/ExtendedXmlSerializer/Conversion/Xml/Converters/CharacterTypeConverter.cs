@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class CharacterTypeConverter : ValueTypeConverterBase<char>
 	{
 		public static CharacterTypeConverter Default { get; } = new CharacterTypeConverter();
-		CharacterTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToChar) {}
+		CharacterTypeConverter() : base(XmlConvert.ToChar, XmlConvert.ToString) {}
 	}
 }

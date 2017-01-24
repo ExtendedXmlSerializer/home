@@ -33,9 +33,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly static char[] Delimiters = Defaults.NamespaceDelimiter.ToArray();
 
-		public static XmlReadContextFactory Default { get; } = new XmlReadContextFactory();
-		XmlReadContextFactory() : this(Elements.Default, Types.Default, NameConverter.Default) {}
-
 		readonly IElements _elements;
 		readonly ITypes _types;
 		readonly INameConverter _converter;

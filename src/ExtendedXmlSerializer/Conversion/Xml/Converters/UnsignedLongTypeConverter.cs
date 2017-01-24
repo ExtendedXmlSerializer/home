@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class UnsignedLongTypeConverter : ValueTypeConverterBase<ulong>
 	{
 		public static UnsignedLongTypeConverter Default { get; } = new UnsignedLongTypeConverter();
-		UnsignedLongTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt64) {}
+		UnsignedLongTypeConverter() : base(XmlConvert.ToUInt64, XmlConvert.ToString) {}
 	}
 }

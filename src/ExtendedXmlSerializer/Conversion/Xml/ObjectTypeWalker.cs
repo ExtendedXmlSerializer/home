@@ -38,8 +38,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly IElements _elements;
 		readonly static TypeInfo FrameworkType = ElementModel.Defaults.FrameworkType;
 
-		public ObjectTypeWalker(object root) : this(Elements.Default, root) {}
-
 		public ObjectTypeWalker(IElements elements, object root) : base(root)
 		{
 			_elements = elements;

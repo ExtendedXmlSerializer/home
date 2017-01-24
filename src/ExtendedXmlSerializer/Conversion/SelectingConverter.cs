@@ -21,23 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class SelectingConverter : ConverterBase
 	{
-		readonly IConverterSelector _selector;
+		readonly IParameterizedSource<TypeInfo, IConverter> _selector;
 
-		public SelectingConverter(IConverterSelector selector)
+		public SelectingConverter(IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
 		{
-			_selector = selector;
+			_selector = new Selector<TypeInfo, IConverter>(options.Get(this).ToArray());
 		}
 
 		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-		IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
+		IConverter Select(IContext context)
+			=> _selector.Get(context.Selected.GetType().GetTypeInfo()) ??
+			   _selector.Get(context.Element.GetType().GetTypeInfo()) ??
+			   _selector.Get(context.Element.Classification);
 
 		public override object Read(IReadContext context) => Select(context).Read(context);
 	}

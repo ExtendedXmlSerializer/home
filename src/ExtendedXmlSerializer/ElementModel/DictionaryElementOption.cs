@@ -21,33 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	class DictionaryElementOption : MemberedCollectionElementOptionBase
+	class DictionaryElementOption : ElementOptionBase
 	{
+		readonly IElementMembers _members;
 		readonly IDictionaryItemFactory _factory;
 
 		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
-			: this(elements, names, members, new DictionaryItemFactory(elements)) {}
+			: this(names, members, new DictionaryItemFactory(elements)) {}
 
-		public DictionaryElementOption(IElements elements, INames names, IElementMembers members,
-		                               IDictionaryItemFactory factory)
-			: base(IsDictionaryTypeSpecification.Default, elements, names, members)
+		public DictionaryElementOption(INames names, IElementMembers members, IDictionaryItemFactory factory)
+			: base(IsDictionaryTypeSpecification.Default, names)
 		{
+			_members = members;
 			_factory = factory;
 		}
 
-		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
-		{
-			var item = _factory.Get(collectionType);
-			var result = new DictionaryElement(name, collectionType, new CollectionItem(item.Self), members);
-			return result;
-		}
+		protected override IElement Create(string displayName, TypeInfo classification)
+			=> new DictionaryElement(displayName, classification, _factory.Get(classification), _members.Get(classification));
 	}
 }

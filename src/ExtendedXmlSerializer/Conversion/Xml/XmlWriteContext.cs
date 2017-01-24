@@ -40,12 +40,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ImmutableArray<object> _services;
 		readonly IDisposable _finish;
 
-		public XmlWriteContext(XmlWriter writer, IRoot root) : this(writer, root, writer) {}
+		public XmlWriteContext(INamespaces namespaces, IElements elements, XmlWriter writer, IRoot root) : this(namespaces, elements, writer, root, writer) {}
 
-		public XmlWriteContext(XmlWriter writer, IRoot root, params object[] services)
-			: this(Elements.Default, Namespaces.Default, writer, root, services) {}
-
-		public XmlWriteContext(IElements selector, INamespaces namespaces, XmlWriter writer, IRoot root,
+		public XmlWriteContext(INamespaces namespaces, IElements selector, XmlWriter writer, IRoot root,
 		                       params object[] services)
 			: this(
 				selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
@@ -103,6 +100,13 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 					var ns = _namespaces.Get(display.Classification);
 					_writer.WriteStartElement(display.DisplayName, ns.NamespaceName);
 				}
+
+/*var type = instance.GetType().GetTypeInfo();
+			if (!context.Container.Exact(type))
+			{
+				context.Write(TypeProperty.Default, type);
+			}*/
+
 				return _finish;
 			}
 			throw new SerializationException(

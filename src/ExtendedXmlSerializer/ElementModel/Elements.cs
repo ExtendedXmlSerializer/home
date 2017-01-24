@@ -23,13 +23,13 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class Elements : IElements
 	{
-		public static Elements Default { get; } = new Elements();
-		Elements() : this(Conversion.Xml.ElementSource.Default) {}
+		public Elements(ICollectionItemTypeLocator locator, IAddDelegates add) : this(new Conversion.Xml.ElementSource(locator, add)) {}
 
 		readonly IParameterizedSource<TypeInfo, IElement> _source;
 

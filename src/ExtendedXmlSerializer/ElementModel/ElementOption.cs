@@ -31,6 +31,6 @@ namespace ExtendedXmlSerialization.ElementModel
 		public ElementOption(INames names) : base(names) {}
 		public ElementOption(ISpecification<TypeInfo> specification, INames names) : base(specification, names) {}
 
-		protected override IElement Create(string name, TypeInfo classification) => new Element(name, classification);
+		protected override IElement Create(string displayName, TypeInfo classification) => new Element(displayName, classification);
 	}
 }

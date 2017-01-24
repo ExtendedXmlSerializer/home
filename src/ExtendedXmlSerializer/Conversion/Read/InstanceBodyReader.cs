@@ -29,9 +29,7 @@ namespace ExtendedXmlSerialization.Conversion.Read
 	{
 		readonly IActivators _activators;
 
-		public InstanceBodyReader(IReader reader) : this(reader, Activators.Default) {}
-
-		public InstanceBodyReader(IReader reader, IActivators activators) : base(reader)
+		public InstanceBodyReader(IActivators activators, IReader reader) : base(reader)
 		{
 			_activators = activators;
 		}

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,20 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
+using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ElementModel
 {
-	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
-		where TKey : class where TValue : class
+	public class MemberedElement : NamedElementBase, IActivatedElement
 	{
-		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
-
-		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
+		public MemberedElement(string displayName, TypeInfo classification, IMembers members)
+			: base(displayName, classification)
 		{
-			_callback = callback;
+			Members = members;
 		}
 
-		protected override TValue Create(TKey parameter) => _callback(parameter);
+		public IMembers Members { get; }
 	}
 }

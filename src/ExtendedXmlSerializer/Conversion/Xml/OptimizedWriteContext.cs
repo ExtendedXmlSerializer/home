@@ -38,9 +38,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly XmlWriter _writer;
 		readonly object _instance;
 
-		public OptimizedWriteContext(IWriteContext context, XmlWriter writer, object instance)
-			: this(new ObjectNamespaces(), context, writer, instance) {}
-
 		public OptimizedWriteContext(IObjectNamespaces namespaces, IWriteContext context, XmlWriter writer, object instance)
 		{
 			_namespaces = namespaces;

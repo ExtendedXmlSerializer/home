@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class UnsignedByteTypeConverter : ValueTypeConverterBase<byte>
 	{
 		public static UnsignedByteTypeConverter Default { get; } = new UnsignedByteTypeConverter();
-		UnsignedByteTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToByte) {}
+		UnsignedByteTypeConverter() : base(XmlConvert.ToByte, XmlConvert.ToString) {}
 	}
 }

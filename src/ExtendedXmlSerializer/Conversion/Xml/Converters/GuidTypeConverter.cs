@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class GuidTypeConverter : ValueTypeConverterBase<Guid>
 	{
 		public static GuidTypeConverter Default { get; } = new GuidTypeConverter();
-		GuidTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToGuid) {}
+		GuidTypeConverter() : base(XmlConvert.ToGuid, XmlConvert.ToString) {}
 	}
 }

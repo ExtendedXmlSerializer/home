@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	{
 		readonly TestClassOtherClass _obj = new TestClassOtherClass();
 		readonly string _xml;
-		readonly IExtendedXmlSerializer _serializer = ExtendedXmlSerializer.Default;
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 
 		public ExtendedXmlSerializerV2Test()
 		{

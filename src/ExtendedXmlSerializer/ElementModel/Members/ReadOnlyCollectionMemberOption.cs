@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -34,8 +33,8 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 		readonly IGetterFactory _getter;
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IElements elements)
-			: this(elements, GetterFactory.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IElements elements, IAddDelegates add)
+			: this(elements, GetterFactory.Default, add) {}
 
 		public ReadOnlyCollectionMemberOption(IElements elements, IGetterFactory getter, IAddDelegates add)
 			: base(Specification.Instance)
@@ -52,7 +51,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 			{
 				var getter = _getter.Get(parameter.Metadata);
 				var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
-				                                                 _elements.Build(parameter.MemberType));
+				                                                 _elements.Get(parameter.MemberType));
 				return result;
 			}
 			return null;

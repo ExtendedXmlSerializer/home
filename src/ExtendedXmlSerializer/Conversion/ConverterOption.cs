@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -34,6 +35,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_converter = converter;
 		}
 
-		protected override IConverter Create(T parameter) => _converter;
+		protected override IConverter Create(TypeInfo parameter) => _converter;
 	}
 }

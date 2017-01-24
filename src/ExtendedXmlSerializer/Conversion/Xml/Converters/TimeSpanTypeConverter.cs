@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class TimeSpanTypeConverter : ValueTypeConverterBase<TimeSpan>
 	{
 		public static TimeSpanTypeConverter Default { get; } = new TimeSpanTypeConverter();
-		TimeSpanTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToTimeSpan) {}
+		TimeSpanTypeConverter() : base(XmlConvert.ToTimeSpan, XmlConvert.ToString) {}
 	}
 }

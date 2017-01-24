@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class DoubleTypeConverter : ValueTypeConverterBase<double>
 	{
 		public static DoubleTypeConverter Default { get; } = new DoubleTypeConverter();
-		DoubleTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToDouble) {}
+		DoubleTypeConverter() : base(XmlConvert.ToDouble, XmlConvert.ToString) {}
 	}
 }

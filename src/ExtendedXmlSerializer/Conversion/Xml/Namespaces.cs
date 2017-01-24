@@ -30,10 +30,9 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Namespaces : WeakCacheBase<TypeInfo, XName>, INamespaces
+	public class Namespaces : CacheBase<TypeInfo, XName>, INamespaces
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(PrefixProvider.Default) {}
+		public Namespaces() : this(PrefixProvider.Default) {}
 
 		readonly IDictionary<Assembly, XName> _known;
 		readonly ITypeFormatter _formatter;

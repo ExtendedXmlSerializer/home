@@ -28,38 +28,43 @@ using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
 	{
-		public static ConverterOptions Default { get; } = new ConverterOptions();
-		ConverterOptions() : this(KnownConverters.Default) {}
+		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
 
+		readonly IAddDelegates _add;
 		readonly IConverterOption _known;
 
-		public ConverterOptions(IConverterOption known)
+		public ConverterOptions(IAddDelegates add, IConverterOption known)
 		{
+			_add = add;
 			_known = known;
 		}
 
 		public IEnumerable<IConverterOption> Get(IConverter parameter)
 		{
+			yield return _known;
+
 			var element = new ElementSelectingConverter(parameter);
 			yield return new ReadOnlyCollectionMemberConverterOption(element);
 			yield return new MemberConverterOption(element);
 
-			yield return _known;
-			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(parameter));
+			var activators = new Activators();
+
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, parameter));
 			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
-			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter));
-			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(parameter));
+			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter, activators, _add));
+			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, parameter));
 		}
 
 		class InstanceConverter : Converter
 		{
-			public InstanceConverter(IConverter converter)
-				: base(new InstanceBodyReader(converter), new InstanceBodyWriter(converter)) {}
+			public InstanceConverter(IActivators activators, IConverter converter)
+				: base(new InstanceBodyReader(activators, converter), new InstanceBodyWriter(converter)) {}
 		}
 	}
 }

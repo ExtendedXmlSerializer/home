@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class UnsignedIntegerTypeConverter : ValueTypeConverterBase<uint>
 	{
 		public static UnsignedIntegerTypeConverter Default { get; } = new UnsignedIntegerTypeConverter();
-		UnsignedIntegerTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToUInt32) {}
+		UnsignedIntegerTypeConverter() : base(XmlConvert.ToUInt32, XmlConvert.ToString) {}
 	}
 }

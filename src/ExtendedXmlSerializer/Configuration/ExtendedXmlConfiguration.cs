@@ -24,6 +24,8 @@
 using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
@@ -32,7 +34,15 @@ namespace ExtendedXmlSerialization.Configuration
 		readonly IXmlContextFactory _context;
 		readonly IConfiguredRootConverterFactory _factory;
 
-		public ExtendedXmlConfiguration() : this(XmlContextFactory.Default, ConfiguredRootConverterFactory.Default) {}
+		public ExtendedXmlConfiguration() : this(new Namespaces(), new CollectionItemTypeLocator()) {}
+
+		public ExtendedXmlConfiguration(INamespaces namespaces, ICollectionItemTypeLocator locator)
+			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
+
+		public ExtendedXmlConfiguration(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
+			: this(
+				new XmlContextFactory(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts())),
+				ConfiguredRootConverterFactory.Default) {}
 
 		public ExtendedXmlConfiguration(IXmlContextFactory context, IConfiguredRootConverterFactory factory)
 		{

@@ -28,9 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class NameConverter : INameConverter
 	{
-		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(Namespaces.Default) {}
-
 		readonly INamespaces _namespaces;
 
 		public NameConverter(INamespaces namespaces)

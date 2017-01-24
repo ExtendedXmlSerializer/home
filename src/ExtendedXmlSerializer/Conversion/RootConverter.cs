@@ -22,15 +22,15 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class RootConverter : Converter
 	{
-		public static RootConverter Default { get; } = new RootConverter();
-		RootConverter() : this(RootSelector.Default) {}
+		public RootConverter() : this(new AddDelegates(new CollectionItemTypeLocator(), new AddMethodLocator())) {}
 
-		public RootConverter(IConverterSelector selector) : this(new SelectingConverter(selector)) {}
+		public RootConverter(IAddDelegates add) : this(new SelectingConverter(new ConverterOptions(add))) {}
 
 		protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
 	}

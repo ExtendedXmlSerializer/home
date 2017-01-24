@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Test.Conversion.Xml
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var name = NamespaceFormatter.Default.Format(expected);
-			var type = TypeContexts.Default.Get(name).Invoke(TypeFormatter.Default.Format(expected));
+			var type = new TypeContexts().Get(name).Invoke(TypeFormatter.Default.Format(expected));
 			Assert.Equal(expected, type);
 		}
 

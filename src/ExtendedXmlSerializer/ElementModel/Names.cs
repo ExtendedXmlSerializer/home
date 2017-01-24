@@ -25,19 +25,19 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class Names : Selector<MemberInfo, string>, INames
 	{
-		public static Names Default { get; } = new Names();
-		Names() : this(Conversion.Defaults.Names) {}
+		// public Names() : this(Conversion.Defaults.Names) {}
 
-		protected Names(IEnumerable<IName> names)
+		public Names(ICollectionItemTypeLocator locator, IEnumerable<IName> names)
 			: this(
 				new KnownElementNames(names),
 				ElementNameOption<Enum>.Default,
-				EnumerableNameOption.Default,
+				new EnumerableNameOption(locator),
 				DefaultElementNameOption.Default) {}
 
 		public Names(params IElementNameOption[] options) : base(options) {}

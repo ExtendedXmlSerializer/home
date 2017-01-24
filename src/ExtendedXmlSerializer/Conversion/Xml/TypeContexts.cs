@@ -35,9 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			Separator = Defaults.NamespaceDelimiter.ToArray(),
 			AssemblySeparator = Defaults.AssemblyDelimiter.ToArray();
 
-		public static TypeContexts Default { get; } = new TypeContexts();
-
-		TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
+		public TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
 
 		readonly IAssemblyLoader _loader;
 		readonly IAlteration<string> _alteration;

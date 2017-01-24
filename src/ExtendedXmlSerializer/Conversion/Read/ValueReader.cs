@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -34,6 +35,11 @@ namespace ExtendedXmlSerialization.Conversion.Read
 			_deserialize = deserialize;
 		}
 
-		public override T Read(IReadContext context) => _deserialize(context.Read());
+		public override T Read(IReadContext context)
+		{
+			var read = context.Read().NullIfEmpty();
+			var result = read != null ? _deserialize(read) : default(T);
+			return result;
+		}
 	}
 }

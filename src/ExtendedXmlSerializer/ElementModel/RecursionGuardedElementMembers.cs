@@ -21,9 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel.Members;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel
 {
-	public interface ISelectorFactory : IParameterizedSource<IConverter, IConverterSelector> {}
+	sealed class RecursionGuardedElementMembers : IElementMembers
+	{
+		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
+
+		readonly IElementMembers _members;
+
+		public RecursionGuardedElementMembers(IElementMembers members)
+		{
+			_members = members;
+		}
+
+		public IMembers Get(TypeInfo parameter)
+			=> _generator.For(parameter).FirstEncounter ? _members.Get(parameter) : new Deferred(_members.Build(parameter));
+
+		sealed class Deferred : IMembers
+		{
+			readonly Func<IMembers> _members;
+
+			public Deferred(Func<IMembers> members)
+			{
+				_members = members;
+			}
+
+			public IEnumerator<IMemberElement> GetEnumerator() => _members().GetEnumerator();
+
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+			public IMemberElement Get(string parameter) => _members().Get(parameter);
+		}
+	}
 }

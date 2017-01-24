@@ -26,13 +26,13 @@ using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class EnumerableNameOption : ElementNameOptionBase
 	{
-		public static EnumerableNameOption Default { get; } = new EnumerableNameOption();
-		EnumerableNameOption() : this(EnumerableNameProvider.Default.Get) {}
+		public EnumerableNameOption(ICollectionItemTypeLocator locator) : this(new EnumerableNameProvider(locator).Get) {}
 
 		public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
 

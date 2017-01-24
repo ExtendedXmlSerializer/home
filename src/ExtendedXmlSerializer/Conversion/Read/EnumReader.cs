@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
@@ -31,6 +32,10 @@ namespace ExtendedXmlSerialization.Conversion.Read
 		EnumReader() {}
 
 		public override object Read(IReadContext context)
-			=> Enum.Parse(context.Element.Classification.AsType(), context.Read());
+		{
+			var value = context.Read().NullIfEmpty();
+			var result = value != null ? Enum.Parse(context.Element.Classification.AsType(), value) : default(Enum);
+			return result;
+		}
 	}
 }
