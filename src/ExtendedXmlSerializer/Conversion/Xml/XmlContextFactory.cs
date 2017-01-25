@@ -61,8 +61,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		{
 			var text = new StreamReader(stream).ReadToEnd();
 			var document = XDocument.Parse(text).Root;
-			var element = _elements.Get(_types.Get(document.Name));
-			var result = new XmlReadContext(_factory, element, document);
+			var typeInfo = _types.Get(document.Name);
+			var element = _elements.Get(typeInfo);
+			var result = new XmlReadContext(_factory, new Root(element), document);
 			return result;
 		}
 	}

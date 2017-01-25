@@ -33,6 +33,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		string Value(IName name, XElement data);
 
-		IContext Select(IXmlReadContext context);
+		/*IContext Select(IXmlReadContext context);*/
 	}
 }

@@ -49,12 +49,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public object GetService(Type serviceType) => _context.GetService(serviceType);
 
 		public IContainerElement Container => _context.Container;
-
 		public IElement Element => _context.Element;
-
-		public IContext Select() => _context.Select();
-
-		public IElement Selected => _context.Selected;
 
 		public IWriteContext New(IContainerElement container, TypeInfo instanceType) => _context.New(container, instanceType);
 

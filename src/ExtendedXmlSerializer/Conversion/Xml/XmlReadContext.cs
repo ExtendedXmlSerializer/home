@@ -32,49 +32,29 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlReadContext : XmlReadContext<IContainerElement>
 	{
-		public XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data) : base(factory, element, data) {}
-
-		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
-		                      XElement data)
-			: base(factory, container, element, data) {}
-
-		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element,
-		                      IElement selected, XElement data) : base(factory, container, element, selected, data) {}
+		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, XElement data) : base(factory, container, data) {}
+		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element, XElement data) : base(factory, container, element, data) {}
 	}
 
 	public abstract class XmlReadContext<T> : IReadContext<T>, IXmlReadContext where T : class, IContainerElement
 	{
 		readonly IXmlReadContextFactory _factory;
 
-		protected XmlReadContext(IXmlReadContextFactory factory, IElement element, XElement data, params object[] services)
-			: this(factory, null, element, element, data)
-		{
-			for (var i = 0; i < services.Length; i++)
-			{
-				Add(services[i]);
-			}
-		}
+		protected XmlReadContext(IXmlReadContextFactory factory, T container, XElement data) : this(factory, container, container.Element, data) {}
 
 		protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, XElement data)
-			: this(factory, container, element, container, data) {}
-
-		protected XmlReadContext(IXmlReadContextFactory factory, T container, IElement element, IElement selected,
-		                         XElement data)
 		{
 			_factory = factory;
 			Container = container;
 			Element = element;
-			Selected = selected;
 			Data = data;
 		}
 
 		public XElement Data { get; }
 
 		public T Container { get; }
-		IContainerElement IContext.Container => Container;
-
 		public IElement Element { get; }
-		public IElement Selected { get; }
+		IContainerElement IContext.Container => Container;
 
 		public object GetService(Type serviceType) => Data.AnnotationAll(serviceType);
 
@@ -84,10 +64,11 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IEnumerable<IReadContext> Items()
 		{
-			var container = (ICollectionElement) Element;
+			var element = (ICollectionElement) Element;
+			var container = element.Element;
 			foreach (var child in Data.Elements())
 			{
-				yield return _factory.Create(container.Element, child);
+				yield return _factory.Create(container, child);
 			}
 		}
 
@@ -107,6 +88,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 
 		public string this[IName name] => _factory.Value(name, Data);
-		public IContext Select() => _factory.Select(this);
+		
 	}
 }

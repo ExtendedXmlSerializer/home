@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	sealed class ConverterOptions : IParameterizedSource<IConverter, IEnumerable<IConverterOption>>
+	sealed class ConverterOptions : IParameterizedSource<ISelectingConverter, IEnumerable<IConverterOption>>
 	{
 		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
 
@@ -45,20 +45,22 @@ namespace ExtendedXmlSerialization.Conversion
 			_known = known;
 		}
 
-		public IEnumerable<IConverterOption> Get(IConverter parameter)
+		public IEnumerable<IConverterOption> Get(ISelectingConverter parameter)
 		{
 			yield return _known;
 
-			var element = new ElementSelectingConverter(parameter);
-			yield return new ReadOnlyCollectionMemberConverterOption(element);
-			yield return new MemberConverterOption(element);
+			var emitter = new Emitter(parameter);
+			yield return
+				new ConverterOption<IReadOnlyCollectionMemberElement>(new Converter(new EnumeratingReader(parameter), emitter));
+			yield return new ConverterOption<IMemberElement>(new Converter(parameter, emitter));
 
 			var activators = new Activators();
 
-			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, parameter));
-			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
-			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter, activators, _add));
-			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, parameter));
+			var container = new ContainerSelectingConverter(parameter);
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, container));
+			yield return new ConverterOption<IArrayElement>(new ArrayConverter(container));
+			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(container, activators, _add));
+			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, container));
 		}
 
 		class InstanceConverter : Converter

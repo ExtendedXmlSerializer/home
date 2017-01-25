@@ -33,10 +33,11 @@ namespace ExtendedXmlSerialization.Test
 	{
 		readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
 		readonly ExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+		readonly string _xml;
 
 		public ExtendedXmlSerializerTests()
 		{
-			_serializer.Serialize(TestClassOtherClass);
+			_xml = _serializer.Serialize(TestClassOtherClass);
 		}
 
 		[Fact]
@@ -74,7 +75,7 @@ namespace ExtendedXmlSerialization.Test
 		{
 			for (int i = 0; i < 100; i++)
 			{
-				_serializer.Serialize(TestClassOtherClass);
+				_serializer.Deserialize<TestClassOtherClass>(_xml);
 			}
 		}
 

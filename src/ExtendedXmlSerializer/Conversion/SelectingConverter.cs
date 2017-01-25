@@ -30,22 +30,34 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class SelectingConverter : ConverterBase
+	public interface ISelectingConverter : IParameterizedSource<TypeInfo, IConverter>, IParameterizedSource<IContext, IConverter>, IConverter {}
+
+	public abstract class SelectingConverterBase : ConverterBase
+	{
+		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
+
+		protected abstract IConverter Select(IContext context);
+
+		public override object Read(IReadContext context) => Select(context).Read(context);
+	}
+
+	public class SelectingConverter : SelectingConverterBase, ISelectingConverter
 	{
 		readonly IParameterizedSource<TypeInfo, IConverter> _selector;
 
-		public SelectingConverter(IParameterizedSource<IConverter, IEnumerable<IConverterOption>> options)
+		public SelectingConverter(IParameterizedSource<ISelectingConverter, IEnumerable<IConverterOption>> options)
 		{
 			_selector = new Selector<TypeInfo, IConverter>(options.Get(this).ToArray());
 		}
 
-		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
+		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
 
-		IConverter Select(IContext context)
-			=> _selector.Get(context.Selected.GetType().GetTypeInfo()) ??
-			   _selector.Get(context.Element.GetType().GetTypeInfo()) ??
-			   _selector.Get(context.Element.Classification);
+		protected override IConverter Select(IContext context) => Get(context);
 
-		public override object Read(IReadContext context) => Select(context).Read(context);
+		public IConverter Get(IContext parameter)
+		{
+			return _selector.Get(parameter.Element.Classification) ??
+			       _selector.Get(parameter.Element.GetType().GetTypeInfo());
+		}
 	}
 }
