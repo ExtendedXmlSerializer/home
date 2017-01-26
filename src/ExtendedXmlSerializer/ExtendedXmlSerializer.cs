@@ -24,36 +24,22 @@
 using System.IO;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class ExtendedXmlSerializer : Converter, IExtendedXmlSerializer
 	{
 		readonly IXmlContextFactory _factory;
-		readonly IConverter _converter;
-
-		public ExtendedXmlSerializer()
-			: this(new Namespaces(), new CollectionItemTypeLocator()) {}
-
-		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator)
-			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
-
-		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
-			: this(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts()), new RootConverter(add)) {}
-
-		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, ITypes types, IConverter converter)
-			: this(new XmlContextFactory(elements, namespaces, types), converter) {}
 
 		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverter converter)
+			: base(converter, new Emitter(converter))
 		{
 			_factory = factory;
-			_converter = converter;
 		}
 
 		public void Serialize(Stream stream, object instance)
@@ -61,10 +47,10 @@ namespace ExtendedXmlSerialization
 			using (var writer = XmlWriter.Create(stream))
 			{
 				var context = _factory.Create(writer, instance);
-				_converter.Write(context, instance);
+				Write(context, instance);
 			}
 		}
 
-		public object Deserialize(Stream stream) => _converter.Read(_factory.Create(stream));
+		public object Deserialize(Stream stream) => Read(_factory.Create(stream));
 	}
 }

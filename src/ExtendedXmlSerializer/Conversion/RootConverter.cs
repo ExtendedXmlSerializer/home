@@ -21,17 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.TypeModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class RootConverter : Converter
+	public class RootConverter : SelectingConverterBase, IRootConverter
 	{
-		public RootConverter() : this(new AddDelegates(new CollectionItemTypeLocator(), new AddMethodLocator())) {}
+		readonly IConverterSelector _selector;
 
-		public RootConverter(IAddDelegates add) : this(new SelectingConverter(new ConverterOptions(add))) {}
+		public RootConverter(IParameterizedSource<IRootConverter, IEnumerable<IConverterOption>> options)
+		{
+			_selector = new ConverterSelector(options.Get(this).ToArray());
+		}
 
-		protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
+		protected override IConverter Select(IContext context) => _selector.Get(context);
+		public IConverter Get(IContext parameter) => _selector.Get(parameter);
+		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

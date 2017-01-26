@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.Conversion
 {
-	public interface IConfiguredRootConverterFactory : IParameterizedSource<IExtendedXmlConfiguration, IConverter> {}
+	class ConverterSelector : Selector<TypeInfo, IConverter>, IConverterSelector
+	{
+		public ConverterSelector(params IOption<TypeInfo, IConverter>[] options) : base(options) {}
+
+		public IConverter Get(IContext parameter) =>
+			Get(parameter.Element.Classification) ?? Get(parameter.Element.GetType().GetTypeInfo());
+	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.Conversion
 {
-	public class ConfiguredRootConverterFactory : IConfiguredRootConverterFactory
+	public abstract class SelectingConverterBase : ConverterBase
 	{
-		public static ConfiguredRootConverterFactory Default { get; } = new ConfiguredRootConverterFactory();
-		ConfiguredRootConverterFactory() {}
+		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-		public IConverter Get(IExtendedXmlConfiguration parameter) => new RootConverter();
+		protected abstract IConverter Select(IContext context);
+
+		public override object Read(IReadContext context) => Select(context).Read(context);
 	}
 }

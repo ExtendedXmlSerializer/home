@@ -32,7 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ElementSource : ElementModel.ElementSource
 	{
-		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add) : this(locator, add, Conversion.Defaults.Names) {}
+		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add)
+			: this(locator, add, Conversion.Defaults.Names) {}
 
 		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, IImmutableList<IName> known)
 			: base(

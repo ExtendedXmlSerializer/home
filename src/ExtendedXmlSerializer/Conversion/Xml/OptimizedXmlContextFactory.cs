@@ -33,7 +33,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly IElements _elements;
 		readonly IXmlContextFactory _factory;
-		public OptimizedXmlContextFactory(IElements elements, INamespaces namespaces, ITypes types) : this(elements, new XmlContextFactory(elements, namespaces, types)) {}
 
 		public OptimizedXmlContextFactory(IElements elements, IXmlContextFactory factory)
 		{

@@ -21,43 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public interface ISelectingConverter : IParameterizedSource<TypeInfo, IConverter>, IParameterizedSource<IContext, IConverter>, IConverter {}
-
-	public abstract class SelectingConverterBase : ConverterBase
+	public class SelectingConverter : SelectingConverterBase
 	{
-		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
+		readonly IConverterSelector _selector;
 
-		protected abstract IConverter Select(IContext context);
-
-		public override object Read(IReadContext context) => Select(context).Read(context);
-	}
-
-	public class SelectingConverter : SelectingConverterBase, ISelectingConverter
-	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _selector;
-
-		public SelectingConverter(IParameterizedSource<ISelectingConverter, IEnumerable<IConverterOption>> options)
+		public SelectingConverter(IConverterSelector selector)
 		{
-			_selector = new Selector<TypeInfo, IConverter>(options.Get(this).ToArray());
+			_selector = selector;
 		}
 
-		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
-
-		protected override IConverter Select(IContext context) => Get(context);
-
-		public IConverter Get(IContext parameter)
-		{
-			return _selector.Get(parameter.Element.Classification) ??
-			       _selector.Get(parameter.Element.GetType().GetTypeInfo());
-		}
+		protected override IConverter Select(IContext context) =>
+			_selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
 	}
 }

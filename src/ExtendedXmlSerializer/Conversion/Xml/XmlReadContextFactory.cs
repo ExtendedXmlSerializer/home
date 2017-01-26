@@ -38,7 +38,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly INameConverter _converter;
 		readonly XName _type;
 
-		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter) : this(elements, types, converter, converter.Get(TypeProperty.Default)) {}
+		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter)
+			: this(elements, types, converter, converter.Get(TypeProperty.Default)) {}
 
 		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter, XName type)
 		{

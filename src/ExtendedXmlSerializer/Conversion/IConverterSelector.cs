@@ -22,19 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class ContainerSelectingConverter : SelectingConverterBase
-	{
-		readonly ISelectingConverter _converter;
-
-		public ContainerSelectingConverter(ISelectingConverter converter)
-		{
-			_converter = converter;
-		}
-
-		protected override IConverter Select(IContext context) => 
-			_converter.Get(context.Container.GetType().GetTypeInfo()) ?? _converter.Get(context);
-	}
+	public interface IConverterSelector : IParameterizedSource<IContext, IConverter>,
+	                                      IParameterizedSource<TypeInfo, IConverter> {}
 }

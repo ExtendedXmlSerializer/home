@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.Test
 	public class ExtendedXmlSerializerTests
 	{
 		readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
-		readonly ExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
 		readonly string _xml;
 
 		public ExtendedXmlSerializerTests()

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Samples.Simple
+namespace ExtendedXmlSerialization.Configuration
 {
-	public class SimpleSamples
+	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
 	{
-		public static void Run()
-		{
-			var serializer = new ExtendedXmlConfiguration().Create();
-			Program.PrintHeader("Serialization");
-			var obj = new TestClass();
-			var xml = serializer.Serialize(obj);
-			Console.WriteLine(xml);
+		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
+		ExtendedXmlSerializerFactory() {}
 
-			Program.PrintHeader("Deserialization");
-			var obj2 = serializer.Deserialize<TestClass>(xml);
-			Console.WriteLine("Obiect id = " + obj2.Id);
+		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
+		{
+			var namespaces = new Namespaces();
+			var locator = new CollectionItemTypeLocator();
+			var add = new AddDelegates(locator, new AddMethodLocator());
+			var elements = new Elements(locator, add);
+			var types = new Types(namespaces, new TypeContexts());
+			var factory = new XmlContextFactory(elements, namespaces, types);
+			var converter = new RootConverter(new ConverterOptions(add));
+			var result = new ExtendedXmlSerializer(factory, converter);
+			return result;
 		}
 	}
 }

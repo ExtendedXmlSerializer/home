@@ -21,24 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Samples.Simple
+namespace ExtendedXmlSerialization.Configuration
 {
-	public class SimpleSamples
-	{
-		public static void Run()
-		{
-			var serializer = new ExtendedXmlConfiguration().Create();
-			Program.PrintHeader("Serialization");
-			var obj = new TestClass();
-			var xml = serializer.Serialize(obj);
-			Console.WriteLine(xml);
-
-			Program.PrintHeader("Deserialization");
-			var obj2 = serializer.Deserialize<TestClass>(xml);
-			Console.WriteLine("Obiect id = " + obj2.Id);
-		}
-	}
+	public interface IExtendedXmlSerializerFactory : IParameterizedSource<IExtendedXmlConfiguration, IExtendedXmlSerializer> {}
 }

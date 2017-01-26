@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		{
 			var parameter = input.GetType().GetTypeInfo();
 			yield return parameter;
-			
+
 			var element = _elements.Get(parameter);
 			var membered = element as IMemberedElement;
 			if (membered != null)
@@ -89,7 +89,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			{
 				Schedule(instance);
 				var result = _framework.Apply();
-				return  result;
+				return result;
 			}
 			return false;
 		}

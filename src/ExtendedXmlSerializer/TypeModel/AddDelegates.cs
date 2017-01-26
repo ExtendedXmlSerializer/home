@@ -33,6 +33,8 @@ namespace ExtendedXmlSerialization.TypeModel
 		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddMethodLocator _add;
 
+		/*public AddDelegates(ICollectionItemTypeLocator locator) : this(locator, new AddMethodLocator()) {}*/
+
 		public AddDelegates(ICollectionItemTypeLocator locator, IAddMethodLocator add)
 		{
 			_locator = locator;

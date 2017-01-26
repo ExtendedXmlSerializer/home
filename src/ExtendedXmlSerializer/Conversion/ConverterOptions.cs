@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	sealed class ConverterOptions : IParameterizedSource<ISelectingConverter, IEnumerable<IConverterOption>>
+	sealed class ConverterOptions : IParameterizedSource<IRootConverter, IEnumerable<IConverterOption>>
 	{
 		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
 
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Conversion
 			_known = known;
 		}
 
-		public IEnumerable<IConverterOption> Get(ISelectingConverter parameter)
+		public IEnumerable<IConverterOption> Get(IRootConverter parameter)
 		{
 			yield return _known;
 
@@ -56,11 +56,11 @@ namespace ExtendedXmlSerialization.Conversion
 
 			var activators = new Activators();
 
-			var container = new ContainerSelectingConverter(parameter);
-			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, container));
-			yield return new ConverterOption<IArrayElement>(new ArrayConverter(container));
-			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(container, activators, _add));
-			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, container));
+			var converter = new SelectingConverter(parameter);
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, converter));
+			yield return new ConverterOption<IArrayElement>(new ArrayConverter(converter));
+			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(converter, activators, _add));
+			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, converter));
 		}
 
 		class InstanceConverter : Converter

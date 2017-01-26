@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Configuration;
-
-namespace ExtendedXmlSerialization.Samples.Simple
+namespace ExtendedXmlSerialization.Conversion
 {
-	public class SimpleSamples
-	{
-		public static void Run()
-		{
-			var serializer = new ExtendedXmlConfiguration().Create();
-			Program.PrintHeader("Serialization");
-			var obj = new TestClass();
-			var xml = serializer.Serialize(obj);
-			Console.WriteLine(xml);
-
-			Program.PrintHeader("Deserialization");
-			var obj2 = serializer.Deserialize<TestClass>(xml);
-			Console.WriteLine("Obiect id = " + obj2.Id);
-		}
-	}
+	public interface IRootConverter : IConverter, IConverterSelector {}
 }

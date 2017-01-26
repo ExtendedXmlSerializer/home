@@ -23,30 +23,17 @@
 
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
-		readonly IXmlContextFactory _context;
-		readonly IConfiguredRootConverterFactory _factory;
+		readonly IExtendedXmlSerializerFactory _factory;
 
-		public ExtendedXmlConfiguration() : this(new Namespaces(), new CollectionItemTypeLocator()) {}
+		public ExtendedXmlConfiguration() : this(ExtendedXmlSerializerFactory.Default) {}
 
-		public ExtendedXmlConfiguration(INamespaces namespaces, ICollectionItemTypeLocator locator)
-			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
-
-		public ExtendedXmlConfiguration(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
-			: this(
-				new XmlContextFactory(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts())),
-				ConfiguredRootConverterFactory.Default) {}
-
-		public ExtendedXmlConfiguration(IXmlContextFactory context, IConfiguredRootConverterFactory factory)
+		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory)
 		{
-			_context = context;
 			_factory = factory;
 		}
 
@@ -88,6 +75,6 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IExtendedXmlSerializer Create() => new ExtendedXmlSerializer(_context, _factory.Get(this));
+		public IExtendedXmlSerializer Create() => _factory.Get(this);
 	}
 }

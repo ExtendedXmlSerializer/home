@@ -31,6 +31,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 		public static DateTimeTypeConverter Default { get; } = new DateTimeTypeConverter();
 
 		DateTimeTypeConverter()
-			: base(x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind), x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
+			: base(
+				x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind),
+				x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
 	}
 }
