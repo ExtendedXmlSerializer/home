@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -29,12 +30,13 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberElement>, IMemberOption
 	{
-		readonly INameProvider _provider;
+		readonly IParameterizedSource<MemberInfo, string> _provider;
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification)
 			: this(specification, MemberNameProvider.Default) {}
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, INameProvider provider)
+		protected MemberOptionBase(ISpecification<MemberInformation> specification,
+		                           IParameterizedSource<MemberInfo, string> provider)
 			: base(specification)
 		{
 			_provider = provider;

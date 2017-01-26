@@ -21,17 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Write;
+using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel
 {
-	public class RootConverter : Converter
+	public class MemberedElement : NamedElementBase, IActivatedElement
 	{
-		public static RootConverter Default { get; } = new RootConverter();
-		RootConverter() : this(RootSelector.Default) {}
+		public MemberedElement(string displayName, TypeInfo classification, IMembers members)
+			: base(displayName, classification)
+		{
+			Members = members;
+		}
 
-		public RootConverter(IConverterSelector selector) : this(new SelectingConverter(selector)) {}
-
-		protected RootConverter(IConverter converter) : base(converter, new Emitter(converter)) {}
+		public IMembers Members { get; }
 	}
 }

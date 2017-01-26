@@ -23,20 +23,17 @@
 
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
-		readonly IXmlContextFactory _context;
-		readonly IConfiguredRootConverterFactory _factory;
+		readonly IExtendedXmlSerializerFactory _factory;
 
-		public ExtendedXmlConfiguration() : this(XmlContextFactory.Default, ConfiguredRootConverterFactory.Default) {}
+		public ExtendedXmlConfiguration() : this(ExtendedXmlSerializerFactory.Default) {}
 
-		public ExtendedXmlConfiguration(IXmlContextFactory context, IConfiguredRootConverterFactory factory)
+		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory)
 		{
-			_context = context;
 			_factory = factory;
 		}
 
@@ -78,6 +75,6 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IExtendedXmlSerializer Create() => new ExtendedXmlSerializer(_context, _factory.Get(this));
+		public IExtendedXmlSerializer Create() => _factory.Get(this);
 	}
 }

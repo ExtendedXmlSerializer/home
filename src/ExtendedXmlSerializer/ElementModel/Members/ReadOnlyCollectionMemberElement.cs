@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 	public class ReadOnlyCollectionMemberElement : MemberElement, IReadOnlyCollectionMemberElement
 	{
 		public ReadOnlyCollectionMemberElement(string displayName, MemberInfo metadata, Action<object, object> add,
-		                                       Func<object, object> getter, Func<IElement> element)
+		                                       Func<object, object> getter, IElement element)
 			: base(displayName, metadata, add, getter, element) {}
 
 		public override void Assign(object instance, object value)

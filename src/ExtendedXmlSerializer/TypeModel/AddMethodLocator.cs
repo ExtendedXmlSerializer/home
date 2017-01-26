@@ -31,13 +31,7 @@ namespace ExtendedXmlSerialization.TypeModel
 	{
 		const string Add = "Add";
 
-		public static AddMethodLocator Default { get; } = new AddMethodLocator();
-		AddMethodLocator() {}
-
-		public MethodInfo Locate(TypeInfo type, TypeInfo elementType)
-		{
-			return GetOrAdd(type, t => Get(type, elementType));
-		}
+		public MethodInfo Locate(TypeInfo type, TypeInfo elementType) => GetOrAdd(type, t => Get(t, elementType));
 
 		static MethodInfo Get(TypeInfo type, TypeInfo elementType)
 		{

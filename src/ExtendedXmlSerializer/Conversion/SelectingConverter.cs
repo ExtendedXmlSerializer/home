@@ -21,12 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
-
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class SelectingConverter : ConverterBase
+	public class SelectingConverter : SelectingConverterBase
 	{
 		readonly IConverterSelector _selector;
 
@@ -35,10 +32,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_selector = selector;
 		}
 
-		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
-
-		IConverter Select(IContext context) => _selector.Get(context.Selected) ?? _selector.Get(context.Element);
-
-		public override object Read(IReadContext context) => Select(context).Read(context);
+		protected override IConverter Select(IContext context) => _selector.Get(context);
 	}
 }

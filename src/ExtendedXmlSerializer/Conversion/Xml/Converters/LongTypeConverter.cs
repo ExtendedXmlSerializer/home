@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class LongTypeConverter : ValueTypeConverterBase<long>
 	{
 		public static LongTypeConverter Default { get; } = new LongTypeConverter();
-		LongTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt64) {}
+		LongTypeConverter() : base(XmlConvert.ToInt64, XmlConvert.ToString) {}
 	}
 }

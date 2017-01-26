@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.ElementModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class SelectedConverterOption : ConverterOptionBase<IClassification>
+	public class SelectedConverterOption : IConverterOption
 	{
 		readonly ImmutableArray<ITypeConverter> _converters;
 
@@ -37,12 +37,13 @@ namespace ExtendedXmlSerialization.Conversion
 			_converters = converters;
 		}
 
-		protected override IConverter Create(IClassification parameter)
+		public bool IsSatisfiedBy(TypeInfo parameter) => true;
+
+		public IConverter Get(TypeInfo parameter)
 		{
-			var type = parameter.Classification;
 			foreach (var converter in _converters)
 			{
-				if (converter.IsSatisfiedBy(type))
+				if (converter.IsSatisfiedBy(parameter))
 				{
 					return converter;
 				}

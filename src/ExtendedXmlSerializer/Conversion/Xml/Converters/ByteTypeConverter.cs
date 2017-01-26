@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class ByteTypeConverter : ValueTypeConverterBase<sbyte>
 	{
 		public static ByteTypeConverter Default { get; } = new ByteTypeConverter();
-		ByteTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToSByte) {}
+		ByteTypeConverter() : base(XmlConvert.ToSByte, XmlConvert.ToString) {}
 	}
 }

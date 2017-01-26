@@ -57,10 +57,6 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 
 			public IElement Element => _context.Element;
 
-			public IContext Select() => _context.Select();
-
-			public IElement Selected => _context.Selected;
-
 			public IEnumerator<IReadMemberContext> GetEnumerator() => _context.GetEnumerator();
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

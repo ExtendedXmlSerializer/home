@@ -22,38 +22,43 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
 	{
-		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
-		ExtendedXmlSerializer() : this(XmlContextFactory.Default, RootConverter.Default) {}
-
 		readonly IXmlContextFactory _factory;
-		readonly IConverter _converter;
+		readonly IConverterSelector _selector;
 
-		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverter converter)
+		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverterOptions options)
 		{
 			_factory = factory;
-			_converter = converter;
+			_selector = options.Get(this);
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
 			using (var writer = XmlWriter.Create(stream))
 			{
-				var context = _factory.Create(writer, instance);
-				_converter.Write(context, instance);
+				Write(_factory.Create(writer, instance), instance);
 			}
 		}
 
-		public object Deserialize(Stream stream) => _converter.Read(_factory.Create(stream));
+		public object Deserialize(Stream stream) => Read(_factory.Create(stream));
+
+		protected override IConverter Select(IContext context)
+			=> _selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
+
+		IConverter IParameterizedSource<IContext, IConverter>.Get(IContext parameter) => _selector.Get(parameter);
+
+		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

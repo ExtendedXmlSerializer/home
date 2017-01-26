@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public sealed class ElementMembers : WeakCacheBase<TypeInfo, IMembers>, IElementMembers
+	public sealed class ElementMembers : CacheBase<TypeInfo, IMembers>, IElementMembers
 	{
 		readonly IMemberElementSelector _selector;
 		readonly ISpecification<PropertyInfo> _property;

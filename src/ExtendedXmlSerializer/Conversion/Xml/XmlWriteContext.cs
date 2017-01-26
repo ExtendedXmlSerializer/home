@@ -40,31 +40,23 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ImmutableArray<object> _services;
 		readonly IDisposable _finish;
 
-		public XmlWriteContext(XmlWriter writer, IRoot root) : this(writer, root, writer) {}
+		public XmlWriteContext(INamespaces namespaces, IElements elements, XmlWriter writer, IRoot root)
+			: this(namespaces, elements, writer, root, writer) {}
 
-		public XmlWriteContext(XmlWriter writer, IRoot root, params object[] services)
-			: this(Elements.Default, Namespaces.Default, writer, root, services) {}
-
-		public XmlWriteContext(IElements selector, INamespaces namespaces, XmlWriter writer, IRoot root,
+		public XmlWriteContext(INamespaces namespaces, IElements selector, XmlWriter writer, IRoot root,
 		                       params object[] services)
 			: this(
-				selector, namespaces, root, selector.Get(root.Classification), writer, services.ToImmutableArray(),
+				selector, namespaces, root, root.Element, writer, services.ToImmutableArray(),
 				new DelegatedDisposable(writer.WriteEndElement)) {}
 
-		XmlWriteContext(IElements selector, INamespaces namespaces,
-		                IContainerElement container, IElement element,
-		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
-			: this(selector, namespaces, container, element, container, writer, services, finish) {}
-
-		XmlWriteContext(IElements selector, INamespaces namespaces,
-		                IContainerElement container, IElement element, IElement selected,
-		                XmlWriter writer, ImmutableArray<object> services, IDisposable finish)
+		XmlWriteContext(IElements selector, INamespaces namespaces, IContainerElement container, IElement element,
+		                XmlWriter writer,
+		                ImmutableArray<object> services, IDisposable finish)
 		{
 			_selector = selector;
 			_namespaces = namespaces;
 			Container = container;
 			Element = element;
-			Selected = selected;
 			_writer = writer;
 			_services = services;
 			_finish = finish;
@@ -72,7 +64,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IContainerElement Container { get; }
 		public IElement Element { get; }
-		public IElement Selected { get; }
 
 		public object GetService(Type serviceType)
 		{
@@ -103,6 +94,13 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 					var ns = _namespaces.Get(display.Classification);
 					_writer.WriteStartElement(display.DisplayName, ns.NamespaceName);
 				}
+
+/*var type = instance.GetType().GetTypeInfo();
+			if (!context.Container.Exact(type))
+			{
+				context.Write(TypeProperty.Default, type);
+			}*/
+
 				return _finish;
 			}
 			throw new SerializationException(
@@ -125,11 +123,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
 			=> Create(parameter, _selector.Load(parameter, instanceType));
 
-		XmlWriteContext Create(IContainerElement container, IElement element) => Create(container, element, container);
-
-		public IContext Select() => Create(Container, Element, Element);
-
-		XmlWriteContext Create(IContainerElement container, IElement element, IElement selected)
-			=> new XmlWriteContext(_selector, _namespaces, container, element, selected, _writer, _services, _finish);
+		XmlWriteContext Create(IContainerElement container, IElement element)
+			=> new XmlWriteContext(_selector, _namespaces, container, element, _writer, _services, _finish);
 	}
 }

@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class IntegerTypeConverter : ValueTypeConverterBase<int>
 	{
 		public static IntegerTypeConverter Default { get; } = new IntegerTypeConverter();
-		IntegerTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt32) {}
+		IntegerTypeConverter() : base(XmlConvert.ToInt32, XmlConvert.ToString) {}
 	}
 }

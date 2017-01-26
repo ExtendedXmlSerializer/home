@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class Selector<TParameter, TResult> : WeakCacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
+	public class Selector<TParameter, TResult> : CacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
 		where TParameter : class where TResult : class
 	{
 		readonly IParameterizedSource<TParameter, TResult> _source;

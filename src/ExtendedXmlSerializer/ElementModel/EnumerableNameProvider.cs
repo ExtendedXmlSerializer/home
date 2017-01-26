@@ -27,8 +27,6 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	sealed class EnumerableNameProvider : NameProvider
 	{
-		public new static EnumerableNameProvider Default { get; } = new EnumerableNameProvider();
-
-		EnumerableNameProvider() : base(EnumerableTypeFormatter.Default) {}
+		public EnumerableNameProvider(ICollectionItemTypeLocator locator) : base(new EnumerableTypeFormatter(locator)) {}
 	}
 }

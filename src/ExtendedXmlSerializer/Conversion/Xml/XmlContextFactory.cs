@@ -27,35 +27,43 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlContextFactory : IXmlContextFactory
 	{
-		public static XmlContextFactory Default { get; } = new XmlContextFactory();
-		XmlContextFactory() : this(Elements.Default) {}
-
 		readonly IElements _elements;
+		readonly INamespaces _namespaces;
+		readonly IXmlReadContextFactory _factory;
+		readonly ITypes _types;
 
-		public XmlContextFactory(IElements elements)
+		public XmlContextFactory(IElements elements, INamespaces namespaces, ITypes types)
+			: this(elements, namespaces, new XmlReadContextFactory(elements, types, new NameConverter(namespaces)), types) {}
+
+		public XmlContextFactory(IElements elements, INamespaces namespaces, IXmlReadContextFactory factory, ITypes types)
 		{
 			_elements = elements;
+			_namespaces = namespaces;
+			_factory = factory;
+			_types = types;
 		}
 
 		public IWriteContext Create(XmlWriter writer, object instance)
 		{
-			var root = new Root(_elements.Build(instance.GetType().GetTypeInfo()));
-			var result = new XmlWriteContext(writer, root);
+			var element = _elements.Get(instance.GetType().GetTypeInfo());
+			var root = new Root(element);
+			var result = new XmlWriteContext(_namespaces, _elements, writer, root);
 			return result;
 		}
 
 		public IReadContext Create(Stream stream)
 		{
 			var text = new StreamReader(stream).ReadToEnd();
-			var document = XDocument.Parse(text);
-			var result = new XmlReadContext(document.Root);
+			var document = XDocument.Parse(text).Root;
+			var typeInfo = _types.Get(document.Name);
+			var element = _elements.Get(typeInfo);
+			var result = new XmlReadContext(_factory, new Root(element), document);
 			return result;
 		}
 	}

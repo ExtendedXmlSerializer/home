@@ -30,11 +30,10 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	class EnumerableTypeFormatter : ITypeFormatter
 	{
-		public static EnumerableTypeFormatter Default { get; } = new EnumerableTypeFormatter();
-		EnumerableTypeFormatter() : this(TypeFormatter.Default, CollectionItemTypeLocator.Default) {}
-
 		readonly ITypeFormatter _formatter;
 		readonly ICollectionItemTypeLocator _locator;
+
+		public EnumerableTypeFormatter(ICollectionItemTypeLocator locator) : this(TypeFormatter.Default, locator) {}
 
 		public EnumerableTypeFormatter(ITypeFormatter formatter, ICollectionItemTypeLocator locator)
 		{

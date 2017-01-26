@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class ShortTypeConverter : ValueTypeConverterBase<short>
 	{
 		public static ShortTypeConverter Default { get; } = new ShortTypeConverter();
-		ShortTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToInt16) {}
+		ShortTypeConverter() : base(XmlConvert.ToInt16, XmlConvert.ToString) {}
 	}
 }

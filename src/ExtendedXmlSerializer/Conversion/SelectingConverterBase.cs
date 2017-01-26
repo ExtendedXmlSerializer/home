@@ -21,26 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Conversion
 {
-	public abstract class ActivatedElementOptionBase : ElementOptionBase
+	public abstract class SelectingConverterBase : ConverterBase
 	{
-		readonly IElementMembers _members;
+		public override void Write(IWriteContext context, object instance) => Select(context).Write(context, instance);
 
-		protected ActivatedElementOptionBase(ISpecification<TypeInfo> specification, INames names,
-		                                     IElementMembers members)
-			: base(specification, names)
-		{
-			_members = members;
-		}
+		protected abstract IConverter Select(IContext context);
 
-		protected override IElement Create(string name, TypeInfo parameter)
-			=> CreateElement(name, parameter, _members.Get(parameter));
-
-		protected abstract IElement CreateElement(string name, TypeInfo parameter, IMembers members);
+		public override object Read(IReadContext context) => Select(context).Read(context);
 	}
 }

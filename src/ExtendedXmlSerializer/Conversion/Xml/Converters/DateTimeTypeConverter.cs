@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 
 		DateTimeTypeConverter()
 			: base(
-				x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind),
-				x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
+				x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind),
+				x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
 	}
 }

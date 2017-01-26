@@ -41,6 +41,6 @@ namespace ExtendedXmlSerialization.ElementModel
 
 		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-		protected abstract IElement Create(string name, TypeInfo classification);
+		protected abstract IElement Create(string displayName, TypeInfo classification);
 	}
 }

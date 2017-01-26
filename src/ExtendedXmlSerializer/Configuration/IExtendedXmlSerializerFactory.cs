@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,7 +23,7 @@
 
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.Configuration
 {
-	public interface ISelectorFactory : IParameterizedSource<IConverter, IConverterSelector> {}
+	public interface IExtendedXmlSerializerFactory : IParameterizedSource<IExtendedXmlConfiguration, IExtendedXmlSerializer> {}
 }

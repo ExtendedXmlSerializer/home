@@ -26,22 +26,25 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ObjectNamespaces : IObjectNamespaces
 	{
-		public ObjectNamespaces() : this(new Namespaces(new GeneratedPrefixProvider()).Get) {}
+		public ObjectNamespaces(IElements elements) : this(elements, new Namespaces(new GeneratedPrefixProvider()).Get) {}
 
+		readonly IElements _elements;
 		readonly Func<TypeInfo, XName> _namespaces;
 
-		public ObjectNamespaces(Func<TypeInfo, XName> namespaces)
+		public ObjectNamespaces(IElements elements, Func<TypeInfo, XName> namespaces)
 		{
+			_elements = elements;
 			_namespaces = namespaces;
 		}
 
 		public ImmutableArray<XName> Get(object parameter)
-			=> new ObjectTypeWalker(parameter)
+			=> new ObjectTypeWalker(_elements, parameter)
 				.Get()
 				.Distinct()
 				.Select(_namespaces)

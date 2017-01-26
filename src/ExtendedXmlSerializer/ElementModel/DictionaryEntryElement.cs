@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class DictionaryEntryElement : ActivatedElement
+	public class DictionaryEntryElement : MemberedElement
 	{
 		public static IName Name { get; } = new Name("Item", typeof(DictionaryEntry).GetTypeInfo());
 

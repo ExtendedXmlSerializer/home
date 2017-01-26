@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class DateTimeOffsetTypeConverter : ValueTypeConverterBase<DateTimeOffset>
 	{
 		public static DateTimeOffsetTypeConverter Default { get; } = new DateTimeOffsetTypeConverter();
-		DateTimeOffsetTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToDateTimeOffset) {}
+		DateTimeOffsetTypeConverter() : base(XmlConvert.ToDateTimeOffset, XmlConvert.ToString) {}
 	}
 }

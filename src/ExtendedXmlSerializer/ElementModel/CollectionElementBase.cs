@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public abstract class CollectionElementBase : ICollectionElement
 	{
-		protected CollectionElementBase(string displayName, TypeInfo classification, Func<IElement> element) : this(displayName, classification, new CollectionItem(element)) {}
+		protected CollectionElementBase(string displayName, TypeInfo classification, IElement element) : this(displayName, classification, new CollectionItem(element)) {}
 
 		protected CollectionElementBase(string displayName, TypeInfo classification, IContainerElement item)
 		{

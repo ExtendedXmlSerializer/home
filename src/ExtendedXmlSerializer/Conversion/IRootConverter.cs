@@ -21,15 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Write;
-
-namespace ExtendedXmlSerialization.ElementModel.Members
+namespace ExtendedXmlSerialization.Conversion
 {
-	public class MemberConverterOption : ConverterOption<IMemberElement>
-	{
-		public MemberConverterOption(IConverter converter)
-			: base(
-				new Converter(converter, new ValidatingAssignedWriter(new Emitter(new EmitDifferingInstanceTypeWriter(converter))))) {}
-	}
+	public interface IRootConverter : IConverter, IConverterSelector {}
 }

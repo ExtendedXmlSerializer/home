@@ -33,7 +33,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
 
 		EnumerationTypeConverter()
-			: base(IsAssignableSpecification<Enum>.Default, new ValueWriter<Enum>(x => x.ToString()), EnumReader.Default
-			) {}
+			: base(IsAssignableSpecification<Enum>.Default, EnumReader.Default, new ValueWriter<Enum>(x => x.ToString())) {}
 	}
 }

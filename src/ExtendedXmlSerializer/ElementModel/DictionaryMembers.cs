@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,20 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
+using System.Collections;
+using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ElementModel
 {
-	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
-		where TKey : class where TValue : class
+	public class DictionaryMembers : Members.Members
 	{
-		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+		public DictionaryMembers(IElement key, IElement value) : this(DictionaryEntryElement.Name.Classification, key, value) {}
 
-		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
-		{
-			_callback = callback;
-		}
+		DictionaryMembers(TypeInfo classification, IElement key, IElement value)
+			: this(
+				classification.GetProperty(nameof(DictionaryEntry.Key)), classification.GetProperty(nameof(DictionaryEntry.Value)),
+				GetterFactory.Default, SetterFactory.Default, key, value) {}
 
-		protected override TValue Create(TKey parameter) => _callback(parameter);
+		DictionaryMembers(MemberInfo key, MemberInfo value, IGetterFactory getter, ISetterFactory setter,
+		                  IElement keyElement, IElement valueElement)
+			: base(
+				new MemberElement(key.Name, key, setter.Get(key), getter.Get(key), keyElement),
+				new MemberElement(value.Name, value, setter.Get(value), getter.Get(value), valueElement)
+			) {}
 	}
 }

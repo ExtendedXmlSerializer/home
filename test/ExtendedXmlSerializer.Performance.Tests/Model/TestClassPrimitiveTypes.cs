@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 
 	public class TestClassOtherClass
 	{
-		public void Init()
+		public TestClassOtherClass Init()
 		{
 			Primitive1 = new TestClassPrimitiveTypes();
 			Primitive1.Init();
@@ -48,6 +48,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 			}
 			Other = new TestClassOther();
 			Other.Init();
+			return this;
 		}
 
 		public TestClassOther Other { get; set; }

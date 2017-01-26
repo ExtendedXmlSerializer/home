@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
@@ -30,10 +29,11 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class CollectionElementOption : MemberedCollectionElementOptionBase
 	{
-		public CollectionElementOption(IElements elements, INames names, IElementMembers members)
-			: base(IsCollectionTypeSpecification.Default, elements, names, members) {}
+		public CollectionElementOption(IElements elements, INames names, IElementMembers members,
+		                               ICollectionItemTypeLocator locator)
+			: base(IsCollectionTypeSpecification.Default, elements, names, members, locator) {}
 
-		protected override IElement Create(string name, TypeInfo collectionType, IMembers members, Func<IElement> element)
-			=> new CollectionElement(name, collectionType, members, element);
+		protected override IElement Create(string displayName, TypeInfo collectionType, IMembers members, IElement element)
+			=> new CollectionElement(displayName, collectionType, members, element);
 	}
 }

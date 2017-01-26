@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class DecimalTypeConverter : ValueTypeConverterBase<decimal>
 	{
 		public static DecimalTypeConverter Default { get; } = new DecimalTypeConverter();
-		DecimalTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToDecimal) {}
+		DecimalTypeConverter() : base(XmlConvert.ToDecimal, XmlConvert.ToString) {}
 	}
 }

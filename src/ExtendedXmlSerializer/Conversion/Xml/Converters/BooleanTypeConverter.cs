@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 	public class BooleanTypeConverter : ValueTypeConverterBase<bool>
 	{
 		public static BooleanTypeConverter Default { get; } = new BooleanTypeConverter();
-		BooleanTypeConverter() : base(XmlConvert.ToString, XmlConvert.ToBoolean) {}
+		BooleanTypeConverter() : base(XmlConvert.ToBoolean, XmlConvert.ToString) {}
 	}
 }

@@ -23,12 +23,13 @@
 
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	class DictionaryConverter : Converter
 	{
-		public DictionaryConverter(IConverter converter)
-			: base(new ListReader(converter, DictionaryAddDelegates.Default), new DictionaryBodyWriter(converter)) {}
+		public DictionaryConverter(IActivators activators, IConverter converter)
+			: base(new ListReader(converter, activators, DictionaryAddDelegates.Default), new DictionaryBodyWriter(converter)) {}
 	}
 }

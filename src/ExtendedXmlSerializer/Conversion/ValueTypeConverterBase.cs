@@ -31,17 +31,10 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public abstract class ValueTypeConverterBase<T> : TypeConverter
 	{
-		protected ValueTypeConverterBase(Func<T, string> serialize,
-		                                 Func<string, T> deserialize)
-			: this(
-				new ValueWriter<T>(serialize),
-				new ValueReader<T>(deserialize)
-			) {}
+		protected ValueTypeConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
+			: this(TypeEqualitySpecification<T>.Default, new ValueReader<T>(deserialize), new ValueWriter<T>(serialize)) {}
 
-		protected ValueTypeConverterBase(IWriter writer, IReader reader)
-			: this(TypeEqualitySpecification<T>.Default, writer, reader) {}
-
-		protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IWriter writer, IReader reader)
-			: base(specification, new ValidatingAssignedReader(reader), new ValidatingAssignedWriter(writer)) {}
+		protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IReader reader, IWriter writer)
+			: base(specification, reader, writer) {}
 	}
 }

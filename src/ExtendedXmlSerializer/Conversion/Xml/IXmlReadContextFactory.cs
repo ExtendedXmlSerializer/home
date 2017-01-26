@@ -32,7 +32,5 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		IReadContext Create(IContainerElement container, XElement data);
 
 		string Value(IName name, XElement data);
-
-		IContext Select(IXmlReadContext context);
 	}
 }

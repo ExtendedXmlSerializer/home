@@ -21,19 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ElementSource : ElementModel.ElementSource
 	{
-		public static ElementSource Default { get; } = new ElementSource();
+		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add)
+			: this(locator, add, Conversion.Defaults.Names) {}
 
-		ElementSource()
+		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
 			: base(
-				Names.Default, new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
+				new Names(locator, known), locator, add, known.Select(x => x.Classification),
+				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
 				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
 			) {}
 	}

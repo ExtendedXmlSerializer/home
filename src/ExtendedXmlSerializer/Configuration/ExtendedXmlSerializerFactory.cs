@@ -21,18 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.Configuration
 {
-	public class ElementSelectingConverter : DecoratedConverter
+	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
 	{
-		public ElementSelectingConverter(IConverter converter) : base(converter) {}
+		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
+		ExtendedXmlSerializerFactory() {}
 
-		public override void Write(IWriteContext context, object instance)
-			=> base.Write((IWriteContext) context.Select(), instance);
-
-		public override object Read(IReadContext context) => base.Read((IReadContext) context.Select());
+		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
+		{
+			var namespaces = new Namespaces();
+			var locator = new CollectionItemTypeLocator();
+			var add = new AddDelegates(locator, new AddMethodLocator());
+			var elements = new Elements(locator, add);
+			var types = new Types(namespaces, new TypeContexts());
+			var factory = new XmlContextFactory(elements, namespaces, types);
+			var result = new ExtendedXmlSerializer(factory, new ConverterOptions(add));
+			return result;
+		}
 	}
 }

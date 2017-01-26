@@ -21,18 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Write
-{
-	public class ValidatingAssignedWriter : DecoratedWriter
-	{
-		public ValidatingAssignedWriter(IWriter writer) : base(writer) {}
+using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
-		public override void Write(IWriteContext context, object instance)
+namespace ExtendedXmlSerialization.ElementModel
+{
+	public class MemberedElementOption : ElementOptionBase
+	{
+		readonly IElementMembers _members;
+
+		public MemberedElementOption(INames names, IElementMembers members)
+			: base(IsActivatedTypeSpecification.Default, names)
 		{
-			if (instance != null)
-			{
-				base.Write(context, instance);
-			}
+			_members = members;
 		}
+
+		protected override IElement Create(string displayName, TypeInfo classification)
+			=> new MemberedElement(displayName, classification, _members.Get(classification));
 	}
 }

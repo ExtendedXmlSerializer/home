@@ -31,9 +31,5 @@ namespace ExtendedXmlSerialization.Conversion
 		IContainerElement Container { get; }
 
 		IElement Element { get; }
-
-		IContext Select();
-
-		IElement Selected { get; }
 	}
 }
