@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,28 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
-
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class TypeFormatter : ITypeFormatter
+	public class DefaultParsingDelimiters
 	{
-		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() {}
+		public static DefaultParsingDelimiters Default { get; } = new DefaultParsingDelimiters();
+		DefaultParsingDelimiters() : this(new Delimiter(';'), new Delimiter(':'), new Delimiter('='), new Delimiter('-')) {}
 
-		public string Format(TypeInfo type)
+		public DefaultParsingDelimiters(Delimiter part, Delimiter @namespace, Delimiter assembly, Delimiter nestedClass)
 		{
-			if (type.IsGenericType)
-			{
-				var types = type.GetGenericArguments();
-				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-				return name;
-			}
-			var result = type.IsNested ? $"{type.DeclaringType.Name}-{type.Name}" : type.Name;
-			return result;
+			Part = part;
+			Namespace = @namespace;
+			Assembly = assembly;
+			NestedClass = nestedClass;
 		}
+
+		public Delimiter Part { get; }
+		public Delimiter Namespace { get; }
+		public Delimiter Assembly { get; }
+		public Delimiter NestedClass { get; }
 	}
 }

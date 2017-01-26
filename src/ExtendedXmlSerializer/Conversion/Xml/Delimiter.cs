@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,28 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class TypeFormatter : ITypeFormatter
+	public struct Delimiter
 	{
-		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() {}
+		readonly ImmutableArray<char> _characters;
 
-		public string Format(TypeInfo type)
+		public Delimiter(params char[] characters) : this(characters.ToImmutableArray()) {}
+
+		public Delimiter(ImmutableArray<char> characters)
 		{
-			if (type.IsGenericType)
-			{
-				var types = type.GetGenericArguments();
-				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-				return name;
-			}
-			var result = type.IsNested ? $"{type.DeclaringType.Name}-{type.Name}" : type.Name;
-			return result;
+			_characters = characters;
 		}
+
+		public static implicit operator char[](Delimiter delimiter) => delimiter._characters.ToArray();
+
+		public static implicit operator char(Delimiter delimiter) => delimiter._characters[0];
 	}
 }

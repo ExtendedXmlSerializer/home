@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
@@ -31,8 +30,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlReadContextFactory : IXmlReadContextFactory
 	{
-		readonly static char[] Delimiters = Defaults.NamespaceDelimiter.ToArray();
-
 		readonly IElements _elements;
 		readonly ITypes _types;
 		readonly INameConverter _converter;
@@ -77,7 +74,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		static XName GetName(string data, XElement element)
 		{
-			var parts = data.ToStringArray(Delimiters);
+			var parts = data.ToStringArray(DefaultParsingDelimiters.Default.Namespace);
 			switch (parts.Length)
 			{
 				case 2:

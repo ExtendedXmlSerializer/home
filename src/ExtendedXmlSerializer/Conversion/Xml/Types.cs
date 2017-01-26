@@ -35,8 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ImmutableArray<IName> _known;
 		readonly ITypeContexts _sources;
 
-		/*public Types(INamespaces namespaces) : this(namespaces, new TypeContexts()) {}*/
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Conversion.Defaults.Names, sources) {}
+		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Defaults.Names, sources) {}
 
 		public Types(INamespaces namespaces, ImmutableArray<IName> known, ITypeContexts sources)
 		{

@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
@@ -31,10 +30,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class TypeContexts : CacheBase<string, Func<string, TypeInfo>>, ITypeContexts
 	{
-		readonly static char[] Delimiters = Defaults.PartDelimiter.ToArray(),
-			Separator = Defaults.NamespaceDelimiter.ToArray(),
-			AssemblySeparator = Defaults.AssemblyDelimiter.ToArray();
-
 		public TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
 
 		readonly IAssemblyLoader _loader;
@@ -48,9 +43,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		protected override Func<string, TypeInfo> Create(string parameter)
 		{
-			var parts = parameter.ToStringArray(Delimiters);
-			var namespacePath = parts[0].Split(Separator)[1];
-			var assemblyPath = parts[1].Split(AssemblySeparator)[1];
+			var parts = parameter.ToStringArray(DefaultParsingDelimiters.Default.Part);
+			var namespacePath = parts[0].Split(DefaultParsingDelimiters.Default.Namespace)[1];
+			var assemblyPath = parts[1].Split(DefaultParsingDelimiters.Default.Assembly)[1];
 			var assembly = _loader.Get(assemblyPath);
 			var result = new TypeLoaderContext(assembly, namespacePath, _alteration).ToDelegate();
 			return result;

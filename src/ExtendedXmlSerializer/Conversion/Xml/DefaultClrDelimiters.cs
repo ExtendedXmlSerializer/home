@@ -21,14 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public static class Defaults
+	public class DefaultClrDelimiters
 	{
-		public static ImmutableArray<char> PartDelimiter { get; } = ImmutableArray.Create(';');
-		public static ImmutableArray<char> NamespaceDelimiter { get; } = ImmutableArray.Create(':');
-		public static ImmutableArray<char> AssemblyDelimiter { get; } = ImmutableArray.Create('=');
+		public static DefaultClrDelimiters Default { get; } = new DefaultClrDelimiters();
+		DefaultClrDelimiters() : this(new Delimiter('+')) {}
+
+		public DefaultClrDelimiters(Delimiter nestedClass)
+		{
+			NestedClass = nestedClass;
+		}
+
+		public Delimiter NestedClass { get; }
 	}
 }

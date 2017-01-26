@@ -27,11 +27,18 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class TypeNameAlteration : IAlteration<string>
 	{
-		const char OldChar = '.', NewChar = '+';
-
+		readonly char _search;
+		readonly char _replace;
+		
 		public static TypeNameAlteration Default { get; } = new TypeNameAlteration();
-		TypeNameAlteration() {}
+		TypeNameAlteration() : this(DefaultParsingDelimiters.Default.NestedClass, DefaultClrDelimiters.Default.NestedClass) {}
 
-		public string Get(string parameter) => parameter.Replace(OldChar, NewChar);
+		public TypeNameAlteration(char search, char replace)
+		{
+			_search = search;
+			_replace = replace;
+		}
+
+		public string Get(string parameter) => parameter.Replace(_search, _replace);
 	}
 }
