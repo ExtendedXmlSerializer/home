@@ -56,13 +56,11 @@ namespace ExtendedXmlSerialization.ElementModel
 			_field = field;
 		}
 
-		protected virtual IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
+		IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
 		{
-			yield return new ElementOption(_specification, _names);
-
 			var members = new ElementMembers(new MemberElementSelector(parameter, _add), _property, _field);
 			var guarded = new RecursionGuardedElementMembers(members);
-
+			yield return new ElementOption(_specification, _names);
 			yield return new DictionaryElementOption(parameter, _names, guarded);
 			yield return new ArrayElementOption(parameter, _names, _locator);
 			yield return new CollectionElementOption(parameter, _names, guarded, _locator);

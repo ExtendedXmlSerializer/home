@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			{
 				var types = type.GetGenericArguments();
 				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var name = type.Name.Replace($"`{types.Length}", $"Of{names}");
+				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
 				return name;
 			}
 			var result = type.IsNested ? $"{type.DeclaringType.Name}.{type.Name}" : type.Name;

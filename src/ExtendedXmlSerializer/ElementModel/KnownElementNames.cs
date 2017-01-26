@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
@@ -31,7 +32,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class KnownElementNames : ElementNameOptionBase
 	{
-		public KnownElementNames(IEnumerable<IName> elements)
+		public KnownElementNames(ImmutableArray<IName> elements)
 			: this(elements.ToDictionary(x => (MemberInfo) x.Classification, x => x.DisplayName)) {}
 
 		public KnownElementNames(IDictionary<MemberInfo, string> names)

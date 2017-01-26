@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class SelectingConverter : SelectingConverterBase
@@ -34,7 +32,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_selector = selector;
 		}
 
-		protected override IConverter Select(IContext context) =>
-			_selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
+		protected override IConverter Select(IContext context) => _selector.Get(context);
 	}
 }

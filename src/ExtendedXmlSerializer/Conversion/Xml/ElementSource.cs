@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add)
 			: this(locator, add, Conversion.Defaults.Names) {}
 
-		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, IImmutableList<IName> known)
+		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
 			: base(
 				new Names(locator, known), locator, add, known.Select(x => x.Classification),
 				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),

@@ -49,6 +49,8 @@ namespace ExtendedXmlSerialization
 			}
 		}
 
+		public static object Deserialize(this IExtendedXmlSerializer @this, string xml) => @this.Deserialize<object>(xml);
+
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml)
 		{
 			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))

@@ -42,10 +42,9 @@ namespace ExtendedXmlSerialization.Conversion
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
 			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 
-		public static TypeInfo ToTypeInfo(this MemberInfo @this)
-			=> @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+		public static TypeInfo ToTypeInfo(this MemberInfo @this) => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
 
-		public static object AnnotationAll(this XElement @this, Type type)
+		public static object AnnotationAll(this XElement @this, Type type) 
 			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)

@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public class Members : IMembers
 	{
-		readonly IImmutableList<IMemberElement> _members;
+		readonly ImmutableArray<IMemberElement> _members;
 		readonly IDictionary<string, IMemberElement> _lookup;
 
 		public Members(params IMemberElement[] members) : this(members.ToImmutableArray()) {}
@@ -47,7 +47,13 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 
 		public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
 
-		public IEnumerator<IMemberElement> GetEnumerator() => _members.GetEnumerator();
+		public IEnumerator<IMemberElement> GetEnumerator()
+		{
+			foreach (var element in _members)
+			{
+				yield return element;
+			}
+		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}

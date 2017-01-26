@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
@@ -31,9 +31,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class Names : Selector<MemberInfo, string>, INames
 	{
-		// public Names() : this(Conversion.Defaults.Names) {}
-
-		public Names(ICollectionItemTypeLocator locator, IEnumerable<IName> names)
+		public Names(ICollectionItemTypeLocator locator, ImmutableArray<IName> names)
 			: this(
 				new KnownElementNames(names),
 				ElementNameOption<Enum>.Default,

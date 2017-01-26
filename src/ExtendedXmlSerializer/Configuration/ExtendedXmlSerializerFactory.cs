@@ -41,8 +41,7 @@ namespace ExtendedXmlSerialization.Configuration
 			var elements = new Elements(locator, add);
 			var types = new Types(namespaces, new TypeContexts());
 			var factory = new XmlContextFactory(elements, namespaces, types);
-			var converter = new RootConverter(new ConverterOptions(add));
-			var result = new ExtendedXmlSerializer(factory, converter);
+			var result = new ExtendedXmlSerializer(factory, new ConverterOptions(add));
 			return result;
 		}
 	}

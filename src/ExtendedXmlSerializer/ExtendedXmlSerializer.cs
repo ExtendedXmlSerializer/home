@@ -22,35 +22,56 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : Converter, IExtendedXmlSerializer
+	public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
 	{
 		readonly IXmlContextFactory _factory;
+		readonly IConverterSelector _selector;
 
-		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverter converter)
-			: base(converter, new Emitter(converter))
+		/*public ExtendedXmlSerializer() : this(new Namespaces(), new CollectionItemTypeLocator()) {}
+
+		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator)
+			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
+
+		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
+			: this(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts()), add) {}
+
+		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, ITypes types, IAddDelegates add)
+			: this(new XmlContextFactory(elements, namespaces, types), new ConverterOptions(add)) {}*/
+
+		/*public ExtendedXmlSerializer() : this(Services.Default, Services.Default) {}*/
+
+		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverterOptions options)
 		{
 			_factory = factory;
+			_selector = options.Get(this);
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
 			using (var writer = XmlWriter.Create(stream))
 			{
-				var context = _factory.Create(writer, instance);
-				Write(context, instance);
+				Write(_factory.Create(writer, instance), instance);
 			}
 		}
 
 		public object Deserialize(Stream stream) => Read(_factory.Create(stream));
+
+		protected override IConverter Select(IContext context)
+			=> _selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
+
+		IConverter IParameterizedSource<IContext, IConverter>.Get(IContext parameter) => _selector.Get(parameter);
+
+		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

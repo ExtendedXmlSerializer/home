@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Conversion.Xml;
@@ -32,7 +33,8 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	sealed class ConverterOptions : IParameterizedSource<IRootConverter, IEnumerable<IConverterOption>>
+	public interface IConverterOptions : IParameterizedSource<IRootConverter, IConverterSelector> {}
+	sealed class ConverterOptions : IConverterOptions
 	{
 		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
 
@@ -45,22 +47,25 @@ namespace ExtendedXmlSerialization.Conversion
 			_known = known;
 		}
 
-		public IEnumerable<IConverterOption> Get(IRootConverter parameter)
+		public IConverterSelector Get(IRootConverter parameter) => new ConverterSelector(Options(parameter).ToArray());
+
+		IEnumerable<IConverterOption> Options(IRootConverter parameter)
 		{
 			yield return _known;
 
-			var emitter = new Emitter(parameter);
+			var element = new SelectingConverter(parameter);
+			var emitter = new Emitter(element);
+			var converter = new Converter(element, emitter);
 			yield return
-				new ConverterOption<IReadOnlyCollectionMemberElement>(new Converter(new EnumeratingReader(parameter), emitter));
-			yield return new ConverterOption<IMemberElement>(new Converter(parameter, emitter));
-
+				new ConverterOption<IReadOnlyCollectionMemberElement>(new Converter(new EnumeratingReader(converter), emitter));
+			yield return new ConverterOption<IMemberElement>(converter);
+			yield return new ConverterOption<IRoot>(converter);
+			
 			var activators = new Activators();
-
-			var converter = new SelectingConverter(parameter);
-			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, converter));
-			yield return new ConverterOption<IArrayElement>(new ArrayConverter(converter));
-			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(converter, activators, _add));
-			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, converter));
+			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, parameter));
+			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
+			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter, activators, _add));
+			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, parameter));
 		}
 
 		class InstanceConverter : Converter
