@@ -38,19 +38,6 @@ namespace ExtendedXmlSerialization
 		readonly IXmlContextFactory _factory;
 		readonly IConverterSelector _selector;
 
-		/*public ExtendedXmlSerializer() : this(new Namespaces(), new CollectionItemTypeLocator()) {}
-
-		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator)
-			: this(namespaces, locator, new AddDelegates(locator, new AddMethodLocator())) {}
-
-		public ExtendedXmlSerializer(INamespaces namespaces, ICollectionItemTypeLocator locator, IAddDelegates add)
-			: this(new Elements(locator, add), namespaces, new Types(namespaces, new TypeContexts()), add) {}
-
-		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, ITypes types, IAddDelegates add)
-			: this(new XmlContextFactory(elements, namespaces, types), new ConverterOptions(add)) {}*/
-
-		/*public ExtendedXmlSerializer() : this(Services.Default, Services.Default) {}*/
-
 		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverterOptions options)
 		{
 			_factory = factory;
