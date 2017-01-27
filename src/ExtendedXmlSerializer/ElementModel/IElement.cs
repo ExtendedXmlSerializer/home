@@ -21,7 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ElementModel.Names;
+
 namespace ExtendedXmlSerialization.ElementModel
 {
+	public interface INamedElement : IElement
+	{
+		IName Name { get; }
+	}
+
 	public interface IElement : IClassification {}
 }

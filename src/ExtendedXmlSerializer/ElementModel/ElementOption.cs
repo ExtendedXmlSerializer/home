@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
@@ -31,6 +32,6 @@ namespace ExtendedXmlSerialization.ElementModel
 		public ElementOption(INames names) : base(names) {}
 		public ElementOption(ISpecification<TypeInfo> specification, INames names) : base(specification, names) {}
 
-		protected override IElement Create(string displayName, TypeInfo classification) => new Element(displayName, classification);
+		protected override IElement Create(IName name) => new Element(name);
 	}
 }

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IContext : IServiceProvider
 	{
-		IContainerElement Container { get; }
+		IContainer Container { get; }
 
 		IElement Element { get; }
 	}

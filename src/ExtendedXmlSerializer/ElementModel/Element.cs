@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class Element : NamedElementBase
 	{
-		public Element(string displayName, TypeInfo classification) : base(displayName, classification) {}
+		public Element(IName name) : base(name) {}
 	}
 }

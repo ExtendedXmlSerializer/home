@@ -21,10 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public interface IElementNameOption : IOption<MemberInfo, string> {}
+	public interface IContainer : IElement
+	{
+		IElement Element { get; }
+	}
+
+	public interface IContainer<out T> : IContainer where T : IElement
+	{
+		new T Element { get; }
+	}
 }

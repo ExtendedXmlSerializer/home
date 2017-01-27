@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ElementModel
 {
 	public class DictionaryMembers : Members.Members
 	{
-		public DictionaryMembers(IElement key, IElement value) : this(DictionaryEntryElement.Name.Classification, key, value) {}
+		public DictionaryMembers(IElement key, IElement value) : this(DictionaryEntryElement.Item.Classification, key, value) {}
 
 		DictionaryMembers(TypeInfo classification, IElement key, IElement value)
 			: this(
@@ -39,8 +39,8 @@ namespace ExtendedXmlSerialization.ElementModel
 		DictionaryMembers(MemberInfo key, MemberInfo value, IGetterFactory getter, ISetterFactory setter,
 		                  IElement keyElement, IElement valueElement)
 			: base(
-				new MemberElement(key.Name, key, setter.Get(key), getter.Get(key), keyElement),
-				new MemberElement(value.Name, value, setter.Get(value), getter.Get(value), valueElement)
+				new Member(key, setter.Get(key), getter.Get(key), keyElement),
+				new Member(value, setter.Get(value), getter.Get(value), valueElement)
 			) {}
 	}
 }

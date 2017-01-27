@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.ElementModel
 			_locator = locator;
 		}
 
-		public IContainerElement Get(TypeInfo parameter)
+		public ICollectionItem Get(TypeInfo parameter)
 		{
 			var pair = _locator.Get(parameter);
 			var members = new DictionaryMembers(_elements.Get(pair.KeyType), _elements.Get(pair.ValueType));

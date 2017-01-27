@@ -22,18 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Names;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public abstract class ContainerElementBase : ElementBase, IContainerElement
+	public interface IMember : IContainer, IName
 	{
-		protected ContainerElementBase(IElement element)
-		{
-			Element = element;
-		}
+		MemberInfo Metadata { get; }
 
-		public IElement Element { get; }
+		object Get(object instance);
 
-		public override TypeInfo Classification => Element.Classification;
+		void Assign(object instance, object value);
 	}
 }

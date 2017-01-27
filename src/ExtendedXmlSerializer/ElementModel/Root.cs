@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class Root : ContainerElementBase, IRoot
+	public class Root : ContainerBase, IRoot
 	{
 		public Root(IElement element) : base(element) {}
 	}

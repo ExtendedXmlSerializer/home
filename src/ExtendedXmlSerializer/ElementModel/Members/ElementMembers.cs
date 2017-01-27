@@ -93,13 +93,13 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 
 		struct Sorting
 		{
-			public Sorting(IMemberElement member, Sort sort)
+			public Sorting(IMember member, Sort sort)
 			{
 				Member = member;
 				Sort = sort;
 			}
 
-			public IMemberElement Member { get; }
+			public IMember Member { get; }
 			public Sort Sort { get; }
 		}
 	}

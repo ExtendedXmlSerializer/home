@@ -21,15 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
-{
-	public interface IContainerElement : IElement
-	{
-		IElement Element { get; }
-	}
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel.Names;
 
-	public interface IContainerElement<out T> : IContainerElement where T : IElement
-	{
-		new T Element { get; }
-	}
+namespace ExtendedXmlSerialization.Conversion.Xml
+{
+	public interface INames : IParameterizedSource<IName, XName> {}
 }

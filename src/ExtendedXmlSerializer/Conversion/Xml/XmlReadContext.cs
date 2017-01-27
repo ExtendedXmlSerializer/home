@@ -27,19 +27,20 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class XmlReadContext : XmlReadContext<IContainerElement>
+	public class XmlReadContext : XmlReadContext<IContainer>
 	{
-		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, XElement data)
+		public XmlReadContext(IXmlReadContextFactory factory, IContainer container, XElement data)
 			: base(factory, container, data) {}
 
-		public XmlReadContext(IXmlReadContextFactory factory, IContainerElement container, IElement element, XElement data)
+		public XmlReadContext(IXmlReadContextFactory factory, IContainer container, IElement element, XElement data)
 			: base(factory, container, element, data) {}
 	}
 
-	public abstract class XmlReadContext<T> : IReadContext<T> where T : class, IContainerElement
+	public abstract class XmlReadContext<T> : IReadContext<T> where T : class, IContainer
 	{
 		readonly IXmlReadContextFactory _factory;
 		readonly XElement _data;
@@ -57,7 +58,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public T Container { get; }
 		public IElement Element { get; }
-		IContainerElement IContext.Container => Container;
+		IContainer IContext.Container => Container;
 
 		public object GetService(Type serviceType) => _data.AnnotationAll(serviceType);
 

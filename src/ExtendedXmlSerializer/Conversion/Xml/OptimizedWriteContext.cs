@@ -48,10 +48,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public object GetService(Type serviceType) => _context.GetService(serviceType);
 
-		public IContainerElement Container => _context.Container;
+		public IContainer Container => _context.Container;
 		public IElement Element => _context.Element;
 
-		public IWriteContext New(IContainerElement container, TypeInfo instanceType) => _context.New(container, instanceType);
+		public IWriteContext New(IContainer container, TypeInfo instanceType) => _context.New(container, instanceType);
 
 		public IDisposable Emit()
 		{
@@ -65,10 +65,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				switch (i)
 				{
 					case 0:
-						_writer.WriteAttributeString(Prefix, name.NamespaceName);
+						_writer.WriteAttributeString(Prefix, name.Namespace.NamespaceName);
 						break;
 					default:
-						_writer.WriteAttributeString(Prefix, name.LocalName, string.Empty, name.NamespaceName);
+						_writer.WriteAttributeString(Prefix, name.Prefix, string.Empty, name.Namespace.NamespaceName);
 						break;
 				}
 			}
@@ -78,6 +78,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public void Write(string text) => _context.Write(text);
 
-		public void Write(IName name, object value) => _context.Write(name, value);
+		/*public void Write(IName name, object value) => _context.Write(name, value);*/
 	}
 }

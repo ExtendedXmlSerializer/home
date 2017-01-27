@@ -21,11 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public interface INameConverter : IParameterizedSource<IName, XName> {}
+	public class NameProvider : NameProviderBase
+	{
+		public static NameProvider Default { get; } = new NameProvider();
+		NameProvider() : this(TypeFormatter.Default) {}
+
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
+
+		public NameProvider(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
+
+		public NameProvider(IAliasProvider alias, ITypeFormatter formatter)
+		{
+			_alias = alias;
+			_formatter = formatter;
+		}
+
+		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(type) ?? _formatter.Get(type), type);
+	}
 }

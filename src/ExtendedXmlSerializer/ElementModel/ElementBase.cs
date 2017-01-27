@@ -22,11 +22,29 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
+	public abstract class NamedElementBase : ElementBase, INamedElement
+	{
+		protected NamedElementBase(IName name) : this(name, name.Classification) {}
+
+		protected NamedElementBase(IName name, TypeInfo classification) : base(classification)
+		{
+			Name = name;
+		}
+
+		public IName Name { get; }
+	}
+
 	public abstract class ElementBase : IElement
 	{
-		public abstract TypeInfo Classification { get; }
+		protected ElementBase(TypeInfo classification)
+		{
+			Classification = classification;
+		}
+
+		public TypeInfo Classification { get; }
 	}
 }

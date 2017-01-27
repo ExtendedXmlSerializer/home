@@ -24,6 +24,7 @@
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
@@ -39,8 +40,8 @@ namespace ExtendedXmlSerialization.ElementModel
 			_names = names;
 		}
 
-		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
+		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter));
 
-		protected abstract IElement Create(string displayName, TypeInfo classification);
+		protected abstract IElement Create(IName name);
 	}
 }

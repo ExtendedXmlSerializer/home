@@ -31,10 +31,7 @@ namespace ExtendedXmlSerialization.Conversion.Write
 		{
 			using (context.Emit())
 			{
-				if (instance != null) // TODO: Make this configurable.
-				{
-					base.Write(context, instance);
-				}
+				base.Write(context, instance);
 			}
 		}
 	}

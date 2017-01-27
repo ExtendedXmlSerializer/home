@@ -25,7 +25,8 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Names;
+using Defaults = ExtendedXmlSerialization.ElementModel.Names.Defaults;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
@@ -55,7 +56,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			for (var i = 0; i < length; i++)
 			{
 				var name = _known[i];
-				if (ns == _namespaces.Get(name.Classification)?.NamespaceName && localName == name.DisplayName)
+				if (ns == _namespaces.Get(name.Classification)?.Namespace.NamespaceName && localName == name.DisplayName)
 				{
 					return name.Classification;
 				}

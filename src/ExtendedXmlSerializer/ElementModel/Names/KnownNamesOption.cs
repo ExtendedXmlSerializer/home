@@ -23,18 +23,22 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class EnumerableNameOption : ElementNameOptionBase
+	public class EnumerableNameOption : NameOptionBase
 	{
-		public EnumerableNameOption(ICollectionItemTypeLocator locator) : this(new EnumerableNameProvider(locator).Get) {}
+		public EnumerableNameOption(ICollectionItemTypeLocator locator) : this(new NameProvider(new EnumerableTypeFormatter(locator)).Get) {}
 
-		public EnumerableNameOption(Func<MemberInfo, string> source) : base(Specification.Instance, source) {}
+		public EnumerableNameOption(Func<MemberInfo, IName> source) : base(Specification.Instance, source) {}
 
 		sealed class Specification : ISpecification<MemberInfo>
 		{
@@ -50,5 +54,14 @@ namespace ExtendedXmlSerialization.ElementModel
 				return result;
 			}
 		}
+	}
+
+	public class KnownNamesOption : NameOptionBase
+	{
+		public KnownNamesOption(ImmutableArray<IName> names)
+			: this(names.ToDictionary(x => x.Classification)) {}
+
+		public KnownNamesOption(IDictionary<TypeInfo, IName> names)
+			: base(new DelegatedSpecification<TypeInfo>(names.ContainsKey), names.TryGet) {}
 	}
 }

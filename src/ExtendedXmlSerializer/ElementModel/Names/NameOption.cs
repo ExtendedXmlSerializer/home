@@ -21,14 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class ElementNameOption<T> : ElementNameOptionBase
+	public class NameOption : NameOptionBase
 	{
-		public static ElementNameOption<T> Default { get; } = new ElementNameOption<T>();
-		ElementNameOption() : base(IsAssignableSpecification<T>.Default.Adapt(), x => x.Name) {}
+		public static NameOption Default { get; } = new NameOption();
+		NameOption() : base(NameProvider.Default.Get) {}
 	}
 }

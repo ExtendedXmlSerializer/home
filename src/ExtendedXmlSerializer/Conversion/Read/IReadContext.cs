@@ -24,10 +24,11 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-	public interface IReadContext<out T> : IReadContext where T : IContainerElement
+	public interface IReadContext<out T> : IReadContext where T : IContainer
 	{
 		new T Container { get; }
 	}

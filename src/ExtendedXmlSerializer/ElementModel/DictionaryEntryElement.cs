@@ -24,15 +24,16 @@
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class DictionaryEntryElement : MemberedElement
 	{
-		public static IName Name { get; } = new Name("Item", typeof(DictionaryEntry).GetTypeInfo());
+		public static IName Item { get; } = new Name("Item", typeof(DictionaryEntry).GetTypeInfo());
 
-		public DictionaryEntryElement(IMembers members) : this(Name, members) {}
+		public DictionaryEntryElement(IMembers members) : this(Item, members) {}
 
-		public DictionaryEntryElement(IName name, IMembers members) : base(name.DisplayName, name.Classification, members) {}
+		public DictionaryEntryElement(IName name, IMembers members) : base(name, members) {}
 	}
 }

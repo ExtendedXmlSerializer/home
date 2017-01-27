@@ -29,12 +29,10 @@ namespace ExtendedXmlSerialization.Conversion.Write
 {
 	public interface IWriteContext : IContext
 	{
-		IWriteContext New(IContainerElement container, TypeInfo instanceType);
+		IWriteContext New(IContainer container, TypeInfo instanceType);
 
 		IDisposable Emit();
 
 		void Write(string text);
-
-		void Write(IName name, object value);
 	}
 }

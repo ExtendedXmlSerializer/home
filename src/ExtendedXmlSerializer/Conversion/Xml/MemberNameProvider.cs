@@ -24,21 +24,33 @@
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
+	public class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	{
+		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
+		MemberAliasProvider() {}
+
+		protected override string GetItem(MemberInfo parameter)
+		{
+			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+		}
+	}
+
 	public class MemberNameProvider : NameProviderBase
 	{
+		readonly IAliasProvider _alias;
 		public static MemberNameProvider Default { get; } = new MemberNameProvider();
-		MemberNameProvider() {}
+		MemberNameProvider() : this(MemberAliasProvider.Default) {}
 
-		protected override string Create(TypeInfo type, MemberInfo member)
+		public MemberNameProvider(IAliasProvider alias)
 		{
-			var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			             member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
-			             member.Name;
-			return result;
+			_alias = alias;
 		}
+
+		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(member) ?? member.Name, type);
 	}
 }

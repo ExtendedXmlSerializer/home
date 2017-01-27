@@ -24,11 +24,10 @@
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public abstract class ConverterOptionBase<T> : IConverterOption where T : IClassification
+	public abstract class ConverterOptionBase<T> : IConverterOption
 	{
 		readonly ISpecification<TypeInfo> _specification;
 

@@ -25,7 +25,6 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -35,15 +34,15 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public ObjectNamespaces(IElements elements) : this(elements, new Namespaces(new GeneratedPrefixProvider()).Get) {}
 
 		readonly IElements _elements;
-		readonly Func<TypeInfo, XName> _namespaces;
+		readonly Func<TypeInfo, INamespace> _namespaces;
 
-		public ObjectNamespaces(IElements elements, Func<TypeInfo, XName> namespaces)
+		public ObjectNamespaces(IElements elements, Func<TypeInfo, INamespace> namespaces)
 		{
 			_elements = elements;
 			_namespaces = namespaces;
 		}
 
-		public ImmutableArray<XName> Get(object parameter)
+		public ImmutableArray<INamespace> Get(object parameter)
 			=> new ObjectTypeWalker(_elements, parameter)
 				.Get()
 				.Distinct()

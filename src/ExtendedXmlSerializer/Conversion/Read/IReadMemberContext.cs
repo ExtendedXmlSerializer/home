@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Read
 {
-	public interface IReadMemberContext : IReadContext<IMemberElement> {}
+	public interface IReadMemberContext : IReadContext<IMember> {}
 }

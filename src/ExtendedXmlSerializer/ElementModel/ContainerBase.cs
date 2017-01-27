@@ -25,15 +25,22 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class NamedElementBase : ElementBase, IName
+	public abstract class ContainerBase : ContainerBase<IElement>
 	{
-		protected NamedElementBase(string displayName, TypeInfo classification)
+		protected ContainerBase(IElement element) : base(element) {}
+	}
+
+	public abstract class ContainerBase<T> : ElementBase, IContainer<T> where T : IElement
+	{
+		protected ContainerBase(T element) : this(element, element.Classification) {}
+
+		protected ContainerBase(T element, TypeInfo classification) : base(classification)
 		{
-			DisplayName = displayName;
-			Classification = classification;
+			Element = element;
 		}
 
-		public override TypeInfo Classification { get; }
-		public string DisplayName { get; }
+		IElement IContainer.Element => Element;
+
+		public T Element { get; }
 	}
 }

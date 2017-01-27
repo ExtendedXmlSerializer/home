@@ -26,11 +26,11 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	class MemberElementSelector : OptionSelector<MemberInformation, IMemberElement>, IMemberElementSelector
+	class MemberElementSelector : OptionSelector<MemberInformation, IMember>, IMemberElementSelector
 	{
 		public MemberElementSelector(IElements elements, IAddDelegates add)
 			: this(new MemberOption(elements), new ReadOnlyCollectionMemberOption(elements, add)) {}
 
-		public MemberElementSelector(params IOption<MemberInformation, IMemberElement>[] options) : base(options) {}
+		public MemberElementSelector(params IOption<MemberInformation, IMember>[] options) : base(options) {}
 	}
 }

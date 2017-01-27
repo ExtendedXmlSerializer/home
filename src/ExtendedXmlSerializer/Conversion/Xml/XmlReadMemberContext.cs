@@ -28,9 +28,9 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class XmlReadMemberContext : XmlReadContext<IMemberElement>, IReadMemberContext
+	public class XmlReadMemberContext : XmlReadContext<IMember>, IReadMemberContext
 	{
-		public XmlReadMemberContext(IXmlReadContextFactory factory, IMemberElement container, IElement element,
+		public XmlReadMemberContext(IXmlReadContextFactory factory, IMember container, IElement element,
 		                            XElement data)
 			: base(factory, container, element, data) {}
 	}

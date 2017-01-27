@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ITypes _types;
 
 		public XmlContextFactory(IElements elements, INamespaces namespaces, ITypes types)
-			: this(elements, namespaces, new XmlReadContextFactory(elements, types, new NameConverter(namespaces)), types) {}
+			: this(elements, namespaces, new XmlReadContextFactory(elements, types, new Names(namespaces)), types) {}
 
 		public XmlContextFactory(IElements elements, INamespaces namespaces, IXmlReadContextFactory factory, ITypes types)
 		{
@@ -53,7 +53,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		{
 			var element = _elements.Get(instance.GetType().GetTypeInfo());
 			var root = new Root(element);
-			var result = new XmlWriteContext(_namespaces, _elements, writer, root);
+			var factory = new XmlWriteContextFactory(_elements, _namespaces, writer);
+			var result = new XmlWriteContext(factory, root);
 			return result;
 		}
 

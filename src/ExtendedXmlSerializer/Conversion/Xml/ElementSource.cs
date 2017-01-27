@@ -24,9 +24,10 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
+using Defaults = ExtendedXmlSerialization.ElementModel.Names.Defaults;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
@@ -36,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
 			: base(
-				new Names(locator, known), locator, add, known.Select(x => x.Classification),
+				new ElementModel.Names.Names(known, locator), locator, add, known.Select(x => x.Classification),
 				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
 				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
 			) {}

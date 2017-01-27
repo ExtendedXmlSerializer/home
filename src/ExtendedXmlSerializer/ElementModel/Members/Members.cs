@@ -31,23 +31,23 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 {
 	public class Members : IMembers
 	{
-		readonly ImmutableArray<IMemberElement> _members;
-		readonly IDictionary<string, IMemberElement> _lookup;
+		readonly ImmutableArray<IMember> _members;
+		readonly IDictionary<string, IMember> _lookup;
 
-		public Members(params IMemberElement[] members) : this(members.ToImmutableArray()) {}
+		public Members(params IMember[] members) : this(members.ToImmutableArray()) {}
 
-		public Members(IEnumerable<IMemberElement> members) : this(members.ToImmutableArray()) {}
-		public Members(ImmutableArray<IMemberElement> members) : this(members, members.ToDictionary(x => x.DisplayName)) {}
+		public Members(IEnumerable<IMember> members) : this(members.ToImmutableArray()) {}
+		public Members(ImmutableArray<IMember> members) : this(members, members.ToDictionary(x => x.DisplayName)) {}
 
-		public Members(ImmutableArray<IMemberElement> members, IDictionary<string, IMemberElement> lookup)
+		public Members(ImmutableArray<IMember> members, IDictionary<string, IMember> lookup)
 		{
 			_members = members;
 			_lookup = lookup;
 		}
 
-		public IMemberElement Get(string parameter) => _lookup.TryGet(parameter);
+		public IMember Get(string parameter) => _lookup.TryGet(parameter);
 
-		public IEnumerator<IMemberElement> GetEnumerator()
+		public IEnumerator<IMember> GetEnumerator()
 		{
 			foreach (var element in _members)
 			{

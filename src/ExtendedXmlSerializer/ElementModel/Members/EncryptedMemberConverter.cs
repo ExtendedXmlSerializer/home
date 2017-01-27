@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 
 			public object GetService(Type serviceType) => _context.GetService(serviceType);
 
-			public IContainerElement Container => _context.Container;
+			public IContainer Container => _context.Container;
 
 			public IElement Element => _context.Element;
 

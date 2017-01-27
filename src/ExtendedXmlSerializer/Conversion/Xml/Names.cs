@@ -21,12 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.TypeModel;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel.Names;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	sealed class EnumerableNameProvider : NameProvider
+	public class Names : CacheBase<IName, XName>, INames
 	{
-		public EnumerableNameProvider(ICollectionItemTypeLocator locator) : base(new EnumerableTypeFormatter(locator)) {}
+		readonly INamespaces _namespaces;
+
+		public Names(INamespaces namespaces)
+		{
+			_namespaces = namespaces;
+		}
+
+		protected override XName Create(IName parameter)
+			=> XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification).Namespace.ToString());
 	}
 }

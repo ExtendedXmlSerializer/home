@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ElementModel
 			_members = members;
 		}
 
-		protected override IElement Create(string displayName, TypeInfo classification)
-			=> new MemberedElement(displayName, classification, _members.Get(classification));
+		protected override IElement Create(IName name)
+			=> new MemberedElement(name, _members.Get(name.Classification));
 	}
 }

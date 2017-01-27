@@ -21,16 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public interface IMemberElement : IContainerElement, IName
+	public class ReadOnlyCollectionMember : Member, IReadOnlyCollectionMember
 	{
-		MemberInfo Metadata { get; }
+		public ReadOnlyCollectionMember(string displayName, MemberInfo metadata, Action<object, object> add,
+		                                       Func<object, object> getter, IElement element)
+			: base(displayName, metadata, add, getter, element) {}
 
-		object Get(object instance);
-
-		void Assign(object instance, object value);
+		public override void Assign(object instance, object value)
+		{
+			var collection = Get(instance);
+			foreach (var element in value.AsValid<IEnumerable>())
+			{
+				base.Assign(collection, element);
+			}
+		}
 	}
 }

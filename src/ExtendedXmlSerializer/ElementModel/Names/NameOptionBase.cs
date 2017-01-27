@@ -21,22 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class NameConverter : CacheBase<IName, XName>, INameConverter
+	public abstract class NameOptionBase : Option<TypeInfo, IName>, INameOption
 	{
-		readonly INamespaces _namespaces;
+		protected NameOptionBase(Func<TypeInfo, IName> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
 
-		public NameConverter(INamespaces namespaces)
-		{
-			_namespaces = namespaces;
-		}
-
-		protected override XName Create(IName parameter)
-			=> XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification).NamespaceName);
+		protected NameOptionBase(ISpecification<TypeInfo> specification, Func<TypeInfo, IName> source)
+			: base(specification, source) {}
 	}
 }

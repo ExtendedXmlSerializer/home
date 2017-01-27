@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ElementModel.Names;
+
 namespace ExtendedXmlSerialization.ElementModel
 {
 	abstract class FrameworkPropertyBase : Name

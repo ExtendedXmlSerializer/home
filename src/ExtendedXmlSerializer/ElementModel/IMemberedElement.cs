@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public interface IMemberedElement : IElement, IName
+	public interface IMemberedElement : INamedElement
 	{
 		IMembers Members { get; }
 	}

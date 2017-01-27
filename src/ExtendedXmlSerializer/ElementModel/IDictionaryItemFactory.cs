@@ -3,5 +3,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public interface IDictionaryItemFactory : IParameterizedSource<TypeInfo, IContainerElement> {}
+	public interface IDictionaryItemFactory : IParameterizedSource<TypeInfo, ICollectionItem> {}
 }

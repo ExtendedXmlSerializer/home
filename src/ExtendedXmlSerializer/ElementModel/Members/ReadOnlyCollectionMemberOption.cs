@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
@@ -44,13 +45,13 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 			_add = add;
 		}
 
-		protected override IMemberElement Create(MemberInformation parameter, string name)
+		protected override IMember Create(MemberInformation parameter, IName name)
 		{
 			var add = _add.Get(parameter.MemberType);
 			if (add != null)
 			{
 				var getter = _getter.Get(parameter.Metadata);
-				var result = new ReadOnlyCollectionMemberElement(name, parameter.Metadata, add, getter,
+				var result = new ReadOnlyCollectionMember(name.DisplayName, parameter.Metadata, add, getter,
 				                                                 _elements.Get(parameter.MemberType));
 				return result;
 			}

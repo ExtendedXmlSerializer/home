@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ConditionMonitor _framework = new ConditionMonitor();
 
 		readonly IElements _elements;
-		readonly static TypeInfo FrameworkType = ElementModel.Defaults.FrameworkType;
+		readonly static TypeInfo FrameworkType = Defaults.FrameworkType;
 
 		public ObjectTypeWalker(IElements elements, object root) : base(root)
 		{

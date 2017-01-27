@@ -1,6 +1,7 @@
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
@@ -16,9 +17,8 @@ namespace ExtendedXmlSerialization.ElementModel
 			_members = members;
 		}
 
-		protected override IElement Create(string displayName, TypeInfo collectionType, IElement item) =>
-			Create(displayName, collectionType, _members.Get(collectionType), item);
+		protected override IElement Create(IName name, INamedElement item) => Create(name, _members.Get(name.Classification), item);
 
-		protected abstract IElement Create(string displayName, TypeInfo collectionType, IMembers members, IElement item);
+		protected abstract IElement Create(IName name, IMembers members, INamedElement item);
 	}
 }

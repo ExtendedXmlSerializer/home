@@ -54,11 +54,11 @@ namespace ExtendedXmlSerialization.ElementModel
 				_members = members;
 			}
 
-			public IEnumerator<IMemberElement> GetEnumerator() => _members().GetEnumerator();
+			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-			public IMemberElement Get(string parameter) => _members().Get(parameter);
+			public IMember Get(string parameter) => _members().Get(parameter);
 		}
 	}
 }

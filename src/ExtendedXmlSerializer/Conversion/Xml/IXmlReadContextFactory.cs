@@ -24,12 +24,13 @@
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public interface IXmlReadContextFactory
 	{
-		IReadContext Create(IContainerElement container, XElement data);
+		IReadContext Create(IContainer container, XElement data);
 
 		string Value(IName name, XElement data);
 	}

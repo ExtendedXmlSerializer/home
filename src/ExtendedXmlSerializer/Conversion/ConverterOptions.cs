@@ -24,16 +24,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
+using Emitter = ExtendedXmlSerialization.Conversion.Write.Emitter;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IConverterOptions : IParameterizedSource<IRootConverter, IConverterSelector> {}
+
 	sealed class ConverterOptions : IConverterOptions
 	{
 		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
@@ -57,21 +58,15 @@ namespace ExtendedXmlSerialization.Conversion
 			var emitter = new Emitter(element);
 			var converter = new Converter(element, emitter);
 			yield return
-				new ConverterOption<IReadOnlyCollectionMemberElement>(new Converter(new EnumeratingReader(converter), emitter));
-			yield return new ConverterOption<IMemberElement>(converter);
+				new ConverterOption<IReadOnlyCollectionMember>(new Converter(new EnumeratingReader(converter), emitter));
+			yield return new ConverterOption<IMember>(converter);
 			yield return new ConverterOption<IRoot>(converter);
-			
+
 			var activators = new Activators();
 			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, parameter));
 			yield return new ConverterOption<IArrayElement>(new ArrayConverter(parameter));
 			yield return new ConverterOption<ICollectionElement>(new EnumerableConverter(parameter, activators, _add));
-			yield return new ConverterOption<IActivatedElement>(new InstanceConverter(activators, parameter));
-		}
-
-		class InstanceConverter : Converter
-		{
-			public InstanceConverter(IActivators activators, IConverter converter)
-				: base(new InstanceBodyReader(activators, converter), new InstanceBodyWriter(converter)) {}
+			yield return new ConverterOption<IActivatedElement>(new ActivatedInstanceConverter(activators, parameter));
 		}
 	}
 }

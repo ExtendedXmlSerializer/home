@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
@@ -41,11 +42,11 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 			_elements = elements;
 		}
 
-		protected override IMemberElement Create(MemberInformation parameter, string name)
+		protected override IMember Create(MemberInformation parameter, IName name)
 		{
 			var getter = _getter.Get(parameter.Metadata);
 			var setter = _setter.Get(parameter.Metadata);
-			var result = new MemberElement(name, parameter.Metadata, setter, getter, _elements.Get(parameter.MemberType));
+			var result = new Member(name.DisplayName, parameter.Metadata, setter, getter, _elements.Get(parameter.MemberType));
 			return result;
 		}
 	}

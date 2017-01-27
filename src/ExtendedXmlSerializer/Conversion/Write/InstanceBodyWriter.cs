@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Write
@@ -38,7 +39,12 @@ namespace ExtendedXmlSerialization.Conversion.Write
 		{
 			foreach (var member in ((IMemberedElement) context.Element).Members)
 			{
-				_writer.New(context, member, member.Get(instance));
+				var value = member.Get(instance);
+				if (value != null)
+				{
+					var child = context.New(member, value.GetType().GetTypeInfo());
+					_writer.Write(child, value);
+				}
 			}
 		}
 	}

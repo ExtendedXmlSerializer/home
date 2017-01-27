@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	class DictionaryElement : MemberedCollectionElementBase, IDictionaryElement
 	{
-		public DictionaryElement(string displayName, TypeInfo classification, IContainerElement item, IMembers members)
-			: base(displayName, classification, item, members) {}
+		public DictionaryElement(IName name, ICollectionItem item, IMembers members) : base(name, item, members) {}
 	}
 }

@@ -21,21 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ElementModel.Members
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public abstract class MemberElementBase : ContainerElementBase, IMemberElement
+	public class Name : ElementBase, IEquatable<IName>, IName
 	{
-		protected MemberElementBase(string displayName, MemberInfo metadata, IElement element) : base(element)
+		public Name(string name, Type classification) : this(name, classification.GetTypeInfo()) {}
+
+		public Name(string name, TypeInfo classification) : base(classification)
 		{
-			DisplayName = displayName;
-			Metadata = metadata;
+			DisplayName = name;
 		}
 
-		public abstract object Get(object instance);
-		public abstract void Assign(object instance, object value);
 		public string DisplayName { get; }
-		public MemberInfo Metadata { get; }
+		
+		public bool Equals(IName other) => Equals(Classification, other?.Classification);
+
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is Name && Equals((Name) obj);
+
+		public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
+
+		public static bool operator ==(Name left, Name right) => left.Equals(right);
+
+		public static bool operator !=(Name left, Name right) => !left.Equals(right);
 	}
 }

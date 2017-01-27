@@ -26,13 +26,16 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public class MemberElement : MemberElementBase
+	public class Member : MemberBase
 	{
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public MemberElement(string displayName, MemberInfo metadata, Action<object, object> setter, Func<object, object> getter,
-		                     IElement element) : base(displayName, metadata, element)
+		public Member(MemberInfo metadata, Action<object, object> setter, Func<object, object> getter, IElement element)
+			: this(metadata.Name, metadata, setter, getter, element) {}
+
+		public Member(string displayName, MemberInfo metadata, Action<object, object> setter, Func<object, object> getter,
+		              IElement element) : base(displayName, metadata, element)
 		{
 			_setter = setter;
 			_getter = getter;

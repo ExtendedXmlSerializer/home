@@ -25,6 +25,7 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
@@ -32,13 +33,13 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly IElements _elements;
 		readonly ITypes _types;
-		readonly INameConverter _converter;
+		readonly INames _converter;
 		readonly XName _type;
 
-		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter)
+		public XmlReadContextFactory(IElements elements, ITypes types, INames converter)
 			: this(elements, types, converter, converter.Get(TypeProperty.Default)) {}
 
-		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter, XName type)
+		public XmlReadContextFactory(IElements elements, ITypes types, INames converter, XName type)
 		{
 			_elements = elements;
 			_types = types;
@@ -46,10 +47,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_type = type;
 		}
 
-		public IReadContext Create(IContainerElement container, XElement data)
+		public IReadContext Create(IContainer container, XElement data)
 		{
 			var element = Element(container, data);
-			var member = container as IMemberElement;
+			var member = container as IMember;
 			if (member != null)
 			{
 				return new XmlReadMemberContext(this, member, element, data);
@@ -59,14 +60,14 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return result;
 		}
 
-		IElement Element(IContainerElement container, XElement element)
+		IElement Element(IContainer container, XElement element)
 		{
 			var data = Attribute(element, _type);
 			if (data != null)
 			{
 				var name = GetName(data, element);
-				var typeInfo = _types.Get(name) ?? container.Classification;
-				var result = _elements.Load(container, typeInfo);
+				var instanceType = _types.Get(name) ?? container.Classification;
+				var result = _elements.Load(container, instanceType);
 				return result;
 			}
 			return container.Element;

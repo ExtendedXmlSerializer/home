@@ -21,23 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.Read;
+using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Conversion
 {
-	public class Names : Selector<MemberInfo, string>, INames
+	class ActivatedInstanceConverter : Converter
 	{
-		public Names(ICollectionItemTypeLocator locator, ImmutableArray<IName> names)
-			: this(
-				new KnownElementNames(names),
-				ElementNameOption<Enum>.Default,
-				new EnumerableNameOption(locator),
-				DefaultElementNameOption.Default) {}
-
-		public Names(params IElementNameOption[] options) : base(options) {}
+		public ActivatedInstanceConverter(IActivators activators, IConverter converter)
+			: base(new InstanceBodyReader(activators, converter), new InstanceBodyWriter(converter)) {}
 	}
 }

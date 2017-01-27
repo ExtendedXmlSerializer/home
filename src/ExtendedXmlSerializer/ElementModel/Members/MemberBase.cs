@@ -21,13 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.ElementModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public static class Defaults
+	public abstract class MemberBase : ContainerBase, IMember
 	{
-		public static ImmutableArray<IName> Names { get; } = new KnownNames().ToImmutableArray();
+		protected MemberBase(string displayName, MemberInfo metadata, IElement element) : base(element)
+		{
+			DisplayName = displayName;
+			Metadata = metadata;
+		}
+
+		public abstract object Get(object instance);
+		public abstract void Assign(object instance, object value);
+		public string DisplayName { get; }
+		public MemberInfo Metadata { get; }
 	}
 }

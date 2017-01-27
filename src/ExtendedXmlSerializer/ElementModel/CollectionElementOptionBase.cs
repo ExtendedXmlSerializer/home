@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
@@ -39,9 +40,8 @@ namespace ExtendedXmlSerialization.ElementModel
 			_locator = locator;
 		}
 
-		protected override IElement Create(string displayName, TypeInfo parameter)
-			=> Create(displayName, parameter, _elements.Get(_locator.Get(parameter)));
+		protected override IElement Create(IName name) => Create(name, (INamedElement)_elements.Get(_locator.Get(name.Classification)));
 
-		protected abstract IElement Create(string displayName, TypeInfo collectionType, IElement item);
+		protected abstract IElement Create(IName name, INamedElement item);
 	}
 }

@@ -22,108 +22,35 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
-using System.Xml;
 using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	class XmlWriteContext : IWriteContext
 	{
-		readonly IElements _selector;
-		readonly INamespaces _namespaces;
-		readonly XmlWriter _writer;
-		readonly ImmutableArray<object> _services;
-		readonly IDisposable _finish;
+		readonly IXmlWriteContextFactory _factory;
 
-		public XmlWriteContext(INamespaces namespaces, IElements elements, XmlWriter writer, IRoot root)
-			: this(namespaces, elements, writer, root, writer) {}
+		public XmlWriteContext(IXmlWriteContextFactory factory, IContainer container) : this(factory, container, container.Element) {}
 
-		public XmlWriteContext(INamespaces namespaces, IElements selector, XmlWriter writer, IRoot root,
-		                       params object[] services)
-			: this(
-				selector, namespaces, root, root.Element, writer, services.ToImmutableArray(),
-				new DelegatedDisposable(writer.WriteEndElement)) {}
-
-		XmlWriteContext(IElements selector, INamespaces namespaces, IContainerElement container, IElement element,
-		                XmlWriter writer,
-		                ImmutableArray<object> services, IDisposable finish)
+		public XmlWriteContext(IXmlWriteContextFactory factory, IContainer container, IElement element)
 		{
-			_selector = selector;
-			_namespaces = namespaces;
+			_factory = factory;
 			Container = container;
 			Element = element;
-			_writer = writer;
-			_services = services;
-			_finish = finish;
 		}
 
-		public IContainerElement Container { get; }
+		public IContainer Container { get; }
 		public IElement Element { get; }
 
-		public object GetService(Type serviceType)
-		{
-			var info = serviceType.GetTypeInfo();
-			var length = _services.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var service = _services[i];
-				if (info.IsInstanceOfType(service))
-				{
-					return service;
-				}
-			}
-			return null;
-		}
+		public object GetService(Type serviceType) => _factory.GetService(serviceType);
 
-		public IDisposable Emit()
-		{
-			var display = Container as IName ?? Element as IName;
-			if (display != null)
-			{
-				if (Container is IMemberElement)
-				{
-					_writer.WriteStartElement(display.DisplayName);
-				}
-				else
-				{
-					var ns = _namespaces.Get(display.Classification);
-					_writer.WriteStartElement(display.DisplayName, ns.NamespaceName);
-				}
+		public IDisposable Emit() => _factory.Start(this);
 
-/*var type = instance.GetType().GetTypeInfo();
-			if (!context.Container.Exact(type))
-			{
-				context.Write(TypeProperty.Default, type);
-			}*/
+		public void Write(string text) => _factory.Execute(text);
 
-				return _finish;
-			}
-			throw new SerializationException(
-				$"Display name not found for element '{Element}' within a container of '{Container}.'");
-		}
-
-		public void Write(string text) => _writer.WriteString(text);
-
-		public void Write(IName name, object value)
-		{
-			var type = value as TypeInfo;
-			if (type != null) // TODO: Make this a selector.
-			{
-				_writer.WriteStartAttribute(name.DisplayName, _namespaces.Get(name.Classification).NamespaceName);
-				_writer.WriteQualifiedName(TypeFormatter.Default.Format(type), _namespaces.Get(type).NamespaceName);
-				_writer.WriteEndAttribute();
-			}
-		}
-
-		public IWriteContext New(IContainerElement parameter, TypeInfo instanceType)
-			=> Create(parameter, _selector.Load(parameter, instanceType));
-
-		XmlWriteContext Create(IContainerElement container, IElement element)
-			=> new XmlWriteContext(_selector, _namespaces, container, element, _writer, _services, _finish);
+		public IWriteContext New(IContainer container, TypeInfo instanceType)
+			=> _factory.Create(container, instanceType);
 	}
 }

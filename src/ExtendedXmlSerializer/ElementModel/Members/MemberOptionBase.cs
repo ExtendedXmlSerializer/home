@@ -25,26 +25,26 @@ using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberElement>, IMemberOption
+	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
-		readonly IParameterizedSource<MemberInfo, string> _provider;
+		readonly IParameterizedSource<MemberInfo, IName> _provider;
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification)
 			: this(specification, MemberNameProvider.Default) {}
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification,
-		                           IParameterizedSource<MemberInfo, string> provider)
+		                           IParameterizedSource<MemberInfo, IName> provider)
 			: base(specification)
 		{
 			_provider = provider;
 		}
 
-		public override IMemberElement Get(MemberInformation parameter)
-			=> Create(parameter, _provider.Get(parameter.Metadata));
+		public override IMember Get(MemberInformation parameter) => Create(parameter, _provider.Get(parameter.Metadata));
 
-		protected abstract IMemberElement Create(MemberInformation parameter, string name);
+		protected abstract IMember Create(MemberInformation parameter, IName name);
 	}
 }
