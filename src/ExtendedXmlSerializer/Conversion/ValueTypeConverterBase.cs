@@ -26,15 +26,25 @@ using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Write;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Options;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public abstract class ValueTypeConverterBase<T> : TypeConverter
+	/*public abstract class ValueTypeConverterBase<T> : TypeConverter
 	{
 		protected ValueTypeConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
 			: this(TypeEqualitySpecification<T>.Default, new ValueReader<T>(deserialize), new ValueWriter<T>(serialize)) {}
 
 		protected ValueTypeConverterBase(ISpecification<TypeInfo> specification, IReader reader, IWriter writer)
 			: base(specification, reader, writer) {}
+	}*/
+
+	public class ValueTypeConverterBase<T> : FixedContextOption
+	{
+		public ValueTypeConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
+			: this(TypeEqualitySpecification<T>.Default, new ValueContext<T>(deserialize, serialize)) {}
+
+		public ValueTypeConverterBase(ISpecification<TypeInfo> specification, IElementContext context)
+			: base(specification, context) {}
 	}
 }

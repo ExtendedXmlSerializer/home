@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ConverterOptions : Conversion.ConverterOptions
 	{
-		public ConverterOptions(IAddDelegates add) : base(add, 
+		public ConverterOptions(IAddDelegates add) : base(add/*, 
 			BooleanTypeConverter.Default,
 			CharacterTypeConverter.Default,
 			ByteTypeConverter.Default,
@@ -47,6 +47,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			DateTimeOffsetTypeConverter.Default,
 			StringTypeConverter.Default,
 			GuidTypeConverter.Default,
-			TimeSpanTypeConverter.Default) {}
+			TimeSpanTypeConverter.Default*/) {}
 	}
 }

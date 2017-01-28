@@ -72,10 +72,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
 	{
-		readonly ElementModel.Names.INames _names;
+		readonly ElementModel.Options.INames _names;
 		readonly INames _native;
 
-		public TypeNames(ElementModel.Names.INames names, INames native)
+		public TypeNames(ElementModel.Options.INames names, INames native)
 		{
 			_names = names;
 			_native = native;

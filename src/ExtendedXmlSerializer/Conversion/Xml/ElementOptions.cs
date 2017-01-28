@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public ElementOptions(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
 			: base(
-				new ElementModel.Names.Names(known), locator, add, known.Select(x => x.Classification),
+				new ElementModel.Options.Names(known), locator, add, known.Select(x => x.Classification),
 				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
 				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
 			) {}

@@ -22,17 +22,36 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Options;
 
 namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 {
-	public class EnumerationTypeConverter : ValueTypeConverterBase<Enum>
+	public class EnumerationTypeConverter : ContextOptionBase
 	{
 		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
+		EnumerationTypeConverter() : base(IsAssignableSpecification<Enum>.Default) {}
 
-		EnumerationTypeConverter()
-			: base(IsAssignableSpecification<Enum>.Default, EnumReader.Default, new ValueWriter<Enum>(x => x.ToString())) {}
+		public override IElementContext Get(TypeInfo parameter) => new EnumerationContext(parameter.AsType());
+
+		class EnumerationContext : ValueContext<Enum>
+		{
+			public EnumerationContext(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
+
+			class Source : IParameterizedSource<string, Enum>
+			{
+				readonly Type _enumerationType;
+
+				public Source(Type enumerationType)
+				{
+					_enumerationType = enumerationType;
+				}
+
+				public Enum Get(string parameter)
+					=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
+			}
+		}
 	}
 }

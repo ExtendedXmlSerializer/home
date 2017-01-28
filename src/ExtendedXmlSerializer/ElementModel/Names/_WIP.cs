@@ -10,13 +10,13 @@ namespace ExtendedXmlSerialization.ElementModel.Names
 		public static ImmutableArray<IName> Names { get; } = new KnownNames().ToImmutableArray();
 	}
 
-	public interface INames : ISelector<TypeInfo, IName> {}
+	/*public interface INames : ISelector<TypeInfo, IName> {}*/
 
-	class Names : Selector<TypeInfo, IName>, INames
+	/*class Names : Selector<TypeInfo, IName>, INames
 	{
-		public Names(ImmutableArray<IName> names) : base(new KnownNamesOption(names), /*new EnumerableNameOption(locator),*/ NameOption.Default) {}
+		public Names(ImmutableArray<IName> names) : base(new KnownNamesOption(names), /*new EnumerableNameOption(locator),#1# NameOption.Default) {}
 
-	}
+	}*/
 
 	public interface IAliasProvider : IParameterizedSource<MemberInfo, string> {}
 
