@@ -26,6 +26,7 @@ using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.ElementModel.Properties;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {

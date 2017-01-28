@@ -22,19 +22,20 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class ConverterOption<T> : ConverterOptionBase<T> where T : IElement
+	public class ConverterOption<T> : ConverterOption where T : IElement
 	{
-		readonly IConverter _converter;
+		public ConverterOption(IConverter converter) : base(IsAssignableSpecification<T>.Default, converter) {}
+	}
 
-		public ConverterOption(IConverter converter)
-		{
-			_converter = converter;
-		}
-
-		protected override IConverter Create(TypeInfo parameter) => _converter;
+	public class ConverterOption : FixedOption<TypeInfo, IConverter>, IConverterOption
+	{
+		public ConverterOption(ITypeConverter converter) : this(converter, converter) {}
+		public ConverterOption(ISpecification<TypeInfo> specification, IConverter converter) : base(specification, converter) {}
 	}
 }

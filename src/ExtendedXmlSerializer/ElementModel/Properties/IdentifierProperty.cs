@@ -21,10 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Properties
 {
-	public interface IElementOption : IOption<TypeInfo, IElement> {}
+	sealed class IdentifierProperty : FrameworkPropertyBase
+	{
+		public static IdentifierProperty Default { get; } = new IdentifierProperty();
+		IdentifierProperty() : base("id") {}
+	}
 }

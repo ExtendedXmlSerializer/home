@@ -21,25 +21,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.ElementModel.Names;
-using ExtendedXmlSerialization.TypeModel;
-using Defaults = ExtendedXmlSerialization.ElementModel.Names.Defaults;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	public class ElementSource : ElementModel.ElementSource
+	sealed class RecursionGuardedElementMembers : IElementMembers
 	{
-		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add) : this(locator, add, Defaults.Names) {}
+		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-		public ElementSource(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
-			: base(
-				new ElementModel.Names.Names(known, locator), locator, add, known.Select(x => x.Classification),
-				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
-				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
-			) {}
+		readonly IElementMembers _members;
+
+		public RecursionGuardedElementMembers(IElementMembers members)
+		{
+			_members = members;
+		}
+
+		public IMembers Get(TypeInfo parameter)
+			=> _generator.For(parameter).FirstEncounter ? _members.Get(parameter) : new Deferred(_members.Build(parameter));
+
+		sealed class Deferred : IMembers
+		{
+			readonly Func<IMembers> _members;
+
+			public Deferred(Func<IMembers> members)
+			{
+				_members = members;
+			}
+
+			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
+
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+			public IMember Get(string parameter) => _members().Get(parameter);
+		}
 	}
 }

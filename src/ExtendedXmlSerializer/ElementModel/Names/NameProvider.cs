@@ -27,22 +27,15 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class NameProvider : NameProviderBase
+	public class NameProvider : NameProviderBase<IName>
 	{
 		public static NameProvider Default { get; } = new NameProvider();
 		NameProvider() : this(TypeFormatter.Default) {}
 
-		readonly IAliasProvider _alias;
-		readonly ITypeFormatter _formatter;
-
 		public NameProvider(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
 
-		public NameProvider(IAliasProvider alias, ITypeFormatter formatter)
-		{
-			_alias = alias;
-			_formatter = formatter;
-		}
+		public NameProvider(IAliasProvider alias, ITypeFormatter formatter) : base(alias, formatter) {}
 
-		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(type) ?? _formatter.Get(type), type);
+		public override IName Create(string displayName, TypeInfo classification) => new Name(displayName, classification);
 	}
 }

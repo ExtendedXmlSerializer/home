@@ -25,19 +25,24 @@ using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	public class MemberedElementOption : ElementOptionBase
+	class DictionaryElementOption : ElementOptionBase
 	{
 		readonly IElementMembers _members;
+		readonly IDictionaryItemFactory _factory;
 
-		public MemberedElementOption(INames names, IElementMembers members)
-			: base(IsActivatedTypeSpecification.Default, names)
+		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
+			: this(names, members, new DictionaryItemFactory(elements)) {}
+
+		public DictionaryElementOption(INames names, IElementMembers members, IDictionaryItemFactory factory)
+			: base(IsDictionaryTypeSpecification.Default, names)
 		{
 			_members = members;
+			_factory = factory;
 		}
 
 		protected override IElement Create(IName name)
-			=> new MemberedElement(name, _members.Get(name.Classification));
+			=> new DictionaryElement(name, _factory.Get(name.Classification), _members.Get(name.Classification));
 	}
 }

@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel;
 using ExtendedXmlSerialization.ElementModel.Members;
@@ -35,32 +35,32 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IConverterOptions : IParameterizedSource<IRootConverter, IConverterSelector> {}
 
-	sealed class ConverterOptions : IConverterOptions
+	public class ConverterOptions : IConverterOptions
 	{
-		public ConverterOptions(IAddDelegates add) : this(add, KnownConverters.Default) {}
-
 		readonly IAddDelegates _add;
-		readonly IConverterOption _known;
+		readonly ImmutableArray<ITypeConverter> _known;
 
-		public ConverterOptions(IAddDelegates add, IConverterOption known)
+		protected ConverterOptions(IAddDelegates add, params ITypeConverter[] known) : this(add, known.ToImmutableArray()) {}
+
+		public ConverterOptions(IAddDelegates add, ImmutableArray<ITypeConverter> known)
 		{
 			_add = add;
 			_known = known;
 		}
 
-		public IConverterSelector Get(IRootConverter parameter) => new ConverterSelector(Options(parameter).ToArray());
+		public IConverterSelector Get(IRootConverter parameter)
+			=> new ConverterSelector(_known.Select(x => new ConverterOption(x)).Concat(Options(parameter)).ToArray());
 
 		IEnumerable<IConverterOption> Options(IRootConverter parameter)
 		{
-			yield return _known;
-
 			var element = new SelectingConverter(parameter);
 			var emitter = new Emitter(element);
 			var converter = new Converter(element, emitter);
+			yield return new ConverterOption<IRoot>(converter);
 			yield return
 				new ConverterOption<IReadOnlyCollectionMember>(new Converter(new EnumeratingReader(converter), emitter));
 			yield return new ConverterOption<IMember>(converter);
-			yield return new ConverterOption<IRoot>(converter);
+			
 
 			var activators = new Activators();
 			yield return new ConverterOption<IDictionaryElement>(new DictionaryConverter(activators, parameter));
@@ -69,4 +69,6 @@ namespace ExtendedXmlSerialization.Conversion
 			yield return new ConverterOption<IActivatedElement>(new ActivatedInstanceConverter(activators, parameter));
 		}
 	}
+
+	
 }

@@ -21,26 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.ElementModel.Members;
-
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Properties
 {
-	public class DictionaryMembers : Members.Members
+	sealed class VersionProperty : FrameworkPropertyBase
 	{
-		public DictionaryMembers(IElement key, IElement value) : this(DictionaryEntryElement.Item.Classification, key, value) {}
-
-		DictionaryMembers(TypeInfo classification, IElement key, IElement value)
-			: this(
-				classification.GetProperty(nameof(DictionaryEntry.Key)), classification.GetProperty(nameof(DictionaryEntry.Value)),
-				GetterFactory.Default, SetterFactory.Default, key, value) {}
-
-		DictionaryMembers(MemberInfo key, MemberInfo value, IGetterFactory getter, ISetterFactory setter,
-		                  IElement keyElement, IElement valueElement)
-			: base(
-				new Member(key, setter.Get(key), getter.Get(key), keyElement),
-				new Member(value, setter.Get(value), getter.Get(value), valueElement)
-			) {}
+		public static VersionProperty Default { get; } = new VersionProperty();
+		VersionProperty() : base("ver") {}
 	}
 }

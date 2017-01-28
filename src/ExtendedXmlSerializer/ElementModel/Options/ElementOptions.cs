@@ -31,9 +31,10 @@ using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	public class ElementSource : IAlteration<IElements>
+	public interface IElementOptions : IAlteration<IElements> {}
+	public class ElementOptions : IElementOptions
 	{
 		readonly INames _names;
 		readonly ICollectionItemTypeLocator _locator;
@@ -42,11 +43,11 @@ namespace ExtendedXmlSerialization.ElementModel
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public ElementSource(INames names, ICollectionItemTypeLocator locator, IAddDelegates add, IEnumerable<TypeInfo> types,
+		public ElementOptions(INames names, ICollectionItemTypeLocator locator, IAddDelegates add, IEnumerable<TypeInfo> types,
 		                     ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 			: this(names, locator, add, new Specification(types), property, field) {}
 
-		public ElementSource(INames names, ICollectionItemTypeLocator locator, IAddDelegates add, ISpecification<TypeInfo> specification,
+		public ElementOptions(INames names, ICollectionItemTypeLocator locator, IAddDelegates add, ISpecification<TypeInfo> specification,
 		                     ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_names = names;
@@ -57,7 +58,7 @@ namespace ExtendedXmlSerialization.ElementModel
 			_field = field;
 		}
 
-		IEnumerable<IOption<TypeInfo, IElement>> CreateOptions(IElements parameter)
+		IEnumerable<IElementOption> CreateOptions(IElements parameter)
 		{
 			var members = new ElementMembers(new MemberElementSelector(parameter, _add), _property, _field);
 			var guarded = new RecursionGuardedElementMembers(members);

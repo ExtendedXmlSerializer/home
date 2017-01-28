@@ -28,11 +28,11 @@ namespace ExtendedXmlSerialization.ElementModel.Names
 {
 	public class Name : ElementBase, IEquatable<IName>, IName
 	{
-		public Name(string name, Type classification) : this(name, classification.GetTypeInfo()) {}
+		public Name(string displayName, Type classification) : this(displayName, classification.GetTypeInfo()) {}
 
-		public Name(string name, TypeInfo classification) : base(classification)
+		public Name(string displayName, TypeInfo classification) : base(classification)
 		{
-			DisplayName = name;
+			DisplayName = displayName;
 		}
 
 		public string DisplayName { get; }

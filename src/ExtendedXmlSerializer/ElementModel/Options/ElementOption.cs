@@ -21,11 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
+
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	sealed class VersionProperty : FrameworkPropertyBase
+	public class ElementOption : ElementOptionBase
 	{
-		public static VersionProperty Default { get; } = new VersionProperty();
-		VersionProperty() : base("ver") {}
+		public ElementOption(INames names) : base(names) {}
+		public ElementOption(ISpecification<TypeInfo> specification, INames names) : base(specification, names) {}
+
+		protected override IElement Create(IName name) => new Element(name);
 	}
 }

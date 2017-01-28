@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public class CollectionElement : MemberedCollectionElementBase
+	public class CollectionElement : MemberedCollectionBase
 	{
 		public CollectionElement(IName name, IMembers members, INamedElement element) : base(name, element, members) {}
 	}

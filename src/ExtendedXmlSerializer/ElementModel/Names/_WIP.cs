@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
@@ -15,7 +14,7 @@ namespace ExtendedXmlSerialization.ElementModel.Names
 
 	class Names : Selector<TypeInfo, IName>, INames
 	{
-		public Names(ImmutableArray<IName> names, ICollectionItemTypeLocator locator) : base(new KnownNamesOption(names), new EnumerableNameOption(locator), NameOption.Default) {}
+		public Names(ImmutableArray<IName> names) : base(new KnownNamesOption(names), /*new EnumerableNameOption(locator),*/ NameOption.Default) {}
 
 	}
 

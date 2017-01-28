@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,34 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Xml.Converters;
+using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	public class KnownConverters : SelectedConverterOption
+	public class CollectionElementOption : MemberedCollectionElementOptionBase
 	{
-		public static KnownConverters Default { get; } = new KnownConverters();
+		public CollectionElementOption(IElements elements, INames names, IElementMembers members,
+		                               ICollectionItemTypeLocator locator)
+			: base(IsCollectionTypeSpecification.Default, elements, names, members, locator) {}
 
-		KnownConverters() : base(
-			BooleanTypeConverter.Default,
-			CharacterTypeConverter.Default,
-			ByteTypeConverter.Default,
-			UnsignedByteTypeConverter.Default,
-			ShortTypeConverter.Default,
-			UnsignedShortTypeConverter.Default,
-			IntegerTypeConverter.Default,
-			UnsignedIntegerTypeConverter.Default,
-			LongTypeConverter.Default,
-			UnsignedLongTypeConverter.Default,
-			FloatTypeConverter.Default,
-			DoubleTypeConverter.Default,
-			DecimalTypeConverter.Default,
-			EnumerationTypeConverter.Default,
-			DateTimeTypeConverter.Default,
-			DateTimeOffsetTypeConverter.Default,
-			StringTypeConverter.Default,
-			GuidTypeConverter.Default,
-			TimeSpanTypeConverter.Default
-		) {}
+		protected override IElement Create(IName name, ElementModel.Members.IMembers members, INamedElement element)
+			=> new CollectionElement(name, members, element);
 	}
 }

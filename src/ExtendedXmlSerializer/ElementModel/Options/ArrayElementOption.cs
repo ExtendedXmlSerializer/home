@@ -22,11 +22,15 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	abstract class FrameworkPropertyBase : Name
+	public class ArrayElementOption : CollectionElementOptionBase
 	{
-		protected FrameworkPropertyBase(string name) : base(name, Defaults.FrameworkType) {}
+		public ArrayElementOption(IElements elements, INames names, ICollectionItemTypeLocator locator)
+			: base(IsArraySpecification.Default, elements, names, locator) {}
+
+		protected override IElement Create(IName name, INamedElement element) => new ArrayElement(name, element);
 	}
 }

@@ -23,19 +23,20 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ElementModel.Options;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
 	public class Elements : IElements
 	{
-		public Elements(ICollectionItemTypeLocator locator, IAddDelegates add) : this(new Conversion.Xml.ElementSource(locator, add)) {}
-
 		readonly IParameterizedSource<TypeInfo, IElement> _source;
 
-		public Elements(IAlteration<IElements> source)
+		public Elements(ICollectionItemTypeLocator locator, IAddDelegates add) : this(new Conversion.Xml.ElementOptions(locator, add)) {}
+		
+		public Elements(IElementOptions options)
 		{
-			_source = source.Get(this);
+			_source = options.Get(this);
 		}
 
 		public IElement Get(TypeInfo parameter) => _source.Get(parameter);

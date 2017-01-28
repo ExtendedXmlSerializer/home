@@ -21,19 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ElementModel.Members;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ElementModel.Names;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	public class CollectionElementOption : MemberedCollectionElementOptionBase
+	public abstract class ElementOptionBase : OptionBase<TypeInfo, IElement>, IElementOption
 	{
-		public CollectionElementOption(IElements elements, INames names, IElementMembers members,
-		                               ICollectionItemTypeLocator locator)
-			: base(IsCollectionTypeSpecification.Default, elements, names, members, locator) {}
+		readonly INames _names;
 
-		protected override IElement Create(IName name, IMembers members, INamedElement element)
-			=> new CollectionElement(name, members, element);
+		protected ElementOptionBase(INames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
+
+		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names)
+			: base(specification)
+		{
+			_names = names;
+		}
+
+		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter));
+
+		protected abstract IElement Create(IName name);
 	}
 }

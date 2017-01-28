@@ -3,12 +3,12 @@ using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.ElementModel
 {
-	public abstract class MemberedCollectionElementBase : CollectionElementBase, IMemberedElement
+	public abstract class MemberedCollectionBase : CollectionElementBase, IMemberedElement
 	{
-		protected MemberedCollectionElementBase(IName name, INamedElement element, IMembers members)
+		protected MemberedCollectionBase(IName name, INamedElement element, IMembers members)
 			: this(name, new CollectionItem(element), members) {}
 
-		protected MemberedCollectionElementBase(IName name, ICollectionItem element, IMembers members)
+		protected MemberedCollectionBase(IName name, ICollectionItem element, IMembers members)
 			: base(name, element)
 		{
 			Members = members;

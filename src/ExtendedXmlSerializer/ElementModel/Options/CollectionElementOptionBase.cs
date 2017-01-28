@@ -21,11 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.TypeModel;
+
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	sealed class IdentifierProperty : FrameworkPropertyBase
+	public abstract class CollectionElementOptionBase : ElementOptionBase
 	{
-		public static IdentifierProperty Default { get; } = new IdentifierProperty();
-		IdentifierProperty() : base("id") {}
+		readonly IElements _elements;
+		readonly ICollectionItemTypeLocator _locator;
+
+		protected CollectionElementOptionBase(ISpecification<TypeInfo> specification, IElements elements, INames names,
+		                                      ICollectionItemTypeLocator locator) : base(specification, names)
+		{
+			_elements = elements;
+			_locator = locator;
+		}
+
+		protected override IElement Create(IName name) => Create(name, (INamedElement)_elements.Get(_locator.Get(name.Classification)));
+
+		protected abstract IElement Create(IName name, INamedElement item);
 	}
 }

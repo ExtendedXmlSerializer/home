@@ -21,28 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Properties
 {
-	class DictionaryElementOption : ElementOptionBase
+	abstract class FrameworkPropertyBase : Name
 	{
-		readonly IElementMembers _members;
-		readonly IDictionaryItemFactory _factory;
-
-		public DictionaryElementOption(IElements elements, INames names, IElementMembers members)
-			: this(names, members, new DictionaryItemFactory(elements)) {}
-
-		public DictionaryElementOption(INames names, IElementMembers members, IDictionaryItemFactory factory)
-			: base(IsDictionaryTypeSpecification.Default, names)
-		{
-			_members = members;
-			_factory = factory;
-		}
-
-		protected override IElement Create(IName name)
-			=> new DictionaryElement(name, _factory.Get(name.Classification), _members.Get(name.Classification));
+		protected FrameworkPropertyBase(string displayName) : base(displayName, Defaults.FrameworkType) {}
 	}
 }

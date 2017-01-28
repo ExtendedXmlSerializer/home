@@ -34,11 +34,9 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class EnumerableNameOption : NameOptionBase
+	/*public class EnumerableNameOption : NameOptionBase
 	{
-		public EnumerableNameOption(ICollectionItemTypeLocator locator) : this(new NameProvider(new EnumerableTypeFormatter(locator)).Get) {}
-
-		public EnumerableNameOption(Func<MemberInfo, IName> source) : base(Specification.Instance, source) {}
+		
 
 		sealed class Specification : ISpecification<MemberInfo>
 		{
@@ -54,7 +52,7 @@ namespace ExtendedXmlSerialization.ElementModel.Names
 				return result;
 			}
 		}
-	}
+	}*/
 
 	public class KnownNamesOption : NameOptionBase
 	{

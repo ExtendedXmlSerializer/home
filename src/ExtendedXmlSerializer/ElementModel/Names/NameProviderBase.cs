@@ -24,13 +24,27 @@
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public abstract class NameProviderBase : IParameterizedSource<MemberInfo, IName>
+	public interface INameProvider<out T> : IParameterizedSource<TypeInfo, T> where T : IName { }
+	
+	public abstract class NameProviderBase<T> : INameProvider<T> where T : IName
 	{
-		public IName Get(MemberInfo parameter) => Create(parameter.ToTypeInfo(), parameter);
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
 
-		protected abstract IName Create(TypeInfo type, MemberInfo member);
+		protected NameProviderBase(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
+
+		protected NameProviderBase(IAliasProvider alias, ITypeFormatter formatter)
+		{
+			_alias = alias;
+			_formatter = formatter;
+		}
+
+		public T Get(TypeInfo parameter) => Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter);
+
+		public abstract T Create(string displayName, TypeInfo classification);
 	}
 }

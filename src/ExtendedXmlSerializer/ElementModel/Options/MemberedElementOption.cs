@@ -21,44 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ElementModel.Members;
+using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	sealed class RecursionGuardedElementMembers : IElementMembers
+	public class MemberedElementOption : ElementOptionBase
 	{
-		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
-
 		readonly IElementMembers _members;
 
-		public RecursionGuardedElementMembers(IElementMembers members)
+		public MemberedElementOption(INames names, IElementMembers members)
+			: base(IsActivatedTypeSpecification.Default, names)
 		{
 			_members = members;
 		}
 
-		public IMembers Get(TypeInfo parameter)
-			=> _generator.For(parameter).FirstEncounter ? _members.Get(parameter) : new Deferred(_members.Build(parameter));
-
-		sealed class Deferred : IMembers
-		{
-			readonly Func<IMembers> _members;
-
-			public Deferred(Func<IMembers> members)
-			{
-				_members = members;
-			}
-
-			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
-
-			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-			public IMember Get(string parameter) => _members().Get(parameter);
-		}
+		protected override IElement Create(IName name)
+			=> new MemberedElement(name, _members.Get(name.Classification));
 	}
 }

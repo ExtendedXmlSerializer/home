@@ -33,11 +33,8 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 	{
 		readonly IParameterizedSource<MemberInfo, IName> _provider;
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification)
-			: this(specification, MemberNameProvider.Default) {}
-
 		protected MemberOptionBase(ISpecification<MemberInformation> specification,
-		                           IParameterizedSource<MemberInfo, IName> provider)
+		                           IParameterizedSource<MemberInfo, IName> provider = null)
 			: base(specification)
 		{
 			_provider = provider;

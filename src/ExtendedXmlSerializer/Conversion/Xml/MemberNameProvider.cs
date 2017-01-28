@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 	}
 
-	public class MemberNameProvider : NameProviderBase
+	/*public class MemberNameProvider : NameProviderBase
 	{
 		readonly IAliasProvider _alias;
 		public static MemberNameProvider Default { get; } = new MemberNameProvider();
@@ -52,5 +52,5 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 
 		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(member) ?? member.Name, type);
-	}
+	}*/
 }

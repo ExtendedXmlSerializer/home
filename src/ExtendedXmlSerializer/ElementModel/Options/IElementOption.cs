@@ -21,34 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel.Options
 {
-	public class SelectedConverterOption : IConverterOption
-	{
-		readonly ImmutableArray<ITypeConverter> _converters;
-
-		public SelectedConverterOption(params ITypeConverter[] converters) : this(converters.ToImmutableArray()) {}
-
-		public SelectedConverterOption(ImmutableArray<ITypeConverter> converters)
-		{
-			_converters = converters;
-		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => true;
-
-		public IConverter Get(TypeInfo parameter)
-		{
-			foreach (var converter in _converters)
-			{
-				if (converter.IsSatisfiedBy(parameter))
-				{
-					return converter;
-				}
-			}
-			return null;
-		}
-	}
+	public interface IElementOption : IOption<TypeInfo, IElement> {}
 }

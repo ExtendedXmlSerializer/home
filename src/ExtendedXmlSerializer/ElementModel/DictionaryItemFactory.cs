@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel

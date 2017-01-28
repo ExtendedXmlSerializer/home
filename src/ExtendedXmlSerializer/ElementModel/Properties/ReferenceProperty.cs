@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.ElementModel.Properties
 {
-	sealed class TypeProperty : FrameworkPropertyBase
+	sealed class ReferenceProperty : FrameworkPropertyBase
 	{
-		public static TypeProperty Default { get; } = new TypeProperty();
-		TypeProperty() : base("type") {}
+		public static ReferenceProperty Default { get; } = new ReferenceProperty();
+		ReferenceProperty() : base("ref") {}
 	}
 }

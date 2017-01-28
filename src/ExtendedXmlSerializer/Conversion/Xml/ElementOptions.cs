@@ -21,27 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
+using ExtendedXmlSerialization.TypeModel;
+using Defaults = ExtendedXmlSerialization.ElementModel.Names.Defaults;
 
-namespace ExtendedXmlSerialization.ElementModel
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public abstract class ElementOptionBase : OptionBase<TypeInfo, IElement>, IElementOption
+	public class ElementOptions : ElementModel.Options.ElementOptions
 	{
-		readonly INames _names;
+		public ElementOptions(ICollectionItemTypeLocator locator, IAddDelegates add) : this(locator, add, Defaults.Names) {}
 
-		protected ElementOptionBase(INames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
-
-		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names)
-			: base(specification)
-		{
-			_names = names;
-		}
-
-		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter));
-
-		protected abstract IElement Create(IName name);
+		public ElementOptions(ICollectionItemTypeLocator locator, IAddDelegates add, ImmutableArray<IName> known)
+			: base(
+				new ElementModel.Names.Names(known), locator, add, known.Select(x => x.Classification),
+				new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
+				new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)
+			) {}
 	}
 }

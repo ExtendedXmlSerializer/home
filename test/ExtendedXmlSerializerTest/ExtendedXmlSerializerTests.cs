@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ElementModel.Options;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.Test
 {
 	public class ExtendedXmlSerializerTests
 	{
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new Serializer();
 
 		/*readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
 		
@@ -48,16 +49,13 @@ namespace ExtendedXmlSerialization.Test
 		{
 			const int expected = 6776;
 
-			var write = new MemoryStream();
-			_serializer.Serialize(write, expected);
-			write.Seek(0, SeekOrigin.Begin);
-			var data = new StreamReader(write).ReadToEnd();
+			var data = _serializer.Serialize(expected);
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>",
 				data);
-			var read = new MemoryStream(Encoding.UTF8.GetBytes(data));
+			/*var read = new MemoryStream(Encoding.UTF8.GetBytes(data));
 			var actual = _serializer.Deserialize(read);
-			Assert.Equal(expected, actual);
+			Assert.Equal(expected, actual);*/
 		}
 
 		[Fact]
@@ -68,9 +66,9 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-InstanceClass>",
 				data);
-			var read = _serializer.Deserialize<InstanceClass>(data);
+			/*var read = _serializer.Deserialize<InstanceClass>(data);
 			Assert.NotNull(read);
-			Assert.Equal("Hello World!", read.PropertyName);
+			Assert.Equal("Hello World!", read.PropertyName);*/
 		}
 
 		/*[Fact]
