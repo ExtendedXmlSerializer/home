@@ -187,8 +187,8 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			{
 				case XmlNodeType.Element:
 					var name = XName.Get(parameter.LocalName, parameter.NamespaceURI);
-					var type = _types.Get(name);
-					return type;
+					var result = _types.Get(name);
+					return result;
 			}
 
 			throw new InvalidOperationException($"Could not locate the type from the current Xml reader '{parameter}.'");
