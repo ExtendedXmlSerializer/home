@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		object Yield(IYielder yielder);
 	}
 
-	public interface IEmitter : IServiceProvider
+	public interface IEmitter
 	{
 		IDisposable Emit(IName name);
 
@@ -71,11 +71,6 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			_writer = writer;
 			_namespaces = namespaces;
 			_finish = finish;
-		}
-
-		public object GetService(Type serviceType)
-		{
-			throw new NotImplementedException();
 		}
 
 		public IDisposable Emit(IName name)
@@ -104,21 +99,34 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 	public class Serializer : CacheBase<TypeInfo, IElementContext>, IExtendedXmlSerializer
 	{
+		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
+		                                                      {
+			                                                      IgnoreWhitespace = true,
+			                                                      IgnoreComments = true,
+			                                                      IgnoreProcessingInstructions = true
+		                                                      };
+
 		readonly INames _names;
 		readonly IContexts _contexts;
 		readonly INamespaces _namespaces;
 		readonly ITypeYielder _type;
+		readonly XmlReaderSettings _settings;
+
 		public Serializer() : this(new Names(), new Namespaces()) {}
 
 		public Serializer(INames names, INamespaces namespaces)
-			: this(names, new Contexts(names), namespaces, new TypeYielder(new Types(namespaces, new TypeContexts()))) {}
+			: this(
+				names, new Contexts(names), namespaces, new TypeYielder(new Types(namespaces, new TypeContexts())),
+				XmlReaderSettings) {}
 
-		public Serializer(INames names, IContexts contexts, INamespaces namespaces, ITypeYielder type)
+		public Serializer(INames names, IContexts contexts, INamespaces namespaces, ITypeYielder type,
+		                  XmlReaderSettings settings)
 		{
 			_names = names;
 			_contexts = contexts;
 			_namespaces = namespaces;
 			_type = type;
+			_settings = settings;
 		}
 
 		public void Serialize(Stream stream, object instance)
@@ -133,7 +141,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 		public object Deserialize(Stream stream)
 		{
-			using (var reader = XmlReader.Create(stream))
+			using (var reader = XmlReader.Create(stream, _settings))
 			{
 				var yielder = new XmlYielder(_type, reader);
 				var classification = yielder.Classification();
@@ -152,6 +160,8 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		TypeInfo Classification();
 
 		string Value();
+
+		IEnumerable<string> Members();
 	}
 
 	class XmlYielder : IYielder
@@ -168,6 +178,20 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		public TypeInfo Classification() => _type.Get(_reader);
 
 		public string Value() => _reader.ReadElementContentAsString();
+
+		public IEnumerable<string> Members()
+		{
+			while (_reader.MoveToNextAttribute() && _reader.Prefix == string.Empty)
+			{
+				yield return _reader.LocalName;
+			}
+
+			while (_reader.Read() && _reader.NodeType == XmlNodeType.Element && _reader.Prefix == string.Empty)
+			{
+				yield return _reader.LocalName;
+				_reader.ReadEndElement();
+			}
+		}
 	}
 
 	public interface ITypeYielder : IParameterizedSource<XmlReader, TypeInfo> {}
@@ -277,7 +301,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			yield return new CollectionContextOption(_contexts, _activators, _locator, _names, _add);
 
 			var members = new ContextMembers(new MemberContextSelector(_contexts, _add), _property, _field);
-			yield return new MemberedContextOption(members);
+			yield return new ActivatedContextOption(_activators, members);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -348,7 +372,12 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 	public interface IMembers : IEnumerable<IMemberContext>, IParameterizedSource<string, IMemberContext> {}
 
-	public interface IMemberContext : IElementContext, IName {}
+	public interface IMemberContext : IElementContext, IName
+	{
+		object Get(object instance);
+
+		void Assign(object instance, object value);
+	}
 
 	class CollectionContextOption : ContainerContextOptionBase<IName>
 	{
@@ -401,14 +430,13 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		readonly ICollectionItemTypeLocator _locator;
 
 		public CollectionItemNameProvider(ICollectionItemTypeLocator locator, INames names)
-			: this(locator, new EnumerableTypeFormatter(locator))
-		{
-			_names = names;
-		}
+			: this(locator, names, new EnumerableTypeFormatter(locator)) {}
 
-		public CollectionItemNameProvider(ICollectionItemTypeLocator locator, ITypeFormatter formatter) : base(formatter)
+		public CollectionItemNameProvider(ICollectionItemTypeLocator locator, INames names, ITypeFormatter formatter)
+			: base(formatter)
 		{
 			_locator = locator;
+			_names = names;
 		}
 
 		public override IName Create(string displayName, TypeInfo classification) => _names.Get(_locator.Get(classification));
@@ -489,47 +517,54 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		}
 	}
 
-	class MemberedContextOption : ContextOptionBase
+	class ActivatedContextOption : ContextOptionBase
 	{
+		readonly IActivators _activators;
 		readonly IContextMembers _contexts;
 
-		public MemberedContextOption(IContextMembers contexts) : base(IsActivatedTypeSpecification.Default)
+		public ActivatedContextOption(IActivators activators, IContextMembers contexts)
+			: base(IsActivatedTypeSpecification.Default)
 		{
+			_activators = activators;
 			_contexts = contexts;
 		}
 
-		public override IElementContext Get(TypeInfo parameter) => new MemberedContext(_contexts, parameter);
+		public override IElementContext Get(TypeInfo parameter)
+			=> new ActivatedContext(_activators, _contexts.Get(parameter), parameter);
 	}
 
-	class MemberedContext : ContextBase
+	class ActivatedContext : ContextBase
 	{
-		readonly IContextMembers _contexts;
+		readonly IActivators _activators;
 		readonly IMembers _members;
 
-		public MemberedContext(IContextMembers contexts, TypeInfo classification)
-			: this(contexts, contexts.Get(classification), classification) {}
-
-		public MemberedContext(IContextMembers contexts, IMembers members, TypeInfo classification) : base(classification)
+		public ActivatedContext(IActivators activators, IMembers members, TypeInfo classification) : base(classification)
 		{
-			_contexts = contexts;
+			_activators = activators;
 			_members = members;
 		}
 
 		public override void Emit(IEmitter emitter, object instance)
 		{
-			var type = instance.GetType();
-			var typeInfo = type.GetTypeInfo();
-			var same = type == Classification.AsType();
-			var members = same ? _members : _contexts.Get(typeInfo);
-			foreach (var member in members)
+			foreach (var member in _members)
 			{
-				member.Emit(emitter, instance);
+				var value = member.Get(instance);
+				if (value != null)
+				{
+					member.Emit(emitter, value);
+				}
 			}
 		}
 
 		public override object Yield(IYielder yielder)
 		{
-			throw new NotImplementedException();
+			var result = _activators.Get(Classification.AsType()).Invoke();
+			foreach (var name in yielder.Members())
+			{
+				var member = _members.Get(name);
+				member?.Assign(result, member.Yield(yielder));
+			}
+			return result;
 		}
 	}
 
@@ -598,7 +633,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			                                IElementContext context)
 				: base(name, context, add, getter) {}
 
-			protected override void Assign(object instance, object value)
+			public override void Assign(object instance, object value)
 			{
 				var collection = Get(instance);
 				foreach (var element in value.AsValid<IEnumerable>())
@@ -773,20 +808,11 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			_getter = getter;
 		}
 
-		public override void Emit(IEmitter emitter, object instance)
-		{
-			var value = Get(instance);
-			if (value != null)
-			{
-				base.Emit(emitter, value);
-			}
-		}
-
 		public string DisplayName { get; }
 
-		protected virtual object Get(object instance) => _getter(instance);
+		public virtual object Get(object instance) => _getter(instance);
 
-		protected virtual void Assign(object instance, object value)
+		public virtual void Assign(object instance, object value)
 		{
 			if (value != null)
 			{
