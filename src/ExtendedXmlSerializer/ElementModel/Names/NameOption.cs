@@ -21,11 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ElementModel.Options;
+
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
 	public class NameOption : NameOptionBase
 	{
 		public static NameOption Default { get; } = new NameOption();
 		NameOption() : base(NameProvider.Default.Get) {}
+	}
+
+	public class GenericNameOption : NameOptionBase
+	{
+		public GenericNameOption(INames names) : base(IsGenericTypeSpecification.Default, new GenericNameProvider(names).Get) {}
 	}
 }

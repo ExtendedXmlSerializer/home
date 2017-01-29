@@ -28,8 +28,16 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
+	public interface INameProvider : INameProvider<IName> {}
+
 	public interface INameProvider<out T> : IParameterizedSource<TypeInfo, T> where T : IName { }
 	
+	public abstract class NameProviderBase : NameProviderBase<IName>, INameProvider
+	{
+		protected NameProviderBase(ITypeFormatter formatter) : base(formatter) {}
+		protected NameProviderBase(IAliasProvider alias, ITypeFormatter formatter) : base(alias, formatter) {}
+	}
+
 	public abstract class NameProviderBase<T> : INameProvider<T> where T : IName
 	{
 		readonly IAliasProvider _alias;

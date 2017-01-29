@@ -28,4 +28,10 @@ namespace ExtendedXmlSerialization.ElementModel.Properties
 		public static TypeProperty Default { get; } = new TypeProperty();
 		TypeProperty() : base("type") {}
 	}
+
+	sealed class TypeArgumentsProperty : FrameworkPropertyBase
+	{
+		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
+		TypeArgumentsProperty() : base("arguments") {}
+	}
 }

@@ -22,6 +22,9 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
@@ -56,16 +59,60 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			readonly Assembly _assembly;
 			readonly string _ns;
 			readonly IAlteration<string> _alteration;
+			readonly Func<ImmutableArray<TypeInfo>> _types;
 
 			public TypeLoaderContext(Assembly assembly, string @namespace, IAlteration<string> alteration)
+				: this(assembly, @namespace, alteration, new Types(assembly).Build(@namespace)) {}
+
+			public TypeLoaderContext(Assembly assembly, string @namespace, IAlteration<string> alteration,
+			                         Func<ImmutableArray<TypeInfo>> types)
 			{
 				_assembly = assembly;
 				_ns = @namespace;
 				_alteration = alteration;
+				_types = types;
 			}
 
-			protected override TypeInfo Create(string parameter)
-				=> _assembly.GetType($"{_ns}.{_alteration.Get(parameter)}", false, false)?.GetTypeInfo();
+			protected override TypeInfo Create(string parameter) => Locate($"{_ns}.{_alteration.Get(parameter)}");
+
+			TypeInfo Locate(string parameter) => _assembly.GetType(parameter, false, false)?.GetTypeInfo() ?? Search(parameter);
+
+			TypeInfo Search(string parameter)
+			{
+				foreach (var typeInfo in _types())
+				{
+					if (typeInfo.FullName.StartsWith(parameter))
+					{
+						return typeInfo;
+					}
+				}
+				return null;
+			}
+		}
+
+		sealed class Types : CacheBase<string, ImmutableArray<TypeInfo>>
+		{
+			readonly ImmutableArray<TypeInfo> _types;
+
+			public Types(Assembly assembly) : this(assembly.DefinedTypes.ToImmutableArray()) {}
+
+			public Types(ImmutableArray<TypeInfo> types)
+			{
+				_types = types;
+			}
+
+			protected override ImmutableArray<TypeInfo> Create(string parameter) => Yield(parameter).ToImmutableArray();
+
+			IEnumerable<TypeInfo> Yield(string parameter)
+			{
+				foreach (var typeInfo in _types)
+				{
+					if (typeInfo.Namespace == parameter)
+					{
+						yield return typeInfo;
+					}
+				}
+			}
 		}
 	}
 }

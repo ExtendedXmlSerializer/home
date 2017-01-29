@@ -26,6 +26,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
+	public class IsGenericTypeSpecification : ISpecification<TypeInfo>
+	{
+		public static IsGenericTypeSpecification Default { get; } = new IsGenericTypeSpecification();
+		IsGenericTypeSpecification() {}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsGenericType;
+	}
+
 	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{
 		readonly Type _genericType;
