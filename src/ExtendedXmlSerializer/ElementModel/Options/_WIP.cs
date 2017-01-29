@@ -104,18 +104,19 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 	public interface IContextOption : IOption<TypeInfo, IElementContext> {}
 
-	public interface IContextOptions : IAlteration<IContexts> {}
-
-	public class Serializer : Contexts, IExtendedXmlSerializer
+	public class Serializer : CacheBase<TypeInfo, IElementContext>, IExtendedXmlSerializer
 	{
 		readonly INames _names;
+		readonly IContexts _contexts;
 		readonly INamespaces _namespaces;
-		public Serializer() : this(new CollectionItemTypeLocator(), new AddMethodLocator(), new Names(), new Namespaces()) {}
+		public Serializer() : this(new Names(), new Namespaces()) {}
 
-		public Serializer(ICollectionItemTypeLocator locator, IAddMethodLocator add, INames names, INamespaces namespaces)
-			: base(new ContextOptions(names, locator, new AddDelegates(locator, add)))
+		public Serializer(INames names, INamespaces namespaces) : this(names, new Contexts(names), namespaces) {}
+
+		public Serializer(INames names, IContexts contexts, INamespaces namespaces)
 		{
 			_names = names;
+			_contexts = contexts;
 			_namespaces = namespaces;
 		}
 
@@ -124,8 +125,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			using (var writer = XmlWriter.Create(stream))
 			{
 				var emitter = new XmlEmitter(_namespaces, writer);
-				var typeInfo = instance.GetType().GetTypeInfo();
-				var context = new RootContext(_names.Get(typeInfo), Get(typeInfo));
+				var context = Get(instance.GetType().GetTypeInfo());
 				context.Emit(emitter, instance);
 			}
 		}
@@ -134,12 +134,37 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		{
 			throw new NotImplementedException();
 		}
+
+		protected override IElementContext Create(TypeInfo parameter) => new RootContext(_names.Get(parameter), _contexts.Get(parameter));
+
+	}
+
+	public class Contexts : IContexts
+	{
+		readonly IParameterizedSource<TypeInfo, IElementContext> _source;
+
+		public Contexts(INames names)
+		{
+			_source = new Selector<TypeInfo, IElementContext>(new ContextOptions(this, names).ToArray());
+		}
+
+		public IElementContext Get(TypeInfo parameter) => _source.Get(parameter);
+		
 	}
 
 	public interface INames : INameProvider<IName> {}
 
+	public interface IContextOptions : IEnumerable<IContextOption> {}
+
 	class ContextOptions : IContextOptions
 	{
+		readonly static MemberSpecification<FieldInfo> Field =
+			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
+
+		readonly static MemberSpecification<PropertyInfo> Property =
+			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
+
+		readonly IContexts _contexts;
 		readonly INames _names;
 		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddDelegates _add;
@@ -151,14 +176,17 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		                      ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 			: this(locator, add, /*new Specification(types),#1# property, field) {}*/
 
-		public ContextOptions(INames names, ICollectionItemTypeLocator locator, IAddDelegates add)
-			: this(names, locator, add, new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default),
-			       new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default)) {}
+		public ContextOptions(IContexts contexts, INames names)
+			: this(contexts, names, new CollectionItemTypeLocator(), new AddMethodLocator()) {}
 
-		public ContextOptions(INames names, ICollectionItemTypeLocator locator, IAddDelegates add,
+		public ContextOptions(IContexts contexts, INames names, ICollectionItemTypeLocator locator, IAddMethodLocator add)
+			: this(contexts, names, locator, new AddDelegates(locator, add), Property, Field) {}
+
+		public ContextOptions(IContexts contexts, INames names, ICollectionItemTypeLocator locator, IAddDelegates add,
 		                      /*ISpecification<TypeInfo> specification,*/
 		                      ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
+			_contexts = contexts;
 			_names = names;
 			_locator = locator;
 			_add = add;
@@ -167,9 +195,9 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			_field = field;
 		}
 
-		public IContexts Get(IContexts parameter) => new Contexts(CreateOptions(parameter).ToArray());
+		/*public IEnumerable<IContextOption> Get(IContexts parameter) => new Contexts(CreateOptions(parameter).ToArray());*/
 
-		IEnumerable<IContextOption> CreateOptions(IContexts parameter)
+		public IEnumerator<IContextOption> GetEnumerator()
 		{
 			yield return BooleanTypeConverter.Default;
 			yield return CharacterTypeConverter.Default;
@@ -192,13 +220,15 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			yield return TimeSpanTypeConverter.Default;
 
 			var activators = new Activators();
-			
-			// yield return new DictionaryContext();
-			yield return new CollectionContextOption(parameter, activators, _locator, _names, _add);
 
-			var members = new ContextMembers(new MemberContextSelector(parameter, _add), _property, _field);
+			// yield return new DictionaryContext();
+			yield return new CollectionContextOption(_contexts, activators, _locator, _names, _add);
+
+			var members = new ContextMembers(new MemberContextSelector(_contexts, _add), _property, _field);
 			yield return new MemberedContextOption(members);
 		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		/*sealed class Specification : AnySpecification<TypeInfo>
 		{
@@ -208,41 +238,37 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 					                               IsAssignableSpecification<Enum>.Default)) {}
 		}*/
 
-		class Contexts : Selector<TypeInfo, IElementContext>, IContexts
+/*
+		class Contexts : OptionSelector<TypeInfo, IElementContext>, IContexts
 		{
 			public Contexts(params IOption<TypeInfo, IElementContext>[] options) : base(options) {}
 
 			/*protected override IElementContext Create(TypeInfo parameter)
 			{
 				return base.Create(parameter);
-			}*/
+			}#1#
 		}
+*/
 	}
 
-	public interface IContexts : ISelector<TypeInfo, IElementContext> {}
+	public interface IContexts : IParameterizedSource<TypeInfo, IElementContext> {}
 
-	public class Contexts : IContexts
+	/*public class Contexts : /*CacheBase<TypeInfo, IElementContext>,#1# IContexts
 	{
 		readonly IParameterizedSource<TypeInfo, IElementContext> _source;
 
-		public Contexts(IContextOptions options)
+		public Contexts(INames names)
 		{
-			_source = options.Get(this);
+			_source = new Selector<TypeInfo, IElementContext>(new ContextOptions(this, names).ToArray());
 		}
 
 		public IElementContext Get(TypeInfo parameter) => _source.Get(parameter);
-	}
+	}*/
 
-	abstract class ContainerContextOptionBase : ContainerContextOptionBase<IName>
+	/*abstract class ContainerContextOptionBase : ContainerContextOptionBase<IName>
 	{
 		protected ContainerContextOptionBase(ISpecification<TypeInfo> specification, INameProvider<IName> name)
 			: base(specification, name) {}
-	}
-
-	/*class Names : ElementModel.Names.Names, INameProvider<IName>
-	{
-		public Names() : this(ElementModel.Names.Defaults.Names) {}
-		public Names(ImmutableArray<IName> names) : base(names) {}
 	}*/
 
 	class Names : Selector<TypeInfo, IName>, INames
@@ -268,24 +294,8 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		protected abstract IElementContext Create(T name);
 	}
 
-	/*class StringTypeConverter : ValueContextOption<string>
-	{
-		readonly static Func<string, string> Self = Self<string>.Default.Get;
-
-		public static StringTypeConverter Default { get; } = new StringTypeConverter();
-		StringTypeConverter() : base(Self, Self) {}
-	}
-
-	class IntegerTypeConverter : ValueContextOption<int>
-	{
-		public static IntegerTypeConverter Default { get; } = new IntegerTypeConverter();
-		IntegerTypeConverter() : base(XmlConvert.ToInt32, XmlConvert.ToString) {}
-	}*/
-
 	public abstract class ContextOptionBase : OptionBase<TypeInfo, IElementContext>, IContextOption
 	{
-		/*protected ContextOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}*/
-
 		protected ContextOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
 	}
 
@@ -296,7 +306,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			: base(specification, context) {}
 	}
 
-	class ValueContext<T> : ElementContextBase<T>
+	class ValueContext<T> : ContextBase<T>
 	{
 		readonly static TypeInfo Type = typeof(T).GetTypeInfo();
 
@@ -391,7 +401,8 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		public CollectionItemContext(IContexts contexts, ICollectionName name)
 			: this(contexts, name, contexts.Get(name.ElementName.Classification)) {}
 
-		public CollectionItemContext(IContexts contexts, ICollectionName name, IElementContext body) : base(name.ElementName, body)
+		public CollectionItemContext(IContexts contexts, ICollectionName name, IElementContext body)
+			: base(name.ElementName, body)
 		{
 			_contexts = contexts;
 		}
@@ -425,7 +436,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			: base(item, activators, add) {}
 	}
 
-	class EnumerableContext<T> : ElementContextBase<T> where T : IEnumerable
+	class EnumerableContext<T> : ContextBase<T> where T : IEnumerable
 	{
 		readonly IElementContext _item;
 		readonly IActivators _activators;
@@ -825,26 +836,6 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 	}
 
 
-/*
-	public static class Extensions
-	{
-		public static IMembers Load(this IContextMembers @this, IMembers members, TypeInfo instanceType)
-			=> members.Exact(instanceType) ? members : @this.Get(instanceType);
-	}
-*/
-
-	class RootOption : ContainerContextOptionBase
-	{
-		readonly IContexts _contexts;
-
-		public RootOption(IContexts contexts, INameProvider<IName> names) : base(AlwaysSpecification<TypeInfo>.Default, names)
-		{
-			_contexts = contexts;
-		}
-
-		protected override IElementContext Create(IName name) => new RootContext(name, _contexts.Get(name.Classification));
-	}
-
 	public class RootContext : NamedContext
 	{
 		public RootContext(IName name, IElementContext body) : base(name, body) {}
@@ -861,9 +852,9 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		public TypeInfo Classification { get; }
 	}
 
-	public abstract class ElementContextBase<T> : ContextBase
+	public abstract class ContextBase<T> : ContextBase
 	{
-		protected ElementContextBase(TypeInfo classification) : base(classification) {}
+		protected ContextBase(TypeInfo classification) : base(classification) {}
 
 		public override void Emit(IEmitter emitter, object instance) => Emit(emitter, (T) instance);
 
@@ -873,7 +864,6 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 	public class NamedContext : NamedContext<IName>
 	{
 		public NamedContext(IName name, IElementContext body) : base(name, body) {}
-		public NamedContext(IName name, IElementContext body, TypeInfo classification) : base(name, body, classification) {}
 	}
 
 	public class NamedContext<T> : DecoratedContext where T : IName
@@ -900,7 +890,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 	{
 		readonly IElementContext _context;
 
-		public DecoratedContext(IElementContext context) : this(context, context.Classification) {}
+		/*public DecoratedContext(IElementContext context) : this(context, context.Classification) {}*/
 
 		public DecoratedContext(IElementContext context, TypeInfo classification) : base(classification)
 		{

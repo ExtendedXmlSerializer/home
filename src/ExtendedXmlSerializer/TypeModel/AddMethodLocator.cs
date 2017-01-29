@@ -27,11 +27,11 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public sealed class AddMethodLocator : ConcurrentDictionary<TypeInfo, MethodInfo>, IAddMethodLocator
+	public sealed class AddMethodLocator : /*ConcurrentDictionary<TypeInfo, MethodInfo>,*/ IAddMethodLocator
 	{
 		const string Add = "Add";
 
-		public MethodInfo Locate(TypeInfo type, TypeInfo elementType) => GetOrAdd(type, t => Get(t, elementType));
+		public MethodInfo Locate(TypeInfo type, TypeInfo elementType) => Get(type, elementType);
 
 		static MethodInfo Get(TypeInfo type, TypeInfo elementType)
 		{

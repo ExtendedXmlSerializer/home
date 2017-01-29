@@ -42,9 +42,9 @@ namespace ExtendedXmlSerialization.Conversion
 	public class ValueTypeConverterBase<T> : FixedContextOption
 	{
 		public ValueTypeConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
-			: this(TypeEqualitySpecification<T>.Default, new ValueContext<T>(deserialize, serialize)) {}
+			: base(TypeEqualitySpecification<T>.Default, new ValueContext<T>(deserialize, serialize)) {}
 
-		public ValueTypeConverterBase(ISpecification<TypeInfo> specification, IElementContext context)
-			: base(specification, context) {}
+		/*public ValueTypeConverterBase(ISpecification<TypeInfo> specification, IElementContext context)
+			: base(specification, context) {}*/
 	}
 }

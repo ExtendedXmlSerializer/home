@@ -53,9 +53,8 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>",
 				data);
-			/*var read = new MemoryStream(Encoding.UTF8.GetBytes(data));
-			var actual = _serializer.Deserialize(read);
-			Assert.Equal(expected, actual);*/
+			var actual = _serializer.Deserialize(data);
+			Assert.Equal(expected, actual);
 		}
 
 		[Fact]

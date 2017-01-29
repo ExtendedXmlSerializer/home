@@ -29,12 +29,13 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class CollectionItemTypeLocator : CacheBase<TypeInfo, TypeInfo>, ICollectionItemTypeLocator
+	public class CollectionItemTypeLocator : /*CacheBase<TypeInfo, TypeInfo>,*/ ICollectionItemTypeLocator
 	{
 		readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
-		
+		readonly static Type Type = typeof(IEnumerable<>);
+
 		// Attribution: http://stackoverflow.com/a/17713382/3602057
-		protected override TypeInfo Create(TypeInfo parameter)
+		public TypeInfo Get(TypeInfo parameter)
 		{
 			// Type is Array
 			// short-circuit if you expect lots of arrays 
@@ -42,15 +43,13 @@ namespace ExtendedXmlSerialization.TypeModel
 				return parameter.GetElementType().GetTypeInfo();
 
 			// type is IEnumerable<T>;
-			if (parameter.IsGenericType && parameter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			if (parameter.IsGenericType && parameter.GetGenericTypeDefinition() == Type)
 				return parameter.GetGenericArguments()[0].GetTypeInfo();
 
 			// type implements/extends IEnumerable<T>;
 			var result = parameter.GetInterfaces()
-			                      .Where(t => t.GetTypeInfo().IsGenericType &&
-			                                  t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			                      .Where(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == Type)
 			                      .Select(t => t.GenericTypeArguments[0]).FirstOrDefault()?.GetTypeInfo();
-
 			return result;
 		}
 	}

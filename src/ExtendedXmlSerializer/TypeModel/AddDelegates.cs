@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class AddDelegates : CacheBase<TypeInfo, Action<object, object>>, IAddDelegates
+	class AddDelegates : /*CacheBase<TypeInfo, Action<object, object>>,*/ IAddDelegates
 	{
 		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddMethodLocator _add;
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.TypeModel
 			_add = add;
 		}
 
-		protected override Action<object, object> Create(TypeInfo parameter)
+		public Action<object, object> Get(TypeInfo parameter)
 		{
 			var elementType = _locator.Get(parameter);
 			if (elementType != null)
