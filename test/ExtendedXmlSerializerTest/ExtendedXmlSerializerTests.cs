@@ -61,12 +61,9 @@ namespace ExtendedXmlSerialization.Test
 		public void SimpleInstance()
 		{
 			var instance = new InstanceClass {PropertyName = "Hello World!"};
-			var data =
-				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"">
-<PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-InstanceClass>";//._serializer.Serialize(instance);
+			var data = _serializer.Serialize(instance);
 			Assert.Equal(
-				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"">
-<PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-InstanceClass>",
+				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-InstanceClass>",
 				data);
 			var read = _serializer.Deserialize<InstanceClass>(data);
 			Assert.NotNull(read);
@@ -90,9 +87,9 @@ namespace ExtendedXmlSerialization.Test
 			var data = _serializer.Serialize(instance);
 			
 			Assert.Equal(expected, data);
-			/*var read = _serializer.Deserialize<TestClassOtherClass>(data);
+			var read = _serializer.Deserialize<TestClassOtherClass>(data);
 			Assert.NotNull(read);
-			Assert.Equal(expected, _serializer.Serialize(read));*/
+			Assert.Equal(expected, _serializer.Serialize(read));
 		}
 
 		[Fact]

@@ -32,6 +32,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Read;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Conversion.Xml.Converters;
 using ExtendedXmlSerialization.Core;
@@ -109,17 +110,17 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		readonly INames _names;
 		readonly IContexts _contexts;
 		readonly INamespaces _namespaces;
-		readonly ITypeYielder _type;
+		readonly ITypeLocator _type;
 		readonly XmlReaderSettings _settings;
 
 		public Serializer() : this(new Names(), new Namespaces()) {}
 
 		public Serializer(INames names, INamespaces namespaces)
 			: this(
-				names, new Contexts(names), namespaces, new TypeYielder(new Types(namespaces, new TypeContexts())),
+				names, new Contexts(names), namespaces, new TypeLocator(new Types(namespaces, new TypeContexts())),
 				XmlReaderSettings) {}
 
-		public Serializer(INames names, IContexts contexts, INamespaces namespaces, ITypeYielder type,
+		public Serializer(INames names, IContexts contexts, INamespaces namespaces, ITypeLocator type,
 		                  XmlReaderSettings settings)
 		{
 			_names = names;
@@ -144,8 +145,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			using (var reader = XmlReader.Create(stream, _settings))
 			{
 				var yielder = new XmlYielder(_type, reader);
-				var classification = yielder.Classification();
-				var context = Get(classification);
+				var context = Get(yielder.Classification);
 				var result = context.Yield(yielder);
 				return result;
 			}
@@ -155,52 +155,83 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			=> new RootContext(_names.Get(parameter), _contexts.Get(parameter));
 	}
 
-	public interface IYielder
+	public interface IYielder : IName
 	{
-		TypeInfo Classification();
-
 		string Value();
 
-		IEnumerable<string> Members();
+		IEnumerable<IName> Members();
+
+		IEnumerable<IName> Items();
 	}
 
 	class XmlYielder : IYielder
 	{
-		readonly ITypeYielder _type;
+		readonly ITypeLocator _type;
 		readonly XmlReader _reader;
+		readonly IXmlLineInfo _line;
 
-		public XmlYielder(ITypeYielder type, XmlReader reader)
+		public XmlYielder(ITypeLocator type, XmlReader reader) : this(type, reader, reader.AsValid<IXmlLineInfo>()) {}
+
+		public XmlYielder(ITypeLocator type, XmlReader reader, IXmlLineInfo line)
 		{
 			_type = type;
 			_reader = reader;
+			_line = line;
 		}
 
-		public TypeInfo Classification() => _type.Get(_reader);
+		public string DisplayName => _reader.LocalName;
 
-		public string Value() => _reader.ReadElementContentAsString();
+		public TypeInfo Classification => _type.Get(_reader);
 
-		public IEnumerable<string> Members()
+
+		public string Value()
 		{
-			while (_reader.MoveToNextAttribute() && _reader.Prefix == string.Empty)
+			var result = _reader.ReadElementContentAsString();
+			switch (_reader.NodeType)
 			{
-				yield return _reader.LocalName;
+			case XmlNodeType.EndElement:
+					_reader.ReadEndElement();
+					break;
 			}
+			return result;
+		}
 
-			while (_reader.Read() && _reader.NodeType == XmlNodeType.Element && _reader.Prefix == string.Empty)
+		public IEnumerable<IName> Members()
+		{
+			var target = _reader.Depth + 1;
+			_reader.Read();
+
+			while (_reader.IsStartElement() && _reader.Depth == target && _reader.Prefix == string.Empty)
 			{
-				yield return _reader.LocalName;
-				_reader.ReadEndElement();
+				var line = _line.LineNumber;
+				var position = _line.LinePosition;
+				yield return this;
+				if (_line.LineNumber == line && _line.LinePosition == position)
+				{
+					_reader.Read();
+				}
+			}
+		}
+
+		public IEnumerable<IName> Items()
+		{
+			var target = _reader.Depth + 1;
+			_reader.Read();
+
+			while (_reader.IsStartElement() && _reader.Depth == target)
+			{
+				yield return this;
 			}
 		}
 	}
 
-	public interface ITypeYielder : IParameterizedSource<XmlReader, TypeInfo> {}
+	public interface ITypeLocator : IParameterizedSource<XmlReader, TypeInfo> {}
 
-	class TypeYielder : ITypeYielder
+	class TypeLocator : ITypeLocator
 	{
 		readonly ITypes _types;
 
-		public TypeYielder(ITypes types)
+		public TypeLocator(ITypes types)
 		{
 			_types = types;
 		}
@@ -298,7 +329,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			yield return TimeSpanTypeConverter.Default;
 
 			// yield return new DictionaryContext();
-			yield return new CollectionContextOption(_contexts, _activators, _locator, _names, _add);
+			yield return new CollectionContextOption(_contexts, new CollectionItemNameProvider(_locator, _names), _activators, _add);
 
 			var members = new ContextMembers(new MemberContextSelector(_contexts, _add), _property, _field);
 			yield return new ActivatedContextOption(_activators, members);
@@ -333,9 +364,9 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			_name = name;
 		}
 
-		public override IElementContext Get(TypeInfo parameter) => Create(_name.Get(parameter));
+		public override IElementContext Get(TypeInfo parameter) => Create(parameter, _name.Get(parameter));
 
-		protected abstract IElementContext Create(T name);
+		protected abstract IElementContext Create(TypeInfo type, T name);
 	}
 
 	public abstract class ContextOptionBase : OptionBase<TypeInfo, IElementContext>, IContextOption
@@ -385,10 +416,6 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		readonly IActivators _activators;
 		readonly IAddDelegates _add;
 
-		public CollectionContextOption(IContexts contexts, IActivators activators, ICollectionItemTypeLocator locator,
-		                               INames names, IAddDelegates add)
-			: this(contexts, new CollectionItemNameProvider(locator, names), activators, add) {}
-
 		public CollectionContextOption(IContexts contexts, INameProvider names, IActivators activators,
 		                               IAddDelegates add) : base(IsCollectionTypeSpecification.Default, names)
 		{
@@ -397,8 +424,13 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			_add = add;
 		}
 
-		protected override IElementContext Create(IName name)
-			=> new EnumerableContext(new CollectionItemContext(_contexts, name), _activators, _add);
+		protected override IElementContext Create(TypeInfo type, IName name)
+		{
+			var context = new CollectionItemContext(_contexts, name);
+			var activator = new CollectionActivator(new DelegatedActivator(_activators.Get(type.AsType())), context, _add);
+			var result = new EnumerableContext(context, activator);
+			return result;
+		}
 	}
 
 	/*class DictionaryContextOption : ContainerContextOptionBase<ICollectionName>
@@ -471,33 +503,28 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 	class DictionaryContext : EnumerableContext<IDictionary>
 	{
-		public DictionaryContext(IElementContext item, IActivators activators, IAddDelegates add, TypeInfo classification)
-			: base(item, activators, add, classification) {}
+		public DictionaryContext(IElementContext item, IActivator activator, TypeInfo classification)
+			: base(item, activator, classification) {}
 
 		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}
 
 	class EnumerableContext : EnumerableContext<IEnumerable>
 	{
-		public EnumerableContext(IElementContext item, IActivators activators, IAddDelegates add)
-			: base(item, activators, add) {}
+		public EnumerableContext(IElementContext item, IActivator activator) : base(item, activator) {}
 	}
 
 	class EnumerableContext<T> : ContextBase<T> where T : IEnumerable
 	{
 		readonly IElementContext _item;
-		readonly IActivators _activators;
-		readonly IAddDelegates _add;
+		readonly IActivator _activator;
 
-		public EnumerableContext(IElementContext item, IActivators activators, IAddDelegates add)
-			: this(item, activators, add, item.Classification) {}
+		public EnumerableContext(IElementContext item, IActivator activator) : this(item, activator, item.Classification) {}
 
-		public EnumerableContext(IElementContext item, IActivators activators, IAddDelegates add, TypeInfo classification)
-			: base(classification)
+		public EnumerableContext(IElementContext item, IActivator activator, TypeInfo classification) : base(classification)
 		{
 			_item = item;
-			_activators = activators;
-			_add = add;
+			_activator = activator;
 		}
 
 		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
@@ -511,36 +538,121 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			}
 		}
 
-		public override object Yield(IYielder yielder)
-		{
-			throw new NotImplementedException();
-		}
+		public override object Yield(IYielder yielder) => _activator.Get(yielder);
 	}
 
 	class ActivatedContextOption : ContextOptionBase
 	{
 		readonly IActivators _activators;
-		readonly IContextMembers _contexts;
+		readonly IContextMembers _members;
 
-		public ActivatedContextOption(IActivators activators, IContextMembers contexts)
+		public ActivatedContextOption(IActivators activators, IContextMembers members)
 			: base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;
-			_contexts = contexts;
+			_members = members;
 		}
 
 		public override IElementContext Get(TypeInfo parameter)
-			=> new ActivatedContext(_activators, _contexts.Get(parameter), parameter);
+		{
+			var members = _members.Get(parameter);
+			var activate = _activators.Get(parameter.AsType());
+			var activator = new MemberedActivator(new DelegatedActivator(activate), members);
+			var result = new ActivatedContext(activator, members, parameter);
+			return result;
+		}
+	}
+
+	public interface IActivator : IParameterizedSource<IYielder, object> {}
+
+	class Activator : IActivator
+	{
+		readonly IActivators _activators;
+
+		public Activator(IActivators activators)
+		{
+			_activators = activators;
+		}
+
+		public object Get(IYielder parameter) => _activators.Get(parameter.Classification.AsType()).Invoke();
+	}
+
+	class DelegatedActivator : IActivator
+	{
+		readonly Func<object> _activate;
+
+		public DelegatedActivator(Func<object> activate)
+		{
+			_activate = activate;
+		}
+
+		public object Get(IYielder parameter) => _activate();
+	}
+
+	class DecoratedActivator : IActivator
+	{
+		readonly IActivator _activator;
+
+		public DecoratedActivator(IActivator activator)
+		{
+			_activator = activator;
+		}
+
+		public virtual object Get(IYielder parameter) => _activator.Get(parameter);
+	}
+
+	class MemberedActivator : DecoratedActivator
+	{
+		readonly IMembers _members;
+
+		public MemberedActivator(IActivator activator, IMembers members) : base(activator)
+		{
+			_members = members;
+		}
+
+		public override object Get(IYielder parameter)
+		{
+			var result = base.Get(parameter);
+			foreach (var name in parameter.Members())
+			{
+				var member = _members.Get(name.DisplayName);
+				member?.Assign(result, member.Yield(parameter));
+			}
+			return result;
+		}
+	}
+
+	class CollectionActivator : DecoratedActivator
+	{
+		readonly IElementContext _context;
+		readonly IAddDelegates _add;
+
+		public CollectionActivator(IActivator activator, IElementContext context, IAddDelegates add) : base(activator)
+		{
+			_context = context;
+			_add = add;
+		}
+
+		public override object Get(IYielder parameter)
+		{
+			var result = base.Get(parameter);
+			var list = result as IList ?? new ListAdapter(result, _add.Get(result.GetType().GetTypeInfo()));
+			foreach (var _ in parameter.Items())
+			{
+				list.Add(_context.Yield(parameter));
+			}
+			return result;
+		}
 	}
 
 	class ActivatedContext : ContextBase
 	{
-		readonly IActivators _activators;
+		readonly IActivator _activator;
 		readonly IMembers _members;
 
-		public ActivatedContext(IActivators activators, IMembers members, TypeInfo classification) : base(classification)
+		public ActivatedContext(IActivator activator, IMembers members, TypeInfo classification) : base(classification)
 		{
-			_activators = activators;
+			_activator = activator;
 			_members = members;
 		}
 
@@ -556,16 +668,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			}
 		}
 
-		public override object Yield(IYielder yielder)
-		{
-			var result = _activators.Get(Classification.AsType()).Invoke();
-			foreach (var name in yielder.Members())
-			{
-				var member = _members.Get(name);
-				member?.Assign(result, member.Yield(yielder));
-			}
-			return result;
-		}
+		public override object Yield(IYielder yielder) => _activator.Get(yielder);
 	}
 
 	public class Members : IMembers

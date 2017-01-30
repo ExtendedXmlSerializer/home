@@ -24,7 +24,6 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
