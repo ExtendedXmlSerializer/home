@@ -24,6 +24,7 @@
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.Legacy.Tools;
 
 namespace ExtendedXmlSerialization.Test.Legacy
@@ -72,7 +73,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		{
 			xml = xml.Replace("[CORELIB]", CoreLib);
 			xml = xml.Replace("[EXTENDEDXMLSERIALIZER_VERSION]",
-							  typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
+							  typeof(ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
 			return xml;
 		}
 

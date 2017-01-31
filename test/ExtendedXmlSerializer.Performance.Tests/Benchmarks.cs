@@ -26,7 +26,6 @@ using System.Text;
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ElementModel.Options;
 using ExtendedXmlSerialization.Performance.Tests.Model;
 
 namespace ExtendedXmlSerialization.Performance.Tests
@@ -56,7 +55,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 
 	public class ExtendedXmlSerializerV2Test
 	{
-		readonly IExtendedXmlSerializer _serializer = new Serializer();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
 

@@ -25,18 +25,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ElementModel.Members
 {
-	sealed class RecursionGuardedElementMembers : IElementMembers
+	sealed class RecursionGuardedElementMembers : IContextMembers
 	{
 		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-		readonly IElementMembers _members;
+		readonly IContextMembers _members;
 
-		public RecursionGuardedElementMembers(IElementMembers members)
+		public RecursionGuardedElementMembers(IContextMembers members)
 		{
 			_members = members;
 		}
@@ -53,11 +54,11 @@ namespace ExtendedXmlSerialization.ElementModel.Members
 				_members = members;
 			}
 
-			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
+			public IEnumerator<IMemberContext> GetEnumerator() => _members().GetEnumerator();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-			public IMember Get(string parameter) => _members().Get(parameter);
+			public IMemberContext Get(string parameter) => _members().Get(parameter);
 		}
 	}
 }

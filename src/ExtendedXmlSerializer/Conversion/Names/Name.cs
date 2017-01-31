@@ -21,27 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel.Names;
 
-namespace ExtendedXmlSerialization.ElementModel.Options
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public abstract class ElementOptionBase : OptionBase<TypeInfo, IElement>, IElementOption
+	public class Name : IEquatable<IName>, IName
 	{
-		readonly INames _names;
+		public Name(string displayName, Type classification) : this(displayName, classification.GetTypeInfo()) {}
 
-		protected ElementOptionBase(INames names) : this(AlwaysSpecification<MemberInfo>.Default, names) {}
-
-		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names)
-			: base(specification)
+		public Name(string displayName, TypeInfo classification)
 		{
-			_names = names;
+			DisplayName = displayName;
+			Classification = classification;
 		}
 
-		public override IElement Get(TypeInfo parameter) => Create(_names.Get(parameter));
+		public string DisplayName { get; }
+		
+		public bool Equals(IName other) => Equals(Classification, other?.Classification);
 
-		protected abstract IElement Create(IName name);
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is Name && Equals((Name) obj);
+
+		public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
+
+		public static bool operator ==(Name left, Name right) => left.Equals(right);
+
+		public static bool operator !=(Name left, Name right) => !left.Equals(right);
+		public TypeInfo Classification { get; }
 	}
 }

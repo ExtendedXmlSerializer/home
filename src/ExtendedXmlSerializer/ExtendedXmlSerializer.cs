@@ -27,13 +27,15 @@ using System.Xml;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
+using INames = ExtendedXmlSerialization.Conversion.INames;
+using Names = ExtendedXmlSerialization.Conversion.Names;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
+	/*public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
 	{
 		readonly IXmlContextFactory _factory;
 		readonly IConverterSelector _selector;
@@ -60,5 +62,61 @@ namespace ExtendedXmlSerialization
 		IConverter IParameterizedSource<IContext, IConverter>.Get(IContext parameter) => _selector.Get(parameter);
 
 		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => _selector.Get(parameter);
+	}*/
+	public class ExtendedXmlSerializer : CacheBase<TypeInfo, IElementContext>, IExtendedXmlSerializer
+	{
+		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
+		                                                      {
+			                                                      IgnoreWhitespace = true,
+			                                                      IgnoreComments = true,
+			                                                      IgnoreProcessingInstructions = true
+		                                                      };
+
+		readonly INames _names;
+		readonly IContexts _contexts;
+		readonly INamespaces _namespaces;
+		readonly ITypeLocator _type;
+		readonly XmlReaderSettings _settings;
+
+		public ExtendedXmlSerializer() : this(new Names(), new Namespaces()) {}
+
+		public ExtendedXmlSerializer(INames names, INamespaces namespaces)
+			: this(
+				names, new Contexts(names), namespaces, new TypeLocator(new Types(namespaces, new TypeContexts())),
+				XmlReaderSettings) {}
+
+		public ExtendedXmlSerializer(INames names, IContexts contexts, INamespaces namespaces, ITypeLocator type,
+		                             XmlReaderSettings settings)
+		{
+			_names = names;
+			_contexts = contexts;
+			_namespaces = namespaces;
+			_type = type;
+			_settings = settings;
+		}
+
+		public void Serialize(Stream stream, object instance)
+		{
+			using (var writer = XmlWriter.Create(stream))
+			{
+				var emitter = new XmlEmitter(_namespaces, writer);
+				var context = Get(instance.GetType().GetTypeInfo());
+				context.Emit(emitter, instance);
+			}
+		}
+
+		public object Deserialize(Stream stream)
+		{
+			using (var reader = XmlReader.Create(stream, _settings))
+			{
+				var yielder = new XmlYielder(_type, reader);
+				var context = Get(yielder.Classification);
+				var result = context.Yield(yielder);
+				return result;
+			}
+		}
+
+		protected override IElementContext Create(TypeInfo parameter)
+			=> new RootContext(_names.Get(parameter), _contexts.Get(parameter));
 	}
 }

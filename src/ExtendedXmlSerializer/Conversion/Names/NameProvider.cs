@@ -26,6 +26,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.TypeModel;
+using INames = ExtendedXmlSerialization.Conversion.INames;
 
 namespace ExtendedXmlSerialization.ElementModel.Names
 {
@@ -43,14 +44,14 @@ namespace ExtendedXmlSerialization.ElementModel.Names
 
 	public class GenericNameProvider : NameProviderBase<IGenericName>
 	{
-		readonly Options.INames _names;
+		readonly INames _names;
 
-		public GenericNameProvider(Options.INames names) : this(names, TypeFormatter.Default) {}
+		public GenericNameProvider(INames names) : this(names, TypeFormatter.Default) {}
 
-		public GenericNameProvider(Options.INames names, ITypeFormatter formatter)
+		public GenericNameProvider(INames names, ITypeFormatter formatter)
 			: this(names, TypeAliasProvider.Default, formatter) {}
 
-		public GenericNameProvider(Options.INames names, IAliasProvider alias, ITypeFormatter formatter)
+		public GenericNameProvider(INames names, IAliasProvider alias, ITypeFormatter formatter)
 			: base(alias, formatter)
 		{
 			_names = names;

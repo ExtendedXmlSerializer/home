@@ -35,17 +35,18 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly ConditionMonitor _framework = new ConditionMonitor();
 
-		readonly IElements _elements;
 		readonly static TypeInfo FrameworkType = Defaults.FrameworkType;
 
-		public ObjectTypeWalker(IElements elements, object root) : base(root)
+		readonly IContexts _contexts;
+
+		public ObjectTypeWalker(IContexts contexts, object root) : base(root)
 		{
-			_elements = elements;
+			_contexts = contexts;
 		}
 
 		protected override IEnumerable<TypeInfo> Select(object input)
 		{
-			var parameter = input.GetType().GetTypeInfo();
+			/*var parameter = input.GetType().GetTypeInfo();
 			yield return parameter;
 
 			var element = _elements.Get(parameter);
@@ -80,7 +81,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 						Schedule(i);
 					}
 				}
-			}
+			}*/
+			yield break;
 		}
 
 		bool Check(IClassification classification, object instance)

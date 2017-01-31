@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ObjectNamespaces : IObjectNamespaces
 	{
-		public ObjectNamespaces(IElements elements) : this(elements, new Namespaces(new GeneratedPrefixProvider()).Get) {}
+		public ObjectNamespaces(IContexts elements) : this(elements, new Namespaces(new GeneratedPrefixProvider()).Get) {}
 
-		readonly IElements _elements;
+		readonly IContexts _elements;
 		readonly Func<TypeInfo, INamespace> _namespaces;
 
-		public ObjectNamespaces(IElements elements, Func<TypeInfo, INamespace> namespaces)
+		public ObjectNamespaces(IContexts elements, Func<TypeInfo, INamespace> namespaces)
 		{
 			_elements = elements;
 			_namespaces = namespaces;

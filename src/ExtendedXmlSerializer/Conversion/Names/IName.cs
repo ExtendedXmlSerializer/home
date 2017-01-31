@@ -21,21 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel;
-
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class ConverterOption<T> : ConverterOption where T : IElement
+	public interface IName : IClassification
 	{
-		public ConverterOption(IConverter converter) : base(IsAssignableSpecification<T>.Default, converter) {}
-	}
-
-	public class ConverterOption : FixedOption<TypeInfo, IConverter>, IConverterOption
-	{
-		public ConverterOption(ITypeConverter converter) : this(converter, converter) {}
-		public ConverterOption(ISpecification<TypeInfo> specification, IConverter converter) : base(specification, converter) {}
+		string DisplayName { get; }
 	}
 }

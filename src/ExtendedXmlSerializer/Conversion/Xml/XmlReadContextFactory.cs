@@ -22,17 +22,12 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
-using ExtendedXmlSerialization.ElementModel.Names;
-using ExtendedXmlSerialization.ElementModel.Properties;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class XmlReadContextFactory : IXmlReadContextFactory
+	public class XmlReadContextFactory 
 	{
-		readonly IElements _elements;
+		/*readonly IElements _elements;
 		readonly ITypes _types;
 		readonly INames _converter;
 		readonly XName _type;
@@ -72,7 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				return result;
 			}
 			return container.Element;
-		}
+		}*/
 
 		static XName GetName(string data, XElement element)
 		{
@@ -87,13 +82,13 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			throw new SerializationException($"Could not parse XML name from {data}");
 		}
 
-		public string Value(IName name, XElement data)
+		/*public string Value(IName name, XElement data)
 		{
 			var xName = _converter.Get(name);
 			var value = Attribute(data, xName);
 			return value;
 		}
 
-		static string Attribute(XElement data, XName xName) => data.HasAttributes ? data.Attribute(xName)?.Value : null;
+		static string Attribute(XElement data, XName xName) => data.HasAttributes ? data.Attribute(xName)?.Value : null;*/
 	}
 }

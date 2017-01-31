@@ -25,7 +25,6 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ElementModel.Options;
 
 namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 {

@@ -21,17 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Read
+using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Core.Specifications;
+
+namespace ExtendedXmlSerialization.ElementModel.Names
 {
-	public class DecoratedReader : ReaderBase
+	public class NameOption : NameOptionBase
 	{
-		readonly IReader _reader;
+		public static NameOption Default { get; } = new NameOption();
+		NameOption() : base(NameProvider.Default.Get) {}
+	}
 
-		public DecoratedReader(IReader reader)
-		{
-			_reader = reader;
-		}
-
-		public override object Read(IReadContext context) => _reader.Read(context);
+	public class GenericNameOption : NameOptionBase
+	{
+		public GenericNameOption(INames names) : base(IsGenericTypeSpecification.Default, new GenericNameProvider(names).Get) {}
 	}
 }

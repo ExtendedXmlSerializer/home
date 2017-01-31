@@ -21,17 +21,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
+using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IXmlContextFactory
+	public class OptimizedNamespaceEmitter : IEmitter
 	{
-		IWriteContext Create(XmlWriter writer, object instance);
+		const string Prefix = "xmlns";
 
-		IReadContext Create(Stream stream);
+		readonly IObjectNamespaces _namespaces;
+		readonly IEmitter _context;
+		readonly XmlWriter _writer;
+		readonly object _instance;
+
+		public OptimizedNamespaceEmitter(IObjectNamespaces namespaces, IEmitter context, XmlWriter writer, object instance)
+		{
+			_namespaces = namespaces;
+			_context = context;
+			_writer = writer;
+			_instance = instance;
+		}
+
+		public IDisposable Emit(IName name)
+		{
+			var result = _context.Emit(name);
+			/*var names = _namespaces.Get(_instance);
+
+			for (var i = 0; i < names.Length; i++)
+			{
+				var name = names[i];
+				switch (i)
+				{
+					case 0:
+						_writer.WriteAttributeString(Prefix, name.Namespace.NamespaceName);
+						break;
+					default:
+						_writer.WriteAttributeString(Prefix, name.Prefix, string.Empty, name.Namespace.NamespaceName);
+						break;
+				}
+			}*/
+			return result;
+		}
+
+		public void Write(string text) => _context.Write(text);
 	}
 }

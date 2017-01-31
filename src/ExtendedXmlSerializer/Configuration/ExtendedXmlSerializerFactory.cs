@@ -37,10 +37,9 @@ namespace ExtendedXmlSerialization.Configuration
 			var namespaces = new Namespaces();
 			var locator = new CollectionItemTypeLocator();
 			var add = new AddDelegates(locator, new AddMethodLocator());
-			var elements = new Elements(locator, add);
 			var types = new Types(namespaces, new TypeContexts());
-			var factory = new XmlContextFactory(elements, namespaces, types);
-			var result = new ExtendedXmlSerializer(factory, new ConverterOptions(add));
+			/*var factory = new XmlContextFactory(elements, namespaces, types);*/
+			var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)*/);
 			return result;
 		}
 	}

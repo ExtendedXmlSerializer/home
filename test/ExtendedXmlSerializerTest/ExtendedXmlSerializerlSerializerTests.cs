@@ -25,15 +25,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ElementModel.Options;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test
 {
-	public class ExtendedXmlSerializerTests
+	public class ExtendedXmlSerializerlSerializerTests
 	{
-		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new Serializer();
+		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new ExtendedXmlSerializer();
 
 		readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
 		

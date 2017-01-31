@@ -47,8 +47,8 @@ namespace ExtendedXmlSerialization.Conversion
 
 		public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
 
-		public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
-			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);
+		/*public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
+			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);*/
 
 		public static bool Exact(this IClassification @this, object instance)
 			=> Exact(@this, instance.GetType().GetTypeInfo());

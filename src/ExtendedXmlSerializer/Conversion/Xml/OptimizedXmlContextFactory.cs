@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.ElementModel;
-
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class OptimizedXmlContextFactory : IXmlContextFactory
+	/*public class OptimizedXmlContextFactory : IXmlContextFactory
 	{
 		readonly IElements _elements;
 		readonly IXmlContextFactory _factory;
@@ -44,5 +38,5 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			new OptimizedWriteContext(new ObjectNamespaces(_elements), _factory.Create(writer, instance), writer, instance);
 
 		public IReadContext Create(Stream stream) => _factory.Create(stream);
-	}
+	}*/
 }

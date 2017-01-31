@@ -1,28 +1,46 @@
-using System;
+// MIT License
+// 
+// Copyright (c) 2016 Wojciech Nagórski
+//                    Michael DeMond
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
 using ExtendedXmlSerialization.ElementModel.Names;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IXmlWriteContextFactory : ICommand<string>, IServiceProvider
+	/*public interface IXmlWriteContextFactory : ICommand<string>, IServiceProvider
 	{
 		IDisposable Start(IWriteContext context);
 
 		IWriteContext Create(IContainer container, TypeInfo instanceType);
-	}
+	}*/
 
-	public interface IEmitter : ICommand<IWriteContext> {}
+	/*public interface IEmitter : ICommand<IWriteContext> {}*/
 
-	public abstract class EmitterBase : IEmitter
+	/*public abstract class EmitterBase : IEmitter
 	{
 		public void Execute(IWriteContext parameter)
 		{
@@ -31,9 +49,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 
 		protected abstract void Emit(IWriteContext parameter, IName name);
-	}
+	}*/
 
-	class Emitter : EmitterBase
+	/*class Emitter : EmitterBase
 	{
 		readonly INames _names;
 		readonly XmlWriter _writer;
@@ -49,7 +67,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			var data = _names.Get(name);
 			_writer.WriteStartElement(data.LocalName, data.NamespaceName);
 		}
-	}
+	}*/
 
 	class QualifiedNameTypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
 	{
@@ -72,10 +90,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
 	{
-		readonly ElementModel.Options.INames _names;
+		readonly Conversion.INames _names;
 		readonly INames _native;
 
-		public TypeNames(ElementModel.Options.INames names, INames native)
+		public TypeNames(Conversion.INames names, INames native)
 		{
 			_names = names;
 			_native = native;
@@ -99,7 +117,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public ImmutableArray<IName> Arguments { get; }
 	}
-
+	/*
 	class MemberEmitter : EmitterBase
 	{
 		readonly ITypeNames _names;
@@ -189,7 +207,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 					if (!context.Container.Exact(type))
 					{
 						context.Write(TypeProperty.Default, type);
-					}*/
+					}#1#
 				}
 				else
 				{
@@ -203,5 +221,5 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 
 		public void Execute(string parameter) => _writer.WriteString(parameter);
-	}
+	}*/
 }
