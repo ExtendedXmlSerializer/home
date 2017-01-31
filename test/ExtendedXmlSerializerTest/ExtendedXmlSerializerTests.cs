@@ -37,12 +37,12 @@ namespace ExtendedXmlSerialization.Test
 
 		readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
 		
-		readonly string _xml;
+		/*readonly string _xml;
 
 		public ExtendedXmlSerializerTests()
 		{
-			_xml = _serializer.Serialize(TestClassOtherClass);
-		}
+			_serializer.Deserialize(_xml = _serializer.Serialize(TestClassOtherClass));
+		}*/
 
 		[Fact]
 		public void Primitive()
@@ -70,14 +70,14 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal("Hello World!", read.PropertyName);
 		}
 
-		[Fact]
+		/*[Fact]
 		public void ProfileLoop()
 		{
 			for (int i = 0; i < 100; i++)
 			{
 				_serializer.Deserialize<TestClassOtherClass>(_xml);
 			}
-		}
+		}*/
 
 		[Fact]
 		public void ComplexInstance()

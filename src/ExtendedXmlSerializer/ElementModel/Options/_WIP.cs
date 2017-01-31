@@ -169,18 +169,14 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		readonly ITypeLocator _type;
 		readonly XmlReader _reader;
 
-		public XmlYielder(ITypeLocator type, XmlReader reader) : this(type, reader, reader.AsValid<IXmlLineInfo>()) {}
-
-		public XmlYielder(ITypeLocator type, XmlReader reader, IXmlLineInfo line)
+		public XmlYielder(ITypeLocator type, XmlReader reader)
 		{
 			_type = type;
 			_reader = reader;
 		}
 
 		public string DisplayName => _reader.LocalName;
-
 		public TypeInfo Classification => _type.Get(_reader);
-
 
 		public string Value()
 		{
@@ -190,31 +186,29 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			return result;
 		}
 
-		public IEnumerator Members() => new Enumerator(_reader, this);
+		public IEnumerator Members() => new Enumerator(_reader, _reader.Depth + 1);
 
-		public IEnumerator Items() => new Enumerator(_reader, this);
-	}
+		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
 
-	public class Enumerator : IEnumerator
-	{
-		readonly XmlReader _reader;
-		readonly IName _name;
-		readonly int _depth;
-
-		internal Enumerator(XmlReader reader, IName name)
+		sealed class Enumerator : IEnumerator
 		{
-			_reader = reader;
-			_name = name;
-			_depth = _reader.Depth + 1;
-		}
+			readonly XmlReader _reader;
+			readonly int _depth;
 
-		public object Current => _name;
+			public Enumerator(XmlReader reader, int depth)
+			{
+				_reader = reader;
+				_depth = depth;
+			}
 
-		public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
+			public object Current => _reader;
 
-		public void Reset()
-		{
-			throw new NotSupportedException();
+			public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
+
+			public void Reset()
+			{
+				throw new NotSupportedException();
+			}
 		}
 	}
 
@@ -613,7 +607,7 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 				var member = _members.Get(parameter.DisplayName);
 				member?.Assign(result, member.Yield(parameter));
 			}
-			
+
 			return result;
 		}
 	}
