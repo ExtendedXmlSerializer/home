@@ -25,7 +25,6 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Performance.Tests.Model;
 
 namespace ExtendedXmlSerialization.Performance.Tests

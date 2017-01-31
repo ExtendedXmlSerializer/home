@@ -21,13 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.ElementModel;
-
-namespace ExtendedXmlSerialization.Conversion.Xml
+/*namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ObjectNamespaces : IObjectNamespaces
 	{
@@ -50,4 +44,4 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				.Distinct()
 				.ToImmutableArray();
 	}
-}
+}*/

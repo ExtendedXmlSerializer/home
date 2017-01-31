@@ -24,9 +24,8 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Model.Names;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel.Names;
-using Defaults = ExtendedXmlSerialization.ElementModel.Names.Defaults;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {

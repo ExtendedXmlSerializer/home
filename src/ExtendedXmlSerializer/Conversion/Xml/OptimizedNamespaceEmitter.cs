@@ -21,50 +21,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
-using ExtendedXmlSerialization.ElementModel.Names;
-
-namespace ExtendedXmlSerialization.Conversion.Xml
+/*namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class OptimizedNamespaceEmitter : IEmitter
-	{
-		const string Prefix = "xmlns";
+ public class OptimizedNamespaceEmitter : IEmitter
+ {
+	 const string Prefix = "xmlns";
 
-		readonly IObjectNamespaces _namespaces;
-		readonly IEmitter _context;
-		readonly XmlWriter _writer;
-		readonly object _instance;
+	 readonly IObjectNamespaces _namespaces;
+	 readonly IEmitter _context;
+	 readonly XmlWriter _writer;
+	 readonly object _instance;
 
-		public OptimizedNamespaceEmitter(IObjectNamespaces namespaces, IEmitter context, XmlWriter writer, object instance)
-		{
-			_namespaces = namespaces;
-			_context = context;
-			_writer = writer;
-			_instance = instance;
-		}
+	 public OptimizedNamespaceEmitter(IObjectNamespaces namespaces, IEmitter context, XmlWriter writer, object instance)
+	 {
+		 _namespaces = namespaces;
+		 _context = context;
+		 _writer = writer;
+		 _instance = instance;
+	 }
 
-		public IDisposable Emit(IName name)
-		{
-			var result = _context.Emit(name);
-			/*var names = _namespaces.Get(_instance);
+	 public IDisposable Emit(IName name)
+	 {
+		 var result = _context.Emit(name);
+		 /*var names = _namespaces.Get(_instance);
 
-			for (var i = 0; i < names.Length; i++)
-			{
-				var name = names[i];
-				switch (i)
-				{
-					case 0:
-						_writer.WriteAttributeString(Prefix, name.Namespace.NamespaceName);
-						break;
-					default:
-						_writer.WriteAttributeString(Prefix, name.Prefix, string.Empty, name.Namespace.NamespaceName);
-						break;
-				}
-			}*/
-			return result;
-		}
+		 for (var i = 0; i < names.Length; i++)
+		 {
+			 var name = names[i];
+			 switch (i)
+			 {
+				 case 0:
+					 _writer.WriteAttributeString(Prefix, name.Namespace.NamespaceName);
+					 break;
+				 default:
+					 _writer.WriteAttributeString(Prefix, name.Prefix, string.Empty, name.Namespace.NamespaceName);
+					 break;
+			 }
+		 }#1#
+		 return result;
+	 }
 
-		public void Write(string text) => _context.Write(text);
-	}
-}
+	 public void Write(string text) => _context.Write(text);
+ }
+}*/

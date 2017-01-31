@@ -25,7 +25,7 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ElementModel.Members
+namespace ExtendedXmlSerialization.TypeModel
 {
 	public interface ISetterFactory : IParameterizedSource<MemberInfo, Action<object, object>> {}
 }

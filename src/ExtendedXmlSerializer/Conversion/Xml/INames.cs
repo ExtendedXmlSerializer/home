@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Model.Names;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {

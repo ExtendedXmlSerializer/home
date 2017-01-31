@@ -21,10 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.TypeModel;
-
 namespace ExtendedXmlSerialization.Configuration
 {
 	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
@@ -34,11 +30,10 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 		{
-			var namespaces = new Namespaces();
+			/*var namespaces = new Namespaces();
 			var locator = new CollectionItemTypeLocator();
 			var add = new AddDelegates(locator, new AddMethodLocator());
-			var types = new Types(namespaces, new TypeContexts());
-			/*var factory = new XmlContextFactory(elements, namespaces, types);*/
+			var types = new Types(namespaces, new TypeContexts());*/
 			var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)*/);
 			return result;
 		}
