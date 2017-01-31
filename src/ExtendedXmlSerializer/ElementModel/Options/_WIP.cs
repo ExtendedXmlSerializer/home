@@ -159,16 +159,15 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 	{
 		string Value();
 
-		IEnumerable<IName> Members();
+		IEnumerator Members();
 
-		IEnumerable<IName> Items();
+		IEnumerator Items();
 	}
 
 	class XmlYielder : IYielder
 	{
 		readonly ITypeLocator _type;
 		readonly XmlReader _reader;
-		readonly IXmlLineInfo _line;
 
 		public XmlYielder(ITypeLocator type, XmlReader reader) : this(type, reader, reader.AsValid<IXmlLineInfo>()) {}
 
@@ -176,7 +175,6 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		{
 			_type = type;
 			_reader = reader;
-			_line = line;
 		}
 
 		public string DisplayName => _reader.LocalName;
@@ -186,42 +184,37 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 
 		public string Value()
 		{
-			var result = _reader.ReadElementContentAsString();
-			switch (_reader.NodeType)
-			{
-			case XmlNodeType.EndElement:
-					_reader.ReadEndElement();
-					break;
-			}
+			_reader.Read();
+			var result = _reader.Value;
+			_reader.Read();
 			return result;
 		}
 
-		public IEnumerable<IName> Members()
-		{
-			var target = _reader.Depth + 1;
-			_reader.Read();
+		public IEnumerator Members() => new Enumerator(_reader, this);
 
-			while (_reader.IsStartElement() && _reader.Depth == target && _reader.Prefix == string.Empty)
-			{
-				var line = _line.LineNumber;
-				var position = _line.LinePosition;
-				yield return this;
-				if (_line.LineNumber == line && _line.LinePosition == position)
-				{
-					_reader.Read();
-				}
-			}
+		public IEnumerator Items() => new Enumerator(_reader, this);
+	}
+
+	public class Enumerator : IEnumerator
+	{
+		readonly XmlReader _reader;
+		readonly IName _name;
+		readonly int _depth;
+
+		internal Enumerator(XmlReader reader, IName name)
+		{
+			_reader = reader;
+			_name = name;
+			_depth = _reader.Depth + 1;
 		}
 
-		public IEnumerable<IName> Items()
-		{
-			var target = _reader.Depth + 1;
-			_reader.Read();
+		public object Current => _name;
 
-			while (_reader.IsStartElement() && _reader.Depth == target)
-			{
-				yield return this;
-			}
+		public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
+
+		public void Reset()
+		{
+			throw new NotSupportedException();
 		}
 	}
 
@@ -329,7 +322,8 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 			yield return TimeSpanTypeConverter.Default;
 
 			// yield return new DictionaryContext();
-			yield return new CollectionContextOption(_contexts, new CollectionItemNameProvider(_locator, _names), _activators, _add);
+			yield return
+				new CollectionContextOption(_contexts, new CollectionItemNameProvider(_locator, _names), _activators, _add);
 
 			var members = new ContextMembers(new MemberContextSelector(_contexts, _add), _property, _field);
 			yield return new ActivatedContextOption(_activators, members);
@@ -613,11 +607,13 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		public override object Get(IYielder parameter)
 		{
 			var result = base.Get(parameter);
-			foreach (var name in parameter.Members())
+			var members = parameter.Members();
+			while (members.MoveNext())
 			{
-				var member = _members.Get(name.DisplayName);
+				var member = _members.Get(parameter.DisplayName);
 				member?.Assign(result, member.Yield(parameter));
 			}
+			
 			return result;
 		}
 	}
@@ -637,10 +633,15 @@ namespace ExtendedXmlSerialization.ElementModel.Options
 		{
 			var result = base.Get(parameter);
 			var list = result as IList ?? new ListAdapter(result, _add.Get(result.GetType().GetTypeInfo()));
-			foreach (var _ in parameter.Items())
+			var items = parameter.Items();
+			while (items.MoveNext())
 			{
 				list.Add(_context.Yield(parameter));
 			}
+			/*foreach (var _ in parameter.Items())
+			{
+				list.Add(_context.Yield(parameter));
+			}*/
 			return result;
 		}
 	}

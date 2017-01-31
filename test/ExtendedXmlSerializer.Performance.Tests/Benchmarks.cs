@@ -41,15 +41,15 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		public ExtendedXmlSerializerTest()
 		{
 			_obj.Init();
-			_xml = _serializer.Serialize(_obj);
+			_xml = SerializationClassWithPrimitive();
+			DeserializationClassWithPrimitive();
 		}
 
 		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
 		[Benchmark]
-		public TestClassOtherClass DeserializationClassWithPrimitive()
-			=> _serializer.Deserialize<TestClassOtherClass>(_xml);
+		public TestClassOtherClass DeserializationClassWithPrimitive() => _serializer.Deserialize<TestClassOtherClass>(_xml);
 	}
 
 
@@ -61,7 +61,8 @@ namespace ExtendedXmlSerialization.Performance.Tests
 
 		public ExtendedXmlSerializerV2Test()
 		{
-			_xml = _serializer.Serialize(_obj);
+			_xml = SerializationClassWithPrimitive();
+			DeserializationClassWithPrimitive();
 		}
 
 		[Benchmark]
@@ -81,6 +82,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		{
 			_obj.Init();
 			_xml = SerializationClassWithPrimitive();
+			DeserializationClassWithPrimitive();
 		}
 
 		[Benchmark]
