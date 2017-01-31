@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Model.Names;
+using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -90,10 +90,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
 	{
-		readonly Conversion.INames _names;
+		readonly Conversion.Names.INames _names;
 		readonly INames _native;
 
-		public TypeNames(Conversion.INames names, INames native)
+		public TypeNames(Conversion.Names.INames names, INames native)
 		{
 			_names = names;
 			_native = native;

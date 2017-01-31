@@ -15,7 +15,7 @@ namespace ExtendedXmlSerialization.Conversion
 			_types = types;
 		}
 
-		public TypeInfo Get(XmlReader parameter)
+		public TypeInfo Get(System.Xml.XmlReader parameter)
 		{
 			switch (parameter.MoveToContent())
 			{

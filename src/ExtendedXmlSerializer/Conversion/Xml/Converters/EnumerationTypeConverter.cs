@@ -23,21 +23,22 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Options;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Xml.Converters
 {
-	public class EnumerationTypeConverter : ContextOptionBase
+	public class EnumerationTypeConverter : ConverterOptionBase
 	{
 		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
 		EnumerationTypeConverter() : base(IsAssignableSpecification<Enum>.Default) {}
 
-		public override IElementContext Get(TypeInfo parameter) => new EnumerationContext(parameter.AsType());
+		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
 
-		class EnumerationContext : ValueContext<Enum>
+		class EnumerationConverter : ValueConverter<Enum>
 		{
-			public EnumerationContext(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
+			public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 
 			class Source : IParameterizedSource<string, Enum>
 			{

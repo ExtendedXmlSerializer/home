@@ -11,6 +11,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_activators = activators;
 		}
 
-		public object Get(IYielder parameter) => _activators.Get(parameter.Classification.AsType()).Invoke();
+		public object Get(IReader parameter) => _activators.Get(parameter.Classification.AsType()).Invoke();
 	}
 }

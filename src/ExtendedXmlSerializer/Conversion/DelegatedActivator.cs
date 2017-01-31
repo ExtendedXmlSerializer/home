@@ -11,6 +11,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_activate = activate;
 		}
 
-		public object Get(IYielder parameter) => _activate();
+		public object Get(IReader parameter) => _activate();
 	}
 }

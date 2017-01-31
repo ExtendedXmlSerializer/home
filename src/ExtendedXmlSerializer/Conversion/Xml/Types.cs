@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Model.Names;
+using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ImmutableArray<IName> _known;
 		readonly ITypeContexts _sources;
 
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Defaults.Names, sources) {}
+		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Conversion.Names.Defaults.Names, sources) {}
 
 		public Types(INamespaces namespaces, ImmutableArray<IName> known, ITypeContexts sources)
 		{

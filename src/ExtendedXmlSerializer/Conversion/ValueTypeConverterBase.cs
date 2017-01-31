@@ -22,13 +22,14 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Conversion.Options;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public class ValueTypeConverterBase<T> : FixedContextOption
+	public class ValueTypeConverterBase<T> : FixedConverterOption
 	{
 		public ValueTypeConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
-			: base(TypeEqualitySpecification<T>.Default, new ValueContext<T>(deserialize, serialize)) {}
+			: base(TypeEqualitySpecification<T>.Default, new ValueConverter<T>(deserialize, serialize)) {}
 	}
 }

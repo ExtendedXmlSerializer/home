@@ -9,6 +9,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_activator = activator;
 		}
 
-		public virtual object Get(IYielder parameter) => _activator.Get(parameter);
+		public virtual object Get(IReader parameter) => _activator.Get(parameter);
 	}
 }
