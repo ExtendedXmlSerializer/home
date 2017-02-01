@@ -2,9 +2,8 @@ using System;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Xml;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	class TypeLocator : ITypeLocator
 	{
