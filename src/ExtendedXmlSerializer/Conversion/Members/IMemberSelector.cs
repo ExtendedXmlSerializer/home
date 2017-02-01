@@ -2,5 +2,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMemberConverterSelector : ISelector<MemberInformation, IMemberConverter> {}
+	public interface IMemberSelector : ISelector<MemberInformation, IMember> {}
 }

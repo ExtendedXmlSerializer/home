@@ -23,7 +23,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IDisposable Emit(IName name)
 		{
-			if (name is IMemberName)
+			if (name is IMember)
 			{
 				_writer.WriteStartElement(name.DisplayName);
 

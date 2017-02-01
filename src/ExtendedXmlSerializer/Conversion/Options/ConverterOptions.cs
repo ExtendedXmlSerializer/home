@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Collections;
 using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Conversion.Xml.Converters;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -20,9 +21,8 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
 		readonly IConverters _converters;
-		readonly INames _names;
+		readonly INameProvider _names;
 		readonly IActivators _activators;
-		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddDelegates _add;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
@@ -30,19 +30,16 @@ namespace ExtendedXmlSerialization.Conversion.Options
 		public ConverterOptions(IConverters converters, INames names)
 			: this(converters, names, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
 
-		public ConverterOptions(IConverters converters, INames names, IActivators activators,
-		                        ICollectionItemTypeLocator locator,
+		public ConverterOptions(IConverters converters, INames names, IActivators activators, ICollectionItemTypeLocator locator,
 		                        IAddMethodLocator add)
-			: this(converters, names, activators, locator, new AddDelegates(locator, add), Property, Field) {}
+			: this(converters, new CollectionItemNameProvider(locator, names), activators, new AddDelegates(locator, add), Property, Field) {}
 
-		public ConverterOptions(IConverters converters, INames names, IActivators activators,
-		                        ICollectionItemTypeLocator locator,
-		                        IAddDelegates add, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public ConverterOptions(IConverters converters, INameProvider names, IActivators activators, IAddDelegates add,
+		                        ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_converters = converters;
 			_names = names;
 			_activators = activators;
-			_locator = locator;
 			_add = add;
 			_property = property;
 			_field = field;
@@ -71,10 +68,9 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			yield return TimeSpanTypeConverter.Default;
 
 			// yield return new DictionaryContext();
-			yield return
-				new CollectionConverterOption(_converters, new CollectionItemNameProvider(_locator, _names), _activators, _add);
+			yield return new CollectionConverterOption(_converters, _names, _activators, _add);
 
-			var members = new ConverterMembers(new MemberConverterSelector(_converters, _add), _property, _field);
+			var members = new ConverterMembers(new MemberSelector(_converters, _add), _property, _field);
 			yield return new ActivatedConverterOption(_activators, members);
 		}
 

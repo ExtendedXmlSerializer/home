@@ -2,7 +2,7 @@ using ExtendedXmlSerialization.Conversion.Names;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMemberConverter : IConverter, IName
+	public interface IMember : IConverter, IName
 	{
 		object Get(object instance);
 

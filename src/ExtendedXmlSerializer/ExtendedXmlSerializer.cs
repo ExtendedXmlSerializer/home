@@ -119,6 +119,6 @@ namespace ExtendedXmlSerialization
 		}
 
 		protected override IConverter Create(TypeInfo parameter)
-			=> new RootConverter(_names.Get(parameter), _converters.Get(parameter));
+			=> new Root(_names.Get(parameter), _converters.Get(parameter));
 	}
 }

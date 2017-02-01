@@ -21,7 +21,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 
 		protected override IConverter Create(TypeInfo type, IName name)
 		{
-			var context = new CollectionItemConverter(_converters, name);
+			var context = new CollectionItem(name, _converters.Get(name.Classification));
 			var activator = new CollectionActivator(new DelegatedActivator(_activators.Get(type.AsType())), context, _add);
 			var result = new EnumerableConverter(context, activator);
 			return result;

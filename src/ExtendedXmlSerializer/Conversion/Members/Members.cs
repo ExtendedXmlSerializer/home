@@ -8,24 +8,24 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
 	public class Members : IMembers
 	{
-		readonly ImmutableArray<IMemberConverter> _members;
-		readonly IDictionary<string, IMemberConverter> _lookup;
+		readonly ImmutableArray<IMember> _members;
+		readonly IDictionary<string, IMember> _lookup;
 
 		/*public Members(TypeInfo classification, params IMember[] members) : this(classification, members.AsEnumerable()) {}*/
 
-		public Members(IEnumerable<IMemberConverter> members) : this(members.ToImmutableArray()) {}
+		public Members(IEnumerable<IMember> members) : this(members.ToImmutableArray()) {}
 
-		public Members(ImmutableArray<IMemberConverter> members) : this(members, members.ToDictionary(x => x.DisplayName)) {}
+		public Members(ImmutableArray<IMember> members) : this(members, members.ToDictionary(x => x.DisplayName)) {}
 
-		public Members(ImmutableArray<IMemberConverter> members, IDictionary<string, IMemberConverter> lookup)
+		public Members(ImmutableArray<IMember> members, IDictionary<string, IMember> lookup)
 		{
 			_members = members;
 			_lookup = lookup;
 		}
 
-		public IMemberConverter Get(string parameter) => _lookup.TryGet(parameter);
+		public IMember Get(string parameter) => _lookup.TryGet(parameter);
 
-		public IEnumerator<IMemberConverter> GetEnumerator()
+		public IEnumerator<IMember> GetEnumerator()
 		{
 			foreach (var element in _members)
 			{

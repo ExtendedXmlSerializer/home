@@ -1,3 +1,4 @@
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -19,12 +20,11 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			_converters = converters;
 		}
 
-		protected override IMemberConverter Create(IMemberName name)
+		protected override IMember Create(string displayName, TypeInfo classification, MemberInfo metadata)
 		{
-			var metadata = name.Metadata;
 			var getter = _getter.Get(metadata);
 			var setter = _setter.Get(metadata);
-			var result = new MemberConverter(name, _converters.Get(name.MemberType), setter, getter);
+			var result = new Member(displayName, classification, setter, getter, _converters.Get(classification));
 			return result;
 		}
 	}

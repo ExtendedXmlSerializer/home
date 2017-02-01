@@ -53,11 +53,11 @@ namespace ExtendedXmlSerialization.Conversion.Members
 				_members = members;
 			}
 
-			public IEnumerator<IMemberConverter> GetEnumerator() => _members().GetEnumerator();
+			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
 
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-			public IMemberConverter Get(string parameter) => _members().Get(parameter);
+			public IMember Get(string parameter) => _members().Get(parameter);
 		}
 	}
 }

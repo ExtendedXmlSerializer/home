@@ -10,11 +10,11 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
 	public sealed class ConverterMembers : CacheBase<TypeInfo, IMembers>, IConverterMembers
 	{
-		readonly IMemberConverterSelector _selector;
+		readonly IMemberSelector _selector;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public ConverterMembers(IMemberConverterSelector selector, ISpecification<PropertyInfo> property,
+		public ConverterMembers(IMemberSelector selector, ISpecification<PropertyInfo> property,
 		                      ISpecification<FieldInfo> field)
 		{
 			_selector = selector;
@@ -63,13 +63,13 @@ namespace ExtendedXmlSerialization.Conversion.Members
 
 		struct Sorting
 		{
-			public Sorting(IMemberConverter member, Sort sort)
+			public Sorting(IMember member, Sort sort)
 			{
 				Member = member;
 				Sort = sort;
 			}
 
-			public IMemberConverter Member { get; }
+			public IMember Member { get; }
 			public Sort Sort { get; }
 		}
 	}

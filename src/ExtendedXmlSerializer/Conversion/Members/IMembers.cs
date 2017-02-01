@@ -3,5 +3,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMembers : IEnumerable<IMemberConverter>, IParameterizedSource<string, IMemberConverter> {}
+	public interface IMembers : IEnumerable<IMember>, IParameterizedSource<string, IMember> {}
 }

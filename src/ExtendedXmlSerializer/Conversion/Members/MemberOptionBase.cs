@@ -1,24 +1,26 @@
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMemberConverter>, IMemberOption
+	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
-		readonly IParameterizedSource<MemberInformation, IMemberName> _provider;
+		readonly IAliasProvider _alias;
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification)
-			: this(specification, MemberNameProvider.Default) {}
+			: this(specification, MemberAliasProvider.Default) {}
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification,
-		                           IParameterizedSource<MemberInformation, IMemberName> provider)
+		protected MemberOptionBase(ISpecification<MemberInformation> specification, IAliasProvider alias)
 			: base(specification)
 		{
-			_provider = provider;
+			_alias = alias;
 		}
 
-		public override IMemberConverter Get(MemberInformation parameter) => Create(_provider.Get(parameter));
+		public override IMember Get(MemberInformation parameter) => Create(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType, parameter.Metadata);
 
-		protected abstract IMemberConverter Create(IMemberName name);
+		protected abstract IMember Create(string displayName, TypeInfo classification, MemberInfo metadata);
 	}
 }
