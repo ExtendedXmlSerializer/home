@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Names

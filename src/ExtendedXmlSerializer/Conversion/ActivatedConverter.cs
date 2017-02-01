@@ -1,4 +1,3 @@
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 
 namespace ExtendedXmlSerialization.Conversion
@@ -8,7 +7,7 @@ namespace ExtendedXmlSerialization.Conversion
 		readonly IActivator _activator;
 		readonly IMembers _members;
 
-		public ActivatedConverter(IActivator activator, IMembers members, TypeInfo classification) : base(classification)
+		public ActivatedConverter(IActivator activator, IMembers members)
 		{
 			_activator = activator;
 			_members = members;

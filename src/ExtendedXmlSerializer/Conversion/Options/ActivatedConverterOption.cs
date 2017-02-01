@@ -21,7 +21,7 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			var members = _members.Get(parameter);
 			var activate = _activators.Get(parameter.AsType());
 			var activator = new MemberedActivator(new DelegatedActivator(activate), members);
-			var result = new ActivatedConverter(activator, members, parameter);
+			var result = new ActivatedConverter(activator, members);
 			return result;
 		}
 	}

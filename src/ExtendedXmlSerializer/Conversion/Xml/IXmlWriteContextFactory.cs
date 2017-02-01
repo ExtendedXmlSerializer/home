@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 

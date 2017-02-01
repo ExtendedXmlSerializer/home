@@ -1,14 +1,10 @@
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class DecoratedConverter : ConverterBase
 	{
 		readonly IConverter _context;
 
-		/*public DecoratedContext(IElementContext context) : this(context, context.Classification) {}*/
-
-		public DecoratedConverter(IConverter context, TypeInfo classification) : base(classification)
+		public DecoratedConverter(IConverter context)
 		{
 			_context = context;
 		}

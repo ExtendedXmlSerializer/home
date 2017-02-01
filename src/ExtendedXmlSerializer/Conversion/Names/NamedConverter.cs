@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion.Names
 {
 	public class NamedConverter : NamedConverter<IName>
@@ -9,9 +7,7 @@ namespace ExtendedXmlSerialization.Conversion.Names
 
 	public class NamedConverter<T> : DecoratedConverter where T : IName
 	{
-		public NamedConverter(T name, IConverter body) : this(name, body, body.Classification) {}
-
-		public NamedConverter(T name, IConverter body, TypeInfo classification) : base(body, classification)
+		public NamedConverter(T name, IConverter body) : base(body)
 		{
 			Name = name;
 		}

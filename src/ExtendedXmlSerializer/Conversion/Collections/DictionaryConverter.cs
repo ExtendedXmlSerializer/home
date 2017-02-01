@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Collections
 {
 	class DictionaryConverter : EnumerableConverter<IDictionary>
 	{
-		public DictionaryConverter(IConverter item, IActivator activator, TypeInfo classification)
-			: base(item, activator, classification) {}
+		public DictionaryConverter(IConverter item, IActivator activator) : base(item, activator) {}
 
 		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}

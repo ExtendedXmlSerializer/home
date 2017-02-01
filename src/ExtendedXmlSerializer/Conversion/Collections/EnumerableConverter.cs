@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Collections
 {
@@ -13,9 +12,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 		readonly IConverter _item;
 		readonly IActivator _activator;
 
-		public EnumerableConverter(IConverter item, IActivator activator) : this(item, activator, item.Classification) {}
-
-		public EnumerableConverter(IConverter item, IActivator activator, TypeInfo classification) : base(classification)
+		public EnumerableConverter(IConverter item, IActivator activator)
 		{
 			_item = item;
 			_activator = activator;
