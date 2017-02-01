@@ -12,7 +12,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 		readonly IAddDelegates _add;
 
 		public CollectionConverterOption(IConverters converters, INameProvider names, IActivators activators,
-		                               IAddDelegates add) : base(IsCollectionTypeSpecification.Default, names)
+		                                 IAddDelegates add) : base(IsCollectionTypeSpecification.Default, names)
 		{
 			_converters = converters;
 			_activators = activators;

@@ -18,11 +18,11 @@ namespace ExtendedXmlSerialization.Conversion.Names
 
 		protected T Name { get; }
 
-		public override void Write(IWriter writer, object instance)
+		public override void Emit(IWriter writer, object instance)
 		{
 			using (writer.Emit(Name))
 			{
-				base.Write(writer, instance);
+				base.Emit(writer, instance);
 			}
 		}
 	}

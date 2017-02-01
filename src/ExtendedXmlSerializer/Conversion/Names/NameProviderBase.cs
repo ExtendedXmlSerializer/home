@@ -27,10 +27,6 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Names
 {
-	public interface INameProvider : INameProvider<IName> {}
-
-	public interface INameProvider<out T> : IParameterizedSource<TypeInfo, T> where T : IName { }
-	
 	public abstract class NameProviderBase : NameProviderBase<IName>, INameProvider
 	{
 		protected NameProviderBase(ITypeFormatter formatter) : base(formatter) {}

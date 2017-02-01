@@ -103,7 +103,7 @@ namespace ExtendedXmlSerialization
 			{
 				var emitter = new XmlWriter(_namespaces, writer);
 				var context = Get(instance.GetType().GetTypeInfo());
-				context.Write(emitter, instance);
+				context.Emit(emitter, instance);
 			}
 		}
 

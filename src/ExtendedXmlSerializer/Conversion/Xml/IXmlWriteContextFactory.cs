@@ -102,21 +102,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		protected override XName Create(TypeInfo parameter) => _native.Get(_names.Get(parameter));
 	}
 
-	public interface IGenericName : IName
-	{
-		ImmutableArray<IName> Arguments { get; }
-	}
-
-	class GenericName : Name, IGenericName
-	{
-		public GenericName(string displayName, TypeInfo classification, ImmutableArray<IName> arguments)
-			: base(displayName, classification)
-		{
-			Arguments = arguments;
-		}
-
-		public ImmutableArray<IName> Arguments { get; }
-	}
+	
 	/*
 	class MemberEmitter : EmitterBase
 	{

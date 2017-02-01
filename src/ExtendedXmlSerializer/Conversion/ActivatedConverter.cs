@@ -14,14 +14,14 @@ namespace ExtendedXmlSerialization.Conversion
 			_members = members;
 		}
 
-		public override void Write(IWriter writer, object instance)
+		public override void Emit(IWriter writer, object instance)
 		{
 			foreach (var member in _members)
 			{
 				var value = member.Get(instance);
 				if (value != null)
 				{
-					member.Write(writer, value);
+					member.Emit(writer, value);
 				}
 			}
 		}

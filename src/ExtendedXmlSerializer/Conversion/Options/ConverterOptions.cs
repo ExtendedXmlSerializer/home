@@ -30,12 +30,14 @@ namespace ExtendedXmlSerialization.Conversion.Options
 		public ConverterOptions(IConverters converters, INames names)
 			: this(converters, names, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
 
-		public ConverterOptions(IConverters converters, INames names, IActivators activators, ICollectionItemTypeLocator locator,
-		                      IAddMethodLocator add)
+		public ConverterOptions(IConverters converters, INames names, IActivators activators,
+		                        ICollectionItemTypeLocator locator,
+		                        IAddMethodLocator add)
 			: this(converters, names, activators, locator, new AddDelegates(locator, add), Property, Field) {}
 
-		public ConverterOptions(IConverters converters, INames names, IActivators activators, ICollectionItemTypeLocator locator,
-		                      IAddDelegates add, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public ConverterOptions(IConverters converters, INames names, IActivators activators,
+		                        ICollectionItemTypeLocator locator,
+		                        IAddDelegates add, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_converters = converters;
 			_names = names;

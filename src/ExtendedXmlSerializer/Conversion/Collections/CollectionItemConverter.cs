@@ -15,17 +15,17 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 			_converters = converters;
 		}
 
-		public override void Write(IWriter writer, object instance)
+		public override void Emit(IWriter writer, object instance)
 		{
 			var type = instance.GetType();
 			var actual = type.GetTypeInfo();
 			if (Equals(actual, Name.Classification))
 			{
-				base.Write(writer, instance);
+				base.Emit(writer, instance);
 			}
 			else
 			{
-				_converters.Get(actual).Write(writer, instance);
+				_converters.Get(actual).Emit(writer, instance);
 			}
 		}
 	}

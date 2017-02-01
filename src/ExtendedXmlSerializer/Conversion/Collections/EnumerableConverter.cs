@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 			var enumerator = Get(instance);
 			while (enumerator.MoveNext())
 			{
-				_item.Write(writer, enumerator.Current);
+				_item.Emit(writer, enumerator.Current);
 			}
 		}
 
