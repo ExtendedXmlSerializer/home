@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	class TypeAliasProvider : AliasProviderBase<TypeInfo>
 	{

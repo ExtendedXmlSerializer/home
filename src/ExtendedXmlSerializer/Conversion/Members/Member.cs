@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			}
 		}
 
-		protected override IName Name => this;
+		protected override IElement Element => this;
 	}
 }

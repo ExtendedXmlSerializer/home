@@ -1,8 +1,8 @@
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMember : IConverter, IName
+	public interface IMember : IConverter, IElement
 	{
 		object Get(object instance);
 

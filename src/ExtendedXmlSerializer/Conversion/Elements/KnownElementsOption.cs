@@ -21,18 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class NameOptionBase : Option<TypeInfo, IName>, INameOption
+	/*public class EnumerableNameOption : NameOptionBase
 	{
-		protected NameOptionBase(Func<TypeInfo, IName> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
+		
 
-		protected NameOptionBase(ISpecification<TypeInfo> specification, Func<TypeInfo, IName> source)
-			: base(specification, source) {}
+		sealed class Specification : ISpecification<MemberInfo>
+		{
+			readonly static TypeInfo TypeInfo = typeof(IEnumerable).GetTypeInfo();
+
+			public static Specification Instance { get; } = new Specification();
+			Specification() {}
+
+			public bool IsSatisfiedBy(MemberInfo parameter)
+			{
+				var type = parameter.ToTypeInfo();
+				var result = type.IsArray || type.IsGenericType && TypeInfo.IsAssignableFrom(type);
+				return result;
+			}
+		}
+	}*/
+
+	public class KnownElementsOption : ElementOptionBase
+	{
+		public KnownElementsOption(ImmutableArray<IElement> names)
+			: this(names.ToDictionary(x => x.Classification)) {}
+
+		public KnownElementsOption(IDictionary<TypeInfo, IElement> names)
+			: base(new DelegatedSpecification<TypeInfo>(names.ContainsKey), names.TryGet) {}
 	}
 }

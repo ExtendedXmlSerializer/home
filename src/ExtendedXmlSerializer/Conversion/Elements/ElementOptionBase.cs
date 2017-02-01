@@ -21,21 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class NameProvider : NameProviderBase
+	public abstract class ElementOptionBase : Option<TypeInfo, IElement>, IElementOption
 	{
-		public static NameProvider Default { get; } = new NameProvider();
-		NameProvider() : this(TypeFormatter.Default) {}
+		protected ElementOptionBase(Func<TypeInfo, IElement> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
 
-		public NameProvider(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
-
-		public NameProvider(IAliasProvider alias, ITypeFormatter formatter) : base(alias, formatter) {}
-
-		public override IName Create(string displayName, TypeInfo classification) => new Name(displayName, classification);
+		protected ElementOptionBase(ISpecification<TypeInfo> specification, Func<TypeInfo, IElement> source)
+			: base(specification, source) {}
 	}
 }

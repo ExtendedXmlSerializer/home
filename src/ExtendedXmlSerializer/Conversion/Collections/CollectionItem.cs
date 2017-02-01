@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Collections
 {
 	class CollectionItem : Container
 	{
-		public CollectionItem(IName elementName, IConverter body) : base(elementName, body) {}
+		public CollectionItem(IElement elementName, IConverter body) : base(elementName, body) {}
 	}
 }

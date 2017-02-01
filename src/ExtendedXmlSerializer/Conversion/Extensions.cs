@@ -25,8 +25,6 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -35,23 +33,22 @@ namespace ExtendedXmlSerialization.Conversion
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
 			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 
-		public static TypeInfo ToTypeInfo(this MemberInfo @this) => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+		/*public static TypeInfo ToTypeInfo(this MemberInfo @this) => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
 
 		public static object AnnotationAll(this XElement @this, Type type) 
-			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
+			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
 
-		public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
+		/*public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();*/
 
 		/*public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
 			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);*/
 
-		public static bool Exact(this IClassification @this, object instance)
-			=> Exact(@this, instance.GetType().GetTypeInfo());
+		/*public static bool Exact(this IName @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());*/
 
-		public static bool Exact(this IClassification @this, TypeInfo type) => type.Equals(@this.Classification);
+		/*public static bool Exact(this IName @this, TypeInfo type) => type.Equals(@this.Classification);*/
 	}
 }

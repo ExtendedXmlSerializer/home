@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Names : CacheBase<IName, XName>, INames
+	public class Names : CacheBase<IElement, XName>, INames
 	{
 		readonly INamespaces _namespaces;
 
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_namespaces = namespaces;
 		}
 
-		protected override XName Create(IName parameter)
+		protected override XName Create(IElement parameter)
 			=> XName.Get(parameter.DisplayName, _namespaces.Get(parameter.Classification).Namespace.ToString());
 	}
 }

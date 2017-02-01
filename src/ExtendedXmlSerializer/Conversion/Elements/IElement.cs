@@ -22,9 +22,13 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface INameOption : IOption<TypeInfo, IName> {}
+	public interface IElement
+	{
+		string DisplayName { get; }
+
+		TypeInfo Classification { get; }
+	}
 }

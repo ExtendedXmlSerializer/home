@@ -1,5 +1,5 @@
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;

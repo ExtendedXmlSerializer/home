@@ -25,10 +25,9 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
-using INames = ExtendedXmlSerialization.Conversion.Names.INames;
-using Names = ExtendedXmlSerialization.Conversion.Names.Names;
 using XmlReader = ExtendedXmlSerialization.Conversion.Xml.XmlReader;
 using XmlWriter = ExtendedXmlSerialization.Conversion.Xml.XmlWriter;
 
@@ -74,23 +73,23 @@ namespace ExtendedXmlSerialization
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly INames _names;
+		readonly IElements _elements;
 		readonly IConverters _converters;
 		readonly INamespaces _namespaces;
 		readonly ITypeLocator _type;
 		readonly XmlReaderSettings _settings;
 
-		public ExtendedXmlSerializer() : this(new Names(), new Namespaces()) {}
+		public ExtendedXmlSerializer() : this(new Elements(), new Namespaces()) {}
 
-		public ExtendedXmlSerializer(INames names, INamespaces namespaces)
+		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces)
 			: this(
-				names, new Converters(names), namespaces, new TypeLocator(new Types(namespaces, new TypeContexts())),
+				elements, new Converters(elements), namespaces, new TypeLocator(new Types(namespaces, new TypeContexts())),
 				XmlReaderSettings) {}
 
-		public ExtendedXmlSerializer(INames names, IConverters converters, INamespaces namespaces, ITypeLocator type,
+		public ExtendedXmlSerializer(IElements elements, IConverters converters, INamespaces namespaces, ITypeLocator type,
 		                             XmlReaderSettings settings)
 		{
-			_names = names;
+			_elements = elements;
 			_converters = converters;
 			_namespaces = namespaces;
 			_type = type;
@@ -119,6 +118,6 @@ namespace ExtendedXmlSerialization
 		}
 
 		protected override IConverter Create(TypeInfo parameter)
-			=> new Root(_names.Get(parameter), _converters.Get(parameter));
+			=> new Root(_elements.Get(parameter), _converters.Get(parameter));
 	}
 }

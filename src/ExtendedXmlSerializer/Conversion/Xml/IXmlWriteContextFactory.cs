@@ -88,16 +88,16 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
 	{
-		readonly Conversion.Names.INames _names;
+		readonly Elements.IElements _elements;
 		readonly INames _native;
 
-		public TypeNames(Conversion.Names.INames names, INames native)
+		public TypeNames(Elements.IElements elements, INames native)
 		{
-			_names = names;
+			_elements = elements;
 			_native = native;
 		}
 
-		protected override XName Create(TypeInfo parameter) => _native.Get(_names.Get(parameter));
+		protected override XName Create(TypeInfo parameter) => _native.Get(_elements.Get(parameter));
 	}
 
 	

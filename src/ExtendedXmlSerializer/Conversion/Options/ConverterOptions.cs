@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Collections;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Conversion.Xml.Converters;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
-using INames = ExtendedXmlSerialization.Conversion.Names.INames;
 
 namespace ExtendedXmlSerialization.Conversion.Options
 {
@@ -21,24 +20,24 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
 		readonly IConverters _converters;
-		readonly INameProvider _names;
+		readonly IElementProvider _elements;
 		readonly IActivators _activators;
 		readonly IAddDelegates _add;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public ConverterOptions(IConverters converters, INames names)
-			: this(converters, names, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
+		public ConverterOptions(IConverters converters, IElements elements)
+			: this(converters, elements, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
 
-		public ConverterOptions(IConverters converters, INames names, IActivators activators, ICollectionItemTypeLocator locator,
+		public ConverterOptions(IConverters converters, IElements elements, IActivators activators, ICollectionItemTypeLocator locator,
 		                        IAddMethodLocator add)
-			: this(converters, new CollectionItemNameProvider(locator, names), activators, new AddDelegates(locator, add), Property, Field) {}
+			: this(converters, new CollectionItemElementProvider(locator, elements), activators, new AddDelegates(locator, add), Property, Field) {}
 
-		public ConverterOptions(IConverters converters, INameProvider names, IActivators activators, IAddDelegates add,
+		public ConverterOptions(IConverters converters, IElementProvider elements, IActivators activators, IAddDelegates add,
 		                        ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_converters = converters;
-			_names = names;
+			_elements = elements;
 			_activators = activators;
 			_add = add;
 			_property = property;
@@ -68,10 +67,10 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			yield return TimeSpanTypeConverter.Default;
 
 			// yield return new DictionaryContext();
-			yield return new CollectionConverterOption(_converters, _names, _activators, _add);
+			yield return new CollectionOption(_converters, _elements, _activators, _add);
 
-			var members = new ConverterMembers(new MemberSelector(_converters, _add), _property, _field);
-			yield return new ActivatedConverterOption(_activators, members);
+			var members = new TypeMembers(new MemberSelector(_converters, _add), _property, _field);
+			yield return new MemberedConverterOption(_activators, members);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

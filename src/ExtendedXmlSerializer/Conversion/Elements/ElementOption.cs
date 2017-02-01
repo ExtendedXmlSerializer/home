@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class NameOption : NameOptionBase
+	public class ElementOption : ElementOptionBase
 	{
-		public static NameOption Default { get; } = new NameOption();
-		NameOption() : base(NameProvider.Default.Get) {}
+		public static ElementOption Default { get; } = new ElementOption();
+		ElementOption() : base(ElementProvider.Default.Get) {}
 	}
 }

@@ -1,9 +1,9 @@
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class Root : Container
 	{
-		public Root(IName name, IConverter body) : base(name, body) {}
+		public Root(IElement element, IConverter body) : base(element, body) {}
 	}
 }

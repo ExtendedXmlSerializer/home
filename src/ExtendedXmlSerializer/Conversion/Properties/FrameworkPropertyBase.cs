@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
-	abstract class FrameworkPropertyBase : Name
+	abstract class FrameworkPropertyBase : Element
 	{
 		protected FrameworkPropertyBase(string displayName) : base(displayName, Defaults.FrameworkType) {}
 	}

@@ -4,12 +4,12 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Options
 {
-	class ActivatedConverterOption : ConverterOptionBase
+	class MemberedConverterOption : ConverterOptionBase
 	{
 		readonly IActivators _activators;
-		readonly IConverterMembers _members;
+		readonly ITypeMembers _members;
 
-		public ActivatedConverterOption(IActivators activators, IConverterMembers members)
+		public MemberedConverterOption(IActivators activators, ITypeMembers members)
 			: base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;

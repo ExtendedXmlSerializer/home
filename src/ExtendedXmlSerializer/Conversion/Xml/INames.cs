@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface INames : IParameterizedSource<IName, XName> {}
+	public interface INames : IParameterizedSource<IElement, XName> {}
 }

@@ -1,11 +1,11 @@
 using System;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IWriter
 	{
-		IDisposable Emit(IName name);
+		IDisposable Emit(IElement element);
 
 		void Write(string text);
 	}

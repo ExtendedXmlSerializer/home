@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Options;
 using ExtendedXmlSerialization.Core.Sources;
 
@@ -10,9 +10,9 @@ namespace ExtendedXmlSerialization.Conversion
 	{
 		readonly IParameterizedSource<TypeInfo, IConverter> _source;
 
-		public Converters(INames names)
+		public Converters(IElements elements)
 		{
-			_source = new Selector<TypeInfo, IConverter>(new ConverterOptions(this, names).ToArray());
+			_source = new Selector<TypeInfo, IConverter>(new ConverterOptions(this, elements).ToArray());
 		}
 
 		public IConverter Get(TypeInfo parameter) => _source.Get(parameter);

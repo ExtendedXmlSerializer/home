@@ -1,6 +1,6 @@
 using System;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.Names;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -21,11 +21,11 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_finish = finish;
 		}
 
-		public IDisposable Emit(IName name)
+		public IDisposable Emit(IElement element)
 		{
-			if (name is IMember)
+			if (element is IMember)
 			{
-				_writer.WriteStartElement(name.DisplayName);
+				_writer.WriteStartElement(element.DisplayName);
 
 				/*var type = instance.GetType().GetTypeInfo();
 				if (!context.Container.Exact(type))
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			}
 			else
 			{
-				_writer.WriteStartElement(name.DisplayName, _namespaces.Get(name.Classification).Namespace.NamespaceName);
+				_writer.WriteStartElement(element.DisplayName, _namespaces.Get(element.Classification).Namespace.NamespaceName);
 			}
 			return _finish;
 		}

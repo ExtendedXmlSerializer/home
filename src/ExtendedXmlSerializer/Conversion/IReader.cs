@@ -1,9 +1,9 @@
 using System.Collections;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public interface IReader : IName
+	public interface IReader : IElement
 	{
 		string Value();
 

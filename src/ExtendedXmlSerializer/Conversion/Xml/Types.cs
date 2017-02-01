@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Names;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -32,12 +32,12 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public class Types : CacheBase<XName, TypeInfo>, ITypes
 	{
 		readonly INamespaces _namespaces;
-		readonly ImmutableArray<IName> _known;
+		readonly ImmutableArray<IElement> _known;
 		readonly ITypeContexts _sources;
 
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Conversion.Names.Defaults.Names, sources) {}
+		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Elements.Defaults.Names, sources) {}
 
-		public Types(INamespaces namespaces, ImmutableArray<IName> known, ITypeContexts sources)
+		public Types(INamespaces namespaces, ImmutableArray<IElement> known, ITypeContexts sources)
 		{
 			_namespaces = namespaces;
 			_known = known;

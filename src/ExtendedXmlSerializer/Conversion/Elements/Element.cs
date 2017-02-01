@@ -24,13 +24,13 @@
 using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class Name : IEquatable<IName>, IName
+	public class Element : IEquatable<IElement>, IElement
 	{
-		public Name(string displayName, Type classification) : this(displayName, classification.GetTypeInfo()) {}
+		public Element(string displayName, Type classification) : this(displayName, classification.GetTypeInfo()) {}
 
-		public Name(string displayName, TypeInfo classification)
+		public Element(string displayName, TypeInfo classification)
 		{
 			DisplayName = displayName;
 			Classification = classification;
@@ -38,16 +38,16 @@ namespace ExtendedXmlSerialization.Conversion.Names
 
 		public string DisplayName { get; }
 		
-		public bool Equals(IName other) => Equals(Classification, other?.Classification);
+		public bool Equals(IElement other) => Equals(Classification, other?.Classification);
 
 		public override bool Equals(object obj)
-			=> !ReferenceEquals(null, obj) && obj is Name && Equals((Name) obj);
+			=> !ReferenceEquals(null, obj) && obj is Element && Equals((Element) obj);
 
 		public override int GetHashCode() => Classification?.GetHashCode() ?? 0;
 
-		public static bool operator ==(Name left, Name right) => left.Equals(right);
+		public static bool operator ==(Element left, Element right) => left.Equals(right);
 
-		public static bool operator !=(Name left, Name right) => !left.Equals(right);
+		public static bool operator !=(Element left, Element right) => !left.Equals(right);
 		public TypeInfo Classification { get; }
 	}
 }

@@ -1,14 +1,14 @@
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public abstract class ContainerBase : DecoratedConverter
 	{
 		protected ContainerBase(IConverter body) : base(body) {}
 
-		protected abstract IName Name { get; }
+		protected abstract IElement Element { get; }
 
 		public override void Emit(IWriter writer, object instance)
 		{
-			using (writer.Emit(Name))
+			using (writer.Emit(Element))
 			{
 				base.Emit(writer, instance);
 			}
@@ -17,11 +17,11 @@ namespace ExtendedXmlSerialization.Conversion.Names
 
 	public class Container : ContainerBase
 	{
-		public Container(IName name, IConverter body) : base(body)
+		public Container(IElement element, IConverter body) : base(body)
 		{
-			Name = name;
+			Element = element;
 		}
 
-		protected override IName Name { get; }
+		protected override IElement Element { get; }
 	}
 }

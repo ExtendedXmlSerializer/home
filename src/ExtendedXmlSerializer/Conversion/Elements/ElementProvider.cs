@@ -21,10 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Names
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.TypeModel;
+
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IName : IClassification
+	public class ElementProvider : ElementProviderBase
 	{
-		string DisplayName { get; }
+		public static ElementProvider Default { get; } = new ElementProvider();
+		ElementProvider() : this(TypeFormatter.Default) {}
+
+		public ElementProvider(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
+
+		public ElementProvider(IAliasProvider alias, ITypeFormatter formatter) : base(alias, formatter) {}
+
+		public override IElement Create(string displayName, TypeInfo classification) => new Element(displayName, classification);
 	}
 }

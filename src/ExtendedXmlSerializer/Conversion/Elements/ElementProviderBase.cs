@@ -21,41 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	/*public class EnumerableNameOption : NameOptionBase
+	public abstract class ElementProviderBase : IElementProvider
 	{
-		
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
 
-		sealed class Specification : ISpecification<MemberInfo>
+		protected ElementProviderBase(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
+
+		protected ElementProviderBase(IAliasProvider alias, ITypeFormatter formatter)
 		{
-			readonly static TypeInfo TypeInfo = typeof(IEnumerable).GetTypeInfo();
-
-			public static Specification Instance { get; } = new Specification();
-			Specification() {}
-
-			public bool IsSatisfiedBy(MemberInfo parameter)
-			{
-				var type = parameter.ToTypeInfo();
-				var result = type.IsArray || type.IsGenericType && TypeInfo.IsAssignableFrom(type);
-				return result;
-			}
+			_alias = alias;
+			_formatter = formatter;
 		}
-	}*/
 
-	public class KnownNamesOption : NameOptionBase
-	{
-		public KnownNamesOption(ImmutableArray<IName> names)
-			: this(names.ToDictionary(x => x.Classification)) {}
+		public IElement Get(TypeInfo parameter) => Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter);
 
-		public KnownNamesOption(IDictionary<TypeInfo, IName> names)
-			: base(new DelegatedSpecification<TypeInfo>(names.ContainsKey), names.TryGet) {}
+		public abstract IElement Create(string displayName, TypeInfo classification);
 	}
 }

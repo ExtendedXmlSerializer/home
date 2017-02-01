@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public abstract class AliasProviderBase<T> : IAliasProvider where T : MemberInfo
 	{

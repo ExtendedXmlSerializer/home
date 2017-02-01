@@ -22,31 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Names
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class NameProviderBase : NameProviderBase<IName>, INameProvider
-	{
-		protected NameProviderBase(ITypeFormatter formatter) : base(formatter) {}
-		protected NameProviderBase(IAliasProvider alias, ITypeFormatter formatter) : base(alias, formatter) {}
-	}
-
-	public abstract class NameProviderBase<T> : INameProvider<T> where T : IName
-	{
-		readonly IAliasProvider _alias;
-		readonly ITypeFormatter _formatter;
-
-		protected NameProviderBase(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
-
-		protected NameProviderBase(IAliasProvider alias, ITypeFormatter formatter)
-		{
-			_alias = alias;
-			_formatter = formatter;
-		}
-
-		public T Get(TypeInfo parameter) => Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter);
-
-		public abstract T Create(string displayName, TypeInfo classification);
-	}
+	public interface IElementOption : IOption<TypeInfo, IElement> {}
 }
