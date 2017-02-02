@@ -1,4 +1,5 @@
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -10,21 +11,22 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		readonly ISetterFactory _setter;
 		readonly IConverters _converters;
 
-		public MemberOption(IConverters converters) : this(converters, GetterFactory.Default, SetterFactory.Default) {}
+		public MemberOption(IConverters converters, IMemberAdorner adorner) : this(converters, adorner, GetterFactory.Default, SetterFactory.Default) {}
 
-		public MemberOption(IConverters converters, IGetterFactory getter, ISetterFactory setter)
-			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable))
+		public MemberOption(IConverters converters, IMemberAdorner adorner, IGetterFactory getter, ISetterFactory setter)
+			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable), adorner)
 		{
 			_getter = getter;
 			_setter = setter;
 			_converters = converters;
 		}
 
-		protected override IMember Create(string displayName, TypeInfo classification, MemberInfo metadata)
+		protected override IMember Create(IElement element, MemberInfo metadata)
 		{
 			var getter = _getter.Get(metadata);
 			var setter = _setter.Get(metadata);
-			var result = new Member(displayName, classification, setter, getter, _converters.Get(classification));
+			var body = _converters.Get(element.Classification);
+			var result = new Member(element, setter, getter, body);
 			return result;
 		}
 	}

@@ -5,7 +5,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
 	class MemberSelector : OptionSelector<MemberInformation, IMember>, IMemberSelector
 	{
-		public MemberSelector(IConverters converters, IAddDelegates add)
-			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters, add)) {}
+		public MemberSelector(IConverters converters, IAddDelegates add, IMemberAdorner adorner)
+			: base(new MemberOption(converters, adorner), new ReadOnlyCollectionMemberOption(converters, add)) {}
 	}
 }

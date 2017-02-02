@@ -21,51 +21,116 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Elements;
+using ExtendedXmlSerialization.Conversion.Members;
+using ExtendedXmlSerialization.Conversion.Properties;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	/*public interface IXmlWriteContextFactory : ICommand<string>, IServiceProvider
+	class XmlMemberAdorner : XmlMemberAdornerBase
 	{
-		IDisposable Start(IWriteContext context);
+		public static XmlMemberAdorner Default { get; } = new XmlMemberAdorner();
+		XmlMemberAdorner() : this(XmlMemberWritable.Default.Accept) {}
 
-		IWriteContext Create(IContainer container, TypeInfo instanceType);
-	}*/
+		readonly Func<IElement, IXmlWritable> _writable;
 
-	/*public interface IEmitter : ICommand<IWriteContext> {}*/
-
-	/*public abstract class EmitterBase : IEmitter
-	{
-		public void Execute(IWriteContext parameter)
+		XmlMemberAdorner(Func<IElement, IXmlWritable> writable)
 		{
-			var name = parameter.Container as IName ?? (parameter.Element as INamedElement)?.Name;
-			Emit(parameter, name);
+			_writable = writable;
 		}
 
-		protected abstract void Emit(IWriteContext parameter, IName name);
-	}*/
+		protected override IXmlWritable GetWritable(IElement parameter) => _writable(parameter);
+	}
 
-	/*class Emitter : EmitterBase
+	abstract class XmlMemberAdornerBase : IMemberAdorner
 	{
-		readonly INames _names;
-		readonly XmlWriter _writer;
+		protected abstract IXmlWritable GetWritable(IElement parameter);
 
-		public Emitter(INames names, XmlWriter writer)
+		public IElement Get(IElement parameter) => new XmlElement(GetWritable(parameter), parameter);
+	}
+
+	class XmlMemberWritable : IXmlWritable
+	{
+		public static XmlMemberWritable Default { get; } = new XmlMemberWritable();
+		XmlMemberWritable() {}
+
+		public void Write(System.Xml.XmlWriter writer, IElement element, object instance)
+			=> writer.WriteStartElement(element.DisplayName);
+	}
+
+	class XmlVariableMemberAdorner : XmlMemberAdornerBase
+	{
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IXmlWritable _variable, _fixed;
+
+		public XmlVariableMemberAdorner(ITypeNames names, INames dataNames)
+			: this(
+				FixedTypeSpecification.Default, new XmlVariableTypeMemberWritable(names, dataNames.Get(TypeProperty.Default)),
+				XmlMemberWritable.Default) {}
+
+		public XmlVariableMemberAdorner(ISpecification<TypeInfo> specification, IXmlWritable variable, IXmlWritable @fixed)
+		{
+			_specification = specification;
+			_variable = variable;
+			_fixed = @fixed;
+		}
+
+		protected override IXmlWritable GetWritable(IElement parameter) 
+			=> _specification.IsSatisfiedBy(parameter.Classification) ? _fixed : _variable;
+	}
+
+	class XmlElement : DecoratedElement, IXmlElement
+	{
+		readonly IXmlWritable _writable;
+		readonly IElement _element;
+
+		public XmlElement(IXmlWritable writable, IElement element) : base(element)
+		{
+			_writable = writable;
+			_element = element;
+		}
+
+		public void Write(System.Xml.XmlWriter writer, object instance) => _writable.Write(writer, _element, instance);
+	}
+
+
+	class XmlVariableTypeMemberWritable : IXmlWritable
+	{
+		readonly ITypeNames _names;
+		readonly XName _type;
+		readonly IXmlWritable _writable;
+
+		public XmlVariableTypeMemberWritable(ITypeNames names, XName type) : this(names, type, XmlMemberWritable.Default) {}
+
+		public XmlVariableTypeMemberWritable(ITypeNames names, XName type, IXmlWritable writable)
 		{
 			_names = names;
-			_writer = writer;
+			_type = type;
+			_writable = writable;
 		}
 
-		protected override void Emit(IWriteContext parameter, IName name)
+		public void Write(System.Xml.XmlWriter writer, IElement element, object instance)
 		{
-			var data = _names.Get(name);
-			_writer.WriteStartElement(data.LocalName, data.NamespaceName);
+			_writable.Write(writer, element, instance);
+
+			var classification = instance.GetType().GetTypeInfo();
+			if (!element.Exact(classification))
+			{
+				var native = _names.Get(classification);
+				writer.WriteStartAttribute(_type.LocalName, _type.NamespaceName);
+				writer.WriteQualifiedName(native.LocalName, native.NamespaceName);
+				writer.WriteEndAttribute();
+			}
 		}
-	}*/
+	}
 
 	class QualifiedNameTypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
 	{
@@ -88,10 +153,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
 	{
-		readonly Elements.IElements _elements;
+		readonly IElements _elements;
 		readonly INames _native;
 
-		public TypeNames(Elements.IElements elements, INames native)
+		public TypeNames(IElements elements, INames native)
 		{
 			_elements = elements;
 			_native = native;
@@ -100,41 +165,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		protected override XName Create(TypeInfo parameter) => _native.Get(_elements.Get(parameter));
 	}
 
-	
-	/*
-	class MemberEmitter : EmitterBase
-	{
-		readonly ITypeNames _names;
-		readonly XName _type;
-		readonly XmlWriter _writer;
 
-		public MemberEmitter(ITypeNames names, INames converter, IName type, XmlWriter writer)
-			: this(names, converter.Get(type), writer) {}
-
-		public MemberEmitter(ITypeNames names, XName type, XmlWriter writer)
-		{
-			_names = names;
-			_type = type;
-			_writer = writer;
-		}
-
-		protected override void Emit(IWriteContext parameter, IName name)
-		{
-			_writer.WriteStartElement(name.DisplayName);
-
-			var classification = parameter.Element.Classification;
-			if (!parameter.Container.Exact(classification))
-			{
-				var native = _names.Get(classification);
-				_writer.WriteStartAttribute(_type.LocalName, _type.NamespaceName);
-				_writer.WriteQualifiedName(native.LocalName, native.NamespaceName);
-				_writer.WriteEndAttribute();
-			}
-		}
-	}
-
-
-	class XmlWriteContextFactory : IXmlWriteContextFactory
+	/*class XmlWriteContextFactory : IXmlWriteContextFactory
 	{
 		readonly IElements _elements;
 		readonly INamespaces _namespaces;

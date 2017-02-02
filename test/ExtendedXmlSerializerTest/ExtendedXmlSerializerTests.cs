@@ -29,7 +29,14 @@ namespace ExtendedXmlSerialization.Test
 {
 	public class ExtendedXmlSerializerTests
 	{
+		readonly TestClassOtherClass _subject = TestClassOtherClass.Create();
+
 		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new ExtendedXmlSerializer();
+
+		public ExtendedXmlSerializerTests()
+		{
+			_serializer.Serialize(_subject);
+		}
 
 		[Fact]
 		public void Primitive()
@@ -55,6 +62,15 @@ namespace ExtendedXmlSerialization.Test
 			var read = _serializer.Deserialize<InstanceClass>(data);
 			Assert.NotNull(read);
 			Assert.Equal("Hello World!", read.PropertyName);
+		}
+
+		[Fact]
+		public void ProfileLoop()
+		{
+			for (int i = 0; i < 100; i++)
+			{
+				_serializer.Serialize(_subject);
+			}
 		}
 
 		[Fact]

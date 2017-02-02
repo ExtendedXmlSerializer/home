@@ -11,4 +11,16 @@ namespace ExtendedXmlSerialization.Conversion
 
 		public virtual object Get(IReader parameter) => _activator.Get(parameter);
 	}
+
+	class DecoratedEmitter : IEmitter
+	{
+		readonly IEmitter _emitter;
+
+		public DecoratedEmitter(IEmitter emitter)
+		{
+			_emitter = emitter;
+		}
+
+		public virtual void Emit(IWriter writer, object instance) => _emitter.Emit(writer, instance);
+	}
 }

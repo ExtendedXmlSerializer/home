@@ -7,11 +7,11 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 	public class Elements : IElements
 	{
 		readonly IParameterizedSource<TypeInfo, IElement> _selector;
-		public Elements() : this(Defaults.Names) {}
+		public Elements() : this(Defaults.Elements) {}
 
-		public Elements(ImmutableArray<IElement> names)
+		public Elements(ImmutableArray<IElement> elements)
 		{
-			_selector = new Selector<TypeInfo, IElement>(new KnownElementsOption(names), new GenericElementOption(this),
+			_selector = new Selector<TypeInfo, IElement>(new KnownElementsOption(elements), new GenericElementOption(this),
 			                                          ElementOption.Default);
 		}
 

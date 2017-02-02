@@ -16,7 +16,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			while (members.MoveNext())
 			{
 				var member = _members.Get(parameter.DisplayName);
-				member?.Assign(result, ((IConverter) member).Get(parameter));
+				member?.Assign(result, ((IActivator) member).Get(parameter));
 			}
 
 			return result;

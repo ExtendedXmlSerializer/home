@@ -21,23 +21,28 @@ namespace ExtendedXmlSerialization.Conversion.Options
 
 		readonly IConverters _converters;
 		readonly IElementProvider _elements;
+		readonly IMemberAdorner _adorner;
 		readonly IActivators _activators;
 		readonly IAddDelegates _add;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public ConverterOptions(IConverters converters, IElements elements)
-			: this(converters, elements, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
+		public ConverterOptions(IConverters converters, IElements elements, IMemberAdorner adorner)
+			: this(converters, elements, adorner, new Activators(), new CollectionItemTypeLocator(), new AddMethodLocator()) {}
 
-		public ConverterOptions(IConverters converters, IElements elements, IActivators activators, ICollectionItemTypeLocator locator,
-		                        IAddMethodLocator add)
-			: this(converters, new CollectionItemElementProvider(locator, elements), activators, new AddDelegates(locator, add), Property, Field) {}
+		public ConverterOptions(IConverters converters, IElements elements, IMemberAdorner adorner, IActivators activators,
+		                        ICollectionItemTypeLocator locator, IAddMethodLocator add)
+			: this(
+				converters, new CollectionItemElementProvider(locator, elements), adorner, activators,
+				new AddDelegates(locator, add), Property, Field) {}
 
-		public ConverterOptions(IConverters converters, IElementProvider elements, IActivators activators, IAddDelegates add,
+		public ConverterOptions(IConverters converters, IElementProvider elements, IMemberAdorner adorner,
+		                        IActivators activators, IAddDelegates add,
 		                        ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_converters = converters;
 			_elements = elements;
+			_adorner = adorner;
 			_activators = activators;
 			_add = add;
 			_property = property;
@@ -69,7 +74,7 @@ namespace ExtendedXmlSerialization.Conversion.Options
 			// yield return new DictionaryContext();
 			yield return new CollectionOption(_converters, _elements, _activators, _add);
 
-			var members = new TypeMembers(new MemberSelector(_converters, _add), _property, _field);
+			var members = new TypeMembers(new MemberSelector(_converters, _add, _adorner), _property, _field);
 			yield return new MemberedConverterOption(_activators, members);
 		}
 

@@ -25,6 +25,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -47,8 +48,8 @@ namespace ExtendedXmlSerialization.Conversion
 		/*public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
 			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);*/
 
-		/*public static bool Exact(this IName @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());*/
+		public static bool Exact(this IElement @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());
 
-		/*public static bool Exact(this IName @this, TypeInfo type) => type.Equals(@this.Classification);*/
+		public static bool Exact(this IElement @this, TypeInfo type) => type.Equals(@this.Classification);
 	}
 }

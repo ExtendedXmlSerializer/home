@@ -4,6 +4,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public static class Defaults
 	{
-		public static ImmutableArray<IElement> Names { get; } = new KnownElements().ToImmutableArray();
+		public static ImmutableArray<IElement> Elements { get; } = new KnownElements().ToImmutableArray();
 	}
 }

@@ -26,7 +26,12 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class Element : IEquatable<IElement>, IElement
+	public class DecoratedElement : Element
+	{
+		public DecoratedElement(IElement element) : base(element.DisplayName, element.Classification) {}
+	}
+
+	public class Element : /*IEquatable<IElement>,*/ IElement
 	{
 		public Element(string displayName, Type classification) : this(displayName, classification.GetTypeInfo()) {}
 
@@ -37,8 +42,10 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 		}
 
 		public string DisplayName { get; }
-		
-		public bool Equals(IElement other) => Equals(Classification, other?.Classification);
+		public TypeInfo Classification { get; }
+
+		/*public bool Equals(IElement other) => Equals(Classification, other?.Classification);
+
 
 		public override bool Equals(object obj)
 			=> !ReferenceEquals(null, obj) && obj is Element && Equals((Element) obj);
@@ -47,7 +54,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 
 		public static bool operator ==(Element left, Element right) => left.Equals(right);
 
-		public static bool operator !=(Element left, Element right) => !left.Equals(right);
-		public TypeInfo Classification { get; }
+		public static bool operator !=(Element left, Element right) => !left.Equals(right);*/
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
@@ -24,23 +25,22 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			_add = add;
 		}
 
-		protected override IMember Create(string displayName, TypeInfo classification, MemberInfo metadata)
+		protected override IMember Create(IElement element, MemberInfo metadata)
 		{
-			var add = _add.Get(classification);
+			var add = _add.Get(element.Classification);
 			if (add != null)
 			{
 				var getter = _getter.Get(metadata);
-				var result = new ReadOnlyCollectionMember(displayName, classification, add, getter, _converters.Get(classification));
+				var result = new ReadOnlyCollectionMember(element, add, getter, _converters.Get(element.Classification));
 				return result;
 			}
 			return null;
 		}
 
-		public class ReadOnlyCollectionMember : Member
+		class ReadOnlyCollectionMember : Member
 		{
-			public ReadOnlyCollectionMember(string displayName, TypeInfo classification, Action<object, object> add, Func<object, object> getter,
-			                                IConverter context)
-				: base(displayName, classification, add, getter, context) {}
+			public ReadOnlyCollectionMember(IElement element, Action<object, object> add, Func<object, object> getter,
+			                                IConverter context) : base(element, add, getter, context) {}
 
 			public override void Assign(object instance, object value)
 			{
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			public static Specification Instance { get; } = new Specification();
 			Specification() : this(IsCollectionTypeSpecification.Default) {}
 			readonly ISpecification<TypeInfo> _specification;
-			
+
 			Specification(ISpecification<TypeInfo> specification)
 			{
 				_specification = specification;

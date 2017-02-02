@@ -36,34 +36,6 @@ namespace ExtendedXmlSerialization
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	/*public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
-	{
-		readonly IXmlContextFactory _factory;
-		readonly IConverterSelector _selector;
-
-		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverterOptions options)
-		{
-			_factory = factory;
-			_selector = options.Get(this);
-		}
-
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = XmlWriter.Create(stream))
-			{
-				Write(_factory.Create(writer, instance), instance);
-			}
-		}
-
-		public object Deserialize(Stream stream) => Read(_factory.Create(stream));
-
-		protected override IConverter Select(IContext context)
-			=> _selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
-
-		IConverter IParameterizedSource<IContext, IConverter>.Get(IContext parameter) => _selector.Get(parameter);
-
-		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => _selector.Get(parameter);
-	}*/
 	public class ExtendedXmlSerializer : CacheBase<TypeInfo, IConverter>, IExtendedXmlSerializer
 	{
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
@@ -73,25 +45,29 @@ namespace ExtendedXmlSerialization
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
+		readonly INamespaces _namespaces;
 		readonly IElements _elements;
 		readonly IConverters _converters;
-		readonly INamespaces _namespaces;
 		readonly ITypeLocator _type;
 		readonly XmlReaderSettings _settings;
 
 		public ExtendedXmlSerializer() : this(new Elements(), new Namespaces()) {}
 
 		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces)
+			: this(elements, namespaces, new Names(namespaces)) {}
+
+		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, INames names)
 			: this(
-				elements, new Converters(elements), namespaces, new TypeLocator(new Types(namespaces, new TypeContexts())),
+				namespaces, elements, new Converters(elements, new XmlVariableMemberAdorner(new TypeNames(elements, names), names)), 
+				new TypeLocator(new Types(namespaces, new TypeContexts())),
 				XmlReaderSettings) {}
 
-		public ExtendedXmlSerializer(IElements elements, IConverters converters, INamespaces namespaces, ITypeLocator type,
+		public ExtendedXmlSerializer(INamespaces namespaces, IElements elements, IConverters converters, ITypeLocator type,
 		                             XmlReaderSettings settings)
 		{
+			_namespaces = namespaces;
 			_elements = elements;
 			_converters = converters;
-			_namespaces = namespaces;
 			_type = type;
 			_settings = settings;
 		}
