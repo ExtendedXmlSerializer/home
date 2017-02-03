@@ -41,12 +41,12 @@ namespace ExtendedXmlSerialization.TypeModel
 			_locator = locator;
 		}
 
-		public string Format(TypeInfo type)
+		public string Get(TypeInfo type)
 		{
 			var arguments = type.GetGenericArguments();
 			var name = arguments.Any()
 				? string.Join(string.Empty, arguments.Select(p => p.Name))
-				: _formatter.Format(_locator.Get(type));
+				: _formatter.Get(_locator.Get(type));
 			var result = $"{type.Name.ToStringArray('`')[0]}Of{name}";
 			return result;
 		}

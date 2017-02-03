@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 	{
 #pragma warning disable 618
 		protected ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer Serializer { get; set; } = new ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer();
-#pragma warning restore 618
+
 
 #if NET451
 		const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		{
 			xml = xml.Replace("[CORELIB]", CoreLib);
 			xml = xml.Replace("[EXTENDEDXMLSERIALIZER_VERSION]",
-							  typeof(ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
+							  typeof(ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer).GetTypeInfo().Assembly.GetName().Version.ToString());
 			return xml;
 		}
 
@@ -83,5 +83,6 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			var obj2 = Serializer.Deserialize(xml, obj.GetType());
 			XmlAssert.AreEqual(xml, Serializer.Serialize(obj2));
 		}
+		#pragma warning restore 618
 	}
 }

@@ -23,23 +23,22 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	sealed class KnownNamespaces : Dictionary<Assembly, XName>
+	sealed class KnownNamespaces : Dictionary<Assembly, INamespace>
 	{
 		public static KnownNamespaces Default { get; } = new KnownNamespaces();
 
-		KnownNamespaces() : base(new Dictionary<Assembly, XName>
+		KnownNamespaces() : base(new Dictionary<Assembly, INamespace>
 		                         {
 			                         {
 				                         typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
-				                         XName.Get("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
+				                         new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
 			                         },
 			                         {
 				                         typeof(object).GetTypeInfo().Assembly,
-				                         XName.Get("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
+				                         new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
 			                         }
 		                         }) {}
 	}

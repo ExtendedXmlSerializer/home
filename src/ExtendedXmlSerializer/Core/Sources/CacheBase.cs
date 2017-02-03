@@ -23,10 +23,11 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	/*public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
+	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
 		where TKey : class where TValue : class
 	{
 		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
@@ -65,7 +66,7 @@ namespace ExtendedXmlSerialization.Core.Sources
 		}
 
 		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
-	}*/
+	}
 
 	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IParameterizedSource<TKey, TValue>
 	{

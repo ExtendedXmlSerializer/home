@@ -21,31 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
-
-namespace ExtendedXmlSerialization.Conversion.Xml
+/*namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class ObjectTypeWalker : ObjectWalkerBase<object, IEnumerable<TypeInfo>>, ISource<IEnumerable<TypeInfo>>
 	{
 		readonly ConditionMonitor _framework = new ConditionMonitor();
 
-		readonly IElements _elements;
-		readonly static TypeInfo FrameworkType = ElementModel.Defaults.FrameworkType;
+		/*readonly static TypeInfo FrameworkType = Defaults.FrameworkType;#1#
 
-		public ObjectTypeWalker(IElements elements, object root) : base(root)
+		readonly IContexts _contexts;
+
+		public ObjectTypeWalker(IContexts contexts, object root) : base(root)
 		{
-			_elements = elements;
+			_contexts = contexts;
 		}
 
 		protected override IEnumerable<TypeInfo> Select(object input)
 		{
-			var parameter = input.GetType().GetTypeInfo();
+			/*var parameter = input.GetType().GetTypeInfo();
 			yield return parameter;
 
 			var element = _elements.Get(parameter);
@@ -80,10 +73,11 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 						Schedule(i);
 					}
 				}
-			}
+			}#1#
+			yield break;
 		}
 
-		bool Check(IClassification classification, object instance)
+		/*bool Check(IClassification classification, object instance)
 		{
 			if (!classification.Exact(instance))
 			{
@@ -92,8 +86,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				return result;
 			}
 			return false;
-		}
+		}#1#
 
 		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
 	}
-}
+}*/

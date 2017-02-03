@@ -23,22 +23,34 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class MemberNameProvider : NameProviderBase
+	public class MemberAliasProvider : AliasProviderBase<MemberInfo>
 	{
-		public static MemberNameProvider Default { get; } = new MemberNameProvider();
-		MemberNameProvider() {}
+		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
+		MemberAliasProvider() {}
 
-		protected override string Create(TypeInfo type, MemberInfo member)
+		protected override string GetItem(MemberInfo parameter)
 		{
-			var result = member.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			             member.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ??
-			             member.Name;
-			return result;
+			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
 		}
 	}
+
+	/*public class MemberNameProvider : NameProviderBase
+	{
+		readonly IAliasProvider _alias;
+		public static MemberNameProvider Default { get; } = new MemberNameProvider();
+		MemberNameProvider() : this(MemberAliasProvider.Default) {}
+
+		public MemberNameProvider(IAliasProvider alias)
+		{
+			_alias = alias;
+		}
+
+		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(member) ?? member.Name, type);
+	}*/
 }

@@ -27,5 +27,25 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface INamespaces : IParameterizedSource<TypeInfo, XName> {}
+	public interface INamespaces : IParameterizedSource<TypeInfo, INamespace> {}
+
+	public interface INamespace
+	{
+		string Prefix { get; }
+		XNamespace Namespace { get; }
+	}
+
+	public class Namespace : INamespace
+	{
+		readonly XNamespace _ns;
+
+		public Namespace(string prefix, XNamespace ns)
+		{
+			_ns = ns;
+			Prefix = prefix;
+		}
+
+		public string Prefix { get; }
+		XNamespace INamespace.Namespace => _ns;
+	}
 }

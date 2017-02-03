@@ -22,7 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
@@ -31,11 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class TypeContexts : CacheBase<string, Func<string, TypeInfo>>, ITypeContexts
 	{
-		readonly static char[] Delimiters = Defaults.PartDelimiter.ToArray(),
-			Separator = Defaults.NamespaceDelimiter.ToArray(),
-			AssemblySeparator = Defaults.AssemblyDelimiter.ToArray();
-
-		public TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
+		public static TypeContexts Default { get; } = new TypeContexts();
+		TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
 
 		readonly IAssemblyLoader _loader;
 		readonly IAlteration<string> _alteration;
@@ -48,29 +46,73 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		protected override Func<string, TypeInfo> Create(string parameter)
 		{
-			var parts = parameter.ToStringArray(Delimiters);
-			var namespacePath = parts[0].Split(Separator)[1];
-			var assemblyPath = parts[1].Split(AssemblySeparator)[1];
+			var parts = parameter.ToStringArray(DefaultParsingDelimiters.Default.Part);
+			var namespacePath = parts[0].Split(DefaultParsingDelimiters.Default.Namespace)[1];
+			var assemblyPath = parts[1].Split(DefaultParsingDelimiters.Default.Assembly)[1];
 			var assembly = _loader.Get(assemblyPath);
 			var result = new TypeLoaderContext(assembly, namespacePath, _alteration).ToDelegate();
 			return result;
 		}
 
-		sealed class TypeLoaderContext : CacheBase<string, TypeInfo>
+		sealed class TypeLoaderContext : /*CacheBase<string, TypeInfo>*/ IParameterizedSource<string, TypeInfo>
 		{
 			readonly Assembly _assembly;
 			readonly string _ns;
 			readonly IAlteration<string> _alteration;
+			readonly Func<ImmutableArray<TypeInfo>> _types;
 
 			public TypeLoaderContext(Assembly assembly, string @namespace, IAlteration<string> alteration)
+				: this(assembly, @namespace, alteration, new Types(assembly).Build(@namespace)) {}
+
+			public TypeLoaderContext(Assembly assembly, string @namespace, IAlteration<string> alteration,
+			                         Func<ImmutableArray<TypeInfo>> types)
 			{
 				_assembly = assembly;
 				_ns = @namespace;
 				_alteration = alteration;
+				_types = types;
 			}
 
-			protected override TypeInfo Create(string parameter)
-				=> _assembly.GetType($"{_ns}.{_alteration.Get(parameter)}", false, false)?.GetTypeInfo();
+			public TypeInfo Get(string parameter) => Locate($"{_ns}.{_alteration.Get(parameter)}");
+
+			TypeInfo Locate(string parameter) => _assembly.GetType(parameter, false, false)?.GetTypeInfo() ?? Search(parameter);
+
+			TypeInfo Search(string parameter)
+			{
+				foreach (var typeInfo in _types())
+				{
+					if (typeInfo.FullName.StartsWith(parameter))
+					{
+						return typeInfo;
+					}
+				}
+				return null;
+			}
+		}
+
+		sealed class Types : /*CacheBase<string, ImmutableArray<TypeInfo>>*/IParameterizedSource<string, ImmutableArray<TypeInfo>>
+		{
+			readonly ImmutableArray<TypeInfo> _types;
+
+			public Types(Assembly assembly) : this(assembly.DefinedTypes.ToImmutableArray()) {}
+
+			public Types(ImmutableArray<TypeInfo> types)
+			{
+				_types = types;
+			}
+
+			public ImmutableArray<TypeInfo> Get(string parameter) => Yield(parameter).ToImmutableArray();
+
+			IEnumerable<TypeInfo> Yield(string parameter)
+			{
+				foreach (var typeInfo in _types)
+				{
+					if (typeInfo.Namespace == parameter)
+					{
+						yield return typeInfo;
+					}
+				}
+			}
 		}
 	}
 }

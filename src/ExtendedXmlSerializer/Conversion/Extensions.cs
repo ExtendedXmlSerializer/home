@@ -25,40 +25,31 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Write;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	public static class Extensions
 	{
-		public static void New(this IWriter @this, IWriteContext context, IContainerElement container, object instance)
-			=>
-				@this.Write(context.New(container, instance?.GetType().GetTypeInfo() ?? container.Classification),
-				            instance);
-
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
 			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 
-		public static TypeInfo ToTypeInfo(this MemberInfo @this) => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
+		/*public static TypeInfo ToTypeInfo(this MemberInfo @this) => @this as TypeInfo ?? @this.DeclaringType.GetTypeInfo();
 
 		public static object AnnotationAll(this XElement @this, Type type) 
-			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);
+			=> @this.Annotation(type) ?? @this.Parent?.AnnotationAll(type);*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
 
-		public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();
+		/*public static T Activate<T>(this IActivators @this, Type type) => (T) @this.Get(type).Invoke();*/
 
-		public static IElement Load(this IElements @this, IContainerElement container, TypeInfo instanceType)
-			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);
+		/*public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
+			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);*/
 
-		public static bool Exact(this IClassification @this, object instance)
-			=> Exact(@this, instance.GetType().GetTypeInfo());
+		public static bool Exact(this IElement @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());
 
-		public static bool Exact(this IClassification @this, TypeInfo type) => type.Equals(@this.Classification);
+		public static bool Exact(this IElement @this, TypeInfo type) => type.Equals(@this.Classification);
 	}
 }

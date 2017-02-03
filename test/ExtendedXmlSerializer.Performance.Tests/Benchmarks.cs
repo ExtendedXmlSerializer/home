@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Performance.Tests.Model;
 
 namespace ExtendedXmlSerialization.Performance.Tests
@@ -40,29 +40,40 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		public ExtendedXmlSerializerTest()
 		{
 			_obj.Init();
-			_xml = _serializer.Serialize(_obj);
+			_xml = SerializationClassWithPrimitive();
+			DeserializationClassWithPrimitive();
 		}
 
 		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
 		[Benchmark]
-		public TestClassOtherClass DeserializationClassWithPrimitive()
-			=> _serializer.Deserialize<TestClassOtherClass>(_xml);
+		public TestClassOtherClass DeserializationClassWithPrimitive() => _serializer.Deserialize<TestClassOtherClass>(_xml);
 	}
 
 
+	// [Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = ExtendedXmlSerializer.Default;
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
-		readonly string _xml;
+		readonly byte[] _xml;
 
 		public ExtendedXmlSerializerV2Test()
 		{
-			_xml = _serializer.Serialize(_obj);
+			_xml = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
+			DeserializationClassWithPrimitive();
 		}
 
+		/*class Configuration : ManualConfig
+		{
+			public Configuration()
+			{
+				Job.Default.With(new GcMode {Force = false});
+				Add(Job.Default);
+			}
+		}*/
+		
 		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
@@ -73,13 +84,14 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	public class XmlSerializerTest
 	{
 		readonly TestClassOtherClass _obj = new TestClassOtherClass();
-		readonly string _xml;
+		readonly byte[] _xml;
 		readonly XmlSerializer _serializer = new XmlSerializer(typeof(TestClassOtherClass));
 
 		public XmlSerializerTest()
 		{
 			_obj.Init();
-			_xml = SerializationClassWithPrimitive();
+			_xml = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
+			DeserializationClassWithPrimitive();
 		}
 
 		[Benchmark]
@@ -95,11 +107,12 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		}
 
 		[Benchmark]
-		public TestClassOtherClass DeserializationClassWithPrimitive()
+		public object DeserializationClassWithPrimitive()
 		{
-			using (var textReader = new StringReader(_xml))
+			using (var stream = new MemoryStream(_xml))
 			{
-				return (TestClassOtherClass) _serializer.Deserialize(textReader);
+				var result = _serializer.Deserialize(stream);
+				return result;
 			}
 		}
 	}

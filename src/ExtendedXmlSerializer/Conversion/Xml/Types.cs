@@ -24,21 +24,23 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ElementModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Types : CacheBase<XName, TypeInfo>, ITypes
+	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
+		public static Types Default { get; } = new Types();
+		Types() : this(Namespaces.Default, TypeContexts.Default) {}
+
 		readonly INamespaces _namespaces;
-		readonly ImmutableArray<IName> _known;
+		readonly ImmutableArray<IElement> _known;
 		readonly ITypeContexts _sources;
 
-		/*public Types(INamespaces namespaces) : this(namespaces, new TypeContexts()) {}*/
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Conversion.Defaults.Names, sources) {}
+		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Defaults.Elements, sources) {}
 
-		public Types(INamespaces namespaces, ImmutableArray<IName> known, ITypeContexts sources)
+		public Types(INamespaces namespaces, ImmutableArray<IElement> known, ITypeContexts sources)
 		{
 			_namespaces = namespaces;
 			_known = known;
@@ -56,7 +58,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			for (var i = 0; i < length; i++)
 			{
 				var name = _known[i];
-				if (ns == _namespaces.Get(name.Classification)?.NamespaceName && localName == name.DisplayName)
+				if (ns == _namespaces.Get(name.Classification)?.Namespace.NamespaceName && localName == name.DisplayName)
 				{
 					return name.Classification;
 				}

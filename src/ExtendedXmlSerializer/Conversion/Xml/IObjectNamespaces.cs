@@ -22,10 +22,9 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<XName>> {}
+	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<INamespace>> {}
 }

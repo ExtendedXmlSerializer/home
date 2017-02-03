@@ -24,41 +24,56 @@
 using System.IO;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion;
+using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using XmlReader = ExtendedXmlSerialization.Conversion.Xml.XmlReader;
+using XmlWriter = ExtendedXmlSerialization.Conversion.Xml.XmlWriter;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : SelectingConverterBase, IExtendedXmlSerializer, IRootConverter
+	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		readonly IXmlContextFactory _factory;
-		readonly IConverterSelector _selector;
+		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
+		ExtendedXmlSerializer() : this(Roots.Default, XmlReaderSettings) {}
 
-		public ExtendedXmlSerializer(IXmlContextFactory factory, IConverterOptions options)
+		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
+		                                                      {
+			                                                      IgnoreWhitespace = true,
+			                                                      IgnoreComments = true,
+			                                                      IgnoreProcessingInstructions = true
+		                                                      };
+
+		readonly IRoots _roots;
+		readonly XmlReaderSettings _settings;
+
+		public ExtendedXmlSerializer(IRoots roots, XmlReaderSettings settings)
 		{
-			_factory = factory;
-			_selector = options.Get(this);
+			_roots = roots;
+			_settings = settings;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
-			using (var writer = XmlWriter.Create(stream))
+			using (var source = System.Xml.XmlWriter.Create(stream))
 			{
-				Write(_factory.Create(writer, instance), instance);
+				var writer = new XmlWriter(source);
+				var context = _roots.Get(instance.GetType().GetTypeInfo());
+				context.Emit(writer, instance);
 			}
 		}
 
-		public object Deserialize(Stream stream) => Read(_factory.Create(stream));
-
-		protected override IConverter Select(IContext context)
-			=> _selector.Get(context.Container.GetType().GetTypeInfo()) ?? _selector.Get(context);
-
-		IConverter IParameterizedSource<IContext, IConverter>.Get(IContext parameter) => _selector.Get(parameter);
-
-		IConverter IParameterizedSource<TypeInfo, IConverter>.Get(TypeInfo parameter) => _selector.Get(parameter);
+		public object Deserialize(Stream stream)
+		{
+			using (var source = System.Xml.XmlReader.Create(stream, _settings))
+			{
+				var reader = new XmlReader(source);
+				var context = _roots.Get(reader.Classification);
+				var result = context.Get(reader);
+				return result;
+			}
+		}
 	}
 }
