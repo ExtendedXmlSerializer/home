@@ -4,11 +4,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public interface IXmlElement : IElement
 	{
-		void Write(System.Xml.XmlWriter writer, object instance);
+		string Namespace { get; }
 	}
 
-	public interface IXmlWritable
-	{
-		void Write(System.Xml.XmlWriter writer, IElement element, object instance);
-	}
 }

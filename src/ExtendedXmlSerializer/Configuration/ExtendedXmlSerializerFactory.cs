@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Configuration
 			var types = new Types(namespaces, new TypeContexts());*/
 			/*var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)#1#);
 			return result;*/
-			return ExtendedXmlSerializer.Default;
+			return new ExtendedXmlSerializer();
 		}
 	}
 }

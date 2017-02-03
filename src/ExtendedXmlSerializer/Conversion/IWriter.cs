@@ -28,8 +28,12 @@ namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IWriter
 	{
-		IDisposable Emit(IElement element, object instance);
+		IDisposable Emit(IElement element);
 
 		void Write(string text);
+
+		void Render(IRender render, object instance);
 	}
+
+	public interface IRender {}
 }

@@ -21,34 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion;
-using ExtendedXmlSerialization.Conversion.Xml;
-
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	class EnumerableTypeFormatter : ITypeFormatter
+	abstract class FrameworkElementBase : XmlElement
 	{
-		readonly ITypeFormatter _formatter;
-		readonly ICollectionItemTypeLocator _locator;
+		readonly static TypeInfo Type = Conversion.Defaults.FrameworkType;
+		readonly static string NamespaceName = Namespaces.Default.Get(Type).Namespace.NamespaceName;
 
-		public EnumerableTypeFormatter(ICollectionItemTypeLocator locator) : this(TypeFormatter.Default, locator) {}
-
-		public EnumerableTypeFormatter(ITypeFormatter formatter, ICollectionItemTypeLocator locator)
-		{
-			_formatter = formatter;
-			_locator = locator;
-		}
-
-		public string Get(TypeInfo type)
-		{
-			var arguments = type.GetGenericArguments();
-			var name = arguments.Any()
-				? string.Join(string.Empty, arguments.Select(p => p.Name))
-				: _formatter.Get(_locator.Get(type));
-			var result = $"{type.Name.ToStringArray('`')[0]}Of{name}";
-			return result;
-		}
+		protected FrameworkElementBase(string displayName) : base(displayName, Type, NamespaceName) {}
 	}
 }

@@ -21,17 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Properties
+namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	sealed class TypeProperty : FrameworkPropertyBase
+	sealed class ReferenceProperty : FrameworkElementBase
 	{
-		public static TypeProperty Default { get; } = new TypeProperty();
-		TypeProperty() : base("type") {}
-	}
-
-	sealed class TypeArgumentsProperty : FrameworkPropertyBase
-	{
-		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : base("arguments") {}
+		public static ReferenceProperty Default { get; } = new ReferenceProperty();
+		ReferenceProperty() : base("ref") {}
 	}
 }

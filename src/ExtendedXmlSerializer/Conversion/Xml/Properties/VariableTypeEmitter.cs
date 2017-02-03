@@ -21,11 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion.Properties
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Elements;
+
+namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	sealed class IdentifierProperty : FrameworkPropertyBase
+	sealed class VariableTypeEmitter : FrameworkElementBase, IRenderXml
 	{
-		public static IdentifierProperty Default { get; } = new IdentifierProperty();
-		IdentifierProperty() : base("id") {}
+		readonly IElement _element;
+		readonly ITypeNames _names;
+
+		public VariableTypeEmitter(IElement element) : this(element, TypeNames.Default) {}
+
+		public VariableTypeEmitter(IElement element, ITypeNames names) : base("type")
+		{
+			_element = element;
+			_names = names;
+		}
+
+		public void Render(System.Xml.XmlWriter writer, object instance)
+		{
+			var classification = instance.GetType().GetTypeInfo();
+			if (!_element.Exact(classification))
+			{
+				var native = _names.Get(classification);
+				writer.WriteStartAttribute(DisplayName, Namespace);
+				writer.WriteQualifiedName(native.LocalName, native.NamespaceName);
+				writer.WriteEndAttribute();
+			}
+		}
+	}
+
+	sealed class TypeArgumentsProperty : FrameworkElementBase
+	{
+		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
+		TypeArgumentsProperty() : base("arguments") {}
 	}
 }

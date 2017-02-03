@@ -14,10 +14,10 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		readonly IGetterFactory _getter;
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IConverters converters, IMemberAdorner adorner) : this(converters, adorner, GetterFactory.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IConverters converters) : this(converters, GetterFactory.Default, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(IConverters converters, IMemberAdorner adorner, IGetterFactory getter, IAddDelegates add)
-			: base(Specification.Instance, adorner)
+		public ReadOnlyCollectionMemberOption(IConverters converters, IGetterFactory getter, IAddDelegates add)
+			: base(Specification.Instance)
 		{
 			_converters = converters;
 			_getter = getter;

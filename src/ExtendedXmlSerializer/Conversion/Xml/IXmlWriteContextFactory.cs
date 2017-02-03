@@ -22,125 +22,69 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Elements;
-using ExtendedXmlSerialization.Conversion.Members;
-using ExtendedXmlSerialization.Conversion.Properties;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	class XmlMemberAdorner : XmlMemberAdornerBase
+	class GenericXmlElement : XmlElement, IXmlWritable
 	{
-		public static XmlMemberAdorner Default { get; } = new XmlMemberAdorner();
-		XmlMemberAdorner() : this(XmlMemberWritable.Default.Accept) {}
+		readonly ImmutableArray<IElement> _arguments;
 
-		readonly Func<IElement, IXmlWritable> _writable;
-
-		XmlMemberAdorner(Func<IElement, IXmlWritable> writable)
+		public GenericXmlElement(string displayName, TypeInfo classification, string ns, ImmutableArray<IElement> arguments)
+			: base(displayName, classification, ns)
 		{
-			_writable = writable;
+			_arguments = arguments;
 		}
 
-		protected override IXmlWritable GetWritable(IElement parameter) => _writable(parameter);
-	}
-
-	abstract class XmlMemberAdornerBase : IMemberAdorner
-	{
-		protected abstract IXmlWritable GetWritable(IElement parameter);
-
-		public IElement Get(IElement parameter) => new XmlElement(GetWritable(parameter), parameter);
-	}
-
-	class XmlMemberWritable : IXmlWritable
-	{
-		public static XmlMemberWritable Default { get; } = new XmlMemberWritable();
-		XmlMemberWritable() {}
-
-		public void Write(System.Xml.XmlWriter writer, IElement element, object instance)
+		public void Execute(System.Xml.XmlWriter parameter)
 		{
-			writer.WriteStartElement(element.DisplayName);
+			throw new NotImplementedException();
 		}
-	}
-
-	class XmlVariableMemberAdorner : XmlMemberAdornerBase
-	{
-		public static XmlVariableMemberAdorner Default { get; } = new XmlVariableMemberAdorner();
-		XmlVariableMemberAdorner()
-			: this(FixedTypeSpecification.Default, XmlMemberWritable.Default, XmlVariableTypeMemberWritable.Default) {}
-
-		readonly ISpecification<TypeInfo> _specification;
-		readonly IXmlWritable _variable, _fixed;
-
-		public XmlVariableMemberAdorner(ISpecification<TypeInfo> specification, IXmlWritable @fixed, IXmlWritable variable)
-		{
-			_specification = specification;
-			_fixed = @fixed;
-			_variable = variable;
-		}
-
-		protected override IXmlWritable GetWritable(IElement parameter)
-			=> _specification.IsSatisfiedBy(parameter.Classification) ? _fixed : _variable;
 	}
 
 	class XmlElement : IXmlElement
 	{
-		readonly IXmlWritable _writable;
-		readonly IElement _element;
+		public XmlElement(string displayName, Type type, string ns) : this(displayName, type.GetTypeInfo(), ns) {}
 
-		public XmlElement(IXmlWritable writable, IElement element)
-			: this(writable, element, element.DisplayName, element.Classification) {}
-
-		public XmlElement(IXmlWritable writable, IElement element, string displayName, TypeInfo classification)
+		public XmlElement(string displayName, TypeInfo classification, string ns)
 		{
-			_writable = writable;
-			_element = element;
 			DisplayName = displayName;
 			Classification = classification;
+			Namespace = ns;
 		}
-
-		public void Write(System.Xml.XmlWriter writer, object instance) => _writable.Write(writer, _element, instance);
 
 		public string DisplayName { get; }
 		public TypeInfo Classification { get; }
+		public string Namespace { get; }
 	}
 
+	public interface IXmlWritable : ICommand<System.Xml.XmlWriter> {}
 
-	class XmlVariableTypeMemberWritable : IXmlWritable
+	public interface IRenderXml : IRender
 	{
-		public static XmlVariableTypeMemberWritable Default { get; } = new XmlVariableTypeMemberWritable();
-		XmlVariableTypeMemberWritable() : this(TypeNames.Default, Names.Default.Get(TypeProperty.Default)) {}
+		void Render(System.Xml.XmlWriter writer, object instance);
+	}
 
-		readonly ITypeNames _names;
-		readonly XName _type;
-		readonly IXmlWritable _writable;
+	class RenderingEmitter : DecoratedEmitter
+	{
+		readonly IRenderXml _render;
 
-		public XmlVariableTypeMemberWritable(ITypeNames names, XName type) : this(names, type, XmlMemberWritable.Default) {}
-
-		public XmlVariableTypeMemberWritable(ITypeNames names, XName type, IXmlWritable writable)
+		public RenderingEmitter(IRenderXml render, IEmitter emitter) : base(emitter)
 		{
-			_names = names;
-			_type = type;
-			_writable = writable;
+			_render = render;
 		}
 
-		public void Write(System.Xml.XmlWriter writer, IElement element, object instance)
+		public override void Emit(IWriter writer, object instance)
 		{
-			_writable.Write(writer, element, instance);
-
-			/*var classification = instance.GetType().GetTypeInfo();
-			if (!element.Exact(classification))
-			{
-				var native = _names.Get(classification);
-				writer.WriteStartAttribute(_type.LocalName, _type.NamespaceName);
-				writer.WriteQualifiedName(native.LocalName, native.NamespaceName);
-				writer.WriteEndAttribute();
-			}*/
+			writer.Render(_render, instance);
+			base.Emit(writer, instance);
 		}
 	}
 

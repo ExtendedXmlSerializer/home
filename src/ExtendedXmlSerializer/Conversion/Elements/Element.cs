@@ -26,10 +26,10 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class DecoratedElement : Element
+	/*public class DecoratedElement : Element
 	{
 		public DecoratedElement(IElement element) : base(element.DisplayName, element.Classification) {}
-	}
+	}*/
 
 	public class Element : /*IEquatable<IElement>,*/ IElement
 	{
