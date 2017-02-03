@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Configuration
 		IExtendedXmlPropertyConfiguration<T, TOtherProperty> Property<TOtherProperty>(
 			Expression<Func<T, TOtherProperty>> property);
 
-		IExtendedXmlPropertyConfiguration<T, TProperty> ObjectReference();
+		IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences();
 		IExtendedXmlPropertyConfiguration<T, TProperty> AsAttribute();
 		IExtendedXmlPropertyConfiguration<T, TProperty> Encrypt();
 		IExtendedXmlPropertyConfiguration<T, TProperty> Name(string name);

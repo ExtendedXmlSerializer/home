@@ -37,6 +37,8 @@ namespace ExtendedXmlSerialization.Configuration
 
 		IExtendedXmlTypeConfiguration<T> AddMigration(Action<XElement> migration);
 		IExtendedXmlTypeConfiguration<T> AddMigration(IExtendedXmlTypeMigrator migrator);
+
+	    IExtendedXmlTypeConfiguration<T> EnableReferences();
 	}
 
 	interface IExtendedXmlTypeConfiguration

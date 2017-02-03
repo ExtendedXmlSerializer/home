@@ -141,5 +141,11 @@ namespace ExtendedXmlSerialization.Configuration
 			}
 			return this;
 		}
+
+	    public IExtendedXmlTypeConfiguration<T> EnableReferences()
+	    {
+	        IsObjectReference = true;
+            return this;
+        }
 	}
 }

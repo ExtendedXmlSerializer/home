@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Configuration
 			return TypeConfiguration.Property(property);
 		}
 
-		public IExtendedXmlPropertyConfiguration<T, TProperty> ObjectReference()
+		public IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences()
 		{
 			IsObjectReference = true;
 			TypeConfiguration.IsObjectReference = true;

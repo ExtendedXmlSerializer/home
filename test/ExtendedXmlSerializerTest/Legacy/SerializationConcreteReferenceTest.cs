@@ -39,9 +39,9 @@ namespace ExtendedXmlSerialization.Test.Legacy
 			                                       {
 				                                       cfg.ConfigureType<TestClassConcreteReference>()
 				                                          .Property(p => p.Id)
-				                                          .ObjectReference();
-				                                       cfg.ConfigureType<TestClassReference>().Property(p => p.Id).ObjectReference();
-				                                       cfg.ConfigureType<IReference>().Property(p => p.Id).ObjectReference();
+				                                          .EnableReferences();
+				                                       cfg.ConfigureType<TestClassReference>().Property(p => p.Id).EnableReferences();
+				                                       cfg.ConfigureType<IReference>().Property(p => p.Id).EnableReferences();
 			                                       });*/
 
 			Serializer.SerializationToolsFactory = new SimpleSerializationToolsFactory()
