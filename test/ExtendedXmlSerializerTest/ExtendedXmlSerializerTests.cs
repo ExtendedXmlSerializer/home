@@ -22,9 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -32,13 +29,13 @@ namespace ExtendedXmlSerialization.Test
 {
 	public class ExtendedXmlSerializerTests
 	{
-		readonly static TestClassOtherClass TestClassOtherClass = TestClassOtherClass.Create();
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
-		readonly string _xml;
+		readonly TestClassOtherClass _subject = TestClassOtherClass.Create();
+
+		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/ExtendedXmlSerializer.Default;
 
 		public ExtendedXmlSerializerTests()
 		{
-			_xml = _serializer.Serialize(TestClassOtherClass);
+			_serializer.Serialize(_subject);
 		}
 
 		[Fact]
@@ -46,15 +43,11 @@ namespace ExtendedXmlSerialization.Test
 		{
 			const int expected = 6776;
 
-			var write = new MemoryStream();
-			_serializer.Serialize(write, expected);
-			write.Seek(0, SeekOrigin.Begin);
-			var data = new StreamReader(write).ReadToEnd();
+			var data = _serializer.Serialize(expected);
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>",
 				data);
-			var read = new MemoryStream(Encoding.UTF8.GetBytes(data));
-			var actual = _serializer.Deserialize(read);
+			var actual = _serializer.Deserialize(data);
 			Assert.Equal(expected, actual);
 		}
 
@@ -64,7 +57,7 @@ namespace ExtendedXmlSerialization.Test
 			var instance = new InstanceClass {PropertyName = "Hello World!"};
 			var data = _serializer.Serialize(instance);
 			Assert.Equal(
-				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests.InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests.InstanceClass>",
+				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-InstanceClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-InstanceClass>",
 				data);
 			var read = _serializer.Deserialize<InstanceClass>(data);
 			Assert.NotNull(read);
@@ -76,7 +69,7 @@ namespace ExtendedXmlSerialization.Test
 		{
 			for (int i = 0; i < 100; i++)
 			{
-				_serializer.Deserialize<TestClassOtherClass>(_xml);
+				_serializer.Serialize(_subject);
 			}
 		}
 
@@ -93,10 +86,11 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(expected, _serializer.Serialize(read));
 		}
 
+/*
 		[Fact]
 		public void Dictionary()
 		{
-			var instance = new Dictionary<int, string>
+			/*var instance = new Dictionary<int, string>
 			               {
 				               {1, "First"},
 				               {2, "Second"},
@@ -105,15 +99,16 @@ namespace ExtendedXmlSerialization.Test
 			var data = _serializer.Serialize(instance);
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><DictionaryOfInt32String xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item><Key>1</Key><Value>First</Value></Item><Item><Key>2</Key><Value>Second</Value></Item><Item><Key>3</Key><Value>Other</Value></Item></DictionaryOfInt32String>",
-				data);
+				data);#1#
 			/*var read = ExtendedXmlSerializer.Default.Deserialize<Dictionary<int, string>>(data);
 			Assert.NotNull(read);
 			Assert.Equal(instance.Count, read.Count);
 			foreach (var entry in read)
 			{
 				Assert.Equal(instance[entry.Key], entry.Value);
-			}*/
+			}#1#
 		}
+*/
 
 		class InstanceClass
 		{

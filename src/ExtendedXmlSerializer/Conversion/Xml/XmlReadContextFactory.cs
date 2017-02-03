@@ -21,80 +21,72 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Read;
-using ExtendedXmlSerialization.ElementModel;
-using ExtendedXmlSerialization.ElementModel.Members;
-
-namespace ExtendedXmlSerialization.Conversion.Xml
+/*namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class XmlReadContextFactory : IXmlReadContextFactory
-	{
-		readonly static char[] Delimiters = Defaults.NamespaceDelimiter.ToArray();
+ public class XmlReadContextFactory 
+ {
+	 /*readonly IElements _elements;
+	 readonly ITypes _types;
+	 readonly INames _converter;
+	 readonly XName _type;
 
-		readonly IElements _elements;
-		readonly ITypes _types;
-		readonly INameConverter _converter;
-		readonly XName _type;
+	 public XmlReadContextFactory(IElements elements, ITypes types, INames converter)
+		 : this(elements, types, converter, converter.Get(TypeProperty.Default)) {}
 
-		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter)
-			: this(elements, types, converter, converter.Get(TypeProperty.Default)) {}
+	 public XmlReadContextFactory(IElements elements, ITypes types, INames converter, XName type)
+	 {
+		 _elements = elements;
+		 _types = types;
+		 _converter = converter;
+		 _type = type;
+	 }
 
-		public XmlReadContextFactory(IElements elements, ITypes types, INameConverter converter, XName type)
-		{
-			_elements = elements;
-			_types = types;
-			_converter = converter;
-			_type = type;
-		}
+	 public IReadContext Create(IContainer container, XElement data)
+	 {
+		 var element = Element(container, data);
+		 var member = container as IMember;
+		 if (member != null)
+		 {
+			 return new XmlReadMemberContext(this, member, element, data);
+		 }
 
-		public IReadContext Create(IContainerElement container, XElement data)
-		{
-			var element = Element(container, data);
-			var member = container as IMemberElement;
-			if (member != null)
-			{
-				return new XmlReadMemberContext(this, member, element, data);
-			}
+		 var result = new XmlReadContext(this, container, element, data);
+		 return result;
+	 }
 
-			var result = new XmlReadContext(this, container, element, data);
-			return result;
-		}
+	 IElement Element(IContainer container, XElement element)
+	 {
+		 var data = Attribute(element, _type);
+		 if (data != null)
+		 {
+			 var name = GetName(data, element);
+			 var instanceType = _types.Get(name) ?? container.Classification;
+			 var result = _elements.Load(container, instanceType);
+			 return result;
+		 }
+		 return container.Element;
+	 }#1#
 
-		IElement Element(IContainerElement container, XElement element)
-		{
-			var data = Attribute(element, _type);
-			if (data != null)
-			{
-				var name = GetName(data, element);
-				var typeInfo = _types.Get(name) ?? container.Classification;
-				var result = _elements.Load(container, typeInfo);
-				return result;
-			}
-			return container.Element;
-		}
+	 /*static XName GetName(string data, XElement element)
+	 {
+		 var parts = data.ToStringArray(DefaultParsingDelimiters.Default.Namespace);
+		 switch (parts.Length)
+		 {
+			 case 2:
+				 var ns = element.GetNamespaceOfPrefix(parts[0])?.NamespaceName ?? string.Empty;
+				 var result = XName.Get(parts[1], ns);
+				 return result;
+		 }
+		 throw new SerializationException($"Could not parse XML name from {data}");
+	 }#1#
 
-		static XName GetName(string data, XElement element)
-		{
-			var parts = data.ToStringArray(Delimiters);
-			switch (parts.Length)
-			{
-				case 2:
-					var ns = element.GetNamespaceOfPrefix(parts[0])?.NamespaceName ?? string.Empty;
-					var result = XName.Get(parts[1], ns);
-					return result;
-			}
-			throw new SerializationException($"Could not parse XML name from {data}");
-		}
+	 /*public string Value(IName name, XElement data)
+	 {
+		 var xName = _converter.Get(name);
+		 var value = Attribute(data, xName);
+		 return value;
+	 }
 
-		public string Value(IName name, XElement data)
-		{
-			var xName = _converter.Get(name);
-			var value = Attribute(data, xName);
-			return value;
-		}
-
-		static string Attribute(XElement data, XName xName) => data.HasAttributes ? data.Attribute(xName)?.Value : null;
-	}
-}
+	 static string Attribute(XElement data, XName xName) => data.HasAttributes ? data.Attribute(xName)?.Value : null;#1#
+ }
+}*/

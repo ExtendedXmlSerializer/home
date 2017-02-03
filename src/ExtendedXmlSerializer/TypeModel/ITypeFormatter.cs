@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface ITypeFormatter
-	{
-		string Format(TypeInfo type);
-	}
+	public interface ITypeFormatter : IParameterizedSource<TypeInfo, string> {}
 }

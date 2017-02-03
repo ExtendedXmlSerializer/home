@@ -50,10 +50,12 @@ namespace ExtendedXmlSerialization
 		}
 
 		public static object Deserialize(this IExtendedXmlSerializer @this, string xml) => @this.Deserialize<object>(xml);
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml) => @this.Deserialize<T>(Encoding.UTF8.GetBytes(xml));
 
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml)
+		public static object Deserialize(this IExtendedXmlSerializer @this, byte[] xml) => @this.Deserialize<object>(xml);
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, byte[] xml)
 		{
-			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+			using (var stream = new MemoryStream(xml))
 			{
 				var result = @this.Deserialize(stream).AsValid<T>();
 				return result;

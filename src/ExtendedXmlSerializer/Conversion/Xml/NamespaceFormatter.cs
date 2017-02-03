@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_style = style;
 		}
 
-		public string Format(TypeInfo type) => $"clr-namespace:{type.Namespace};assembly={Name(type)}";
+		public string Get(TypeInfo type) => $"clr-namespace:{type.Namespace};assembly={Name(type)}";
 
 		string Name(TypeInfo type)
 		{

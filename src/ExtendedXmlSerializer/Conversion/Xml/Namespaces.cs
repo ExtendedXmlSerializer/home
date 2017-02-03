@@ -23,37 +23,36 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Namespaces : CacheBase<TypeInfo, XName>, INamespaces
+	public class Namespaces : WeakCacheBase<TypeInfo, INamespace>, INamespaces
 	{
-		public Namespaces() : this(PrefixProvider.Default) {}
+		public static Namespaces Default { get; } = new Namespaces();
+		Namespaces() : this(PrefixProvider.Default) {}
 
-		readonly IDictionary<Assembly, XName> _known;
+		readonly IDictionary<Assembly, INamespace> _known;
 		readonly ITypeFormatter _formatter;
 		readonly IPrefixProvider _prefix;
 
 		public Namespaces(IPrefixProvider prefix) : this(KnownNamespaces.Default, NamespaceFormatter.Default, prefix) {}
 
-		public Namespaces(IDictionary<Assembly, XName> known, ITypeFormatter formatter, IPrefixProvider prefix)
+		public Namespaces(IDictionary<Assembly, INamespace> known, ITypeFormatter formatter, IPrefixProvider prefix)
 		{
 			_known = known;
 			_formatter = formatter;
 			_prefix = prefix;
 		}
 
-		protected override XName Create(TypeInfo parameter)
-			=> _known.TryGet(parameter.Assembly) ?? Format(parameter);
+		protected override INamespace Create(TypeInfo parameter) => _known.TryGet(parameter.Assembly) ?? Format(parameter);
 
-		XName Format(TypeInfo parameter)
+		Namespace Format(TypeInfo parameter)
 		{
-			var name = _formatter.Format(parameter);
-			var result = XName.Get(_prefix.Get(name), name);
+			var name = _formatter.Get(parameter);
+			var result = new Namespace(_prefix.Get(name), name);
 			return result;
 		}
 	}

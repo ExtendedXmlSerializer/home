@@ -25,6 +25,20 @@ using System;
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
+	public class ConditionalSpecification<T> : ISpecification<T>
+	{
+		readonly ConditionMonitor _monitor;
+
+		public ConditionalSpecification() : this(new ConditionMonitor()) {}
+
+		public ConditionalSpecification(ConditionMonitor monitor)
+		{
+			_monitor = monitor;
+		}
+
+		public bool IsSatisfiedBy(T parameter) => _monitor.Apply();
+	}
+
 	public class DelegatedSpecification<T> : ISpecification<T>
 	{
 		readonly Func<T, bool> _delegate;

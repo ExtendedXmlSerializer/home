@@ -26,11 +26,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class DictionaryPairTypesLocator : CacheBase<TypeInfo, DictionaryPairTypes>, IDictionaryPairTypesLocator
+	public class DictionaryPairTypesLocator : /*CacheBase<TypeInfo, DictionaryPairTypes>,*/ IDictionaryPairTypesLocator
 	{
 		public DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
@@ -41,7 +40,7 @@ namespace ExtendedXmlSerialization.TypeModel
 			_type = type;
 		}
 
-		protected override DictionaryPairTypes Create(TypeInfo parameter)
+		public DictionaryPairTypes Get(TypeInfo parameter)
 		{
 			foreach (var it in parameter.GetInterfaces().Select(x => x.GetTypeInfo()).Append(parameter))
 			{
