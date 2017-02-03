@@ -11,7 +11,7 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 
 		public override void Emit(IWriter writer, object instance)
 		{
-			using (writer.Emit(_element, instance))
+			using (writer.Emit(_element))
 			{
 				base.Emit(writer, instance);
 			}

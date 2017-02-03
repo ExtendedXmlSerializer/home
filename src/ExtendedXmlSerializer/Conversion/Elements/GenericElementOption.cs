@@ -4,6 +4,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public class GenericElementOption : ElementOptionBase
 	{
-		public GenericElementOption(IElements elements) : base(IsGenericTypeSpecification.Default, new GenericElementProvider(elements).Get) {}
+		public GenericElementOption(IElementProvider provider) : base(IsGenericTypeSpecification.Default, provider.Get) {}
 	}
 }

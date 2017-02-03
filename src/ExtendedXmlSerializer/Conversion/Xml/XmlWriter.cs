@@ -29,35 +29,40 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class XmlWriter : IWriter
 	{
-		readonly INamespaces _namespaces;
 		readonly System.Xml.XmlWriter _writer;
 		readonly IDisposable _finish;
 
-		public XmlWriter(System.Xml.XmlWriter writer)
-			: this(Namespaces.Default, writer, new DelegatedDisposable(writer.WriteEndElement)) {}
+		public XmlWriter(System.Xml.XmlWriter writer) : this(writer, new DelegatedDisposable(writer.WriteEndElement)) {}
 
-		public XmlWriter(INamespaces namespaces, System.Xml.XmlWriter writer, IDisposable finish)
+		public XmlWriter(System.Xml.XmlWriter writer, IDisposable finish)
 		{
-			_namespaces = namespaces;
 			_writer = writer;
 			_finish = finish;
 		}
 
-		public IDisposable Emit(IElement element, object instance)
+		public IDisposable Emit(IElement element)
 		{
-			var xmlElement = element as IXmlElement;
-			if (xmlElement != null)
+			var xml = element as IXmlElement;
+			if (xml != null)
 			{
-				xmlElement.Write(_writer, instance);
+				_writer.WriteStartElement(element.DisplayName, xml.Namespace);
 			}
 			else
 			{
-				_writer.WriteStartElement(element.DisplayName, _namespaces.Get(element.Classification).Namespace.NamespaceName);
+				_writer.WriteStartElement(element.DisplayName);
 			}
-			
+
+			var writable = element as IXmlWritable;
+			writable?.Execute(_writer);
+
 			return _finish;
 		}
 
 		public void Write(string text) => _writer.WriteString(text);
+		public void Render(IRender render, object instance)
+		{
+			var xml = render as IRenderXml;
+			xml?.Render(_writer, instance);
+		}
 	}
 }

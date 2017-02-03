@@ -25,10 +25,13 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IElement
+	public interface IDisplayAware
 	{
 		string DisplayName { get; }
+	}
 
+	public interface IElement : IDisplayAware
+	{
 		TypeInfo Classification { get; }
 	}
 }

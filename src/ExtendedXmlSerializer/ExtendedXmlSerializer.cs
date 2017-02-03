@@ -36,9 +36,6 @@ namespace ExtendedXmlSerialization
 	/// </summary>
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
-		ExtendedXmlSerializer() : this(Roots.Default, XmlReaderSettings) {}
-
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
 		                                                      {
 			                                                      IgnoreWhitespace = true,
@@ -48,6 +45,10 @@ namespace ExtendedXmlSerialization
 
 		readonly IRoots _roots;
 		readonly XmlReaderSettings _settings;
+
+		public ExtendedXmlSerializer() : this(Roots.Default) {}
+
+		public ExtendedXmlSerializer(IRoots roots) : this(roots, XmlReaderSettings) {}
 
 		public ExtendedXmlSerializer(IRoots roots, XmlReaderSettings settings)
 		{

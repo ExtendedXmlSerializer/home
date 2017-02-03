@@ -11,8 +11,8 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 		readonly IActivators _activators;
 		readonly IAddDelegates _add;
 
-		public CollectionOption(IConverters converters, IElements elements)
-			: this(converters, new CollectionItemElementProvider(elements), Activators.Default, AddDelegates.Default) {}
+		public CollectionOption(IConverters converters, IElements elements, IAliasProvider alias)
+			: this(converters, new CollectionItemElementProvider(elements, alias), Activators.Default, AddDelegates.Default) {}
 
 		public CollectionOption(IConverters converters, IElementProvider elements, IActivators activators, IAddDelegates add)
 			: base(IsCollectionTypeSpecification.Default, elements)

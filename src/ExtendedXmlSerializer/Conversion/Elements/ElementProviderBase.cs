@@ -31,8 +31,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 		readonly IAliasProvider _alias;
 		readonly ITypeFormatter _formatter;
 
-		protected ElementProviderBase(ITypeFormatter formatter) : this(TypeAliasProvider.Default, formatter) {}
-
 		protected ElementProviderBase(IAliasProvider alias, ITypeFormatter formatter)
 		{
 			_alias = alias;

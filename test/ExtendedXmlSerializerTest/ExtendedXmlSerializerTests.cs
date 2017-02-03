@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Test
 	{
 		readonly TestClassOtherClass _subject = TestClassOtherClass.Create();
 
-		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/ExtendedXmlSerializer.Default;
+		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new ExtendedXmlSerializer();
 
 		public ExtendedXmlSerializerTests()
 		{
@@ -64,6 +64,7 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal("Hello World!", read.PropertyName);
 		}
 
+/*
 		[Fact]
 		public void ProfileLoop()
 		{
@@ -72,6 +73,7 @@ namespace ExtendedXmlSerialization.Test
 				_serializer.Serialize(_subject);
 			}
 		}
+*/
 
 		[Fact]
 		public void ComplexInstance()

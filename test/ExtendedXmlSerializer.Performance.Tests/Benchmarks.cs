@@ -51,11 +51,9 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		public TestClassOtherClass DeserializationClassWithPrimitive() => _serializer.Deserialize<TestClassOtherClass>(_xml);
 	}
 
-
-	// [Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
-		readonly IExtendedXmlSerializer _serializer = ExtendedXmlSerializer.Default;
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
 
@@ -65,15 +63,6 @@ namespace ExtendedXmlSerialization.Performance.Tests
 			DeserializationClassWithPrimitive();
 		}
 
-		/*class Configuration : ManualConfig
-		{
-			public Configuration()
-			{
-				Job.Default.With(new GcMode {Force = false});
-				Add(Job.Default);
-			}
-		}*/
-		
 		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
