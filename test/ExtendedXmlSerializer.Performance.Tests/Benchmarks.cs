@@ -52,9 +52,10 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	}
 
 
+	// [Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerializer();
+		readonly IExtendedXmlSerializer _serializer = ExtendedXmlSerializer.Default;
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
 
@@ -63,6 +64,15 @@ namespace ExtendedXmlSerialization.Performance.Tests
 			_xml = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
 			DeserializationClassWithPrimitive();
 		}
+
+		/*class Configuration : ManualConfig
+		{
+			public Configuration()
+			{
+				Job.Default.With(new GcMode {Force = false});
+				Add(Job.Default);
+			}
+		}*/
 		
 		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);

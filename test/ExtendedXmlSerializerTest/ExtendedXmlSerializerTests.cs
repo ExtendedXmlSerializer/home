@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Test
 	{
 		readonly TestClassOtherClass _subject = TestClassOtherClass.Create();
 
-		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/new ExtendedXmlSerializer();
+		readonly IExtendedXmlSerializer _serializer = /*new ExtendedXmlConfiguration().Create()*/ExtendedXmlSerializer.Default;
 
 		public ExtendedXmlSerializerTests()
 		{

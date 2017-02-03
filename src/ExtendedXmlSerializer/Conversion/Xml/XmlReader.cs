@@ -9,6 +9,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly ITypeLocator _type;
 		readonly System.Xml.XmlReader _reader;
 
+		public XmlReader(System.Xml.XmlReader reader) : this(TypeLocator.Default, reader) {}
+
 		public XmlReader(ITypeLocator type, System.Xml.XmlReader reader)
 		{
 			_type = type;

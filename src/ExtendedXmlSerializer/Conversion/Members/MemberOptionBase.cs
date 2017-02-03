@@ -13,9 +13,6 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		readonly IAliasProvider _alias;
 		readonly IMemberAdorner _adorner;
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification)
-			: this(specification, XmlMemberAdorner.Default) {}
-
 		protected MemberOptionBase(ISpecification<MemberInformation> specification, IMemberAdorner adorner)
 			: this(specification, MemberAliasProvider.Default, adorner) {}
 

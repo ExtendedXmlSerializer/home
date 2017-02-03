@@ -9,6 +9,8 @@ namespace ExtendedXmlSerialization.Conversion.Options
 		readonly IActivators _activators;
 		readonly ITypeMembers _members;
 
+		public MemberedConverterOption(ITypeMembers members) : this(Activators.Default, members) {}
+
 		public MemberedConverterOption(IActivators activators, ITypeMembers members)
 			: base(IsActivatedTypeSpecification.Default)
 		{

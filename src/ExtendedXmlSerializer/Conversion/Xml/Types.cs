@@ -29,13 +29,16 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Types : CacheBase<XName, TypeInfo>, ITypes
+	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
+		public static Types Default { get; } = new Types();
+		Types() : this(Namespaces.Default, TypeContexts.Default) {}
+
 		readonly INamespaces _namespaces;
 		readonly ImmutableArray<IElement> _known;
 		readonly ITypeContexts _sources;
 
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Elements.Defaults.Elements, sources) {}
+		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Defaults.Elements, sources) {}
 
 		public Types(INamespaces namespaces, ImmutableArray<IElement> known, ITypeContexts sources)
 		{

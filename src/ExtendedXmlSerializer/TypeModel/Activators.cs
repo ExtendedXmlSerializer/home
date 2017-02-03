@@ -23,13 +23,15 @@
 
 using System;
 using System.Linq.Expressions;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class Activators : CacheBase<Type, Func<object>>, IActivators
+	class Activators : /*CacheBase<Type, Func<object>>,*/ IActivators
 	{
-		protected override Func<object> Create(Type parameter)
+		public static Activators Default { get; } = new Activators();
+		Activators() {}
+
+		public Func<object> Get(Type parameter)
 		{
 			var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
 			var lambda = Expression.Lambda<Func<object>>(newExp);

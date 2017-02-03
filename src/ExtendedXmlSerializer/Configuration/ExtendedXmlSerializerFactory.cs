@@ -34,8 +34,9 @@ namespace ExtendedXmlSerialization.Configuration
 			var locator = new CollectionItemTypeLocator();
 			var add = new AddDelegates(locator, new AddMethodLocator());
 			var types = new Types(namespaces, new TypeContexts());*/
-			var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)*/);
-			return result;
+			/*var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)#1#);
+			return result;*/
+			return ExtendedXmlSerializer.Default;
 		}
 	}
 }

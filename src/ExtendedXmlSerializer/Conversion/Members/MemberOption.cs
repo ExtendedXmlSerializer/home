@@ -11,7 +11,8 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		readonly ISetterFactory _setter;
 		readonly IConverters _converters;
 
-		public MemberOption(IConverters converters, IMemberAdorner adorner) : this(converters, adorner, GetterFactory.Default, SetterFactory.Default) {}
+		public MemberOption(IConverters converters, IMemberAdorner adorner)
+			: this(converters, adorner, GetterFactory.Default, SetterFactory.Default) {}
 
 		public MemberOption(IConverters converters, IMemberAdorner adorner, IGetterFactory getter, ISetterFactory setter)
 			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable), adorner)

@@ -21,37 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class KnownElements : IEnumerable<IElement>
-	{
-		public virtual IEnumerator<IElement> GetEnumerator()
-		{
-			yield return new Element("boolean", typeof(bool));
-			yield return new Element("char", typeof(char));
-			yield return new Element("byte", typeof(sbyte));
-			yield return new Element("unsignedByte", typeof(byte));
-			yield return new Element("short", typeof(short));
-			yield return new Element("unsignedShort", typeof(ushort));
-			yield return new Element("int", typeof(int));
-			yield return new Element("unsignedInt", typeof(uint));
-			yield return new Element("long", typeof(long));
-			yield return new Element("unsignedLong", typeof(ulong));
-			yield return new Element("float", typeof(float));
-			yield return new Element("double", typeof(double));
-			yield return new Element("decimal", typeof(decimal));
-			yield return new Element("dateTime", typeof(DateTime));
-			yield return new Element("dateTimeOffset", typeof(DateTimeOffset));
-			yield return new Element("string", typeof(string));
-			yield return new Element("guid", typeof(Guid));
-			yield return new Element("TimeSpan", typeof(TimeSpan));
-			yield return new Element("Item", typeof(DictionaryEntry));
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+	public interface IElementOptions : IEnumerable<IElementOption> {}
 }

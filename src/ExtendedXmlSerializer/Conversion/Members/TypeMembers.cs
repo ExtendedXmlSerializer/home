@@ -8,14 +8,13 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public sealed class TypeMembers : CacheBase<TypeInfo, IMembers>, ITypeMembers
+	public class TypeMembers : WeakCacheBase<TypeInfo, IMembers>, ITypeMembers
 	{
 		readonly IMemberSelector _selector;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public TypeMembers(IMemberSelector selector, ISpecification<PropertyInfo> property,
-		                      ISpecification<FieldInfo> field)
+		protected TypeMembers(IMemberSelector selector, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
 			_selector = selector;
 			_property = property;

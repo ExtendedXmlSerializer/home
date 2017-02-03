@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		readonly System.Xml.XmlWriter _writer;
 		readonly IDisposable _finish;
 
-		public XmlWriter(INamespaces namespaces, System.Xml.XmlWriter writer)
-			: this(namespaces, writer, new DelegatedDisposable(writer.WriteEndElement)) {}
+		public XmlWriter(System.Xml.XmlWriter writer)
+			: this(Namespaces.Default, writer, new DelegatedDisposable(writer.WriteEndElement)) {}
 
 		public XmlWriter(INamespaces namespaces, System.Xml.XmlWriter writer, IDisposable finish)
 		{

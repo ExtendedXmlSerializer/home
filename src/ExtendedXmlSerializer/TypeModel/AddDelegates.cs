@@ -29,10 +29,11 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	class AddDelegates : /*CacheBase<TypeInfo, Action<object, object>>,*/ IAddDelegates
 	{
+		public static AddDelegates Default { get; } = new AddDelegates();
+		AddDelegates() : this(CollectionItemTypeLocator.Default, AddMethodLocator.Default) {}
+
 		readonly ICollectionItemTypeLocator _locator;
 		readonly IAddMethodLocator _add;
-
-		/*public AddDelegates(ICollectionItemTypeLocator locator) : this(locator, new AddMethodLocator()) {}*/
 
 		public AddDelegates(ICollectionItemTypeLocator locator, IAddMethodLocator add)
 		{

@@ -57,4 +57,47 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			}
 		}
 	}
+
+/*
+	public class Member : DecoratedConverter, IMember
+	{
+		readonly Action<object, object> _setter;
+		readonly Func<object, object> _getter;
+		readonly IElement _element;
+
+		public Member(IElement element, Action<object, object> setter, Func<object, object> getter, IConverter body)
+			: this(element.DisplayName, element.Classification, setter, getter, element, body) {}
+
+		public Member(string displayName, TypeInfo classification, Action<object, object> setter,
+		              Func<object, object> getter, IElement element, IConverter body) : base(body)
+		{
+			DisplayName = displayName;
+			Classification = classification;
+			_setter = setter;
+			_getter = getter;
+			_element = element;
+		}
+
+		public override void Emit(IWriter writer, object instance)
+		{
+			using (writer.Emit(_element, this))
+			{
+				base.Emit(writer, instance);
+			}
+		}
+
+		public string DisplayName { get; }
+		public TypeInfo Classification { get; }
+
+		public virtual object Get(object instance) => _getter(instance);
+
+		public virtual void Assign(object instance, object value)
+		{
+			if (value != null)
+			{
+				_setter(instance, value);
+			}
+		}
+	}
+*/
 }

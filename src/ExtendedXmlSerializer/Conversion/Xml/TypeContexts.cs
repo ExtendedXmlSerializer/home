@@ -32,7 +32,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public class TypeContexts : CacheBase<string, Func<string, TypeInfo>>, ITypeContexts
 	{
-		public TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
+		public static TypeContexts Default { get; } = new TypeContexts();
+		TypeContexts() : this(AssemblyLoader.Default, TypeNameAlteration.Default) {}
 
 		readonly IAssemblyLoader _loader;
 		readonly IAlteration<string> _alteration;
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return result;
 		}
 
-		sealed class TypeLoaderContext : CacheBase<string, TypeInfo>
+		sealed class TypeLoaderContext : /*CacheBase<string, TypeInfo>*/ IParameterizedSource<string, TypeInfo>
 		{
 			readonly Assembly _assembly;
 			readonly string _ns;
@@ -72,7 +73,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				_types = types;
 			}
 
-			protected override TypeInfo Create(string parameter) => Locate($"{_ns}.{_alteration.Get(parameter)}");
+			public TypeInfo Get(string parameter) => Locate($"{_ns}.{_alteration.Get(parameter)}");
 
 			TypeInfo Locate(string parameter) => _assembly.GetType(parameter, false, false)?.GetTypeInfo() ?? Search(parameter);
 
@@ -89,7 +90,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			}
 		}
 
-		sealed class Types : CacheBase<string, ImmutableArray<TypeInfo>>
+		sealed class Types : /*CacheBase<string, ImmutableArray<TypeInfo>>*/IParameterizedSource<string, ImmutableArray<TypeInfo>>
 		{
 			readonly ImmutableArray<TypeInfo> _types;
 
@@ -100,7 +101,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 				_types = types;
 			}
 
-			protected override ImmutableArray<TypeInfo> Create(string parameter) => Yield(parameter).ToImmutableArray();
+			public ImmutableArray<TypeInfo> Get(string parameter) => Yield(parameter).ToImmutableArray();
 
 			IEnumerable<TypeInfo> Yield(string parameter)
 			{

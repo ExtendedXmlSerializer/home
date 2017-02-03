@@ -28,6 +28,9 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	public sealed class AddMethodLocator : /*ConcurrentDictionary<TypeInfo, MethodInfo>,*/ IAddMethodLocator
 	{
+		public static AddMethodLocator Default { get; } = new AddMethodLocator();
+		AddMethodLocator() {}
+
 		const string Add = "Add";
 
 		public MethodInfo Locate(TypeInfo type, TypeInfo elementType) => Get(type, elementType);

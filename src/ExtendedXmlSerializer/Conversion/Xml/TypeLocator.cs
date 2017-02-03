@@ -7,6 +7,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	class TypeLocator : ITypeLocator
 	{
+		public static TypeLocator Default { get; } = new TypeLocator();
+		TypeLocator() : this(Types.Default) {}
+
 		readonly ITypes _types;
 
 		public TypeLocator(ITypes types)

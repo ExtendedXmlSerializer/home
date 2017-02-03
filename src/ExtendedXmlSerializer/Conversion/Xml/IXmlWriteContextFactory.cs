@@ -63,47 +63,59 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		XmlMemberWritable() {}
 
 		public void Write(System.Xml.XmlWriter writer, IElement element, object instance)
-			=> writer.WriteStartElement(element.DisplayName);
+		{
+			writer.WriteStartElement(element.DisplayName);
+		}
 	}
 
 	class XmlVariableMemberAdorner : XmlMemberAdornerBase
 	{
+		public static XmlVariableMemberAdorner Default { get; } = new XmlVariableMemberAdorner();
+		XmlVariableMemberAdorner()
+			: this(FixedTypeSpecification.Default, XmlMemberWritable.Default, XmlVariableTypeMemberWritable.Default) {}
+
 		readonly ISpecification<TypeInfo> _specification;
 		readonly IXmlWritable _variable, _fixed;
 
-		public XmlVariableMemberAdorner(ITypeNames names, INames dataNames)
-			: this(
-				FixedTypeSpecification.Default, new XmlVariableTypeMemberWritable(names, dataNames.Get(TypeProperty.Default)),
-				XmlMemberWritable.Default) {}
-
-		public XmlVariableMemberAdorner(ISpecification<TypeInfo> specification, IXmlWritable variable, IXmlWritable @fixed)
+		public XmlVariableMemberAdorner(ISpecification<TypeInfo> specification, IXmlWritable @fixed, IXmlWritable variable)
 		{
 			_specification = specification;
-			_variable = variable;
 			_fixed = @fixed;
+			_variable = variable;
 		}
 
-		protected override IXmlWritable GetWritable(IElement parameter) 
+		protected override IXmlWritable GetWritable(IElement parameter)
 			=> _specification.IsSatisfiedBy(parameter.Classification) ? _fixed : _variable;
 	}
 
-	class XmlElement : DecoratedElement, IXmlElement
+	class XmlElement : IXmlElement
 	{
 		readonly IXmlWritable _writable;
 		readonly IElement _element;
 
-		public XmlElement(IXmlWritable writable, IElement element) : base(element)
+		public XmlElement(IXmlWritable writable, IElement element)
+			: this(writable, element, element.DisplayName, element.Classification) {}
+
+		public XmlElement(IXmlWritable writable, IElement element, string displayName, TypeInfo classification)
 		{
 			_writable = writable;
 			_element = element;
+			DisplayName = displayName;
+			Classification = classification;
 		}
 
 		public void Write(System.Xml.XmlWriter writer, object instance) => _writable.Write(writer, _element, instance);
+
+		public string DisplayName { get; }
+		public TypeInfo Classification { get; }
 	}
 
 
 	class XmlVariableTypeMemberWritable : IXmlWritable
 	{
+		public static XmlVariableTypeMemberWritable Default { get; } = new XmlVariableTypeMemberWritable();
+		XmlVariableTypeMemberWritable() : this(TypeNames.Default, Names.Default.Get(TypeProperty.Default)) {}
+
 		readonly ITypeNames _names;
 		readonly XName _type;
 		readonly IXmlWritable _writable;
@@ -121,18 +133,18 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		{
 			_writable.Write(writer, element, instance);
 
-			var classification = instance.GetType().GetTypeInfo();
+			/*var classification = instance.GetType().GetTypeInfo();
 			if (!element.Exact(classification))
 			{
 				var native = _names.Get(classification);
 				writer.WriteStartAttribute(_type.LocalName, _type.NamespaceName);
 				writer.WriteQualifiedName(native.LocalName, native.NamespaceName);
 				writer.WriteEndAttribute();
-			}
+			}*/
 		}
 	}
 
-	class QualifiedNameTypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
+	class QualifiedNameTypeFormatter : /*CacheBase<TypeInfo, string>,*/ ITypeFormatter
 	{
 		readonly ITypeNames _names;
 
@@ -141,7 +153,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_names = names;
 		}
 
-		protected override string Create(TypeInfo parameter)
+		public string Get(TypeInfo parameter)
 		{
 			var name = _names.Get(parameter);
 			var result = XmlQualifiedName.ToString(name.LocalName, name.NamespaceName);
@@ -151,10 +163,15 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 	public interface ITypeNames : IParameterizedSource<TypeInfo, XName> {}
 
-	class TypeNames : CacheBase<TypeInfo, XName>, ITypeNames
+	class TypeNames : /*CacheBase<TypeInfo, XName>,*/ ITypeNames
 	{
+		public static TypeNames Default { get; } = new TypeNames();
+		TypeNames() : this(Elements.Default) {}
+
 		readonly IElements _elements;
 		readonly INames _native;
+
+		public TypeNames(IElements elements) : this(elements, Names.Default) {}
 
 		public TypeNames(IElements elements, INames native)
 		{
@@ -162,7 +179,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_native = native;
 		}
 
-		protected override XName Create(TypeInfo parameter) => _native.Get(_elements.Get(parameter));
+		public XName Get(TypeInfo parameter) => _native.Get(_elements.Get(parameter));
 	}
 
 

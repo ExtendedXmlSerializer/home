@@ -30,6 +30,9 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	public class CollectionItemTypeLocator : /*CacheBase<TypeInfo, TypeInfo>,*/ ICollectionItemTypeLocator
 	{
+		public static CollectionItemTypeLocator Default { get; } = new CollectionItemTypeLocator();
+		CollectionItemTypeLocator() {}
+
 		readonly static TypeInfo ArrayInfo = typeof(Array).GetTypeInfo();
 		readonly static Type Type = typeof(IEnumerable<>);
 

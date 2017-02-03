@@ -24,10 +24,8 @@
 using System.IO;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.Core.Sources;
 using XmlReader = ExtendedXmlSerialization.Conversion.Xml.XmlReader;
 using XmlWriter = ExtendedXmlSerialization.Conversion.Xml.XmlWriter;
 
@@ -36,8 +34,11 @@ namespace ExtendedXmlSerialization
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
-	public class ExtendedXmlSerializer : CacheBase<TypeInfo, IConverter>, IExtendedXmlSerializer
+	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
+		public static ExtendedXmlSerializer Default { get; } = new ExtendedXmlSerializer();
+		ExtendedXmlSerializer() : this(Roots.Default, XmlReaderSettings) {}
+
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
 		                                                      {
 			                                                      IgnoreWhitespace = true,
@@ -45,55 +46,34 @@ namespace ExtendedXmlSerialization
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly INamespaces _namespaces;
-		readonly IElements _elements;
-		readonly IConverters _converters;
-		readonly ITypeLocator _type;
+		readonly IRoots _roots;
 		readonly XmlReaderSettings _settings;
 
-		public ExtendedXmlSerializer() : this(new Elements(), new Namespaces()) {}
-
-		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces)
-			: this(elements, namespaces, new Names(namespaces)) {}
-
-		public ExtendedXmlSerializer(IElements elements, INamespaces namespaces, INames names)
-			: this(
-				namespaces, elements, new Converters(elements, new XmlVariableMemberAdorner(new TypeNames(elements, names), names)), 
-				new TypeLocator(new Types(namespaces, new TypeContexts())),
-				XmlReaderSettings) {}
-
-		public ExtendedXmlSerializer(INamespaces namespaces, IElements elements, IConverters converters, ITypeLocator type,
-		                             XmlReaderSettings settings)
+		public ExtendedXmlSerializer(IRoots roots, XmlReaderSettings settings)
 		{
-			_namespaces = namespaces;
-			_elements = elements;
-			_converters = converters;
-			_type = type;
+			_roots = roots;
 			_settings = settings;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
-			using (var writer = System.Xml.XmlWriter.Create(stream))
+			using (var source = System.Xml.XmlWriter.Create(stream))
 			{
-				var emitter = new XmlWriter(_namespaces, writer);
-				var context = Get(instance.GetType().GetTypeInfo());
-				context.Emit(emitter, instance);
+				var writer = new XmlWriter(source);
+				var context = _roots.Get(instance.GetType().GetTypeInfo());
+				context.Emit(writer, instance);
 			}
 		}
 
 		public object Deserialize(Stream stream)
 		{
-			using (var reader = System.Xml.XmlReader.Create(stream, _settings))
+			using (var source = System.Xml.XmlReader.Create(stream, _settings))
 			{
-				var yielder = new XmlReader(_type, reader);
-				var context = Get(yielder.Classification);
-				var result = context.Get(yielder);
+				var reader = new XmlReader(source);
+				var context = _roots.Get(reader.Classification);
+				var result = context.Get(reader);
 				return result;
 			}
 		}
-
-		protected override IConverter Create(TypeInfo parameter)
-			=> new Root(_elements.Get(parameter), _converters.Get(parameter));
 	}
 }

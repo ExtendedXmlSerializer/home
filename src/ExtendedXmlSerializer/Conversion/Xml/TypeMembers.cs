@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Members;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Selector<TParameter, TResult> : CacheBase<TParameter, TResult>, ISelector<TParameter, TResult>
-		where TParameter : class where TResult : class
+	public class TypeMembers : Members.TypeMembers
 	{
-		readonly IParameterizedSource<TParameter, TResult> _source;
+		readonly static MemberSpecification<FieldInfo> Field =
+			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
 
-		public Selector(params IOption<TParameter, TResult>[] options)
-			: this(new OptionSelector<TParameter, TResult>(options.ToImmutableArray())) {}
+		readonly static MemberSpecification<PropertyInfo> Property =
+			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
-		public Selector(IParameterizedSource<TParameter, TResult> source)
-		{
-			_source = source;
-		}
-
-		protected override TResult Create(TParameter parameter) => _source.Get(parameter);
+		public TypeMembers(IConverters converters) : base(new MemberSelector(converters), Property, Field) {}
 	}
 }

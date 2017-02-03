@@ -9,11 +9,10 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 		readonly IElements _elements;
 		readonly ICollectionItemTypeLocator _locator;
 
-		public CollectionItemElementProvider(ICollectionItemTypeLocator locator, IElements elements)
-			: this(locator, elements, new EnumerableTypeFormatter(locator)) {}
+		public CollectionItemElementProvider(IElements elements) : this(CollectionItemTypeLocator.Default, elements) {}
 
-		public CollectionItemElementProvider(ICollectionItemTypeLocator locator, IElements elements, ITypeFormatter formatter)
-			: base(formatter)
+		public CollectionItemElementProvider(ICollectionItemTypeLocator locator, IElements elements)
+			: base(new EnumerableTypeFormatter(locator))
 		{
 			_locator = locator;
 			_elements = elements;
