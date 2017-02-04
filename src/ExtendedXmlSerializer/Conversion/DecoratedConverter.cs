@@ -21,22 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class DecoratedConverter : ConverterBase
 	{
-		readonly IActivator _activator;
-		readonly IEmitter _emitter;
+		readonly IReader _reader;
+		readonly IWriter _writer;
 
-		public DecoratedConverter(IActivator activator, IEmitter emitter)
+		public DecoratedConverter(IReader reader, IWriter writer)
 		{
-			_activator = activator;
-			_emitter = emitter;
+			_reader = reader;
+			_writer = writer;
 		}
 
-		public override void Emit(XmlWriter writer, object instance) => _emitter.Emit(writer, instance);
-		public override object Get(IReader reader) => _activator.Get(reader);
+		public override void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
+		public override object Get(IXmlReader reader) => _reader.Get(reader);
 	}
 }

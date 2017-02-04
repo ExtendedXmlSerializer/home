@@ -21,20 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Elements;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public interface IReader : IDisplayAware
-	{
-		TypeInfo Classification();
-
-		string Value();
-
-		IEnumerator Members();
-
-		IEnumerator Items();
-	}
+	public interface IReader : IParameterizedSource<IXmlReader, object> {}
 }

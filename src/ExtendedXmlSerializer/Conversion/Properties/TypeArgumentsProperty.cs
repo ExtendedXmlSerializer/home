@@ -23,27 +23,15 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
 	sealed class TypeArgumentsProperty : FrameworkElementBase<ImmutableArray<Type>>, ITypeArgumentsProperty
 	{
 		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : this(Names.Default) {}
+		TypeArgumentsProperty() : base("arguments") {}
 
-		readonly INames _names;
-
-		public TypeArgumentsProperty(INames names) : base("arguments")
-		{
-			_names = names;
-		}
-
-		public override void Emit(XmlWriter writer, ImmutableArray<Type> instance)
-		{
-			var value = _names.FormatArguments(writer, instance);
-			writer.WriteAttributeString(Name.LocalName, Name.NamespaceName, value);
-		}
+		public override void Emit(IXmlWriter writer, ImmutableArray<Type> instance)
+			=> writer.Attribute(Name, writer.Get(instance));
 	}
 }

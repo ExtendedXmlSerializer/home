@@ -23,7 +23,7 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Xml;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Properties;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
@@ -33,20 +33,18 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 		readonly ImmutableArray<Type> _arguments;
 		readonly ITypeArgumentsProperty _property;
 
-		public StartGenericElement(string displayName, string @namespace, ImmutableArray<Type> arguments)
-			: this(displayName, @namespace, arguments, TypeArgumentsProperty.Default) {}
+		public StartGenericElement(XName name, ImmutableArray<Type> arguments)
+			: this(name, arguments, TypeArgumentsProperty.Default) {}
 
-		public StartGenericElement(string displayName, string @namespace, ImmutableArray<Type> arguments,
-		                           ITypeArgumentsProperty property)
-			: base(displayName, @namespace)
+		public StartGenericElement(XName name, ImmutableArray<Type> arguments, ITypeArgumentsProperty property) : base(name)
 		{
 			_arguments = arguments;
 			_property = property;
 		}
 
-		public override void Emit(XmlWriter writer, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			base.Emit(writer, instance);
+			base.Write(writer, instance);
 			_property.Emit(writer, _arguments);
 		}
 	}

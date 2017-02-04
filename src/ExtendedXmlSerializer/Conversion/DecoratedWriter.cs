@@ -21,19 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.TypeModel;
-
 namespace ExtendedXmlSerialization.Conversion
 {
-	class Activator : IActivator
+	class DecoratedWriter : IWriter
 	{
-		readonly IActivators _activators;
+		readonly IWriter _writer;
 
-		public Activator(IActivators activators)
+		public DecoratedWriter(IWriter writer)
 		{
-			_activators = activators;
+			_writer = writer;
 		}
 
-		public object Get(IReader parameter) => _activators.Get(parameter.Classification().AsType()).Invoke();
+		public virtual void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
 	}
 }

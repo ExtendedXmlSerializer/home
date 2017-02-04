@@ -26,23 +26,23 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	class MemberedActivator : DecoratedActivator
+	class MemberedReader : DecoratedReader
 	{
 		readonly IDictionary<string, IMember> _members;
 
-		public MemberedActivator(IActivator activator, IDictionary<string, IMember> members) : base(activator)
+		public MemberedReader(IReader reader, IDictionary<string, IMember> members) : base(reader)
 		{
 			_members = members;
 		}
 
-		public override object Get(IReader parameter)
+		public override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
 			var members = parameter.Members();
 			while (members.MoveNext())
 			{
 				var member = _members.TryGet(parameter.DisplayName);
-				member?.Assign(result, ((IActivator) member).Get(parameter));
+				member?.Assign(result, ((IReader) member).Get(parameter));
 			}
 
 			return result;

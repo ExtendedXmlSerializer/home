@@ -33,8 +33,7 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 		public static GenericEmitterOption Default { get; } = new GenericEmitterOption();
 		GenericEmitterOption() : base(IsGenericTypeSpecification.Default) {}
 
-		public override IEmitter Create(XName name, TypeInfo classification)
-			=>
-				new StartGenericElement(name.LocalName, name.NamespaceName, classification.GetGenericArguments().ToImmutableArray());
+		public override IWriter Create(XName name, TypeInfo classification)
+			=> new StartGenericElement(name, classification.GetGenericArguments().ToImmutableArray());
 	}
 }

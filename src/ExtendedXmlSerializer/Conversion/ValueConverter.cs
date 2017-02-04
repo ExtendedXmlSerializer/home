@@ -22,14 +22,11 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion
 {
 	class ValueConverter<T> : ConverterBase<T>
 	{
-		/*readonly static TypeInfo Type = typeof(T).GetTypeInfo();*/
-
 		readonly Func<string, T> _deserialize;
 		readonly Func<T, string> _serialize;
 
@@ -39,8 +36,8 @@ namespace ExtendedXmlSerialization.Conversion
 			_serialize = serialize;
 		}
 
-		public override void Emit(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
+		public override void Emit(IXmlWriter writer, T instance) => writer.Write(_serialize(instance));
 
-		public override object Get(IReader reader) => _deserialize(reader.Value());
+		public override object Get(IXmlReader reader) => _deserialize(reader.Value());
 	}
 }

@@ -21,9 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Conversion
+namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IActivator : IParameterizedSource<IReader, object> {}
+	class MemberWriter : IWriter
+	{
+		readonly ImmutableArray<IMember> _members;
+
+		public MemberWriter(ImmutableArray<IMember> members)
+		{
+			_members = members;
+		}
+
+		public void Write(IXmlWriter writer, object instance)
+		{
+			for (var i = 0; i < _members.Length; i++)
+			{
+				var member = _members[i];
+				var value = member.Get(instance);
+				if (value != null)
+				{
+					member.Write(writer, value);
+				}
+			}
+		}
+	}
 }

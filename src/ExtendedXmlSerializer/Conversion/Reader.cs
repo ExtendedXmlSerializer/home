@@ -21,38 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Conversion.Collections
+namespace ExtendedXmlSerialization.Conversion
 {
-	class CollectionActivator : DecoratedActivator
+	class Reader : IReader
 	{
-		readonly IConverter _context;
-		readonly IAddDelegates _add;
+		readonly IActivators _activators;
 
-		public CollectionActivator(IActivator activator, IConverter context, IAddDelegates add) : base(activator)
+		public Reader(IActivators activators)
 		{
-			_context = context;
-			_add = add;
+			_activators = activators;
 		}
 
-		public override object Get(IReader parameter)
-		{
-			var result = base.Get(parameter);
-			var list = result as IList ?? new ListAdapter(result, _add.Get(result.GetType().GetTypeInfo()));
-			var items = parameter.Items();
-			while (items.MoveNext())
-			{
-				list.Add(_context.Get(parameter));
-			}
-			/*foreach (var _ in parameter.Items())
-			{
-				list.Add(_context.Yield(parameter));
-			}*/
-			return result;
-		}
+		public object Get(IXmlReader parameter) => _activators.Get(parameter.Classification().AsType()).Invoke();
 	}
 }

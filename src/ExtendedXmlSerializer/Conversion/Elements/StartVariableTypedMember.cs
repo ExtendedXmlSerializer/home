@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 using ExtendedXmlSerialization.Conversion.Properties;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
@@ -40,14 +39,14 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 			_property = property;
 		}
 
-		public override void Emit(XmlWriter writer, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			base.Emit(writer, instance);
+			base.Write(writer, instance);
 
 			var type = instance.GetType();
 			if (_classification != type)
 			{
-				_property.Emit(writer, type);
+				_property.Write(writer, type);
 			}
 		}
 	}

@@ -22,27 +22,14 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml;
-using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
 	sealed class TypeProperty : FrameworkElementBase<TypeInfo>, ITypeProperty
 	{
 		public static TypeProperty Default { get; } = new TypeProperty();
-		TypeProperty() : this(Names.Default) {}
+		TypeProperty() : base("type") {}
 
-		readonly INames _names;
-
-		public TypeProperty(INames names) : base("type")
-		{
-			_names = names;
-		}
-
-		public override void Emit(XmlWriter writer, TypeInfo instance)
-		{
-			var property = _names.Format(writer, instance);
-			writer.WriteAttributeString(Name.LocalName, Name.NamespaceName, property);
-		}
+		public override void Emit(IXmlWriter writer, TypeInfo instance) => writer.Attribute(Name, writer.Get(instance));
 	}
 }

@@ -21,21 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	class StartElement : EmitterBase
+	class StartElement : WriterBase
 	{
-		readonly string _displayName;
-		readonly string _ns;
+		readonly XName _name;
 
-		public StartElement(string displayName, string @namespace)
+		public StartElement(XName name)
 		{
-			_displayName = displayName;
-			_ns = @namespace;
+			_name = name;
 		}
 
-		public override void Emit(XmlWriter writer, object instance) => writer.WriteStartElement(_displayName, _ns);
+		public override void Write(IXmlWriter writer, object instance) => writer.Element(_name);
 	}
 }

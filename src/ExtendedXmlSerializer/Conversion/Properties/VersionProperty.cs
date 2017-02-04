@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
@@ -31,7 +30,7 @@ namespace ExtendedXmlSerialization.Conversion.Properties
 		public static VersionProperty Default { get; } = new VersionProperty();
 		VersionProperty() : base("ver") {}
 
-		public override void Emit(XmlWriter writer, int instance)
+		public override void Emit(IXmlWriter writer, int instance)
 		{
 			throw new NotImplementedException();
 		}

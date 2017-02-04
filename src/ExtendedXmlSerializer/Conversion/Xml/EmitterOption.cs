@@ -32,7 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public static EmitterOption Default { get; } = new EmitterOption();
 		EmitterOption() {}
 
-		public override IEmitter Create(XName name, TypeInfo classification)
-			=> new StartElement(name.LocalName, name.NamespaceName);
+		public override IWriter Create(XName name, TypeInfo classification) => new StartElement(name);
 	}
 }

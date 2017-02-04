@@ -27,11 +27,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class Emitters : OptionSelector<TypeInfo, IEmitter>, IEmitters
+	public class Emitters : OptionSelector<TypeInfo, IWriter>, IEmitters
 	{
 		public static Emitters Default { get; } = new Emitters();
 		Emitters() : this(GenericEmitterOption.Default, EmitterOption.Default) {}
 
-		public Emitters(params IOption<TypeInfo, IEmitter>[] options) : base(options) {}
+		public Emitters(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}
 }

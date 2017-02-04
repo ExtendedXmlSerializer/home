@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class EmitterOptionBase : OptionBase<TypeInfo, IEmitter>, IEmitterOption
+	public abstract class EmitterOptionBase : OptionBase<TypeInfo, IWriter>, IEmitterOption
 	{
 		protected EmitterOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
@@ -42,8 +42,8 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 			_names = names;
 		}
 
-		public override IEmitter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
+		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-		public abstract IEmitter Create(XName name, TypeInfo classification);
+		public abstract IWriter Create(XName name, TypeInfo classification);
 	}
 }

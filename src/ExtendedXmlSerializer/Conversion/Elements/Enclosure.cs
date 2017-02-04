@@ -21,30 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	abstract class EmitterBase : IEmitter
-	{
-		public abstract void Emit(XmlWriter writer, object instance);
-	}
-
 	class Enclosure : EnclosureBase
 	{
-		readonly IEmitter _start;
-		readonly IEmitter _finish;
+		readonly IWriter _start;
+		readonly IWriter _finish;
 
-		public Enclosure(IEmitter start, IEmitter body) : this(start, body, FinishElement.Default) {}
+		public Enclosure(IWriter start, IWriter body) : this(start, body, FinishElement.Default) {}
 
-		public Enclosure(IEmitter start, IEmitter body, IEmitter finish) : base(body)
+		public Enclosure(IWriter start, IWriter body, IWriter finish) : base(body)
 		{
 			_start = start;
 			_finish = finish;
 		}
 
-		protected override void Start(XmlWriter writer, object instance) => _start.Emit(writer, instance);
+		protected override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
 
-		protected override void Finish(XmlWriter writer, object instance) => _finish.Emit(writer, instance);
+		protected override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
 	}
 }

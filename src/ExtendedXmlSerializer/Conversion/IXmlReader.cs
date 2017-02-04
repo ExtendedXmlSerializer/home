@@ -21,19 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System.Collections;
+using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	class DecoratedEmitter : IEmitter
+	public interface IXmlReader : IDisplayAware
 	{
-		readonly IEmitter _emitter;
+		TypeInfo Classification();
 
-		public DecoratedEmitter(IEmitter emitter)
-		{
-			_emitter = emitter;
-		}
+		string Value();
 
-		public virtual void Emit(XmlWriter writer, object instance) => _emitter.Emit(writer, instance);
+		IEnumerator Members();
+
+		IEnumerator Items();
 	}
 }
