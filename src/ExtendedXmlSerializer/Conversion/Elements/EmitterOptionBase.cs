@@ -22,41 +22,28 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	class StartElementProvider : StartElementProviderBase
+	public abstract class EmitterOptionBase : OptionBase<TypeInfo, IEmitter>, IEmitterOption
 	{
-		public static StartElementProvider Default { get; } = new StartElementProvider();
-		StartElementProvider() {}
+		protected EmitterOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		public override IEmitter Create(string displayName, TypeInfo classification, string @namespace)
-			=> new StartElement(displayName, @namespace);
-	}
+		protected EmitterOptionBase(ISpecification<TypeInfo> specification) : this(specification, TypeNames.Default) {}
 
-	public abstract class StartElementProviderBase : IStartElementProvider
-	{
-		readonly IAliasProvider _alias;
-		readonly ITypeFormatter _formatter;
-		readonly INamespaces _namespaces;
-
-		protected StartElementProviderBase()
-			: this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
-
-		protected StartElementProviderBase(IAliasProvider alias, ITypeFormatter formatter, INamespaces namespaces)
+		readonly ITypeNames _names;
+		
+		protected EmitterOptionBase(ISpecification<TypeInfo> specification, ITypeNames names) : base(specification)
 		{
-			_alias = alias;
-			_formatter = formatter;
-			_namespaces = namespaces;
+			_names = names;
 		}
 
-		public IEmitter Get(TypeInfo parameter)
-			=>
-				Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter,
-				       _namespaces.Get(parameter).Namespace.NamespaceName);
+		public override IEmitter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-		public abstract IEmitter Create(string displayName, TypeInfo classification, string @namespace);
+		public abstract IEmitter Create(XName name, TypeInfo classification);
 	}
 }

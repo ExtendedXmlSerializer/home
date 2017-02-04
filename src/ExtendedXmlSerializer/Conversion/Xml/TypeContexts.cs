@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			return result;
 		}
 
-		sealed class TypeLoaderContext : /*CacheBase<string, TypeInfo>*/ IParameterizedSource<string, TypeInfo>
+		sealed class TypeLoaderContext : IParameterizedSource<string, TypeInfo>
 		{
 			readonly Assembly _assembly;
 			readonly string _ns;
@@ -90,7 +90,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			}
 		}
 
-		sealed class Types : /*CacheBase<string, ImmutableArray<TypeInfo>>*/IParameterizedSource<string, ImmutableArray<TypeInfo>>
+		sealed class Types : IParameterizedSource<string, ImmutableArray<TypeInfo>>
 		{
 			readonly ImmutableArray<TypeInfo> _types;
 

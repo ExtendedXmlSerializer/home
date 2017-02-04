@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public class TypeMembers : WeakCacheBase<TypeInfo, IMembers>, ITypeMembers
+	public class TypeMembers : ITypeMembers
 	{
 		readonly IMemberSelector _selector;
 		readonly ISpecification<PropertyInfo> _property;
@@ -21,8 +20,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			_field = field;
 		}
 
-		protected override IMembers Create(TypeInfo parameter) =>
-			new Members(Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member));
+		public IEnumerable<IMember> Get(TypeInfo parameter) => Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member);
 
 		IEnumerable<Sorting> Yield(TypeInfo parameter)
 		{

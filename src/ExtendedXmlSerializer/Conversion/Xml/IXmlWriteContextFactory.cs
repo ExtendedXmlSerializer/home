@@ -21,104 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Elements;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	/*class GenericXmlElement : GenericElement, IXmlElement
-	{
-		public GenericXmlElement(string displayName, TypeInfo classification, string ns, ImmutableArray<IElement> arguments)
-			: base(displayName, classification, arguments)
-		{
-			Namespace = ns;
-		}
+	public interface ITypeNames : IParameterizedSource<TypeInfo, XName> {}
 
-		public string Namespace { get; }
-	}
-	*/
-	class XmlElement : IXmlElement
-	{
-		public XmlElement(string displayName, Type type, string ns) : this(displayName, type.GetTypeInfo(), ns) {}
-
-		public XmlElement(string displayName, TypeInfo classification, string ns)
-		{
-			DisplayName = displayName;
-			Classification = classification;
-			Namespace = ns;
-		}
-
-		public string DisplayName { get; }
-		public TypeInfo Classification { get; }
-		public string Namespace { get; }
-	}
-
-	/*sealed class VariableTypeEmitter : DecoratedEmitter
-	{
-		readonly IElement _element;
-		readonly IElements _elements;
-
-		public VariableTypeEmitter(IElement element, IEmitter emitter) : this(element, Elements.Default, emitter) {}
-
-		public VariableTypeEmitter(IElement element, IElements elements, IEmitter emitter) : base(emitter)
-		{
-			_element = element;
-			_elements = elements;
-		}
-
-		public override void Emit(IWriter writer, object instance)
-		{
-			var actual = _elements.Actual(_element, instance);
-			if (actual != null)
-			{
-				var xml = (IXmlWriter) writer;
-
-				writer.Attribute(TypeProperty.Default, actual);
-			}
-			base.Emit(writer, instance);
-		}
-	}*/
-
-	/*class QualifiedNameTypeFormatter : /*CacheBase<TypeInfo, string>,#1# ITypeFormatter
-	{
-		readonly XmlWriter _writer;
-		readonly ITypeNames _names;
-
-		public QualifiedNameTypeFormatter(XmlWriter writer) : this(writer, TypeNames.Default) {}
-
-		public QualifiedNameTypeFormatter(XmlWriter writer, ITypeNames names)
-		{
-			_writer = writer;
-			_names = names;
-		}
-
-		public string Get(TypeInfo parameter)
-		{
-			var name = _names.Get(parameter);
-			var type = XmlQualifiedName.ToString(name.LocalName, _writer.GetPrefix(name.NamespaceName));
-			var result = parameter.IsGenericType ? parameter.GetGenericArguments()
-			return type;
-		}
-	}*/
-
-	/*public interface ITypeNames : IParameterizedSource<TypeInfo, XName> {}
-
-	class TypeNames : /*CacheBase<TypeInfo, XName>,#1# ITypeNames
+	class TypeNames : WeakCacheBase<TypeInfo, XName>, ITypeNames
 	{
 		public static TypeNames Default { get; } = new TypeNames();
-		TypeNames() : this(Elements.Default) {}
+		TypeNames() : this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
 
-		readonly IElements _elements;
-		readonly INames _native;
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
+		readonly INamespaces _namespaces;
 
-		public TypeNames(IElements elements) : this(elements, Names.Default) {}
-
-		public TypeNames(IElements elements, INames native)
+		public TypeNames(IAliasProvider alias, ITypeFormatter formatter, INamespaces namespaces)
 		{
-			_elements = elements;
-			_native = native;
+			_alias = alias;
+			_formatter = formatter;
+			_namespaces = namespaces;
 		}
 
-		public XName Get(TypeInfo parameter) => _native.Get(_elements.Get(parameter));
-	}*/
+		protected override XName Create(TypeInfo parameter)
+			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _namespaces.Get(parameter).Namespace.NamespaceName);
+	}
 }

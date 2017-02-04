@@ -21,46 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public static class Extensions
 	{
-		
-		/*public static bool ReadTo(this XmlReader @this, XmlNodeType type)
-		{
-			while (!@this.EOF && @this.Read())
-			{
-				if (@this.NodeType == type)
-				{
-					return true;
-				}
-			}
-			return false;
-		}*/
+		public static string FormatArguments(this ITypeNames @this, XmlWriter writer, TypeInfo type)
+			=> FormatArguments(@this, writer, type.GetGenericArguments().ToImmutableArray());
 
-		/*public static void FinishCurrentElement(this XmlReader @this)
-		{
-			if (!@this.IsEmptyElement)
-			{
-				@this.ReadTo(XmlNodeType.EndElement);
-			}
-		}*/
+		public static string FormatArguments(this ITypeNames @this, XmlWriter writer, ImmutableArray<Type> arguments)
+			=> string.Join(",", Generic(@this, writer, arguments));
 
-/*
-		public static XmlReader ReadToNextElement(this XmlReader @this)
+		public static string Format(this ITypeNames @this, XmlWriter writer, TypeInfo type)
 		{
-			/*switch (@this.conten.MoveToContent())
-			{
-					case 
-			}
-			if ()
-			{
-				_reader.ReadEndElement();
-			}#1#
-
-			return @this;
+			var name = @this.QualifiedFormat(writer, type);
+			var result = type.IsGenericType ? string.Concat(name, $"[{@this.FormatArguments(writer, type)}]") : name;
+			return result;
 		}
-*/
-		
+
+		static IEnumerable<string> Generic(ITypeNames @this, XmlWriter writer, ImmutableArray<Type> arguments)
+		{
+			for (var i = 0; i < arguments.Length; i++)
+			{
+				yield return @this.QualifiedFormat(writer, arguments[i].GetTypeInfo());
+			}
+		}
+
+		static string QualifiedFormat(this ITypeNames @this, XmlWriter writer, TypeInfo type)
+			=> writer.QualifiedFormat(@this.Get(type));
+
+		static string QualifiedFormat(this XmlWriter @this, XName name)
+			=> XmlQualifiedName.ToString(name.LocalName, @this.LookupPrefix(name.NamespaceName));
 	}
 }

@@ -28,7 +28,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class CollectionItemTypeLocator : /*CacheBase<TypeInfo, TypeInfo>,*/ ICollectionItemTypeLocator
+	public class CollectionItemTypeLocator : ICollectionItemTypeLocator
 	{
 		public static CollectionItemTypeLocator Default { get; } = new CollectionItemTypeLocator();
 		CollectionItemTypeLocator() {}

@@ -41,23 +41,20 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			_members = members;
 		}
 
-		public IMembers Get(TypeInfo parameter)
+		public IEnumerable<IMember> Get(TypeInfo parameter)
 			=> _generator.For(parameter).FirstEncounter ? _members.Get(parameter) : new Deferred(_members.Build(parameter));
 
-		sealed class Deferred : IMembers
+		sealed class Deferred : IEnumerable<IMember>
 		{
-			readonly Func<IMembers> _members;
+			readonly Func<IEnumerable<IMember>> _members;
 
-			public Deferred(Func<IMembers> members)
+			public Deferred(Func<IEnumerable<IMember>> members)
 			{
 				_members = members;
 			}
 
 			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
-
 			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-			public IMember Get(string parameter) => _members().Get(parameter);
 		}
 	}
 }

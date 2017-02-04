@@ -21,14 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Conversion
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	/*public interface IWriter
-	{
-		/*IDisposable Emit(IElement element);#1#
-
-		void Write(string text);
-
-		void Attribute(IElement element, string value);
-	}*/
+	public interface IEmitterOption : IOption<TypeInfo, IEmitter> {}
 }

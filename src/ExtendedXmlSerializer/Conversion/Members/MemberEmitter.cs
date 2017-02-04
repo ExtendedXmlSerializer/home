@@ -1,19 +1,21 @@
+using System.Collections.Immutable;
 using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
 	class MemberEmitter : IEmitter
 	{
-		readonly IMembers _members;
-		public MemberEmitter(IMembers members)
+		readonly ImmutableArray<IMember> _members;
+		public MemberEmitter(ImmutableArray<IMember> members)
 		{
 			_members = members;
 		}
 
 		public void Emit(XmlWriter writer, object instance)
 		{
-			foreach (var member in _members)
+			for (var i = 0; i < _members.Length; i++)
 			{
+				var member = _members[i];
 				var value = member.Get(instance);
 				if (value != null)
 				{

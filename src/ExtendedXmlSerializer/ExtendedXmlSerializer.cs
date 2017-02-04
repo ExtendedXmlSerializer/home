@@ -70,7 +70,7 @@ namespace ExtendedXmlSerialization
 			using (var source = System.Xml.XmlReader.Create(stream, _settings))
 			{
 				var reader = new XmlReader(source);
-				var context = _roots.Get(reader.Classification);
+				var context = _roots.Get(reader.Classification());
 				var result = context.Get(reader);
 				return result;
 			}

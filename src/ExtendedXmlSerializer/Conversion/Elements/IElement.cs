@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public interface IDisplayAware
 	{
 		string DisplayName { get; }
 	}
+	/*
 
 	public interface IElement : IDisplayAware
 	{
 		TypeInfo Classification { get; }
-	}
+	}*/
 }

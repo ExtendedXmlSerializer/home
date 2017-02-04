@@ -21,17 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
+using System.Reflection;
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	sealed class TypeProperty : FrameworkElementBase
+	public interface ITypeProperty : IProperty<TypeInfo> {}
+
+	sealed class TypeProperty : FrameworkElementBase<TypeInfo>, ITypeProperty
 	{
 		public static TypeProperty Default { get; } = new TypeProperty();
-		TypeProperty() : base("type") {}
+		TypeProperty() : this(TypeNames.Default) {}
+
+		readonly ITypeNames _names;
+		
+		public TypeProperty(ITypeNames names) : base("type")
+		{
+			_names = names;
+		}
+
+		public override void Emit(XmlWriter writer, TypeInfo instance)
+		{
+			var property = _names.Format(writer, instance);
+			writer.WriteAttributeString(Name.LocalName, Name.NamespaceName, property);
+		}
 	}
 
-	sealed class TypeArgumentsProperty : FrameworkElementBase
+	public interface ITypeArgumentsProperty : IProperty<ImmutableArray<Type>> {}
+	sealed class TypeArgumentsProperty : FrameworkElementBase<ImmutableArray<Type>>, ITypeArgumentsProperty
 	{
 		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : base("arguments") {}
+		TypeArgumentsProperty() : this(TypeNames.Default) {}
+
+		readonly ITypeNames _names;
+
+		public TypeArgumentsProperty(ITypeNames names) : base("arguments")
+		{
+			_names = names;
+		}
+
+		public override void Emit(XmlWriter writer, ImmutableArray<Type> instance)
+		{
+			var value = _names.FormatArguments(writer, instance);
+			writer.WriteAttributeString(Name.LocalName, Name.NamespaceName, value);
+		}
 	}
 }
