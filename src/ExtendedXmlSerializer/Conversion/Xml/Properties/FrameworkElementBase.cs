@@ -26,7 +26,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
 	abstract class FrameworkElementBase : XmlElement
 	{
-		readonly static TypeInfo Type = Conversion.Defaults.FrameworkType;
+		readonly static TypeInfo Type = Defaults.FrameworkType;
 		readonly static string NamespaceName = Namespaces.Default.Get(Type).Namespace.NamespaceName;
 
 		protected FrameworkElementBase(string displayName) : base(displayName, Type, NamespaceName) {}

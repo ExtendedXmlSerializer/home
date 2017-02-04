@@ -24,7 +24,6 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -32,17 +31,14 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
 		public static Types Default { get; } = new Types();
-		Types() : this(Namespaces.Default, TypeContexts.Default) {}
+		Types() : this(Elements.Defaults.Elements, TypeContexts.Default) {}
 
-		readonly INamespaces _namespaces;
-		readonly ImmutableArray<IElement> _known;
+		readonly ImmutableArray<IXmlElement> _known;
 		readonly ITypeContexts _sources;
 
-		public Types(INamespaces namespaces, ITypeContexts sources) : this(namespaces, Defaults.Elements, sources) {}
-
-		public Types(INamespaces namespaces, ImmutableArray<IElement> known, ITypeContexts sources)
+		
+		public Types(ImmutableArray<IXmlElement> known, ITypeContexts sources)
 		{
-			_namespaces = namespaces;
 			_known = known;
 			_sources = sources;
 		}
@@ -58,7 +54,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			for (var i = 0; i < length; i++)
 			{
 				var name = _known[i];
-				if (ns == _namespaces.Get(name.Classification)?.Namespace.NamespaceName && localName == name.DisplayName)
+				if (ns == name.Namespace && localName == name.DisplayName)
 				{
 					return name.Classification;
 				}

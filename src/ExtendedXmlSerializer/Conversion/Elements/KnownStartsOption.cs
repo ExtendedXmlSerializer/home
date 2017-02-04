@@ -21,10 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IElementOption : IOption<TypeInfo, IElement> {}
+	public static class Defaults
+	{
+		public static ImmutableArray<IXmlElement> Elements { get; } = KnownElements.Default.ToImmutableArray();
+	}
+
+	public class KnownStartsOption : StartOptionBase
+	{
+		public static KnownStartsOption Default { get; } = new KnownStartsOption();
+		KnownStartsOption() : this(Defaults.Elements) {}
+
+		public KnownStartsOption(ImmutableArray<IXmlElement> names) : this(names.ToDictionary(x => x.Classification, x => (IEmitter)new StartElement(x.DisplayName, x.Namespace))) {}
+
+		public KnownStartsOption(IDictionary<TypeInfo, IEmitter> names)
+			: base(new DelegatedSpecification<TypeInfo>(names.ContainsKey), names.TryGet) {}
+
+	}
 }

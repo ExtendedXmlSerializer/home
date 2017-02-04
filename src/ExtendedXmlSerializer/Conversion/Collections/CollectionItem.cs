@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 {
 	class CollectionItem : Container
 	{
-		public CollectionItem(IElement elementName, IConverter body) : base(elementName, body) {}
+		public CollectionItem(IEmitter start, IConverter body) : base(start, body) {}
 	}
 }

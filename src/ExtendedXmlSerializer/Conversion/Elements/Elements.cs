@@ -24,19 +24,23 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public class Elements : IElements
 	{
-		readonly IParameterizedSource<TypeInfo, IElement> _selector;
+		public static Elements Default { get; } = new Elements();
+		Elements() : this(x => new ElementOptions(x)) {}
+
+		readonly IParameterizedSource<TypeInfo, IEmitter> _selector;
 
 		public Elements(Func<IElements, IElementOptions> options)
 		{
-			_selector = new OptionSelector<TypeInfo, IElement>(options(this).ToArray());
+			_selector = new OptionSelector<TypeInfo, IEmitter>(options(this).ToArray());
 		}
 
-		public IElement Get(TypeInfo parameter) => _selector.Get(parameter);
+		public IEmitter Get(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

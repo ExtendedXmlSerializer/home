@@ -1,3 +1,5 @@
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion
 {
 	public class DecoratedConverter : ConverterBase
@@ -13,7 +15,7 @@ namespace ExtendedXmlSerialization.Conversion
 			_emitter = emitter;
 		}
 
-		public override void Emit(IWriter writer, object instance) => _emitter.Emit(writer, instance);
+		public override void Emit(XmlWriter writer, object instance) => _emitter.Emit(writer, instance);
 		public override object Get(IReader reader) => _activator.Get(reader);
 	}
 }

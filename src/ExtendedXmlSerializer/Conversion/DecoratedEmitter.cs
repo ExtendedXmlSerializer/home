@@ -1,3 +1,5 @@
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion
 {
 	class DecoratedEmitter : IEmitter
@@ -9,6 +11,6 @@ namespace ExtendedXmlSerialization.Conversion
 			_emitter = emitter;
 		}
 
-		public virtual void Emit(IWriter writer, object instance) => _emitter.Emit(writer, instance);
+		public virtual void Emit(XmlWriter writer, object instance) => _emitter.Emit(writer, instance);
 	}
 }

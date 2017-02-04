@@ -3,6 +3,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IElementProvider : IParameterizedSource<TypeInfo, IElement> {}
+	public interface IStartElementProvider : IParameterizedSource<TypeInfo, IEmitter> {}
 	/*public interface INameProvider<out T> : IParameterizedSource<TypeInfo, T> where T : IElement { }*/
 }

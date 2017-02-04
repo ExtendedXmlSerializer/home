@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion.Collections
 {
@@ -20,7 +21,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 
 		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
 
-		public override void Emit(IWriter writer, T instance)
+		public override void Emit(XmlWriter writer, T instance)
 		{
 			var enumerator = Get(instance);
 			while (enumerator.MoveNext())

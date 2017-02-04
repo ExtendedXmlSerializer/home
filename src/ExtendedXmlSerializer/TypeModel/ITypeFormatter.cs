@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface ITypeFormatter : IParameterizedSource<TypeInfo, string> {}
+	public interface ITypeFormatter : IFormatter<TypeInfo> {}
 }

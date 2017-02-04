@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Members
@@ -32,20 +31,19 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public Member(IElement element, Action<object, object> setter, Func<object, object> getter, IConverter body)
-			: this(element.DisplayName, element.Classification, element, setter, getter, body) {}
+		public Member(string displayName, Action<object, object> setter, Func<object, object> getter, IConverter body)
+			: this(displayName, new StartMember(displayName), setter, getter, body) {}
 
-		public Member(string displayName, TypeInfo classification, IElement element, Action<object, object> setter,
-		              Func<object, object> getter, IConverter body) : base(element, body)
+		public Member(string displayName, IEmitter start, Action<object, object> setter, Func<object, object> getter,
+		              IConverter body) : base(start, body)
 		{
 			DisplayName = displayName;
-			Classification = classification;
 			_setter = setter;
 			_getter = getter;
 		}
 
+
 		public string DisplayName { get; }
-		public TypeInfo Classification { get; }
 
 		public virtual object Get(object instance) => _getter(instance);
 
