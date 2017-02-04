@@ -9,7 +9,6 @@ using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Options;
 using ExtendedXmlSerialization.Conversion.Xml.Converters;
-using ExtendedXmlSerialization.Conversion.Xml.Properties;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
@@ -35,7 +34,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_converters = converters;
 		}
 
-		// public IConverter Get(TypeInfo parameter)
 		protected override IConverter Create(TypeInfo parameter)
 			=> new Root(_elements.Get(parameter), _converters.Get(parameter));
 	}
@@ -96,7 +94,23 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	class MemberSelector : OptionSelector<MemberInformation, IMember>, IMemberSelector
 	{
 		public MemberSelector(IConverters converters)
-			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters)) {}
+			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters, MemberElementProvider.Default)) {}
+	}
+
+	class MemberElementProvider : IMemberElementProvider
+	{
+		public static MemberElementProvider Default { get; } = new MemberElementProvider();
+		MemberElementProvider() : this(MemberAliasProvider.Default) {}
+
+		readonly IAliasProvider _alias;
+
+		public MemberElementProvider(IAliasProvider alias)
+		{
+			_alias = alias;
+		}
+
+		public IElement Get(MemberInformation parameter)
+			=> new XmlElement(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType, null);
 	}
 
 	public class MemberOption : Members.MemberOption
@@ -105,18 +119,18 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public MemberOption(IConverters converters) : this(FixedTypeSpecification.Default, converters) {}
 
-		public MemberOption(ISpecification<TypeInfo> specification, IConverters converters) : base(converters)
+		public MemberOption(ISpecification<TypeInfo> specification, IConverters converters)
+			: base(converters, MemberElementProvider.Default)
 		{
 			_specification = specification;
 		}
 
-		protected override IMember Create(IElement element, Action<object, object> setter, Func<object, object> getter,
-		                                  IConverter body)
+		protected override IMember CreateMember(IElement element, Action<object, object> setter, Func<object, object> getter, IConverter body)
 		{
 			var converter = _specification.IsSatisfiedBy(element.Classification)
 				? body
-				: new DecoratedConverter(body, new RenderingEmitter(new VariableTypeEmitter(element), body));
-			var result = base.Create(element, setter, getter, converter);
+				: new DecoratedConverter(body, new VariableTypeEmitter(element, body));
+			var result = base.CreateMember(element, setter, getter, converter);
 			return result;
 		}
 	}

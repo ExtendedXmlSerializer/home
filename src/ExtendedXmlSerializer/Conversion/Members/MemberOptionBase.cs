@@ -1,33 +1,44 @@
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Elements;
-using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMemberAdorner : IAlteration<IElement> {}
+	public interface IMemberElementProvider : IParameterizedSource<MemberInformation, IElement> {}
 
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
-		readonly IAliasProvider _alias;
+		readonly IConverters _converters;
+		readonly IMemberElementProvider _provider;
+		readonly IGetterFactory _getter;
+		
+		protected MemberOptionBase(ISpecification<MemberInformation> specification, IConverters converters,
+		                           IMemberElementProvider provider)
+			: this(specification, converters, provider, GetterFactory.Default) {}
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification)
-			: this(specification, MemberAliasProvider.Default) {}
-
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, IAliasProvider alias)
+		protected MemberOptionBase(ISpecification<MemberInformation> specification, IConverters converters,
+		                           IMemberElementProvider provider,
+		                           IGetterFactory getter
+		)
 			: base(specification)
 		{
-			_alias = alias;
+			_converters = converters;
+			_provider = provider;
+			_getter = getter;
 		}
 
 		public override IMember Get(MemberInformation parameter)
 		{
-			var element = new Element(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType);
-			var result = Create(element, parameter.Metadata);
+			var getter = _getter.Get(parameter.Metadata);
+			var element = _provider.Get(parameter);
+			var body = _converters.Get(element.Classification);
+			var result = Create(element, getter, body, parameter.Metadata);
 			return result;
 		}
 
-		protected abstract IMember Create(IElement element, MemberInfo metadata);
+		protected abstract IMember Create(IElement element, Func<object, object> getter, IConverter body, MemberInfo metadata);
 	}
 }

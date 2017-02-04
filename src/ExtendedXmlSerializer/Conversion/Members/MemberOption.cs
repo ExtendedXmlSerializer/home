@@ -8,30 +8,21 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
 	public class MemberOption : MemberOptionBase
 	{
-		readonly IGetterFactory _getter;
 		readonly ISetterFactory _setter;
-		readonly IConverters _converters;
 
-		public MemberOption(IConverters converters) : this(converters, GetterFactory.Default, SetterFactory.Default) {}
+		public MemberOption(IConverters converters, IMemberElementProvider provider)
+			: this(converters, provider, SetterFactory.Default) {}
 
-		public MemberOption(IConverters converters, IGetterFactory getter, ISetterFactory setter)
-			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable))
+		public MemberOption(IConverters converters, IMemberElementProvider provider, ISetterFactory setter)
+			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable), converters, provider)
 		{
-			_getter = getter;
 			_setter = setter;
-			_converters = converters;
 		}
 
-		protected override IMember Create(IElement element, MemberInfo metadata)
-		{
-			var getter = _getter.Get(metadata);
-			var setter = _setter.Get(metadata);
-			var body = _converters.Get(element.Classification);
-			var result = Create(element, setter, getter, body);
-			return result;
-		}
+		protected override IMember Create(IElement element, Func<object, object> getter, IConverter body, MemberInfo metadata)
+			=> CreateMember(element, _setter.Get(metadata), getter, body);
 
-		protected virtual IMember Create(IElement element, Action<object, object> setter, Func<object, object> getter,
+		protected virtual IMember CreateMember(IElement element, Action<object, object> setter, Func<object, object> getter,
 		                                       IConverter body) => new Member(element, setter, getter, body);
 	}
 }

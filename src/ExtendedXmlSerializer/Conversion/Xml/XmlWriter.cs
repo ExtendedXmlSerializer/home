@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Elements;
 using ExtendedXmlSerialization.Core;
 
@@ -42,8 +43,8 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IDisposable Emit(IElement element)
 		{
-			var xml = element as IXmlElement;
-			if (xml != null)
+			var xml = (IXmlElement) element;
+			if (xml.Namespace != null)
 			{
 				_writer.WriteStartElement(element.DisplayName, xml.Namespace);
 			}
@@ -51,18 +52,42 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			{
 				_writer.WriteStartElement(element.DisplayName);
 			}
-
-			var writable = element as IXmlWritable;
-			writable?.Execute(_writer);
-
 			return _finish;
 		}
 
 		public void Write(string text) => _writer.WriteString(text);
-		public void Render(IRender render, object instance)
+
+		public void Attribute(IElement element, object value)
 		{
-			var xml = render as IRenderXml;
-			xml?.Render(_writer, instance);
+			var xml = element as IXmlElement;
+			if (xml != null)
+			{
+				_writer.WriteStartAttribute(element.DisplayName, xml.Namespace);
+			}
+			else
+			{
+				_writer.WriteStartAttribute(element.DisplayName);
+			}
+
+			var content = value as IXmlElement;
+			if (content != null)
+			{
+				_writer.WriteQualifiedName(content.DisplayName, content.Namespace);
+			}
+			else
+			{
+				var name = value as XName;
+				if (name != null)
+				{
+					_writer.WriteQualifiedName(name.LocalName, name.NamespaceName);
+				}
+				else
+				{
+					Write(value as string ?? value.ToString());
+				}
+			}
+
+			_writer.WriteEndAttribute();
 		}
 	}
 }

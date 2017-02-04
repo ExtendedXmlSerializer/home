@@ -27,13 +27,13 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Conversion.Elements;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.Xml.Properties;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	class GenericXmlElement : XmlElement, IXmlWritable
+	class GenericXmlElement : XmlElement
 	{
 		readonly ImmutableArray<IElement> _arguments;
 
@@ -41,11 +41,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			: base(displayName, classification, ns)
 		{
 			_arguments = arguments;
-		}
-
-		public void Execute(System.Xml.XmlWriter parameter)
-		{
-			throw new NotImplementedException();
 		}
 	}
 
@@ -65,25 +60,26 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public string Namespace { get; }
 	}
 
-	public interface IXmlWritable : ICommand<System.Xml.XmlWriter> {}
-
-	public interface IRenderXml : IRender
+	sealed class VariableTypeEmitter : DecoratedEmitter
 	{
-		void Render(System.Xml.XmlWriter writer, object instance);
-	}
+		readonly IElement _element;
+		readonly IElements _elements;
+		
+		public VariableTypeEmitter(IElement element, IEmitter emitter) : this(element, Elements.Default, emitter) {}
 
-	class RenderingEmitter : DecoratedEmitter
-	{
-		readonly IRenderXml _render;
-
-		public RenderingEmitter(IRenderXml render, IEmitter emitter) : base(emitter)
+		public VariableTypeEmitter(IElement element, IElements elements, IEmitter emitter) : base(emitter)
 		{
-			_render = render;
+			_element = element;
+			_elements = elements;
 		}
 
 		public override void Emit(IWriter writer, object instance)
 		{
-			writer.Render(_render, instance);
+			var actual = _elements.Actual(_element, instance);
+			if (actual != null)
+			{
+				writer.Attribute(TypeProperty.Default, actual);
+			}
 			base.Emit(writer, instance);
 		}
 	}

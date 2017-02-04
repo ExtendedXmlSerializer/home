@@ -10,30 +10,20 @@ namespace ExtendedXmlSerialization.Conversion.Members
 {
 	public class ReadOnlyCollectionMemberOption : MemberOptionBase
 	{
-		readonly IConverters _converters;
-		readonly IGetterFactory _getter;
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IConverters converters) : this(converters, GetterFactory.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IConverters converters, IMemberElementProvider provider) : this(converters, provider, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(IConverters converters, IGetterFactory getter, IAddDelegates add)
-			: base(Specification.Instance)
+		public ReadOnlyCollectionMemberOption(IConverters converters, IMemberElementProvider provider, IAddDelegates add)
+			: base(Specification.Instance, converters, provider)
 		{
-			_converters = converters;
-			_getter = getter;
 			_add = add;
 		}
-
-		protected override IMember Create(IElement element, MemberInfo metadata)
+		protected override IMember Create(IElement element, Func<object, object> getter, IConverter body, MemberInfo metadata)
 		{
 			var add = _add.Get(element.Classification);
-			if (add != null)
-			{
-				var getter = _getter.Get(metadata);
-				var result = new ReadOnlyCollectionMember(element, add, getter, _converters.Get(element.Classification));
-				return result;
-			}
-			return null;
+			var result = add != null ? new ReadOnlyCollectionMember(element, add, getter, body) : null;
+			return result;
 		}
 
 		class ReadOnlyCollectionMember : Member
