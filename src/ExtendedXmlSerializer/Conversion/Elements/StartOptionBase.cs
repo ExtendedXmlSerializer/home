@@ -21,24 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class ElementProviderBase : IElementProvider
+	public abstract class StartOptionBase : Option<TypeInfo, IEmitter>, IStartOption
 	{
-		readonly IAliasProvider _alias;
-		readonly ITypeFormatter _formatter;
+		protected StartOptionBase(Func<TypeInfo, IEmitter> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
 
-		protected ElementProviderBase(IAliasProvider alias, ITypeFormatter formatter)
-		{
-			_alias = alias;
-			_formatter = formatter;
-		}
-
-		public IElement Get(TypeInfo parameter) => Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter);
-
-		public abstract IElement Create(string displayName, TypeInfo classification);
+		protected StartOptionBase(ISpecification<TypeInfo> specification, Func<TypeInfo, IEmitter> source)
+			: base(specification, source) {}
 	}
 }

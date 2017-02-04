@@ -22,18 +22,41 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class ElementBase : IElement
+	class StartElementProvider : StartElementProviderBase
 	{
-		protected ElementBase(string displayName, TypeInfo classification)
+		public static StartElementProvider Default { get; } = new StartElementProvider();
+		StartElementProvider() {}
+
+		public override IEmitter Create(string displayName, TypeInfo classification, string @namespace)
+			=> new StartElement(displayName, @namespace);
+	}
+
+	public abstract class StartElementProviderBase : IStartElementProvider
+	{
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
+		readonly INamespaces _namespaces;
+
+		protected StartElementProviderBase()
+			: this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
+
+		protected StartElementProviderBase(IAliasProvider alias, ITypeFormatter formatter, INamespaces namespaces)
 		{
-			DisplayName = displayName;
-			Classification = classification;
+			_alias = alias;
+			_formatter = formatter;
+			_namespaces = namespaces;
 		}
 
-		public string DisplayName { get; }
-		public TypeInfo Classification { get; }
+		public IEmitter Get(TypeInfo parameter)
+			=>
+				Create(_alias.Get(parameter) ?? _formatter.Get(parameter), parameter,
+				       _namespaces.Get(parameter).Namespace.NamespaceName);
+
+		public abstract IEmitter Create(string displayName, TypeInfo classification, string @namespace);
 	}
 }

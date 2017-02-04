@@ -1,3 +1,5 @@
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion.Members
 {
 	class MemberEmitter : IEmitter
@@ -8,7 +10,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			_members = members;
 		}
 
-		public void Emit(IWriter writer, object instance)
+		public void Emit(XmlWriter writer, object instance)
 		{
 			foreach (var member in _members)
 			{

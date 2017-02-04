@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Conversion.Collections;
@@ -10,20 +9,15 @@ using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.Conversion.Options;
 using ExtendedXmlSerialization.Conversion.Xml.Converters;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public static class Defaults
-	{
-		public static ImmutableArray<IElement> Elements { get; } = KnownElements.Default.ToImmutableArray();
-	}
+	
 
 	class Roots : WeakCacheBase<TypeInfo, IConverter>, IRoots
 	{
 		public static Roots Default { get; } = new Roots();
-		Roots() : this(Elements.Default, DefaultConverters.Default) {}
+		Roots() : this(Elements.Elements.Default, DefaultConverters.Default) {}
 
 		readonly IElements _elements;
 		readonly IConverters _converters;
@@ -48,15 +42,13 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly IConverters _converters;
 		readonly IElements _elements;
-		readonly IAliasProvider _alias;
+		
+		public ConverterOptions(IConverters converters) : this(converters, Elements.Elements.Default) {}
 
-		public ConverterOptions(IConverters converters) : this(converters, Elements.Default, TypeAliasProvider.Default) {}
-
-		public ConverterOptions(IConverters converters, IElements elements, IAliasProvider alias)
+		public ConverterOptions(IConverters converters, IElements elements)
 		{
 			_converters = converters;
 			_elements = elements;
-			_alias = alias;
 		}
 
 		public IEnumerator<IConverterOption> GetEnumerator()
@@ -82,7 +74,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			yield return TimeSpanTypeConverter.Default;
 
 			// yield return new DictionaryContext();
-			yield return new CollectionOption(_converters, _elements, _alias);
+			yield return new CollectionOption(_converters, _elements);
 
 			yield return new MemberedConverterOption(new TypeMembers(_converters));
 		}
@@ -94,10 +86,10 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	class MemberSelector : OptionSelector<MemberInformation, IMember>, IMemberSelector
 	{
 		public MemberSelector(IConverters converters)
-			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters, MemberElementProvider.Default)) {}
+			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters, MemberAliasProvider.Default)) {}
 	}
 
-	class MemberElementProvider : IMemberElementProvider
+	/*class MemberElementProvider : IMemberElementProvider
 	{
 		public static MemberElementProvider Default { get; } = new MemberElementProvider();
 		MemberElementProvider() : this(MemberAliasProvider.Default) {}
@@ -111,31 +103,9 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		public IElement Get(MemberInformation parameter)
 			=> new XmlElement(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType, null);
-	}
+	}*/
 
-	public class MemberOption : Members.MemberOption
-	{
-		readonly ISpecification<TypeInfo> _specification;
-
-		public MemberOption(IConverters converters) : this(FixedTypeSpecification.Default, converters) {}
-
-		public MemberOption(ISpecification<TypeInfo> specification, IConverters converters)
-			: base(converters, MemberElementProvider.Default)
-		{
-			_specification = specification;
-		}
-
-		protected override IMember CreateMember(IElement element, Action<object, object> setter, Func<object, object> getter, IConverter body)
-		{
-			var converter = _specification.IsSatisfiedBy(element.Classification)
-				? body
-				: new DecoratedConverter(body, new VariableTypeEmitter(element, body));
-			var result = base.CreateMember(element, setter, getter, converter);
-			return result;
-		}
-	}
-
-	public class KnownElements : IEnumerable<IElement>
+	public class KnownElements : IEnumerable<IXmlElement>
 	{
 		public static KnownElements Default { get; } = new KnownElements();
 		KnownElements() : this(Namespaces.Default.Get(typeof(object).GetTypeInfo()).Namespace.NamespaceName) {}
@@ -147,7 +117,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_ns = @namespace;
 		}
 
-		public virtual IEnumerator<IElement> GetEnumerator()
+		public virtual IEnumerator<IXmlElement> GetEnumerator()
 		{
 			yield return new XmlElement("boolean", typeof(bool), _ns);
 			yield return new XmlElement("char", typeof(char), _ns);
@@ -173,12 +143,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
-	public class Elements : Conversion.Elements.Elements
-	{
-		public static Elements Default { get; } = new Elements();
-		Elements() : base(x => new ElementOptions(x)) {}
-	}
-
 	public class ElementOptions : IElementOptions
 	{
 		readonly IElements _elements;
@@ -188,64 +152,22 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			_elements = elements;
 		}
 
-		public IEnumerator<IElementOption> GetEnumerator()
+		public IEnumerator<IStartOption> GetEnumerator()
 		{
-			yield return KnownElementsOption.Default;
-			yield return new GenericElementOption(new GenericElementProvider(_elements));
-			yield return ElementOption.Default;
+			yield return KnownStartsOption.Default;
+			yield return new GenericStartOption(new GenericStartElementProvider(_elements));
+			yield return StartOption.Default;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
-	public class KnownElementsOption : Conversion.Elements.KnownElementsOption
+	
+
+	public class StartOption : StartOptionBase
 	{
-		public static KnownElementsOption Default { get; } = new KnownElementsOption();
-		KnownElementsOption() : base(Defaults.Elements) {}
-	}
-
-	public class ElementOption : ElementOptionBase
-	{
-		public static ElementOption Default { get; } = new ElementOption();
-		ElementOption() : this(Provider.Implementation) {}
-
-		public ElementOption(IElementProvider provider) : base(provider.Get) {}
-
-		class Provider : ElementProviderBase
-		{
-			public static Provider Implementation { get; } = new Provider();
-			Provider() : this(Namespaces.Default, TypeAliasProvider.Default, TypeFormatter.Default) {}
-
-			readonly INamespaces _namespaces;
-
-			public Provider(INamespaces namespaces, IAliasProvider alias, ITypeFormatter formatter)
-				: base(alias, formatter)
-			{
-				_namespaces = namespaces;
-			}
-
-			public override IElement Create(string displayName, TypeInfo classification)
-				=> new XmlElement(displayName, classification, _namespaces.Get(classification).Namespace.NamespaceName);
-		}
-	}
-
-	class GenericElementProvider : GenericElementProviderBase
-	{
-		readonly INamespaces _namespaces;
-
-		public GenericElementProvider(IElements elements) : this(Namespaces.Default, elements) {}
-
-		public GenericElementProvider(INamespaces namespaces, IElements elements)
-			: base(elements.Get, TypeAliasProvider.Default)
-		{
-			_namespaces = namespaces;
-		}
-
-		protected override IElement Create(string displayName, TypeInfo classification,
-		                                   ImmutableArray<IElement> arguments)
-			=>
-				new GenericXmlElement(displayName, classification, _namespaces.Get(classification).Namespace.NamespaceName,
-				                      arguments);
+		public static StartOption Default { get; } = new StartOption();
+		StartOption() : base(StartElementProvider.Default.Get) {}
 	}
 
 	class TypeAliasProvider : AliasProviderBase<TypeInfo>

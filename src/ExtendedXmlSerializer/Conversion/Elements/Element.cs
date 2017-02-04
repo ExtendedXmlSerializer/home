@@ -21,41 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	/*public class EnumerableNameOption : NameOptionBase
+	public class Element : IElement
 	{
-		
+		public Element(string displayName, Type type) : this(displayName, type.GetTypeInfo()) {}
 
-		sealed class Specification : ISpecification<MemberInfo>
+		public Element(string displayName, TypeInfo classification)
 		{
-			readonly static TypeInfo TypeInfo = typeof(IEnumerable).GetTypeInfo();
-
-			public static Specification Instance { get; } = new Specification();
-			Specification() {}
-
-			public bool IsSatisfiedBy(MemberInfo parameter)
-			{
-				var type = parameter.ToTypeInfo();
-				var result = type.IsArray || type.IsGenericType && TypeInfo.IsAssignableFrom(type);
-				return result;
-			}
+			DisplayName = displayName;
+			Classification = classification;
 		}
-	}*/
 
-	public class KnownElementsOption : ElementOptionBase
-	{
-		public KnownElementsOption(ImmutableArray<IElement> names)
-			: this(names.ToDictionary(x => x.Classification)) {}
-
-		public KnownElementsOption(IDictionary<TypeInfo, IElement> names)
-			: base(new DelegatedSpecification<TypeInfo>(names.ContainsKey), names.TryGet) {}
+		public string DisplayName { get; }
+		public TypeInfo Classification { get; }
 	}
 }

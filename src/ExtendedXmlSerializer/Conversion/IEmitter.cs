@@ -1,7 +1,9 @@
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion
 {
 	public interface IEmitter
 	{
-		void Emit(IWriter writer, object instance);
+		void Emit(XmlWriter writer, object instance);
 	}
 }

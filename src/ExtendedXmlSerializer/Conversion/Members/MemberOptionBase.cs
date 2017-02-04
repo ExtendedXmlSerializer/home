@@ -7,38 +7,36 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Conversion.Members
 {
-	public interface IMemberElementProvider : IParameterizedSource<MemberInformation, IElement> {}
-
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
 		readonly IConverters _converters;
-		readonly IMemberElementProvider _provider;
+		readonly IAliasProvider _alias;
 		readonly IGetterFactory _getter;
-		
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, IConverters converters,
-		                           IMemberElementProvider provider)
-			: this(specification, converters, provider, GetterFactory.Default) {}
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification, IConverters converters,
-		                           IMemberElementProvider provider,
-		                           IGetterFactory getter
+		                           IAliasProvider alias)
+			: this(specification, converters, alias, GetterFactory.Default) {}
+
+		protected MemberOptionBase(ISpecification<MemberInformation> specification, IConverters converters,
+		                           IAliasProvider alias, IGetterFactory getter
 		)
 			: base(specification)
 		{
 			_converters = converters;
-			_provider = provider;
+			_alias = alias;
 			_getter = getter;
 		}
 
 		public override IMember Get(MemberInformation parameter)
 		{
 			var getter = _getter.Get(parameter.Metadata);
-			var element = _provider.Get(parameter);
-			var body = _converters.Get(element.Classification);
-			var result = Create(element, getter, body, parameter.Metadata);
+			var body = _converters.Get(parameter.MemberType);
+			var result = Create(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType, getter, body,
+			                    parameter.Metadata);
 			return result;
 		}
 
-		protected abstract IMember Create(IElement element, Func<object, object> getter, IConverter body, MemberInfo metadata);
+		protected abstract IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
+		                                  IConverter body, MemberInfo metadata);
 	}
 }

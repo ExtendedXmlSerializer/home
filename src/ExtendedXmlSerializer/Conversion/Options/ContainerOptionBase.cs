@@ -6,16 +6,16 @@ namespace ExtendedXmlSerialization.Conversion.Options
 {
 	abstract class ContainerOptionBase : ConverterOptionBase
 	{
-		readonly IElementProvider _element;
+		readonly IStartElementProvider _provider;
 
-		protected ContainerOptionBase(ISpecification<TypeInfo> specification, IElementProvider element)
+		protected ContainerOptionBase(ISpecification<TypeInfo> specification, IStartElementProvider provider)
 			: base(specification)
 		{
-			_element = element;
+			_provider = provider;
 		}
 
-		public override IConverter Get(TypeInfo parameter) => Create(parameter, _element.Get(parameter));
+		public override IConverter Get(TypeInfo parameter) => Create(parameter, _provider.Get(parameter));
 
-		protected abstract IConverter Create(TypeInfo type, IElement name);
+		protected abstract IConverter Create(TypeInfo type, IEmitter start);
 	}
 }

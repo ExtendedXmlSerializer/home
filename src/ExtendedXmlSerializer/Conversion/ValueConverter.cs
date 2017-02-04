@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Xml;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.Conversion
 			_serialize = serialize;
 		}
 
-		public override void Emit(IWriter writer, T instance) => writer.Write(_serialize(instance));
+		public override void Emit(XmlWriter writer, T instance) => writer.WriteString(_serialize(instance));
 
 		public override object Get(IReader reader) => _deserialize(reader.Value());
 	}

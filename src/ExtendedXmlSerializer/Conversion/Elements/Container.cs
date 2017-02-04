@@ -25,6 +25,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 {
 	public class Container : DecoratedConverter
 	{
-		public Container(IElement element, IConverter body) : base(body, new ElementEmitter(element, body)) {}
+		public Container(IEmitter start, IConverter body) : base(body, new Enclosure(start, body)) {}
 	}
 }

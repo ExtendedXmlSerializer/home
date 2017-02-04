@@ -21,18 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public abstract class ElementOptionBase : Option<TypeInfo, IElement>, IElementOption
-	{
-		protected ElementOptionBase(Func<TypeInfo, IElement> source) : this(AlwaysSpecification<TypeInfo>.Default, source) {}
-
-		protected ElementOptionBase(ISpecification<TypeInfo> specification, Func<TypeInfo, IElement> source)
-			: base(specification, source) {}
-	}
+	public interface IStartOption : IOption<TypeInfo, IEmitter> {}
 }
