@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 
 		Types()
 			: this(
-				WellKnownAliases.Default.ToDictionary(x => TypeNames.Default.Get(x.Key.GetTypeInfo()), y => y.Key.GetTypeInfo()),
+				WellKnownAliases.Default.ToDictionary(x => Names.Default.Get(x.Key.GetTypeInfo()), y => y.Key.GetTypeInfo()),
 				TypeContexts.Default) {}
 
 		readonly IDictionary<XName, TypeInfo> _known;

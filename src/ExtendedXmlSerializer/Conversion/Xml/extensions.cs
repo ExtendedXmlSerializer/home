@@ -32,20 +32,20 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	public static class Extensions
 	{
-		public static string FormatArguments(this ITypeNames @this, XmlWriter writer, TypeInfo type)
+		public static string FormatArguments(this INames @this, XmlWriter writer, TypeInfo type)
 			=> FormatArguments(@this, writer, type.GetGenericArguments().ToImmutableArray());
 
-		public static string FormatArguments(this ITypeNames @this, XmlWriter writer, ImmutableArray<Type> arguments)
+		public static string FormatArguments(this INames @this, XmlWriter writer, ImmutableArray<Type> arguments)
 			=> string.Join(",", Generic(@this, writer, arguments));
 
-		public static string Format(this ITypeNames @this, XmlWriter writer, TypeInfo type)
+		public static string Format(this INames @this, XmlWriter writer, TypeInfo type)
 		{
 			var name = @this.QualifiedFormat(writer, type);
 			var result = type.IsGenericType ? string.Concat(name, $"[{@this.FormatArguments(writer, type)}]") : name;
 			return result;
 		}
 
-		static IEnumerable<string> Generic(ITypeNames @this, XmlWriter writer, ImmutableArray<Type> arguments)
+		static IEnumerable<string> Generic(INames @this, XmlWriter writer, ImmutableArray<Type> arguments)
 		{
 			for (var i = 0; i < arguments.Length; i++)
 			{
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 			}
 		}
 
-		static string QualifiedFormat(this ITypeNames @this, XmlWriter writer, TypeInfo type)
+		static string QualifiedFormat(this INames @this, XmlWriter writer, TypeInfo type)
 			=> writer.QualifiedFormat(@this.Get(type));
 
 		static string QualifiedFormat(this XmlWriter @this, XName name)

@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 {
 	class GeneratedPrefixProvider : CacheBase<string, string>, IPrefixProvider
 	{
-		protected override string Create(string parameter) => $"ns{(Count + 1).ToString()}";
+		protected override string Create(string parameter) => $"ns{Count + 1}";
 	}
 }

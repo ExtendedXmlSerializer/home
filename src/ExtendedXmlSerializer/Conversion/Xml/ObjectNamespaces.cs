@@ -21,27 +21,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*namespace ExtendedXmlSerialization.Conversion.Xml
-{
-	public class ObjectNamespaces : IObjectNamespaces
-	{
-		public ObjectNamespaces(IContexts elements) : this(elements, new Namespaces(new GeneratedPrefixProvider()).Get) {}
-
-		readonly IContexts _elements;
-		readonly Func<TypeInfo, INamespace> _namespaces;
-
-		public ObjectNamespaces(IContexts elements, Func<TypeInfo, INamespace> namespaces)
-		{
-			_elements = elements;
-			_namespaces = namespaces;
-		}
-
-		public ImmutableArray<INamespace> Get(object parameter)
-			=> new ObjectTypeWalker(_elements, parameter)
-				.Get()
-				.Distinct()
-				.Select(_namespaces)
-				.Distinct()
-				.ToImmutableArray();
-	}
-}*/

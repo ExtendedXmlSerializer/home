@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	{
 		readonly char _search;
 		readonly char _replace;
-		
+
 		public static TypeNameAlteration Default { get; } = new TypeNameAlteration();
 		TypeNameAlteration() : this(DefaultParsingDelimiters.Default.NestedClass, DefaultClrDelimiters.Default.NestedClass) {}
 
