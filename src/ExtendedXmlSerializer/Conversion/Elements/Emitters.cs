@@ -22,35 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Conversion.Elements;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Conversion.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Conversion.Xml
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	public class Emitters : OptionSelector<TypeInfo, IEmitter>, IEmitters
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
+		public static Emitters Default { get; } = new Emitters();
+		Emitters() : this(GenericEmitterOption.Default, EmitterOption.Default) {}
 
-		protected override string GetItem(MemberInfo parameter)
-		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
-		}
+		public Emitters(params IOption<TypeInfo, IEmitter>[] options) : base(options) {}
 	}
-
-	/*public class MemberNameProvider : NameProviderBase
-	{
-		readonly IAliasProvider _alias;
-		public static MemberNameProvider Default { get; } = new MemberNameProvider();
-		MemberNameProvider() : this(MemberAliasProvider.Default) {}
-
-		public MemberNameProvider(IAliasProvider alias)
-		{
-			_alias = alias;
-		}
-
-		protected override IName Create(TypeInfo type, MemberInfo member) => new Name(_alias.Get(member) ?? member.Name, type);
-	}*/
 }

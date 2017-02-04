@@ -18,7 +18,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		}
 
 		public string DisplayName => _reader.LocalName;
-		public TypeInfo Classification => _type.Get(_reader);
+		public TypeInfo Classification() => _type.Get(_reader);
 
 		public string Value()
 		{

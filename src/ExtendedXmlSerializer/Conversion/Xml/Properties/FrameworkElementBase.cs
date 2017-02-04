@@ -22,13 +22,32 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Conversion.Elements;
+
 namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	abstract class FrameworkElementBase : XmlElement
+	static class Defaults
 	{
-		readonly static TypeInfo Type = Defaults.FrameworkType;
-		readonly static string NamespaceName = Namespaces.Default.Get(Type).Namespace.NamespaceName;
+		readonly static TypeInfo Type = Conversion.Defaults.FrameworkType;
+		public static string Namespace { get; } = Namespaces.Default.Get(Type).Namespace.NamespaceName;
+	}
 
-		protected FrameworkElementBase(string displayName) : base(displayName, Type, NamespaceName) {}
+	public interface IProperty<in T> : IEmitter
+	{
+		void Emit(XmlWriter writer, T instance);
+	}
+
+	abstract class FrameworkElementBase<T> : EmitterBase<T>, IProperty<T>
+	{
+		protected FrameworkElementBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
+
+		protected FrameworkElementBase(XName name)
+		{
+			Name = name;
+		}
+
+		protected XName Name { get; }
 	}
 }

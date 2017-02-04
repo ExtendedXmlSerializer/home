@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Members;
 using ExtendedXmlSerialization.TypeModel;
@@ -20,9 +22,9 @@ namespace ExtendedXmlSerialization.Conversion.Options
 
 		public override IConverter Get(TypeInfo parameter)
 		{
-			var members = _members.Get(parameter);
+			var members = _members.Get(parameter).ToImmutableArray();
 			var activate = _activators.Get(parameter.AsType());
-			var activator = new MemberedActivator(new DelegatedActivator(activate), members);
+			var activator = new MemberedActivator(new DelegatedActivator(activate), members.ToDictionary(x => x.DisplayName));
 			var result = new DecoratedConverter(activator, new MemberEmitter(members));
 			return result;
 		}

@@ -1,10 +1,13 @@
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core;
+
 namespace ExtendedXmlSerialization.Conversion.Members
 {
 	class MemberedActivator : DecoratedActivator
 	{
-		readonly IMembers _members;
+		readonly IDictionary<string, IMember> _members;
 
-		public MemberedActivator(IActivator activator, IMembers members) : base(activator)
+		public MemberedActivator(IActivator activator, IDictionary<string, IMember> members) : base(activator)
 		{
 			_members = members;
 		}
@@ -15,7 +18,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 			var members = parameter.Members();
 			while (members.MoveNext())
 			{
-				var member = _members.Get(parameter.DisplayName);
+				var member = _members.TryGet(parameter.DisplayName);
 				member?.Assign(result, ((IActivator) member).Get(parameter));
 			}
 

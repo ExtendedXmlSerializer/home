@@ -21,26 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Conversion.Elements;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Elements
+namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	public class Elements : IElements
+	public class MemberAliasProvider : AliasProviderBase<MemberInfo>
 	{
-		public static Elements Default { get; } = new Elements();
-		Elements() : this(x => new ElementOptions(x)) {}
+		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
+		MemberAliasProvider() {}
 
-		readonly IParameterizedSource<TypeInfo, IEmitter> _selector;
-
-		public Elements(Func<IElements, IElementOptions> options)
+		protected override string GetItem(MemberInfo parameter)
 		{
-			_selector = new OptionSelector<TypeInfo, IEmitter>(options(this).ToArray());
+			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
 		}
-
-		public IEmitter Get(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

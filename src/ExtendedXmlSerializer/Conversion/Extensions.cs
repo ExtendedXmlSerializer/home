@@ -25,8 +25,6 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Conversion.Elements;
-using ExtendedXmlSerialization.Conversion.Xml;
 
 namespace ExtendedXmlSerialization.Conversion
 {
@@ -56,11 +54,11 @@ namespace ExtendedXmlSerialization.Conversion
 		/*public static IElement Actual(this IElements @this, IElement definition, object instance)
 			=> Actual(@this, definition.Classification.AsType(), instance);*/
 
-		public static IXmlElement Actual(this IElements @this, Type definition, object instance)
+		/*public static IXmlElement Actual(this IEmitters @this, Type definition, object instance)
 		{
 			var type = instance.GetType();
 			var result = definition != type ? (IXmlElement)@this.Get(type.GetTypeInfo()) : null;
 			return result;
-		}
+		}*/
 	}
 }

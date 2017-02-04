@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Immutable;
 using System.Xml;
-using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Conversion.Xml.Properties;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
@@ -23,17 +22,32 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 
 	class StartGenericElement : StartElement
 	{
-		readonly ImmutableArray<IElement> _arguments;
-		public StartGenericElement(string displayName, string @namespace, ImmutableArray<IElement> arguments) : base(displayName, @namespace)
+		readonly ImmutableArray<Type> _arguments;
+		readonly ITypeArgumentsProperty _property;
+
+		public StartGenericElement(string displayName, string @namespace, ImmutableArray<Type> arguments)
+			: this(displayName, @namespace, arguments, TypeArgumentsProperty.Default)
+		{}
+
+		public StartGenericElement(string displayName, string @namespace, ImmutableArray<Type> arguments, ITypeArgumentsProperty property)
+			: base(displayName, @namespace)
 		{
 			_arguments = arguments;
+			_property = property;
 		}
 
 		public override void Emit(XmlWriter writer, object instance)
 		{
 			base.Emit(writer, instance);
-
+			_property.Emit(writer, _arguments);
 		}
+	}
+
+	abstract class EmitterBase<T> : EmitterBase
+	{
+		public override void Emit(XmlWriter writer, object instance) => Emit(writer, instance.AsValid<T>());
+
+		public abstract void Emit(XmlWriter writer, T instance);
 	}
 
 	abstract class EmitterBase : IEmitter
@@ -52,34 +66,25 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 	class StartVariableTypedMember : StartMember
 	{
 		readonly Type _classification;
-		readonly IElements _elements;
-		readonly IXmlElement _property;
-		readonly ITypeFormatter _formatter;
+		readonly ITypeProperty _property;
 
-		public StartVariableTypedMember(string name, Type classification)
-			: this(name, classification, Elements.Default, TypeProperty.Default, TypeFormatter.Default) {}
+		public StartVariableTypedMember(string name, Type classification) : this(name, classification, TypeProperty.Default) {}
 
-		public StartVariableTypedMember(string name, Type classification, IElements elements, IXmlElement property,
-		                                ITypeFormatter formatter) : base(name)
+		public StartVariableTypedMember(string name, Type classification, ITypeProperty property) : base(name)
 		{
 			_classification = classification;
-			_elements = elements;
 			_property = property;
-			_formatter = formatter;
 		}
 
 		public override void Emit(XmlWriter writer, object instance)
 		{
 			base.Emit(writer, instance);
 
-			/*var actual = _elements.Actual(_classification, instance);
-			if (actual != null)
+			var type = instance.GetType();
+			if (_classification != type)
 			{
-				/*writer.WriteAttributeString(_property.DisplayName, _property.Namespace, _formatter.Get(actual.Classification));#1#
-				writer.WriteStartAttribute(_property.DisplayName, _property.Namespace);
-				writer.WriteQualifiedName(actual.DisplayName, actual.Namespace);
-				writer.WriteEndAttribute();
-			}*/
+				_property.Emit(writer, type);
+			}
 		}
 	}
 

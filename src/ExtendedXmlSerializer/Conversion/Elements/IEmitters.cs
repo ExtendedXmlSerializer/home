@@ -3,5 +3,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IElements : ISelector<TypeInfo, IEmitter> {}
+	public interface IEmitters : ISelector<TypeInfo, IEmitter> {}
 }

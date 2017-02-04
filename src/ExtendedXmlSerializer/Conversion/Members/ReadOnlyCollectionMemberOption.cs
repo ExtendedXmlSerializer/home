@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.Conversion.Elements;
+using ExtendedXmlSerialization.Conversion.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
@@ -12,14 +13,17 @@ namespace ExtendedXmlSerialization.Conversion.Members
 	{
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IConverters converters, IAliasProvider alias) : this(converters, alias, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IConverters converters)
+			: this(converters, MemberAliasProvider.Default, AddDelegates.Default) {}
 
 		public ReadOnlyCollectionMemberOption(IConverters converters, IAliasProvider alias, IAddDelegates add)
 			: base(Specification.Instance, converters, alias)
 		{
 			_add = add;
 		}
-		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter, IConverter body, MemberInfo metadata)
+
+		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
+		                                  IConverter body, MemberInfo metadata)
 		{
 			var add = _add.Get(classification);
 			var result = add != null ? new ReadOnlyCollectionMember(displayName, add, getter, body) : null;

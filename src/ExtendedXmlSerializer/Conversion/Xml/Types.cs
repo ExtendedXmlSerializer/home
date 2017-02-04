@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
@@ -31,35 +33,22 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
 		public static Types Default { get; } = new Types();
-		Types() : this(Elements.Defaults.Elements, TypeContexts.Default) {}
 
-		readonly ImmutableArray<IXmlElement> _known;
+		Types()
+			: this(
+				WellKnownAliases.Default.ToDictionary(x => TypeNames.Default.Get(x.Key.GetTypeInfo()), y => y.Key.GetTypeInfo()),
+				TypeContexts.Default) {}
+
+		readonly IDictionary<XName, TypeInfo> _known;
 		readonly ITypeContexts _sources;
 
-		
-		public Types(ImmutableArray<IXmlElement> known, ITypeContexts sources)
+		public Types(IDictionary<XName, TypeInfo> known, ITypeContexts sources)
 		{
 			_known = known;
 			_sources = sources;
 		}
 
 		protected override TypeInfo Create(XName parameter)
-			=> Known(parameter) ?? _sources.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
-
-		TypeInfo Known(XName parameter)
-		{
-			var localName = parameter.LocalName;
-			var ns = parameter.NamespaceName;
-			var length = _known.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var name = _known[i];
-				if (ns == name.Namespace && localName == name.DisplayName)
-				{
-					return name.Classification;
-				}
-			}
-			return null;
-		}
+			=> _known.TryGet(parameter) ?? _sources.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 	}
 }

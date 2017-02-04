@@ -21,11 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	sealed class IdentifierProperty : FrameworkElementBase
+	sealed class IdentifierProperty : FrameworkElementBase<int>
 	{
 		public static IdentifierProperty Default { get; } = new IdentifierProperty();
 		IdentifierProperty() : base("id") {}
+		
+		public override void Emit(XmlWriter writer, int instance)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -26,7 +26,7 @@ using System.Linq.Expressions;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class Activators : /*CacheBase<Type, Func<object>>,*/ IActivators
+	class Activators : IActivators
 	{
 		public static Activators Default { get; } = new Activators();
 		Activators() {}

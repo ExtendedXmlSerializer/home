@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class DictionaryPairTypesLocator : /*CacheBase<TypeInfo, DictionaryPairTypes>,*/ IDictionaryPairTypesLocator
+	public class DictionaryPairTypesLocator : IDictionaryPairTypesLocator
 	{
 		public DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 

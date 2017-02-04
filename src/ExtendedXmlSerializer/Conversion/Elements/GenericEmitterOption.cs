@@ -21,9 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IElementOptions : IEnumerable<IStartOption> {}
+	public class GenericEmitterOption : EmitterOptionBase
+	{
+		public static GenericEmitterOption Default { get; } = new GenericEmitterOption();
+		GenericEmitterOption() : base(IsGenericTypeSpecification.Default) {}
+
+		public override IEmitter Create(XName name, TypeInfo classification)
+			=>
+				new StartGenericElement(name.LocalName, name.NamespaceName, classification.GetGenericArguments().ToImmutableArray());
+	}
 }

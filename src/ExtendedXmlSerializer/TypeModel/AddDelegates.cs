@@ -27,7 +27,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class AddDelegates : /*CacheBase<TypeInfo, Action<object, object>>,*/ IAddDelegates
+	class AddDelegates : IAddDelegates
 	{
 		public static AddDelegates Default { get; } = new AddDelegates();
 		AddDelegates() : this(CollectionItemTypeLocator.Default, AddMethodLocator.Default) {}

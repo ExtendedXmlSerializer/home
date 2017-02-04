@@ -7,8 +7,6 @@ namespace ExtendedXmlSerialization.Conversion
 		readonly IActivator _activator;
 		readonly IEmitter _emitter;
 
-		public DecoratedConverter(IConverter converter) : this(converter, converter) {}
-
 		public DecoratedConverter(IActivator activator, IEmitter emitter)
 		{
 			_activator = activator;

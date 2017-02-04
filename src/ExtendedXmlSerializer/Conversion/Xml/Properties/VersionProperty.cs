@@ -21,11 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Conversion.Xml.Properties
 {
-	sealed class VersionProperty : FrameworkElementBase
+	sealed class VersionProperty : FrameworkElementBase<int>
 	{
 		public static VersionProperty Default { get; } = new VersionProperty();
 		VersionProperty() : base("ver") {}
+
+		public override void Emit(XmlWriter writer, int instance)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
