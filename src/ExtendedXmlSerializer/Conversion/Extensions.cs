@@ -48,8 +48,15 @@ namespace ExtendedXmlSerialization.Conversion
 		/*public static IElement Load(this IElements @this, IContainer container, TypeInfo instanceType)
 			=> container.Exact(instanceType) ? container.Element : @this.Get(instanceType);*/
 
-		public static bool Exact(this IElement @this, object instance) => Exact(@this, instance.GetType().GetTypeInfo());
+		// public static bool Exact(this IElement @this, object instance) => Exact(@this, instance.GetType());
 
-		public static bool Exact(this IElement @this, TypeInfo type) => type.Equals(@this.Classification);
+		// public static bool Exact(this IElement @this, Type type) => type == @this.Classification.AsType();
+
+		public static IElement Actual(this IElements @this, IElement definition, object instance)
+		{
+			var type = instance.GetType();
+			var result = definition.Classification.AsType() != type ? @this.Get(type.GetTypeInfo()) : null;
+			return result;
+		}
 	}
 }

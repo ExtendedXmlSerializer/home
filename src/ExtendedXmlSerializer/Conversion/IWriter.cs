@@ -32,8 +32,6 @@ namespace ExtendedXmlSerialization.Conversion
 
 		void Write(string text);
 
-		void Render(IRender render, object instance);
+		void Attribute(IElement element, object value);
 	}
-
-	public interface IRender {}
 }

@@ -8,7 +8,7 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 		ImmutableArray<IElement> Arguments { get; }
 	}
 
-	class GenericElement : Element, IGenericElement
+	class GenericElement : ElementBase, IGenericElement
 	{
 		public GenericElement(string displayName, TypeInfo classification, ImmutableArray<IElement> arguments)
 			: base(displayName, classification)
