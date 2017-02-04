@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	public interface IEmitterOption : IOption<TypeInfo, IEmitter> {}
+	public interface IEmitterOption : IOption<TypeInfo, IWriter> {}
 }

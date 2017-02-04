@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Conversion.Members
 		public Member(string displayName, Action<object, object> setter, Func<object, object> getter, IConverter body)
 			: this(displayName, new StartMember(displayName), setter, getter, body) {}
 
-		public Member(string displayName, IEmitter start, Action<object, object> setter, Func<object, object> getter,
+		public Member(string displayName, IWriter start, Action<object, object> setter, Func<object, object> getter,
 		              IConverter body) : base(start, body)
 		{
 			DisplayName = displayName;

@@ -21,31 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Xml;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Conversion.Members
+namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	class MemberEmitter : IEmitter
+	abstract class WriterBase : IWriter
 	{
-		readonly ImmutableArray<IMember> _members;
+		public abstract void Write(IXmlWriter writer, object instance);
+	}
 
-		public MemberEmitter(ImmutableArray<IMember> members)
-		{
-			_members = members;
-		}
+	abstract class WriterBase<T> : WriterBase
+	{
+		public override void Write(IXmlWriter writer, object instance) => Emit(writer, instance.AsValid<T>());
 
-		public void Emit(XmlWriter writer, object instance)
-		{
-			for (var i = 0; i < _members.Length; i++)
-			{
-				var member = _members[i];
-				var value = member.Get(instance);
-				if (value != null)
-				{
-					member.Emit(writer, value);
-				}
-			}
-		}
+		public abstract void Emit(IXmlWriter writer, T instance);
 	}
 }

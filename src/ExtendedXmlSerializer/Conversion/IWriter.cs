@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerialization.Core;
-
-namespace ExtendedXmlSerialization.Conversion.Elements
+namespace ExtendedXmlSerialization.Conversion
 {
-	abstract class EmitterBase<T> : EmitterBase
+	public interface IWriter
 	{
-		public override void Emit(XmlWriter writer, object instance) => Emit(writer, instance.AsValid<T>());
-
-		public abstract void Emit(XmlWriter writer, T instance);
+		void Write(IXmlWriter writer, object instance);
 	}
 }

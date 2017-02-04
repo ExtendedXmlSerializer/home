@@ -21,12 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion
 {
-	public interface IEmitter
+	class DecoratedReader : IReader
 	{
-		void Emit(XmlWriter writer, object instance);
+		readonly IReader _reader;
+
+		public DecoratedReader(IReader reader)
+		{
+			_reader = reader;
+		}
+
+		public virtual object Get(IXmlReader parameter) => _reader.Get(parameter);
 	}
 }

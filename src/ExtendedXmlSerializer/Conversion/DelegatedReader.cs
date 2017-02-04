@@ -25,15 +25,15 @@ using System;
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	class DelegatedActivator : IActivator
+	class DelegatedReader : IReader
 	{
 		readonly Func<object> _activate;
 
-		public DelegatedActivator(Func<object> activate)
+		public DelegatedReader(Func<object> activate)
 		{
 			_activate = activate;
 		}
 
-		public object Get(IReader parameter) => _activate();
+		public object Get(IXmlReader parameter) => _activate();
 	}
 }

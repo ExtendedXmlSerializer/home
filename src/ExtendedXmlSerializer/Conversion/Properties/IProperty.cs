@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
-	public interface IProperty<in T> : IEmitter
+	public interface IProperty<in T> : IWriter
 	{
-		void Emit(XmlWriter writer, T instance);
+		void Emit(IXmlWriter writer, T instance);
 	}
 }

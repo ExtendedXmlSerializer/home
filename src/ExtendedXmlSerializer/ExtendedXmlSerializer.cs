@@ -27,6 +27,7 @@ using System.Xml;
 using ExtendedXmlSerialization.Conversion;
 using ExtendedXmlSerialization.Conversion.Elements;
 using XmlReader = ExtendedXmlSerialization.Conversion.Xml.XmlReader;
+using XmlWriter = System.Xml.XmlWriter;
 
 
 namespace ExtendedXmlSerialization
@@ -61,7 +62,7 @@ namespace ExtendedXmlSerialization
 			using (var source = XmlWriter.Create(stream))
 			{
 				var context = _roots.Get(instance.GetType().GetTypeInfo());
-				context.Emit(source, instance);
+				context.Write(new Conversion.XmlWriter(source), instance);
 			}
 		}
 

@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 		{
 			var item = _locator.Get(parameter);
 			var context = new CollectionItem(_emitters.Get(item), _converters.Get(item));
-			var activator = new CollectionActivator(new DelegatedActivator(_activators.Get(parameter.AsType())), context, _add);
+			var activator = new CollectionReader(new DelegatedReader(_activators.Get(parameter.AsType())), context, _add);
 			var result = new EnumerableConverter(context, activator);
 			return result;
 		}

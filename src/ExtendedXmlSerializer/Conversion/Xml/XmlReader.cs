@@ -27,7 +27,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Conversion.Xml
 {
-	class XmlReader : IReader
+	class XmlReader : IXmlReader
 	{
 		readonly ITypeLocator _type;
 		readonly System.Xml.XmlReader _reader;

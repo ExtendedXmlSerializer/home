@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	class StartMember : IEmitter
+	class StartMember : IWriter
 	{
 		readonly string _name;
 
@@ -34,6 +32,6 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 			_name = name;
 		}
 
-		public virtual void Emit(XmlWriter writer, object instance) => writer.WriteStartElement(_name);
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Member(_name);
 	}
 }

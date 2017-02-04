@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.Conversion
 {
-	public interface IConverter : IActivator, IEmitter {}
+	public interface IConverter : IReader, IWriter {}
 }

@@ -21,15 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion.Elements
 {
-	class FinishElement : IEmitter
+	class FinishElement : IWriter
 	{
 		public static FinishElement Default { get; } = new FinishElement();
 		FinishElement() {}
 
-		public void Emit(XmlWriter writer, object instance) => writer.WriteEndElement();
+		public void Write(IXmlWriter writer, object instance) => writer.EndCurrent();
 	}
 }

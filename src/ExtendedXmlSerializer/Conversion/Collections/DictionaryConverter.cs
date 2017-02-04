@@ -27,7 +27,7 @@ namespace ExtendedXmlSerialization.Conversion.Collections
 {
 	class DictionaryConverter : EnumerableConverter<IDictionary>
 	{
-		public DictionaryConverter(IConverter item, IActivator activator) : base(item, activator) {}
+		public DictionaryConverter(IConverter item, IReader reader) : base(item, reader) {}
 
 		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}

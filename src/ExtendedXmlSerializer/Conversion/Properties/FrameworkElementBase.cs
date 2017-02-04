@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Conversion.Elements;
 
 namespace ExtendedXmlSerialization.Conversion.Properties
 {
-	abstract class FrameworkElementBase<T> : EmitterBase<T>, IProperty<T>
+	abstract class FrameworkElementBase<T> : WriterBase<T>, IProperty<T>
 	{
 		protected FrameworkElementBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
 

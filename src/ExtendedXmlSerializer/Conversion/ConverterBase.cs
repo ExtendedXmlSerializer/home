@@ -21,21 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.Conversion
 {
 	public abstract class ConverterBase : IConverter
 	{
-		public abstract void Emit(XmlWriter writer, object instance);
+		public abstract void Write(IXmlWriter writer, object instance);
 
-		public abstract object Get(IReader reader);
+		public abstract object Get(IXmlReader reader);
 	}
 
 	public abstract class ConverterBase<T> : ConverterBase
 	{
-		public override void Emit(XmlWriter writer, object instance) => Emit(writer, (T) instance);
+		public override void Write(IXmlWriter writer, object instance) => Emit(writer, (T) instance);
 
-		public abstract void Emit(XmlWriter writer, T instance);
+		public abstract void Emit(IXmlWriter writer, T instance);
 	}
 }
