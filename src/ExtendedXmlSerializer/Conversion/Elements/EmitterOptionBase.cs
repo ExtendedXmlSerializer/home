@@ -33,11 +33,11 @@ namespace ExtendedXmlSerialization.Conversion.Elements
 	{
 		protected EmitterOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		protected EmitterOptionBase(ISpecification<TypeInfo> specification) : this(specification, TypeNames.Default) {}
+		protected EmitterOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
 
-		readonly ITypeNames _names;
-		
-		protected EmitterOptionBase(ISpecification<TypeInfo> specification, ITypeNames names) : base(specification)
+		readonly INames _names;
+
+		protected EmitterOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
 		{
 			_names = names;
 		}

@@ -21,31 +21,3 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*namespace ExtendedXmlSerialization.Conversion
-{
- class DictionaryContextOption : ContainerContextOptionBase<IName>
- {
-	 readonly IContexts _contexts;
-	 readonly IActivators _activators;
-	 readonly IAddDelegates _add;
-
-	 public DictionaryContextOption(IContexts contexts, IActivators activators, ICollectionItemTypeLocator locator,
-		                              INames names, IAddDelegates add)
-		 : this(contexts, new CollectionItemNameProvider(locator, names), activators, add) {}
-
-	 public DictionaryContextOption(IContexts contexts, INameProvider<IName> names, IActivators activators,
-		                              IAddDelegates add)
-		 : base(IsCollectionTypeSpecification.Default, names)
-	 {
-		 _contexts = contexts;
-		 _activators = activators;
-		 _add = add;
-	 }
-
-	 protected override IElementContext Create(TypeInfo type, IName name)
-	 {
-		 throw new System.NotImplementedException();
-		 // new EnumerableContext(new CollectionItemContext(_contexts, name), _activators, _add);
-	 }
- }
-}*/

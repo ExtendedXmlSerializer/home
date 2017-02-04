@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Conversion.Xml
 		public static implicit operator char[](Delimiter delimiter) => delimiter._characters.ToArray();
 
 		public static implicit operator char(Delimiter delimiter) => delimiter._characters[0];
-		public static implicit operator string(Delimiter delimiter) => ((char)delimiter).ToString();
+		public static implicit operator string(Delimiter delimiter) => ((char) delimiter).ToString();
 
 		public override string ToString() => _characters[0].ToString();
 	}
