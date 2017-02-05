@@ -24,20 +24,49 @@
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
+	class ArrayReader : CollectionReader
+	{
+		readonly ITypeProperty _property;
+
+		public ArrayReader(IConverter item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
+
+		public ArrayReader(IConverter item, IAddDelegates add, ITypeProperty property) : base(ArrayActivator.Default, item, add)
+		{
+			_property = property;
+		}
+
+		public override object Get(IXmlReader parameter)
+		{
+			var itemType = _property.Get(parameter);
+			var list = base.Get(parameter).AsValid<ArrayList>();
+			var result = list.ToArray(itemType.AsType());
+			return result;
+		}
+	}
+
+	class ArrayActivator : DelegatedFixedReader
+	{
+		public static ArrayActivator Default { get; } = new ArrayActivator();
+		ArrayActivator() : base(() => new ArrayList()) {}
+	}
+
 	class CollectionReader : DecoratedReader
 	{
-		readonly IConverter _context;
+		readonly IConverter _item;
 		readonly IAddDelegates _add;
 
-		public CollectionReader(IReader reader, IConverter context, IAddDelegates add) : base(reader)
+		public CollectionReader(IReader activator, IConverter item) : this(activator, item, AddDelegates.Default) {}
+
+		public CollectionReader(IReader activator, IConverter item, IAddDelegates add) : base(activator)
 		{
-			_context = context;
+			_item = item;
 			_add = add;
 		}
 
@@ -48,7 +77,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 			var items = parameter.Items();
 			while (items.MoveNext())
 			{
-				list.Add(_context.Get(parameter));
+				list.Add(_item.Get(parameter));
 			}
 			return result;
 		}

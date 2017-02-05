@@ -21,36 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class TypeExtractor : ITypeExtractor
+	public abstract class NamedElementOptionBase : ElementOptionBase
 	{
-		public static TypeExtractor Default { get; } = new TypeExtractor();
-		TypeExtractor() : this(Types.Default) {}
+		readonly INames _names;
 
-		readonly ITypes _types;
+		protected NamedElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		public TypeExtractor(ITypes types)
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
+
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
 		{
-			_types = types;
+			_names = names;
 		}
 
-		public TypeInfo Get(System.Xml.XmlReader parameter)
-		{
-			switch (parameter.MoveToContent())
-			{
-				case XmlNodeType.Element:
-					var name = XName.Get(parameter.LocalName, parameter.NamespaceURI);
-					var result = _types.Get(name);
-					return result;
-			}
+		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-			throw new InvalidOperationException($"Could not locate the type from the current Xml reader '{parameter}.'");
-		}
+		public abstract IWriter Create(XName name, TypeInfo classification);
 	}
 }

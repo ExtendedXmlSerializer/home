@@ -21,12 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ConverterModel.Xml;
-
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	public interface IProperty<in T> : IWriter
-	{
-		void Write(IXmlWriter writer, T instance);
-	}
+	public interface IProperty<T> : IConverter<T> {}
 }

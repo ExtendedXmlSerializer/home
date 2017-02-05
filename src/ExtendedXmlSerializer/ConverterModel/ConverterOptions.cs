@@ -59,9 +59,9 @@ namespace ExtendedXmlSerialization.ConverterModel
 			yield return StringConverter.Default;
 			yield return GuidConverter.Default;
 			yield return TimeSpanConverter.Default;
-			
 
-			// yield return new DictionaryContext();
+
+			yield return new ArrayOption(_converters);
 			yield return new CollectionOption(_converters);
 
 			yield return new MemberedConverterOption(new Members.Members(_converters));

@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
@@ -32,10 +34,14 @@ namespace ExtendedXmlSerialization.ConverterModel
 		public abstract object Get(IXmlReader reader);
 	}
 
-	public abstract class ConverterBase<T> : ConverterBase
+	public abstract class ConverterBase<T> : IConverter<T>, IConverter
 	{
-		public override void Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, instance.AsValid<T>());
 
 		public abstract void Write(IXmlWriter writer, T instance);
+
+		object IParameterizedSource<IXmlReader, object>.Get(IXmlReader parameter) => Get(parameter);
+
+		public abstract T Get(IXmlReader reader);
 	}
 }

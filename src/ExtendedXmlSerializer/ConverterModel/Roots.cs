@@ -29,18 +29,18 @@ namespace ExtendedXmlSerialization.ConverterModel
 	class Roots : WeakCacheBase<TypeInfo, IConverter>, IRoots
 	{
 		public static Roots Default { get; } = new Roots();
-		Roots() : this(Writers.Default, DefaultConverters.Default) {}
+		Roots() : this(Elements.Default, DefaultConverters.Default) {}
 
-		readonly IWriters _writers;
+		readonly IElements _elements;
 		readonly IConverters _converters;
 
-		public Roots(IWriters writers, IConverters converters)
+		public Roots(IElements elements, IConverters converters)
 		{
-			_writers = writers;
+			_elements = elements;
 			_converters = converters;
 		}
 
 		protected override IConverter Create(TypeInfo parameter)
-			=> new Root(_writers.Get(parameter), _converters.Get(parameter));
+			=> new Root(_elements.Get(parameter), _converters.Get(parameter));
 	}
 }

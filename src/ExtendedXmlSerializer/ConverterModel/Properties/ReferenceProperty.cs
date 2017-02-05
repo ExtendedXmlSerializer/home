@@ -26,12 +26,17 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	sealed class ReferenceProperty : FrameworkElementBase<int>
+	sealed class ReferenceProperty : FrameworkPropertyBase<int>
 	{
 		public static ReferenceProperty Default { get; } = new ReferenceProperty();
 		ReferenceProperty() : base("ref") {}
 
 		public override void Write(IXmlWriter writer, int instance)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override int Get(IXmlReader reader)
 		{
 			throw new NotImplementedException();
 		}

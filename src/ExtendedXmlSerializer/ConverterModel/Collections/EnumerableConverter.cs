@@ -53,6 +53,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 			}
 		}
 
-		public override object Get(IXmlReader reader) => _reader.Get(reader);
+		public override T Get(IXmlReader reader) => (T)_reader.Get(reader);
 	}
 }

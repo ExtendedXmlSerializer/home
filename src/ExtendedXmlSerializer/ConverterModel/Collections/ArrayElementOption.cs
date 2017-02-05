@@ -22,23 +22,48 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Properties
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	sealed class VersionProperty : FrameworkPropertyBase<int>
+	class ArrayElementOption : ElementOptionBase
 	{
-		public static VersionProperty Default { get; } = new VersionProperty();
-		VersionProperty() : base("ver") {}
+		public static ArrayElementOption Default { get; } = new ArrayElementOption();
+		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}
 
-		public override void Write(IXmlWriter writer, int instance)
+		readonly ICollectionItemTypeLocator _locator;
+
+		public ArrayElementOption(ICollectionItemTypeLocator locator) : base(IsArraySpecification.Default)
 		{
-			throw new NotImplementedException();
+			_locator = locator;
 		}
 
-		public override int Get(IXmlReader reader)
+		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
+	}
+
+	class ArrayElement : Element
+	{
+		readonly static XName XName = Names.Default.Get(typeof(Array).GetTypeInfo());
+
+		readonly TypeInfo _elementType;
+		readonly ITypeProperty _property;
+
+		public ArrayElement(TypeInfo element) : this(XName, element, ItemTypeProperty.Default) {}
+
+		public ArrayElement(XName name, TypeInfo elementType, ITypeProperty property) : base(name)
 		{
-			throw new NotImplementedException();
+			_elementType = elementType;
+			_property = property;
+		}
+
+		public override void Write(IXmlWriter writer, object instance)
+		{
+			base.Write(writer, instance);
+			_property.Write(writer, _elementType);
 		}
 	}
 }

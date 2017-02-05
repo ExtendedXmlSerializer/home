@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.ConverterModel
 		public abstract void Write(IXmlWriter writer, object instance);
 	}
 
-	abstract class WriterBase<T> : WriterBase
+	abstract class WriterBase<T> : IWriter
 	{
-		public override void Write(IXmlWriter writer, object instance) => Write(writer, instance.AsValid<T>());
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, instance.AsValid<T>());
 
 		public abstract void Write(IXmlWriter writer, T instance);
 	}

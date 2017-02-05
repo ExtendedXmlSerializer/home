@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class GenericElementOption : ElementOptionBase
+	class GenericElementOption : NamedElementOptionBase
 	{
 		public static GenericElementOption Default { get; } = new GenericElementOption();
 		GenericElementOption() : base(IsGenericTypeSpecification.Default) {}
