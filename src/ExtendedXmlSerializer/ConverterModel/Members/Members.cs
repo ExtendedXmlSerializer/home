@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class Members : IMembers
+	class Members : IMembers
 	{
 		readonly ISelector _selector;
 		readonly ISpecification<PropertyInfo> _property;

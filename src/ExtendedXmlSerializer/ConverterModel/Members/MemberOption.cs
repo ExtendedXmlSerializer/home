@@ -53,8 +53,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		                                       Func<object, object> getter, IConverter body)
 		{
 			var start = _specification.IsSatisfiedBy(classification)
-				? new StartMember(displayName)
-				: new StartVariableTypedMember(displayName, classification.AsType());
+				? new ConverterModel.Member(displayName)
+				: new VariableTypedMember(displayName, classification.AsType());
 			var result = new Member(displayName, start, setter, getter, body);
 			return result;
 		}

@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	public class DecoratedConverter : ConverterBase
+	class DecoratedConverter : ConverterBase
 	{
 		readonly IReader _reader;
 		readonly IWriter _writer;

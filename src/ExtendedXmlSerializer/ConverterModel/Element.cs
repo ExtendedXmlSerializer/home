@@ -21,34 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.ConverterModel.Properties;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class StartVariableTypedMember : StartMember
+	class Element : WriterBase
 	{
-		readonly Type _classification;
-		readonly ITypeProperty _property;
+		readonly XName _name;
 
-		public StartVariableTypedMember(string name, Type classification) : this(name, classification, TypeProperty.Default) {}
-
-		public StartVariableTypedMember(string name, Type classification, ITypeProperty property) : base(name)
+		public Element(XName name)
 		{
-			_classification = classification;
-			_property = property;
+			_name = name;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-
-			var type = instance.GetType();
-			if (_classification != type)
-			{
-				_property.Write(writer, type);
-			}
-		}
+		public override void Write(IXmlWriter writer, object instance) => writer.Element(_name);
 	}
 }

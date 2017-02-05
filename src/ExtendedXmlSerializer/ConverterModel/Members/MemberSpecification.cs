@@ -27,11 +27,11 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
+	class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
 	{
 		public MemberSpecification(ISpecification<T> specification) : base(specification, AllowSpecification.Default) {}
 
-		public class AllowSpecification : ISpecification<MemberInfo>
+		sealed class AllowSpecification : ISpecification<MemberInfo>
 		{
 			public static AllowSpecification Default { get; } = new AllowSpecification();
 			AllowSpecification() {}

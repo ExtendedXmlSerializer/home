@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class ReadOnlyCollectionMemberOption : MemberOptionBase
+	class ReadOnlyCollectionMemberOption : MemberOptionBase
 	{
 		readonly IAddDelegates _add;
 

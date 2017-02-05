@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class TypePartitions : CacheBase<string, Func<string, TypeInfo>>, ITypePartitions
+	class TypePartitions : CacheBase<string, Func<string, TypeInfo>>, ITypePartitions
 	{
 		public static TypePartitions Default { get; } = new TypePartitions();
 		TypePartitions() : this(DefaultParsingDelimiters.Default, AssemblyLoader.Default, TypeNameAlteration.Default) {}

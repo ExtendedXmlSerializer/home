@@ -22,31 +22,33 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class StartGenericElement : StartElement
+	class VariableTypedMember : Member
 	{
-		readonly ImmutableArray<Type> _arguments;
-		readonly ITypeArgumentsProperty _property;
+		readonly Type _classification;
+		readonly ITypeProperty _property;
 
-		public StartGenericElement(XName name, ImmutableArray<Type> arguments)
-			: this(name, arguments, TypeArgumentsProperty.Default) {}
+		public VariableTypedMember(string name, Type classification) : this(name, classification, TypeProperty.Default) {}
 
-		public StartGenericElement(XName name, ImmutableArray<Type> arguments, ITypeArgumentsProperty property) : base(name)
+		public VariableTypedMember(string name, Type classification, ITypeProperty property) : base(name)
 		{
-			_arguments = arguments;
+			_classification = classification;
 			_property = property;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
-			_property.Write(writer, _arguments);
+
+			var type = instance.GetType();
+			if (_classification != type)
+			{
+				_property.Write(writer, type);
+			}
 		}
 	}
 }

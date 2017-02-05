@@ -26,11 +26,11 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class WriterOption : WriterOptionBase
+	class ElementOption : ElementOptionBase
 	{
-		public static WriterOption Default { get; } = new WriterOption();
-		WriterOption() {}
+		public static ElementOption Default { get; } = new ElementOption();
+		ElementOption() {}
 
-		public override IWriter Create(XName name, TypeInfo classification) => new StartElement(name);
+		public override IWriter Create(XName name, TypeInfo classification) => new Element(name);
 	}
 }

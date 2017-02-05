@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class DefaultParsingDelimiters : IParsingDelimiters
+	class DefaultParsingDelimiters : IParsingDelimiters
 	{
 		public static DefaultParsingDelimiters Default { get; } = new DefaultParsingDelimiters();
 		DefaultParsingDelimiters() : this(new Delimiter(';'), new Delimiter(':'), new Delimiter('='), new Delimiter('-')) {}
