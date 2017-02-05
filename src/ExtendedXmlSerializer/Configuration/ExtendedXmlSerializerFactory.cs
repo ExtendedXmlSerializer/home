@@ -30,12 +30,6 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 		{
-			/*var namespaces = new Namespaces();
-			var locator = new CollectionItemTypeLocator();
-			var add = new AddDelegates(locator, new AddMethodLocator());
-			var types = new Types(namespaces, new TypeContexts());*/
-			/*var result = new ExtendedXmlSerializer(/*factory, new ConverterOptions(add)#1#);
-			return result;*/
 			return new ExtendedXmlSerializer();
 		}
 	}

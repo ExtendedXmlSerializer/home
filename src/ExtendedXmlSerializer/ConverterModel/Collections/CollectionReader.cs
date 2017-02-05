@@ -50,10 +50,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 			{
 				list.Add(_context.Get(parameter));
 			}
-			/*foreach (var _ in parameter.Items())
-			{
-				list.Add(_context.Yield(parameter));
-			}*/
 			return result;
 		}
 	}

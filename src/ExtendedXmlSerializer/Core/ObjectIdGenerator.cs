@@ -107,20 +107,6 @@ namespace ExtendedXmlSerialization.Core
 			return result;
 		}
 
-		/*/// <summary>Determines whether an object has already been assigned an ID.</summary>
-		/// <returns>The object ID of <paramref name="obj" /> if previously known to the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" />; otherwise, null.</returns>
-		/// <param name="obj">The object you are asking for. </param>
-		/// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
-		public virtual long? Locate(object obj)
-		{
-		    if (obj == null)
-		        throw new ArgumentNullException("obj", ("ArgumentNull_Obj"));
-		    bool found;
-		    var index = FindIndex(obj, out found);
-		    var result = found ? (long?) _ids[index] : null;
-		    return result;
-		}*/
-
 		public virtual bool Contains(object obj)
 		{
 			bool result;
