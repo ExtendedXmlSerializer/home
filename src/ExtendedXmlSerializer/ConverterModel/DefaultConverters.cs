@@ -26,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Converters
+namespace ExtendedXmlSerialization.ConverterModel
 {
 	public class DefaultConverters : IConverters
 	{

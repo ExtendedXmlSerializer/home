@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
 	static class Defaults
 	{
-		readonly static TypeInfo Type = Converters.Defaults.FrameworkType;
+		readonly static TypeInfo Type = ConverterModel.Defaults.FrameworkType;
 		public static string Namespace { get; } = Namespaces.Default.Get(Type);
 	}
 }
