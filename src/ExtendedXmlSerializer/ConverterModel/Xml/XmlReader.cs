@@ -26,6 +26,9 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Properties;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
@@ -38,21 +41,38 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly ITypeExtractor _type;
+		readonly ITypes _types;
+		readonly IParsingDelimiters _delimiters;
 		readonly System.Xml.XmlReader _reader;
+		readonly static TypeInfo ArrayType = typeof(Array).GetTypeInfo();
 
 		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
 		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
-		public XmlReader(System.Xml.XmlReader reader) : this(TypeExtractor.Default, reader) {}
+		public XmlReader(System.Xml.XmlReader reader) : this(Types.Default, DefaultParsingDelimiters.Default, reader) {}
 
-		public XmlReader(ITypeExtractor type, System.Xml.XmlReader reader)
+		public XmlReader(ITypes types, IParsingDelimiters delimiters, System.Xml.XmlReader reader)
 		{
-			_type = type;
+			_types = types;
+			_delimiters = delimiters;
 			_reader = reader;
 		}
 
 		public string DisplayName => _reader.LocalName;
-		public TypeInfo Classification() => _type.Get(_reader);
+		public TypeInfo Classification()
+		{
+			switch (_reader.MoveToContent())
+			{
+				case XmlNodeType.Element:
+					var name = XName.Get(_reader.LocalName, _reader.NamespaceURI);
+					var result = Get(name);
+					if (Equals(result, ArrayType))
+					{
+						return ItemTypeProperty.Default.Get(this).MakeArrayType().GetTypeInfo();
+					}
+					return result;
+			}
+			throw new InvalidOperationException($"Could not locate the type from the current Xml reader '{_reader}.'");
+		}
 
 		public string Value()
 		{
@@ -65,6 +85,17 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public IEnumerator Members() => new Enumerator(_reader, _reader.Depth + 1);
 
 		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
+
+		public string this[XName name] => _reader.GetAttribute(name.LocalName, name.NamespaceName);
+
+		public XName Get(string parameter)
+		{
+			var parts = parameter.ToStringArray(_delimiters.Namespace);
+			var result = parts.Length == 2 ? XName.Get(parts[1], _reader.LookupNamespace(parts[0])) : XName.Get(parts[0], _reader.LookupNamespace(string.Empty));
+			return result;
+		}
+
+		public TypeInfo Get(XName parameter) => _types.Get(parameter);
 
 		public void Dispose() => _reader.Dispose();
 

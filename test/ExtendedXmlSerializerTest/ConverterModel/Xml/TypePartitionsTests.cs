@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 using Xunit;
 

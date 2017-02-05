@@ -21,10 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	public interface ITypeExtractor : IParameterizedSource<System.Xml.XmlReader, TypeInfo> {}
+	abstract class FrameworkPropertyBase<T> : ConverterBase<T>, IProperty<T>
+	{
+		protected FrameworkPropertyBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
+
+		protected FrameworkPropertyBase(XName name)
+		{
+			Name = name;
+		}
+
+		protected XName Name { get; }
+	}
 }

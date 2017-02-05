@@ -56,7 +56,8 @@ namespace ExtendedXmlSerialization
 		{
 			using (var reader = new XmlReader(stream))
 			{
-				var root = _roots.Get(reader.Classification());
+				var typeInfo = reader.Classification();
+				var root = _roots.Get(typeInfo);
 				var result = root.Get(reader);
 				return result;
 			}

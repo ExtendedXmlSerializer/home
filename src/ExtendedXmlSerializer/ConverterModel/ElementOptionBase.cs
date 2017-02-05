@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ConverterModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -33,17 +31,6 @@ namespace ExtendedXmlSerialization.ConverterModel
 	{
 		protected ElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		protected ElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
-
-		readonly INames _names;
-
-		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
-		{
-			_names = names;
-		}
-
-		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
-
-		public abstract IWriter Create(XName name, TypeInfo classification);
+		protected ElementOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
 	}
 }

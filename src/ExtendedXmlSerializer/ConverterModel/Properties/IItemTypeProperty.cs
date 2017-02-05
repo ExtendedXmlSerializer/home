@@ -21,19 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	abstract class FrameworkElementBase<T> : WriterBase<T>, IProperty<T>
+	class ItemTypeProperty : TypePropertyBase, ITypeProperty
 	{
-		protected FrameworkElementBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
-
-		protected FrameworkElementBase(XName name)
-		{
-			Name = name;
-		}
-
-		protected XName Name { get; }
+		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
+		ItemTypeProperty() : base("item") {}
 	}
 }

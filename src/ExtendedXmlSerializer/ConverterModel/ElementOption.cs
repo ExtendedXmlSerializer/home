@@ -26,7 +26,7 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class ElementOption : ElementOptionBase
+	class ElementOption : NamedElementOptionBase
 	{
 		public static ElementOption Default { get; } = new ElementOption();
 		ElementOption() {}

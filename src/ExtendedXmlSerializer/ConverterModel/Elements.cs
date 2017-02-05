@@ -22,28 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ConverterModel.Collections;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class TypeFormatter : ITypeFormatter
+	class Elements : OptionSelector<TypeInfo, IWriter>, IElements
 	{
-		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() {}
+		public static Elements Default { get; } = new Elements();
+		Elements() : this(ArrayElementOption.Default, GenericElementOption.Default, ElementOption.Default) {}
 
-		public string Get(TypeInfo type)
-		{
-			/*if (type.IsGenericType)
-			{
-				var types = type.GetGenericArguments();
-				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-				return name;
-			}*/
-			var result = type.IsNested
-				? $"{type.DeclaringType.Name}{(string) DefaultParsingDelimiters.Default.NestedClass}{type.Name}"
-				: type.Name;
-			return result;
-		}
+		public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}
 }

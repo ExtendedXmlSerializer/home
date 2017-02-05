@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
@@ -47,7 +48,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 			var type = instance.GetType();
 			if (_classification != type)
 			{
-				_property.Write(writer, type);
+				_property.Write(writer, type.GetTypeInfo());
 			}
 		}
 	}

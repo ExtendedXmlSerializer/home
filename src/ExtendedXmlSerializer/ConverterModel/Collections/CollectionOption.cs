@@ -22,40 +22,71 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class CollectionOption : ConverterOptionBase
+	abstract class CollectionOptionBase : ConverterOptionBase
 	{
 		readonly IConverters _converters;
+		readonly IElements _elements;
 		readonly ICollectionItemTypeLocator _locator;
-		readonly IWriters _writers;
-		readonly IActivators _activators;
-		readonly IAddDelegates _add;
 
-		public CollectionOption(IConverters converters)
-			: this(
-				converters, CollectionItemTypeLocator.Default, Writers.Default, Activators.Default,
-				AddDelegates.Default) {}
+		protected CollectionOptionBase(IConverters converters) : this(IsCollectionTypeSpecification.Default, converters) {}
 
-		public CollectionOption(IConverters converters, ICollectionItemTypeLocator locator, IWriters writers,
-		                        IActivators activators, IAddDelegates add)
-			: base(IsCollectionTypeSpecification.Default)
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IConverters converters)
+			: this(specification, converters, Elements.Default, CollectionItemTypeLocator.Default) {}
+
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IConverters converters, IElements elements,
+		                               ICollectionItemTypeLocator locator) : base(specification)
 		{
 			_converters = converters;
+			_elements = elements;
 			_locator = locator;
-			_writers = writers;
-			_activators = activators;
-			_add = add;
 		}
 
 		public override IConverter Get(TypeInfo parameter)
 		{
-			var item = _locator.Get(parameter);
-			var context = new CollectionItem(_writers.Get(item), _converters.Get(item));
-			var activator = new CollectionReader(new DelegatedFixedReader(_activators.Get(parameter.AsType())), context, _add);
-			var result = new EnumerableConverter(context, activator);
+			var itemType = _locator.Get(parameter);
+			var result = Create(_elements.Get(itemType), _converters.Get(itemType), itemType, parameter);
+			return result;
+		}
+
+		protected abstract IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter);
+	}
+
+	class ArrayOption : CollectionOptionBase
+	{
+		public ArrayOption(IConverters converters) : base(IsArraySpecification.Default, converters) {}
+
+		protected override IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter)
+		{
+			var item = new CollectionItem(element, body);
+			var reader = new ArrayReader(item);
+			var result = new EnumerableConverter(item, reader);
+			return result;
+		}
+	}
+
+	class CollectionOption : CollectionOptionBase
+	{
+		readonly IActivators _activators;
+
+		public CollectionOption(IConverters converters) : this(converters, Activators.Default) {}
+
+		public CollectionOption(IConverters converters, IActivators activators)
+			: base(converters)
+		{
+			_activators = activators;
+		}
+
+		protected override IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter)
+		{
+			var item = new CollectionItem(element, body);
+			var activator = new DelegatedFixedReader(_activators.Get(parameter.AsType()));
+			var reader = new CollectionReader(activator, item);
+			var result = new EnumerableConverter(item, reader);
 			return result;
 		}
 	}

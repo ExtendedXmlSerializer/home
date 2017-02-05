@@ -22,9 +22,35 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IWriters : ISelector<TypeInfo, IWriter> {}
+	class TypeFormatter : ITypeFormatter
+	{
+		public static TypeFormatter Default { get; } = new TypeFormatter();
+		TypeFormatter() : this(DefaultParsingDelimiters.Default) {}
+
+		readonly IParsingDelimiters _delimiters;
+
+		public TypeFormatter(IParsingDelimiters delimiters)
+		{
+			_delimiters = delimiters;
+		}
+
+		public string Get(TypeInfo type)
+		{
+			/*if (type.IsGenericType)
+			{
+				var types = type.GetGenericArguments();
+				var names = string.Join(string.Empty, types.Select(p => p.Name));
+				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
+				return name;
+			}*/
+			var result = type.IsNested
+				? $"{type.DeclaringType.Name}{(string) _delimiters.NestedClass}{type.Name}"
+				: type.Name;
+			return result;
+		}
+	}
 }

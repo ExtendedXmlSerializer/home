@@ -22,14 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public interface IXmlWriter : IDisposable, IFormatter<ImmutableArray<Type>>, IFormatter<TypeInfo>
+	public interface IXmlWriter : IDisposable, IFormatter<TypeInfo>
 	{
 		void Attribute(XName name, string value);
 		void Write(string text);

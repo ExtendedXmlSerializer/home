@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -27,28 +24,10 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		public string Get(TypeInfo parameter)
 		{
-			var name = Format(parameter);
-			var result = parameter.IsGenericType
-				? string.Concat(name, $"[{Get(parameter.GetGenericArguments().ToImmutableArray())}]")
-				: name;
+			var name = _names.Get(parameter);
+			var formatted = XmlQualifiedName.ToString(name.LocalName, _writer.LookupPrefix(name.NamespaceName));
+			var result = parameter.IsGenericType ? string.Concat(formatted, $"[{this.GetArguments(parameter)}]") : formatted;
 			return result;
-		}
-
-		public string Get(ImmutableArray<Type> parameter) => string.Join(",", Generic(parameter));
-
-		string Format(TypeInfo type)
-		{
-			var name = _names.Get(type);
-			var result = XmlQualifiedName.ToString(name.LocalName, _writer.LookupPrefix(name.NamespaceName));
-			return result;
-		}
-
-		IEnumerable<string> Generic(ImmutableArray<Type> arguments)
-		{
-			for (var i = 0; i < arguments.Length; i++)
-			{
-				yield return Format(arguments[i].GetTypeInfo());
-			}
 		}
 
 		public void Element(XName name) => _writer.WriteStartElement(name.LocalName, name.NamespaceName);

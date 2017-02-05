@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -79,13 +78,15 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(expected, _serializer.Serialize(read));
 		}
 
-		/*[Fact]
-		public void Array()
+		[Fact]
+		public void BasicArray()
 		{
 			var instance = new[] {1, 2, 3, 4, 5};
 			var data = _serializer.Serialize(instance);
-			Debugger.Break();
-		}*/
+
+			var read = _serializer.Deserialize(data);
+			Assert.Equal(instance, read);
+		}
 
 /*
 		[Fact]

@@ -21,16 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	sealed class TypeProperty : FrameworkElementBase<TypeInfo>, ITypeProperty
+	sealed class TypeProperty : TypePropertyBase, ITypeProperty
 	{
 		public static TypeProperty Default { get; } = new TypeProperty();
 		TypeProperty() : base("type") {}
-
-		public override void Write(IXmlWriter writer, TypeInfo instance) => writer.Attribute(Name, writer.Get(instance));
 	}
 }

@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.ConverterModel
 {
 	class Container : DecoratedConverter
 	{
-		public Container(IWriter start, IConverter body) : base(body, new Enclosure(start, body)) {}
+		public Container(IWriter element, IConverter body) : base(body, new Enclosure(element, body)) {}
 	}
 }

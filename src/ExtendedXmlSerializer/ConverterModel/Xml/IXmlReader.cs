@@ -24,10 +24,12 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public interface IXmlReader : IDisposable, IDisplayAware
+	public interface IXmlReader : IDisposable, IDisplayAware, IParameterizedSource<string, XName>, IParameterizedSource<XName, TypeInfo>
 	{
 		TypeInfo Classification();
 
@@ -36,5 +38,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		IEnumerator Members();
 
 		IEnumerator Items();
+
+		string this[XName name] { get; }
 	}
 }
