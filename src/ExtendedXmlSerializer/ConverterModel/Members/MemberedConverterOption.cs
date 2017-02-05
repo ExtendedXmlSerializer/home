@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.TypeModel;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class MemberedConverterOption : ConverterOptionBase
 	{
-		readonly IRoots _roots;
+		readonly IActivators _activators;
+		readonly IMembers _members;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public MemberedConverterOption(IMembers members) : this(Activators.Default, members) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public MemberedConverterOption(IActivators activators, IMembers members)
+			: base(IsActivatedTypeSpecification.Default)
 		{
-			_roots = roots;
+			_activators = activators;
+			_members = members;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override IConverter Get(TypeInfo parameter)
 		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
+			var members = _members.Get(parameter).ToImmutableArray();
+			var activate = _activators.Get(parameter.AsType());
+			var activator = new MemberedReader(new DelegatedFixedReader(activate), members.ToDictionary(x => x.DisplayName));
+			var result = new DecoratedConverter(activator, new MemberWriter(members));
+			return result;
 		}
 	}
 }

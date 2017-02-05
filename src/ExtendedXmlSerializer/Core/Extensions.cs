@@ -23,13 +23,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
+		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
+			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
+
+		public static TypeInfo AccountForNullable(this TypeInfo @this)
+			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+
+
 		public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
 		{
 			TValue result;

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	struct Sort : IComparable<Sort>
 	{
-		readonly IRoots _roots;
-
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
-
-		public ExtendedXmlSerializer(IRoots roots)
+		public Sort(int? assigned, int value)
 		{
-			_roots = roots;
+			Assigned = assigned;
+			Value = value;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		int? Assigned { get; }
+		int Value { get; }
 
-		public object Deserialize(Stream stream)
+		public int CompareTo(Sort other)
 		{
-			using (var reader = new XmlReader(stream))
+			var right = !other.Assigned.HasValue;
+			if (!Assigned.HasValue && right)
 			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
+				return Value.CompareTo(other.Value);
 			}
+			var compare = Assigned.GetValueOrDefault(-1).CompareTo(other.Assigned.GetValueOrDefault(-1));
+			var result = right ? -compare : compare;
+			return result;
 		}
 	}
 }

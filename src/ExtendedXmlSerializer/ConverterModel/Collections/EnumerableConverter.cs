@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
+using System.Collections;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class EnumerableConverter : EnumerableConverter<IEnumerable>
 	{
-		readonly IRoots _roots;
+		public EnumerableConverter(IConverter item, IReader reader) : base(item, reader) {}
+	}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+	class EnumerableConverter<T> : ConverterBase<T> where T : IEnumerable
+	{
+		readonly IConverter _item;
+		readonly IReader _reader;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public EnumerableConverter(IConverter item, IReader reader)
 		{
-			_roots = roots;
+			_item = item;
+			_reader = reader;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
+
+		public override void Write(IXmlWriter writer, T instance)
 		{
-			using (var writer = new XmlWriter(stream))
+			var enumerator = Get(instance);
+			while (enumerator.MoveNext())
 			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				_item.Write(writer, enumerator.Current);
 			}
 		}
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public override object Get(IXmlReader reader) => _reader.Get(reader);
 	}
 }

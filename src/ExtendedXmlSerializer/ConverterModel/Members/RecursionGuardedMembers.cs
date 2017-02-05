@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	sealed class RecursionGuardedMembers : IMembers
 	{
-		readonly IRoots _roots;
+		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		readonly IMembers _members;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public RecursionGuardedMembers(IMembers members)
 		{
-			_roots = roots;
+			_members = members;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public IEnumerable<IMember> Get(TypeInfo parameter)
+			=> _generator.For(parameter).FirstEncounter ? _members.Get(parameter) : new Deferred(_members.Build(parameter));
 
-		public object Deserialize(Stream stream)
+		sealed class Deferred : IEnumerable<IMember>
 		{
-			using (var reader = new XmlReader(stream))
+			readonly Func<IEnumerable<IMember>> _members;
+
+			public Deferred(Func<IEnumerable<IMember>> members)
 			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
+				_members = members;
 			}
+
+			public IEnumerator<IMember> GetEnumerator() => _members().GetEnumerator();
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		}
 	}
 }

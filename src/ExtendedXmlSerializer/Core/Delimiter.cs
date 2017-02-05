@@ -21,45 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Collections.Immutable;
+using System.Linq;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.Core
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public struct Delimiter
 	{
-		readonly IRoots _roots;
+		readonly ImmutableArray<char> _characters;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public Delimiter(params char[] characters) : this(characters.ToImmutableArray()) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public Delimiter(ImmutableArray<char> characters)
 		{
-			_roots = roots;
+			_characters = characters;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public static implicit operator char[](Delimiter delimiter) => delimiter._characters.ToArray();
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public static implicit operator char(Delimiter delimiter) => delimiter._characters[0];
+		public static implicit operator string(Delimiter delimiter) => ((char) delimiter).ToString();
+
+		public override string ToString() => _characters[0].ToString();
 	}
 }

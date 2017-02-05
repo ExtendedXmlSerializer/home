@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class Names : WeakCacheBase<TypeInfo, XName>, INames
 	{
-		readonly IRoots _roots;
+		public static Names Default { get; } = new Names();
+		Names() : this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
+		readonly INamespaces _namespaces;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public Names(IAliasProvider alias, ITypeFormatter formatter, INamespaces namespaces)
 		{
-			_roots = roots;
+			_alias = alias;
+			_formatter = formatter;
+			_namespaces = namespaces;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override XName Create(TypeInfo parameter)
+			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _namespaces.Get(parameter));
 	}
 }

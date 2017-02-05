@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.TypeModel;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class TypeFormatter : ITypeFormatter
 	{
-		readonly IRoots _roots;
+		public static TypeFormatter Default { get; } = new TypeFormatter();
+		TypeFormatter() {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
-
-		public ExtendedXmlSerializer(IRoots roots)
+		public string Get(TypeInfo type)
 		{
-			_roots = roots;
-		}
-
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
+			/*if (type.IsGenericType)
 			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
+				var types = type.GetGenericArguments();
+				var names = string.Join(string.Empty, types.Select(p => p.Name));
+				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
+				return name;
+			}*/
+			var result = type.IsNested
+				? $"{type.DeclaringType.Name}{(string) DefaultParsingDelimiters.Default.NestedClass}{type.Name}"
+				: type.Name;
+			return result;
 		}
 	}
 }

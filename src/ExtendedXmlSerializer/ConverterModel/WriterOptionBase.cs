@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public abstract class WriterOptionBase : OptionBase<TypeInfo, IWriter>, IWriterOption
 	{
-		readonly IRoots _roots;
+		protected WriterOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		protected WriterOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		readonly INames _names;
+
+		protected WriterOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
 		{
-			_roots = roots;
+			_names = names;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public abstract IWriter Create(XName name, TypeInfo classification);
 	}
 }

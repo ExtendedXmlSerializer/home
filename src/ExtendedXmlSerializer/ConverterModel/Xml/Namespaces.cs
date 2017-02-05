@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class Namespaces : WeakCacheBase<TypeInfo, string>, INamespaces
 	{
-		readonly IRoots _roots;
+		public static Namespaces Default { get; } = new Namespaces();
+		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		readonly IDictionary<Assembly, Namespace?> _known;
+		readonly ITypeFormatter _formatter;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public Namespaces(IDictionary<Assembly, Namespace?> known, ITypeFormatter formatter)
 		{
-			_roots = roots;
+			_known = known;
+			_formatter = formatter;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		/*Namespace Format(TypeInfo parameter)
 		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+			var name = _formatter.Get(parameter);
+			var result = new Namespace(_prefix.Get(name), name);
+			return result;
+		}*/
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override string Create(TypeInfo parameter)
+			=> _known.TryGet(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }

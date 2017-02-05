@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Runtime.Serialization.Formatters;
+using ExtendedXmlSerialization.TypeModel;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class NamespaceFormatter : ITypeFormatter
 	{
-		readonly IRoots _roots;
+		public static NamespaceFormatter Default { get; } = new NamespaceFormatter();
+		NamespaceFormatter() : this(FormatterAssemblyStyle.Simple) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public static NamespaceFormatter Full { get; } = new NamespaceFormatter(FormatterAssemblyStyle.Full);
 
-		public ExtendedXmlSerializer(IRoots roots)
+		readonly FormatterAssemblyStyle _style;
+
+		NamespaceFormatter(FormatterAssemblyStyle style)
 		{
-			_roots = roots;
+			_style = style;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public string Get(TypeInfo type) => $"clr-namespace:{type.Namespace};assembly={Name(type)}";
 
-		public object Deserialize(Stream stream)
+		string Name(TypeInfo type)
 		{
-			using (var reader = new XmlReader(stream))
+			var name = type.Assembly.GetName();
+			switch (_style)
 			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
+				case FormatterAssemblyStyle.Simple:
+					return name.Name;
+				default:
+					return name.FullName;
 			}
 		}
 	}
