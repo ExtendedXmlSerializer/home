@@ -79,13 +79,13 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(expected, _serializer.Serialize(read));
 		}
 
-		[Fact]
+		/*[Fact]
 		public void Array()
 		{
 			var instance = new[] {1, 2, 3, 4, 5};
 			var data = _serializer.Serialize(instance);
 			Debugger.Break();
-		}
+		}*/
 
 /*
 		[Fact]

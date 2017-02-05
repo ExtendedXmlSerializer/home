@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ExtendedXmlSerializer")]
 [assembly: AssemblyTrademark("")]
-[assembly: InternalsVisibleTo("ExtendedXmlSerializerTest")]
+[assembly: InternalsVisibleTo("ExtendedXmlSerializerTest, PublicKey=00240000048000009400000006020000002400005253413100040000010001001b1e766f975691c227ac39ebb9b2d2e71dde1f0e148412ecd710781790f3e694dbd6330fb45e11cff2775c2f15a9eede436b0053ce17aaf89ed9f01aac91fc661934d38422c7ef5b81db01848113b3c0e094657e090a615203aef49ea67976182471b0456f7ff7c545d40d9dd6a169f2f292f978702aae1d246cd8f4833e36e7")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
