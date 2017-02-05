@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class ValueConverterBase<T> : FixedConverterOption
+	class ValueConverterBase<T> : FixedConverterOption
 	{
 		public ValueConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
 			: base(TypeEqualitySpecification<T>.Default, new ValueConverter<T>(deserialize, serialize)) {}

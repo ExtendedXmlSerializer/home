@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class Namespaces : /*WeakCacheBase<TypeInfo, string>,*/ INamespaces
+	class Namespaces : INamespaces
 	{
 		public static Namespaces Default { get; } = new Namespaces();
 		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}

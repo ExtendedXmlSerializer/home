@@ -21,13 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System.Collections.Immutable;
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Converters
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class UnsignedShortTypeConverter : ValueConverterBase<ushort>
+	class GenericElementOption : ElementOptionBase
 	{
-		public static UnsignedShortTypeConverter Default { get; } = new UnsignedShortTypeConverter();
-		UnsignedShortTypeConverter() : base(XmlConvert.ToUInt16, XmlConvert.ToString) {}
+		public static GenericElementOption Default { get; } = new GenericElementOption();
+		GenericElementOption() : base(IsGenericTypeSpecification.Default) {}
+
+		public override IWriter Create(XName name, TypeInfo classification)
+			=> new GenericElement(name, classification.GetGenericArguments().ToImmutableArray());
 	}
 }

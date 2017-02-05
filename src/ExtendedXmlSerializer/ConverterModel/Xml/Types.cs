@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
+	class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
 		public static Types Default { get; } = new Types();
 

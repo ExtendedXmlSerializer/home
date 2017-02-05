@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,34 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Test.Conversion.Xml
+using System;
+using System.Collections.Immutable;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Properties;
+using ExtendedXmlSerialization.ConverterModel.Xml;
+
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class ExtensionsTests
+	class GenericElement : Element
 	{
-		/*readonly ITestOutputHelper _output;
-		public ExtensionsTests(ITestOutputHelper output)
+		readonly ImmutableArray<Type> _arguments;
+		readonly ITypeArgumentsProperty _property;
+
+		public GenericElement(XName name, ImmutableArray<Type> arguments)
+			: this(name, arguments, TypeArgumentsProperty.Default) {}
+
+		public GenericElement(XName name, ImmutableArray<Type> arguments, ITypeArgumentsProperty property) : base(name)
 		{
-			_output = output;
-		}*/
+			_arguments = arguments;
+			_property = property;
+		}
 
-		/*[Fact]
-		public void FinishCurrentElement()
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			const string
-				Child = @"<Test att=""first""><Second att=""second""/></Test>",
-				Children = @"<Test att=""first""><Second att=""second""/><Second att=""second""/></Test>",
-				Open = @"<Test att=""first""></Test>",
-				Closed = @"<Test att=""first"" />";
-
-			using (var reader = XmlReader.Create(new StringReader(Children)))
-			{
-				while (reader.Read())
-				{
-					_output.WriteLine($"{reader.Depth}: {reader.IsEmptyElement} - {reader.IsStartElement()} {reader.NodeType}");
-				}
-			}
-
-			throw new InvalidOperationException();
-		}*/
+			base.Write(writer, instance);
+			_property.Write(writer, _arguments);
+		}
 	}
 }

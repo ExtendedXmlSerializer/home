@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class TypeNameAlteration : IAlteration<string>
+	class TypeNameAlteration : IAlteration<string>
 	{
 		readonly char _search;
 		readonly char _replace;

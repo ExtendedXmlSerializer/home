@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class DefaultConverters : IConverters
+	class DefaultConverters : IConverters
 	{
 		public static DefaultConverters Default { get; } = new DefaultConverters();
 		DefaultConverters() : this(x => new ConverterOptions(x)) {}

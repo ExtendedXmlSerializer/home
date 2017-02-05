@@ -25,13 +25,13 @@ using System;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class Member : Container, IMember
+	class Member : Container, IMember
 	{
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
 		public Member(string displayName, Action<object, object> setter, Func<object, object> getter, IConverter body)
-			: this(displayName, new StartMember(displayName), setter, getter, body) {}
+			: this(displayName, new ConverterModel.Member(displayName), setter, getter, body) {}
 
 		public Member(string displayName, IWriter start, Action<object, object> setter, Func<object, object> getter,
 		              IConverter body) : base(start, body)
@@ -54,47 +54,4 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 			}
 		}
 	}
-
-/*
-	public class Member : DecoratedConverter, IMember
-	{
-		readonly Action<object, object> _setter;
-		readonly Func<object, object> _getter;
-		readonly IElement _element;
-
-		public Member(IElement element, Action<object, object> setter, Func<object, object> getter, IConverter body)
-			: this(element.DisplayName, element.Classification, setter, getter, element, body) {}
-
-		public Member(string displayName, TypeInfo classification, Action<object, object> setter,
-		              Func<object, object> getter, IElement element, IConverter body) : base(body)
-		{
-			DisplayName = displayName;
-			Classification = classification;
-			_setter = setter;
-			_getter = getter;
-			_element = element;
-		}
-
-		public override void Emit(IWriter writer, object instance)
-		{
-			using (writer.Emit(_element, this))
-			{
-				base.Emit(writer, instance);
-			}
-		}
-
-		public string DisplayName { get; }
-		public TypeInfo Classification { get; }
-
-		public virtual object Get(object instance) => _getter(instance);
-
-		public virtual void Assign(object instance, object value)
-		{
-			if (value != null)
-			{
-				_setter(instance, value);
-			}
-		}
-	}
-*/
 }

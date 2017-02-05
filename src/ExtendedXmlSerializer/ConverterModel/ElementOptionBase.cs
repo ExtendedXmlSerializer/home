@@ -29,15 +29,15 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public abstract class WriterOptionBase : OptionBase<TypeInfo, IWriter>, IWriterOption
+	public abstract class ElementOptionBase : OptionBase<TypeInfo, IWriter>, IElementOption
 	{
-		protected WriterOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
+		protected ElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		protected WriterOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
+		protected ElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
 
 		readonly INames _names;
 
-		protected WriterOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
+		protected ElementOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
 		{
 			_names = names;
 		}

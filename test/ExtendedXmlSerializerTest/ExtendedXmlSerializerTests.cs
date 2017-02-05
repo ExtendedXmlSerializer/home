@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -64,17 +65,6 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal("Hello World!", read.PropertyName);
 		}
 
-/*
-		[Fact]
-		public void ProfileLoop()
-		{
-			for (int i = 0; i < 100; i++)
-			{
-				_serializer.Serialize(_subject);
-			}
-		}
-*/
-
 		[Fact]
 		public void ComplexInstance()
 		{
@@ -86,6 +76,14 @@ namespace ExtendedXmlSerialization.Test
 			var read = _serializer.Deserialize<TestClassOtherClass>(data);
 			Assert.NotNull(read);
 			Assert.Equal(expected, _serializer.Serialize(read));
+		}
+
+		[Fact]
+		public void Array()
+		{
+			var instance = new[] {1, 2, 3, 4, 5};
+			var data = _serializer.Serialize(instance);
+			Debugger.Break();
 		}
 
 /*

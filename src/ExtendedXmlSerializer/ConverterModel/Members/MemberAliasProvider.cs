@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	class MemberAliasProvider : AliasProviderBase<MemberInfo>
 	{
 		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
 		MemberAliasProvider() {}

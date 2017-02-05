@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	public class IntegerConverter : ValueConverterBase<int>
+	class IntegerConverter : ValueConverterBase<int>
 	{
 		public static IntegerConverter Default { get; } = new IntegerConverter();
 		IntegerConverter() : base(XmlConvert.ToInt32, XmlConvert.ToString) {}

@@ -21,19 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class GenericWriterOption : WriterOptionBase
+	class Member : IWriter
 	{
-		public static GenericWriterOption Default { get; } = new GenericWriterOption();
-		GenericWriterOption() : base(IsGenericTypeSpecification.Default) {}
+		readonly string _name;
 
-		public override IWriter Create(XName name, TypeInfo classification)
-			=> new StartGenericElement(name, classification.GetGenericArguments().ToImmutableArray());
+		public Member(string name)
+		{
+			_name = name;
+		}
+
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Member(_name);
 	}
 }

@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class FieldMemberSpecification : ISpecification<FieldInfo>
+	class FieldMemberSpecification : ISpecification<FieldInfo>
 	{
 		public static FieldMemberSpecification Default { get; } = new FieldMemberSpecification();
 		FieldMemberSpecification() {}

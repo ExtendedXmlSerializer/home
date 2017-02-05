@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class Root : Container
+	class Root : Container
 	{
 		public Root(IWriter start, IConverter body) : base(start, body) {}
 	}

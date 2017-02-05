@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	public class LongConverter : ValueConverterBase<long>
+	class LongConverter : ValueConverterBase<long>
 	{
 		public static LongConverter Default { get; } = new LongConverter();
 		LongConverter() : base(XmlConvert.ToInt64, XmlConvert.ToString) {}

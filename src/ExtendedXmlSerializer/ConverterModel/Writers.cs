@@ -26,10 +26,10 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class Writers : OptionSelector<TypeInfo, IWriter>, IWriters
+	class Writers : OptionSelector<TypeInfo, IWriter>, IWriters
 	{
 		public static Writers Default { get; } = new Writers();
-		Writers() : this(GenericWriterOption.Default, WriterOption.Default) {}
+		Writers() : this(GenericElementOption.Default, ElementOption.Default) {}
 
 		public Writers(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}

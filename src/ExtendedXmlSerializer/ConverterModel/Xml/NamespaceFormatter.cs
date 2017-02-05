@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class NamespaceFormatter : ITypeFormatter
+	class NamespaceFormatter : ITypeFormatter
 	{
 		public static NamespaceFormatter Default { get; } = new NamespaceFormatter();
 		NamespaceFormatter() : this(FormatterAssemblyStyle.Simple) {}

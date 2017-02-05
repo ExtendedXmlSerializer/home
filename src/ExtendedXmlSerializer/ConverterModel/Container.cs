@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ConverterModel.Converters;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public class Container : DecoratedConverter
+	class Container : DecoratedConverter
 	{
 		public Container(IWriter start, IConverter body) : base(body, new Enclosure(start, body)) {}
 	}

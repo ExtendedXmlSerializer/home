@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class TypeFormatter : ITypeFormatter
+	class TypeFormatter : ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
 		TypeFormatter() {}

@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public class PropertyMemberSpecification : ISpecification<PropertyInfo>
+	class PropertyMemberSpecification : ISpecification<PropertyInfo>
 	{
 		public static PropertyMemberSpecification Default { get; } = new PropertyMemberSpecification();
 		PropertyMemberSpecification() {}
