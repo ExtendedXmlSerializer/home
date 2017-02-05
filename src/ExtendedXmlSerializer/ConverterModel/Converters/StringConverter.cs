@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class StringConverter : ValueConverterBase<string>
 	{
-		readonly IRoots _roots;
+		readonly static Func<string, string> Self = Self<string>.Default.Get;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
-
-		public ExtendedXmlSerializer(IRoots roots)
-		{
-			_roots = roots;
-		}
-
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public static StringConverter Default { get; } = new StringConverter();
+		StringConverter() : base(Self, Self) {}
 	}
 }

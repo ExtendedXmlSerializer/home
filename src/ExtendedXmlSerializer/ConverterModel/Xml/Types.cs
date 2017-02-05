@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class Types : WeakCacheBase<XName, TypeInfo>, ITypes
 	{
-		readonly IRoots _roots;
+		public static Types Default { get; } = new Types();
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		Types()
+			: this(
+				WellKnownAliases.Default.ToDictionary(x => Names.Default.Get(x.Key.GetTypeInfo()), y => y.Key.GetTypeInfo()),
+				TypePartitions.Default) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		readonly IDictionary<XName, TypeInfo> _known;
+		readonly ITypePartitions _sources;
+
+		public Types(IDictionary<XName, TypeInfo> known, ITypePartitions sources)
 		{
-			_roots = roots;
+			_known = known;
+			_sources = sources;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override TypeInfo Create(XName parameter)
+			=> _known.TryGet(parameter) ?? _sources.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 	}
 }

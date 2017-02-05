@@ -21,45 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class TypeAliasProvider : AliasProviderBase<TypeInfo>
 	{
-		readonly IRoots _roots;
+		public static TypeAliasProvider Default { get; } = new TypeAliasProvider();
+		TypeAliasProvider() : this(WellKnownAliases.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		readonly IDictionary<Type, string> _names;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public TypeAliasProvider(IDictionary<Type, string> names)
 		{
-			_roots = roots;
+			_names = names;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override string GetItem(TypeInfo parameter)
+			=> _names.TryGet(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

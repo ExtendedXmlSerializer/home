@@ -21,45 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.Core.Sources;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class Roots : WeakCacheBase<TypeInfo, IConverter>, IRoots
 	{
-		readonly IRoots _roots;
+		public static Roots Default { get; } = new Roots();
+		Roots() : this(Writers.Default, DefaultConverters.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		readonly IWriters _writers;
+		readonly IConverters _converters;
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public Roots(IWriters writers, IConverters converters)
 		{
-			_roots = roots;
+			_writers = writers;
+			_converters = converters;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override IConverter Create(TypeInfo parameter)
+			=> new Root(_writers.Get(parameter), _converters.Get(parameter));
 	}
 }

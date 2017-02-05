@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class EnumerationTypeConverter : ConverterOptionBase
 	{
-		readonly IRoots _roots;
+		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
+		EnumerationTypeConverter() : base(IsAssignableSpecification<Enum>.Default) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
 
-		public ExtendedXmlSerializer(IRoots roots)
+		class EnumerationConverter : ValueConverter<Enum>
 		{
-			_roots = roots;
-		}
+			public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
+			class Source : IParameterizedSource<string, Enum>
 			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+				readonly Type _enumerationType;
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
+				public Source(Type enumerationType)
+				{
+					_enumerationType = enumerationType;
+				}
+
+				public Enum Get(string parameter)
+					=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ConverterModel.Converters;
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class MemberedReader : DecoratedReader
 	{
-		readonly IRoots _roots;
+		readonly IDictionary<string, IMember> _members;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
-
-		public ExtendedXmlSerializer(IRoots roots)
+		public MemberedReader(IReader reader, IDictionary<string, IMember> members) : base(reader)
 		{
-			_roots = roots;
+			_members = members;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override object Get(IXmlReader parameter)
 		{
-			using (var writer = new XmlWriter(stream))
+			var result = base.Get(parameter);
+			var members = parameter.Members();
+			while (members.MoveNext())
 			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				var member = _members.TryGet(parameter.DisplayName);
+				member?.Assign(result, ((IReader) member).Get(parameter));
 			}
-		}
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
+			return result;
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,45 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
+using ExtendedXmlSerialization.ConverterModel.Converters;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	abstract class EnclosureBase : DecoratedWriter
 	{
-		readonly IRoots _roots;
+		protected EnclosureBase(IWriter body) : base(body) {}
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
-
-		public ExtendedXmlSerializer(IRoots roots)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			_roots = roots;
+			Start(writer, instance);
+			base.Write(writer, instance);
+			Finish(writer, instance);
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		protected abstract void Start(IXmlWriter writer, object instance);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected abstract void Finish(IXmlWriter writer, object instance);
 	}
 }

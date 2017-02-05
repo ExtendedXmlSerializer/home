@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel;
+using System;
+using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
-
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class StartVariableTypedMember : StartMember
 	{
-		readonly IRoots _roots;
+		readonly Type _classification;
+		readonly ITypeProperty _property;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public StartVariableTypedMember(string name, Type classification) : this(name, classification, TypeProperty.Default) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public StartVariableTypedMember(string name, Type classification, ITypeProperty property) : base(name)
 		{
-			_roots = roots;
+			_classification = classification;
+			_property = property;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			using (var writer = new XmlWriter(stream))
-			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+			base.Write(writer, instance);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
+			var type = instance.GetType();
+			if (_classification != type)
 			{
-				var root = _roots.Get(reader.Classification());
-				var result = root.Get(reader);
-				return result;
+				_property.Write(writer, type);
 			}
 		}
 	}
