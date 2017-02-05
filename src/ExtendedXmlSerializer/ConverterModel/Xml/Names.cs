@@ -23,12 +23,11 @@
 
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class Names : WeakCacheBase<TypeInfo, XName>, INames
+	class Names : INames
 	{
 		public static Names Default { get; } = new Names();
 		Names() : this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
@@ -44,7 +43,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			_namespaces = namespaces;
 		}
 
-		protected override XName Create(TypeInfo parameter)
+		public XName Get(TypeInfo parameter)
 			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _namespaces.Get(parameter));
 	}
 }

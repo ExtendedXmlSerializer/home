@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ConverterModel.Converters
+namespace ExtendedXmlSerialization.ConverterModel
 {
 	public static class Defaults
 	{
