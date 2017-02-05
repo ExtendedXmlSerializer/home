@@ -27,11 +27,4 @@ namespace ExtendedXmlSerialization.ConverterModel
 	{
 		string DisplayName { get; }
 	}
-
-	/*
-	
-		public interface IElement : IDisplayAware
-		{
-			TypeInfo Classification { get; }
-		}*/
 }

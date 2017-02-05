@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public sealed class AddMethodLocator : /*ConcurrentDictionary<TypeInfo, MethodInfo>,*/ IAddMethodLocator
+	public sealed class AddMethodLocator : IAddMethodLocator
 	{
 		public static AddMethodLocator Default { get; } = new AddMethodLocator();
 		AddMethodLocator() {}
