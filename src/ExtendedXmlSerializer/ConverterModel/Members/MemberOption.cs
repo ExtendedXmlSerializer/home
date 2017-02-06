@@ -23,6 +23,7 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -53,7 +54,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		                                       Func<object, object> getter, IConverter body)
 		{
 			var start = _specification.IsSatisfiedBy(classification)
-				? new ConverterModel.Member(displayName)
+				? new Elements.Member(displayName)
 				: new VariableTypedMember(displayName, classification.AsType());
 			var result = new Member(displayName, start, setter, getter, body);
 			return result;

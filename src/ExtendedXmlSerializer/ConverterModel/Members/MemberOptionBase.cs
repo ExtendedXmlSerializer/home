@@ -23,6 +23,7 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;

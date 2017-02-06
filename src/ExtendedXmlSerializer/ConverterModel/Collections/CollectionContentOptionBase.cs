@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -32,13 +33,14 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 		readonly IContainers _containers;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(IContainers containers) : this(IsCollectionTypeSpecification.Default, containers) {}
+		protected CollectionContentOptionBase(IContainers containers)
+			: this(IsCollectionTypeSpecification.Default, containers) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
 			: this(specification, containers, CollectionItemTypeLocator.Default) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
-		                               ICollectionItemTypeLocator locator) : base(specification)
+		                                      ICollectionItemTypeLocator locator) : base(specification)
 		{
 			_containers = containers;
 			_locator = locator;

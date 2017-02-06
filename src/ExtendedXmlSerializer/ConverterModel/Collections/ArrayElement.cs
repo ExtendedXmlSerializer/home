@@ -24,6 +24,7 @@
 using System;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 

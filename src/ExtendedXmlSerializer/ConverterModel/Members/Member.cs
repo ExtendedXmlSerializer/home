@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
@@ -31,7 +32,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly Func<object, object> _getter;
 
 		public Member(string displayName, Action<object, object> setter, Func<object, object> getter, IConverter body)
-			: this(displayName, new ConverterModel.Member(displayName), setter, getter, body) {}
+			: this(displayName, new Elements.Member(displayName), setter, getter, body) {}
 
 		public Member(string displayName, IWriter element, Action<object, object> setter, Func<object, object> getter,
 		              IConverter body) : base(element, body)

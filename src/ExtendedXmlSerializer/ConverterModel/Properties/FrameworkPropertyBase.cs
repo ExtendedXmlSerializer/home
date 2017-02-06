@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
