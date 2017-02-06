@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
@@ -33,7 +32,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 
 	abstract class WriterBase<T> : IWriter
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, instance.AsValid<T>());
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
 
 		public abstract void Write(IXmlWriter writer, T instance);
 	}

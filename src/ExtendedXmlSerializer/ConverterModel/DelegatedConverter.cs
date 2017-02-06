@@ -21,9 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IConverterOptions : IEnumerable<IConverterOption> {}
+	class DelegatedConverter<T> : ConverterBase, IConverter<T>
+	{
+		readonly Func<string, T> _deserialize;
+		readonly Func<T, string> _serialize;
+
+		public DelegatedConverter(Func<string, T> deserialize, Func<T, string> serialize)
+		{
+			_deserialize = deserialize;
+			_serialize = serialize;
+		}
+
+		public override void Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
+		public void Write(IXmlWriter writer, T instance) => writer.Write(_serialize( instance));
+
+		public override object Get(IXmlReader reader) => Deserialize(reader);
+		T Deserialize(IXmlReader reader) => _deserialize(reader.Value());
+		T IConverter<T>.Get(IXmlReader reader) => Deserialize(reader);
+	}
 }

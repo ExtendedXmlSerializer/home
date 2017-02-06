@@ -22,13 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class ValueConverterBase<T> : FixedConverterOption
+	/*class ValueConverterBase<T> : DelegatedConverter<T>
 	{
-		public ValueConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
-			: base(TypeEqualitySpecification<T>.Default, new ValueConverter<T>(deserialize, serialize)) {}
-	}
+		public ValueConverterBase(Func<string, T> deserialize, Func<T, string> serialize) : base(deserialize, serialize) {}
+	}*/
 }

@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
@@ -36,7 +35,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 
 	public abstract class ConverterBase<T> : IConverter<T>, IConverter
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, instance.AsValid<T>());
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
 
 		public abstract void Write(IXmlWriter writer, T instance);
 

@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Elements : OptionSelector<TypeInfo, IWriter>, IElements
+	class Elements : Selector<TypeInfo, IWriter>, IElements
 	{
 		public static Elements Default { get; } = new Elements();
 		Elements() : this(ArrayElementOption.Default, GenericElementOption.Default, ElementOption.Default) {}

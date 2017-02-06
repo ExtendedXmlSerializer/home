@@ -26,20 +26,18 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class EnumerableConverter : EnumerableConverter<IEnumerable>
+	class EnumerableWriter : EnumerableWriter<IEnumerable>
 	{
-		public EnumerableConverter(IConverter item, IReader reader) : base(item, reader) {}
+		public EnumerableWriter(IWriter item) : base(item) {}
 	}
 
-	class EnumerableConverter<T> : ConverterBase<T> where T : IEnumerable
+	class EnumerableWriter<T> : WriterBase<T> where T : IEnumerable
 	{
-		readonly IConverter _item;
-		readonly IReader _reader;
+		readonly IWriter _item;
 
-		public EnumerableConverter(IConverter item, IReader reader)
+		public EnumerableWriter(IWriter item)
 		{
 			_item = item;
-			_reader = reader;
 		}
 
 		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
@@ -52,7 +50,5 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 				_item.Write(writer, enumerator.Current);
 			}
 		}
-
-		public override T Get(IXmlReader reader) => (T)_reader.Get(reader);
 	}
 }

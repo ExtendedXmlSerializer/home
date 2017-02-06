@@ -22,35 +22,34 @@
 // SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Converters
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class EnumerationTypeConverter : ConverterOptionBase
+	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
 	{
-		public static EnumerationTypeConverter Default { get; } = new EnumerationTypeConverter();
-		EnumerationTypeConverter() : base(IsAssignableSpecification<Enum>.Default) {}
+		readonly IParameterizedSource<TypeInfo, IConverter> _source;
 
-		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
+		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
 
-		class EnumerationConverter : ValueConverter<Enum>
+		public Contents(Func<IContents, IContentOptions> options)
 		{
-			public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
+			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+		}
 
-			class Source : IParameterizedSource<string, Enum>
+		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
+
+		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		{
+			readonly IContainers _containers;
+			public Creator(IContainers containers)
 			{
-				readonly Type _enumerationType;
-
-				public Source(Type enumerationType)
-				{
-					_enumerationType = enumerationType;
-				}
-
-				public Enum Get(string parameter)
-					=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
+				_containers = containers;
 			}
+
+			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
 		}
 	}
 }

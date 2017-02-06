@@ -23,8 +23,12 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IConverters : IParameterizedSource<TypeInfo, IConverter> {}
+	class FixedContentOption : FixedOption<TypeInfo, IConverter>, IContentOption
+	{
+		public FixedContentOption(ISpecification<TypeInfo> specification, IConverter context) : base(specification, context) {}
+	}
 }

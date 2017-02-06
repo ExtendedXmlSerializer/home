@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class FloatConverter : ValueConverterBase<float>
+	class FloatConverter : DelegatedConverter<float>
 	{
 		public static FloatConverter Default { get; } = new FloatConverter();
 		FloatConverter() : base(XmlConvert.ToSingle, XmlConvert.ToString) {}

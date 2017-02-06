@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly static MemberSpecification<PropertyInfo> Property =
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
-		public Members(IConverters converters) : this(new Selector(converters), Property, Field) {}
+		public Members(IContents contents) : this(new Selector(contents), Property, Field) {}
 
 		protected Members(ISelector selector, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{

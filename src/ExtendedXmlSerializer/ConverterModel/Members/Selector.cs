@@ -25,9 +25,9 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class Selector : OptionSelector<MemberInformation, IMember>, ISelector
+	class Selector : Selector<MemberInformation, IMember>, ISelector
 	{
-		public Selector(IConverters converters)
-			: base(new MemberOption(converters), new ReadOnlyCollectionMemberOption(converters)) {}
+		public Selector(IContents contents)
+			: base(new MemberOption(contents), new ReadOnlyCollectionMemberOption(contents)) {}
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Roots : WeakCacheBase<TypeInfo, IConverter>, IRoots
+	class DictionaryWriter : EnumerableWriter<IDictionary>
 	{
-		public static Roots Default { get; } = new Roots();
-		Roots() : this(Elements.Default, DefaultConverters.Default) {}
+		public DictionaryWriter(IWriter item) : base(item) {}
 
-		readonly IElements _elements;
-		readonly IConverters _converters;
-
-		public Roots(IElements elements, IConverters converters)
-		{
-			_elements = elements;
-			_converters = converters;
-		}
-
-		protected override IConverter Create(TypeInfo parameter)
-			=> new Root(_elements.Get(parameter), _converters.Get(parameter));
+		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}
 }

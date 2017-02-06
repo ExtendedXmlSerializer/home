@@ -21,10 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IRoots : IParameterizedSource<TypeInfo, IConverter> {}
+	class MemberedContentOption : ContentOptionBase
+	{
+		readonly IActivators _activators;
+		readonly IMembers _members;
+
+		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
+
+		public MemberedContentOption(IActivators activators, IMembers members)
+			: base(IsActivatedTypeSpecification.Default)
+		{
+			_activators = activators;
+			_members = members;
+		}
+
+		public override IConverter Get(TypeInfo parameter)
+		{
+			var members = _members.Get(parameter).ToImmutableArray();
+			var activate = _activators.Get(parameter.AsType());
+			var activator = new MemberedReader(new DelegatedFixedReader(activate), members.ToDictionary(x => x.DisplayName));
+			var result = new DecoratedConverter(activator, new MemberWriter(members));
+			return result;
+		}
+	}
 }

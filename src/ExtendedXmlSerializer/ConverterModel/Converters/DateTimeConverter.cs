@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class DateTimeConverter : ValueConverterBase<DateTime>
+	class DateTimeConverter : DelegatedConverter<DateTime>
 	{
 		public static DateTimeConverter Default { get; } = new DateTimeConverter();
 

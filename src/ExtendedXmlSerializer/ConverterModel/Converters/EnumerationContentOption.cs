@@ -22,25 +22,35 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class DefaultConverters : IConverters
+	class EnumerationContentOption : ContentOptionBase
 	{
-		public static DefaultConverters Default { get; } = new DefaultConverters();
-		DefaultConverters() : this(x => new ConverterOptions(x)) {}
+		public static EnumerationContentOption Default { get; } = new EnumerationContentOption();
+		EnumerationContentOption() : base(IsAssignableSpecification<Enum>.Default) {}
 
+		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
+	}
 
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+	class EnumerationConverter : DelegatedConverter<Enum>
+	{
+		public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 
-		public DefaultConverters(Func<IConverters, IConverterOptions> options)
+		class Source : IParameterizedSource<string, Enum>
 		{
-			_source = new OptionSelector<TypeInfo, IConverter>(options(this).ToArray());
-		}
+			readonly Type _enumerationType;
 
-		public IConverter Get(TypeInfo parameter) => _source.Get(parameter);
+			public Source(Type enumerationType)
+			{
+				_enumerationType = enumerationType;
+			}
+
+			public Enum Get(string parameter)
+				=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
+		}
 	}
 }

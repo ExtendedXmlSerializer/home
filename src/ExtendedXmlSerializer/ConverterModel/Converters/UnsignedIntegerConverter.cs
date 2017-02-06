@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class UnsignedIntegerConverter : ValueConverterBase<uint>
+	class UnsignedIntegerConverter : DelegatedConverter<uint>
 	{
 		public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
 		UnsignedIntegerConverter() : base(XmlConvert.ToUInt32, XmlConvert.ToString) {}
