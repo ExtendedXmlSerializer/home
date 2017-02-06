@@ -44,17 +44,21 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		readonly ITypes _types;
 		readonly IParsingDelimiters _delimiters;
 		readonly System.Xml.XmlReader _reader;
-		readonly static TypeInfo ArrayType = typeof(Array).GetTypeInfo();
+		readonly ITypeProperty _item;
 
 		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
-		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
-		public XmlReader(System.Xml.XmlReader reader) : this(Types.Default, DefaultParsingDelimiters.Default, reader) {}
 
-		public XmlReader(ITypes types, IParsingDelimiters delimiters, System.Xml.XmlReader reader)
+		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
+
+		public XmlReader(System.Xml.XmlReader reader)
+			: this(Types.Default, DefaultParsingDelimiters.Default, reader, ItemTypeProperty.Default) {}
+
+		public XmlReader(ITypes types, IParsingDelimiters delimiters, System.Xml.XmlReader reader, ITypeProperty item)
 		{
 			_types = types;
 			_delimiters = delimiters;
 			_reader = reader;
+			_item = item;
 		}
 
 		public string DisplayName => _reader.LocalName;
@@ -64,12 +68,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			switch (_reader.MoveToContent())
 			{
 				case XmlNodeType.Element:
-					var name = XName.Get(_reader.LocalName, _reader.NamespaceURI);
-					var result = Get(name);
-					if (Equals(result, ArrayType))
-					{
-						return ItemTypeProperty.Default.Get(this).MakeArrayType().GetTypeInfo();
-					}
+					var result = Contains(_item.Name)
+						? _item.Get(this).MakeArrayType().GetTypeInfo()
+						: Get(XName.Get(_reader.LocalName, _reader.NamespaceURI));
 					return result;
 			}
 			throw new InvalidOperationException($"Could not locate the type from the current Xml reader '{_reader}.'");
@@ -83,11 +84,14 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			return result;
 		}
 
-		public IEnumerator Members() => new Enumerator(_reader, _reader.Depth + 1);
+		public IEnumerator Members() => Items(); // Same for now...
 
-		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
+		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + (_reader.MoveToElement() ? 0 : 1));
 
-		public string this[XName name] => _reader.GetAttribute(name.LocalName, name.NamespaceName);
+		public bool Contains(XName name)
+			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName);
+
+		public string this[XName name] => Contains(name) ? _reader.Value : null;
 
 		public XName Get(string parameter)
 		{
