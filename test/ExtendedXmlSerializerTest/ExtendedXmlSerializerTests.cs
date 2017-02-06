@@ -82,19 +82,28 @@ namespace ExtendedXmlSerialization.Test
 		[Fact]
 		public void BasicArray()
 		{
-			var instance = new[] {1, 2, 3, 4, 5};
-			var data = _serializer.Serialize(instance);
-			var read = _serializer.Deserialize<int[]>(data);
-			Assert.Equal(instance, read);
+			var expected = new[] {1, 2, 3, 4, 5};
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<int[]>(data);
+			Assert.Equal(expected, actual);
 		}
 
 		[Fact]
 		public void BasicList()
 		{
-			var instance = new List<string> {"Hello", "World", "Hope", "This", "Works!"};
-			var data = _serializer.Serialize(instance);
-			var read = _serializer.Deserialize<List<string>>(data);
-			Assert.Equal(instance, read);
+			var expected = new List<string> {"Hello", "World", "Hope", "This", "Works!"};
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<List<string>>(data);
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void BasicHashSet()
+		{
+			var expected = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"};
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<HashSet<string>>(data);
+			Assert.True(actual.SetEquals(expected));
 		}
 
 /*

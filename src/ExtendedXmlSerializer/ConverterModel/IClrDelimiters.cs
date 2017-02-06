@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,28 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Namespaces : INamespaces
+	interface IClrDelimiters
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
-
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		Delimiter Generic { get; }
+		Delimiter NestedClass { get; }
 	}
 }

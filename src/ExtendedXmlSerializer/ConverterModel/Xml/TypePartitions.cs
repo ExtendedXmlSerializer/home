@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
@@ -50,8 +51,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		protected override Func<string, TypeInfo> Create(string parameter)
 		{
 			var parts = parameter.ToStringArray(_delimiters.Part);
-			var namespacePath = parts[0].Split(_delimiters.Namespace)[1];
-			var assemblyPath = parts[1].Split(_delimiters.Assembly)[1];
+			var namespacePath = parts[0].ToStringArray(_delimiters.Namespace)[1];
+			var assemblyPath = string.Join(_delimiters.Assembly, parts[1].Split(_delimiters.Assembly).Skip(1));
 			var assembly = _loader.Get(assemblyPath);
 			var result = new Locator(assembly, namespacePath, _alteration).ToDelegate();
 			return result;
@@ -68,7 +69,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 				: this(assembly, @namespace, alteration, new Namespaces(assembly).Build(@namespace)) {}
 
 			public Locator(Assembly assembly, string @namespace, IAlteration<string> alteration,
-			             Func<ImmutableArray<TypeInfo>> types)
+			               Func<ImmutableArray<TypeInfo>> types)
 			{
 				_assembly = assembly;
 				_ns = @namespace;

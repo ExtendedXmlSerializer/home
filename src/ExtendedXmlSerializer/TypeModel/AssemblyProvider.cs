@@ -23,26 +23,30 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+#if CORE
+using System.Linq;
+using Microsoft.Extensions.DependencyModel;
+#endif
+
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class Namespaces : INamespaces
+	public class AssemblyProvider : IAssemblyProvider
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		public static AssemblyProvider Default { get; } = new AssemblyProvider();
+		AssemblyProvider() {}
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		public IEnumerable<Assembly> Get()
 		{
-			_known = known;
-			_formatter = formatter;
+#if CORE
+			return DependencyContext
+				.Default
+				.GetRuntimeAssemblyNames(Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment.GetRuntimeIdentifier())
+				.Select(x => new AssemblyName(x.Name))
+				.Select(Assembly.Load);
+#else
+			return System.AppDomain.CurrentDomain.GetAssemblies();
+#endif
 		}
-
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }

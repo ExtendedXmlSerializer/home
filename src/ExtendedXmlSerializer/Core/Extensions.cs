@@ -45,10 +45,17 @@ namespace ExtendedXmlSerialization.Core
 			this IParameterizedSource<TParameter, TResult> @this) where TParameter : class where TResult : class
 			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
-		public static TValue TryGet<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
+		public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key) where TValue : class
 		{
 			TValue result;
 			return target.TryGetValue(key, out result) ? result : default(TValue);
+		}
+
+		public static TValue? GetStructure<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
+			where TValue : struct
+		{
+			TValue result;
+			return target.TryGetValue(key, out result) ? result : (TValue?) null;
 		}
 
 		public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);

@@ -54,11 +54,4 @@ namespace ExtendedXmlSerialization.Core
 			return false;
 		}
 	}
-
-	public enum ConditionMonitorState
-	{
-		None,
-		Applying,
-		Applied
-	}
 }

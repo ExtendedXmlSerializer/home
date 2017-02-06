@@ -21,28 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Properties;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class Namespaces : INamespaces
+	class TypeExtractor : ITypeExtractor
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		public static TypeExtractor Default { get; } = new TypeExtractor();
+		TypeExtractor() : this(Types.Default, ItemTypeProperty.Default, TypeArgumentsProperty.Default) {}
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
+		readonly ITypes _types;
+		readonly ITypeProperty _item;
+		readonly ITypeArgumentsProperty _generic;
 
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		public TypeExtractor(ITypes types, ITypeProperty item, ITypeArgumentsProperty generic)
 		{
-			_known = known;
-			_formatter = formatter;
+			_types = types;
+			_item = item;
+			_generic = generic;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		public TypeInfo Get(IXmlReader parameter)
+		{
+			var contains = parameter.Contains(_item.Name);
+			var type = contains
+				? _item.Get(parameter).MakeArrayType().GetTypeInfo()
+				: Get(parameter.Name);
+
+			var result = type.IsGenericTypeDefinition
+				? type.MakeGenericType(_generic.Get(parameter).ToArray()).GetTypeInfo()
+				: type;
+			return result;
+		}
+
+		public TypeInfo Get(XName parameter) => _types.Get(parameter);
 	}
 }

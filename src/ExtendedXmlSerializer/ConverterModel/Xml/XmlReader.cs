@@ -24,11 +24,9 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ConverterModel.Properties;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
@@ -44,7 +42,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		                                                      };
 
 		readonly ITypeExtractor _types;
-		readonly IParsingDelimiters _delimiters;
+		readonly IParameterizedSource<string, XNamespace> _prefixes;
+		readonly char _namespace;
 		readonly System.Xml.XmlReader _reader;
 
 		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
@@ -52,12 +51,15 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
 
 		public XmlReader(System.Xml.XmlReader reader)
-			: this(TypeExtractor.Default, DefaultParsingDelimiters.Default, reader) {}
+			: this(TypeExtractor.Default, Prefixes.Default, DefaultParsingDelimiters.Default.Namespace, reader
+			) {}
 
-		public XmlReader(ITypeExtractor types, IParsingDelimiters delimiters, System.Xml.XmlReader reader)
+		public XmlReader(ITypeExtractor types, IParameterizedSource<string, XNamespace> prefixes, char @namespace,
+		                 System.Xml.XmlReader reader)
 		{
 			_types = types;
-			_delimiters = delimiters;
+			_prefixes = prefixes;
+			_namespace = @namespace;
 			_reader = reader;
 		}
 
@@ -82,8 +84,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			return result;
 		}
 
-		public IEnumerator Members() => Items();
-		// Same for now...
+		public IEnumerator Members() => Items(); // Same for now...
 
 		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + (_reader.MoveToElement() ? 0 : 1));
 
@@ -93,15 +94,16 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		public string this[XName name] => Contains(name) ? _reader.Value : null;
 
-
 		public XName Get(string parameter)
 		{
-			var parts = parameter.ToStringArray(_delimiters.Namespace);
+			var parts = parameter.ToStringArray(_namespace);
 			var result = parts.Length == 2
-				? XName.Get(parts[1], _reader.LookupNamespace(parts[0]))
+				? XName.Get(parts[1], Namespace(parts[0]))
 				: XName.Get(parts[0], _reader.LookupNamespace(string.Empty));
 			return result;
 		}
+
+		string Namespace(string prefix) => _reader.LookupNamespace(prefix) ?? _prefixes.Get(prefix)?.NamespaceName;
 
 		public TypeInfo Get(XName parameter) => _types.Get(parameter);
 
@@ -127,38 +129,5 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 				throw new NotSupportedException();
 			}
 		}
-	}
-
-	public interface ITypeExtractor : IParameterizedSource<IXmlReader, TypeInfo>, IParameterizedSource<XName, TypeInfo> {}
-
-	class TypeExtractor : ITypeExtractor
-	{
-		public static TypeExtractor Default { get; } = new TypeExtractor();
-		TypeExtractor() : this(Types.Default, TypeProperty.Default, TypeArgumentsProperty.Default) {}
-
-		readonly ITypes _types;
-		readonly ITypeProperty _item;
-		readonly ITypeArgumentsProperty _generic;
-
-		public TypeExtractor(ITypes types, ITypeProperty item, ITypeArgumentsProperty generic)
-		{
-			_types = types;
-			_item = item;
-			_generic = generic;
-		}
-
-		public TypeInfo Get(IXmlReader parameter)
-		{
-			var type = parameter.Contains(_item.Name)
-				? _item.Get(parameter).MakeArrayType().GetTypeInfo()
-				: Get(parameter.Name);
-
-			var result = type.IsGenericTypeDefinition
-				? type.MakeGenericType(_generic.Get(parameter).ToArray()).GetTypeInfo()
-				: type;
-			return result;
-		}
-
-		public TypeInfo Get(XName parameter) => _types.Get(parameter);
 	}
 }

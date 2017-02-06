@@ -22,27 +22,41 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class Namespaces : INamespaces
+	class Prefixes : IPrefixes
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		public static Prefixes Default { get; } = new Prefixes();
+
+		Prefixes() : this(WellKnownNamespaces.Default,
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identifier), x => x.Prefix),
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier)),
+		                  PrefixProvider.Default) {}
 
 		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
+		readonly IDictionary<XNamespace, string> _names;
+		readonly IDictionary<string, XNamespace> _namespaces;
+		readonly IPrefixProvider _provider;
 
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names,
+		                IDictionary<string, XNamespace> namespaces,
+		                IPrefixProvider provider)
 		{
 			_known = known;
-			_formatter = formatter;
+			_names = names;
+			_namespaces = namespaces;
+			_provider = provider;
 		}
 
 		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+			=> _known.GetStructure(parameter.Assembly)?.Prefix ?? _provider.Get(parameter.AssemblyQualifiedName);
+
+		public string Get(XName parameter) => _names.Get(parameter.NamespaceName) ?? _provider.Get(parameter.NamespaceName);
+		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
 	}
 }

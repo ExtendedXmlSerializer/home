@@ -21,28 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class Namespaces : INamespaces
+	public abstract class WeakCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
+	                                                                                       where TValue : class
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		protected WeakCacheBase()
 		{
-			_known = known;
-			_formatter = formatter;
+			_callback = Create;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		protected abstract TValue Create(TKey parameter);
+
+		public bool Contains(TKey key)
+		{
+			TValue temp;
+			return _cache.TryGetValue(key, out temp);
+		}
+
+		public void Add(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, value);
+		}
+
+		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }

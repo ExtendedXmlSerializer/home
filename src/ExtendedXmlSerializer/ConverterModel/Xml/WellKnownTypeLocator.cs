@@ -38,8 +38,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		WellKnownTypeLocator()
 			: this(
-				WellKnownNamespaces.Default.ToDictionary(x => x.Value?.Identifier,
-				                                         x => new Locator(x.Key.ExportedTypes.ToMetadata()).ToDelegate())
+				WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier, x => new Locator(x.Key).ToDelegate())
 			) {}
 
 		readonly IDictionary<string, Func<string, TypeInfo>> _types;
@@ -49,42 +48,38 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			_types = types;
 		}
 
-		public TypeInfo Get(XName parameter)
+		public TypeInfo Get(XName parameter) => _types.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
+
+		sealed class Locator : WeakCacheBase<string, TypeInfo>
 		{
-			var result = _types.TryGet(parameter.NamespaceName)?.Invoke(parameter.LocalName);
-			return result;
-		}
+			readonly Assembly _assembly;
 
-		sealed class Locator : IParameterizedSource<string, TypeInfo>
-		{
-			readonly ImmutableArray<TypeInfo> _types;
-			readonly IDictionary<string, TypeInfo> _lookup;
-
-			public Locator(ImmutableArray<TypeInfo> types)
-				: this(types, types.ToArray().GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First())) {}
-
-			public Locator(ImmutableArray<TypeInfo> types, IDictionary<string, TypeInfo> lookup)
+			public Locator(Assembly assembly)
 			{
-				_types = types;
-				_lookup = lookup;
+				_assembly = assembly;
 			}
 
-			public TypeInfo Get(string parameter) => _lookup.TryGet(parameter) ?? Search(parameter);
-
-			TypeInfo Search(string parameter)
+			TypeInfo Search(ImmutableArray<TypeInfo> types, string parameter)
 			{
-				var length = _types.Length;
+				var length = types.Length;
 				for (var i = 0; i < length; i++)
 				{
-					var type = _types[i];
+					var type = types[i];
 					if (type.Name.StartsWith(parameter))
 					{
 						return type;
 					}
 				}
 
-				throw new InvalidOperationException(
-					$"Could not find a type with the name '{parameter}' in array '{_types[0].Assembly}'");
+				throw new InvalidOperationException($"Could not find a type with the name '{parameter}' in array '{_assembly}'");
+			}
+
+			protected override TypeInfo Create(string parameter)
+			{
+				var types = _assembly.ExportedTypes.ToMetadata();
+				var lookup = types.ToArray().GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First());
+				var result = lookup.Get(parameter) ?? Search(types, parameter);
+				return result;
 			}
 		}
 	}
