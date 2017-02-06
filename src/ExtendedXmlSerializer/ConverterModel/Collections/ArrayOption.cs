@@ -21,15 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class FinishElement : IWriter
+	class ArrayOption : CollectionOptionBase
 	{
-		public static FinishElement Default { get; } = new FinishElement();
-		FinishElement() {}
+		public ArrayOption(IContainers container) : base(IsArraySpecification.Default, container) {}
 
-		public void Write(IXmlWriter writer, object instance) => writer.EndCurrent();
+		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
+		{
+			var reader = new ArrayReader(item);
+			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
+			return result;
+		}
 	}
 }

@@ -21,10 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	/*class Root : Container
+	class ContainerOptions : IContainerOptions
 	{
-		public Root(IWriter element, IConverter body) : base(element, body) {}
-	}*/
+		readonly IContainerOption _known;
+		readonly IContentOptions _options;
+
+		public ContainerOptions(IContainers containers)
+			: this(ContainerOption.Default, new ContentOptions(containers, new Contents(containers))) {}
+
+		public ContainerOptions(IContainerOption known, IContentOptions options)
+		{
+			_known = known;
+			_options = options;
+		}
+
+		public IEnumerator<IContainerOption> GetEnumerator()
+		{
+			yield return _known;
+			foreach (var content in _options.Skip(1))
+			{
+				yield return new ContainerOption(Elements.Default, content);
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+	}
 }

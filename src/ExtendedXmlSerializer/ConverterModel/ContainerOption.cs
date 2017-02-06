@@ -21,36 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class ContainerOption : OptionBase<TypeInfo, IConverter>, IContainerOption
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		public static ContainerOption Default { get; } = new ContainerOption();
+		ContainerOption() : this(WellKnownContent.Default) {}
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
 
-		public Contents(Func<IContents, IContentOptions> options)
+		readonly IParameterizedSource<TypeInfo, IWriter> _element;
+		readonly IContentOption _content;
+
+		public ContainerOption(IContentOption content) : this(ElementOption.Default, content) {}
+
+		public ContainerOption(IParameterizedSource<TypeInfo, IWriter> element, IContentOption content) : base(content)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_element = element;
+			_content = content;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
-		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
-		}
+		public override IConverter Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
 	}
 }

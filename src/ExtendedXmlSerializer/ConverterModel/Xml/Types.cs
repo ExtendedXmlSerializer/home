@@ -21,9 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -57,39 +55,5 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			=>
 				_aliased.TryGet(parameter) ??
 				_known.Get(parameter) ?? _partitions.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
-	}
-
-	class WellKnownTypeLocator : ITypes
-	{
-		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
-		WellKnownTypeLocator() : this(WellKnownNamespaces.Default.ToDictionary(x => x.Value?.Identifier, x => x.Key.DefinedTypes.ToImmutableArray())) {}
-
-		readonly IDictionary<string, ImmutableArray<TypeInfo>> _types;
-
-		public WellKnownTypeLocator(IDictionary<string, ImmutableArray<TypeInfo>> types)
-		{
-			_types = types;
-		}
-
-		public TypeInfo Get(XName parameter)
-		{
-			var types = _types.TryGet(parameter.NamespaceName);
-			var result = types != null ? Search(types, parameter.LocalName) : null;
-			return result;
-		}
-
-		static TypeInfo Search(ImmutableArray<TypeInfo> types, string name)
-		{
-			var length = types.Length;
-			for (int i = 0; i < length; i++)
-			{
-				var type = types[i];
-				if (type.Name == name)
-				{
-					return type;
-				}
-			}
-			throw new InvalidOperationException($"Could not find a type with the name '{name}' in array '{types[0].Assembly}'");
-		}
 	}
 }

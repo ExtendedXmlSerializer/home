@@ -22,35 +22,49 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class WellKnownTypeLocator : ITypes
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
+		WellKnownTypeLocator()
+			: this(WellKnownNamespaces.Default.ToDictionary(x => x.Value?.Identifier, x => x.Key.DefinedTypes.ToImmutableArray())
+			) {}
 
-		public Contents(Func<IContents, IContentOptions> options)
+		readonly IDictionary<string, ImmutableArray<TypeInfo>> _types;
+
+		public WellKnownTypeLocator(IDictionary<string, ImmutableArray<TypeInfo>> types)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_types = types;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		public TypeInfo Get(XName parameter)
 		{
-			readonly IContainers _containers;
+			var types = _types.TryGet(parameter.NamespaceName);
+			var result = types != null ? Search(types, parameter.LocalName) : null;
+			return result;
+		}
 
-			public Creator(IContainers containers)
+		static TypeInfo Search(ImmutableArray<TypeInfo> types, string name)
+		{
+			var length = types.Length;
+			for (var i = 0; i < length; i++)
 			{
-				_containers = containers;
+				var type = types[i];
+				if (type.Name == name)
+				{
+					return type;
+				}
 			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
+			throw new InvalidOperationException($"Could not find a type with the name '{name}' in array '{types[0].Assembly}'");
 		}
 	}
 }

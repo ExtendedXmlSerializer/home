@@ -29,16 +29,17 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 	sealed class WellKnownNamespaces : Dictionary<Assembly, Namespace?>
 	{
 		public static WellKnownNamespaces Default { get; } = new WellKnownNamespaces();
+
 		WellKnownNamespaces() : base(new Dictionary<Assembly, Namespace?>
-		                         {
-			                         {
-				                         typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
-				                         new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
-			                         },
-			                         {
-				                         typeof(object).GetTypeInfo().Assembly,
-				                         new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
-			                         }
-		                         }) {}
+		                             {
+			                             {
+				                             typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
+				                             new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
+			                             },
+			                             {
+				                             typeof(object).GetTypeInfo().Assembly,
+				                             new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
+			                             }
+		                             }) {}
 	}
 }

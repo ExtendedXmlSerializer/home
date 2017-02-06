@@ -21,11 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ConverterModel.Properties;
-using ExtendedXmlSerialization.ConverterModel.Xml;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
@@ -43,27 +39,5 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 		}
 
 		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
-	}
-
-	class ArrayElement : Element
-	{
-		readonly static XName XName = Names.Default.Get(typeof(Array).GetTypeInfo());
-
-		readonly TypeInfo _elementType;
-		readonly ITypeProperty _property;
-
-		public ArrayElement(TypeInfo element) : this(XName, element, ItemTypeProperty.Default) {}
-
-		public ArrayElement(XName name, TypeInfo elementType, ITypeProperty property) : base(name)
-		{
-			_elementType = elementType;
-			_property = property;
-		}
-
-		public override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-			_property.Write(writer, _elementType);
-		}
 	}
 }

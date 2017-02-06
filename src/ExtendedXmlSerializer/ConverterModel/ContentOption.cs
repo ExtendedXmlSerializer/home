@@ -21,36 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class ContentOption<T> : FixedOption<TypeInfo, IConverter>, IContentOption
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
-
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
-
-		public Contents(Func<IContents, IContentOptions> options)
-		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
-		}
-
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
-		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
-		}
+		public ContentOption(IConverter<T> converter) : this(converter, TypeEqualitySpecification<T>.Default) {}
+		public ContentOption(IConverter<T> converter, ISpecification<TypeInfo> specification) : base(specification, converter) {}
 	}
 }

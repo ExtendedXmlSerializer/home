@@ -21,36 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class EndCurrentElement : IWriter
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		public static EndCurrentElement Default { get; } = new EndCurrentElement();
+		EndCurrentElement() {}
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
-
-		public Contents(Func<IContents, IContentOptions> options)
-		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
-		}
-
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
-		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
-		}
+		public void Write(IXmlWriter writer, object instance) => writer.EndCurrent();
 	}
 }

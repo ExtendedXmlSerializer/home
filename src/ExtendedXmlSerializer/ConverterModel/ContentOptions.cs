@@ -23,54 +23,11 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Collections;
-using ExtendedXmlSerialization.ConverterModel.Converters;
 using ExtendedXmlSerialization.ConverterModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class WellKnownContent : Selector<TypeInfo, IConverter>, IContentOption
-	{
-		readonly ISpecification<TypeInfo> _specification;
-		public static WellKnownContent Default { get; } = new WellKnownContent();
-
-		WellKnownContent() : this(
-			BooleanConverter.Default.ToContent(),
-			CharacterConverter.Default.ToContent(),
-			ByteConverter.Default.ToContent(),
-			UnsignedByteConverter.Default.ToContent(),
-			ShortConverter.Default.ToContent(),
-			UnsignedShortConverter.Default.ToContent(),
-			IntegerConverter.Default.ToContent(),
-			UnsignedIntegerConverter.Default.ToContent(),
-			LongConverter.Default.ToContent(),
-			UnsignedLongConverter.Default.ToContent(),
-			FloatConverter.Default.ToContent(),
-			DoubleConverter.Default.ToContent(),
-			DecimalConverter.Default.ToContent(),
-			EnumerationContentOption.Default,
-			DateTimeConverter.Default.ToContent(),
-			DateTimeOffsetConverter.Default.ToContent(),
-			StringConverter.Default.ToContent(),
-			GuidConverter.Default.ToContent(),
-			TimeSpanConverter.Default.ToContent()
-		) {}
-
-		public WellKnownContent(params IContentOption[] options)
-			: this(new AnySpecification<TypeInfo>(options), options) {}
-
-		public WellKnownContent(ISpecification<TypeInfo> specification, params IContentOption[] options)
-			: base(options)
-		{
-			_specification = specification;
-		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
-	}
-
 	class ContentOptions : IContentOptions
 	{
 		readonly IContainers _containers;

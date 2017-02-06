@@ -21,34 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class EnumerableWriter : EnumerableWriter<IEnumerable>
-	{
-		public EnumerableWriter(IWriter item) : base(item) {}
-	}
-
-	class EnumerableWriter<T> : WriterBase<T> where T : IEnumerable
-	{
-		readonly IWriter _item;
-
-		public EnumerableWriter(IWriter item)
-		{
-			_item = item;
-		}
-
-		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
-
-		public override void Write(IXmlWriter writer, T instance)
-		{
-			var enumerator = Get(instance);
-			while (enumerator.MoveNext())
-			{
-				_item.Write(writer, enumerator.Current);
-			}
-		}
-	}
+	public interface IContainerOptions : IEnumerable<IContainerOption> {}
 }

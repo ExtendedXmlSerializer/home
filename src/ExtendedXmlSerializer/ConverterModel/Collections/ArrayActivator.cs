@@ -21,36 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class ArrayActivator : DelegatedFixedReader
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
-
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
-
-		public Contents(Func<IContents, IContentOptions> options)
-		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
-		}
-
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
-		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
-		}
+		public static ArrayActivator Default { get; } = new ArrayActivator();
+		ArrayActivator() : base(() => new ArrayList()) {}
 	}
 }
