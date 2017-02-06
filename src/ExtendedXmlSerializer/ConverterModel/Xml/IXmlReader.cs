@@ -40,6 +40,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		IEnumerator Items();
 
+		bool Contains(XName name);
+
 		string this[XName name] { get; }
 	}
 }

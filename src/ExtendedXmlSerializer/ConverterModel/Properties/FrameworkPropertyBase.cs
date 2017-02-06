@@ -34,6 +34,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Properties
 			Name = name;
 		}
 
-		protected XName Name { get; }
+		public XName Name { get; }
 	}
 }
