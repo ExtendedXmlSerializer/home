@@ -21,15 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using System.IO;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
 	public class AssemblyLoader : IAssemblyLoader
 	{
+		readonly ImmutableArray<Assembly> _loaded;
 		public static AssemblyLoader Default { get; } = new AssemblyLoader();
-		AssemblyLoader() {}
+		AssemblyLoader() : this(AssemblyProvider.Default.Get().ToImmutableArray()) {}
 
-		public Assembly Get(string parameter) => Assembly.Load(new AssemblyName(parameter));
+		AssemblyLoader(ImmutableArray<Assembly> loaded)
+		{
+			_loaded = loaded;
+		}
+
+		public Assembly Get(string parameter)
+		{
+			try
+			{
+				return Assembly.Load(new AssemblyName(parameter));
+			}
+			catch (FileNotFoundException)
+			{
+				var length = _loaded.Length;
+				for (var i = 0; i < length; i++)
+				{
+					var assembly = _loaded[i];
+					if (assembly.GetName().Name == parameter)
+					{
+						return assembly;
+					}
+				}
+				throw;
+			}
+		}
 	}
 }

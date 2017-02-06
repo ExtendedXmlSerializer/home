@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		protected override TypeInfo Create(XName parameter)
 			=>
-				_aliased.TryGet(parameter) ??
+				_aliased.Get(parameter) ??
 				_known.Get(parameter) ?? _partitions.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 	}
 }

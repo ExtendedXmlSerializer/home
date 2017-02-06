@@ -21,28 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-	class Namespaces : INamespaces
+	public class IsGenericTypeSpecification : ISpecification<TypeInfo>
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		public static IsGenericTypeSpecification Default { get; } = new IsGenericTypeSpecification();
+		IsGenericTypeSpecification() {}
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsGenericType;
 	}
 }

@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 				case FormatterAssemblyStyle.Simple:
 					return name.Name;
 				default:
-					return name.FullName;
+					return name.ToString();
 			}
 		}
 	}

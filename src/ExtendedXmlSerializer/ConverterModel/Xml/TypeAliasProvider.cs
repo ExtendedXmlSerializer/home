@@ -42,6 +42,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		}
 
 		protected override string GetItem(TypeInfo parameter)
-			=> _names.TryGet(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
+			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

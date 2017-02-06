@@ -31,25 +31,37 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 	class XmlWriter : IXmlWriter
 	{
 		readonly INames _names;
+		readonly IPrefixes _prefixes;
 		readonly System.Xml.XmlWriter _writer;
 
-		public XmlWriter(Stream stream) : this(System.Xml.XmlWriter.Create(stream)) {}
-		public XmlWriter(System.Xml.XmlWriter writer) : this(Names.Default, writer) {}
+		public XmlWriter(Stream stream) : this(Names.Default, Prefixes.Default, System.Xml.XmlWriter.Create(stream)) {}
 
-		public XmlWriter(INames names, System.Xml.XmlWriter writer)
+		public XmlWriter(INames names, IPrefixes prefixes, System.Xml.XmlWriter writer)
 		{
 			_names = names;
+			_prefixes = prefixes;
 			_writer = writer;
 		}
 
 		public void Attribute(XName name, string value)
-			=> _writer.WriteAttributeString(name.LocalName, name.NamespaceName, value);
+			=> _writer.WriteAttributeString(Prefix(name), name.LocalName, name.NamespaceName, value);
+
+		string Prefix(XName name)
+			=> _writer.LookupPrefix(name.NamespaceName) ?? CreatePrefix(_prefixes.Get(name), name.NamespaceName);
 
 		public string Get(TypeInfo parameter)
 		{
 			var name = _names.Get(parameter);
-			var formatted = XmlQualifiedName.ToString(name.LocalName, _writer.LookupPrefix(name.NamespaceName));
+			var prefix = _writer.LookupPrefix(name.NamespaceName) ?? CreatePrefix(_prefixes.Get(parameter), name.NamespaceName);
+			var formatted = XmlQualifiedName.ToString(name.LocalName, prefix);
 			var result = parameter.IsGenericType ? string.Concat(formatted, $"[{this.GetArguments(parameter)}]") : formatted;
+			return result;
+		}
+
+		string CreatePrefix(string prefix, string @namespace)
+		{
+			_writer.WriteAttributeString(prefix, XNamespace.Xmlns.NamespaceName, @namespace);
+			var result = _writer.LookupPrefix(@namespace);
 			return result;
 		}
 

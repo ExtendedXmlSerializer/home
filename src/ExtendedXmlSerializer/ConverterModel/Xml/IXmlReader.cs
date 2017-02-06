@@ -29,11 +29,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public interface IQualifiedName
-	{
-		XName Name { get; }
-	}
-
 	public interface IXmlReader : IDisposable, IQualifiedName, IDisplayAware, IParameterizedSource<string, XName>,
 	                              IParameterizedSource<XName, TypeInfo>
 	{

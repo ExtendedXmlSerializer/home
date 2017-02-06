@@ -21,28 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class Namespaces : INamespaces
+	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
+		where TKey : class where TValue : class
 	{
-		public static Namespaces Default { get; } = new Namespaces();
-		Namespaces() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Namespaces(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
 		{
-			_known = known;
-			_formatter = formatter;
+			_callback = callback;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		protected override TValue Create(TKey parameter) => _callback(parameter);
 	}
 }

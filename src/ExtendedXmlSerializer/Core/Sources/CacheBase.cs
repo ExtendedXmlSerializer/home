@@ -23,51 +23,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class WeakCache<TKey, TValue> : WeakCacheBase<TKey, TValue>
-		where TKey : class where TValue : class
-	{
-		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
-
-		public WeakCache(ConditionalWeakTable<TKey, TValue>.CreateValueCallback callback)
-		{
-			_callback = callback;
-		}
-
-		protected override TValue Create(TKey parameter) => _callback(parameter);
-	}
-
-	public abstract class WeakCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
-	                                                                                       where TValue : class
-	{
-		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
-		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
-
-		protected WeakCacheBase()
-		{
-			_callback = Create;
-		}
-
-		protected abstract TValue Create(TKey parameter);
-
-		public bool Contains(TKey key)
-		{
-			TValue temp;
-			return _cache.TryGetValue(key, out temp);
-		}
-
-		public void Add(TKey key, TValue value)
-		{
-			_cache.Remove(key);
-			_cache.Add(key, value);
-		}
-
-		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
-	}
-
 	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IParameterizedSource<TKey, TValue>
 	{
 		readonly Func<TKey, TValue> _create;
