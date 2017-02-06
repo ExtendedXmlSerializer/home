@@ -22,9 +22,10 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
@@ -34,12 +35,18 @@ namespace ExtendedXmlSerialization.ConverterModel.Properties
 		TypeArgumentsProperty() : base("arguments") {}
 
 		public override void Write(IXmlWriter writer, ImmutableArray<Type> instance)
-			=> writer.Attribute(Name, writer.GetArguments(instance.ToArray()));
+			=> writer.Attribute(Name, writer.GetArguments(instance));
 
+		public override ImmutableArray<Type> Get(IXmlReader reader) => Yield(reader).ToImmutableArray();
 
-		public override ImmutableArray<Type> Get(IXmlReader reader)
+		IEnumerable<Type> Yield(IXmlReader reader)
 		{
-			throw new NotImplementedException();
+			var names = reader[Name].ToStringArray();
+			var length = names.Length;
+			for (var i = 0; i < length; i++)
+			{
+				yield return reader.ReadType(names[i]).AsType();
+			}
 		}
 	}
 }

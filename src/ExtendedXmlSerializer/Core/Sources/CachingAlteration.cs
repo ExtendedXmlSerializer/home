@@ -21,10 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-
-namespace ExtendedXmlSerialization.ConverterModel.Properties
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public interface IProperty<T> : IConverter<T>, IQualifiedName {}
+	public class CachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
+		where TParameter : class where TResult : class
+	{
+		public static CachingAlteration<TParameter, TResult> Default { get; } = new CachingAlteration<TParameter, TResult>();
+		CachingAlteration() {}
+
+		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
+			=> new WeakCache<TParameter, TResult>(parameter.Get);
+	}
 }

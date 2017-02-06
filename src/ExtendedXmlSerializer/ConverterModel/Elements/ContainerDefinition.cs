@@ -25,6 +25,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
 	public struct ContainerDefinition
 	{
+		public ContainerDefinition(IContentOption content) : this(ElementOptions.Default, content) {}
+
 		public ContainerDefinition(IElementOption element, IContentOption content)
 		{
 			Element = element;

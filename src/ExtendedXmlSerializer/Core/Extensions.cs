@@ -31,18 +31,10 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core
 {
-	public class CachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
-		where TParameter : class where TResult : class
-	{
-		public static CachingAlteration<TParameter, TResult> Default { get; } = new CachingAlteration<TParameter, TResult>();
-		CachingAlteration() {}
-
-		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
-			=> new WeakCache<TParameter, TResult>(parameter.Get);
-	}
-
 	public static class Extensions
 	{
+		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',');
+
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
 			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
 
@@ -70,6 +62,9 @@ namespace ExtendedXmlSerialization.Core
 		{
 			yield return @this;
 		}
+
+		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this)
+			=> @this.Select(x => x.GetTypeInfo()).ToImmutableArray();
 
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);

@@ -23,22 +23,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
 	public static class Extensions
 	{
-		public static string GetArguments(this IFormatter<TypeInfo> @this, TypeInfo type)
-			=> @this.GetArguments(type.GetGenericArguments());
+		public static TypeInfo ReadType(this IXmlReader @this, XName property) => ReadType(@this, @this[property]);
 
-		public static string GetArguments(this IFormatter<TypeInfo> @this, params Type[] parameter)
-			=> string.Join(",", Generic(@this, parameter));
-
-		static IEnumerable<string> Generic(IFormatter<TypeInfo> formatter, IReadOnlyList<Type> types)
+		public static TypeInfo ReadType(this IXmlReader @this, string data)
 		{
-			for (var i = 0; i < types.Count; i++)
+			var name = @this.Get(data);
+			var result = @this.Get(name);
+			return result;
+		}
+
+		public static string GetArguments(this IFormatter<TypeInfo> @this, TypeInfo type)
+			=> @this.GetArguments(type.GetGenericArguments().ToImmutableArray());
+
+		public static string GetArguments(this IFormatter<TypeInfo> @this, ImmutableArray<Type> types)
+			=> string.Join(",", Generic(@this, types));
+
+		static IEnumerable<string> Generic(IFormatter<TypeInfo> formatter, ImmutableArray<Type> types)
+		{
+			for (var i = 0; i < types.Length; i++)
 			{
 				yield return formatter.Get(types[i].GetTypeInfo());
 			}

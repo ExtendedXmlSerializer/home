@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel
@@ -29,28 +30,30 @@ namespace ExtendedXmlSerialization.ConverterModel
 	class TypeFormatter : ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() : this(DefaultParsingDelimiters.Default.NestedClass) {}
+		TypeFormatter() : this(DefaultClrDelimiters.Default.Generic, DefaultParsingDelimiters.Default.NestedClass) {}
 
-		readonly string _namespaceDelimiter;
+		readonly string _namespace;
+		readonly char _generic;
 
-		public TypeFormatter(string namespaceDelimiter)
+		public TypeFormatter(char generic, string @namespace)
 		{
-			_namespaceDelimiter = namespaceDelimiter;
+			_namespace = @namespace;
+			_generic = generic;
 		}
 
 		public string Get(TypeInfo type)
 		{
-			/*if (type.IsGenericType)
+			if (type.IsGenericType)
 			{
-				var types = type.GetGenericArguments();
-				var names = string.Join(string.Empty, types.Select(p => p.Name));
-				var name = type.Name.Replace($"`{types.Length.ToString()}", $"Of{names}");
-				return name;
-			}*/
-			var result = type.IsNested
-				? $"{type.DeclaringType.Name}{_namespaceDelimiter}{type.Name}"
-				: type.Name;
-			return result;
+				return type.Name.ToStringArray(_generic)[0];
+			}
+
+			if (type.IsNested)
+			{
+				return $"{type.DeclaringType.Name}{_namespace}{type.Name}";
+			}
+
+			return type.Name;
 		}
 	}
 }

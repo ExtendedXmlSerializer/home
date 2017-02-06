@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ConverterModel.Elements;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
@@ -29,6 +30,6 @@ namespace ExtendedXmlSerialization.ConverterModel
 	public static class Extensions
 	{
 		public static IContentOption ToContent<T>(this IConverter<T> @this)
-			=> new ContentOption(TypeEqualitySpecification<T>.Default, @this);
+			=> new ContentOption(TypeEqualitySpecification<T>.Default, @this.AsValid<IConverter>());
 	}
 }

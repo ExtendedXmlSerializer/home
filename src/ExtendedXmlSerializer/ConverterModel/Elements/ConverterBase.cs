@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
@@ -35,11 +34,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 
 	public abstract class ConverterBase<T> : IConverter<T>
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
-
 		public abstract void Write(IXmlWriter writer, T instance);
-
-		object IParameterizedSource<IXmlReader, object>.Get(IXmlReader parameter) => Get(parameter);
 
 		public abstract T Get(IXmlReader reader);
 	}

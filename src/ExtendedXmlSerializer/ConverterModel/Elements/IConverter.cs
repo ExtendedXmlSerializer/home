@@ -27,9 +27,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
 	public interface IConverter : IReader, IWriter {}
 
-	public interface IConverter<T> : IConverter
+	public interface IConverter<T>
 	{
 		void Write(IXmlWriter writer, T instance);
-		new T Get(IXmlReader reader);
+		T Get(IXmlReader reader);
 	}
 }
