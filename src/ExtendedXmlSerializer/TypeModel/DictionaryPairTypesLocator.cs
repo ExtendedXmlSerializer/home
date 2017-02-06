@@ -23,7 +23,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
 
@@ -42,7 +41,7 @@ namespace ExtendedXmlSerialization.TypeModel
 
 		public DictionaryPairTypes Get(TypeInfo parameter)
 		{
-			foreach (var it in parameter.GetInterfaces().Select(x => x.GetTypeInfo()).Append(parameter))
+			foreach (var it in parameter.GetInterfaces().ToMetadata().Add(parameter))
 			{
 				if (it.IsGenericType && it.GetGenericTypeDefinition() == _type)
 				{

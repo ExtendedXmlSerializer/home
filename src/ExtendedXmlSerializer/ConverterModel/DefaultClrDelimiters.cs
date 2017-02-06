@@ -28,13 +28,15 @@ namespace ExtendedXmlSerialization.ConverterModel
 	class DefaultClrDelimiters
 	{
 		public static DefaultClrDelimiters Default { get; } = new DefaultClrDelimiters();
-		DefaultClrDelimiters() : this(new Delimiter('+')) {}
+		DefaultClrDelimiters() : this(new Delimiter('+'), new Delimiter('`')) {}
 
-		public DefaultClrDelimiters(Delimiter nestedClass)
+		public DefaultClrDelimiters(Delimiter nestedClass, Delimiter generic)
 		{
 			NestedClass = nestedClass;
+			Generic = generic;
 		}
 
 		public Delimiter NestedClass { get; }
+		public Delimiter Generic { get; }
 	}
 }

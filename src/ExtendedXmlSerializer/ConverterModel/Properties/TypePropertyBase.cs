@@ -32,12 +32,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Properties
 
 		public override void Write(IXmlWriter writer, TypeInfo instance) => writer.Attribute(Name, writer.Get(instance));
 
-		public override TypeInfo Get(IXmlReader reader)
-		{
-			var data = reader[Name];
-			var name = reader.Get(data);
-			var result = reader.Get(name);
-			return result;
-		}
+		public override TypeInfo Get(IXmlReader reader) => reader.ReadType(Name);
 	}
 }

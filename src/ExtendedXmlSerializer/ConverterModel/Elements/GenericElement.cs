@@ -34,8 +34,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		readonly ImmutableArray<Type> _arguments;
 		readonly ITypeArgumentsProperty _property;
 
-		public GenericElement(XName name, ImmutableArray<Type> arguments)
-			: this(name, arguments, TypeArgumentsProperty.Default) {}
+		public GenericElement(XName name, params Type[] types) : this(name, types.ToImmutableArray(), TypeArgumentsProperty.Default) {}
 
 		public GenericElement(XName name, ImmutableArray<Type> arguments, ITypeArgumentsProperty property) : base(name)
 		{

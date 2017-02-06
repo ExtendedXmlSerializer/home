@@ -53,21 +53,21 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			var namespacePath = parts[0].Split(_delimiters.Namespace)[1];
 			var assemblyPath = parts[1].Split(_delimiters.Assembly)[1];
 			var assembly = _loader.Get(assemblyPath);
-			var result = new Types(assembly, namespacePath, _alteration).ToDelegate();
+			var result = new Locator(assembly, namespacePath, _alteration).ToDelegate();
 			return result;
 		}
 
-		sealed class Types : IParameterizedSource<string, TypeInfo>
+		sealed class Locator : IParameterizedSource<string, TypeInfo>
 		{
 			readonly Assembly _assembly;
 			readonly string _ns;
 			readonly IAlteration<string> _alteration;
 			readonly Func<ImmutableArray<TypeInfo>> _types;
 
-			public Types(Assembly assembly, string @namespace, IAlteration<string> alteration)
+			public Locator(Assembly assembly, string @namespace, IAlteration<string> alteration)
 				: this(assembly, @namespace, alteration, new Namespaces(assembly).Build(@namespace)) {}
 
-			public Types(Assembly assembly, string @namespace, IAlteration<string> alteration,
+			public Locator(Assembly assembly, string @namespace, IAlteration<string> alteration,
 			             Func<ImmutableArray<TypeInfo>> types)
 			{
 				_assembly = assembly;

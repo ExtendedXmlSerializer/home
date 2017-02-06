@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
@@ -36,35 +37,55 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
 
 		WellKnownTypeLocator()
-			: this(WellKnownNamespaces.Default.ToDictionary(x => x.Value?.Identifier, x => x.Key.DefinedTypes.ToImmutableArray())
+			: this(
+				WellKnownNamespaces.Default.ToDictionary(x => x.Value?.Identifier,
+				                                         x => new Locator(x.Key.ExportedTypes.ToMetadata()).ToDelegate())
 			) {}
 
-		readonly IDictionary<string, ImmutableArray<TypeInfo>> _types;
+		readonly IDictionary<string, Func<string, TypeInfo>> _types;
 
-		public WellKnownTypeLocator(IDictionary<string, ImmutableArray<TypeInfo>> types)
+		public WellKnownTypeLocator(IDictionary<string, Func<string, TypeInfo>> types)
 		{
 			_types = types;
 		}
 
 		public TypeInfo Get(XName parameter)
 		{
-			var types = _types.TryGet(parameter.NamespaceName);
-			var result = types != null ? Search(types, parameter.LocalName) : null;
+			var result = _types.TryGet(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 			return result;
 		}
 
-		static TypeInfo Search(ImmutableArray<TypeInfo> types, string name)
+		sealed class Locator : IParameterizedSource<string, TypeInfo>
 		{
-			var length = types.Length;
-			for (var i = 0; i < length; i++)
+			readonly ImmutableArray<TypeInfo> _types;
+			readonly IDictionary<string, TypeInfo> _lookup;
+
+			public Locator(ImmutableArray<TypeInfo> types)
+				: this(types, types.ToArray().GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First())) {}
+
+			public Locator(ImmutableArray<TypeInfo> types, IDictionary<string, TypeInfo> lookup)
 			{
-				var type = types[i];
-				if (type.Name == name)
-				{
-					return type;
-				}
+				_types = types;
+				_lookup = lookup;
 			}
-			throw new InvalidOperationException($"Could not find a type with the name '{name}' in array '{types[0].Assembly}'");
+
+			public TypeInfo Get(string parameter) => _lookup.TryGet(parameter) ?? Search(parameter);
+
+			TypeInfo Search(string parameter)
+			{
+				var length = _types.Length;
+				for (var i = 0; i < length; i++)
+				{
+					var type = _types[i];
+					if (type.Name.StartsWith(parameter))
+					{
+						return type;
+					}
+				}
+
+				throw new InvalidOperationException(
+					$"Could not find a type with the name '{parameter}' in array '{_types[0].Assembly}'");
+			}
 		}
 	}
 }
