@@ -21,36 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class CollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		readonly IActivators _activators;
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
+		public CollectionContentOption(IContainers containers) : this(containers, Activators.Default) {}
 
-		public Contents(Func<IContents, IContentOptions> options)
+		public CollectionContentOption(IContainers containers, IActivators activators)
+			: base(containers)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_activators = activators;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
 		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
+			var activator = new DelegatedFixedReader(_activators.Get(classification.AsType()));
+			var reader = new CollectionReader(activator, item);
+			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
+			return result;
 		}
 	}
 }

@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Specifications;
+
 namespace ExtendedXmlSerialization.ConverterModel
 {
 	public static class Extensions
 	{
-		public static IContentOption ToContent<T>(this IConverter<T> @this) => new ContentOption<T>(@this);
+		public static IContentOption ToContent<T>(this IConverter<T> @this)
+			=> new ContentOption(TypeEqualitySpecification<T>.Default, @this);
 	}
 }

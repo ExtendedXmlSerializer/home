@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Converters;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class ArrayOption : CollectionOptionBase
+	public abstract class CompositeOptionBase<TParameter, TResult> : Selector<TParameter, TResult>,
+	                                                                 IOption<TParameter, TResult>
 	{
-		public ArrayOption(IContainers container) : base(IsArraySpecification.Default, container) {}
+		readonly ISpecification<TParameter> _specification;
 
-		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
+		protected CompositeOptionBase(params IOption<TParameter, TResult>[] options)
+			: this(new AnySpecification<TParameter>(options), options) {}
+
+		protected CompositeOptionBase(ISpecification<TParameter> specification, params IOption<TParameter, TResult>[] options)
+			: base(options)
 		{
-			var reader = new ArrayReader(item);
-			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
-			return result;
+			_specification = specification;
 		}
+
+		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
 	}
 }

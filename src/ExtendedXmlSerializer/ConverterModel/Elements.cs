@@ -22,16 +22,13 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Collections;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Elements : Selector<TypeInfo, IWriter>, IElements
+	class Elements : CompositeOptionBase<TypeInfo, IWriter>, IElementOption
 	{
 		public static Elements Default { get; } = new Elements();
-		Elements() : this(ArrayElementOption.Default, GenericElementOption.Default, ElementOption.Default) {}
-
-		public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
+		Elements() : base(GenericElementOption.Default, ElementOption.Default) {}
 	}
 }

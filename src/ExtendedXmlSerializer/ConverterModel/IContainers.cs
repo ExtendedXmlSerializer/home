@@ -26,5 +26,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IContainers : IParameterizedSource<TypeInfo, IConverter> {}
+	public interface IContainers : IParameterizedSource<TypeInfo, IConverter>
+	{
+		IConverter Content(TypeInfo parameter);
+	}
 }

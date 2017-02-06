@@ -21,35 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class ContainerOptions : IContainerOptions
+	abstract class CollectionContentOptionBase : ContentOptionBase
 	{
-		readonly IContainerOption _known;
-		readonly IContentOptions _options;
+		readonly IContainers _containers;
+		readonly ICollectionItemTypeLocator _locator;
 
-		public ContainerOptions(IContainers containers)
-			: this(ContainerOption.Default, new ContentOptions(containers, new Contents(containers))) {}
+		protected CollectionContentOptionBase(IContainers containers) : this(IsCollectionTypeSpecification.Default, containers) {}
 
-		public ContainerOptions(IContainerOption known, IContentOptions options)
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
+			: this(specification, containers, CollectionItemTypeLocator.Default) {}
+
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
+		                               ICollectionItemTypeLocator locator) : base(specification)
 		{
-			_known = known;
-			_options = options;
+			_containers = containers;
+			_locator = locator;
 		}
 
-		public IEnumerator<IContainerOption> GetEnumerator()
+		public override IConverter Get(TypeInfo parameter)
 		{
-			yield return _known;
-			foreach (var content in _options.Skip(1))
-			{
-				yield return new ContainerOption(Elements.Default, content);
-			}
+			var itemType = _locator.Get(parameter);
+			var result = Create(_containers.Get(itemType), itemType, parameter);
+			return result;
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		protected abstract IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification);
 	}
 }

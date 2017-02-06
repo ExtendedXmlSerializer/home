@@ -34,11 +34,11 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 	{
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IContents contents)
-			: this(contents, MemberAliasProvider.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IContainers containers)
+			: this(containers, MemberAliasProvider.Default, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(IContents contents, IAliasProvider alias, IAddDelegates add)
-			: base(Specification.Instance, contents, alias)
+		public ReadOnlyCollectionMemberOption(IContainers containers, IAliasProvider alias, IAddDelegates add)
+			: base(Specification.Instance, containers, alias)
 		{
 			_add = add;
 		}

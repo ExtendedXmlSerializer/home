@@ -24,22 +24,27 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	class Containers : WeakCacheBase<TypeInfo, IConverter>, IContainers
+	class Containers : IContainers
 	{
 		public static Containers Default { get; } = new Containers();
-		Containers() : this(x => new ContainerOptions(x)) {}
+		Containers() : this(x => new ContainerDefinitions(x)) {}
 
-		readonly ISelector<TypeInfo, IConverter> _selector;
+		readonly IParameterizedSource<TypeInfo, IConverter> _selector, _contents;
 
-		public Containers(Func<IContainers, IContainerOptions> options)
+		public Containers(Func<IContainers, IContainerDefinitions> options)
 		{
-			_selector = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			var definitions = options(this).ToArray();
+			var option = definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray();
+			_selector = new Selector<TypeInfo, IConverter>(option).Cache();
+			_contents = new Selector<TypeInfo, IConverter>(definitions.Select(x => x.Content).ToArray()).Cache();
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _selector.Get(parameter);
+		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
+		public IConverter Content(TypeInfo parameter) => _contents.Get(parameter);
 	}
 }
