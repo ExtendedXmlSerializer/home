@@ -27,7 +27,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 {
 	class Selector : Selector<MemberInformation, IMember>, ISelector
 	{
-		public Selector(IContents contents)
-			: base(new MemberOption(contents), new ReadOnlyCollectionMemberOption(contents)) {}
+		public Selector(IContainers containers)
+			: base(new MemberOption(containers), new ReadOnlyCollectionMemberOption(containers)) {}
 	}
 }

@@ -28,16 +28,10 @@ namespace ExtendedXmlSerialization.ConverterModel
 {
 	class ContainerOption : OptionBase<TypeInfo, IConverter>, IContainerOption
 	{
-		public static ContainerOption Default { get; } = new ContainerOption();
-		ContainerOption() : this(WellKnownContent.Default) {}
-
-
-		readonly IParameterizedSource<TypeInfo, IWriter> _element;
+		readonly IElementOption _element;
 		readonly IContentOption _content;
 
-		public ContainerOption(IContentOption content) : this(ElementOption.Default, content) {}
-
-		public ContainerOption(IParameterizedSource<TypeInfo, IWriter> element, IContentOption content) : base(content)
+		public ContainerOption(IElementOption element, IContentOption content) : base(content)
 		{
 			_element = element;
 			_content = content;

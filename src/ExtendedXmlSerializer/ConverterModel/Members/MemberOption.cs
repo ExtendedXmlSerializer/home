@@ -34,12 +34,12 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 
 		readonly ISetterFactory _setter;
 
-		public MemberOption(IContents contents)
-			: this(FixedTypeSpecification.Default, contents, MemberAliasProvider.Default, SetterFactory.Default) {}
+		public MemberOption(IContainers containers)
+			: this(FixedTypeSpecification.Default, containers, MemberAliasProvider.Default, SetterFactory.Default) {}
 
-		public MemberOption(ISpecification<TypeInfo> specification, IContents contents, IAliasProvider alias,
+		public MemberOption(ISpecification<TypeInfo> specification, IContainers containers, IAliasProvider alias,
 		                    ISetterFactory setter)
-			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable), contents, alias)
+			: base(new DelegatedSpecification<MemberInformation>(x => x.Assignable), containers, alias)
 		{
 			_specification = specification;
 			_setter = setter;

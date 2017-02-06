@@ -22,9 +22,20 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	public interface IElements : ISelector<TypeInfo, IWriter> {}
+	class ArrayContentOption : CollectionContentOptionBase
+	{
+		public ArrayContentOption(IContainers container) : base(IsArraySpecification.Default, container) {}
+
+		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
+		{
+			var reader = new ArrayReader(item);
+			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
+			return result;
+		}
+	}
 }

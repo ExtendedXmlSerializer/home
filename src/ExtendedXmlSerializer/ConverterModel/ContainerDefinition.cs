@@ -21,9 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IContainerOptions : IEnumerable<IContainerOption> {}
+	public struct ContainerDefinition
+	{
+		public ContainerDefinition(IElementOption element, IContentOption content)
+		{
+			Element = element;
+			Content = content;
+		}
+
+		public IElementOption Element { get; }
+
+		public IContentOption Content { get; }
+	}
 }
