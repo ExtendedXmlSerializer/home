@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		{
 			var members = _members.Get(parameter).ToImmutableArray();
 			var activate = _activators.Get(parameter.AsType());
-			var activator = new MemberedReader(new DelegatedFixedReader(activate), members.ToDictionary(x => x.DisplayName));
+			var activator = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
 			var result = new DecoratedConverter(activator, new MemberWriter(members));
 			return result;
 		}

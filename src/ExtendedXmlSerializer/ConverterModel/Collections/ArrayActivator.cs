@@ -25,7 +25,7 @@ using System.Collections;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class ArrayActivator : DelegatedFixedReader
+	class ArrayActivator : DelegatedFixedActivator
 	{
 		public static ArrayActivator Default { get; } = new ArrayActivator();
 		ArrayActivator() : base(() => new ArrayList()) {}

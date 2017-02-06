@@ -25,11 +25,6 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	abstract class WriterBase : IWriter
-	{
-		public abstract void Write(IXmlWriter writer, object instance);
-	}
-
 	abstract class WriterBase<T> : IWriter
 	{
 		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);

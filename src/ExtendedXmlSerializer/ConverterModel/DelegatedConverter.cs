@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel

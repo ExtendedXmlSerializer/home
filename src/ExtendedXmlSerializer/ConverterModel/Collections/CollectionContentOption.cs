@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Converters;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 
 		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
 		{
-			var activator = new DelegatedFixedReader(_activators.Get(classification.AsType()));
+			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 			var reader = new CollectionReader(activator, item);
 			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
 			return result;

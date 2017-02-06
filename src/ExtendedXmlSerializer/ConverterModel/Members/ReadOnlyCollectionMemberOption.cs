@@ -24,6 +24,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
