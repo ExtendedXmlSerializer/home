@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
@@ -34,23 +33,5 @@ namespace ExtendedXmlSerialization.ConverterModel.Converters
 		EnumerationContentOption() : base(IsAssignableSpecification<Enum>.Default) {}
 
 		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
-	}
-
-	class EnumerationConverter : DelegatedConverter<Enum>
-	{
-		public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
-
-		class Source : IParameterizedSource<string, Enum>
-		{
-			readonly Type _enumerationType;
-
-			public Source(Type enumerationType)
-			{
-				_enumerationType = enumerationType;
-			}
-
-			public Enum Get(string parameter)
-				=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
-		}
 	}
 }

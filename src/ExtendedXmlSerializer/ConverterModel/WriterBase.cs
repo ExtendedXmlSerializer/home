@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 
 	abstract class WriterBase<T> : IWriter
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
 
 		public abstract void Write(IXmlWriter writer, T instance);
 	}

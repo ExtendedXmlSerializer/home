@@ -21,71 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IContainerOption : IOption<TypeInfo, IConverter> {}
-
-	public interface IContainerOptions : IEnumerable<IContainerOption> {}
-
-	class ContainerOptions : IContainerOptions
-	{
-		readonly IContainerOption _known;
-		readonly IContentOptions _options;
-
-		public ContainerOptions(IContainers containers)
-			: this(ContainerOption.Default, new ContentOptions(containers, new Contents(containers))) {}
-
-		public ContainerOptions(IContainerOption known, IContentOptions options)
-		{
-			_known = known;
-			_options = options;
-		}
-
-		public IEnumerator<IContainerOption> GetEnumerator()
-		{
-			yield return _known;
-			foreach (var content in _options.Skip(1))
-			{
-				yield return new ContainerOption(Elements.Default, content);
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
-
 	public interface IContentOption : IOption<TypeInfo, IConverter> {}
-
-	class ContentOption<T> : FixedOption<TypeInfo, IConverter>, IContentOption
-	{
-		public ContentOption(IConverter<T> converter) : this(converter, TypeEqualitySpecification<T>.Default) {}
-		public ContentOption(IConverter<T> converter, ISpecification<TypeInfo> specification) : base(specification, converter) {}
-	}
-
-	class ContainerOption : OptionBase<TypeInfo, IConverter>, IContainerOption
-	{
-		public static ContainerOption Default { get; } = new ContainerOption();
-		ContainerOption() : this(WellKnownContent.Default) {}
-
-
-		readonly IParameterizedSource<TypeInfo, IWriter> _element;
-		readonly IContentOption _content;
-
-		public ContainerOption(IContentOption content) : this(ElementOption.Default, content) {}
-
-		public ContainerOption(IParameterizedSource<TypeInfo, IWriter> element, IContentOption content) : base(content)
-		{
-			_element = element;
-			_content = content;
-		}
-
-		public override IConverter Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
-	}
 }

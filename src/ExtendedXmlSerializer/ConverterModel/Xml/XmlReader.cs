@@ -58,6 +58,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		}
 
 		public string DisplayName => _reader.LocalName;
+
 		public TypeInfo Classification()
 		{
 			switch (_reader.MoveToContent())
@@ -91,7 +92,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public XName Get(string parameter)
 		{
 			var parts = parameter.ToStringArray(_delimiters.Namespace);
-			var result = parts.Length == 2 ? XName.Get(parts[1], _reader.LookupNamespace(parts[0])) : XName.Get(parts[0], _reader.LookupNamespace(string.Empty));
+			var result = parts.Length == 2
+				? XName.Get(parts[1], _reader.LookupNamespace(parts[0]))
+				: XName.Get(parts[0], _reader.LookupNamespace(string.Empty));
 			return result;
 		}
 

@@ -21,36 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class EnumerableWriter<T> : WriterBase<T> where T : IEnumerable
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		readonly IWriter _item;
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
-
-		public Contents(Func<IContents, IContentOptions> options)
+		public EnumerableWriter(IWriter item)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_item = item;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
+		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
 
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		public override void Write(IXmlWriter writer, T instance)
 		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
+			var enumerator = Get(instance);
+			while (enumerator.MoveNext())
 			{
-				_containers = containers;
+				_item.Write(writer, enumerator.Current);
 			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
 		}
+	}
+
+	class EnumerableWriter : EnumerableWriter<IEnumerable>
+	{
+		public EnumerableWriter(IWriter item) : base(item) {}
 	}
 }

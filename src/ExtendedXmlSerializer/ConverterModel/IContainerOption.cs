@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	/*class ValueConverterBase<T> : DelegatedConverter<T>
-	{
-		public ValueConverterBase(Func<string, T> deserialize, Func<T, string> serialize) : base(deserialize, serialize) {}
-	}*/
+	public interface IContainerOption : IOption<TypeInfo, IConverter> {}
 }

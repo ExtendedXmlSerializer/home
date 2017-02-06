@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Properties
 		public override void Write(IXmlWriter writer, ImmutableArray<Type> instance)
 			=> writer.Attribute(Name, writer.GetArguments(instance.ToArray()));
 
-		
+
 		public override ImmutableArray<Type> Get(IXmlReader reader)
 		{
 			throw new NotImplementedException();

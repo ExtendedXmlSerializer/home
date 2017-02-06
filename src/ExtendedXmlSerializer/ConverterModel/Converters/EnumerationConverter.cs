@@ -22,35 +22,25 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
-using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class EnumerationConverter : DelegatedConverter<Enum>
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
-
-		public Contents(Func<IContents, IContentOptions> options)
+		class Source : IParameterizedSource<string, Enum>
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
-		}
+			readonly Type _enumerationType;
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
-		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
+			public Source(Type enumerationType)
 			{
-				_containers = containers;
+				_enumerationType = enumerationType;
 			}
 
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
+			public Enum Get(string parameter)
+				=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
 		}
 	}
 }

@@ -37,8 +37,8 @@ namespace ExtendedXmlSerialization.ConverterModel
 			_serialize = serialize;
 		}
 
-		public override void Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
-		public void Write(IXmlWriter writer, T instance) => writer.Write(_serialize( instance));
+		public override void Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
+		public void Write(IXmlWriter writer, T instance) => writer.Write(_serialize(instance));
 
 		public override object Get(IXmlReader reader) => Deserialize(reader);
 		T Deserialize(IXmlReader reader) => _deserialize(reader.Value());

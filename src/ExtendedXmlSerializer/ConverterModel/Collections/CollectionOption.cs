@@ -23,50 +23,10 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Converters;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	abstract class CollectionOptionBase : ContentOptionBase
-	{
-		readonly IContainers _containers;
-		readonly ICollectionItemTypeLocator _locator;
-
-		protected CollectionOptionBase(IContainers containers) : this(IsCollectionTypeSpecification.Default, containers) {}
-
-		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
-			: this(specification, containers, CollectionItemTypeLocator.Default) {}
-
-		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
-		                               ICollectionItemTypeLocator locator) : base(specification)
-		{
-			_containers = containers;
-			_locator = locator;
-		}
-
-		public override IConverter Get(TypeInfo parameter)
-		{
-			var itemType = _locator.Get(parameter);
-			var result = Create(_containers.Get(itemType), itemType, parameter);
-			return result;
-		}
-
-		protected abstract IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification);
-	}
-
-	class ArrayOption : CollectionOptionBase
-	{
-		public ArrayOption(IContainers container) : base(IsArraySpecification.Default, container) {}
-
-		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
-		{
-			var reader = new ArrayReader(item);
-			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
-			return result;
-		}
-	}
-
 	class CollectionOption : CollectionOptionBase
 	{
 		readonly IActivators _activators;

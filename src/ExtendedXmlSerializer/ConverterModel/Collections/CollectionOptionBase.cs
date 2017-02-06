@@ -21,36 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	abstract class CollectionOptionBase : ContentOptionBase
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		readonly IContainers _containers;
+		readonly ICollectionItemTypeLocator _locator;
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
+		protected CollectionOptionBase(IContainers containers) : this(IsCollectionTypeSpecification.Default, containers) {}
 
-		public Contents(Func<IContents, IContentOptions> options)
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
+			: this(specification, containers, CollectionItemTypeLocator.Default) {}
+
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
+		                               ICollectionItemTypeLocator locator) : base(specification)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_containers = containers;
+			_locator = locator;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		public override IConverter Get(TypeInfo parameter)
 		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
+			var itemType = _locator.Get(parameter);
+			var result = Create(_containers.Get(itemType), itemType, parameter);
+			return result;
 		}
+
+		protected abstract IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification);
 	}
 }

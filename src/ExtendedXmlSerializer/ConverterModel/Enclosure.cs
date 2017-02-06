@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 		readonly IWriter _start;
 		readonly IWriter _finish;
 
-		public Enclosure(IWriter start, IWriter body) : this(start, body, FinishElement.Default) {}
+		public Enclosure(IWriter start, IWriter body) : this(start, body, EndCurrentElement.Default) {}
 
 		public Enclosure(IWriter start, IWriter body, IWriter finish) : base(body)
 		{

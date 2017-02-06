@@ -68,7 +68,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 				: this(assembly, @namespace, alteration, new Namespaces(assembly).Build(@namespace)) {}
 
 			public Types(Assembly assembly, string @namespace, IAlteration<string> alteration,
-			                         Func<ImmutableArray<TypeInfo>> types)
+			             Func<ImmutableArray<TypeInfo>> types)
 			{
 				_assembly = assembly;
 				_ns = @namespace;

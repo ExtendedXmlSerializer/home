@@ -22,35 +22,32 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ConverterModel.Properties;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 
-namespace ExtendedXmlSerialization.ConverterModel
+namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	class Contents : WeakCacheBase<TypeInfo, IConverter>, IContents
+	class ArrayElement : Element
 	{
-		readonly IParameterizedSource<TypeInfo, IConverter> _source;
+		readonly static XName XName = Names.Default.Get(typeof(Array).GetTypeInfo());
 
-		public Contents(IContainers containers) : this(new Creator(containers).Get) {}
+		readonly TypeInfo _elementType;
+		readonly ITypeProperty _property;
 
-		public Contents(Func<IContents, IContentOptions> options)
+		public ArrayElement(TypeInfo element) : this(XName, element, ItemTypeProperty.Default) {}
+
+		public ArrayElement(XName name, TypeInfo elementType, ITypeProperty property) : base(name)
 		{
-			_source = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+			_elementType = elementType;
+			_property = property;
 		}
 
-		protected override IConverter Create(TypeInfo parameter) => _source.Get(parameter);
-
-		sealed class Creator : IParameterizedSource<IContents, IContentOptions>
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			readonly IContainers _containers;
-
-			public Creator(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public IContentOptions Get(IContents parameter) => new ContentOptions(_containers, parameter);
+			base.Write(writer, instance);
+			_property.Write(writer, _elementType);
 		}
 	}
 }

@@ -33,9 +33,9 @@ namespace ExtendedXmlSerialization.ConverterModel
 		public abstract object Get(IXmlReader reader);
 	}
 
-	public abstract class ConverterBase<T> : IConverter<T>, IConverter
+	public abstract class ConverterBase<T> : IConverter<T>
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T)instance);
+		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
 
 		public abstract void Write(IXmlWriter writer, T instance);
 
