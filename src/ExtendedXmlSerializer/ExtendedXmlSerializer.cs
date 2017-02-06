@@ -34,20 +34,20 @@ namespace ExtendedXmlSerialization
 	/// </summary>
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		readonly IRoots _roots;
+		readonly IContainers _containers;
 
-		public ExtendedXmlSerializer() : this(Roots.Default) {}
+		public ExtendedXmlSerializer() : this(Containers.Default) {}
 
-		public ExtendedXmlSerializer(IRoots roots)
+		public ExtendedXmlSerializer(IContainers containers)
 		{
-			_roots = roots;
+			_containers = containers;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
 			using (var writer = new XmlWriter(stream))
 			{
-				var root = _roots.Get(instance.GetType().GetTypeInfo());
+				var root = _containers.Get(instance.GetType().GetTypeInfo());
 				root.Write(writer, instance);
 			}
 		}
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization
 			using (var reader = new XmlReader(stream))
 			{
 				var typeInfo = reader.Classification();
-				var root = _roots.Get(typeInfo);
+				var root = _containers.Get(typeInfo);
 				var result = root.Get(reader);
 				return result;
 			}

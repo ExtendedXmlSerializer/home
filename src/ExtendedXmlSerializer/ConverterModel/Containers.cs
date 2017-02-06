@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public abstract class ConverterOptionBase : OptionBase<TypeInfo, IConverter>, IConverterOption
+	class Containers : WeakCacheBase<TypeInfo, IConverter>, IContainers
 	{
-		protected ConverterOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
+		public static Containers Default { get; } = new Containers();
+		Containers() : this(x => new ContainerOptions(x)) {}
+
+		readonly ISelector<TypeInfo, IConverter> _selector;
+
+		public Containers(Func<IContainers, IContainerOptions> options)
+		{
+			_selector = new Selector<TypeInfo, IConverter>(options(this).ToArray());
+		}
+
+		protected override IConverter Create(TypeInfo parameter) => _selector.Get(parameter);
 	}
 }

@@ -23,8 +23,10 @@
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
+/*
 	class CollectionItem : Container
 	{
 		public CollectionItem(IWriter element, IConverter body) : base(element, body) {}
 	}
+*/
 }

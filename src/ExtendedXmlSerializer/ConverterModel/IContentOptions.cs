@@ -21,35 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Converters;
-using ExtendedXmlSerialization.TypeModel;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class MemberedConverterOption : ConverterOptionBase
-	{
-		readonly IActivators _activators;
-		readonly IMembers _members;
-
-		public MemberedConverterOption(IMembers members) : this(Activators.Default, members) {}
-
-		public MemberedConverterOption(IActivators activators, IMembers members)
-			: base(IsActivatedTypeSpecification.Default)
-		{
-			_activators = activators;
-			_members = members;
-		}
-
-		public override IConverter Get(TypeInfo parameter)
-		{
-			var members = _members.Get(parameter).ToImmutableArray();
-			var activate = _activators.Get(parameter.AsType());
-			var activator = new MemberedReader(new DelegatedFixedReader(activate), members.ToDictionary(x => x.DisplayName));
-			var result = new DecoratedConverter(activator, new MemberWriter(members));
-			return result;
-		}
-	}
+	public interface IContentOptions : IEnumerable<IContentOption> {}
 }

@@ -25,14 +25,15 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class OptionSelector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public class Selector<TParameter, TResult> : ISelector<TParameter, TResult>
 	{
-		readonly ImmutableArray<IOption<TParameter, TResult>> _options;
 		readonly static TResult Default = default(TResult);
 
-		public OptionSelector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
+		readonly ImmutableArray<IOption<TParameter, TResult>> _options;
 
-		public OptionSelector(ImmutableArray<IOption<TParameter, TResult>> options)
+		public Selector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
+
+		public Selector(ImmutableArray<IOption<TParameter, TResult>> options)
 		{
 			_options = options;
 		}

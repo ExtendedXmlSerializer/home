@@ -21,14 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	class DictionaryConverter : EnumerableConverter<IDictionary>
-	{
-		public DictionaryConverter(IConverter item, IReader reader) : base(item, reader) {}
-
-		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
-	}
+	public interface IContainers : IParameterizedSource<TypeInfo, IConverter> {}
 }

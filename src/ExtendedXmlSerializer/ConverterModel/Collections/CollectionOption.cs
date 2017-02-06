@@ -22,49 +22,47 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Converters;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
-	abstract class CollectionOptionBase : ConverterOptionBase
+	abstract class CollectionOptionBase : ContentOptionBase
 	{
-		readonly IConverters _converters;
-		readonly IElements _elements;
+		readonly IContainers _containers;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionOptionBase(IConverters converters) : this(IsCollectionTypeSpecification.Default, converters) {}
+		protected CollectionOptionBase(IContainers containers) : this(IsCollectionTypeSpecification.Default, containers) {}
 
-		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IConverters converters)
-			: this(specification, converters, Elements.Default, CollectionItemTypeLocator.Default) {}
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
+			: this(specification, containers, CollectionItemTypeLocator.Default) {}
 
-		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IConverters converters, IElements elements,
+		protected CollectionOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
 		                               ICollectionItemTypeLocator locator) : base(specification)
 		{
-			_converters = converters;
-			_elements = elements;
+			_containers = containers;
 			_locator = locator;
 		}
 
 		public override IConverter Get(TypeInfo parameter)
 		{
 			var itemType = _locator.Get(parameter);
-			var result = Create(_elements.Get(itemType), _converters.Get(itemType), itemType, parameter);
+			var result = Create(_containers.Get(itemType), itemType, parameter);
 			return result;
 		}
 
-		protected abstract IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter);
+		protected abstract IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification);
 	}
 
 	class ArrayOption : CollectionOptionBase
 	{
-		public ArrayOption(IConverters converters) : base(IsArraySpecification.Default, converters) {}
+		public ArrayOption(IContainers container) : base(IsArraySpecification.Default, container) {}
 
-		protected override IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter)
+		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
 		{
-			var item = new CollectionItem(element, body);
 			var reader = new ArrayReader(item);
-			var result = new EnumerableConverter(item, reader);
+			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}
@@ -73,20 +71,19 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 	{
 		readonly IActivators _activators;
 
-		public CollectionOption(IConverters converters) : this(converters, Activators.Default) {}
+		public CollectionOption(IContainers containers) : this(containers, Activators.Default) {}
 
-		public CollectionOption(IConverters converters, IActivators activators)
-			: base(converters)
+		public CollectionOption(IContainers containers, IActivators activators)
+			: base(containers)
 		{
 			_activators = activators;
 		}
 
-		protected override IConverter Create(IWriter element, IConverter body, TypeInfo itemType, TypeInfo parameter)
+		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
 		{
-			var item = new CollectionItem(element, body);
-			var activator = new DelegatedFixedReader(_activators.Get(parameter.AsType()));
+			var activator = new DelegatedFixedReader(_activators.Get(classification.AsType()));
 			var reader = new CollectionReader(activator, item);
-			var result = new EnumerableConverter(item, reader);
+			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}

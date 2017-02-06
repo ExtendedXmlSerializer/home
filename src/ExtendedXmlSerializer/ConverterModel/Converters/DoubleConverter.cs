@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Converters
 {
-	class DoubleConverter : ValueConverterBase<double>
+	class DoubleConverter : DelegatedConverter<double>
 	{
 		public static DoubleConverter Default { get; } = new DoubleConverter();
 		DoubleConverter() : base(XmlConvert.ToDouble, XmlConvert.ToString) {}

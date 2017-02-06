@@ -29,13 +29,13 @@ namespace ExtendedXmlSerialization.ConverterModel
 	class TypeFormatter : ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() : this(DefaultParsingDelimiters.Default) {}
+		TypeFormatter() : this(DefaultParsingDelimiters.Default.NestedClass) {}
 
-		readonly IParsingDelimiters _delimiters;
+		readonly string _namespaceDelimiter;
 
-		public TypeFormatter(IParsingDelimiters delimiters)
+		public TypeFormatter(string namespaceDelimiter)
 		{
-			_delimiters = delimiters;
+			_namespaceDelimiter = namespaceDelimiter;
 		}
 
 		public string Get(TypeInfo type)
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.ConverterModel
 				return name;
 			}*/
 			var result = type.IsNested
-				? $"{type.DeclaringType.Name}{(string) _delimiters.NestedClass}{type.Name}"
+				? $"{type.DeclaringType.Name}{_namespaceDelimiter}{type.Name}"
 				: type.Name;
 			return result;
 		}
