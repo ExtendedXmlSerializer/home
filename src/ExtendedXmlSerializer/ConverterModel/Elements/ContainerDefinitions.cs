@@ -44,6 +44,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 			yield return new ContainerDefinition(new DictionaryContentOption(_containers));
 			yield return new ContainerDefinition(new CollectionContentOption(_containers));
 			yield return new ContainerDefinition(new MemberedContentOption(new Members.Members(_containers)));
+			yield return new ContainerDefinition(new RuntimeContentOption(_containers));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

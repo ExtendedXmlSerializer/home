@@ -31,23 +31,29 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 	class TypeExtractor : ITypeExtractor
 	{
 		public static TypeExtractor Default { get; } = new TypeExtractor();
-		TypeExtractor() : this(Types.Default, ItemTypeProperty.Default, TypeArgumentsProperty.Default) {}
+		TypeExtractor() : this(Types.Default, TypeProperty.Default, ItemTypeProperty.Default, TypeArgumentsProperty.Default) {}
 
 		readonly ITypes _types;
+		readonly ITypeProperty _type;
 		readonly ITypeProperty _item;
 		readonly ITypeArgumentsProperty _generic;
 
-		public TypeExtractor(ITypes types, ITypeProperty item, ITypeArgumentsProperty generic)
+		public TypeExtractor(ITypes types, ITypeProperty type, ITypeProperty item, ITypeArgumentsProperty generic)
 		{
 			_types = types;
+			_type = type;
 			_item = item;
 			_generic = generic;
 		}
 
 		public TypeInfo Get(IXmlReader parameter)
 		{
-			var contains = parameter.Contains(_item.Name);
-			var type = contains
+			if (parameter.Contains(_type.Name))
+			{
+				return _type.Get(parameter);
+			}
+
+			var type = parameter.Contains(_item.Name)
 				? _item.Get(parameter).MakeArrayType().GetTypeInfo()
 				: Get(parameter.Name);
 
