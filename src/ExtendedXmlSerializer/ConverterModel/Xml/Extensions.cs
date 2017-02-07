@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public static string GetArguments(this IFormatter<TypeInfo> @this, ImmutableArray<Type> types)
 			=> string.Join(",", Generic(@this, types));
 
-		static IEnumerable<string> Generic(IFormatter<TypeInfo> formatter, ImmutableArray<Type> types)
+		static IEnumerable<string> Generic(IParameterizedSource<TypeInfo, string> formatter, ImmutableArray<Type> types)
 		{
 			for (var i = 0; i < types.Length; i++)
 			{

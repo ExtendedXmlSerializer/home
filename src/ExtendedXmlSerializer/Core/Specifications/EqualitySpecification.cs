@@ -21,32 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-	class MemberWriter : IWriter
+	public class EqualitySpecification<T> : ISpecification<T>
 	{
-		readonly ImmutableArray<IMember> _members;
+		readonly T _source;
 
-		public MemberWriter(ImmutableArray<IMember> members)
+		public EqualitySpecification(T source)
 		{
-			_members = members;
+			_source = source;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
-		{
-			var length = _members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = _members[i];
-				var value = member.Get(instance);
-				if (value != null)
-				{
-					member.Write(writer, value);
-				}
-			}
-		}
+		public bool IsSatisfiedBy(T parameter) => Equals(parameter, _source);
 	}
 }

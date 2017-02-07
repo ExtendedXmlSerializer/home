@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Elements;
@@ -67,7 +66,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 
 		public override IConverter Get(TypeInfo parameter)
 		{
-			var members = _members.Get(parameter).ToImmutableArray();
+			var members = _members.Get(parameter);
 			var activate = _activators.Get(parameter.AsType());
 			var reader = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
 			var result = new DecoratedConverter(reader, new MemberWriter(members));

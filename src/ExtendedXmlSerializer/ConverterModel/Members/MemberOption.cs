@@ -53,10 +53,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		protected virtual IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
 		                                       Func<object, object> getter, IConverter body)
 		{
-			var start = _specification.IsSatisfiedBy(classification)
-				? new Elements.Member(displayName)
-				: new VariableTypedMember(displayName, classification.AsType());
-			var result = new Member(displayName, start, setter, getter, body);
+			var result = _specification.IsSatisfiedBy(classification)
+				? new Member(displayName, getter, setter, body)
+				: (IMember)new VariableTypeMember(displayName, classification, getter, setter, body);
 			return result;
 		}
 	}

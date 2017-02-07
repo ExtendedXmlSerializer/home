@@ -25,8 +25,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class GeneratedPrefixProvider : CacheBase<string, string>, IPrefixProvider
+	class Prefixer : CacheBase<string, string>, IPrefixer
 	{
-		protected override string Create(string parameter) => $"ns{Count + 1}";
+		protected override string Create(string parameter) => $"ns{(Count + 1).ToString()}";
 	}
 }

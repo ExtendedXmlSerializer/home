@@ -60,8 +60,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 
 		IMember Create(MemberInfo property, TypeInfo metadata)
 			=>
-				new Members.Member(property.Name, new VariableTypedMember(property.Name, metadata.AsType()), _setter.Get(property),
-				                   _getter.Get(property), _containers.Content(metadata));
+				new VariableTypeMember(property.Name, metadata, _getter.Get(property), _setter.Get(property),
+				                       _containers.Content(metadata));
 
 		public IConverter Get(TypeInfo parameter)
 		{

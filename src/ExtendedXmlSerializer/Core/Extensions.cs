@@ -81,6 +81,9 @@ namespace ExtendedXmlSerialization.Core
 			return result;
 		}
 
+
+		public static ISpecification<T> Inverse<T>(this ISpecification<T> @this) => new InverseSpecification<T>(@this);
+
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);
 

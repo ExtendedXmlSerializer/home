@@ -35,28 +35,23 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		Prefixes() : this(WellKnownNamespaces.Default,
 		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identifier), x => x.Prefix),
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier)),
-		                  PrefixProvider.Default) {}
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier))) {}
 
 		readonly IDictionary<Assembly, Namespace> _known;
 		readonly IDictionary<XNamespace, string> _names;
 		readonly IDictionary<string, XNamespace> _namespaces;
-		readonly IPrefixProvider _provider;
 
 		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names,
-		                IDictionary<string, XNamespace> namespaces,
-		                IPrefixProvider provider)
+		                IDictionary<string, XNamespace> namespaces)
 		{
 			_known = known;
 			_names = names;
 			_namespaces = namespaces;
-			_provider = provider;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Prefix ?? _provider.Get(parameter.AssemblyQualifiedName);
+		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
 
-		public string Get(XName parameter) => _names.Get(parameter.NamespaceName) ?? _provider.Get(parameter.NamespaceName);
+		public string Get(XName parameter) => _names.Get(parameter.NamespaceName);
 		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
 	}
 }

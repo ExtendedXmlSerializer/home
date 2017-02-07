@@ -25,7 +25,6 @@ using System;
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -48,19 +47,19 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		                                  IConverter body, MemberInfo metadata)
 		{
 			var add = _add.Get(classification);
-			var result = add != null ? new ReadOnlyCollectionMember(displayName, add, getter, body) : null;
+			var result = add != null ? new ReadOnlyCollectionMember(displayName, getter, add, body) : null;
 			return result;
 		}
 
 		class ReadOnlyCollectionMember : Member
 		{
-			public ReadOnlyCollectionMember(string displayName, Action<object, object> add, Func<object, object> getter,
-			                                IConverter context) : base(displayName, add, getter, context) {}
+			public ReadOnlyCollectionMember(string displayName, Func<object, object> getter, Action<object, object> add,
+			                                IConverter context) : base(displayName, getter, add, context) {}
 
 			public override void Assign(object instance, object value)
 			{
 				var collection = Get(instance);
-				foreach (var element in value.AsValid<IEnumerable>())
+				foreach (var element in (IEnumerable)value)
 				{
 					base.Assign(collection, element);
 				}

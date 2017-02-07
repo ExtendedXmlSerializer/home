@@ -21,86 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class Members : IMembers
+	class Members : CacheBase<TypeInfo, ImmutableArray<IMember>>, IMembers
 	{
-		readonly ISelector _selector;
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
+		readonly IMemberSource _source;
 
-		readonly static MemberSpecification<FieldInfo> Field =
-			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
+		public Members(IContainers containers) : this(new MemberSource(containers)) {}
 
-		readonly static MemberSpecification<PropertyInfo> Property =
-			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
-
-		public Members(IContainers containers) : this(new Selector(containers), Property, Field) {}
-
-		protected Members(ISelector selector, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public Members(IMemberSource source)
 		{
-			_selector = selector;
-			_property = property;
-			_field = field;
+			_source = source;
 		}
 
-		public IEnumerable<IMember> Get(TypeInfo parameter) => Yield(parameter).OrderBy(x => x.Sort).Select(x => x.Member);
-
-		IEnumerable<Sorting> Yield(TypeInfo parameter)
-		{
-			foreach (var property in parameter.GetProperties())
-			{
-				if (_property.IsSatisfiedBy(property))
-				{
-					var sorting = Create(property, property.PropertyType, property.CanWrite);
-					if (sorting != null)
-					{
-						yield return sorting.Value;
-					}
-				}
-			}
-
-			foreach (var field in parameter.GetFields())
-			{
-				if (_field.IsSatisfiedBy(field))
-				{
-					var sorting = Create(field, field.FieldType, !field.IsInitOnly);
-					if (sorting != null)
-					{
-						yield return sorting.Value;
-					}
-				}
-			}
-		}
-
-		Sorting? Create(MemberInfo metadata, Type memberType, bool assignable)
-		{
-			var sort = new Sort(metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order, metadata.MetadataToken);
-			var information = new MemberInformation(metadata, memberType.GetTypeInfo().AccountForNullable(), assignable);
-			var element = _selector.Get(information);
-			var result = element != null ? (Sorting?) new Sorting(element, sort) : null;
-			return result;
-		}
-
-		struct Sorting
-		{
-			public Sorting(IMember member, Sort sort)
-			{
-				Member = member;
-				Sort = sort;
-			}
-
-			public IMember Member { get; }
-			public Sort Sort { get; }
-		}
+		protected override ImmutableArray<IMember> Create(TypeInfo parameter) => _source.Get(parameter).ToImmutableArray();
 	}
 }
