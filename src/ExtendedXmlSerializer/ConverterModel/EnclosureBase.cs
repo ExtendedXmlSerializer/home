@@ -32,11 +32,13 @@ namespace ExtendedXmlSerialization.ConverterModel
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			Start(writer, instance);
-			base.Write(writer, instance);
+			Body(writer, instance);
 			Finish(writer, instance);
 		}
 
 		protected abstract void Start(IXmlWriter writer, object instance);
+
+		protected void Body(IXmlWriter writer, object instance) => base.Write(writer, instance);
 
 		protected abstract void Finish(IXmlWriter writer, object instance);
 	}

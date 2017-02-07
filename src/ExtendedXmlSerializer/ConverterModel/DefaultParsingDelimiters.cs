@@ -28,19 +28,30 @@ namespace ExtendedXmlSerialization.ConverterModel
 	class DefaultParsingDelimiters : IParsingDelimiters
 	{
 		public static DefaultParsingDelimiters Default { get; } = new DefaultParsingDelimiters();
-		DefaultParsingDelimiters() : this(new Delimiter(';'), new Delimiter(':'), new Delimiter('='), new Delimiter('-')) {}
 
-		public DefaultParsingDelimiters(Delimiter part, Delimiter @namespace, Delimiter assembly, Delimiter nestedClass)
+		DefaultParsingDelimiters()
+			: this(
+				new Delimiter(';'), new Delimiter(':'), new Delimiter('='), new Delimiter('-'), new Delimiter('['),
+				new Delimiter(']'), new Delimiter(',')) {}
+
+		public DefaultParsingDelimiters(Delimiter part, Delimiter @namespace, Delimiter assembly, Delimiter nestedClass,
+		                                Delimiter genericStart, Delimiter genericEnd, Delimiter generics)
 		{
 			Part = part;
 			Namespace = @namespace;
 			Assembly = assembly;
 			NestedClass = nestedClass;
+			GenericStart = genericStart;
+			GenericEnd = genericEnd;
+			Generics = generics;
 		}
 
 		public Delimiter Part { get; }
 		public Delimiter Namespace { get; }
 		public Delimiter Assembly { get; }
 		public Delimiter NestedClass { get; }
+		public Delimiter GenericStart { get; }
+		public Delimiter GenericEnd { get; }
+		public Delimiter Generics { get; }
 	}
 }

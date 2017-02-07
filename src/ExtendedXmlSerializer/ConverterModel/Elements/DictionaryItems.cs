@@ -37,21 +37,23 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		readonly static PropertyInfo Value = Type.GetProperty(nameof(DictionaryEntry.Value));
 
 		readonly IContainers _containers;
+		readonly IConverter _runtime;
 		readonly IWriter _element;
 		readonly IGetterFactory _getter;
 		readonly ISetterFactory _setter;
 		readonly IDictionaryPairTypesLocator _locator;
 
-		public DictionaryItems(IContainers containers)
+		public DictionaryItems(IContainers containers, IConverter runtime)
 			: this(
-				containers, ElementOption.Default.Get(Type), GetterFactory.Default, SetterFactory.Default,
+				containers, runtime, ElementOption.Default.Get(Type), GetterFactory.Default, SetterFactory.Default,
 				DictionaryPairTypesLocator.Default
 			) {}
 
-		public DictionaryItems(IContainers containers, IWriter element, IGetterFactory getter,
+		public DictionaryItems(IContainers containers, IConverter runtime, IWriter element, IGetterFactory getter,
 		                       ISetterFactory setter, IDictionaryPairTypesLocator locator)
 		{
 			_containers = containers;
+			_runtime = runtime;
 			_element = element;
 			_getter = getter;
 			_setter = setter;
@@ -61,7 +63,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		IMember Create(MemberInfo property, TypeInfo metadata)
 			=>
 				new VariableTypeMember(property.Name, metadata, _getter.Get(property), _setter.Get(property),
-				                       _containers.Content(metadata));
+				                       _runtime, _containers.Content(metadata));
 
 		public IConverter Get(TypeInfo parameter)
 		{

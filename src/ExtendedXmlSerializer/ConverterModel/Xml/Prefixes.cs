@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
 
-		public string Get(XName parameter) => _names.Get(parameter.NamespaceName);
+		public string Get(XNamespace parameter) => _names.Get(parameter.NamespaceName);
 		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
 	}
 }

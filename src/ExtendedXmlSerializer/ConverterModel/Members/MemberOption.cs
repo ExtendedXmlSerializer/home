@@ -31,12 +31,16 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 {
 	class MemberOption : MemberOptionBase
 	{
+		readonly IConverter _runtime;
 		readonly ISpecification<TypeInfo> _specification;
 
 		readonly ISetterFactory _setter;
 
-		public MemberOption(IContainers containers)
-			: this(FixedTypeSpecification.Default, containers, MemberAliasProvider.Default, SetterFactory.Default) {}
+		public MemberOption(IContainers containers, IConverter runtime)
+			: this(FixedTypeSpecification.Default, containers, MemberAliasProvider.Default, SetterFactory.Default)
+		{
+			_runtime = runtime;
+		}
 
 		public MemberOption(ISpecification<TypeInfo> specification, IContainers containers, IAliasProvider alias,
 		                    ISetterFactory setter)
@@ -55,7 +59,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		{
 			var result = _specification.IsSatisfiedBy(classification)
 				? new Member(displayName, getter, setter, body)
-				: (IMember)new VariableTypeMember(displayName, classification, getter, setter, body);
+				: (IMember) new VariableTypeMember(displayName, classification, getter, setter, _runtime, body);
 			return result;
 		}
 	}

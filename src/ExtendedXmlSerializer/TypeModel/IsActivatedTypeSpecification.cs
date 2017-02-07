@@ -29,11 +29,13 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	public class IsActivatedTypeSpecification : ISpecification<TypeInfo>
 	{
+		readonly static TypeInfo GeneralObject = typeof(object).GetTypeInfo();
 		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
 		IsActivatedTypeSpecification() {}
 
 		public bool IsSatisfiedBy(TypeInfo parameter)
 			=> parameter.IsValueType ||
-			   !parameter.IsAbstract && parameter.IsClass && parameter.GetConstructor(Type.EmptyTypes) != null;
+			   !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject) &&
+			   parameter.GetConstructor(Type.EmptyTypes) != null;
 	}
 }

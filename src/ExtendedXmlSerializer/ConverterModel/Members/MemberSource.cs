@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -44,7 +43,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public MemberSource(IContainers containers) : this(new Selector(containers), Property, Field) {}
+		public MemberSource(ISelector selector) : this(selector, Property, Field) {}
 
 		public MemberSource(ISelector selector, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{

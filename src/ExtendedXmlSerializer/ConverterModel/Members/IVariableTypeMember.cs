@@ -21,34 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Collections;
-using ExtendedXmlSerialization.TypeModel;
+using System;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class DictionaryContentOption : ContentOptionBase
-	{
-		readonly IDictionaryItems _items;
-		readonly IActivators _activators;
-
-		public DictionaryContentOption(IContainers containers, IConverter runtime)
-			: this(new DictionaryItems(containers, runtime), Activators.Default) {}
-
-		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
-			: base(IsDictionaryTypeSpecification.Default)
-		{
-			_items = items;
-			_activators = activators;
-		}
-
-		public override IConverter Get(TypeInfo parameter)
-		{
-			var item = _items.Get(parameter);
-			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
-			return result;
-		}
-	}
+	public interface IVariableTypeMember : IMember, ISpecification<Type> {}
 }

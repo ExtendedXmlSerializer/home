@@ -24,8 +24,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
@@ -35,6 +37,27 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public static TypeInfo ReadType(this IXmlReader @this, XName property) => ReadType(@this, @this[property]);
 
 		public static TypeInfo ReadType(this IXmlReader @this, string data)
+		{
+			var delimiters = DefaultParsingDelimiters.Default;
+			var start = delimiters.GenericStart;
+			var parts = data.ToStringArray(start);
+			var type = @this.Type(parts[0]);
+			var result = parts.Length > 1
+				? @this.Generic(type,
+				                string.Join(start, parts.ToArray().Skip(1))
+				                      .TrimEnd(delimiters.GenericEnd)
+				                      .ToStringArray(delimiters.Generics))
+				: type;
+			return result;
+		}
+
+		static TypeInfo Generic(this IXmlReader @this, TypeInfo definition, ImmutableArray<string> types)
+		{
+			var result = definition.MakeGenericType(types.Select(@this.ReadType).Select(x => x.AsType()).ToArray()).GetTypeInfo();
+			return result;
+		}
+
+		static TypeInfo Type(this IXmlReader @this, string data)
 		{
 			var name = @this.Get(data);
 			var result = @this.Get(name);
