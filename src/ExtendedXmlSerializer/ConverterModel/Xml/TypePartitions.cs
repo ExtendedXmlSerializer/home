@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class TypePartitions : CacheBase<string, Func<string, TypeInfo>>, ITypePartitions
+	class TypePartitions : WeakCacheBase<string, Func<string, TypeInfo>>, ITypePartitions
 	{
 		public static TypePartitions Default { get; } = new TypePartitions();
 		TypePartitions() : this(DefaultParsingDelimiters.Default, AssemblyLoader.Default, TypeNameAlteration.Default) {}
@@ -98,9 +98,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		sealed class Namespaces : IParameterizedSource<string, ImmutableArray<TypeInfo>>
 		{
-			readonly Func<IReadOnlyList<TypeInfo>> _types;
+			readonly Func<ImmutableArray<TypeInfo>> _types;
 
-			public Namespaces(Func<IReadOnlyList<TypeInfo>> types)
+			public Namespaces(Func<ImmutableArray<TypeInfo>> types)
 			{
 				_types = types;
 			}
@@ -110,7 +110,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			IEnumerable<TypeInfo> Yield(string parameter)
 			{
 				var types = _types();
-				for (var i = 0; i < types.Count; i++)
+				var length = types.Length;
+				for (var i = 0; i < length; i++)
 				{
 					var type = types[i];
 					if (type.Namespace == parameter)

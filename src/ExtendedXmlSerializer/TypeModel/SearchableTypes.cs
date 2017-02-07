@@ -22,14 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class SearchableTypes : WeakCacheBase<Assembly, IReadOnlyList<TypeInfo>>, ISearchableTypes
+	class SearchableTypes : ISearchableTypes
 	{
 		public static SearchableTypes Default { get; } = new SearchableTypes();
 		SearchableTypes() : this(GenericActivatedTypeSpecification.Default.IsSatisfiedBy) {}
@@ -41,7 +40,6 @@ namespace ExtendedXmlSerialization.TypeModel
 			_specification = specification;
 		}
 
-		protected override IReadOnlyList<TypeInfo> Create(Assembly parameter)
-			=> parameter.ExportedTypes.ToMetadata(_specification);
+		public ImmutableArray<TypeInfo> Get(Assembly parameter) => parameter.ExportedTypes.ToMetadata(_specification);
 	}
 }

@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
@@ -38,8 +39,10 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		WellKnownTypeLocator()
 			: this(
-				WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier,
-				                                         x => new Locator(SearchableTypes.Default.Get(x.Key)).ToDelegate())
+				WellKnownNamespaces.Default.ToDictionary(
+					x => x.Value.Identifier,
+				    x => new Locator(SearchableTypes.Default.Get(x.Key)).ToDelegate()
+					)
 			) {}
 
 		readonly IDictionary<string, Func<string, TypeInfo>> _types;
@@ -53,13 +56,13 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		sealed class Locator : IParameterizedSource<string, TypeInfo>
 		{
-			readonly IReadOnlyList<TypeInfo> _types;
+			readonly ImmutableArray<TypeInfo> _types;
 			readonly IDictionary<string, TypeInfo> _lookup;
 
-			public Locator(IReadOnlyList<TypeInfo> types)
-				: this(types, types.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First())) {}
+			public Locator(ImmutableArray<TypeInfo> types)
+				: this(types, types.ToArray().GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First())) {}
 
-			public Locator(IReadOnlyList<TypeInfo> types, IDictionary<string, TypeInfo> lookup)
+			public Locator(ImmutableArray<TypeInfo> types, IDictionary<string, TypeInfo> lookup)
 			{
 				_types = types;
 				_lookup = lookup;
@@ -67,9 +70,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 			public TypeInfo Get(string parameter) => _lookup.Get(parameter) ?? Search(_types, parameter);
 
-			static TypeInfo Search(IReadOnlyList<TypeInfo> types, string parameter)
+			static TypeInfo Search(ImmutableArray<TypeInfo> types, string parameter)
 			{
-				var length = types.Count;
+				var length = types.Length;
 				for (var i = 0; i < length; i++)
 				{
 					var type = types[i];
