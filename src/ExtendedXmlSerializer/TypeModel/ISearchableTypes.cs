@@ -22,10 +22,11 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface ISearchableTypes : IParameterizedSource<Assembly, IReadOnlyList<TypeInfo>> {}
+	public interface ISearchableTypes : IParameterizedSource<Assembly, ImmutableArray<TypeInfo>> {}
 }
