@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
-	{
-		readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;
-
-		public FirstAssignedSource(params IParameterizedSource<TParameter, TResult>[] sources)
-		{
-			_sources = sources.ToImmutableArray();
-		}
-
-		public TResult Get(TParameter parameter)
-		{
-			foreach (var source in _sources)
-			{
-				var result = source.Get(parameter);
-				if (!Equals(result, default(TResult)))
-				{
-					return result;
-				}
-			}
-			return default(TResult);
-		}
-	}
+	public interface INamespaceNames : IParameterizedSource<TypeInfo, string> {}
 }

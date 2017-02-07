@@ -21,32 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberWriter : IWriter
+	class NamespaceNames : WeakCacheBase<TypeInfo, string>, INamespaceNames
 	{
-		readonly ImmutableArray<IMember> _members;
+		public static NamespaceNames Default { get; } = new NamespaceNames();
+		NamespaceNames() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
 
-		public MemberWriter(ImmutableArray<IMember> members)
+		readonly IDictionary<Assembly, Namespace> _known;
+		readonly ITypeFormatter _formatter;
+
+		public NamespaceNames(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
 		{
-			_members = members;
+			_known = known;
+			_formatter = formatter;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
-		{
-			var length = _members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = _members[i];
-				var value = member.Get(instance);
-				if (value != null)
-				{
-					member.Write(writer, value);
-				}
-			}
-		}
+		protected override string Create(TypeInfo parameter)
+			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }

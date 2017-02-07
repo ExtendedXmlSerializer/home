@@ -21,20 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ConverterModel.Xml
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class PrefixProvider : IPrefixProvider
-	{
-		public static PrefixProvider Default { get; } = new PrefixProvider();
-		PrefixProvider() : this("_") {}
-
-		readonly string _prefix;
-
-		public PrefixProvider(string prefix)
-		{
-			_prefix = prefix;
-		}
-
-		public string Get(string parameter) => _prefix;
-	}
+	public interface IMemberSource : IParameterizedSource<TypeInfo, IEnumerable<IMember>> {}
 }

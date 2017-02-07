@@ -30,20 +30,20 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 	class Names : INames
 	{
 		public static Names Default { get; } = new Names();
-		Names() : this(TypeAliasProvider.Default, TypeFormatter.Default, Namespaces.Default) {}
+		Names() : this(TypeAliasProvider.Default, TypeFormatter.Default, NamespaceNames.Default) {}
 
 		readonly IAliasProvider _alias;
 		readonly ITypeFormatter _formatter;
-		readonly INamespaces _namespaces;
+		readonly INamespaceNames _names;
 
-		public Names(IAliasProvider alias, ITypeFormatter formatter, INamespaces namespaces)
+		public Names(IAliasProvider alias, ITypeFormatter formatter, INamespaceNames names)
 		{
 			_alias = alias;
 			_formatter = formatter;
-			_namespaces = namespaces;
+			_names = names;
 		}
 
 		public XName Get(TypeInfo parameter)
-			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _namespaces.Get(parameter));
+			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _names.Get(parameter));
 	}
 }

@@ -31,11 +31,12 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public Member(string displayName, Action<object, object> setter, Func<object, object> getter, IConverter body)
-			: this(displayName, new Elements.Member(displayName), setter, getter, body) {}
+		public Member(string displayName, Func<object, object> getter, Action<object, object> setter, IConverter body)
+			: this(displayName, getter, setter, new Elements.Member(displayName), body) {}
 
-		public Member(string displayName, IWriter element, Action<object, object> setter, Func<object, object> getter,
-		              IConverter body) : base(element, body)
+		protected Member(string displayName, Func<object, object> getter, Action<object, object> setter, IWriter element,
+		                 IConverter body)
+			: base(element, body)
 		{
 			DisplayName = displayName;
 			_setter = setter;

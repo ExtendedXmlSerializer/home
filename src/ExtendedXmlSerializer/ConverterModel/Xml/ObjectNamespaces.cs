@@ -21,3 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Members;
+
+namespace ExtendedXmlSerialization.ConverterModel.Xml
+{
+	public class ObjectNamespaces : IObjectNamespaces
+	{
+		readonly static Func<TypeInfo, string> Names = NamespaceNames.Default.Get;
+
+		readonly IMembers _members;
+		readonly Func<TypeInfo, string> _names;
+		readonly Func<string, Namespace> _namespaces;
+
+		public ObjectNamespaces(IMembers members) : this(members, Names, new Namespaces().Get) {}
+
+		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
+		{
+			_members = members;
+			_names = names;
+			_namespaces = namespaces;
+		}
+
+		public ImmutableArray<Namespace> Get(object parameter)
+			=> new ObjectTypeWalker(_members, parameter)
+				.Get()
+				.Distinct()
+				.Select(_names)
+				.Distinct()
+				.Select(_namespaces)
+				.ToImmutableArray();
+	}
+}
