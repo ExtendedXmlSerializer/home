@@ -47,8 +47,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		{
 			var members = _members.Get(parameter).ToImmutableArray();
 			var activate = _activators.Get(parameter.AsType());
-			var activator = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
-			var result = new DecoratedConverter(activator, new MemberWriter(members));
+			var reader = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
+			var result = new DecoratedConverter(reader, new MemberWriter(members));
 			return result;
 		}
 	}

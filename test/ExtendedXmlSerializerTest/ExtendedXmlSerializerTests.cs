@@ -106,29 +106,23 @@ namespace ExtendedXmlSerialization.Test
 			Assert.True(actual.SetEquals(expected));
 		}
 
-/*
 		[Fact]
 		public void Dictionary()
 		{
-			/*var instance = new Dictionary<int, string>
-			               {
+			var expected = new Dictionary<int, string>{
 				               {1, "First"},
 				               {2, "Second"},
 				               {3, "Other"}
 			               };
-			var data = _serializer.Serialize(instance);
-			Assert.Equal(
-				@"<?xml version=""1.0"" encoding=""utf-8""?><DictionaryOfInt32String xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item><Key>1</Key><Value>First</Value></Item><Item><Key>2</Key><Value>Second</Value></Item><Item><Key>3</Key><Value>Other</Value></Item></DictionaryOfInt32String>",
-				data);#1#
-			/*var read = ExtendedXmlSerializer.Default.Deserialize<Dictionary<int, string>>(data);
-			Assert.NotNull(read);
-			Assert.Equal(instance.Count, read.Count);
-			foreach (var entry in read)
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<Dictionary<int, string>>(data);
+			Assert.NotNull(actual);
+			Assert.Equal(expected.Count, actual.Count);
+			foreach (var entry in actual)
 			{
-				Assert.Equal(instance[entry.Key], entry.Value);
-			}#1#
+				Assert.Equal(expected[entry.Key], entry.Value);
+			}
 		}
-*/
 
 		class InstanceClass
 		{

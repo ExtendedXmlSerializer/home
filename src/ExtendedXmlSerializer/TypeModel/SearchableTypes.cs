@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class ArrayActivator : DelegatedFixedActivator
+	class SearchableTypes : WeakCacheBase<Assembly, IReadOnlyList<TypeInfo>>, ISearchableTypes
 	{
-		public static ArrayActivator Default { get; } = new ArrayActivator();
-		ArrayActivator() : base(() => new ArrayList()) {}
+		public static SearchableTypes Default { get; } = new SearchableTypes();
+		SearchableTypes() : this(GenericActivatedTypeSpecification.Default.IsSatisfiedBy) {}
+
+		readonly Func<TypeInfo, bool> _specification;
+
+		public SearchableTypes(Func<TypeInfo, bool> specification)
+		{
+			_specification = specification;
+		}
+
+		protected override IReadOnlyList<TypeInfo> Create(Assembly parameter)
+			=> parameter.ExportedTypes.ToMetadata(_specification);
 	}
 }
