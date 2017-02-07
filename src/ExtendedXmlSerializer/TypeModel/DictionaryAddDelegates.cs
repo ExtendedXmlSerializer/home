@@ -21,33 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
-using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.ConverterModel.Properties;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class ArrayReader : CollectionReader
+	class DictionaryAddDelegates : IAddDelegates
 	{
-		readonly ITypeProperty _property;
+		readonly Action<object, object> _action;
 
-		public ArrayReader(IConverter item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
+		public static DictionaryAddDelegates Default { get; } = new DictionaryAddDelegates();
 
-		public ArrayReader(IConverter item, IAddDelegates add, ITypeProperty property)
-			: base(Activator<ArrayList>.Default, item, add)
+		DictionaryAddDelegates()
 		{
-			_property = property;
+			_action = Add;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var itemType = _property.Get(parameter);
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(itemType.AsType());
-			return result;
-		}
+		public Action<object, object> Get(TypeInfo parameter) => _action;
+
+		void Add(object dictionary, object item) => Add((IDictionary) dictionary, (DictionaryEntry) item);
+
+		void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
 	}
 }

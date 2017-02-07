@@ -41,6 +41,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		{
 			yield return new ContainerDefinition(ElementOption.Default, WellKnownContent.Default);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(_containers));
+			yield return new ContainerDefinition(new DictionaryContentOption(_containers));
 			yield return new ContainerDefinition(new CollectionContentOption(_containers));
 			yield return new ContainerDefinition(new MemberedContentOption(new Members.Members(_containers)));
 		}

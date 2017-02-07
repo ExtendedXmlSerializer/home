@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			readonly Func<ImmutableArray<TypeInfo>> _types;
 
 			public Locator(Assembly assembly, string @namespace, IAlteration<string> alteration)
-				: this(assembly, @namespace, alteration, new Namespaces(assembly).Build(@namespace)) {}
+				: this(assembly, @namespace, alteration, new Namespaces(SearchableTypes.Default.Build(assembly)).Build(@namespace)) {}
 
 			public Locator(Assembly assembly, string @namespace, IAlteration<string> alteration,
 			               Func<ImmutableArray<TypeInfo>> types)
@@ -83,11 +83,13 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 			TypeInfo Search(string parameter)
 			{
-				foreach (var typeInfo in _types())
+				var types = _types();
+				for (var i = 0; i < types.Length; i++)
 				{
-					if (typeInfo.FullName.StartsWith(parameter))
+					var type = types[i];
+					if (type.FullName.StartsWith(parameter))
 					{
-						return typeInfo;
+						return type;
 					}
 				}
 				return null;
@@ -96,11 +98,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		sealed class Namespaces : IParameterizedSource<string, ImmutableArray<TypeInfo>>
 		{
-			readonly ImmutableArray<TypeInfo> _types;
+			readonly Func<IReadOnlyList<TypeInfo>> _types;
 
-			public Namespaces(Assembly assembly) : this(assembly.DefinedTypes.ToImmutableArray()) {}
-
-			public Namespaces(ImmutableArray<TypeInfo> types)
+			public Namespaces(Func<IReadOnlyList<TypeInfo>> types)
 			{
 				_types = types;
 			}
@@ -109,11 +109,13 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 			IEnumerable<TypeInfo> Yield(string parameter)
 			{
-				foreach (var typeInfo in _types)
+				var types = _types();
+				for (var i = 0; i < types.Count; i++)
 				{
-					if (typeInfo.Namespace == parameter)
+					var type = types[i];
+					if (type.Namespace == parameter)
 					{
-						yield return typeInfo;
+						yield return type;
 					}
 				}
 			}

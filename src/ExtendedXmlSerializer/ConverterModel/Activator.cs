@@ -26,6 +26,12 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
+	class Activator<T> : DelegatedFixedActivator where T : new()
+	{
+		public static Activator<T> Default { get; } = new Activator<T>();
+		Activator() : base(() => new T()) {}
+	}
+
 	class Activator : IReader
 	{
 		readonly IActivators _activators;

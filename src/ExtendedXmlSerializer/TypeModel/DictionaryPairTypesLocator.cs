@@ -30,7 +30,8 @@ namespace ExtendedXmlSerialization.TypeModel
 {
 	public class DictionaryPairTypesLocator : IDictionaryPairTypesLocator
 	{
-		public DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
+		public static DictionaryPairTypesLocator Default { get; } = new DictionaryPairTypesLocator();
+		DictionaryPairTypesLocator() : this(typeof(IDictionary<,>)) {}
 
 		readonly Type _type;
 

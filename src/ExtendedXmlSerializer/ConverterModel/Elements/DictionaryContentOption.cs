@@ -21,32 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.ConverterModel.Properties;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Collections;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Collections
+namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class ArrayReader : CollectionReader
+	class DictionaryContentOption : ContentOptionBase
 	{
-		readonly ITypeProperty _property;
+		readonly IDictionaryItems _items;
+		readonly IActivators _activators;
 
-		public ArrayReader(IConverter item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
+		public DictionaryContentOption(IContainers containers) : this(new DictionaryItems(containers), Activators.Default) {}
 
-		public ArrayReader(IConverter item, IAddDelegates add, ITypeProperty property)
-			: base(Activator<ArrayList>.Default, item, add)
+		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
+			: base(IsDictionaryTypeSpecification.Default)
 		{
-			_property = property;
+			_items = items;
+			_activators = activators;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public override IConverter Get(TypeInfo parameter)
 		{
-			var itemType = _property.Get(parameter);
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(itemType.AsType());
+			var item = _items.Get(parameter);
+			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
+			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
+			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
 			return result;
 		}
 	}

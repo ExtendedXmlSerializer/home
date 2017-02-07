@@ -33,6 +33,8 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
+		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
+
 		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',');
 
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
@@ -70,8 +72,14 @@ namespace ExtendedXmlSerialization.Core
 			yield return @this;
 		}
 
-		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this)
-			=> @this.Select(x => x.GetTypeInfo()).ToImmutableArray();
+		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this,
+		                                                  Func<TypeInfo, bool> specification = null)
+		{
+			var select = @this.Select(x => x.GetTypeInfo());
+			var items = specification != null ? select.Where(specification) : select;
+			var result = items.ToImmutableArray();
+			return result;
+		}
 
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);
