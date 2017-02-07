@@ -50,7 +50,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		{
 			if (parameter.Contains(_type.Name))
 			{
-				return _type.Get(parameter);
+				var typeInfo = _type.Get(parameter);
+				return typeInfo;
 			}
 
 			var type = parameter.Contains(_item.Name)

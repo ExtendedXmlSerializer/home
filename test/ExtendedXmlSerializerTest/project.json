@@ -17,6 +17,9 @@
   },
   "frameworks": {
     "netcoreapp1.0": {
+        "buildOptions": {
+            "define": [ "CORE" ]
+        },
         "dependencies": {
             "Microsoft.DotNet.InternalAbstractions": "1.0.0",
             "NETStandard.Library": "1.6.1",
@@ -27,10 +30,13 @@
         }
     },
     "net451": {
-      "frameworkAssemblies": {
-      },
-      "dependencies": {
-      }
+        "buildOptions": {
+            "define": [ "CLASSIC" ]
+        },
+        "frameworkAssemblies": {
+        },
+        "dependencies": {
+        }
     }
   }
 }

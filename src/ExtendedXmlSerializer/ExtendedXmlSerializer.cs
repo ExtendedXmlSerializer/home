@@ -25,7 +25,7 @@ using System.IO;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.ConverterModel.Xml;
-
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerialization
 {
@@ -34,18 +34,22 @@ namespace ExtendedXmlSerialization
 	/// </summary>
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
+		readonly IXmlWriterFactory _factory;
 		readonly IContainers _containers;
 
-		public ExtendedXmlSerializer() : this(Containers.Default) {}
+		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
 
-		public ExtendedXmlSerializer(IContainers containers)
+		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
+
+		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
 		{
+			_factory = factory;
 			_containers = containers;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
-			using (var writer = new XmlWriter(stream))
+			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
 			{
 				var root = _containers.Get(instance.GetType().GetTypeInfo());
 				root.Write(writer, instance);

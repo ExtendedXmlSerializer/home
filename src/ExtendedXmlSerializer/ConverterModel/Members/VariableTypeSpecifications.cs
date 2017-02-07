@@ -23,43 +23,15 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Properties;
-using ExtendedXmlSerialization.ConverterModel.Xml;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IVariableTypedMember : IWriter, ISpecification<Type> {}
-
-	class VariableTypedMember : Member, IVariableTypedMember
+	sealed class VariableTypeSpecifications : WeakCache<TypeInfo, ISpecification<Type>>
 	{
-		readonly ISpecification<Type> _specification;
-		readonly ITypeProperty _property;
-
-		public VariableTypedMember(string name, Type classification)
-			: this(name, new EqualitySpecification<Type>(classification).Inverse()) {}
-
-		public VariableTypedMember(string name, ISpecification<Type> specification)
-			: this(name, specification, TypeProperty.Default) {}
-
-		public VariableTypedMember(string name, ISpecification<Type> specification, ITypeProperty property) : base(name)
-		{
-			_specification = specification;
-			_property = property;
-		}
-
-		public override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-
-			var type = instance.GetType();
-			if (_specification.IsSatisfiedBy(type))
-			{
-				_property.Write(writer, type.GetTypeInfo());
-			}
-		}
-
-		public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
+		public static VariableTypeSpecifications Default { get; } = new VariableTypeSpecifications();
+		VariableTypeSpecifications() : base(x => new EqualitySpecification<Type>(x.AsType()).Inverse()) {}
 	}
 }

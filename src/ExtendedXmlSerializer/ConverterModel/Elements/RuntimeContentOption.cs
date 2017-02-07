@@ -22,33 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Collections;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class DictionaryContentOption : ContentOptionBase
+	class RuntimeContentOption : FixedContentOption
 	{
-		readonly IDictionaryItems _items;
-		readonly IActivators _activators;
-
-		public DictionaryContentOption(IContainers containers, IConverter runtime)
-			: this(new DictionaryItems(containers, runtime), Activators.Default) {}
-
-		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
-			: base(IsDictionaryTypeSpecification.Default)
-		{
-			_items = items;
-			_activators = activators;
-		}
-
-		public override IConverter Get(TypeInfo parameter)
-		{
-			var item = _items.Get(parameter);
-			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
-			return result;
-		}
+		public RuntimeContentOption(IConverter runtime) : base(AlwaysSpecification<TypeInfo>.Default, runtime) {}
 	}
 }

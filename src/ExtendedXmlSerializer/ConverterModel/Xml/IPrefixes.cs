@@ -27,6 +27,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public interface IPrefixes : IParameterizedSource<TypeInfo, string>, IParameterizedSource<XName, string>,
+	public interface IPrefixes : IParameterizedSource<TypeInfo, string>, IParameterizedSource<XNamespace, string>,
 	                             IParameterizedSource<string, XNamespace> {}
 }

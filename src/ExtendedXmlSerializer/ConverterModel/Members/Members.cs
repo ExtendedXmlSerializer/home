@@ -23,7 +23,6 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 	{
 		readonly IMemberSource _source;
 
-		public Members(IContainers containers) : this(new MemberSource(containers)) {}
+		public Members(ISelector selector) : this(new MemberSource(selector)) {}
 
 		public Members(IMemberSource source)
 		{

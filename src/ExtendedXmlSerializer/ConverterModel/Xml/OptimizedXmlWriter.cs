@@ -21,41 +21,63 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Members;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public class ObjectNamespaces : IObjectNamespaces
+	class OptimizedXmlWriter : IXmlWriter
 	{
-		readonly static Func<TypeInfo, string> Names = NamespaceNames.Default.Get;
+		readonly static string Prefix = nameof(XNamespace.Xmlns).ToLower();
+		readonly IXmlWriter _writer;
+		readonly System.Xml.XmlWriter _native;
+		readonly ImmutableArray<Namespace> _namespaces;
 
-		readonly IMembers _members;
-		readonly Func<TypeInfo, string> _names;
-		readonly Func<string, Namespace> _namespaces;
-
-		public ObjectNamespaces(IMembers members) : this(members, Names, new Namespaces().Get) {}
-
-		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
+		public OptimizedXmlWriter(IXmlWriter writer, System.Xml.XmlWriter native, ImmutableArray<Namespace> namespaces)
 		{
-			_members = members;
-			_names = names;
+			_writer = writer;
+			_native = native;
 			_namespaces = namespaces;
 		}
 
-		public ImmutableArray<Namespace> Get(object parameter)
+		public void Element(XName name)
 		{
-			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
-			var items = types.Length > 1 ? types.Add(Defaults.FrameworkType) : types;
-			var result = items
-				.Select(_names)
-				.Distinct()
-				.Select(_namespaces)
-				.ToImmutableArray();
-			return result;
+			var write = _native.WriteState;
+			_writer.Element(name);
+
+			switch (write)
+			{
+				case WriteState.Start:
+					var length = _namespaces.Length;
+					for (var i = 0; i < length; i++)
+					{
+						var ns = _namespaces[i];
+						switch (i)
+						{
+							case 0:
+								_native.WriteAttributeString(Prefix, ns.Identifier);
+								break;
+							default:
+								_native.WriteAttributeString(Prefix, ns.Prefix, string.Empty, ns.Identifier);
+								break;
+						}
+					}
+					break;
+			}
 		}
+
+		public string Get(TypeInfo parameter) => _writer.Get(parameter);
+
+		public void Attribute(XName name, string value) => _writer.Attribute(name, value);
+
+		public void Write(string text) => _writer.Write(text);
+
+		public void EndCurrent() => _writer.EndCurrent();
+
+		public void Member(string name) => _writer.Member(name);
+
+		public void Dispose() => _writer.Dispose();
 	}
 }

@@ -21,33 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Collections;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ConverterModel.Elements;
+using ExtendedXmlSerialization.ConverterModel.Members;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class DictionaryContentOption : ContentOptionBase
+	class OptimizedXmlWriterFactory : IXmlWriterFactory
 	{
-		readonly IDictionaryItems _items;
-		readonly IActivators _activators;
+		readonly IXmlWriterFactory _factory;
+		readonly IObjectNamespaces _namespaces;
 
-		public DictionaryContentOption(IContainers containers, IConverter runtime)
-			: this(new DictionaryItems(containers, runtime), Activators.Default) {}
+		public OptimizedXmlWriterFactory() : this(Containers.Default) {}
 
-		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
-			: base(IsDictionaryTypeSpecification.Default)
+		public OptimizedXmlWriterFactory(IContainers containers)
+			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
+
+		public OptimizedXmlWriterFactory(IXmlWriterFactory factory, IObjectNamespaces namespaces)
 		{
-			_items = items;
-			_activators = activators;
+			_factory = factory;
+			_namespaces = namespaces;
 		}
 
-		public override IConverter Get(TypeInfo parameter)
+		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
 		{
-			var item = _items.Get(parameter);
-			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
+			var origin = _factory.Create(writer, instance);
+			var result = new OptimizedXmlWriter(origin, writer, _namespaces.Get(instance));
 			return result;
 		}
 	}

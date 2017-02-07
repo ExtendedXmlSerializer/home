@@ -21,34 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Collections;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ConverterModel.Elements;
+using ExtendedXmlSerialization.ConverterModel.Properties;
+using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class DictionaryContentOption : ContentOptionBase
+	class VariableTypeWriter : DecoratedWriter
 	{
-		readonly IDictionaryItems _items;
-		readonly IActivators _activators;
+		readonly ISpecification<Type> _type;
+		readonly IConverter _runtime;
+		readonly ITypeProperty _property;
 
-		public DictionaryContentOption(IContainers containers, IConverter runtime)
-			: this(new DictionaryItems(containers, runtime), Activators.Default) {}
+		public VariableTypeWriter(ISpecification<Type> type, IConverter runtime, IWriter body)
+			: this(type, runtime, body, TypeProperty.Default) {}
 
-		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
-			: base(IsDictionaryTypeSpecification.Default)
+		public VariableTypeWriter(ISpecification<Type> type, IConverter runtime, IWriter body, ITypeProperty property)
+			: base(body)
 		{
-			_items = items;
-			_activators = activators;
+			_type = type;
+			_runtime = runtime;
+			_property = property;
 		}
 
-		public override IConverter Get(TypeInfo parameter)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			var item = _items.Get(parameter);
-			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
-			return result;
+			var type = instance.GetType();
+			if (_type.IsSatisfiedBy(type))
+			{
+				_property.Write(writer, type.GetTypeInfo());
+				_runtime.Write(writer, instance);
+			}
+			else
+			{
+				base.Write(writer, instance);
+			}
 		}
 	}
 }

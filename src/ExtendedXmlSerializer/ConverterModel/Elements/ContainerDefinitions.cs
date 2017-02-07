@@ -39,12 +39,13 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 
 		public IEnumerator<ContainerDefinition> GetEnumerator()
 		{
+			var runtime = new RuntimeConverter(_containers);
 			yield return new ContainerDefinition(ElementOption.Default, WellKnownContent.Default);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(_containers));
-			yield return new ContainerDefinition(new DictionaryContentOption(_containers));
+			yield return new ContainerDefinition(new DictionaryContentOption(_containers, runtime));
 			yield return new ContainerDefinition(new CollectionContentOption(_containers));
-			yield return new ContainerDefinition(new MemberedContentOption(new Members.Members(_containers)));
-			yield return new ContainerDefinition(new RuntimeContentOption(_containers));
+			yield return new ContainerDefinition(new MemberedContentOption(new Selector(_containers, runtime)));
+			yield return new ContainerDefinition(new RuntimeContentOption(runtime));
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

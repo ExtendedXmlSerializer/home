@@ -24,37 +24,16 @@
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.ConverterModel.Xml;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class RuntimeContentOption : FixedContentOption
-	{
-		public RuntimeContentOption(IContainers containers) : base(AlwaysSpecification<TypeInfo>.Default, new RuntimeConverter(containers)) {}
-
-		sealed class RuntimeConverter : ConverterBase
-		{
-			readonly IContainers _containers;
-
-			public RuntimeConverter(IContainers containers)
-			{
-				_containers = containers;
-			}
-
-			public override void Write(IXmlWriter writer, object instance)
-				=> _containers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
-
-			public override object Get(IXmlReader reader) => _containers.Content(reader.Classification()).Get(reader);
-		}
-	}
-
 	class MemberedContentOption : ContentOptionBase
 	{
 		readonly IActivators _activators;
 		readonly IMembers _members;
 
+		public MemberedContentOption(ISelector selector) : this(new Members(selector)) {}
 		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
 
 		public MemberedContentOption(IActivators activators, IMembers members)

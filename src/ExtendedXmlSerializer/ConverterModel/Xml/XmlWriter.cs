@@ -34,7 +34,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		readonly IPrefixes _prefixes;
 		readonly System.Xml.XmlWriter _writer;
 
-		public XmlWriter(Stream stream) : this(Names.Default, Prefixes.Default, System.Xml.XmlWriter.Create(stream)) {}
+		public XmlWriter(Stream stream) : this(System.Xml.XmlWriter.Create(stream)) {}
+
+		public XmlWriter(System.Xml.XmlWriter writer) : this(Names.Default, Prefixes.Default, writer) {}
 
 		public XmlWriter(INames names, IPrefixes prefixes, System.Xml.XmlWriter writer)
 		{
@@ -47,7 +49,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			=> _writer.WriteAttributeString(Prefix(name), name.LocalName, name.NamespaceName, value);
 
 		string Prefix(XName name)
-			=> _writer.LookupPrefix(name.NamespaceName) ?? CreatePrefix(_prefixes.Get(name), name.NamespaceName);
+			=> _writer.LookupPrefix(name.NamespaceName) ?? CreatePrefix(_prefixes.Get(name.Namespace), name.NamespaceName);
 
 		public string Get(TypeInfo parameter)
 		{

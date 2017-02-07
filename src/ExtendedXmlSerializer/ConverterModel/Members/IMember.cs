@@ -21,14 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IVariableTypeMember : IMember, ISpecification<Type> {}
-
 	public interface IMember : IConverter, IDisplayAware
 	{
 		object Get(object instance);

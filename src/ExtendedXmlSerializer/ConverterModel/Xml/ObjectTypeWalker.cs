@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,13 +48,27 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			var members = _members.Get(parameter);
 			var length = members.Length;
 
-			for (int i = 0; i < length; i++)
+			for (var i = 0; i < length; i++)
 			{
 				var member = members[i];
-				var instance = member.Get(input);
-				if ((member as IVariableTypeMember)?.IsSatisfiedBy(instance.GetType()) ?? false)
+				var variable = member as IVariableTypeMember;
+				if (variable != null)
 				{
-					Schedule(instance);
+					var instance = member.Get(input);
+					var isSatisfiedBy = variable.IsSatisfiedBy(instance.GetType());
+					if (isSatisfiedBy)
+					{
+						Schedule(instance);
+					}
+				}
+			}
+
+			var enumerable = input as IEnumerable;
+			if (enumerable != null)
+			{
+				foreach (var item in enumerable)
+				{
+					Schedule(item);
 				}
 			}
 
