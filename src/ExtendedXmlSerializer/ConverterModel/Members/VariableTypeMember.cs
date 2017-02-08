@@ -24,6 +24,7 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Elements;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
@@ -34,7 +35,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 
 		public VariableTypeMember(string displayName, TypeInfo classification, Func<object, object> getter,
 		                          Action<object, object> setter, IConverter runtime, IConverter body)
-			: this(displayName, getter, setter, VariableTypeSpecifications.Default.Get(classification), runtime, body
+			: this(displayName, getter, setter, new EqualitySpecification<Type>(classification.AsType()).Inverse(), runtime, body
 			) {}
 
 		VariableTypeMember(string displayName, Func<object, object> getter, Action<object, object> setter,
