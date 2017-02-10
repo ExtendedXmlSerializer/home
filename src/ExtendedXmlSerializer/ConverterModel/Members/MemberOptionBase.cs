@@ -36,9 +36,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly IAliasProvider _alias;
 		readonly IGetterFactory _getter;
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers,
-		                           IAliasProvider alias)
-			: this(specification, containers, alias, GetterFactory.Default) {}
+		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers)
+			: this(specification, containers, MemberAliasProvider.Default, GetterFactory.Default) {}
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers,
 		                           IAliasProvider alias, IGetterFactory getter

@@ -34,11 +34,10 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 	{
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IContainers containers)
-			: this(containers, MemberAliasProvider.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(IContainers containers) : this(containers, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(IContainers containers, IAliasProvider alias, IAddDelegates add)
-			: base(Specification.Instance, containers, alias)
+		public ReadOnlyCollectionMemberOption(IContainers containers, IAddDelegates add)
+			: base(Specification.Instance, containers)
 		{
 			_add = add;
 		}
@@ -59,7 +58,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 			public override void Assign(object instance, object value)
 			{
 				var collection = Get(instance);
-				foreach (var element in (IEnumerable)value)
+				foreach (var element in (IEnumerable) value)
 				{
 					base.Assign(collection, element);
 				}

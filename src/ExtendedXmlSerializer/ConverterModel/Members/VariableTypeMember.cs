@@ -23,29 +23,36 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Elements;
+using ExtendedXmlSerialization.ConverterModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class VariableTypeMember : Member, IVariableTypeMember
+	class VariableTypeMember : IVariableTypeMember
 	{
+		readonly IMember _member;
 		readonly ISpecification<Type> _specification;
 
-		public VariableTypeMember(string displayName, TypeInfo classification, Func<object, object> getter,
-		                          Action<object, object> setter, IConverter runtime, IConverter body)
-			: this(displayName, getter, setter, new EqualitySpecification<Type>(classification.AsType()).Inverse(), runtime, body
-			) {}
+		public VariableTypeMember(TypeInfo classification, IMember member)
+			: this(new EqualitySpecification<Type>(classification.AsType()).Inverse(), member) {}
 
-		VariableTypeMember(string displayName, Func<object, object> getter, Action<object, object> setter,
-		                   ISpecification<Type> specification, IConverter runtime, IConverter body)
-			: base(
-				displayName, getter, setter, new DecoratedConverter(body, new VariableTypeWriter(specification, runtime, body)))
+		public VariableTypeMember(ISpecification<Type> specification, IMember member)
 		{
+			_member = member;
 			_specification = specification;
 		}
 
 		public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
+
+		public object Get(IXmlReader parameter) => ((IReader) _member).Get(parameter);
+
+		public void Write(IXmlWriter writer, object instance) => _member.Write(writer, instance);
+
+		public string DisplayName => _member.DisplayName;
+
+		public object Get(object instance) => _member.Get(instance);
+
+		public void Assign(object instance, object value) => _member.Assign(instance, value);
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,30 +22,33 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class Containers : IContainers
+	class VariableTypeMemberOption : MemberOption
 	{
-		public static Containers Default { get; } = new Containers();
-		Containers() : this(ContainerDefinitions.Default.Get) {}
+		readonly IConverter _runtime;
 
-		readonly IParameterizedSource<TypeInfo, IConverter> _selector, _contents;
+		public VariableTypeMemberOption(IContainers containers) : this(containers, new RuntimeConverter(containers)) {}
 
-		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> options)
+		public VariableTypeMemberOption(IContainers containers, IConverter runtime)
+			: base(VariableTypeMemberSpecification.Default, containers)
 		{
-			var definitions = options(this).ToArray();
-			var option = definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray();
-			_selector = new Selector<TypeInfo, IConverter>(option).Cache();
-			_contents = new Selector<TypeInfo, IConverter>(definitions.Select(x => x.Content).ToArray()).Cache();
+			_runtime = runtime;
 		}
 
-		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
-		public IConverter Content(TypeInfo parameter) => _contents.Get(parameter);
+		protected override IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
+		                                        Func<object, object> getter, IConverter body)
+		{
+			var specification = new EqualitySpecification<Type>(classification.AsType()).Inverse();
+			var converter = new DecoratedConverter(body, new VariableTypeWriter(specification, _runtime, body));
+			var member = base.CreateMember(displayName, classification, setter, getter, converter);
+			var result = new VariableTypeMember(specification, member);
+			return result;
+		}
 	}
 }

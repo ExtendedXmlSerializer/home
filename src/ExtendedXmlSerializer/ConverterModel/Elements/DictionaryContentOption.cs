@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Collections;
+using ExtendedXmlSerialization.ConverterModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
@@ -32,8 +33,8 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		readonly IDictionaryItems _items;
 		readonly IActivators _activators;
 
-		public DictionaryContentOption(IContainers containers, IConverter runtime)
-			: this(new DictionaryItems(containers, runtime), Activators.Default) {}
+		public DictionaryContentOption(IMemberOption variable)
+			: this(new DictionaryItems(variable), Activators.Default) {}
 
 		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
 			: base(IsDictionaryTypeSpecification.Default)

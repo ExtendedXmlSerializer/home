@@ -21,10 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-	public interface IContainerDefinitions : IParameterizedSource<IContainers, IEnumerable<ContainerDefinition>> {}
+	public class DecoratedSpecification<T> : ISpecification<T>
+	{
+		readonly ISpecification<T> _specification;
+
+		public DecoratedSpecification(ISpecification<T> specification)
+		{
+			_specification = specification;
+		}
+
+		public virtual bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+	}
 }

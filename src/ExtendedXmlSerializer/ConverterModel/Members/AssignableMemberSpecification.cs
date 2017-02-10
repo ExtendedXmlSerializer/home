@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IContainerDefinitions : IParameterizedSource<IContainers, IEnumerable<ContainerDefinition>> {}
+	class AssignableMemberSpecification : DelegatedSpecification<MemberInformation>
+	{
+		public static AssignableMemberSpecification Default { get; } = new AssignableMemberSpecification();
+		AssignableMemberSpecification() : base(x => x.Assignable) {}
+	}
 }

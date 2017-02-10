@@ -35,35 +35,23 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		readonly static TypeInfo Type = typeof(DictionaryEntry).GetTypeInfo();
 		readonly static PropertyInfo Key = Type.GetProperty(nameof(DictionaryEntry.Key));
 		readonly static PropertyInfo Value = Type.GetProperty(nameof(DictionaryEntry.Value));
+		readonly static IWriter Element = ElementOption.Default.Get(Type);
 
-		readonly IContainers _containers;
-		readonly IConverter _runtime;
+		readonly IMemberOption _variable;
 		readonly IWriter _element;
-		readonly IGetterFactory _getter;
-		readonly ISetterFactory _setter;
 		readonly IDictionaryPairTypesLocator _locator;
 
-		public DictionaryItems(IContainers containers, IConverter runtime)
-			: this(
-				containers, runtime, ElementOption.Default.Get(Type), GetterFactory.Default, SetterFactory.Default,
-				DictionaryPairTypesLocator.Default
-			) {}
+		public DictionaryItems(IMemberOption variable) : this(variable, Element, DictionaryPairTypesLocator.Default) {}
 
-		public DictionaryItems(IContainers containers, IConverter runtime, IWriter element, IGetterFactory getter,
-		                       ISetterFactory setter, IDictionaryPairTypesLocator locator)
+		public DictionaryItems(IMemberOption variable, IWriter element, IDictionaryPairTypesLocator locator)
 		{
-			_containers = containers;
-			_runtime = runtime;
+			_variable = variable;
 			_element = element;
-			_getter = getter;
-			_setter = setter;
 			_locator = locator;
 		}
 
-		IMember Create(MemberInfo property, TypeInfo metadata)
-			=>
-				new VariableTypeMember(property.Name, metadata, _getter.Get(property), _setter.Get(property),
-				                       _runtime, _containers.Content(metadata));
+		IMember Create(MemberInfo metadata, TypeInfo classification)
+			=> _variable.Get(new MemberInformation(metadata, classification, true));
 
 		public IConverter Get(TypeInfo parameter)
 		{

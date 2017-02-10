@@ -23,11 +23,10 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	class Members : CacheBase<TypeInfo, ImmutableArray<IMember>>, IMembers
+	class Members : IMembers
 	{
 		readonly IMemberSource _source;
 
@@ -38,6 +37,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 			_source = source;
 		}
 
-		protected override ImmutableArray<IMember> Create(TypeInfo parameter) => _source.Get(parameter).ToImmutableArray();
+		public ImmutableArray<IMember> Get(TypeInfo parameter) => _source.Get(parameter).ToImmutableArray();
 	}
 }

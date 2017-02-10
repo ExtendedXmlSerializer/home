@@ -36,8 +36,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		public MemberedContentOption(ISelector selector) : this(new Members(selector)) {}
 		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
 
-		public MemberedContentOption(IActivators activators, IMembers members)
-			: base(IsActivatedTypeSpecification.Default)
+		public MemberedContentOption(IActivators activators, IMembers members) : base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;
 			_members = members;

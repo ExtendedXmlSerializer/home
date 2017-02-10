@@ -27,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
@@ -39,13 +40,14 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		readonly static MemberSpecification<PropertyInfo> Property =
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
-		readonly ISelector _selector;
+		readonly IParameterizedSource<MemberInformation, IMember> _selector;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public MemberSource(ISelector selector) : this(selector, Property, Field) {}
+		public MemberSource(IParameterizedSource<MemberInformation, IMember> selector) : this(selector, Property, Field) {}
 
-		public MemberSource(ISelector selector, ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public MemberSource(IParameterizedSource<MemberInformation, IMember> selector, ISpecification<PropertyInfo> property,
+		                    ISpecification<FieldInfo> field)
 		{
 			_selector = selector;
 			_property = property;

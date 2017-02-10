@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.ConverterModel.Collections;
 using ExtendedXmlSerialization.ConverterModel.Members;
@@ -30,24 +29,20 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
 	class ContainerDefinitions : IContainerDefinitions
 	{
-		readonly IContainers _containers;
+		public static ContainerDefinitions Default { get; } = new ContainerDefinitions();
+		ContainerDefinitions() {}
 
-		public ContainerDefinitions(IContainers containers)
+		public IEnumerable<ContainerDefinition> Get(IContainers parameter)
 		{
-			_containers = containers;
-		}
-
-		public IEnumerator<ContainerDefinition> GetEnumerator()
-		{
-			var runtime = new RuntimeConverter(_containers);
+			var runtime = new RuntimeConverter(parameter);
+			var variable = new VariableTypeMemberOption(parameter, runtime);
 			yield return new ContainerDefinition(ElementOption.Default, WellKnownContent.Default);
-			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(_containers));
-			yield return new ContainerDefinition(new DictionaryContentOption(_containers, runtime));
-			yield return new ContainerDefinition(new CollectionContentOption(_containers));
-			yield return new ContainerDefinition(new MemberedContentOption(new Selector(_containers, runtime)));
+			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
+			yield return new ContainerDefinition(new DictionaryContentOption(variable));
+			yield return new ContainerDefinition(new CollectionContentOption(parameter));
+
+			yield return new ContainerDefinition(new MemberedContentOption(new Selector(parameter, variable)));
 			yield return new ContainerDefinition(new RuntimeContentOption(runtime));
 		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

@@ -21,10 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IContainerDefinitions : IParameterizedSource<IContainers, IEnumerable<ContainerDefinition>> {}
+	class VariableTypeMemberSpecification : DecoratedSpecification<MemberInformation>
+	{
+		public static VariableTypeMemberSpecification Default { get; } = new VariableTypeMemberSpecification();
+		VariableTypeMemberSpecification() : this(FixedTypeSpecification.Default.Inverse()) {}
+
+		readonly ISpecification<TypeInfo> _variable;
+
+		public VariableTypeMemberSpecification(ISpecification<TypeInfo> variable)
+			: base(AssignableMemberSpecification.Default)
+		{
+			_variable = variable;
+		}
+
+		public override bool IsSatisfiedBy(MemberInformation parameter)
+			=> base.IsSatisfiedBy(parameter) && _variable.IsSatisfiedBy(parameter.MemberType);
+	}
 }
