@@ -22,20 +22,14 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	class CanPartitionSpecification : AnySpecification<TypeInfo>
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
-
-		public override string Get(MemberInfo parameter)
-		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
-		}
+		public static CanPartitionSpecification Default { get; } = new CanPartitionSpecification();
+		CanPartitionSpecification() : base(GenericActivatedTypeSpecification.Default, HasAliasSpecification.Default) {}
 	}
 }

@@ -59,6 +59,13 @@ namespace ExtendedXmlSerialization.Test.TestObject
 
 	public class TestClassInheritanceWithOrder : TestClassInheritanceWithOrderBase
 	{
+		public static TestClassInheritanceWithOrder Create()
+		{
+			var result = new TestClassInheritanceWithOrder();
+			result.Init();
+			return result;
+		}
+
 		[XmlElement(Order = 1)]
 		public int Id2 { get; set; }
 

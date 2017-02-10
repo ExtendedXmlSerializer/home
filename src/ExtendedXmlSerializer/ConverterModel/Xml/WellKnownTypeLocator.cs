@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
@@ -38,53 +32,17 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
 
 		WellKnownTypeLocator()
-			: this(
-				WellKnownNamespaces.Default.ToDictionary(
-					x => x.Value.Identifier,
-				    x => new Locator(SearchableTypes.Default.Get(x.Key)).ToDelegate()
-					)
-			) {}
+			: this(new TypeLookup(
+				       WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier, x => FirstAssemblyTypes.Default.Get(x.Key))
+			       )) {}
 
-		readonly IDictionary<string, Func<string, TypeInfo>> _types;
+		readonly ITypeLookup _types;
 
-		public WellKnownTypeLocator(IDictionary<string, Func<string, TypeInfo>> types)
+		public WellKnownTypeLocator(ITypeLookup types)
 		{
 			_types = types;
 		}
 
-		public TypeInfo Get(XName parameter) => _types.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
-
-		sealed class Locator : IParameterizedSource<string, TypeInfo>
-		{
-			readonly ImmutableArray<TypeInfo> _types;
-			readonly IDictionary<string, TypeInfo> _lookup;
-
-			public Locator(ImmutableArray<TypeInfo> types)
-				: this(types, types.ToArray().GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.First())) {}
-
-			public Locator(ImmutableArray<TypeInfo> types, IDictionary<string, TypeInfo> lookup)
-			{
-				_types = types;
-				_lookup = lookup;
-			}
-
-			public TypeInfo Get(string parameter) => _lookup.Get(parameter) ?? Search(_types, parameter);
-
-			static TypeInfo Search(ImmutableArray<TypeInfo> types, string parameter)
-			{
-				var length = types.Length;
-				for (var i = 0; i < length; i++)
-				{
-					var type = types[i];
-					if (type.Name.StartsWith(parameter))
-					{
-						return type;
-					}
-				}
-
-				throw new InvalidOperationException(
-					$"Could not find a type with the name '{parameter}' in array '{types[0].Assembly}'");
-			}
-		}
+		public TypeInfo Get(XName parameter) => _types.Get(parameter.NamespaceName)?.Get(parameter.LocalName);
 	}
 }

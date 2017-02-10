@@ -53,6 +53,8 @@ namespace ExtendedXmlSerialization.Core
 			return target.TryGetValue(key, out result) ? result : default(TValue);
 		}
 
+		public static IEnumerable<TValue> Get<TKey, TValue>(this ILookup<TKey, TValue> target, TKey key) => target[key];
+
 		public static TValue? GetStructure<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
 			where TValue : struct
 		{
@@ -72,14 +74,17 @@ namespace ExtendedXmlSerialization.Core
 			yield return @this;
 		}
 
-		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this,
+		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this,
 		                                                  Func<TypeInfo, bool> specification = null)
 		{
 			var select = @this.Select(x => x.GetTypeInfo());
-			var items = specification != null ? select.Where(specification) : select;
-			var result = items.ToImmutableArray();
+			var result = specification != null ? select.Where(specification) : select;
 			return result;
 		}
+
+		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this,
+		                                                  Func<TypeInfo, bool> specification = null)
+			=> @this.YieldMetadata(specification).ToImmutableArray();
 
 
 		public static ISpecification<T> Inverse<T>(this ISpecification<T> @this) => new InverseSpecification<T>(@this);

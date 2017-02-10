@@ -21,21 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	class NamespacePartitions : /*WeakCacheBase<Assembly, ITypeLookup>,*/ IPartitions
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
+		public static NamespacePartitions Default { get; } = new NamespacePartitions();
+		NamespacePartitions() : this(new PartitionedTypes(x => x.Namespace)) {}
 
-		public override string Get(MemberInfo parameter)
+		readonly IPartitionedTypes _types;
+
+		public NamespacePartitions(IPartitionedTypes types)
 		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			_types = types;
+		}
+
+		public ITypeLookup Get(Assembly parameter)
+		{
+			var maps = _types.Get(parameter).ToDictionary(x => x.Key, x => (ITypeMap) new FormattedTypeMap(x));
+			var result = new TypeLookup(maps);
+			return result;
 		}
 	}
 }

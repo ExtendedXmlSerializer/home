@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class SearchableTypes : ISearchableTypes
+	class PartitionFormatter : IPartitionFormatter
 	{
-		public static SearchableTypes Default { get; } = new SearchableTypes();
-		SearchableTypes() : this(GenericActivatedTypeSpecification.Default.IsSatisfiedBy) {}
+		public static PartitionFormatter Default { get; } = new PartitionFormatter();
+		PartitionFormatter() : this(TypeAliasProvider.Default, TypeFormatter.Default) {}
 
-		readonly Func<TypeInfo, bool> _specification;
+		readonly IAliasProvider _alias;
+		readonly ITypeFormatter _formatter;
 
-		public SearchableTypes(Func<TypeInfo, bool> specification)
+		public PartitionFormatter(IAliasProvider alias, ITypeFormatter formatter)
 		{
-			_specification = specification;
+			_alias = alias;
+			_formatter = formatter;
 		}
 
-		public ImmutableArray<TypeInfo> Get(Assembly parameter) => parameter.ExportedTypes.ToMetadata(_specification);
+		public string Get(TypeInfo parameter) => _alias.Get(parameter) ?? _formatter.Get(parameter);
 	}
 }

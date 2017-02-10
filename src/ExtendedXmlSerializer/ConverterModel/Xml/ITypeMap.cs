@@ -22,20 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
-	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
-
-		public override string Get(MemberInfo parameter)
-		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
-		}
-	}
+	public interface ITypeMap : IParameterizedSource<string, TypeInfo> {}
 }

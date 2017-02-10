@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.ConverterModel;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 using Xunit;
@@ -35,7 +36,7 @@ namespace ExtendedXmlSerialization.Test.ConverterModel.Xml
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var name = NamespaceFormatter.Default.Get(expected);
-			var type = TypePartitions.Default.Get(name).Invoke(TypeFormatter.Default.Get(expected));
+			var type = TypePartitions.Default.Get(XNamespace.Get(name)).Get(TypeFormatter.Default.Get(expected));
 			Assert.Equal(expected, type);
 		}
 

@@ -32,28 +32,18 @@ namespace ExtendedXmlSerialization.ConverterModel
 		public static TypeFormatter Default { get; } = new TypeFormatter();
 		TypeFormatter() : this(DefaultClrDelimiters.Default.Generic, DefaultParsingDelimiters.Default.NestedClass) {}
 
-		readonly string _namespace;
+		readonly string _nested;
 		readonly char _generic;
 
-		public TypeFormatter(char generic, string @namespace)
+		public TypeFormatter(char generic, string nested)
 		{
-			_namespace = @namespace;
 			_generic = generic;
+			_nested = nested;
 		}
 
 		public string Get(TypeInfo type)
-		{
-			if (type.IsGenericType)
-			{
-				return type.Name.ToStringArray(_generic)[0];
-			}
+			=> type.IsNested ? $"{Process(type.DeclaringType.GetTypeInfo())}{_nested}{Process(type)}" : Process(type);
 
-			if (type.IsNested)
-			{
-				return $"{type.DeclaringType.Name}{_namespace}{type.Name}";
-			}
-
-			return type.Name;
-		}
+		string Process(TypeInfo type) => type.IsGenericType ? type.Name.ToStringArray(_generic)[0] : type.Name;
 	}
 }

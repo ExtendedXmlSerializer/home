@@ -21,21 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	class PartitionedTypes : IPartitionedTypes
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
+		readonly static Func<TypeInfo, bool> Specification = CanPartitionSpecification.Default.IsSatisfiedBy;
 
-		public override string Get(MemberInfo parameter)
+		public static PartitionedTypes Default { get; } = new PartitionedTypes();
+		PartitionedTypes() : this(PartitionFormatter.Default.Get) {}
+
+		readonly Func<TypeInfo, bool> _specification;
+		readonly Func<TypeInfo, string> _group;
+
+		public PartitionedTypes(Func<TypeInfo, string> group) : this(Specification, group) {}
+
+		public PartitionedTypes(Func<TypeInfo, bool> specification, Func<TypeInfo, string> group)
 		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			_specification = specification;
+			_group = group;
 		}
+
+		public ILookup<string, TypeInfo> Get(Assembly parameter)
+			=> parameter.ExportedTypes.YieldMetadata(_specification).ToLookup(_group);
 	}
 }

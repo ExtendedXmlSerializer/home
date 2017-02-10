@@ -22,10 +22,19 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	public interface ITypePartitions : IParameterizedSource<string, Func<string, TypeInfo>> {}
+	class FormattedTypeMap : TypeMap
+	{
+		readonly static Func<TypeInfo, string> Formatter = PartitionFormatter.Default.Get;
+
+		public FormattedTypeMap(IEnumerable<TypeInfo> types) : this(types, Formatter) {}
+
+		public FormattedTypeMap(IEnumerable<TypeInfo> types, Func<TypeInfo, string> formatter)
+			: base(types.ToDictionary(formatter)) {}
+	}
 }

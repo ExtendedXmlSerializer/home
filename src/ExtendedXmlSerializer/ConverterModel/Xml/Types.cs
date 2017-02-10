@@ -36,15 +36,14 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 
 		Types()
 			: this(
-				WellKnownAliases.Default.ToDictionary(x => Names.Default.Get(x.Key.GetTypeInfo()), y => y.Key.GetTypeInfo()),
+				WellKnownAliases.Default.Select(x => x.Key).YieldMetadata().ToDictionary(Names.Default.Get),
 				WellKnownTypeLocator.Default,
 				TypePartitions.Default) {}
 
 		readonly IDictionary<XName, TypeInfo> _aliased;
-		readonly ITypes _known;
-		readonly ITypePartitions _partitions;
+		readonly ITypes _known, _partitions;
 
-		public Types(IDictionary<XName, TypeInfo> aliased, ITypes known, ITypePartitions partitions)
+		public Types(IDictionary<XName, TypeInfo> aliased, ITypes known, ITypes partitions)
 		{
 			_aliased = aliased;
 			_known = known;
@@ -52,8 +51,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 		}
 
 		protected override TypeInfo Create(XName parameter)
-			=>
-				_aliased.Get(parameter) ??
-				_known.Get(parameter) ?? _partitions.Get(parameter.NamespaceName)?.Invoke(parameter.LocalName);
+			=> _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
 	}
 }

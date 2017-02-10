@@ -21,21 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	class FirstAssemblyTypes : IParameterizedSource<Assembly, ITypeMap>
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
+		public static FirstAssemblyTypes Default { get; } = new FirstAssemblyTypes();
+		FirstAssemblyTypes() : this(PartitionedTypes.Default) {}
 
-		public override string Get(MemberInfo parameter)
+		readonly IPartitionedTypes _types;
+
+		public FirstAssemblyTypes(IPartitionedTypes types)
 		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			_types = types;
 		}
+
+		public ITypeMap Get(Assembly parameter) => new TypeMap(_types.Get(parameter).ToDictionary(y => y.Key, y => y.First()));
 	}
 }

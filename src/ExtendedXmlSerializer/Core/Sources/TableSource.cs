@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ConverterModel.Members
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class MemberAliasProvider : AliasProviderBase<MemberInfo>
+	public class TableSource<TKey, TValue> : IParameterizedSource<TKey, TValue>
 	{
-		public static MemberAliasProvider Default { get; } = new MemberAliasProvider();
-		MemberAliasProvider() {}
+		readonly IDictionary<TKey, TValue> _store;
 
-		public override string Get(MemberInfo parameter)
+		public TableSource(IDictionary<TKey, TValue> store)
 		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			_store = store;
+		}
+
+		public virtual TValue Get(TKey parameter)
+		{
+			TValue result;
+			return _store.TryGetValue(parameter, out result) ? result : default(TValue);
 		}
 	}
 }

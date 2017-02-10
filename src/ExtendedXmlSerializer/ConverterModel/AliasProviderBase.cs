@@ -25,10 +25,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public abstract class AliasProviderBase<T> : IAliasProvider where T : MemberInfo
+	public abstract class AliasProviderBase<T> : IAliasProvider<T> where T : MemberInfo
 	{
-		public string Get(MemberInfo parameter) => GetItem((T) parameter);
-
-		protected abstract string GetItem(T parameter);
+		public abstract string Get(T parameter);
 	}
 }

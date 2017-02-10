@@ -26,5 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel
 {
-	public interface IAliasProvider : IParameterizedSource<MemberInfo, string> {}
+	public interface IAliasProvider : IAliasProvider<TypeInfo> {}
+
+	public interface IAliasProvider<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
 }

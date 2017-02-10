@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class TypeAliasProvider : AliasProviderBase<TypeInfo>
+	class TypeAliasProvider : AliasProviderBase<TypeInfo>, IAliasProvider
 	{
 		public static TypeAliasProvider Default { get; } = new TypeAliasProvider();
 		TypeAliasProvider() : this(WellKnownAliases.Default) {}
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			_names = names;
 		}
 
-		protected override string GetItem(TypeInfo parameter)
+		public override string Get(TypeInfo parameter)
 			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

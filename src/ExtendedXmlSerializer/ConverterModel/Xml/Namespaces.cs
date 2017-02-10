@@ -22,11 +22,10 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Xml
 {
-	class Namespaces : CacheBase<string, Namespace>, INamespaces
+	class Namespaces : INamespaces
 	{
 		readonly IPrefixes _prefixes;
 		readonly IPrefixer _prefixer;
@@ -39,7 +38,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Xml
 			_prefixer = prefixer;
 		}
 
-		protected override Namespace Create(string parameter)
+		public Namespace Get(string parameter)
 			=> new Namespace(_prefixes.Get(XNamespace.Get(parameter)) ?? _prefixer.Get(parameter), parameter);
 	}
 }
