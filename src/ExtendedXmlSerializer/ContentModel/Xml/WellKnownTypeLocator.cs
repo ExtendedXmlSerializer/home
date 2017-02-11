@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
@@ -34,17 +36,23 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
 
 		WellKnownTypeLocator()
-			: this(new TypePartition(
-				       WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier, x => NamedAssemblyTypes.Default.Get(x.Key))
-			       )) {}
+			: this(WellKnownNamespaces.Default.ToDictionary(
+				       x => x.Value.Identifier,
+				       x => new Func<string, TypeInfo>(
+					       x.Key.ExportedTypes
+					        .YieldMetadata(CanPartitionSpecification.Default.IsSatisfiedBy)
+					        .ToLookup(TypeFormatter.Default.Get)
+					        .ToDictionary(y => y.Key, y => y.First())
+					        .Get)
+			       ).Get) {}
 
-		readonly ITypePartition _types;
+		readonly Partition _types;
 
-		public WellKnownTypeLocator(ITypePartition types)
+		public WellKnownTypeLocator(Partition types)
 		{
 			_types = types;
 		}
 
-		public TypeInfo Get(XName parameter) => _types.Get(parameter.NamespaceName)?.Get(parameter.LocalName);
+		public TypeInfo Get(XName parameter) => _types.Invoke(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 	}
 }

@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -31,12 +34,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	class MemberedContentOption : ContentOptionBase
 	{
 		readonly IActivators _activators;
-		readonly IMembers _members;
+		readonly IParameterizedSource<TypeInfo, ImmutableArray<IMember>> _members;
 
-		public MemberedContentOption(ISelector selector) : this(new Members(selector)) {}
-		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
+		public MemberedContentOption(ISelector selector) : this(Activators.Default, new Members(selector).Cache()) {}
 
-		public MemberedContentOption(IActivators activators, IMembers members) : base(IsActivatedTypeSpecification.Default)
+		public MemberedContentOption(IActivators activators, IParameterizedSource<TypeInfo, ImmutableArray<IMember>> members) : base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;
 			_members = members;

@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -45,7 +46,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 
-		public MemberSource(ISelector selector) : this(Order, selector.Get) {}
+		public MemberSource(IParameterizedSource<MemberInformation, IMember> selector) : this(Order, selector.Get) {}
 
 		public MemberSource(Func<MemberInformation, int> order, Func<MemberInformation, IMember> selector)
 			: this(order, selector, Property, Field) {}
@@ -60,20 +61,25 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_field = field;
 		}
 
-		public IEnumerable<IMember> Get(TypeInfo parameter) => Yield(parameter).OrderBy(_order).Select(_selector);
+		public IEnumerable<IMember> Get(TypeInfo parameter)
+			=> Yield(parameter).OrderBy(_order).Select(_selector).Where(x => x != null);
 
 		IEnumerable<MemberInformation> Yield(TypeInfo parameter)
 		{
-			foreach (var property in parameter.GetProperties())
+			var properties = parameter.GetProperties();
+			for (var i = 0; i < properties.Length; i++)
 			{
+				var property = properties[i];
 				if (_property.IsSatisfiedBy(property))
 				{
 					yield return Create(property, property.PropertyType, property.CanWrite);
 				}
 			}
 
-			foreach (var field in parameter.GetFields())
+			var fields = parameter.GetFields();
+			for (var i = 0; i < fields.Length; i++)
 			{
+				var field = fields[i];
 				if (_field.IsSatisfiedBy(field))
 				{
 					yield return Create(field, field.FieldType, !field.IsInitOnly);

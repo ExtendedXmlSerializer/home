@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public static MemberAliases Default { get; } = new MemberAliases();
 		MemberAliases() {}
 
-		public override string Get(MemberInfo parameter)
+		protected override string Create(MemberInfo parameter)
 		{
 			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
 			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();

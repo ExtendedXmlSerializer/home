@@ -33,9 +33,11 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
+		readonly static char[] Delimiters = {','};
+
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
-		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, ',');
+		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, Delimiters);
 
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
 			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
@@ -44,7 +46,7 @@ namespace ExtendedXmlSerialization.Core
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
 		public static IParameterizedSource<TParameter, TResult> Cache<TParameter, TResult>(
-			this IParameterizedSource<TParameter, TResult> @this) where TParameter : class where TResult : class
+			this IParameterizedSource<TParameter, TResult> @this)
 			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
 		public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key) where TValue : class

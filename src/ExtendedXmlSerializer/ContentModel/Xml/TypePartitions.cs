@@ -21,25 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class TypePartitions : ITypePartitions
 	{
+		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
+		readonly static Func<TypeInfo, bool> Specification = CanPartitionSpecification.Default.IsSatisfiedBy;
+
+		readonly Func<TypeInfo, bool> _specification;
+		readonly Func<TypeInfo, string> _key;
+
 		public static TypePartitions Default { get; } = new TypePartitions();
-		TypePartitions() : this(new PartitionedTypes(x => x.Namespace)) {}
+		TypePartitions() : this(x => x.Namespace) {}
 
-		readonly IPartitionedTypes _types;
+		public TypePartitions(Func<TypeInfo, string> key) : this(Specification, key) {}
 
-		public TypePartitions(IPartitionedTypes types)
+		public TypePartitions(Func<TypeInfo, bool> specification, Func<TypeInfo, string> key)
 		{
-			_types = types;
+			_specification = specification;
+			_key = key;
 		}
 
-		public ITypePartition Get(Assembly parameter)
-			=> new TypePartition(_types.Get(parameter).ToDictionary(x => x.Key, x => (ITypeMap) new TypeMap(x)));
+		public Partition Get(Assembly parameter) =>
+			parameter.ExportedTypes.YieldMetadata(_specification)
+			         .ToLookup(_key)
+			         .ToDictionary(x => x.Key, x => new Func<string, TypeInfo>(x.ToDictionary(Formatter).Get))
+			         .Get;
 	}
 }

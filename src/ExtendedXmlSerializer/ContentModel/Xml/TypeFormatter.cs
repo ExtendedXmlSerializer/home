@@ -22,11 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeFormatter : ITypeFormatter
+	class TypeFormatter : WeakCacheBase<TypeInfo, string>, ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
 		TypeFormatter() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default) {}
@@ -40,6 +41,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_formatter = formatter;
 		}
 
-		public string Get(TypeInfo parameter) => _alias.Get(parameter) ?? _formatter.Get(parameter);
+		protected override string Create(TypeInfo parameter) => _alias.Get(parameter) ?? _formatter.Get(parameter);
 	}
 }

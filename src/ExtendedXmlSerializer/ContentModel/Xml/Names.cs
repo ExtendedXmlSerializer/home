@@ -23,11 +23,12 @@
 
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Names : INames
+	class Names : WeakCacheBase<TypeInfo, XName>, INames
 	{
 		public static Names Default { get; } = new Names();
 		Names() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default, Namespacing.Names.Default) {}
@@ -43,7 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_names = names;
 		}
 
-		public XName Get(TypeInfo parameter)
+		protected override XName Create(TypeInfo parameter)
 			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _names.Get(parameter));
 	}
 }

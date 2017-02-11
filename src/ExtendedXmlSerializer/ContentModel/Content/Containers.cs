@@ -32,10 +32,12 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class Containers : IContainers
 	{
-		public static Containers Default { get; } = new Containers();
-		Containers() : this(ContainerDefinitions.Default.Get) {}
+		// public static Containers Default { get; } = new Containers();
+		readonly static Func<IContainers, IEnumerable<ContainerDefinition>> Options = ContainerDefinitions.Default.Get;
 
 		readonly IParameterizedSource<TypeInfo, ISerializer> _selector, _contents;
+
+		public Containers() : this(Options) {}
 
 		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> options)
 		{

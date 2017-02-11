@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 		readonly IXmlWriterFactory _factory;
 		readonly IObjectNamespaces _namespaces;
 
-		public OptimizedXmlWriterFactory() : this(Containers.Default) {}
+		public OptimizedXmlWriterFactory() : this(new Containers()) {}
 
 		public OptimizedXmlWriterFactory(IContainers containers)
 			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}

@@ -36,8 +36,8 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 		public void TestName()
 		{
 			var expected = typeof(Subject).GetTypeInfo();
-			var name = NamespaceFormatter.Default.Get(expected);
-			var type = TypeMaps.Default.Get(XNamespace.Get(name)).Get(TypeFormatter.Default.Get(expected));
+			var @namespace = NamespaceFormatter.Default.Get(expected);
+			var type = TypeMaps.Default.Get(XName.Get(TypeFormatter.Default.Get(expected), @namespace));
 			Assert.Equal(expected, type);
 		}
 

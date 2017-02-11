@@ -55,8 +55,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public string Get(TypeInfo parameter)
 		{
 			var name = _names.Get(parameter);
-			var prefix = _writer.LookupPrefix(name.NamespaceName) ?? CreatePrefix(_prefixes.Get(parameter), name.NamespaceName);
-			var formatted = XmlQualifiedName.ToString(name.LocalName, prefix);
+			var formatted = XmlQualifiedName.ToString(name.LocalName, Prefix(name));
 			var result = parameter.IsGenericType ? string.Concat(formatted, $"[{this.GetArguments(parameter)}]") : formatted;
 			return result;
 		}
@@ -64,8 +63,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		string CreatePrefix(string prefix, string @namespace)
 		{
 			_writer.WriteAttributeString(prefix, XNamespace.Xmlns.NamespaceName, @namespace);
-			var result = _writer.LookupPrefix(@namespace);
-			return result;
+			return _writer.LookupPrefix(@namespace);
 		}
 
 		public void Element(XName name) => _writer.WriteStartElement(name.LocalName, name.NamespaceName);

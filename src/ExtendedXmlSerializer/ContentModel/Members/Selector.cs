@@ -28,8 +28,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class Selector : Selector<MemberInformation, IMember>, ISelector
 	{
-		public Selector(IContainers containers)
-			: this(containers, new VariableTypeMemberOption(containers, new RuntimeSerializer(containers))) {}
+		public Selector(IContainers containers) : this(containers, new VariableTypeMemberOption(containers)) {}
 
 		public Selector(IContainers containers, IMemberOption variable)
 			: base(variable, new MemberOption(containers), new ReadOnlyCollectionMemberOption(containers)) {}

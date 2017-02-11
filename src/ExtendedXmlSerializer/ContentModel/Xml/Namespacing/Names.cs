@@ -24,12 +24,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Names : WeakCacheBase<TypeInfo, string>, INames
+	class Names : INames
 	{
 		public static Names Default { get; } = new Names();
 		Names() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
@@ -43,7 +42,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 			_formatter = formatter;
 		}
 
-		protected override string Create(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }

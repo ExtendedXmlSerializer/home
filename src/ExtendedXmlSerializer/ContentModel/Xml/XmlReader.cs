@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		readonly ITypeExtractor _types;
 		readonly IParameterizedSource<string, XNamespace> _prefixes;
-		readonly char _namespace;
+		readonly Delimiter _namespace;
 		readonly System.Xml.XmlReader _reader;
 
 		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			: this(TypeExtractor.Default, Prefixes.Default, DefaultParsingDelimiters.Default.Namespace, reader
 			) {}
 
-		public XmlReader(ITypeExtractor types, IParameterizedSource<string, XNamespace> prefixes, char @namespace,
+		public XmlReader(ITypeExtractor types, IParameterizedSource<string, XNamespace> prefixes, Delimiter @namespace,
 		                 System.Xml.XmlReader reader)
 		{
 			_types = types;

@@ -21,18 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class Members : IMembers
 	{
-		readonly IMemberSource _source;
+		readonly IParameterizedSource<TypeInfo, IEnumerable<IMember>> _source;
 
 		public Members(ISelector selector) : this(new MemberSource(selector)) {}
 
-		public Members(IMemberSource source)
+		public Members(IParameterizedSource<TypeInfo, IEnumerable<IMember>> source)
 		{
 			_source = source;
 		}

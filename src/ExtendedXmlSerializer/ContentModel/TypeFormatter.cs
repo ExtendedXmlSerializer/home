@@ -33,17 +33,23 @@ namespace ExtendedXmlSerialization.ContentModel
 		TypeFormatter() : this(DefaultClrDelimiters.Default.Generic, DefaultParsingDelimiters.Default.NestedClass) {}
 
 		readonly string _nested;
-		readonly char _generic;
+		readonly Delimiter _generic;
 
-		public TypeFormatter(char generic, string nested)
+		public TypeFormatter(Delimiter generic, string nested)
 		{
 			_generic = generic;
 			_nested = nested;
 		}
 
-		public string Get(TypeInfo type)
-			=> type.IsNested ? $"{Process(type.DeclaringType.GetTypeInfo())}{_nested}{Process(type)}" : Process(type);
-
 		string Process(TypeInfo type) => type.IsGenericType ? type.Name.ToStringArray(_generic)[0] : type.Name;
+
+		public string Get(TypeInfo parameter)
+		{
+			var name = Process(parameter);
+			var result = parameter.IsNested
+				? $"{Process(parameter.DeclaringType.GetTypeInfo())}{_nested}{name}"
+				: name;
+			return result;
+		}
 	}
 }

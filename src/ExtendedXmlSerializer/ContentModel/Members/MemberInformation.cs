@@ -25,10 +25,17 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public struct MemberInformation
+	public struct MemberInformation // : IEquatable<MemberInformation>
 	{
+		/*
+		readonly int _code;
+
 		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
+			: this(metadata, memberType, assignable, metadata.MetadataToken.GetHashCode()) {}*/
+
+		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable/*, int code*/)
 		{
+			/*_code = code;*/
 			Metadata = metadata;
 			MemberType = memberType;
 			Assignable = assignable;
@@ -37,5 +44,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public MemberInfo Metadata { get; }
 		public TypeInfo MemberType { get; }
 		public bool Assignable { get; }
+
+		/*public bool Equals(MemberInformation other) => _code == other._code;
+
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is MemberInformation && Equals((MemberInformation) obj);
+
+		public override int GetHashCode() => _code;
+
+		public static bool operator ==(MemberInformation left, MemberInformation right) => left.Equals(right);
+
+		public static bool operator !=(MemberInformation left, MemberInformation right) => !left.Equals(right);*/
 	}
 }

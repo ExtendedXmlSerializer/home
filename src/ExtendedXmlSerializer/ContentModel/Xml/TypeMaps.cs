@@ -31,63 +31,42 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeMaps : CacheBase<XNamespace, ITypeMap>, ITypes // TODO: Move to weak reference (currently this is faster).
+	class TypeMaps : ITypes
 	{
 		public static TypeMaps Default { get; } = new TypeMaps();
-		TypeMaps() : this(DefaultParsingDelimiters.Default, AssemblyLoader.Default, TypePartitions.Default) {}
+
+		TypeMaps()
+			: this(DefaultParsingDelimiters.Default, AssemblyLoader.Default, TypePartitions.Default, TypeNameAlteration.Default) {}
 
 		readonly IParsingDelimiters _delimiters;
 		readonly IAssemblyLoader _loader;
 		readonly ITypePartitions _partitions;
+		readonly IAlteration<string> _names;
 
-		public TypeMaps(IParsingDelimiters delimiters, IAssemblyLoader loader, ITypePartitions partitions)
+		public TypeMaps(IParsingDelimiters delimiters, IAssemblyLoader loader, ITypePartitions partitions,
+		                IAlteration<string> names)
 		{
 			_delimiters = delimiters;
 			_loader = loader;
 			_partitions = partitions;
+			_names = names;
 		}
 
-		protected override ITypeMap Create(XNamespace parameter)
+		public TypeInfo Get(XName parameter)
 		{
 			var parts = parameter.NamespaceName.ToStringArray(_delimiters.Part);
 			var namespacePath = parts[0].ToStringArray(_delimiters.Namespace)[1];
 			var delimiter = _delimiters.Assembly;
 			var assemblyPath = string.Join(delimiter, parts[1].Split(delimiter).Skip(1));
 			var assembly = _loader.Get(assemblyPath);
-			var partition = _partitions.Get(assembly);
-			var result = new Map(partition.Get(namespacePath), assembly, namespacePath);
+
+			var result = assembly.GetType($"{namespacePath}.{_names.Get(parameter.LocalName)}", false, false)?.GetTypeInfo() ??
+			             _partitions.Get(assembly).Invoke(namespacePath).Invoke(parameter.LocalName);
+			if (result == null)
+			{
+				throw new InvalidOperationException($"Could not find a type with the name '{parameter}' in assembly '{assembly}'");
+			}
 			return result;
-		}
-
-		public TypeInfo Get(XName parameter) => Get(parameter.Namespace)?.Get(parameter.LocalName);
-
-		sealed class Map : ITypeMap
-		{
-			readonly Assembly _assembly;
-			readonly string _ns;
-			readonly IAlteration<string> _names;
-			readonly ITypeMap _map;
-
-			public Map(ITypeMap map, Assembly assembly, string @namespace)
-				: this(map, assembly, @namespace, TypeNameAlteration.Default) {}
-
-			public Map(ITypeMap map, Assembly assembly, string @namespace, IAlteration<string> names)
-			{
-				_assembly = assembly;
-				_ns = @namespace;
-				_names = names;
-				_map = map;
-			}
-
-			public TypeInfo Get(string parameter)
-			{
-				var result = _assembly.GetType($"{_ns}.{_names.Get(parameter)}", false, false)?.GetTypeInfo() ?? _map.Get(parameter);
-				if (result == null)
-				{
-					throw new InvalidOperationException($"Could not find a type with the name '{parameter}' in assembly '{_assembly}'");
-				}
-				return result;
-			}
 		}
 	}
 }
