@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class WellKnownContent : CompositeOptionBase<TypeInfo, IConverter>, IContentOption
+	class WellKnownContent : CompositeOptionBase<TypeInfo, ISerializer>, IContentOption
 	{
 		public static WellKnownContent Default { get; } = new WellKnownContent();
 

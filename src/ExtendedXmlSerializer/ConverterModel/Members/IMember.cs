@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ConverterModel.Elements;
 
 namespace ExtendedXmlSerialization.ConverterModel.Members
 {
-	public interface IMember : IConverter, IDisplayAware
+	public interface IMember : ISerializer, IDisplayAware
 	{
 		object Get(object instance);
 

@@ -59,6 +59,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		}
 
 		protected abstract IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
-		                                  IConverter body, MemberInfo metadata);
+		                                  ISerializer body, MemberInfo metadata);
 	}
 }

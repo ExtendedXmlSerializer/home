@@ -42,12 +42,12 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 			_members = members;
 		}
 
-		public override IConverter Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
 			var activate = _activators.Get(parameter.AsType());
 			var reader = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
-			var result = new DecoratedConverter(reader, new MemberWriter(members));
+			var result = new DecoratedSerializer(reader, new MemberWriter(members));
 			return result;
 		}
 	}

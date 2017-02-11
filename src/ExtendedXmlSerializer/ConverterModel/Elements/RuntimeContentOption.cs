@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
 	class RuntimeContentOption : FixedContentOption
 	{
-		public RuntimeContentOption(IConverter runtime) : base(AlwaysSpecification<TypeInfo>.Default, runtime) {}
+		public RuntimeContentOption(ISerializer runtime) : base(AlwaysSpecification<TypeInfo>.Default, runtime) {}
 	}
 }

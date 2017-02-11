@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	public abstract class ContentOptionBase : OptionBase<TypeInfo, IConverter>, IContentOption
+	public abstract class ContentOptionBase : OptionBase<TypeInfo, ISerializer>, IContentOption
 	{
 		protected ContentOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
 	}

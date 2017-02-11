@@ -46,11 +46,11 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		}
 
 		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
-		                                  IConverter body, MemberInfo metadata)
+		                                  ISerializer body, MemberInfo metadata)
 			=> CreateMember(displayName, classification, _setter.Get(metadata), getter, body);
 
 		protected virtual IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
-		                                       Func<object, object> getter, IConverter body)
+		                                       Func<object, object> getter, ISerializer body)
 			=> new Member(displayName, getter, setter, body);
 	}
 }

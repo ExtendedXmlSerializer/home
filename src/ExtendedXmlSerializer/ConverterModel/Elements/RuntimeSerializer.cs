@@ -21,15 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	public interface IConverter : IReader, IWriter {}
-
-	public interface IConverter<T>
+	sealed class RuntimeSerializer : SerializerBase
 	{
-		void Write(IXmlWriter writer, T instance);
-		T Get(IXmlReader reader);
+		readonly IContainers _containers;
+
+		public RuntimeSerializer(IContainers containers)
+		{
+			_containers = containers;
+		}
+
+		public override void Write(IXmlWriter writer, object instance)
+			=> _containers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
+
+		public override object Get(IXmlReader reader) => _containers.Content(reader.Classification()).Get(reader);
 	}
 }

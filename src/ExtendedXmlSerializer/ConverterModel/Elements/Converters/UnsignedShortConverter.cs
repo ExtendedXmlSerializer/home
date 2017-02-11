@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 {
-	class UnsignedShortConverter : DelegatedConverter<ushort>
+	class UnsignedShortConverter : ConverterBase<ushort>
 	{
 		public static UnsignedShortConverter Default { get; } = new UnsignedShortConverter();
 		UnsignedShortConverter() : base(XmlConvert.ToUInt16, XmlConvert.ToString) {}

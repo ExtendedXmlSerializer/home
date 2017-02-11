@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 		public static EnumerationContentOption Default { get; } = new EnumerationContentOption();
 		EnumerationContentOption() : base(IsAssignableSpecification<Enum>.Default) {}
 
-		public override IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
+		public override ISerializer Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType()).ToSerializer();
 	}
 }

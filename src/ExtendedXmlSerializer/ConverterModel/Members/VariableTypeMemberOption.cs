@@ -31,21 +31,21 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 {
 	class VariableTypeMemberOption : MemberOption
 	{
-		readonly IConverter _runtime;
+		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(IContainers containers) : this(containers, new RuntimeConverter(containers)) {}
+		public VariableTypeMemberOption(IContainers containers) : this(containers, new RuntimeSerializer(containers)) {}
 
-		public VariableTypeMemberOption(IContainers containers, IConverter runtime)
+		public VariableTypeMemberOption(IContainers containers, ISerializer runtime)
 			: base(VariableTypeMemberSpecification.Default, containers)
 		{
 			_runtime = runtime;
 		}
 
 		protected override IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
-		                                        Func<object, object> getter, IConverter body)
+		                                        Func<object, object> getter, ISerializer body)
 		{
 			var specification = new EqualitySpecification<Type>(classification.AsType()).Inverse();
-			var converter = new DecoratedConverter(body, new VariableTypeWriter(specification, _runtime, body));
+			var converter = new DecoratedSerializer(body, new VariableTypeWriter(specification, _runtime, body));
 			var member = base.CreateMember(displayName, classification, setter, getter, converter);
 			var result = new VariableTypeMember(specification, member);
 			return result;

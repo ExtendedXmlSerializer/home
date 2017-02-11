@@ -31,10 +31,10 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 	{
 		public ArrayContentOption(IContainers container) : base(IsArraySpecification.Default, container) {}
 
-		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification)
 		{
 			var reader = new ArrayReader(item);
-			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
+			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}

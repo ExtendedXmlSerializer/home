@@ -32,12 +32,12 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 {
 	class CollectionReader : DecoratedReader
 	{
-		readonly IConverter _item;
+		readonly ISerializer _item;
 		readonly IAddDelegates _add;
 
-		public CollectionReader(IReader activator, IConverter item) : this(activator, item, AddDelegates.Default) {}
+		public CollectionReader(IReader activator, ISerializer item) : this(activator, item, AddDelegates.Default) {}
 
-		public CollectionReader(IReader activator, IConverter item, IAddDelegates add) : base(activator)
+		public CollectionReader(IReader activator, ISerializer item, IAddDelegates add) : base(activator)
 		{
 			_item = item;
 			_add = add;

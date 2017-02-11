@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 {
-	class BooleanConverter : DelegatedConverter<bool>
+	class BooleanConverter : ConverterBase<bool>
 	{
 		public static BooleanConverter Default { get; } = new BooleanConverter();
 		BooleanConverter() : base(XmlConvert.ToBoolean, XmlConvert.ToString) {}

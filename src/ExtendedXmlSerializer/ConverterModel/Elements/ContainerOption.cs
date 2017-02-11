@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class ContainerOption : OptionBase<TypeInfo, IConverter>, IContainerOption
+	class ContainerOption : OptionBase<TypeInfo, ISerializer>, IContainerOption
 	{
 		readonly IElementOption _element;
 		readonly IContentOption _content;
@@ -37,6 +37,6 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 			_content = content;
 		}
 
-		public override IConverter Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
+		public override ISerializer Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
 	}
 }

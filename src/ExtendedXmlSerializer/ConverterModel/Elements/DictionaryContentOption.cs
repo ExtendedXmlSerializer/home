@@ -43,12 +43,12 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 			_activators = activators;
 		}
 
-		public override IConverter Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var item = _items.Get(parameter);
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
 			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedConverter(reader, new DictionaryWriter(item));
+			var result = new DecoratedSerializer(reader, new DictionaryWriter(item));
 			return result;
 		}
 	}

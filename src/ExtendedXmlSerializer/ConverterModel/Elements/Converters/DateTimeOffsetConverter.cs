@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 {
-	class DateTimeOffsetConverter : DelegatedConverter<DateTimeOffset>
+	class DateTimeOffsetConverter : ConverterBase<DateTimeOffset>
 	{
 		public static DateTimeOffsetConverter Default { get; } = new DateTimeOffsetConverter();
 		DateTimeOffsetConverter() : base(XmlConvert.ToDateTimeOffset, XmlConvert.ToString) {}

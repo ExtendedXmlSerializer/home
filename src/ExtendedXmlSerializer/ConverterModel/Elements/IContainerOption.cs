@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	public interface IContainerOption : IOption<TypeInfo, IConverter> {}
+	public interface IContainerOption : IOption<TypeInfo, ISerializer> {}
 }

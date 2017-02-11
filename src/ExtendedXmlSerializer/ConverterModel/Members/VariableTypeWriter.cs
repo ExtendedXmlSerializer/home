@@ -33,13 +33,13 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 	class VariableTypeWriter : DecoratedWriter
 	{
 		readonly ISpecification<Type> _type;
-		readonly IConverter _runtime;
+		readonly ISerializer _runtime;
 		readonly ITypeProperty _property;
 
-		public VariableTypeWriter(ISpecification<Type> type, IConverter runtime, IWriter body)
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
 			: this(type, runtime, body, TypeProperty.Default) {}
 
-		public VariableTypeWriter(ISpecification<Type> type, IConverter runtime, IWriter body, ITypeProperty property)
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
 			: base(body)
 		{
 			_type = type;

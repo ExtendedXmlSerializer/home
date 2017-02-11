@@ -27,8 +27,8 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class FixedContentOption : FixedOption<TypeInfo, IConverter>, IContentOption
+	class FixedContentOption : FixedOption<TypeInfo, ISerializer>, IContentOption
 	{
-		public FixedContentOption(ISpecification<TypeInfo> specification, IConverter context) : base(specification, context) {}
+		public FixedContentOption(ISpecification<TypeInfo> specification, ISerializer context) : base(specification, context) {}
 	}
 }

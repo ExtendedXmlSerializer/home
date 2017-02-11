@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 {
-	class UnsignedLongConverter : DelegatedConverter<ulong>
+	class UnsignedLongConverter : ConverterBase<ulong>
 	{
 		public static UnsignedLongConverter Default { get; } = new UnsignedLongConverter();
 		UnsignedLongConverter() : base(XmlConvert.ToUInt64, XmlConvert.ToString) {}

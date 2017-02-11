@@ -25,14 +25,14 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	public abstract class ConverterBase : IConverter
+	public abstract class SerializerBase : ISerializer
 	{
 		public abstract void Write(IXmlWriter writer, object instance);
 
 		public abstract object Get(IXmlReader reader);
 	}
 
-	public abstract class ConverterBase<T> : IConverter<T>
+	public abstract class SerializerBase<T> : ISerializer<T>
 	{
 		public abstract void Write(IXmlWriter writer, T instance);
 

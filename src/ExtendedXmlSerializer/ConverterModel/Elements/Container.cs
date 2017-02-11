@@ -23,8 +23,8 @@
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	class Container : DecoratedConverter
+	class Container : DecoratedSerializer
 	{
-		public Container(IWriter element, IConverter body) : base(body, new Enclosure(element, body)) {}
+		public Container(IWriter element, ISerializer body) : base(body, new Enclosure(element, body)) {}
 	}
 }

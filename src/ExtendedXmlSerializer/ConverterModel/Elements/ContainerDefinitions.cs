@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 
 		public IEnumerable<ContainerDefinition> Get(IContainers parameter)
 		{
-			var runtime = new RuntimeConverter(parameter);
+			var runtime = new RuntimeSerializer(parameter);
 			var variable = new VariableTypeMemberOption(parameter, runtime);
 			yield return new ContainerDefinition(ElementOption.Default, WellKnownContent.Default);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));

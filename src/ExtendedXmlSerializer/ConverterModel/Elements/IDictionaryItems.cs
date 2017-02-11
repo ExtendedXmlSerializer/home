@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements
 {
-	public interface IDictionaryItems : IParameterizedSource<TypeInfo, IConverter> {}
+	public interface IDictionaryItems : IParameterizedSource<TypeInfo, ISerializer> {}
 }

@@ -53,14 +53,14 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		IMember Create(MemberInfo metadata, TypeInfo classification)
 			=> _variable.Get(new MemberInformation(metadata, classification, true));
 
-		public IConverter Get(TypeInfo parameter)
+		public ISerializer Get(TypeInfo parameter)
 		{
 			var pair = _locator.Get(parameter);
 			var key = Create(Key, pair.KeyType);
 			var value = Create(Value, pair.ValueType);
 			var members = ImmutableArray.Create(key, value);
 			var reader = new MemberedReader(Activator<DictionaryEntry>.Default, members.ToDictionary(x => x.DisplayName));
-			var converter = new DecoratedConverter(reader, new MemberWriter(members));
+			var converter = new DecoratedSerializer(reader, new MemberWriter(members));
 			var result = new Container(_element, converter);
 			return result;
 		}

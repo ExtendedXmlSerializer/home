@@ -21,23 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
+using ExtendedXmlSerialization.ConverterModel.Elements;
 using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ConverterModel.Elements
+namespace ExtendedXmlSerialization.ConverterModel
 {
-	sealed class RuntimeConverter : ConverterBase
+	class DelegatedSerializer<T> : SerializerBase, ISerializer<T>
 	{
-		readonly IContainers _containers;
+		readonly Func<string, T> _deserialize;
+		readonly Func<T, string> _serialize;
 
-		public RuntimeConverter(IContainers containers)
+		public DelegatedSerializer(Func<string, T> deserialize, Func<T, string> serialize)
 		{
-			_containers = containers;
+			_deserialize = deserialize;
+			_serialize = serialize;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
-			=> _containers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
+		public override void Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
+		public void Write(IXmlWriter writer, T instance) => writer.Write(_serialize(instance));
 
-		public override object Get(IXmlReader reader) => _containers.Content(reader.Classification()).Get(reader);
+		public override object Get(IXmlReader reader) => Deserialize(reader);
+		T Deserialize(IXmlReader reader) => _deserialize(reader.Value());
+		T IParameterizedSource<IXmlReader, T>.Get(IXmlReader reader) => Deserialize(reader);
 	}
 }

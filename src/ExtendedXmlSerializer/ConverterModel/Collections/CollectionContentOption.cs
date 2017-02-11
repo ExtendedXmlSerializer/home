@@ -39,11 +39,11 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 			_activators = activators;
 		}
 
-		protected override IConverter Create(IConverter item, TypeInfo itemType, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification)
 		{
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 			var reader = new CollectionReader(activator, item);
-			var result = new DecoratedConverter(reader, new EnumerableWriter(item));
+			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}

@@ -34,9 +34,9 @@ namespace ExtendedXmlSerialization.ConverterModel.Collections
 	{
 		readonly ITypeProperty _property;
 
-		public ArrayReader(IConverter item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
+		public ArrayReader(ISerializer item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
 
-		public ArrayReader(IConverter item, IAddDelegates add, ITypeProperty property)
+		public ArrayReader(ISerializer item, IAddDelegates add, ITypeProperty property)
 			: base(Activator<ArrayList>.Default, item, add)
 		{
 			_property = property;

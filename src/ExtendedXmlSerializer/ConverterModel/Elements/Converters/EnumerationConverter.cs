@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ConverterModel.Elements.Converters
 {
-	class EnumerationConverter : DelegatedConverter<Enum>
+	class EnumerationConverter : ConverterBase<Enum>
 	{
 		public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 

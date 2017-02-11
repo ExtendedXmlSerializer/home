@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.ConverterModel.Xml;
 
 namespace ExtendedXmlSerialization.ConverterModel.Properties
 {
-	public interface IProperty<T> : IConverter<T>, IQualifiedName {}
+	public interface IProperty<T> : ISerializer<T>, IQualifiedName {}
 }

@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		}
 
 		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
-		                                  IConverter body, MemberInfo metadata)
+		                                  ISerializer body, MemberInfo metadata)
 		{
 			var add = _add.Get(classification);
 			var result = add != null ? new ReadOnlyCollectionMember(displayName, getter, add, body) : null;
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ConverterModel.Members
 		class ReadOnlyCollectionMember : Member
 		{
 			public ReadOnlyCollectionMember(string displayName, Func<object, object> getter, Action<object, object> add,
-			                                IConverter context) : base(displayName, getter, add, context) {}
+			                                ISerializer context) : base(displayName, getter, add, context) {}
 
 			public override void Assign(object instance, object value)
 			{

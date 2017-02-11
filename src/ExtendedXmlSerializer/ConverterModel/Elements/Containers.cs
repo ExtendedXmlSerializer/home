@@ -35,17 +35,17 @@ namespace ExtendedXmlSerialization.ConverterModel.Elements
 		public static Containers Default { get; } = new Containers();
 		Containers() : this(ContainerDefinitions.Default.Get) {}
 
-		readonly IParameterizedSource<TypeInfo, IConverter> _selector, _contents;
+		readonly IParameterizedSource<TypeInfo, ISerializer> _selector, _contents;
 
 		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> options)
 		{
 			var definitions = options(this).ToArray();
 			var option = definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray();
-			_selector = new Selector<TypeInfo, IConverter>(option).Cache();
-			_contents = new Selector<TypeInfo, IConverter>(definitions.Select(x => x.Content).ToArray()).Cache();
+			_selector = new Selector<TypeInfo, ISerializer>(option).Cache();
+			_contents = new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache();
 		}
 
-		public IConverter Get(TypeInfo parameter) => _selector.Get(parameter);
-		public IConverter Content(TypeInfo parameter) => _contents.Get(parameter);
+		public ISerializer Get(TypeInfo parameter) => _selector.Get(parameter);
+		public ISerializer Content(TypeInfo parameter) => _contents.Get(parameter);
 	}
 }
