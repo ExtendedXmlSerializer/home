@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IDisposable, IQualifiedName, IDisplayAware, IParameterizedSource<string, XName>,
+	public interface IXmlReader : IDisposable, IQualifiedName, IDisplay, IParameterizedSource<string, XName>,
 	                              IParameterizedSource<XName, TypeInfo>
 	{
 		TypeInfo Classification();

@@ -21,31 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	struct Sort : IComparable<Sort>
+	class MemberOrder : IMemberOrder
 	{
-		public Sort(int? assigned, int value)
-		{
-			Assigned = assigned;
-			Value = value;
-		}
+		public static MemberOrder Default { get; } = new MemberOrder();
+		MemberOrder() {}
 
-		int? Assigned { get; }
-		int Value { get; }
-
-		public int CompareTo(Sort other)
-		{
-			var right = !other.Assigned.HasValue;
-			if (!Assigned.HasValue && right)
-			{
-				return Value.CompareTo(other.Value);
-			}
-			var compare = Assigned.GetValueOrDefault(-1).CompareTo(other.Assigned.GetValueOrDefault(-1));
-			var result = right ? -compare : compare;
-			return result;
-		}
+		public int Get(MemberInformation parameter)
+			=> parameter.Metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order ?? parameter.Metadata.MetadataToken;
 	}
 }

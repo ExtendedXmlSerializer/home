@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMember : ISerializer, IDisplayAware
+	public interface IMember : ISerializer, IDisplay
 	{
 		object Get(object instance);
 

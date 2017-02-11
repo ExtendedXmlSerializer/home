@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IDisplayAware
-	{
-		string DisplayName { get; }
-	}
+	public interface IMemberOrder : IParameterizedSource<MemberInformation, int> {}
 }

@@ -21,21 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
-
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class MemberAliases : AliasesBase<MemberInfo>, IAliases
+	public interface IDisplay
 	{
-		public static MemberAliases Default { get; } = new MemberAliases();
-		MemberAliases() {}
-
-		public override string Get(MemberInfo parameter)
-		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
-		}
+		string DisplayName { get; }
 	}
 }

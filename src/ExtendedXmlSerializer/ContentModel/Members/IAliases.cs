@@ -22,20 +22,8 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberAliases : AliasesBase<MemberInfo>, IAliases
-	{
-		public static MemberAliases Default { get; } = new MemberAliases();
-		MemberAliases() {}
-
-		public override string Get(MemberInfo parameter)
-		{
-			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
-		}
-	}
+	public interface IAliases : IAliases<MemberInfo> {}
 }
