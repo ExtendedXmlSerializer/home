@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class Enclosure : EnclosureBase
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly IWriter _start;
+		readonly IWriter _finish;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public Enclosure(IWriter start, IWriter body) : this(start, body, EndCurrentElement.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public Enclosure(IWriter start, IWriter body, IWriter finish) : base(body)
 		{
-			_factory = factory;
-			_containers = containers;
+			_start = start;
+			_finish = finish;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		protected override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		protected override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class MemberedContentOption : ContentOptionBase
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly IActivators _activators;
+		readonly IMembers _members;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public MemberedContentOption(ISelector selector) : this(new Members(selector)) {}
+		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public MemberedContentOption(IActivators activators, IMembers members) : base(IsActivatedTypeSpecification.Default)
 		{
-			_factory = factory;
-			_containers = containers;
+			_activators = activators;
+			_members = members;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override ISerializer Get(TypeInfo parameter)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
+			var members = _members.Get(parameter);
+			var activate = _activators.Get(parameter.AsType());
+			var reader = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
+			var result = new DecoratedSerializer(reader, new MemberWriter(members));
+			return result;
 		}
 	}
 }

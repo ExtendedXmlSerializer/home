@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	sealed class RuntimeSerializer : SerializerBase
 	{
-		readonly IXmlWriterFactory _factory;
 		readonly IContainers _containers;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public RuntimeSerializer(IContainers containers)
 		{
-			_factory = factory;
 			_containers = containers;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public override void Write(IXmlWriter writer, object instance)
+			=> _containers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public override object Get(IXmlReader reader) => _containers.Content(reader.Classification()).Get(reader);
 	}
 }

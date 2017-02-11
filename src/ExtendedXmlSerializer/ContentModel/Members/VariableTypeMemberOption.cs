@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class VariableTypeMemberOption : MemberOption
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly ISerializer _runtime;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public VariableTypeMemberOption(IContainers containers) : this(containers, new RuntimeSerializer(containers)) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public VariableTypeMemberOption(IContainers containers, ISerializer runtime)
+			: base(VariableTypeMemberSpecification.Default, containers)
 		{
-			_factory = factory;
-			_containers = containers;
+			_runtime = runtime;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		protected override IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
+		                                        Func<object, object> getter, ISerializer body)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
+			var specification = new EqualitySpecification<Type>(classification.AsType()).Inverse();
+			var converter = new DecoratedSerializer(body, new VariableTypeWriter(specification, _runtime, body));
+			var member = base.CreateMember(displayName, classification, setter, getter, converter);
+			var result = new VariableTypeMember(specification, member);
+			return result;
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class CollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly IActivators _activators;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public CollectionContentOption(IContainers containers) : this(containers, Activators.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public CollectionContentOption(IContainers containers, IActivators activators)
+			: base(containers)
 		{
-			_factory = factory;
-			_containers = containers;
+			_activators = activators;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		protected override ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
+			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
+			var reader = new CollectionReader(activator, item);
+			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));
+			return result;
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Collections;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class EnumerableWriter<T> : WriterBase<T> where T : IEnumerable
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly IWriter _item;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public EnumerableWriter(IWriter item)
 		{
-			_factory = factory;
-			_containers = containers;
+			_item = item;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
+
+		public override void Write(IXmlWriter writer, T instance)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
+			var enumerator = Get(instance);
+			while (enumerator.MoveNext())
 			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				_item.Write(writer, enumerator.Current);
 			}
 		}
+	}
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+	class EnumerableWriter : EnumerableWriter<IEnumerable>
+	{
+		public EnumerableWriter(IWriter item) : base(item) {}
 	}
 }

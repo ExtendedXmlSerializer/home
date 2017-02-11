@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,49 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class VariableTypeWriter : DecoratedWriter
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly ISpecification<Type> _type;
+		readonly ISerializer _runtime;
+		readonly ITypeProperty _property;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
+			: this(type, runtime, body, TypeProperty.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
+			: base(body)
 		{
-			_factory = factory;
-			_containers = containers;
+			_type = type;
+			_runtime = runtime;
+			_property = property;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
+			var type = instance.GetType();
+			if (_type.IsSatisfiedBy(type))
 			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				_property.Write(writer, type.GetTypeInfo());
+				_runtime.Write(writer, instance);
 			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
+			else
 			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
+				base.Write(writer, instance);
 			}
 		}
 	}

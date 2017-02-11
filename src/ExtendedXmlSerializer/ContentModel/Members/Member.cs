@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,49 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
+using System;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class Member : Container, IMember
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly Action<object, object> _setter;
+		readonly Func<object, object> _getter;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public Member(string displayName, Func<object, object> getter, Action<object, object> setter, ISerializer body)
+			: this(displayName, getter, setter, new Content.Member(displayName), body) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		protected Member(string displayName, Func<object, object> getter, Action<object, object> setter, IWriter element,
+		                 ISerializer body)
+			: base(element, body)
 		{
-			_factory = factory;
-			_containers = containers;
+			DisplayName = displayName;
+			_setter = setter;
+			_getter = getter;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
 
-		public object Deserialize(Stream stream)
+		public string DisplayName { get; }
+
+		public virtual object Get(object instance) => _getter(instance);
+
+		public virtual void Assign(object instance, object value)
 		{
-			using (var reader = new XmlReader(stream))
+			if (value != null)
 			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
+				_setter(instance, value);
 			}
 		}
 	}

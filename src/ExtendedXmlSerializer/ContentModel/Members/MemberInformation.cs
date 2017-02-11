@@ -21,50 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public struct MemberInformation
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
-
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
 		{
-			_factory = factory;
-			_containers = containers;
+			Metadata = metadata;
+			MemberType = memberType;
+			Assignable = assignable;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public MemberInfo Metadata { get; }
+		public TypeInfo MemberType { get; }
+		public bool Assignable { get; }
 	}
 }

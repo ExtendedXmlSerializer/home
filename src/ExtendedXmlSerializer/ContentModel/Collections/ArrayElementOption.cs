@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class ArrayElementOption : ElementOptionBase
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		public static ArrayElementOption Default { get; } = new ArrayElementOption();
+		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		readonly ICollectionItemTypeLocator _locator;
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public ArrayElementOption(ICollectionItemTypeLocator locator) : base(IsArraySpecification.Default)
 		{
-			_factory = factory;
-			_containers = containers;
+			_locator = locator;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
 	}
 }

@@ -21,50 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class Containers : IContainers
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		public static Containers Default { get; } = new Containers();
+		Containers() : this(ContainerDefinitions.Default.Get) {}
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		readonly IParameterizedSource<TypeInfo, ISerializer> _selector, _contents;
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> options)
 		{
-			_factory = factory;
-			_containers = containers;
+			var definitions = options(this).ToArray();
+			var option = definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray();
+			_selector = new Selector<TypeInfo, ISerializer>(option).Cache();
+			_contents = new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache();
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public ISerializer Get(TypeInfo parameter) => _selector.Get(parameter);
+		public ISerializer Content(TypeInfo parameter) => _contents.Get(parameter);
 	}
 }

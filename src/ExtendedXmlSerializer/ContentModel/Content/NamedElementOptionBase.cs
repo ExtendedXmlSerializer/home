@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public abstract class NamedElementOptionBase : ElementOptionBase
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly INames _names;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		protected NamedElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
 		{
-			_factory = factory;
-			_containers = containers;
+			_names = names;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
+		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public abstract IWriter Create(XName name, TypeInfo classification);
 	}
 }

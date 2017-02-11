@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local

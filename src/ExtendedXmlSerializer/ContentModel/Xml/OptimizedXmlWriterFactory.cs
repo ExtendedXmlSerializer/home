@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.ContentModel.Members;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class OptimizedXmlWriterFactory : IXmlWriterFactory
 	{
 		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly IObjectNamespaces _namespaces;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public OptimizedXmlWriterFactory() : this(Containers.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
+		public OptimizedXmlWriterFactory(IContainers containers)
+			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public OptimizedXmlWriterFactory(IXmlWriterFactory factory, IObjectNamespaces namespaces)
 		{
 			_factory = factory;
-			_containers = containers;
+			_namespaces = namespaces;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
+			var origin = _factory.Create(writer, instance);
+			var result = new OptimizedXmlWriter(origin, writer, _namespaces.Get(instance));
+			return result;
 		}
 	}
 }

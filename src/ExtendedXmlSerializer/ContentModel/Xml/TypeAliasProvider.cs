@@ -21,50 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class TypeAliasProvider : AliasProviderBase<TypeInfo>, IAliasProvider
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		public static TypeAliasProvider Default { get; } = new TypeAliasProvider();
+		TypeAliasProvider() : this(WellKnownAliases.Default) {}
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		readonly IDictionary<Type, string> _names;
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public TypeAliasProvider(IDictionary<Type, string> names)
 		{
-			_factory = factory;
-			_containers = containers;
+			_names = names;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
-			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
-			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
-		}
+		public override string Get(TypeInfo parameter)
+			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

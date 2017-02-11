@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,50 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Collections;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class CollectionReader : DecoratedReader
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IContainers _containers;
+		readonly ISerializer _item;
+		readonly IAddDelegates _add;
 
-		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
+		public CollectionReader(IReader activator, ISerializer item) : this(activator, item, AddDelegates.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
-
-		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
+		public CollectionReader(IReader activator, ISerializer item, IAddDelegates add) : base(activator)
 		{
-			_factory = factory;
-			_containers = containers;
+			_item = item;
+			_add = add;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public override object Get(IXmlReader parameter)
 		{
-			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
+			var result = base.Get(parameter);
+			var list = result as IList ?? new ListAdapter(result, _add.Get(result.GetType().GetTypeInfo()));
+			var items = parameter.Items();
+			while (items.MoveNext())
 			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				list.Add(_item.Get(parameter));
 			}
-		}
-
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = new XmlReader(stream))
-			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
-			}
+			return result;
 		}
 	}
 }
