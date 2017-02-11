@@ -26,7 +26,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	class OptimizedXmlWriter : IXmlWriter
 	{

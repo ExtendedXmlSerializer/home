@@ -25,6 +25,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {

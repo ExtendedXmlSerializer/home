@@ -30,13 +30,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class Names : INames
 	{
 		public static Names Default { get; } = new Names();
-		Names() : this(TypeAliasProvider.Default, TypeFormatter.Default, NamespaceNames.Default) {}
+		Names() : this(TypeAliasProvider.Default, ContentModel.TypeFormatter.Default, Namespacing.Names.Default) {}
 
 		readonly IAliasProvider _alias;
 		readonly ITypeFormatter _formatter;
-		readonly INamespaceNames _names;
+		readonly Namespacing.INames _names;
 
-		public Names(IAliasProvider alias, ITypeFormatter formatter, INamespaceNames names)
+		public Names(IAliasProvider alias, ITypeFormatter formatter, Namespacing.INames names)
 		{
 			_alias = alias;
 			_formatter = formatter;

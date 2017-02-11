@@ -21,24 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class FirstAssemblyTypes : IParameterizedSource<Assembly, ITypeMap>
-	{
-		public static FirstAssemblyTypes Default { get; } = new FirstAssemblyTypes();
-		FirstAssemblyTypes() : this(PartitionedTypes.Default) {}
-
-		readonly IPartitionedTypes _types;
-
-		public FirstAssemblyTypes(IPartitionedTypes types)
-		{
-			_types = types;
-		}
-
-		public ITypeMap Get(Assembly parameter) => new TypeMap(_types.Get(parameter).ToDictionary(y => y.Key, y => y.First()));
-	}
+	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<Namespace>> {}
 }

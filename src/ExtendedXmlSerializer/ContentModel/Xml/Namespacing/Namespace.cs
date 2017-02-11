@@ -21,24 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Namespaces : INamespaces
+	public struct Namespace
 	{
-		readonly IPrefixes _prefixes;
-		readonly IPrefixer _prefixer;
-
-		public Namespaces() : this(Prefixes.Default, new Prefixer()) {}
-
-		public Namespaces(IPrefixes prefixes, IPrefixer prefixer)
+		public Namespace(string prefix, string identifier)
 		{
-			_prefixes = prefixes;
-			_prefixer = prefixer;
+			Prefix = prefix;
+			Identifier = identifier;
 		}
 
-		public Namespace Get(string parameter)
-			=> new Namespace(_prefixes.Get(XNamespace.Get(parameter)) ?? _prefixer.Get(parameter), parameter);
+		public string Prefix { get; }
+		public string Identifier { get; }
 	}
 }

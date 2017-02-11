@@ -21,17 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
-{
-	public struct Namespace
-	{
-		public Namespace(string prefix, string identifier)
-		{
-			Prefix = prefix;
-			Identifier = identifier;
-		}
+using ExtendedXmlSerialization.Core.Sources;
 
-		public string Prefix { get; }
-		public string Identifier { get; }
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+{
+	class Prefixer : CacheBase<string, string>, IPrefixer
+	{
+		protected override string Create(string parameter) => $"ns{Count}";
 	}
 }

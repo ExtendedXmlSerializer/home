@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			: this(
 				WellKnownAliases.Default.Select(x => x.Key).YieldMetadata().ToDictionary(Names.Default.Get),
 				WellKnownTypeLocator.Default,
-				TypePartitions.Default) {}
+				TypeMaps.Default) {}
 
 		readonly IDictionary<XName, TypeInfo> _aliased;
 		readonly ITypes _known, _partitions;

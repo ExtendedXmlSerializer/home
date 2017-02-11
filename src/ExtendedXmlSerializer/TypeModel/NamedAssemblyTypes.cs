@@ -21,25 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class WellKnownNamespaces : Dictionary<Assembly, Namespace>
+	class NamedAssemblyTypes : IParameterizedSource<Assembly, ITypeMap>
 	{
-		public static WellKnownNamespaces Default { get; } = new WellKnownNamespaces();
+		readonly IPartitionedTypes _types;
 
-		WellKnownNamespaces() : base(new Dictionary<Assembly, Namespace>
-		                             {
-			                             {
-				                             typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
-				                             new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
-			                             },
-			                             {
-				                             typeof(object).GetTypeInfo().Assembly,
-				                             new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
-			                             }
-		                             }) {}
+		public NamedAssemblyTypes(IPartitionedTypes types)
+		{
+			_types = types;
+		}
+
+		public ITypeMap Get(Assembly parameter) => new TypeMap(_types.Get(parameter).ToDictionary(y => y.Key, y => y.First()));
 	}
 }

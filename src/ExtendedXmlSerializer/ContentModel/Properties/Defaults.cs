@@ -22,13 +22,13 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	static class Defaults
 	{
 		readonly static TypeInfo Type = ContentModel.Defaults.FrameworkType;
-		public static string Namespace { get; } = NamespaceNames.Default.Get(Type);
+		public static string Namespace { get; } = Names.Default.Get(Type);
 	}
 }

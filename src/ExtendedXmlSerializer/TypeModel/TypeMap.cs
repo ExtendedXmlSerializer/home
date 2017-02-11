@@ -21,9 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface INamespaces : IParameterizedSource<string, Namespace> {}
+	class TypeMap : TableSource<string, TypeInfo>, ITypeMap
+	{
+		public TypeMap(IDictionary<string, TypeInfo> store) : base(store) {}
+	}
 }

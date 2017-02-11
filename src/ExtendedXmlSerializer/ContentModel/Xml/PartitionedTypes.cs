@@ -25,6 +25,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
@@ -33,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		readonly static Func<TypeInfo, bool> Specification = CanPartitionSpecification.Default.IsSatisfiedBy;
 
 		public static PartitionedTypes Default { get; } = new PartitionedTypes();
-		PartitionedTypes() : this(PartitionFormatter.Default.Get) {}
+		PartitionedTypes() : this(TypeFormatter.Default.Get) {}
 
 		readonly Func<TypeInfo, bool> _specification;
 		readonly Func<TypeInfo, string> _group;

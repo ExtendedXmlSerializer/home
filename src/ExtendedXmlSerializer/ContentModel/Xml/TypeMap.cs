@@ -21,14 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeMap : TableSource<string, TypeInfo>, ITypeMap
+	class TypeMap : TypeModel.TypeMap
 	{
-		public TypeMap(IDictionary<string, TypeInfo> store) : base(store) {}
+		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
+
+		public TypeMap(IEnumerable<TypeInfo> types) : this(types, Formatter) {}
+
+		public TypeMap(IEnumerable<TypeInfo> types, Func<TypeInfo, string> formatter)
+			: base(types.ToDictionary(formatter)) {}
 	}
 }

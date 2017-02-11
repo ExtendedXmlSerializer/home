@@ -21,37 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Prefixes : IPrefixes
+	class Namespaces : INamespaces
 	{
-		public static Prefixes Default { get; } = new Prefixes();
+		readonly IPrefixes _prefixes;
+		readonly IPrefixer _prefixer;
 
-		Prefixes() : this(WellKnownNamespaces.Default,
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identifier), x => x.Prefix),
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier))) {}
+		public Namespaces() : this(Prefixes.Default, new Prefixer()) {}
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly IDictionary<XNamespace, string> _names;
-		readonly IDictionary<string, XNamespace> _namespaces;
-
-		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names,
-		                IDictionary<string, XNamespace> namespaces)
+		public Namespaces(IPrefixes prefixes, IPrefixer prefixer)
 		{
-			_known = known;
-			_names = names;
-			_namespaces = namespaces;
+			_prefixes = prefixes;
+			_prefixer = prefixer;
 		}
 
-		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
-
-		public string Get(XNamespace parameter) => _names.Get(parameter.NamespaceName);
-		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
+		public Namespace Get(string parameter)
+			=> new Namespace(_prefixes.Get(XNamespace.Get(parameter)) ?? _prefixer.Get(parameter), parameter);
 	}
 }

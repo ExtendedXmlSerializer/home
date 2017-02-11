@@ -26,15 +26,15 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class PartitionFormatter : IPartitionFormatter
+	class TypeFormatter : ITypeFormatter
 	{
-		public static PartitionFormatter Default { get; } = new PartitionFormatter();
-		PartitionFormatter() : this(TypeAliasProvider.Default, TypeFormatter.Default) {}
+		public static TypeFormatter Default { get; } = new TypeFormatter();
+		TypeFormatter() : this(TypeAliasProvider.Default, ContentModel.TypeFormatter.Default) {}
 
 		readonly IAliasProvider _alias;
 		readonly ITypeFormatter _formatter;
 
-		public PartitionFormatter(IAliasProvider alias, ITypeFormatter formatter)
+		public TypeFormatter(IAliasProvider alias, ITypeFormatter formatter)
 		{
 			_alias = alias;
 			_formatter = formatter;

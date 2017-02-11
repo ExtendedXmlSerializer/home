@@ -21,9 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public interface IPrefixer : IParameterizedSource<string, string> {}
+	class Names : WeakCacheBase<TypeInfo, string>, INames
+	{
+		public static Names Default { get; } = new Names();
+		Names() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+
+		readonly IDictionary<Assembly, Namespace> _known;
+		readonly ITypeFormatter _formatter;
+
+		public Names(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		{
+			_known = known;
+			_formatter = formatter;
+		}
+
+		protected override string Create(TypeInfo parameter)
+			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+	}
 }

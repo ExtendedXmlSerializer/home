@@ -21,41 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
+using System.Runtime.Serialization.Formatters;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public class ObjectNamespaces : IObjectNamespaces
+	class NamespaceFormatter : ITypeFormatter
 	{
-		readonly static Func<TypeInfo, string> Names = NamespaceNames.Default.Get;
+		public static NamespaceFormatter Default { get; } = new NamespaceFormatter();
+		NamespaceFormatter() : this(FormatterAssemblyStyle.Simple) {}
 
-		readonly IMembers _members;
-		readonly Func<TypeInfo, string> _names;
-		readonly Func<string, Namespace> _namespaces;
+		public static NamespaceFormatter Full { get; } = new NamespaceFormatter(FormatterAssemblyStyle.Full);
 
-		public ObjectNamespaces(IMembers members) : this(members, Names, new Namespaces().Get) {}
+		readonly FormatterAssemblyStyle _style;
 
-		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
+		NamespaceFormatter(FormatterAssemblyStyle style)
 		{
-			_members = members;
-			_names = names;
-			_namespaces = namespaces;
+			_style = style;
 		}
 
-		public ImmutableArray<Namespace> Get(object parameter)
+		public string Get(TypeInfo type) => $"clr-namespace:{type.Namespace};assembly={Name(type)}";
+
+		string Name(TypeInfo type)
 		{
-			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
-			var items = types.Length > 1 ? types.Add(Defaults.FrameworkType) : types;
-			var result = items
-				.Select(_names)
-				.Distinct()
-				.Select(_namespaces)
-				.ToImmutableArray();
-			return result;
+			var name = type.Assembly.GetName();
+			switch (_style)
+			{
+				case FormatterAssemblyStyle.Simple:
+					return name.Name;
+				default:
+					return name.ToString();
+			}
 		}
 	}
 }

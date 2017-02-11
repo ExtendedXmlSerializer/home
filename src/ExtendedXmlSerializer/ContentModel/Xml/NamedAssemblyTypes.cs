@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface ITypeLookup : IParameterizedSource<string, ITypeMap> {}
+	class NamedAssemblyTypes : TypeModel.NamedAssemblyTypes
+	{
+		public static NamedAssemblyTypes Default { get; } = new NamedAssemblyTypes();
+		NamedAssemblyTypes() : base(PartitionedTypes.Default) {}
+	}
 }

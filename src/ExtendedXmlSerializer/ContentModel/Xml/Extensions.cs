@@ -34,35 +34,28 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	public static class Extensions
 	{
+		readonly static DefaultParsingDelimiters Delimiters = DefaultParsingDelimiters.Default;
+
 		public static TypeInfo ReadType(this IXmlReader @this, XName property) => ReadType(@this, @this[property]);
 
 		public static TypeInfo ReadType(this IXmlReader @this, string data)
 		{
-			var delimiters = DefaultParsingDelimiters.Default;
-			var start = delimiters.GenericStart;
+			var start = Delimiters.GenericStart;
 			var parts = data.ToStringArray(start);
 			var type = @this.Type(parts[0]);
 			var result = parts.Length > 1
 				? @this.Generic(type,
 				                string.Join(start, parts.ToArray().Skip(1))
-				                      .TrimEnd(delimiters.GenericEnd)
-				                      .ToStringArray(delimiters.Generics))
+				                      .TrimEnd(Delimiters.GenericEnd)
+				                      .ToStringArray(Delimiters.Generics))
 				: type;
 			return result;
 		}
 
 		static TypeInfo Generic(this IXmlReader @this, TypeInfo definition, ImmutableArray<string> types)
-		{
-			var result = definition.MakeGenericType(types.Select(@this.ReadType).Select(x => x.AsType()).ToArray()).GetTypeInfo();
-			return result;
-		}
+			=> definition.MakeGenericType(types.Select(@this.ReadType).Select(x => x.AsType()).ToArray()).GetTypeInfo();
 
-		static TypeInfo Type(this IXmlReader @this, string data)
-		{
-			var name = @this.Get(data);
-			var result = @this.Get(name);
-			return result;
-		}
+		static TypeInfo Type(this IXmlReader @this, string data) => @this.Get(@this.Get(data));
 
 		public static string GetArguments(this IFormatter<TypeInfo> @this, TypeInfo type)
 			=> @this.GetArguments(type.GetGenericArguments().ToImmutableArray());

@@ -25,7 +25,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
 	public interface IPartitionedTypes : IParameterizedSource<Assembly, ILookup<string, TypeInfo>> {}
 }

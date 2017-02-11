@@ -21,28 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class NamespacePartitions : /*WeakCacheBase<Assembly, ITypeLookup>,*/ IPartitions
-	{
-		public static NamespacePartitions Default { get; } = new NamespacePartitions();
-		NamespacePartitions() : this(new PartitionedTypes(x => x.Namespace)) {}
-
-		readonly IPartitionedTypes _types;
-
-		public NamespacePartitions(IPartitionedTypes types)
-		{
-			_types = types;
-		}
-
-		public ITypeLookup Get(Assembly parameter)
-		{
-			var maps = _types.Get(parameter).ToDictionary(x => x.Key, x => (ITypeMap) new FormattedTypeMap(x));
-			var result = new TypeLookup(maps);
-			return result;
-		}
-	}
+	public interface ITypePartitions : IParameterizedSource<Assembly, ITypePartition> {}
 }

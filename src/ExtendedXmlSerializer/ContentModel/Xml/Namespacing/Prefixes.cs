@@ -22,17 +22,36 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class TypeLookup : TableSource<string, ITypeMap>, ITypeLookup
+	class Prefixes : IPrefixes
 	{
-		readonly static ITypeMap Default = new TypeMap(new Dictionary<string, TypeInfo>());
+		public static Prefixes Default { get; } = new Prefixes();
 
-		public TypeLookup(IDictionary<string, ITypeMap> store) : base(store) {}
+		Prefixes() : this(WellKnownNamespaces.Default,
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identifier), x => x.Prefix),
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier))) {}
 
-		public override ITypeMap Get(string parameter) => base.Get(parameter) ?? Default;
+		readonly IDictionary<Assembly, Namespace> _known;
+		readonly IDictionary<XNamespace, string> _names;
+		readonly IDictionary<string, XNamespace> _namespaces;
+
+		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names,
+		                IDictionary<string, XNamespace> namespaces)
+		{
+			_known = known;
+			_names = names;
+			_namespaces = namespaces;
+		}
+
+		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
+
+		public string Get(XNamespace parameter) => _names.Get(parameter.NamespaceName);
+		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
 	}
 }

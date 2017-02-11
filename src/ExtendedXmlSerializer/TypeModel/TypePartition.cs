@@ -21,25 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using Xunit;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Test.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	public class TypePartitionsTests
+	class TypePartition : TableSource<string, ITypeMap>, ITypePartition
 	{
-		[Fact]
-		public void TestName()
-		{
-			var expected = typeof(Subject).GetTypeInfo();
-			var name = NamespaceFormatter.Default.Get(expected);
-			var type = TypePartitions.Default.Get(XNamespace.Get(name)).Get(TypeFormatter.Default.Get(expected));
-			Assert.Equal(expected, type);
-		}
+		readonly static ITypeMap Default = new TypeMap(new Dictionary<string, TypeInfo>());
 
-		sealed class Subject {}
+		public TypePartition(IDictionary<string, ITypeMap> store) : base(store) {}
+
+		public override ITypeMap Get(string parameter) => base.Get(parameter) ?? Default;
 	}
 }

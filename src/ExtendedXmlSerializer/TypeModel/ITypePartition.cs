@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<Namespace>> {}
+	public interface ITypePartition : IParameterizedSource<string, ITypeMap> {}
 }

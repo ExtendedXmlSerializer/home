@@ -21,29 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using Xunit;
+using TypeFormatter = ExtendedXmlSerialization.ContentModel.TypeFormatter;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 {
-	class NamespaceNames : WeakCacheBase<TypeInfo, string>, INamespaceNames
+	public class TypeMapsTests
 	{
-		public static NamespaceNames Default { get; } = new NamespaceNames();
-		NamespaceNames() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
-
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public NamespaceNames(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		[Fact]
+		public void TestName()
 		{
-			_known = known;
-			_formatter = formatter;
+			var expected = typeof(Subject).GetTypeInfo();
+			var name = NamespaceFormatter.Default.Get(expected);
+			var type = TypeMaps.Default.Get(XNamespace.Get(name)).Get(TypeFormatter.Default.Get(expected));
+			Assert.Equal(expected, type);
 		}
 
-		protected override string Create(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		sealed class Subject {}
 	}
 }

@@ -21,9 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public interface IPartitionFormatter : ITypeFormatter {}
+	class OptimizedXmlWriterFactory : IXmlWriterFactory
+	{
+		readonly IXmlWriterFactory _factory;
+		readonly IObjectNamespaces _namespaces;
+
+		public OptimizedXmlWriterFactory() : this(Containers.Default) {}
+
+		public OptimizedXmlWriterFactory(IContainers containers)
+			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
+
+		public OptimizedXmlWriterFactory(IXmlWriterFactory factory, IObjectNamespaces namespaces)
+		{
+			_factory = factory;
+			_namespaces = namespaces;
+		}
+
+		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
+		{
+			var origin = _factory.Create(writer, instance);
+			var result = new OptimizedXmlWriter(origin, writer, _namespaces.Get(instance));
+			return result;
+		}
+	}
 }

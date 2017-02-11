@@ -21,20 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class FormattedTypeMap : TypeMap
-	{
-		readonly static Func<TypeInfo, string> Formatter = PartitionFormatter.Default.Get;
-
-		public FormattedTypeMap(IEnumerable<TypeInfo> types) : this(types, Formatter) {}
-
-		public FormattedTypeMap(IEnumerable<TypeInfo> types, Func<TypeInfo, string> formatter)
-			: base(types.ToDictionary(formatter)) {}
-	}
+	public interface ITypeMap : IParameterizedSource<string, TypeInfo> {}
 }

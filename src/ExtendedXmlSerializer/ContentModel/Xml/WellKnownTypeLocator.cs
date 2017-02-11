@@ -24,6 +24,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
@@ -32,13 +34,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
 
 		WellKnownTypeLocator()
-			: this(new TypeLookup(
-				       WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier, x => FirstAssemblyTypes.Default.Get(x.Key))
+			: this(new TypePartition(
+				       WellKnownNamespaces.Default.ToDictionary(x => x.Value.Identifier, x => NamedAssemblyTypes.Default.Get(x.Key))
 			       )) {}
 
-		readonly ITypeLookup _types;
+		readonly ITypePartition _types;
 
-		public WellKnownTypeLocator(ITypeLookup types)
+		public WellKnownTypeLocator(ITypePartition types)
 		{
 			_types = types;
 		}

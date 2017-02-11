@@ -21,32 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class OptimizedXmlWriterFactory : IXmlWriterFactory
+	sealed class WellKnownNamespaces : Dictionary<Assembly, Namespace>
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IObjectNamespaces _namespaces;
+		public static WellKnownNamespaces Default { get; } = new WellKnownNamespaces();
 
-		public OptimizedXmlWriterFactory() : this(Containers.Default) {}
-
-		public OptimizedXmlWriterFactory(IContainers containers)
-			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
-
-		public OptimizedXmlWriterFactory(IXmlWriterFactory factory, IObjectNamespaces namespaces)
-		{
-			_factory = factory;
-			_namespaces = namespaces;
-		}
-
-		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
-		{
-			var origin = _factory.Create(writer, instance);
-			var result = new OptimizedXmlWriter(origin, writer, _namespaces.Get(instance));
-			return result;
-		}
+		WellKnownNamespaces() : base(new Dictionary<Assembly, Namespace>
+		                             {
+			                             {
+				                             typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
+				                             new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
+			                             },
+			                             {
+				                             typeof(object).GetTypeInfo().Assembly,
+				                             new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
+			                             }
+		                             }) {}
 	}
 }
