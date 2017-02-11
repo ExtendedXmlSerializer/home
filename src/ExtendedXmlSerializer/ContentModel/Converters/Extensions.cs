@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Content;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class StringConverter : ConverterBase<string>
+	public static class Extensions
 	{
-		readonly static Func<string, string> Self = Self<string>.Default.Get;
+		public static IContentOption ToContent<T>(this IConverter<T> @this)
+			=> new ContentOption(@this, @this.ToSerializer());
 
-		public static StringConverter Default { get; } = new StringConverter();
-		StringConverter() : base(Self, Self) {}
+		public static ISerializer ToSerializer<T>(this IConverter<T> @this)
+			=> new DelegatedSerializer<T>(@this.Load, @this.Save);
 	}
 }

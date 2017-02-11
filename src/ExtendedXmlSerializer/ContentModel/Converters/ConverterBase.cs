@@ -2,29 +2,17 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public interface IConverter : ISpecification<TypeInfo>
-	{
-		object Load(string data);
-
-		string Save(object instance);
-	}
-
-	public interface IConverter<T> : ISpecification<TypeInfo>
-	{
-		T Load(string data);
-
-		string Save(T instance);
-	}
-
 	abstract class ConverterBase<T> : DecoratedSpecification<TypeInfo>, IConverter<T>, IConverter
 	{
+		readonly static TypeEqualitySpecification<T> Specification = TypeEqualitySpecification<T>.Default;
+
 		readonly Func<string, T> _deserialize;
 		readonly Func<T, string> _serialize;
 
 		protected ConverterBase(Func<string, T> deserialize, Func<T, string> serialize)
-			: this(TypeEqualitySpecification<T>.Default, deserialize, serialize) {}
+			: this(Specification, deserialize, serialize) {}
 
 		protected ConverterBase(ISpecification<TypeInfo> specification, Func<string, T> deserialize,
 		                         Func<T, string> serialize) : base(specification)

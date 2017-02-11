@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class GuidConverter : ConverterBase<Guid>
+	class UnsignedShortConverter : ConverterBase<ushort>
 	{
-		public static GuidConverter Default { get; } = new GuidConverter();
-		GuidConverter() : base(XmlConvert.ToGuid, XmlConvert.ToString) {}
+		public static UnsignedShortConverter Default { get; } = new UnsignedShortConverter();
+		UnsignedShortConverter() : base(XmlConvert.ToUInt16, XmlConvert.ToString) {}
 	}
 }

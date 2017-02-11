@@ -21,13 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class DecimalConverter : ConverterBase<decimal>
+	class StringConverter : ConverterBase<string>
 	{
-		public static DecimalConverter Default { get; } = new DecimalConverter();
-		DecimalConverter() : base(XmlConvert.ToDecimal, XmlConvert.ToString) {}
+		readonly static Func<string, string> Self = Self<string>.Default.Get;
+
+		public static StringConverter Default { get; } = new StringConverter();
+		StringConverter() : base(Self, Self) {}
 	}
 }

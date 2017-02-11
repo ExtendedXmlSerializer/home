@@ -21,14 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class DateTimeOffsetConverter : ConverterBase<DateTimeOffset>
+	public abstract class AliasesBase<T> : IAliases<T> where T : MemberInfo
 	{
-		public static DateTimeOffsetConverter Default { get; } = new DateTimeOffsetConverter();
-		DateTimeOffsetConverter() : base(XmlConvert.ToDateTimeOffset, XmlConvert.ToString) {}
+		public abstract string Get(T parameter);
 	}
 }

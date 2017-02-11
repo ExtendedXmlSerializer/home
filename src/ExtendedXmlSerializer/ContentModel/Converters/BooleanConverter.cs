@@ -23,11 +23,11 @@
 
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class UnsignedIntegerConverter : ConverterBase<uint>
+	class BooleanConverter : ConverterBase<bool>
 	{
-		public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
-		UnsignedIntegerConverter() : base(XmlConvert.ToUInt32, XmlConvert.ToString) {}
+		public static BooleanConverter Default { get; } = new BooleanConverter();
+		BooleanConverter() : base(XmlConvert.ToBoolean, XmlConvert.ToString) {}
 	}
 }

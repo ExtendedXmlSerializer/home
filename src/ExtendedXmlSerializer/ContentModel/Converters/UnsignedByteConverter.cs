@@ -23,7 +23,7 @@
 
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	class UnsignedByteConverter : ConverterBase<byte>
 	{

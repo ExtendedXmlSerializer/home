@@ -23,11 +23,11 @@
 
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class BooleanConverter : ConverterBase<bool>
+	class DecimalConverter : ConverterBase<decimal>
 	{
-		public static BooleanConverter Default { get; } = new BooleanConverter();
-		BooleanConverter() : base(XmlConvert.ToBoolean, XmlConvert.ToString) {}
+		public static DecimalConverter Default { get; } = new DecimalConverter();
+		DecimalConverter() : base(XmlConvert.ToDecimal, XmlConvert.ToString) {}
 	}
 }

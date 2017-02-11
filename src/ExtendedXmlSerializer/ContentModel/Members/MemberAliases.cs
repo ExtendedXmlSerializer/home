@@ -21,13 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class IntegerConverter : ConverterBase<int>
+	class MemberAliases : AliasesBase<MemberInfo>
 	{
-		public static IntegerConverter Default { get; } = new IntegerConverter();
-		IntegerConverter() : base(XmlConvert.ToInt32, XmlConvert.ToString) {}
+		public static MemberAliases Default { get; } = new MemberAliases();
+		MemberAliases() {}
+
+		public override string Get(MemberInfo parameter)
+		{
+			return parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+		}
 	}
 }

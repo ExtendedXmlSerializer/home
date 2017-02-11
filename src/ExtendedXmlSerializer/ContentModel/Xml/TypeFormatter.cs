@@ -29,12 +29,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class TypeFormatter : ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() : this(TypeAliasProvider.Default, ContentModel.TypeFormatter.Default) {}
+		TypeFormatter() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default) {}
 
-		readonly IAliasProvider _alias;
+		readonly IAliases _alias;
 		readonly ITypeFormatter _formatter;
 
-		public TypeFormatter(IAliasProvider alias, ITypeFormatter formatter)
+		public TypeFormatter(IAliases alias, ITypeFormatter formatter)
 		{
 			_alias = alias;
 			_formatter = formatter;

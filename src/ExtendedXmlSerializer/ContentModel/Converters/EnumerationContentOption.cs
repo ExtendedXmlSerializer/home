@@ -21,13 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class FloatConverter : ConverterBase<float>
+	class EnumerationContentOption : ContentOptionBase
 	{
-		public static FloatConverter Default { get; } = new FloatConverter();
-		FloatConverter() : base(XmlConvert.ToSingle, XmlConvert.ToString) {}
+		public static EnumerationContentOption Default { get; } = new EnumerationContentOption();
+		EnumerationContentOption() : base(IsAssignableSpecification<Enum>.Default) {}
+
+		public override ISerializer Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType()).ToSerializer();
 	}
 }

@@ -33,14 +33,14 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
 		readonly IContainers _containers;
-		readonly IAliasProvider<MemberInfo> _alias;
+		readonly IAliases<MemberInfo> _alias;
 		readonly IGetterFactory _getter;
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers)
-			: this(specification, containers, MemberAliasProvider.Default, GetterFactory.Default) {}
+			: this(specification, containers, MemberAliases.Default, GetterFactory.Default) {}
 
 		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers,
-		                           IAliasProvider<MemberInfo> alias, IGetterFactory getter
+		                           IAliases<MemberInfo> alias, IGetterFactory getter
 		)
 			: base(specification)
 		{

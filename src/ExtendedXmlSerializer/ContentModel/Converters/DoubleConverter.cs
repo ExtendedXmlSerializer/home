@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public abstract class AliasProviderBase<T> : IAliasProvider<T> where T : MemberInfo
+	class DoubleConverter : ConverterBase<double>
 	{
-		public abstract string Get(T parameter);
+		public static DoubleConverter Default { get; } = new DoubleConverter();
+		DoubleConverter() : base(XmlConvert.ToDouble, XmlConvert.ToString) {}
 	}
 }

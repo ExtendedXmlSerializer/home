@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,27 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class TypeAliasProvider : AliasProviderBase<TypeInfo>, IAliasProvider
+	class UnsignedLongConverter : ConverterBase<ulong>
 	{
-		public static TypeAliasProvider Default { get; } = new TypeAliasProvider();
-		TypeAliasProvider() : this(WellKnownAliases.Default) {}
-
-		readonly IDictionary<Type, string> _names;
-
-		public TypeAliasProvider(IDictionary<Type, string> names)
-		{
-			_names = names;
-		}
-
-		public override string Get(TypeInfo parameter)
-			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
+		public static UnsignedLongConverter Default { get; } = new UnsignedLongConverter();
+		UnsignedLongConverter() : base(XmlConvert.ToUInt64, XmlConvert.ToString) {}
 	}
 }

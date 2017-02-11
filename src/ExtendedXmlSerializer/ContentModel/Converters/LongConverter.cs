@@ -21,19 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class EnumerationContentOption : ContentOptionBase
+	class LongConverter : ConverterBase<long>
 	{
-		public static EnumerationContentOption Default { get; } = new EnumerationContentOption();
-		EnumerationContentOption() : base(IsAssignableSpecification<Enum>.Default) {}
-
-		public override ISerializer Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType()).ToSerializer();
+		public static LongConverter Default { get; } = new LongConverter();
+		LongConverter() : base(XmlConvert.ToInt64, XmlConvert.ToString) {}
 	}
 }

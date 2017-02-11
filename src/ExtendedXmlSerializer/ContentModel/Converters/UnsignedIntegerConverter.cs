@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class TimeSpanConverter : ConverterBase<TimeSpan>
+	class UnsignedIntegerConverter : ConverterBase<uint>
 	{
-		public static TimeSpanConverter Default { get; } = new TimeSpanConverter();
-		TimeSpanConverter() : base(XmlConvert.ToTimeSpan, XmlConvert.ToString) {}
+		public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
+		UnsignedIntegerConverter() : base(XmlConvert.ToUInt32, XmlConvert.ToString) {}
 	}
 }

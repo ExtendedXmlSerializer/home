@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel
 {
-	public static class Extensions
-	{
-		public static IContentOption ToContent<T>(this IConverter<T> @this)
-			=> new ContentOption(@this, @this.ToSerializer());
+	public interface IAliases : IAliases<TypeInfo> {}
 
-		public static ISerializer ToSerializer<T>(this IConverter<T> @this)
-			=> new DelegatedSerializer<T>(@this.Load, @this.Save);
-	}
+	public interface IAliases<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
 }

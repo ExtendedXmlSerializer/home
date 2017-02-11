@@ -21,18 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class DateTimeConverter : ConverterBase<DateTime>
+	class FloatConverter : ConverterBase<float>
 	{
-		public static DateTimeConverter Default { get; } = new DateTimeConverter();
-
-		DateTimeConverter()
-			: base(
-				x => XmlConvert.ToDateTime(x, XmlDateTimeSerializationMode.RoundtripKind),
-				x => XmlConvert.ToString(x, XmlDateTimeSerializationMode.RoundtripKind)) {}
+		public static FloatConverter Default { get; } = new FloatConverter();
+		FloatConverter() : base(XmlConvert.ToSingle, XmlConvert.ToString) {}
 	}
 }

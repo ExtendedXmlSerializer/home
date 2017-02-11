@@ -23,11 +23,11 @@
 
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class LongConverter : ConverterBase<long>
+	class CharacterConverter : ConverterBase<char>
 	{
-		public static LongConverter Default { get; } = new LongConverter();
-		LongConverter() : base(XmlConvert.ToInt64, XmlConvert.ToString) {}
+		public static CharacterConverter Default { get; } = new CharacterConverter();
+		CharacterConverter() : base(XmlConvert.ToChar, XmlConvert.ToString) {}
 	}
 }

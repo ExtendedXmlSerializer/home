@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Xml;
 
-namespace ExtendedXmlSerialization.Converters
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class UnsignedLongConverter : ConverterBase<ulong>
+	class DateTimeOffsetConverter : ConverterBase<DateTimeOffset>
 	{
-		public static UnsignedLongConverter Default { get; } = new UnsignedLongConverter();
-		UnsignedLongConverter() : base(XmlConvert.ToUInt64, XmlConvert.ToString) {}
+		public static DateTimeOffsetConverter Default { get; } = new DateTimeOffsetConverter();
+		DateTimeOffsetConverter() : base(XmlConvert.ToDateTimeOffset, XmlConvert.ToString) {}
 	}
 }

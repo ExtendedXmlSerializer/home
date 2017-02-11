@@ -21,12 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public interface IAliasProvider : IAliasProvider<TypeInfo> {}
+	class EnumerationConverter : ConverterBase<Enum>
+	{
+		public EnumerationConverter(Type enumerationType) : base(new Source(enumerationType).Get, x => x.ToString()) {}
 
-	public interface IAliasProvider<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
+		class Source : IParameterizedSource<string, Enum>
+		{
+			readonly Type _enumerationType;
+
+			public Source(Type enumerationType)
+			{
+				_enumerationType = enumerationType;
+			}
+
+			public Enum Get(string parameter)
+				=> parameter != null ? (Enum) Enum.Parse(_enumerationType, parameter) : default(Enum);
+		}
+	}
 }
