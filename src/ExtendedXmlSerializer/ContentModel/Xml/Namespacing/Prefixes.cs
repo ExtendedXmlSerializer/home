@@ -26,32 +26,24 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Prefixes : IPrefixes
+	class Prefixes : DuplexTableSource<XNamespace, string>, IPrefixes
 	{
 		public static Prefixes Default { get; } = new Prefixes();
 
 		Prefixes() : this(WellKnownNamespaces.Default,
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identifier), x => x.Prefix),
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Prefix, x => XNamespace.Get(x.Identifier))) {}
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identity), x => x.Prefix)) {}
 
 		readonly IDictionary<Assembly, Namespace> _known;
-		readonly IDictionary<XNamespace, string> _names;
-		readonly IDictionary<string, XNamespace> _namespaces;
 
-		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names,
-		                IDictionary<string, XNamespace> namespaces)
+		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names) : base(names)
 		{
 			_known = known;
-			_names = names;
-			_namespaces = namespaces;
 		}
 
 		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
-
-		public string Get(XNamespace parameter) => _names.Get(parameter.NamespaceName);
-		public XNamespace Get(string parameter) => _namespaces.Get(parameter);
 	}
 }

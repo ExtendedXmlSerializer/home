@@ -23,17 +23,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class XmlReader : IXmlReader
+	class XmlReader : TypeParser, IXmlReader
 	{
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
 		                                                      {
@@ -42,40 +41,18 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly ITypeExtractor _types;
-		readonly IParameterizedSource<string, XNamespace> _prefixes;
-		readonly Delimiter _namespace;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
-
-		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
+		public XmlReader(Stream stream) : this(System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
 
 		public XmlReader(System.Xml.XmlReader reader)
-			: this(TypeExtractor.Default, Prefixes.Default, DefaultParsingDelimiters.Default.Namespace, reader
-			) {}
-
-		public XmlReader(ITypeExtractor types, IParameterizedSource<string, XNamespace> prefixes, Delimiter @namespace,
-		                 System.Xml.XmlReader reader)
+			: base(new Resolver(reader.AsValid<IXmlNamespaceResolver>(), reader.GetDefaultNamespace()))
 		{
-			_types = types;
-			_prefixes = prefixes;
-			_namespace = @namespace;
 			_reader = reader;
 		}
 
 		public string DisplayName => _reader.LocalName;
 		public XName Name => XName.Get(_reader.LocalName, _reader.NamespaceURI);
-
-		public TypeInfo Classification()
-		{
-			switch (_reader.MoveToContent())
-			{
-				case XmlNodeType.Element:
-					return _types.Get(this);
-			}
-			throw new InvalidOperationException($"Could not locate the type from the current Xml reader '{_reader}.'");
-		}
 
 		public string Value()
 		{
@@ -86,29 +63,37 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		}
 
 		public IEnumerator Members() => Items(); // Same for now...
-
 		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + (_reader.MoveToElement() ? 0 : 1));
 
-
-		public bool Contains(XName name)
-			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName);
-
-		public string this[XName name] => Contains(name) ? _reader.Value : null;
-
-		public XName Get(string parameter)
-		{
-			var parts = parameter.ToStringArray(_namespace);
-			var result = parts.Length == 2
-				? XName.Get(parts[1], Namespace(parts[0]))
-				: XName.Get(parts[0], _reader.LookupNamespace(string.Empty));
-			return result;
-		}
-
-		string Namespace(string prefix) => _reader.LookupNamespace(prefix) ?? _prefixes.Get(prefix)?.NamespaceName;
-
-		public TypeInfo Get(XName parameter) => _types.Get(parameter);
+		public string this[XName name]
+			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName) ? _reader.Value : null;
 
 		public void Dispose() => _reader.Dispose();
+
+		sealed class Resolver : IXmlNamespaceResolver
+		{
+			readonly IXmlNamespaceResolver _resolver;
+			readonly string _defaultNamespace;
+
+			// public Resolver(IXmlNamespaceResolver resolver) : this(resolver, resolver.LookupNamespace(string.Empty)) {}
+
+			public Resolver(IXmlNamespaceResolver resolver, string defaultNamespace)
+			{
+				_resolver = resolver;
+				_defaultNamespace = defaultNamespace;
+			}
+
+			public IDictionary<string, string> GetNamespacesInScope(XmlNamespaceScope scope)
+				=> _resolver.GetNamespacesInScope(scope);
+
+			public string LookupNamespace(string prefix) =>
+				string.IsNullOrEmpty(prefix)
+					? _defaultNamespace
+					: _resolver.LookupNamespace(prefix);
+
+			public string LookupPrefix(string namespaceName) => _resolver.LookupPrefix(namespaceName);
+		}
+
 
 		sealed class Enumerator : IEnumerator
 		{

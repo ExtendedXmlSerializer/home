@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class UnsignedByteConverter : ConverterBase<byte>
+	class UnsignedByteConverter : Converter<byte>
 	{
 		public static UnsignedByteConverter Default { get; } = new UnsignedByteConverter();
 		UnsignedByteConverter() : base(XmlConvert.ToByte, XmlConvert.ToString) {}

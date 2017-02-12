@@ -22,7 +22,8 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel
@@ -30,18 +31,18 @@ namespace ExtendedXmlSerialization.ContentModel
 	class TypeFormatter : ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() : this(DefaultClrDelimiters.Default.Generic, DefaultParsingDelimiters.Default.NestedClass) {}
+		TypeFormatter() : this(GenericNameParser.Default, DefaultParsingDelimiters.Default.NestedClass) {}
 
+		readonly IParseContext<string> _generic;
 		readonly string _nested;
-		readonly Delimiter _generic;
 
-		public TypeFormatter(Delimiter generic, string nested)
+		public TypeFormatter(IParseContext<string> generic, string nested)
 		{
 			_generic = generic;
 			_nested = nested;
 		}
 
-		string Process(TypeInfo type) => type.IsGenericType ? type.Name.ToStringArray(_generic)[0] : type.Name;
+		string Process(TypeInfo type) => type.IsGenericType ? _generic.Get(type.Name) : type.Name;
 
 		public string Get(TypeInfo parameter)
 		{

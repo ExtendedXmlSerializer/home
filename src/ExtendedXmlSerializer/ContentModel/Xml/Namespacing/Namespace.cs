@@ -25,13 +25,17 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	public struct Namespace
 	{
-		public Namespace(string prefix, string identifier)
+		public Namespace(string prefix, string identity) : this(prefix, identity, string.Empty) {}
+
+		public Namespace(string prefix, string identity, string name)
 		{
 			Prefix = prefix;
-			Identifier = identifier;
+			Identity = identity;
+			Name = name;
 		}
 
 		public string Prefix { get; }
-		public string Identifier { get; }
+		public string Identity { get; }
+		public string Name { get; }
 	}
 }

@@ -3,7 +3,6 @@
   "testRunner": "xunit",
   "version": "1.5.0",
     "buildOptions": {
-        "keyFile": "../../ExtendedXmlSerializer.snk",
         "embed": [ "Resources/*.xml", "Legacy/Resources/*.xml" ]
     },
   "dependencies": {

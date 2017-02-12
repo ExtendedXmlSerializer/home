@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class ByteConverter : ConverterBase<sbyte>
+	class ByteConverter : Converter<sbyte>
 	{
 		public static ByteConverter Default { get; } = new ByteConverter();
 		ByteConverter() : base(XmlConvert.ToSByte, XmlConvert.ToString) {}

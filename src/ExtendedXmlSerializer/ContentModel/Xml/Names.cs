@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -31,20 +32,20 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class Names : WeakCacheBase<TypeInfo, XName>, INames
 	{
 		public static Names Default { get; } = new Names();
-		Names() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default, Namespacing.Names.Default) {}
+		Names() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default, Identities.Default) {}
 
 		readonly IAliases _alias;
 		readonly ITypeFormatter _formatter;
-		readonly Namespacing.INames _names;
+		readonly IIdentities _identities;
 
-		public Names(IAliases alias, ITypeFormatter formatter, Namespacing.INames names)
+		public Names(IAliases alias, ITypeFormatter formatter, IIdentities identities)
 		{
 			_alias = alias;
 			_formatter = formatter;
-			_names = names;
+			_identities = identities;
 		}
 
 		protected override XName Create(TypeInfo parameter)
-			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _names.Get(parameter));
+			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _identities.Get(parameter));
 	}
 }

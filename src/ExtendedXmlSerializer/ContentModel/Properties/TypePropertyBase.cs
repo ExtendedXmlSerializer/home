@@ -30,8 +30,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	{
 		protected TypePropertyBase(string displayName) : base(displayName) {}
 
-		public override void Write(IXmlWriter writer, TypeInfo instance) => writer.Attribute(Name, writer.Get(instance));
+		protected override string Format(IXmlWriter writer, TypeInfo instance) => writer.Get(instance);
 
-		public override TypeInfo Get(IXmlReader reader) => reader.ReadType(Name);
+		protected override TypeInfo Parse(IXmlReader reader, string data) => reader.Get(data);
 	}
 }

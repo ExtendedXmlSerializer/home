@@ -22,18 +22,34 @@
 // SOFTWARE.
 
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	abstract class FrameworkPropertyBase<T> : SerializerBase<T>, IProperty<T>
 	{
-		protected FrameworkPropertyBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
+		readonly XName _name;
+		readonly T _defaultValue;
 
-		protected FrameworkPropertyBase(XName name)
+		protected FrameworkPropertyBase(string displayName, T defaultValue = default(T))
+			: this(XName.Get(displayName, Defaults.Namespace), defaultValue) {}
+
+		protected FrameworkPropertyBase(XName name, T defaultValue)
 		{
-			Name = name;
+			_name = name;
+			_defaultValue = defaultValue;
 		}
 
-		public XName Name { get; }
+		public override void Write(IXmlWriter writer, T instance) => writer.Attribute(_name, Format(writer, instance));
+		protected abstract string Format(IXmlWriter writer, T instance);
+
+		public override T Get(IXmlReader parameter)
+		{
+			var data = parameter[_name];
+			var result = data != null ? Parse(parameter, data) : _defaultValue;
+			return result;
+		}
+
+		protected abstract T Parse(IXmlReader reader, string data);
 	}
 }

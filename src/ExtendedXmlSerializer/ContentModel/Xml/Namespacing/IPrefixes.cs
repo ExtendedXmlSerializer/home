@@ -27,6 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public interface IPrefixes : IParameterizedSource<TypeInfo, string>, IParameterizedSource<XNamespace, string>,
+	public interface IPrefixes : IParameterizedSource<TypeInfo, string>,
+	                             IParameterizedSource<XNamespace, string>,
 	                             IParameterizedSource<string, XNamespace> {}
 }

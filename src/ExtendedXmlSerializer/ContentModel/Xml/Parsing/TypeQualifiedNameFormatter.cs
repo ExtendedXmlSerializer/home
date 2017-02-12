@@ -22,9 +22,23 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public interface INames : IParameterizedSource<TypeInfo, string> {}
+	class TypeQualifiedNameFormatter : ITypeFormatter
+	{
+		readonly IParameterizedSource<TypeInfo, QualifiedNameParts> _factory;
+
+		public TypeQualifiedNameFormatter(IXmlNamespaceResolver resolver) : this(new QualifiedTypeNameFactory(resolver)) {}
+
+		public TypeQualifiedNameFormatter(IParameterizedSource<TypeInfo, QualifiedNameParts> factory)
+		{
+			_factory = factory;
+		}
+
+		public string Get(TypeInfo parameter) => QualifiedNameFormatter.Default.Get(_factory.Get(parameter));
+	}
 }

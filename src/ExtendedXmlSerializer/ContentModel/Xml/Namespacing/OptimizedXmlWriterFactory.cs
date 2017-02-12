@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class OptimizedXmlWriterFactory : IXmlWriterFactory
+	public class OptimizedXmlWriterFactory : IXmlWriterFactory
 	{
 		readonly IXmlWriterFactory _factory;
 		readonly IObjectNamespaces _namespaces;

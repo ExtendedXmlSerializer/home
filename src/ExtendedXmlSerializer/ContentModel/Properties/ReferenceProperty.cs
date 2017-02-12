@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		public static ReferenceProperty Default { get; } = new ReferenceProperty();
 		ReferenceProperty() : base("ref") {}
 
-		public override void Write(IXmlWriter writer, int instance)
+		protected override string Format(IXmlWriter writer, int instance)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override int Get(IXmlReader reader)
+		protected override int Parse(IXmlReader reader, string data)
 		{
 			throw new NotImplementedException();
 		}

@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Test.Support;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
-namespace ExtendedXmlSerialization.Test.ConverterModel.Members
+namespace ExtendedXmlSerialization.Test.ContentModel.Members
 {
 	public class MemberSourceTests
 	{

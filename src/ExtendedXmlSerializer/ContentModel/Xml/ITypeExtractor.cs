@@ -22,10 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface ITypeExtractor : IParameterizedSource<IXmlReader, TypeInfo>, IParameterizedSource<XName, TypeInfo> {}
+	public interface ITypeExtractor : IParameterizedSource<IXmlReader, TypeInfo> {}
 }

@@ -23,24 +23,18 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IDisposable, IQualifiedName, IDisplay, IParameterizedSource<string, XName>,
-	                              IParameterizedSource<XName, TypeInfo>
+	public interface IXmlReader : IDisposable, IQualifiedName, IDisplay, ITypeParser
 	{
-		TypeInfo Classification();
-
 		string Value();
 
 		IEnumerator Members();
 
 		IEnumerator Items();
-
-		bool Contains(XName name);
 
 		string this[XName name] { get; }
 	}

@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class DecimalConverter : ConverterBase<decimal>
+	class DecimalConverter : Converter<decimal>
 	{
 		public static DecimalConverter Default { get; } = new DecimalConverter();
 		DecimalConverter() : base(XmlConvert.ToDecimal, XmlConvert.ToString) {}

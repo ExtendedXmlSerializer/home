@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class StringConverter : ConverterBase<string>
+	class StringConverter : Converter<string>
 	{
 		readonly static Func<string, string> Self = Self<string>.Default.Get;
 

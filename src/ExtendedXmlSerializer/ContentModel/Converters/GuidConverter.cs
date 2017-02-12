@@ -26,7 +26,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class GuidConverter : ConverterBase<Guid>
+	class GuidConverter : Converter<Guid>
 	{
 		public static GuidConverter Default { get; } = new GuidConverter();
 		GuidConverter() : base(XmlConvert.ToGuid, XmlConvert.ToString) {}

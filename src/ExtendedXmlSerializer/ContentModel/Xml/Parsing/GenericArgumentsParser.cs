@@ -21,27 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Collections.Immutable;
+using System.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class Names : INames
+	class GenericArgumentsParser : ParserBase<ImmutableArray<XmlQualifiedName>>
 	{
-		public static Names Default { get; } = new Names();
-		Names() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		public static GenericArgumentsParser Default { get; } = new GenericArgumentsParser();
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Names(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+		GenericArgumentsParser() : base(Parse.Ref(() => NameParser.Default.Get())
+		                                     .DelimitedBy(Parsing.List)
+		                                     .Token()
+		                                     .Contained(Parsing.Start, Parsing.Finish)
+		                                     .Select(names => names.ToImmutableArray())) {}
 	}
 }

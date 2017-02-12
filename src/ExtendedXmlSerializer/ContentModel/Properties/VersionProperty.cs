@@ -31,7 +31,27 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		public static VersionProperty Default { get; } = new VersionProperty();
 		VersionProperty() : base("ver") {}
 
-		public override void Write(IXmlWriter writer, int instance)
+		protected override string Format(IXmlWriter writer, int instance)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override int Parse(IXmlReader reader, string data)
+		{
+			throw new NotImplementedException();
+		}
+
+		/*public override int Parse(string data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string Format(int instance)
+		{
+			throw new NotImplementedException();
+		}*/
+
+		/*public override void Write(IXmlWriter writer, int instance)
 		{
 			throw new NotImplementedException();
 		}
@@ -39,6 +59,6 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		public override int Get(IXmlReader reader)
 		{
 			throw new NotImplementedException();
-		}
+		}*/
 	}
 }

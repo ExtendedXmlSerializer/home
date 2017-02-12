@@ -24,28 +24,48 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Reflection;
+using System.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.TypeModel;
+using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	sealed class TypeArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, ITypeArgumentsProperty
 	{
+		readonly Parser<ImmutableArray<XmlQualifiedName>> _parser;
 		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : base("arguments") {}
+		TypeArgumentsProperty() : this(QualifiedNameListParser.Default.Get()) {}
 
-		public override void Write(IXmlWriter writer, ImmutableArray<Type> instance)
-			=> writer.Attribute(Name, writer.GetArguments(instance));
-
-		public override ImmutableArray<Type> Get(IXmlReader reader) => Yield(reader).ToImmutableArray();
-
-		IEnumerable<Type> Yield(IXmlReader reader)
+		public TypeArgumentsProperty(Parser<ImmutableArray<XmlQualifiedName>> parser)
+			: base("arguments", ImmutableArray<Type>.Empty)
 		{
-			var names = reader[Name].ToStringArray();
+			_parser = parser;
+		}
+
+		protected override string Format(IXmlWriter writer, ImmutableArray<Type> instance)
+			=> string.Join(",", Format(writer, instance));
+
+		static IEnumerable<string> Format(ITypeFormatter formatter, ImmutableArray<Type> types)
+		{
+			for (var i = 0; i < types.Length; i++)
+			{
+				yield return formatter.Get(types[i].GetTypeInfo());
+			}
+		}
+
+		protected override ImmutableArray<Type> Parse(IXmlReader reader, string data)
+			=> Yield(reader, data).ToImmutableArray();
+
+		IEnumerable<Type> Yield(IXmlReader reader, string data)
+		{
+			var names = _parser.Parse(data);
 			var length = names.Length;
 			for (var i = 0; i < length; i++)
 			{
-				yield return reader.ReadType(names[i]).AsType();
+				yield return reader.Get(names[i].ToString()).AsType();
 			}
 		}
 	}

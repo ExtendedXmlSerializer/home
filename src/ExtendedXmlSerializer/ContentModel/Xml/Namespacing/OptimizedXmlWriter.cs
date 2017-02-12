@@ -57,18 +57,16 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 						switch (i)
 						{
 							case 0:
-								_native.WriteAttributeString(Prefix, ns.Identifier);
+								_native.WriteAttributeString(Prefix, ns.Identity);
 								break;
 							default:
-								_native.WriteAttributeString(Prefix, ns.Prefix, string.Empty, ns.Identifier);
+								_native.WriteAttributeString(Prefix, ns.Prefix, string.Empty, ns.Identity);
 								break;
 						}
 					}
 					break;
 			}
 		}
-
-		public string Get(TypeInfo parameter) => _writer.Get(parameter);
 
 		public void Attribute(XName name, string value) => _writer.Attribute(name, value);
 
@@ -77,6 +75,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 		public void EndCurrent() => _writer.EndCurrent();
 
 		public void Member(string name) => _writer.Member(name);
+		public string Get(TypeInfo parameter) => _writer.Get(parameter);
 
 		public void Dispose() => _writer.Dispose();
 	}

@@ -31,12 +31,12 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		public static IdentifierProperty Default { get; } = new IdentifierProperty();
 		IdentifierProperty() : base("id") {}
 
-		public override void Write(IXmlWriter writer, int instance)
+		protected override string Format(IXmlWriter writer, int instance)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override int Get(IXmlReader reader)
+		protected override int Parse(IXmlReader reader, string data)
 		{
 			throw new NotImplementedException();
 		}

@@ -22,19 +22,20 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlWriter : IDisposable, IFormatter<TypeInfo>
+	public interface IXmlWriter : ITypeFormatter, IDisposable
 	{
-		void Attribute(XName name, string value);
-		void Write(string text);
-
 		void Element(XName name);
 		void EndCurrent();
+
+		void Attribute(XName name, string value);
+
+		void Write(string text);
+
 		void Member(string name);
 	}
 }

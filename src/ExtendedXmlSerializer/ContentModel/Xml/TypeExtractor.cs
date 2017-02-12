@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Properties;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
@@ -46,24 +46,35 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_generic = generic;
 		}
 
-		public TypeInfo Get(IXmlReader parameter)
+		public TypeInfo Get(IXmlReader parameter) => Item(parameter) ?? Type(parameter) ?? Other(parameter);
+
+		TypeInfo Type(IXmlReader parameter)
 		{
-			if (parameter.Contains(_type.Name))
+			var type = _types.Get(parameter.Name);
+			if (type != null)
 			{
-				var typeInfo = _type.Get(parameter);
-				return typeInfo;
+				var generic = _generic.Get(parameter);
+				var result = generic.IsEmpty ? type : type.MakeGenericType(generic.ToArray()).GetTypeInfo();
+				return result;
 			}
-
-			var type = parameter.Contains(_item.Name)
-				? _item.Get(parameter).MakeArrayType().GetTypeInfo()
-				: Get(parameter.Name);
-
-			var result = type.IsGenericTypeDefinition
-				? type.MakeGenericType(_generic.Get(parameter).ToArray()).GetTypeInfo()
-				: type;
-			return result;
+			return null;
 		}
 
-		public TypeInfo Get(XName parameter) => _types.Get(parameter);
+		TypeInfo Item(IXmlReader parameter)
+		{
+			var typeInfo = _item.Get(parameter);
+			var info = typeInfo?.MakeArrayType().GetTypeInfo();
+			return info;
+		}
+
+		TypeInfo Other(IXmlReader parameter)
+		{
+			var result = _type.Get(parameter);
+			if (result == null)
+			{
+				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter.Name}.'");
+			}
+			return result;
+		}
 	}
 }

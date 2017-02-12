@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class CharacterConverter : ConverterBase<char>
+	class CharacterConverter : Converter<char>
 	{
 		public static CharacterConverter Default { get; } = new CharacterConverter();
 		CharacterConverter() : base(XmlConvert.ToChar, XmlConvert.ToString) {}

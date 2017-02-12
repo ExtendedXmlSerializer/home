@@ -25,7 +25,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class ShortConverter : ConverterBase<short>
+	class ShortConverter : Converter<short>
 	{
 		public static ShortConverter Default { get; } = new ShortConverter();
 		ShortConverter() : base(XmlConvert.ToInt16, XmlConvert.ToString) {}

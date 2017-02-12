@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 		public static IContentOption ToContent<T>(this IConverter<T> @this) => new ContentOption(@this, @this.ToSerializer());
 
 		public static ISerializer ToSerializer<T>(this IConverter<T> @this)
-			=> new DelegatedSerializer<T>(@this.Load, @this.Save);
+			=> new DelegatedSerializer<T>(@this.Parse, @this.Format);
 	}
 }

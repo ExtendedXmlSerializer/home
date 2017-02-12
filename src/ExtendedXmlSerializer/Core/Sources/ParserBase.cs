@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using Xunit;
-using TypeFormatter = ExtendedXmlSerialization.ContentModel.TypeFormatter;
+using Sprache;
 
-namespace ExtendedXmlSerialization.Test.ContentModel.Xml
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class TypeMapsTests
+	public abstract class ParserBase<T> : DelegatedSource<string, T>, IParseContext<T>
 	{
-		[Fact]
-		public void TestName()
+		readonly Parser<T> _parser;
+
+		protected ParserBase(Parser<T> parser) : base(parser.Parse)
 		{
-			var expected = typeof(Subject).GetTypeInfo();
-			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var type = TypeMaps.Default.Get(XName.Get(TypeFormatter.Default.Get(expected), @namespace));
-			Assert.Equal(expected, type);
+			_parser = parser;
 		}
 
-		sealed class Subject {}
+		public IResult<T> Get(IInput parameter) => _parser(parameter);
+
+		public Parser<T> Get() => _parser;
 	}
 }
