@@ -27,12 +27,7 @@ namespace ExtendedXmlSerialization.ContentModel
 {
 	public interface IParsingDelimiters
 	{
-		Delimiter Assembly { get; }
-		Delimiter Namespace { get; }
 		Delimiter NestedClass { get; }
-		Delimiter GenericStart { get; }
-		Delimiter Generics { get; }
-		Delimiter GenericEnd { get; }
-		Delimiter Part { get; }
+		
 	}
 }
