@@ -1,4 +1,4 @@
-/*// MIT License
+// MIT License
 // 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
@@ -26,21 +26,20 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using Xunit;
-// using TypeFormatter = ExtendedXmlSerialization.ContentModel.TypeFormatter;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 {
-	public class TypeMapsTests
+	public class AssemblyPartitionedTypesTests
 	{
 		[Fact]
 		public void TestName()
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var type = TypeMaps.Default.Get(XName.Get(TypeFormatter.Default.Get(expected), @namespace));
+			var type = AssemblyPartitionedTypes.Default.Get(XName.Get(TypeFormatter.Default.Get(expected), @namespace));
 			Assert.Equal(expected, type);
 		}
 
 		sealed class Subject {}
 	}
-}*/
+}

@@ -40,25 +40,5 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		{
 			throw new NotImplementedException();
 		}
-
-		/*public override int Parse(string data)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override string Format(int instance)
-		{
-			throw new NotImplementedException();
-		}*/
-
-		/*public override void Write(IXmlWriter writer, int instance)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override int Get(IXmlReader reader)
-		{
-			throw new NotImplementedException();
-		}*/
 	}
 }
