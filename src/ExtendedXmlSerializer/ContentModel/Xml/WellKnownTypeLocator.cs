@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				       x => x.Value.Identity,
 				       x => new Func<string, TypeInfo>(
 					       x.Key.ExportedTypes
-					        .YieldMetadata()
+					        .YieldMetadata(CanPartitionSpecification.Default.IsSatisfiedBy)
 					        .ToLookup(TypeFormatter.Default.Get)
 					        .ToDictionary(y => y.Key, y => y.First())
 					        .Get)
@@ -53,11 +53,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_types = types;
 		}
 
-		public TypeInfo Get(XName parameter)
-		{
-			var invoke = _types.Invoke(parameter.NamespaceName);
-			var typeInfo = invoke?.Invoke(parameter.LocalName);
-			return typeInfo;
-		}
+		public TypeInfo Get(XName parameter) => _types.Invoke(parameter.NamespaceName)?.Invoke(parameter.LocalName);
 	}
 }

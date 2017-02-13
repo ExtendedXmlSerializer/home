@@ -21,32 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Xml;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class XmlWriter : TypeQualifiedNameFormatter, IXmlWriter
+	class XmlWriter : IXmlWriter
 	{
-		readonly IXmlNamespaceResolver _resolver;
+		readonly IPrefixes _prefixes;
+		readonly INames _names;
 		readonly System.Xml.XmlWriter _writer;
 
-		public XmlWriter(System.Xml.XmlWriter writer) : this(new Resolver(writer), writer) {}
+		public XmlWriter(System.Xml.XmlWriter writer) : this(Prefixes.Default, Names.Default, writer) {}
 
-		public XmlWriter(IXmlNamespaceResolver resolver, System.Xml.XmlWriter writer) : base(resolver)
+		public XmlWriter(IPrefixes prefixes, INames names, System.Xml.XmlWriter writer)
 		{
-			_resolver = resolver;
+			_prefixes = prefixes;
+			_names = names;
 			_writer = writer;
 		}
 
-		public void Attribute(XName name, string value)
-			=>
-				_writer.WriteAttributeString(_resolver.LookupPrefix(name.NamespaceName), name.LocalName, name.NamespaceName, value);
-
+		public void Attribute(XName name, string value) =>
+			_writer.WriteAttributeString(LookupPrefix(name.NamespaceName), name.LocalName, name.NamespaceName, value);
 
 		public void Element(XName name) => _writer.WriteStartElement(name.LocalName, name.NamespaceName);
 
@@ -58,36 +60,27 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public void Dispose() => _writer.Dispose();
 
-		sealed class Resolver : IXmlNamespaceResolver
+		QualifiedNameParts Get(TypeInfo parameter)
 		{
-			readonly IPrefixes _prefixes;
-			readonly System.Xml.XmlWriter _writer;
+			var name = _names.Get(parameter);
+			var @namespace = LookupPrefix(name.NamespaceName);
+			var result = parameter.IsGenericType
+				? new QualifiedNameParts(@namespace, name.LocalName,
+				                         parameter.GetGenericArguments().YieldMetadata().Select(Get).ToImmutableArray)
+				: new QualifiedNameParts(@namespace, name.LocalName);
 
-			public Resolver(System.Xml.XmlWriter writer) : this(Prefixes.Default, writer) {}
-
-			public Resolver(IPrefixes prefixes, System.Xml.XmlWriter writer)
-			{
-				_prefixes = prefixes;
-				_writer = writer;
-			}
-
-			public IDictionary<string, string> GetNamespacesInScope(XmlNamespaceScope scope)
-			{
-				throw new NotSupportedException();
-			}
-
-			public string LookupNamespace(string prefix)
-			{
-				throw new NotSupportedException();
-			}
-
-			public string LookupPrefix(string namespaceName) => _writer.LookupPrefix(namespaceName) ?? Create(namespaceName);
-
-			string Create(string @namespace)
-			{
-				_writer.WriteAttributeString(_prefixes.Get(XNamespace.Get(@namespace)), XNamespace.Xmlns.NamespaceName, @namespace);
-				return _writer.LookupPrefix(@namespace);
-			}
+			return result;
 		}
+
+		string LookupPrefix(string parameter) => _writer.LookupPrefix(parameter) ?? Create(parameter);
+		
+		string Create(string @namespace)
+		{
+			_writer.WriteAttributeString(_prefixes.Get(XNamespace.Get(@namespace)), XNamespace.Xmlns.NamespaceName, @namespace);
+			return _writer.LookupPrefix(@namespace);
+		}
+
+		string IParameterizedSource<TypeInfo, string>.Get(TypeInfo parameter)
+			=> QualifiedNameFormatter.Default.Get(Get(parameter));
 	}
 }

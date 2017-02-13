@@ -33,14 +33,14 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
-		readonly static char[] Delimiters = {','};
+		/*readonly static char[] Delimiters = {','};
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
 		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, Delimiters);
 
 		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
-			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();
+			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;

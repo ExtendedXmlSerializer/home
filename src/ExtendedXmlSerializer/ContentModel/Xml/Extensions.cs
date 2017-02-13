@@ -21,25 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	public static class Extensions
 	{
 		public static TypeInfo Classification(this IXmlReader @this) => TypeExtractor.Default.Get(@this);
-
-		public static string GetDefaultNamespace(this System.Xml.XmlReader @this)
-		{
-			switch (@this.MoveToContent())
-			{
-				case XmlNodeType.Element:
-					return @this.LookupNamespace(string.Empty);
-				default:
-					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{@this}.'");
-			}
-		}
 	}
 }
