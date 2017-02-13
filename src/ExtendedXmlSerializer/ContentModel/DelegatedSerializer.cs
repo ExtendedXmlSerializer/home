@@ -22,22 +22,25 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class DelegatedSerializer<T> : SerializerBase
+	class DelegatedSerializer : SerializerBase
 	{
-		readonly Func<string, T> _deserialize;
-		readonly Func<T, string> _serialize;
+		readonly Func<string, object> _deserialize;
+		readonly Func<object, string> _serialize;
 
-		public DelegatedSerializer(Func<string, T> deserialize, Func<T, string> serialize)
+		public DelegatedSerializer(IConverter converter) : this(converter.Parse, converter.Format) {}
+
+		public DelegatedSerializer(Func<string, object> deserialize, Func<object, string> serialize)
 		{
 			_deserialize = deserialize;
 			_serialize = serialize;
 		}
 
-		public override void Write(IXmlWriter writer, object instance) => writer.Write(_serialize((T) instance));
+		public override void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
 
 		public override object Get(IXmlReader reader) => _deserialize(reader.Value());
 	}

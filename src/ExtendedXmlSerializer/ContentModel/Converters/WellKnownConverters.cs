@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,19 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	class WellKnownConverters : Items<IConverter>
 	{
-		readonly Func<TParameter, TResult> _source;
+		public static WellKnownConverters Default { get; } = new WellKnownConverters();
 
-		public DelegatedSource(Func<TParameter, TResult> source)
-		{
-			_source = source;
-		}
-
-		public virtual TResult Get(TParameter parameter) => _source(parameter);
+		WellKnownConverters() : base(
+			BooleanConverter.Default,
+			CharacterConverter.Default,
+			ByteConverter.Default,
+			UnsignedByteConverter.Default,
+			ShortConverter.Default,
+			UnsignedShortConverter.Default,
+			IntegerConverter.Default,
+			UnsignedIntegerConverter.Default,
+			LongConverter.Default,
+			UnsignedLongConverter.Default,
+			FloatConverter.Default,
+			DoubleConverter.Default,
+			DecimalConverter.Default,
+			DateTimeConverter.Default,
+			DateTimeOffsetConverter.Default,
+			StringConverter.Default,
+			GuidConverter.Default,
+			TimeSpanConverter.Default
+		) {}
 	}
 }

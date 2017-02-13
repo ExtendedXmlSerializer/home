@@ -26,28 +26,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class Containers : IContainers
 	{
-		// public static Containers Default { get; } = new Containers();
-		readonly static Func<IContainers, IEnumerable<ContainerDefinition>> Options = ContainerDefinitions.Default.Get;
+		readonly static Func<IContainers, IEnumerable<ContainerDefinition>> Definitions =
+			ContainerDefinitions.Default.Get;
 
-		readonly IParameterizedSource<TypeInfo, ISerializer> _selector, _contents;
+		public static Containers Default { get; } = new Containers();
+		Containers() : this(Definitions) {}
 
-		public Containers() : this(Options) {}
+		readonly Func<TypeInfo, ISerializer> _selector, _content;
 
-		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> options)
+		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> definitions)
 		{
-			var definitions = options(this).ToArray();
-			var option = definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray();
-			_selector = new Selector<TypeInfo, ISerializer>(option).Cache();
-			_contents = new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache();
+			var selector = new ContainerSelector(definitions(this).ToArray());
+			_selector = selector.ReferenceCache().Get;
+			_content = selector.Content;
 		}
 
-		public ISerializer Get(TypeInfo parameter) => _selector.Get(parameter);
-		public ISerializer Content(TypeInfo parameter) => _contents.Get(parameter);
+		public ISerializer Get(TypeInfo parameter) => _selector(parameter);
+		public ISerializer Content(TypeInfo parameter) => _content(parameter);
 	}
 }

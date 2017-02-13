@@ -21,23 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Runtime.CompilerServices;
-
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public abstract class WeakCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
-	                                                                                       where TValue : class
+	public class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
+		where TParameter : class where TResult : class
 	{
-		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
-		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
+		public static ReferenceCachingAlteration<TParameter, TResult> Default { get; } =
+			new ReferenceCachingAlteration<TParameter, TResult>();
 
-		protected WeakCacheBase()
-		{
-			_callback = Create;
-		}
+		ReferenceCachingAlteration() {}
 
-		protected abstract TValue Create(TKey parameter);
-
-		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
+		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
+			=> new ReferenceCache<TParameter, TResult>(parameter.Get);
 	}
 }

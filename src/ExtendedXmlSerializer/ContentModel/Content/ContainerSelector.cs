@@ -21,19 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	sealed class ContainerSelector : Selector<TypeInfo, ISerializer>, IContainers
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly IParameterizedSource<TypeInfo, ISerializer> _content;
 
-		public DelegatedSource(Func<TParameter, TResult> source)
+		public ContainerSelector(params ContainerDefinition[] definitions)
+			: this(
+				new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).ReferenceCache(), definitions) {}
+
+		public ContainerSelector(IParameterizedSource<TypeInfo, ISerializer> content, params ContainerDefinition[] definitions)
+			: base(definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray())
 		{
-			_source = source;
+			_content = content;
 		}
 
-		public virtual TResult Get(TParameter parameter) => _source(parameter);
+		public ISerializer Content(TypeInfo parameter) => _content.Get(parameter);
 	}
 }

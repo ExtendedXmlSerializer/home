@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Names : WeakCacheBase<TypeInfo, XName>, INames
+	class Names : ReferenceCacheBase<TypeInfo, XName>, INames
 	{
 		public static Names Default { get; } = new Names();
 		Names() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default, Identities.Default) {}

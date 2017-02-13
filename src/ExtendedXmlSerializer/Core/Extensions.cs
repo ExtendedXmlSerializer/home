@@ -33,17 +33,19 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
-		/*readonly static char[] Delimiters = {','};
+		public static Func<TParameter, TResult> Alter<TParameter, TResult>(this IAlteration<TResult> @this,
+		                                                                   Func<TParameter, TResult> factory)
+			=> DelegateAlterations<TParameter, TResult>.Default.Get(@this).Get(factory);
 
-		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
-
-		public static ImmutableArray<string> ToStringArray(this string target) => ToStringArray(target, Delimiters);
-
-		public static ImmutableArray<string> ToStringArray(this string target, params char[] delimiters) =>
-			target.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToImmutableArray();*/
+		/*public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
+
+		public static IParameterizedSource<TParameter, TResult>
+			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : class
+			=> ReferenceCachingAlteration<TParameter, TResult>.Default.Get(@this);
 
 		public static IParameterizedSource<TParameter, TResult> Cache<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this)
@@ -64,7 +66,7 @@ namespace ExtendedXmlSerialization.Core
 			return target.TryGetValue(key, out result) ? result : (TValue?) null;
 		}
 
-		public static IEnumerable<T> Append<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
+		public static IEnumerable<T> Appending<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 
 		public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 

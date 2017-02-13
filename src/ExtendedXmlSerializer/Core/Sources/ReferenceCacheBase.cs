@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,19 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public abstract class ReferenceCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
+	                                                                                       where TValue : class
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-		public DelegatedSource(Func<TParameter, TResult> source)
+		protected ReferenceCacheBase()
 		{
-			_source = source;
+			_callback = Create;
 		}
 
-		public virtual TResult Get(TParameter parameter) => _source(parameter);
+		protected abstract TValue Create(TKey parameter);
+
+		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }

@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization
 
 		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, new Containers()) {}
+		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
 
 		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
 		{

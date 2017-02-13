@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Core.Specifications
 		{
 			var interfaceTypes = parameter.GetInterfaces();
 
-			foreach (var it in interfaceTypes.Append(parameter.AsType()))
+			foreach (var it in interfaceTypes.Appending(parameter.AsType()))
 			{
 				if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == _genericType)
 					return true;
