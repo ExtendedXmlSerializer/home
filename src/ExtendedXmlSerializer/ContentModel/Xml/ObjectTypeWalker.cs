@@ -71,54 +71,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 					Schedule(item);
 				}
 			}
-
-			/*
-
-			var element = _elements.Get(parameter);
-			var membered = element as IMemberedElement;
-			if (membered != null)
-			{
-				foreach (var member in membered.Members)
-				{
-					if (Check(member, member.Get(input)))
-					{
-						yield return FrameworkType;
-					}
-				}
-			}
-
-			var collection = element as ICollectionElement;
-			if (collection != null)
-			{
-				var item = collection as IDictionaryElement;
-				if (item != null)
-				{
-					foreach (DictionaryEntry entry in (IDictionary) input)
-					{
-						Schedule(entry.Key);
-						Schedule(entry.Value);
-					}
-				}
-				else
-				{
-					foreach (var i in (IEnumerable) input)
-					{
-						Schedule(i);
-					}
-				}
-			}*/
 		}
-
-		/*bool Check(IClassification classification, object instance)
-		{
-			if (!classification.Exact(instance))
-			{
-				Schedule(instance);
-				var result = _framework.Apply();
-				return result;
-			}
-			return false;
-		}*/
 
 		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
 	}

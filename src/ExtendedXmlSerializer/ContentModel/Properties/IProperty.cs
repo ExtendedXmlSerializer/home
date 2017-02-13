@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	public interface IProperty<T> : ISerializer<T> /*, IQualifiedName*/ {}
+	public interface IProperty<T> : ISerializer<T> {}
 }

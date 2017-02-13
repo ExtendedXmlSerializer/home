@@ -37,8 +37,6 @@ namespace ExtendedXmlSerialization.Core
 		                                                                   Func<TParameter, TResult> factory)
 			=> DelegateAlterations<TParameter, TResult>.Default.Get(@this).Get(factory);
 
-		/*public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();*/
-
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 

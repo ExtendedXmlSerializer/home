@@ -34,11 +34,4 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 
 		string Format(T instance);
 	}
-
-	/*public interface IConverter : ISpecification<TypeInfo>
-	{
-		object Load(string data);
-
-		string Save(object instance);
-	}*/
 }
