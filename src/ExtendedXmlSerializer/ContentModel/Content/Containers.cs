@@ -31,13 +31,9 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class Containers : IContainers
 	{
-		readonly static Func<IContainers, IEnumerable<ContainerDefinition>> Definitions =
-			ContainerDefinitions.Default.Get;
-
-		public static Containers Default { get; } = new Containers();
-		Containers() : this(Definitions) {}
-
 		readonly Func<TypeInfo, ISerializer> _selector, _content;
+
+		public Containers() : this(new ContainerDefinitions().Get) {}
 
 		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> definitions)
 		{

@@ -32,10 +32,9 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContainerDefinitions : IContainerDefinitions
 	{
-		public static ContainerDefinitions Default { get; } = new ContainerDefinitions();
-		ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
-
 		readonly IContentOption _content;
+
+		public ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
 
 		public ContainerDefinitions(IAlteration<IConverter> alteration)
 			: this(new CompositeContentOption(new WellKnownContent(alteration).ToArray())) {}
