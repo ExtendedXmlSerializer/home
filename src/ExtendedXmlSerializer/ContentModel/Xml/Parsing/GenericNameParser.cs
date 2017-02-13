@@ -27,7 +27,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public class GenericNameParser : ParserBase<string>
+	class GenericNameParser : ParserBase<string>
 	{
 		public static GenericNameParser Default { get; } = new GenericNameParser();
 

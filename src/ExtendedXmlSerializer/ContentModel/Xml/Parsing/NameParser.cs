@@ -27,7 +27,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public class NameParser : ParserBase<XmlQualifiedName>, INameParser
+	class NameParser : ParserBase<XmlQualifiedName>, INameParser
 	{
 		public static NameParser Default { get; } = new NameParser();
 		NameParser() : this(GenericQualifiedNameParser.Default.Get, QualifiedNameParser.Default.Get) {}

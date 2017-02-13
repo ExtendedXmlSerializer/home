@@ -29,7 +29,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public class GenericQualifiedNameParser : ParserBase<XmlQualifiedName>, INameParser
+	class GenericQualifiedNameParser : ParserBase<XmlQualifiedName>, INameParser
 	{
 		public static GenericQualifiedNameParser Default { get; } = new GenericQualifiedNameParser();
 		GenericQualifiedNameParser() : this(GenericArgumentsParser.Default.Get, QualifiedNameParser.Default.Get) {}

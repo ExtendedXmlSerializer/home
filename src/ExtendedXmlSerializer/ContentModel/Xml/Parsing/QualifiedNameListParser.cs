@@ -28,7 +28,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public class QualifiedNameListParser : ParserBase<ImmutableArray<XmlQualifiedName>>
+	class QualifiedNameListParser : ParserBase<ImmutableArray<XmlQualifiedName>>
 	{
 		public static QualifiedNameListParser Default { get; } = new QualifiedNameListParser();
 
