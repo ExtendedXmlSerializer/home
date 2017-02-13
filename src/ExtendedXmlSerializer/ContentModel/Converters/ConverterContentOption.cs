@@ -23,17 +23,30 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class CachedConverter : Converter<object>
+	class ConverterContentOption : ContentOptionBase
 	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
+		readonly Func<TypeInfo, ISerializer> _factory;
 
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
+		public ConverterContentOption(IConverter converter, IAlteration<IConverter> alteration)
+			: this(converter.Accept, alteration, converter) {}
+
+		public ConverterContentOption(Func<TypeInfo, IConverter> factory, IAlteration<IConverter> alteration,
+		                              ISpecification<TypeInfo> specification)
+			: this(new SerializerFactory(alteration.Alter(factory)).ToDelegate(), specification) {}
+
+		public ConverterContentOption(Func<TypeInfo, ISerializer> factory, ISpecification<TypeInfo> specification)
+			: base(specification)
+		{
+			_factory = factory;
+		}
+
+		public override ISerializer Get(TypeInfo parameter) => _factory(parameter);
 	}
 }

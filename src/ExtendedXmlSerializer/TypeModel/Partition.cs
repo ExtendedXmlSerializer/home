@@ -23,17 +23,8 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class CachedConverter : Converter<object>
-	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
-
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
-	}
+	public delegate Func<string, TypeInfo> Partition(string parameter);
 }

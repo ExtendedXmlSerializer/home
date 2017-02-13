@@ -26,17 +26,6 @@ using System.Collections.Concurrent;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class Cache<TKey, TValue> : CacheBase<TKey, TValue>
-	{
-		readonly Func<TKey, TValue> _factory;
-		public Cache(Func<TKey, TValue> factory)
-		{
-			_factory = factory;
-		}
-
-		protected override TValue Create(TKey parameter) => _factory(parameter);
-	}
-
 	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IParameterizedSource<TKey, TValue>
 	{
 		readonly Func<TKey, TValue> _create;
