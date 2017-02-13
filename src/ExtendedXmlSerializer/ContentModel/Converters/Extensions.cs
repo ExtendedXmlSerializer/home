@@ -22,14 +22,14 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	public static class Extensions
 	{
-		public static IContentOption ToContent<T>(this IConverter<T> @this) => new ContentOption(@this, @this.ToSerializer());
+		public static IContentOption ToContent(this IAlteration<IConverter> @this, IConverter converter) => new ConverterContentOption(converter, @this);
 
-		public static ISerializer ToSerializer<T>(this IConverter<T> @this)
-			=> new DelegatedSerializer<T>(@this.Parse, @this.Format);
+		
 	}
 }

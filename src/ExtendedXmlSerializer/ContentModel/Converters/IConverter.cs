@@ -26,6 +26,8 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
+	public interface IConverter : IConverter<object> {}
+
 	public interface IConverter<T> : ISpecification<TypeInfo>
 	{
 		T Parse(string data);

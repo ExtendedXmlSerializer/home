@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class Converter<T> : ConverterBase<T>
+	class Converter<T> : ConverterBase<T>, IConverter
 	{
 		readonly Func<string, T> _deserialize;
 		readonly Func<T, string> _serialize;
@@ -42,7 +42,9 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 		}
 
 		public override T Parse(string data) => _deserialize(data);
-
 		public override string Format(T instance) => _serialize(instance);
+
+		object IConverter<object>.Parse(string data) => Parse(data);
+		string IConverter<object>.Format(object instance) => Format((T) instance);
 	}
 }

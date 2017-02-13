@@ -25,7 +25,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -36,9 +35,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly IActivators _activators;
 		readonly IParameterizedSource<TypeInfo, ImmutableArray<IMember>> _members;
 
-		public MemberedContentOption(ISelector selector) : this(Activators.Default, new Members(selector).Cache()) {}
+		public MemberedContentOption(ISelector selector) : this(Activators.Default, new Members(selector)) {}
 
-		public MemberedContentOption(IActivators activators, IParameterizedSource<TypeInfo, ImmutableArray<IMember>> members) : base(IsActivatedTypeSpecification.Default)
+		public MemberedContentOption(IActivators activators, IParameterizedSource<TypeInfo, ImmutableArray<IMember>> members)
+			: base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;
 			_members = members;

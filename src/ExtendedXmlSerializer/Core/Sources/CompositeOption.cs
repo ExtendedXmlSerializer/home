@@ -21,19 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public class CompositeOption<TParameter, TResult> : Selector<TParameter, TResult>,
+	                                                    IOption<TParameter, TResult>
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly ISpecification<TParameter> _specification;
 
-		public DelegatedSource(Func<TParameter, TResult> source)
+		public CompositeOption(params IOption<TParameter, TResult>[] options)
+			: this(new AnySpecification<TParameter>(options), options) {}
+
+		public CompositeOption(ISpecification<TParameter> specification, params IOption<TParameter, TResult>[] options)
+			: base(options)
 		{
-			_source = source;
+			_specification = specification;
 		}
 
-		public virtual TResult Get(TParameter parameter) => _source(parameter);
+		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
 	}
 }

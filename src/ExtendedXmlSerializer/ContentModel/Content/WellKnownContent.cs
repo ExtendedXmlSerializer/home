@@ -21,36 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class WellKnownContent : CompositeOptionBase<TypeInfo, ISerializer>, IContentOption
+	class WellKnownContent : Items<IContentOption>
 	{
-		public static WellKnownContent Default { get; } = new WellKnownContent();
+		public WellKnownContent(IAlteration<IConverter> alteration)
+			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
 
-		WellKnownContent() : base(
-			BooleanConverter.Default.ToContent(),
-			CharacterConverter.Default.ToContent(),
-			ByteConverter.Default.ToContent(),
-			UnsignedByteConverter.Default.ToContent(),
-			ShortConverter.Default.ToContent(),
-			UnsignedShortConverter.Default.ToContent(),
-			IntegerConverter.Default.ToContent(),
-			UnsignedIntegerConverter.Default.ToContent(),
-			LongConverter.Default.ToContent(),
-			UnsignedLongConverter.Default.ToContent(),
-			FloatConverter.Default.ToContent(),
-			DoubleConverter.Default.ToContent(),
-			DecimalConverter.Default.ToContent(),
-			DateTimeConverter.Default.ToContent(),
-			DateTimeOffsetConverter.Default.ToContent(),
-			StringConverter.Default.ToContent(),
-			GuidConverter.Default.ToContent(),
-			TimeSpanConverter.Default.ToContent(),
-			EnumerationContentOption.Default
-		) {}
+		public WellKnownContent(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration, params IContentOption[] others) :
+			base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
 	}
 }

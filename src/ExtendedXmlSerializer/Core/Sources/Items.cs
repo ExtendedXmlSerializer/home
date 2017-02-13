@@ -21,19 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public class Items<T> : ItemsBase<T>
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly ImmutableArray<T> _items;
 
-		public DelegatedSource(Func<TParameter, TResult> source)
+		public Items(params T[] items) : this(items.ToImmutableArray()) {}
+
+		public Items(ImmutableArray<T> items)
 		{
-			_source = source;
+			_items = items;
 		}
 
-		public virtual TResult Get(TParameter parameter) => _source(parameter);
+		public override IEnumerator<T> GetEnumerator()
+		{
+			var length = _items.Length;
+			for (var i = 0; i < length; i++)
+			{
+				yield return _items[i];
+			}
+		}
 	}
 }

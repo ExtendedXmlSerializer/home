@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeFormatter : WeakCacheBase<TypeInfo, string>, ITypeFormatter
+	class TypeFormatter : ReferenceCacheBase<TypeInfo, string>, ITypeFormatter
 	{
 		public static TypeFormatter Default { get; } = new TypeFormatter();
 		TypeFormatter() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default) {}

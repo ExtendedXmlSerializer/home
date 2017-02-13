@@ -24,7 +24,6 @@
 namespace ExtendedXmlSerialization.Core.Sources
 {
 	public class CachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
-		
 	{
 		public static CachingAlteration<TParameter, TResult> Default { get; } = new CachingAlteration<TParameter, TResult>();
 		CachingAlteration() {}

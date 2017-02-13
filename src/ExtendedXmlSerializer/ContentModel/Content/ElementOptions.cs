@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ElementOptions : CompositeOptionBase<TypeInfo, IWriter>, IElementOption
+	class ElementOptions : CompositeOption<TypeInfo, IWriter>, IElementOption
 	{
 		public static ElementOptions Default { get; } = new ElementOptions();
 		ElementOptions() : base(GenericElementOption.Default, ElementOption.Default) {}

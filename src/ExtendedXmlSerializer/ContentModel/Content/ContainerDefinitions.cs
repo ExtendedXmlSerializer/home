@@ -22,21 +22,34 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContainerDefinitions : IContainerDefinitions
 	{
 		public static ContainerDefinitions Default { get; } = new ContainerDefinitions();
-		ContainerDefinitions() {}
+		ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
+
+		readonly IContentOption _content;
+
+		public ContainerDefinitions(IAlteration<IConverter> alteration)
+			: this(new CompositeContentOption(new WellKnownContent(alteration).ToArray())) {}
+
+		public ContainerDefinitions(IContentOption content)
+		{
+			_content = content;
+		}
 
 		public IEnumerable<ContainerDefinition> Get(IContainers parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
 			var variable = new VariableTypeMemberOption(parameter, runtime);
-			yield return new ContainerDefinition(ElementOption.Default, WellKnownContent.Default);
+			yield return new ContainerDefinition(ElementOption.Default, _content);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
 			yield return new ContainerDefinition(new DictionaryContentOption(variable));
 			yield return new ContainerDefinition(new CollectionContentOption(parameter));
