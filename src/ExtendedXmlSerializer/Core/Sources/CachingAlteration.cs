@@ -24,12 +24,12 @@
 namespace ExtendedXmlSerialization.Core.Sources
 {
 	public class CachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
-		where TParameter : class where TResult : class
+		
 	{
 		public static CachingAlteration<TParameter, TResult> Default { get; } = new CachingAlteration<TParameter, TResult>();
 		CachingAlteration() {}
 
 		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
-			=> new WeakCache<TParameter, TResult>(parameter.Get);
+			=> new Cache<TParameter, TResult>(parameter.Get);
 	}
 }

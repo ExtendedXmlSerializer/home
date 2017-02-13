@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 
 namespace ExtendedXmlSerialization.Performance.Tests
@@ -30,7 +31,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		// ReSharper disable once UnusedMember.Local
 		static void Main(string[] args)
 		{
-			// Job.Default.With(new GcMode {Force = false});
+			Job.Default.With(new GcMode {Force = false});
 			var switcher = new BenchmarkSwitcher(new[]
 			                                     {
 				                                     typeof(ExtendedXmlSerializerTest),

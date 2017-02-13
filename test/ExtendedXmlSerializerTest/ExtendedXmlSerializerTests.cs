@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
-// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerialization.Test
 {

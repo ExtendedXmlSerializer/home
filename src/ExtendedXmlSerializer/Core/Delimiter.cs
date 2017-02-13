@@ -28,20 +28,26 @@ namespace ExtendedXmlSerialization.Core
 {
 	public struct Delimiter
 	{
-		readonly ImmutableArray<char> _characters;
+		readonly char[] _array;
+		readonly char _first;
+		readonly string _text;
 
 		public Delimiter(params char[] characters) : this(characters.ToImmutableArray()) {}
 
-		public Delimiter(ImmutableArray<char> characters)
+		Delimiter(ImmutableArray<char> characters) : this(characters.ToArray(), characters[0]) {}
+
+		Delimiter(char[] array, char first)
 		{
-			_characters = characters;
+			_array = array;
+			_first = first;
+			_text = first.ToString();
 		}
 
-		public static implicit operator char[](Delimiter delimiter) => delimiter._characters.ToArray();
+		public static implicit operator char[](Delimiter delimiter) => delimiter._array;
 
-		public static implicit operator char(Delimiter delimiter) => delimiter._characters[0];
-		public static implicit operator string(Delimiter delimiter) => ((char) delimiter).ToString();
+		public static implicit operator char(Delimiter delimiter) => delimiter._first;
+		public static implicit operator string(Delimiter delimiter) => delimiter.ToString();
 
-		public override string ToString() => _characters[0].ToString();
+		public override string ToString() => _text;
 	}
 }

@@ -1,6 +1,5 @@
 {
   "buildOptions": {
-    "keyFile": "../../ExtendedXmlSerializer.snk"
   },
   "title": "ExtendedXmlSerializer",
   "version": "1.5.0",
@@ -28,6 +27,9 @@
             "buildOptions": {
                 "define": [ "CLASSIC" ]
             },
+            "dependencies": {
+                "Sprache": "2.1.1-develop-00012"
+            },
             "frameworkAssemblies": {
                 "System.Data": "4.0.0.0",
                 "System.Xml": "4.0.0.0",
@@ -46,6 +48,7 @@
                 "System.Reflection.TypeExtensions": "4.3.0",
                 "Microsoft.Extensions.DependencyModel": "1.1.0",
                 "System.ComponentModel": "4.3.0",
+                "Sprache": "2.1.1-develop-00012",
                 "System.Xml.XmlSerializer": "4.3.0"
             }
         }

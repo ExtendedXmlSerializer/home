@@ -36,9 +36,10 @@ namespace ExtendedXmlSerialization.Core.Specifications
 
 		public bool IsSatisfiedBy(T parameter)
 		{
-			foreach (var specification in _specifications)
+			var length = _specifications.Length;
+			for (int i = 0; i < length; i++)
 			{
-				if (!specification.IsSatisfiedBy(parameter))
+				if (!_specifications[i].IsSatisfiedBy(parameter))
 				{
 					return false;
 				}

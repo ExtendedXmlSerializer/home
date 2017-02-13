@@ -23,8 +23,8 @@
 
 using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ConverterModel.Elements;
-using ExtendedXmlSerialization.ConverterModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerialization
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization
 
 		public ExtendedXmlSerializer() : this(XmlWriterFactory.Default) {}
 
-		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, Containers.Default) {}
+		public ExtendedXmlSerializer(IXmlWriterFactory factory) : this(factory, new Containers()) {}
 
 		public ExtendedXmlSerializer(IXmlWriterFactory factory, IContainers containers)
 		{
