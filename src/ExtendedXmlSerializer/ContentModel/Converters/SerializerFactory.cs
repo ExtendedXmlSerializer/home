@@ -24,16 +24,18 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class CachedConverter : Converter<object>
+	class SerializerFactory : IParameterizedSource<TypeInfo, ISerializer>
 	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
+		readonly Func<TypeInfo, IConverter> _converter;
 
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
+		public SerializerFactory(Func<TypeInfo, IConverter> converter)
+		{
+			_converter = converter;
+		}
+
+		public ISerializer Get(TypeInfo parameter) => new DelegatedSerializer(_converter(parameter));
 	}
 }

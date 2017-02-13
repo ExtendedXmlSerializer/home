@@ -22,18 +22,18 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class CachedConverter : Converter<object>
+	public class Cache<TKey, TValue> : CacheBase<TKey, TValue>
 	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
+		readonly Func<TKey, TValue> _factory;
 
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
+		public Cache(Func<TKey, TValue> factory)
+		{
+			_factory = factory;
+		}
+
+		protected override TValue Create(TKey parameter) => _factory(parameter);
 	}
 }

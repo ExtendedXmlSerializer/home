@@ -22,9 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -34,37 +31,5 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 	{
 		public EnumerationContentOption(IAlteration<IConverter> alteration)
 			: base(x => new EnumerationConverter(x.AsType()), alteration, IsAssignableSpecification<Enum>.Default) {}
-	}
-
-	class SerializerFactory : IParameterizedSource<TypeInfo, ISerializer>
-	{
-		readonly Func<TypeInfo, IConverter> _converter;
-
-		public SerializerFactory(Func<TypeInfo, IConverter> converter)
-		{
-			_converter = converter;
-		}
-
-		public ISerializer Get(TypeInfo parameter) => new DelegatedSerializer(_converter(parameter));
-	}
-
-	class ConverterContentOption : ContentOptionBase
-	{
-		readonly Func<TypeInfo, ISerializer> _factory;
-
-		public ConverterContentOption(IConverter converter, IAlteration<IConverter> alteration)
-			: this(converter.Accept, alteration, converter) {}
-
-		public ConverterContentOption(Func<TypeInfo, IConverter> factory, IAlteration<IConverter> alteration,
-		                              ISpecification<TypeInfo> specification)
-			: this(new SerializerFactory(alteration.Alter(factory)).ToDelegate(), specification) {}
-
-		public ConverterContentOption(Func<TypeInfo, ISerializer> factory, ISpecification<TypeInfo> specification)
-			: base(specification)
-		{
-			_factory = factory;
-		}
-
-		public override ISerializer Get(TypeInfo parameter) => _factory(parameter);
 	}
 }
