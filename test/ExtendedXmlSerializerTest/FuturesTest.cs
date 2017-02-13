@@ -37,6 +37,7 @@ namespace ExtendedXmlSerialization.Test
 		public PerformanceTests()
 		{
 			_xml = _sut.Serialize(_instance);
+			_sut.Deserialize(_xml);
 		}
 
 		[Fact]
@@ -44,7 +45,8 @@ namespace ExtendedXmlSerialization.Test
 		{
 			for (int i = 0; i < 1000; i++)
 			{
-				_sut.Deserialize(_xml);
+				_sut.Serialize(_instance);
+				//_sut.Deserialize(_xml);
 			}
 		}
 		

@@ -24,7 +24,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
@@ -32,8 +35,10 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class XmlReader : TypeParser, IXmlReader
+	class XmlReader : IXmlReader
 	{
+		readonly static Func<string, XmlQualifiedName> Parser = NameParser.Default.Cache<string, XmlQualifiedName>().Get;
+
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
 		                                                      {
 			                                                      IgnoreWhitespace = true,
@@ -41,14 +46,24 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
+		readonly Func<string, XmlQualifiedName> _parser;
+		readonly ITypes _types;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(Stream stream) : this(System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
+		public XmlReader(Stream stream) : this(Parser, Xml.Types.Default, System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
 
-		public XmlReader(System.Xml.XmlReader reader)
-			: base(new Resolver(reader.AsValid<IXmlNamespaceResolver>(), reader.GetDefaultNamespace()))
+		public XmlReader(Func<string, XmlQualifiedName> parser, ITypes types, System.Xml.XmlReader reader)
 		{
+			_parser = parser;
+			_types = types;
 			_reader = reader;
+			switch (_reader.MoveToContent())
+			{
+				case XmlNodeType.Element:
+					break;
+				default:
+					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{_reader}.'");
+			}
 		}
 
 		public string DisplayName => _reader.LocalName;
@@ -63,37 +78,34 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		}
 
 		public IEnumerator Members() => Items(); // Same for now...
-		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + (_reader.MoveToElement() ? 0 : 1));
+		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
 
-		public string this[XName name]
-			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName) ? _reader.Value : null;
+		public string this[XName name] => _reader.HasAttributes ? _reader.GetAttribute(name.LocalName, name.NamespaceName) : null;
 
-		public void Dispose() => _reader.Dispose();
-
-		sealed class Resolver : IXmlNamespaceResolver
+		public TypeInfo Get(string data)
 		{
-			readonly IXmlNamespaceResolver _resolver;
-			readonly string _defaultNamespace;
-
-			// public Resolver(IXmlNamespaceResolver resolver) : this(resolver, resolver.LookupNamespace(string.Empty)) {}
-
-			public Resolver(IXmlNamespaceResolver resolver, string defaultNamespace)
-			{
-				_resolver = resolver;
-				_defaultNamespace = defaultNamespace;
-			}
-
-			public IDictionary<string, string> GetNamespacesInScope(XmlNamespaceScope scope)
-				=> _resolver.GetNamespacesInScope(scope);
-
-			public string LookupNamespace(string prefix) =>
-				string.IsNullOrEmpty(prefix)
-					? _defaultNamespace
-					: _resolver.LookupNamespace(prefix);
-
-			public string LookupPrefix(string namespaceName) => _resolver.LookupPrefix(namespaceName);
+			var name = _parser(data);
+			var type = Type(name);
+			var result = type.IsGenericType
+				? type.MakeGenericType(Types(name.AsValid<GenericXmlQualifiedName>().Arguments).ToArray()).GetTypeInfo()
+				: type;
+			return result;
 		}
 
+		string LookupNamespace(string prefix) => _reader.LookupNamespace(prefix) ?? _reader.LookupNamespace(string.Empty);
+
+		TypeInfo Type(XmlQualifiedName name) => _types.Get(XName.Get(name.Name, LookupNamespace(name.Namespace)));
+
+		IEnumerable<Type> Types(ImmutableArray<XmlQualifiedName> names)
+		{
+			var length = names.Length;
+			for (var i = 0; i < length; i++)
+			{
+				yield return Type(names[i]).AsType();
+			}
+		}
+
+		public void Dispose() => _reader.Dispose();
 
 		sealed class Enumerator : IEnumerator
 		{

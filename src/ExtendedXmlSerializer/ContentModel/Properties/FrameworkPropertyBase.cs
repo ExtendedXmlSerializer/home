@@ -40,7 +40,15 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_defaultValue = defaultValue;
 		}
 
-		public override void Write(IXmlWriter writer, T instance) => writer.Attribute(_name, Format(writer, instance));
+		public override void Write(IXmlWriter writer, T instance)
+		{
+			var value = Format(writer, instance);
+			if (value != null)
+			{
+				writer.Attribute(_name, value);
+			}
+		}
+
 		protected abstract string Format(IXmlWriter writer, T instance);
 
 		public override T Get(IXmlReader parameter)

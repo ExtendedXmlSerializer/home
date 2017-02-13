@@ -46,7 +46,15 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_generic = generic;
 		}
 
-		public TypeInfo Get(IXmlReader parameter) => Item(parameter) ?? Type(parameter) ?? Other(parameter);
+		public TypeInfo Get(IXmlReader parameter)
+		{
+			var result = Item(parameter) ?? Type(parameter) ?? _type.Get(parameter);
+			if (result == null)
+			{
+				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter.Name}.'");
+			}
+			return result;
+		}
 
 		TypeInfo Type(IXmlReader parameter)
 		{
@@ -60,21 +68,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			return null;
 		}
 
-		TypeInfo Item(IXmlReader parameter)
-		{
-			var typeInfo = _item.Get(parameter);
-			var info = typeInfo?.MakeArrayType().GetTypeInfo();
-			return info;
-		}
-
-		TypeInfo Other(IXmlReader parameter)
-		{
-			var result = _type.Get(parameter);
-			if (result == null)
-			{
-				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter.Name}.'");
-			}
-			return result;
-		}
+		TypeInfo Item(IXmlReader parameter) => _item.Get(parameter)?.MakeArrayType().GetTypeInfo();
 	}
 }

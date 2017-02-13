@@ -51,8 +51,7 @@ namespace ExtendedXmlSerialization
 		{
 			using (var writer = _factory.Create(XmlWriter.Create(stream), instance))
 			{
-				var root = _containers.Get(instance.GetType().GetTypeInfo());
-				root.Write(writer, instance);
+				_containers.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
 			}
 		}
 
@@ -60,10 +59,7 @@ namespace ExtendedXmlSerialization
 		{
 			using (var reader = new XmlReader(stream))
 			{
-				var typeInfo = reader.Classification();
-				var root = _containers.Get(typeInfo);
-				var result = root.Get(reader);
-				return result;
+				return _containers.Get(reader.Classification()).Get(reader);
 			}
 		}
 	}
