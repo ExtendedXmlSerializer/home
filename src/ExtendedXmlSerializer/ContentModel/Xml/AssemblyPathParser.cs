@@ -27,7 +27,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public class AssemblyPathParser : ParserBase<AssemblyPath>
+	class AssemblyPathParser : ParserBase<AssemblyPath>
 	{
 		readonly static Parser<string>
 			Namespace = Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars('_', '.'))),

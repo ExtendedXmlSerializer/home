@@ -28,7 +28,7 @@ using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public class GenericXmlQualifiedName : XmlQualifiedName, IEquatable<GenericXmlQualifiedName>
+	class GenericXmlQualifiedName : XmlQualifiedName, IEquatable<GenericXmlQualifiedName>
 	{
 		public GenericXmlQualifiedName(string name, string ns, ImmutableArray<XmlQualifiedName> arguments) : base(name, ns)
 		{

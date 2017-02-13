@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public class ObjectNamespaces : IObjectNamespaces
+	class ObjectNamespaces : IObjectNamespaces
 	{
 		readonly static Func<TypeInfo, string> Identities = Namespacing.Identities.Default.Get;
 
