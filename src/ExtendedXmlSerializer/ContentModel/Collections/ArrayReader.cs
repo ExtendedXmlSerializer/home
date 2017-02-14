@@ -31,11 +31,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayReader : CollectionReader
 	{
-		readonly ITypeProperty _property;
+		readonly IQualifiedNameProperty _property;
 
-		public ArrayReader(ISerializer item) : this(item, AddDelegates.Default, ItemTypeProperty.Default) {}
+		public ArrayReader(ISerializer item) : this(item, AddDelegates.Default, ItemQualifiedNameProperty.Default) {}
 
-		public ArrayReader(ISerializer item, IAddDelegates add, ITypeProperty property)
+		public ArrayReader(ISerializer item, IAddDelegates add, IQualifiedNameProperty property)
 			: base(Activator<ArrayList>.Default, item, add)
 		{
 			_property = property;
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		public override object Get(IXmlReader parameter)
 		{
-			var itemType = _property.Get(parameter);
+			var itemType = parameter.Property(_property);
 			var list = base.Get(parameter).AsValid<ArrayList>();
 			var result = list.ToArray(itemType.AsType());
 			return result;

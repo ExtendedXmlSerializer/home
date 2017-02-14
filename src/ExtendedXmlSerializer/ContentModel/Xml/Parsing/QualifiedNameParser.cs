@@ -21,25 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class QualifiedNameParser : ParserBase<XmlQualifiedName>
+	class QualifiedNameParser : Cache<string, QualifiedName>, IQualifiedNameParser
 	{
-		readonly static Func<string, Parser<char>> Namespace = Parsing.Namespace.Accept;
-
 		public static QualifiedNameParser Default { get; } = new QualifiedNameParser();
-		QualifiedNameParser() : this(NameIdentifierParser.Default.Get) {}
+		QualifiedNameParser() : base(Implementation.Instance.Get) {}
 
-		public QualifiedNameParser(Parser<string> identifier) : base(
-			identifier
-				.SelectMany(Namespace, (prefix, _) => prefix)
-				.SelectMany(identifier.Accept, (prefix, local) => new XmlQualifiedName(local, prefix))
-				.Or(identifier.Select(item => new XmlQualifiedName(item)))) {}
+		public class Implementation : ParserBase<QualifiedName>
+		{
+			public static Implementation Instance { get; } = new Implementation();
+			Implementation() : this(GenericQualifiedNameParser.Default.Get, BasicQualifiedNameParser.Default.Get) {}
+
+			public Implementation(Parser<QualifiedName> generic, Parser<QualifiedName> name) : base(generic.Or(name)) {}
+		}
 	}
 }

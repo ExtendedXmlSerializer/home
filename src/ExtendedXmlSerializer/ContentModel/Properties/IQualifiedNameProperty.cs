@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class ItemTypeProperty : TypePropertyBase, ITypeProperty
-	{
-		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
-		ItemTypeProperty() : base("item") {}
-	}
+	public interface IQualifiedNameProperty : IProperty<QualifiedName> {}
 }

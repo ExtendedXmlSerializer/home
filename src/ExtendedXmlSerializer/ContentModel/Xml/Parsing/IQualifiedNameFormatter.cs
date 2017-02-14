@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	interface IQualifiedNameFormatter : IFormatter<QualifiedNameParts> {}
+	interface IQualifiedNameFormatter : IFormatter<QualifiedName> {}
 }

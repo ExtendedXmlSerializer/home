@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -31,21 +31,49 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class GenericElement : Element
 	{
-		readonly ImmutableArray<Type> _arguments;
-		readonly ITypeArgumentsProperty _property;
+		readonly TypeInfo _genericType;
+		readonly IQualifiedNameArgumentsProperty _property;
 
-		public GenericElement(XName name, params Type[] types) : this(name, types.ToImmutableArray(), TypeArgumentsProperty.Default) {}
+		public GenericElement(XName name, TypeInfo genericType) : this(name, genericType, TypeArgumentsProperty.Default) {}
 
-		public GenericElement(XName name, ImmutableArray<Type> arguments, ITypeArgumentsProperty property) : base(name)
+		public GenericElement(XName name, TypeInfo genericType, IQualifiedNameArgumentsProperty property) : base(name)
 		{
-			_arguments = arguments;
+			_genericType = genericType;
 			_property = property;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
-			_property.Write(writer, _arguments);
+			var names = writer.Get(_genericType).GetArguments();
+			if (names.HasValue)
+			{
+				writer.Property(_property, names.Value);
+			}
+			else
+			{
+				throw new InvalidOperationException($"The generic type '{_genericType}' contains generic type arguments, but they could not be parsed.");
+			}
 		}
 	}
+
+/*
+	abstract class TypedElement : Element
+	{
+		readonly TypeInfo _type;
+		readonly IQualifiedNameProperty _property;
+
+		protected TypedElement(XName name, TypeInfo type, IQualifiedNameProperty property) : base(name)
+		{
+			_type = type;
+			_property = property;
+		}
+
+		public override void Write(IXmlWriter writer, object instance)
+		{
+			base.Write(writer, instance);
+			writer.Property(_property, writer.Get(_type));
+		}
+	}
+*/
 }

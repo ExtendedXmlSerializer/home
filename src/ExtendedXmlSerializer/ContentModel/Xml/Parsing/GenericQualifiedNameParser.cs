@@ -21,21 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class GenericQualifiedNameParser : ParserBase<XmlQualifiedName>, INameParser
+	class GenericQualifiedNameParser : ParserBase<QualifiedName>, IQualifiedNameParser
 	{
 		public static GenericQualifiedNameParser Default { get; } = new GenericQualifiedNameParser();
-		GenericQualifiedNameParser() : this(GenericArgumentsParser.Default.Get, QualifiedNameParser.Default.Get) {}
+		GenericQualifiedNameParser() : this(GenericArgumentsParser.Default.Get, BasicQualifiedNameParser.Default.Get) {}
 
-		public GenericQualifiedNameParser(Parser<ImmutableArray<XmlQualifiedName>> arguments, Parser<XmlQualifiedName> name)
+		public GenericQualifiedNameParser(Parser<IEnumerable<QualifiedName>> arguments, Parser<QualifiedName> name)
 			: base(name.SelectMany(arguments.Accept,
-			                       (item, argument) => new GenericXmlQualifiedName(item.Name, item.Namespace, argument))) {}
+			                       (item, argument) => new QualifiedName(item.Name, item.Identifier, argument.ToImmutableArray))) {}
 	}
 }

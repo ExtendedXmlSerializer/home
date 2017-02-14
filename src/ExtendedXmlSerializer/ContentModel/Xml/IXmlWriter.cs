@@ -22,12 +22,16 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlWriter : ITypeFormatter, IDisposable
+	public interface IQualifiedNameFactory : IParameterizedSource<TypeInfo, QualifiedName> {}
+
+	public interface IXmlWriter : IQualifiedNameFactory, IDisposable
 	{
 		void Element(XName name);
 		void EndCurrent();

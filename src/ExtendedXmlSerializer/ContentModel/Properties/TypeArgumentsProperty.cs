@@ -21,52 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection;
-using System.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core;
 using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class TypeArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, ITypeArgumentsProperty
-	{
-		readonly Parser<ImmutableArray<XmlQualifiedName>> _parser;
-		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : this(QualifiedNameListParser.Default.Get()) {}
+	public interface IQualifiedNameArgumentsProperty : IProperty<IEnumerable<QualifiedName>> {}
 
-		public TypeArgumentsProperty(Parser<ImmutableArray<XmlQualifiedName>> parser)
-			: base("arguments", ImmutableArray<Type>.Empty)
+	sealed class TypeArgumentsProperty : FrameworkPropertyBase<IEnumerable<QualifiedName>>, IQualifiedNameArgumentsProperty
+	{
+		readonly IQualifiedNameProperty _property;
+		readonly Parser<IEnumerable<QualifiedName>> _parser;
+		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
+		TypeArgumentsProperty() : this(TypeProperty.Default, QualifiedNameListParser.Default.Get()) {}
+
+		public TypeArgumentsProperty(IQualifiedNameProperty property, Parser<IEnumerable<QualifiedName>> parser) : base("arguments")
 		{
+			_property = property;
 			_parser = parser;
 		}
 
-		protected override string Format(IXmlWriter writer, ImmutableArray<Type> instance)
-			=> string.Join(",", Format(writer, instance));
+		public override string Format(IEnumerable<QualifiedName> instance) => string.Join(",", FormatNames(instance.Fixed()));
 
-		static IEnumerable<string> Format(ITypeFormatter formatter, ImmutableArray<Type> types)
+		string[] FormatNames(QualifiedName[] names)
 		{
-			for (var i = 0; i < types.Length; i++)
-			{
-				yield return formatter.Get(types[i].GetTypeInfo());
-			}
-		}
-
-		protected override ImmutableArray<Type> Parse(IXmlReader reader, string data)
-			=> Yield(reader, data).ToImmutableArray();
-
-		IEnumerable<Type> Yield(IXmlReader reader, string data)
-		{
-			var names = _parser.Parse(data);
 			var length = names.Length;
+			var result = new string[length];
 			for (var i = 0; i < length; i++)
 			{
-				yield return reader.Get(names[i].ToString()).AsType();
+				result[i] = _property.Format(names[i]);
 			}
+			return result;
 		}
+
+		public override IEnumerable<QualifiedName> Parse(string data) => _parser.Parse(data);
 	}
 }

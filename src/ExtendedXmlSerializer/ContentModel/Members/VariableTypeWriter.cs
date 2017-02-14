@@ -33,12 +33,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISpecification<Type> _type;
 		readonly ISerializer _runtime;
-		readonly ITypeProperty _property;
+		readonly IQualifiedNameProperty _property;
 
 		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
 			: this(type, runtime, body, TypeProperty.Default) {}
 
-		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, IQualifiedNameProperty property)
 			: base(body)
 		{
 			_type = type;
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var type = instance.GetType();
 			if (_type.IsSatisfiedBy(type))
 			{
-				_property.Write(writer, type.GetTypeInfo());
+				writer.Property(_property, writer.Get(type.GetTypeInfo()));
 				_runtime.Write(writer, instance);
 			}
 			else

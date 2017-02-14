@@ -29,9 +29,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class QualifiedNameFactory : IParameterizedSource<XmlQualifiedName, QualifiedNameParts>
+	public interface IQualifiedNamePartsFactory : IParameterizedSource<XmlQualifiedName, QualifiedName> {}
+
+	class QualifiedNameFactory : IQualifiedNamePartsFactory
 	{
-		readonly Func<XmlQualifiedName, QualifiedNameParts> _selector;
+		readonly Func<XmlQualifiedName, QualifiedName> _selector;
 		public static QualifiedNameFactory Default { get; } = new QualifiedNameFactory();
 
 		QualifiedNameFactory()
@@ -39,12 +41,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 			_selector = Get;
 		}
 
-		public QualifiedNameParts Get(XmlQualifiedName parameter)
+		public QualifiedName Get(XmlQualifiedName parameter)
 		{
 			var generic = parameter as GenericXmlQualifiedName;
 			var result = generic != null
-				? new QualifiedNameParts(parameter.Namespace, parameter.Name, generic.Arguments.Select(_selector).ToImmutableArray)
-				: new QualifiedNameParts(parameter.Namespace, parameter.Name);
+				? new QualifiedName(parameter.Name, parameter.Namespace, generic.Arguments.Select(_selector).ToImmutableArray)
+				: new QualifiedName(parameter.Name, parameter.Namespace);
 			return result;
 		}
 	}

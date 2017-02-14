@@ -24,7 +24,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 using Sprache;
 using Xunit;
@@ -40,44 +39,62 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 			CompoundGenericType =
 				"ns100:CompoundGenericType[sys:string, exs:AnotherGenericType[ns5:AnotherType,ns6:OneMoreType], ns40:SomeOtherType]";
 
-		[Fact]
-		public void Local() => Assert.Equal(new XmlQualifiedName("SomeType"), NameParser.Default.Get(Type));
+		sealed class QualifiedNameEqualityComparer : IEqualityComparer<QualifiedName>
+		{
+			public static QualifiedNameEqualityComparer Default { get; } = new QualifiedNameEqualityComparer();
+
+			QualifiedNameEqualityComparer() : this(QualifiedNameFormatter.Default) {}
+
+			readonly IQualifiedNameFormatter _formatter;
+			
+			QualifiedNameEqualityComparer(IQualifiedNameFormatter formatter)
+			{
+				_formatter = formatter;
+			}
+
+			public bool Equals(QualifiedName x, QualifiedName y) => string.Equals(_formatter.Get(x), _formatter.Get(y));
+
+			public int GetHashCode(QualifiedName obj) => _formatter.Get(obj).GetHashCode();
+		}
 
 		[Fact]
-		public void Qualified() => Assert.Equal(new XmlQualifiedName("SomeType", "ns1"), NameParser.Default.Get(QualifiedType));
+		public void Local() => Assert.Equal(new QualifiedName("SomeType"), QualifiedNameParser.Default.Get(Type), QualifiedNameEqualityComparer.Default);
+
+		[Fact]
+		public void Qualified() => Assert.Equal(new QualifiedName("SomeType", "ns1"), QualifiedNameParser.Default.Get(QualifiedType), QualifiedNameEqualityComparer.Default);
 
 		[Fact]
 		public void Generic()
 		{
-			var expected = new GenericXmlQualifiedName("GenericType", "ns123", new[]
+			var expected = new QualifiedName("GenericType", "ns123", new[]
 			             {
-				             new XmlQualifiedName("string", "sys"),
-				             new XmlQualifiedName("int"),
-				             new XmlQualifiedName("SomeOtherType", "ns4")
-			             }.ToImmutableArray());
+				             new QualifiedName("string", "sys"),
+				             new QualifiedName("int"),
+				             new QualifiedName("SomeOtherType", "ns4")
+			             }.ToImmutableArray);
 
-			var actual = NameParser.Default.Get(GenericType);
-			Assert.Equal(expected, actual);
+			var actual = QualifiedNameParser.Default.Get(GenericType);
+			Assert.Equal(expected, actual, QualifiedNameEqualityComparer.Default);
 			Assert.Equal(GenericType.Replace(" ", ""), actual.ToString());
 		}
 
 		[Fact]
 		public void CompoundGeneric()
 		{
-			var expected = new GenericXmlQualifiedName("CompoundGenericType", "ns100", new[]
+			var expected = new QualifiedName("CompoundGenericType", "ns100", new[]
 							{
-								new XmlQualifiedName("string", "sys"),
-								new GenericXmlQualifiedName("AnotherGenericType", "exs",
+								new QualifiedName("string", "sys"),
+								new QualifiedName("AnotherGenericType", "exs",
 								new[]
 								{
-									new XmlQualifiedName("AnotherType", "ns5"),
-									new XmlQualifiedName("OneMoreType", "ns6")
-								}.ToImmutableArray()),
-								new XmlQualifiedName("SomeOtherType", "ns40")
-							}.ToImmutableArray());
+									new QualifiedName("AnotherType", "ns5"),
+									new QualifiedName("OneMoreType", "ns6")
+								}.ToImmutableArray),
+								new QualifiedName("SomeOtherType", "ns40")
+							}.ToImmutableArray);
 
-			var actual = NameParser.Default.Get(CompoundGenericType);
-			Assert.Equal(expected, actual);
+			var actual = QualifiedNameParser.Default.Get(CompoundGenericType);
+			Assert.Equal(expected, actual, QualifiedNameEqualityComparer.Default);
 			Assert.Equal(CompoundGenericType.Replace(" ", ""), actual.ToString());
 		}
 
@@ -87,10 +104,10 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 			var actual = QualifiedNameListParser.Default.Get().Parse("sys:string, int, ns4:SomeOtherType");
 			Assert.True(new[]
 			             {
-				             new XmlQualifiedName("string", "sys"),
-				             new XmlQualifiedName("int"),
-				             new XmlQualifiedName("SomeOtherType", "ns4")
-			             }.ToImmutableArray().SequenceEqual(actual));
+				             new QualifiedName("string", "sys"),
+				             new QualifiedName("int"),
+				             new QualifiedName("SomeOtherType", "ns4")
+			             }.ToImmutableArray().SequenceEqual(actual, QualifiedNameEqualityComparer.Default));
 		}
 
 		[Fact]
