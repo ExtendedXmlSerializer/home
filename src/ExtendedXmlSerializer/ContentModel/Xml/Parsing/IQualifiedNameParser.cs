@@ -21,24 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	sealed class ReferenceProperty : FrameworkPropertyBase<int>
-	{
-		public static ReferenceProperty Default { get; } = new ReferenceProperty();
-		ReferenceProperty() : base("ref") {}
-
-		protected override string Format(IXmlWriter writer, int instance)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override int Parse(IXmlReader reader, string data)
-		{
-			throw new NotImplementedException();
-		}
-	}
+	public interface IQualifiedNameParser : IParser<QualifiedName> {}
 }

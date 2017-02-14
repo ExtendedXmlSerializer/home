@@ -32,7 +32,6 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static GenericElementOption Default { get; } = new GenericElementOption();
 		GenericElementOption() : base(IsGenericTypeSpecification.Default) {}
 
-		public override IWriter Create(XName name, TypeInfo classification)
-			=> new GenericElement(name, classification.GetGenericArguments());
+		public override IWriter Create(XName name, TypeInfo classification) => new GenericElement(name, classification);
 	}
 }

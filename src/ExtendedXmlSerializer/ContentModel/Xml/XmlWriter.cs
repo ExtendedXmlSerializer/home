@@ -28,7 +28,6 @@ using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
@@ -60,14 +59,14 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public void Dispose() => _writer.Dispose();
 
-		QualifiedNameParts Get(TypeInfo parameter)
+		public QualifiedName Get(TypeInfo parameter)
 		{
 			var name = _names.Get(parameter);
-			var @namespace = LookupPrefix(name.NamespaceName);
+			var prefix = LookupPrefix(name.NamespaceName);
 			var result = parameter.IsGenericType
-				? new QualifiedNameParts(@namespace, name.LocalName,
-				                         parameter.GetGenericArguments().YieldMetadata().Select(Get).ToImmutableArray)
-				: new QualifiedNameParts(@namespace, name.LocalName);
+				? new QualifiedName(name.LocalName,
+				                         prefix, parameter.GetGenericArguments().YieldMetadata().Select(Get).ToImmutableArray)
+				: new QualifiedName(name.LocalName, prefix);
 
 			return result;
 		}
@@ -79,8 +78,5 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_writer.WriteAttributeString(_prefixes.Get(XNamespace.Get(@namespace)), XNamespace.Xmlns.NamespaceName, @namespace);
 			return _writer.LookupPrefix(@namespace);
 		}
-
-		string IParameterizedSource<TypeInfo, string>.Get(TypeInfo parameter)
-			=> QualifiedNameFormatter.Default.Get(Get(parameter));
 	}
 }

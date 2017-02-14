@@ -35,11 +35,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly static XName XName = Names.Default.Get(typeof(Array).GetTypeInfo());
 
 		readonly TypeInfo _elementType;
-		readonly ITypeProperty _property;
+		readonly IQualifiedNameProperty _property;
 
-		public ArrayElement(TypeInfo element) : this(XName, element, ItemTypeProperty.Default) {}
+		public ArrayElement(TypeInfo element) : this(XName, element, ItemQualifiedNameProperty.Default) {}
 
-		public ArrayElement(XName name, TypeInfo elementType, ITypeProperty property) : base(name)
+		public ArrayElement(XName name, TypeInfo elementType, IQualifiedNameProperty property) : base(name)
 		{
 			_elementType = elementType;
 			_property = property;
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
-			_property.Write(writer, _elementType);
+			writer.Property(_property, writer.Get(_elementType));
 		}
 	}
 }

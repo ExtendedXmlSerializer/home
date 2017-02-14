@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
 	class QualifiedNameFormatter : IQualifiedNameFormatter
 	{
-		readonly Func<QualifiedNameParts, string> _selector;
+		readonly Func<QualifiedName, string> _selector;
 
 		public static QualifiedNameFormatter Default { get; } = new QualifiedNameFormatter();
 
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 			_selector = Get;
 		}
 
-		public string Get(QualifiedNameParts parameter)
+		public string Get(QualifiedName parameter)
 		{
 			var arguments = parameter.GetArguments();
 			var append = arguments.HasValue

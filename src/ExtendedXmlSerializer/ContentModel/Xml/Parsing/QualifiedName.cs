@@ -21,17 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class NameParser : ParserBase<XmlQualifiedName>, INameParser
+	public struct QualifiedName
 	{
-		public static NameParser Default { get; } = new NameParser();
-		NameParser() : this(GenericQualifiedNameParser.Default.Get, QualifiedNameParser.Default.Get) {}
+		readonly Func<ImmutableArray<QualifiedName>> _arguments;
 
-		public NameParser(Parser<XmlQualifiedName> generic, Parser<XmlQualifiedName> name) : base(generic.Or(name)) {}
+		public QualifiedName(string name, string identifier = "", Func<ImmutableArray<QualifiedName>> arguments = null)
+		{
+			_arguments = arguments;
+			Identifier = identifier;
+			Name = name;
+		}
+
+		public string Identifier { get; }
+		public string Name { get; }
+		public ImmutableArray<QualifiedName>? GetArguments() => _arguments?.Invoke();
+
+		public override string ToString() => QualifiedNameFormatter.Default.Get(this);
 	}
 }

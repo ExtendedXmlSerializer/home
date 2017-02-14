@@ -23,12 +23,16 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IDisposable, IQualifiedName, IDisplay, ITypeParser
+	public interface ITypeProvider : IParameterizedSource<QualifiedName, TypeInfo> {}
+
+	public interface IXmlReader : IDisposable, IQualifiedName, IDisplay, ITypeProvider
 	{
 		string Value();
 

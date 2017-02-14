@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Properties;
 
@@ -31,43 +30,32 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class TypeExtractor : ITypeExtractor
 	{
 		public static TypeExtractor Default { get; } = new TypeExtractor();
-		TypeExtractor() : this(Types.Default, TypeProperty.Default, ItemTypeProperty.Default, TypeArgumentsProperty.Default) {}
+		TypeExtractor() : this(Types.Default, TypeProperty.Default, ItemQualifiedNameProperty.Default, TypeArgumentsProperty.Default) {}
 
 		readonly ITypes _types;
-		readonly ITypeProperty _type;
-		readonly ITypeProperty _item;
-		readonly ITypeArgumentsProperty _generic;
+		readonly IQualifiedNameProperty _type, _item;
+		readonly IQualifiedNameArgumentsProperty _arguments;
 
-		public TypeExtractor(ITypes types, ITypeProperty type, ITypeProperty item, ITypeArgumentsProperty generic)
+		public TypeExtractor(ITypes types, IQualifiedNameProperty type, IQualifiedNameProperty item, IQualifiedNameArgumentsProperty arguments)
 		{
 			_types = types;
 			_type = type;
 			_item = item;
-			_generic = generic;
+			_arguments = arguments;
 		}
 
 		public TypeInfo Get(IXmlReader parameter)
 		{
-			var result = Item(parameter) ?? Type(parameter) ?? _type.Get(parameter);
+			var result = 
+				parameter.Property(_arguments) ?? 
+				parameter.Property(_item)?.MakeArrayType().GetTypeInfo() ?? 
+				_types.Get(parameter.Name) ?? 
+				parameter.Property(_type);
 			if (result == null)
 			{
 				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter.Name}.'");
 			}
 			return result;
 		}
-
-		TypeInfo Type(IXmlReader parameter)
-		{
-			var type = _types.Get(parameter.Name);
-			if (type != null)
-			{
-				var generic = _generic.Get(parameter);
-				var result = generic.IsEmpty ? type : type.MakeGenericType(generic.ToArray()).GetTypeInfo();
-				return result;
-			}
-			return null;
-		}
-
-		TypeInfo Item(IXmlReader parameter) => _item.Get(parameter)?.MakeArrayType().GetTypeInfo();
 	}
 }

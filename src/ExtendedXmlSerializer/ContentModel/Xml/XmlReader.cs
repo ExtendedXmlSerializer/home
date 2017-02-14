@@ -23,22 +23,17 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlReader : IXmlReader
 	{
-		readonly static Func<string, XmlQualifiedName> Parser = NameParser.Default.Cache<string, XmlQualifiedName>().Get;
-
 		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
 		                                                      {
 			                                                      IgnoreWhitespace = true,
@@ -46,15 +41,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly Func<string, XmlQualifiedName> _parser;
 		readonly ITypes _types;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(Stream stream) : this(Parser, Xml.Types.Default, System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
+		public XmlReader(Stream stream) : this(Xml.Types.Default, System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
 
-		public XmlReader(Func<string, XmlQualifiedName> parser, ITypes types, System.Xml.XmlReader reader)
+		public XmlReader(ITypes types, System.Xml.XmlReader reader)
 		{
-			_parser = parser;
 			_types = types;
 			_reader = reader;
 			switch (_reader.MoveToContent())
@@ -80,29 +73,40 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public IEnumerator Members() => Items(); // Same for now...
 		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
 
-		public string this[XName name] => _reader.HasAttributes ? _reader.GetAttribute(name.LocalName, name.NamespaceName) : null;
+		public string this[XName name]
+			=> _reader.HasAttributes ? _reader.GetAttribute(name.LocalName, name.NamespaceName) : null;
 
-		public TypeInfo Get(string data)
+		public TypeInfo Get(QualifiedName parameter)
 		{
-			var name = _parser(data);
-			var type = Type(name);
+			var type = Type(parameter);
 			var result = type.IsGenericType
-				? type.MakeGenericType(Types(name.AsValid<GenericXmlQualifiedName>().Arguments).ToArray()).GetTypeInfo()
+				? type.MakeGenericType(Types(parameter).ToArray()).GetTypeInfo()
 				: type;
 			return result;
 		}
 
-		string LookupNamespace(string prefix) => _reader.LookupNamespace(prefix) ?? _reader.LookupNamespace(string.Empty);
+		TypeInfo Type(QualifiedName name) => _types.Get(XName.Get(name.Name, LookupNamespace(name.Identifier)));
 
-		TypeInfo Type(XmlQualifiedName name) => _types.Get(XName.Get(name.Name, LookupNamespace(name.Namespace)));
+		string LookupNamespace(string prefix)
+			=>
+				!string.IsNullOrEmpty(prefix) ? (_reader.LookupNamespace(prefix) ?? prefix) : _reader.LookupNamespace(string.Empty);
 
-		IEnumerable<Type> Types(ImmutableArray<XmlQualifiedName> names)
+		Type[] Types(QualifiedName name)
 		{
-			var length = names.Length;
-			for (var i = 0; i < length; i++)
+			var names = name.GetArguments();
+			if (names.HasValue)
 			{
-				yield return Type(names[i]).AsType();
+				var list = names.Value;
+				var length = list.Length;
+				var result = new Type[length];
+				for (var i = 0; i < length; i++)
+				{
+					result[i] = Get(list[i]).AsType();
+				}
+				return result;
 			}
+			throw new InvalidOperationException(
+				$"A qualified name of '{XmlQualifiedName.ToString(name.Name, name.Identifier)}' was provided, but it does not contain any type argument names to process.");
 		}
 
 		public void Dispose() => _reader.Dispose();

@@ -25,6 +25,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
@@ -75,7 +76,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 		public void EndCurrent() => _writer.EndCurrent();
 
 		public void Member(string name) => _writer.Member(name);
-		public string Get(TypeInfo parameter) => _writer.Get(parameter);
+
+		public QualifiedName Get(TypeInfo parameter) => _writer.Get(parameter);
 
 		public void Dispose() => _writer.Dispose();
 	}

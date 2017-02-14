@@ -21,7 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Xml;
+
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	public interface IProperty<T> : ISerializer<T> {}
+	public interface IProperty<T> : IConverter<T>, IQualifiedName {}
 }

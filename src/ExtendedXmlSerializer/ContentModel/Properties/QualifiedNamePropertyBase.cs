@@ -21,24 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	struct QualifiedNameParts
+	abstract class QualifiedNamePropertyBase : FrameworkPropertyBase<QualifiedName>
 	{
-		readonly Func<ImmutableArray<QualifiedNameParts>> _arguments;
+		readonly IQualifiedNameFormatter _formatter;
+		readonly IQualifiedNameParser _parser;
 
-		public QualifiedNameParts(string identifier, string name, Func<ImmutableArray<QualifiedNameParts>> arguments = null)
+		protected QualifiedNamePropertyBase(string displayName) : this(QualifiedNameFormatter.Default, QualifiedNameParser.Default, displayName) {}
+
+		protected QualifiedNamePropertyBase(IQualifiedNameFormatter formatter, IQualifiedNameParser parser, string displayName)
+			: base(displayName)
 		{
-			_arguments = arguments;
-			Identifier = identifier;
-			Name = name;
+			_formatter = formatter;
+			_parser = parser;
 		}
 
-		public string Identifier { get; }
-		public string Name { get; }
-		public ImmutableArray<QualifiedNameParts>? GetArguments() => _arguments?.Invoke();
+		public override string Format(QualifiedName instance) => _formatter.Get(instance);
+
+		public override QualifiedName Parse(string data) => _parser.Get(data);
 	}
 }

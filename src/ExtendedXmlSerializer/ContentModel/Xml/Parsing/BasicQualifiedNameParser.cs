@@ -22,9 +22,23 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public interface ITypeArgumentsProperty : IProperty<ImmutableArray<Type>> {}
+	class BasicQualifiedNameParser : ParserBase<QualifiedName>
+	{
+		readonly static Func<string, Parser<char>> Namespace = Parsing.Namespace.Accept;
+
+		public static BasicQualifiedNameParser Default { get; } = new BasicQualifiedNameParser();
+		BasicQualifiedNameParser() : this(NameIdentifierParser.Default.Get) {}
+
+		public BasicQualifiedNameParser(Parser<string> identifier) : base(
+			identifier
+				.SelectMany(Namespace, (prefix, _) => prefix)
+				.SelectMany(identifier.Accept, (prefix, local) => new QualifiedName(local, prefix))
+				.Or(identifier.Select(item => new QualifiedName(item)))) {}
+	}
 }
