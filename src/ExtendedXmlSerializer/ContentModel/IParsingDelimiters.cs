@@ -28,6 +28,5 @@ namespace ExtendedXmlSerialization.ContentModel
 	public interface IParsingDelimiters
 	{
 		Delimiter NestedClass { get; }
-		
 	}
 }

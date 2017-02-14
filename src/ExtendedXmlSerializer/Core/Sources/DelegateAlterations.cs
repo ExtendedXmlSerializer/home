@@ -28,7 +28,9 @@ namespace ExtendedXmlSerialization.Core.Sources
 	public class DelegateAlterations<TParameter, TResult> :
 		ReferenceCache<IAlteration<TResult>, IAlteration<Func<TParameter, TResult>>>
 	{
-		public static DelegateAlterations<TParameter, TResult> Default { get; } = new DelegateAlterations<TParameter, TResult>();
+		public static DelegateAlterations<TParameter, TResult> Default { get; } =
+			new DelegateAlterations<TParameter, TResult>();
+
 		DelegateAlterations() : base(x => new DelegateAlteration(x)) {}
 
 		class DelegateAlteration : IAlteration<Func<TParameter, TResult>>

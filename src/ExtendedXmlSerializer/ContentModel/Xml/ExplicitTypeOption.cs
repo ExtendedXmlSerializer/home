@@ -21,33 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Properties;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class QualifiedNameFormatter : IQualifiedNameFormatter
+	class ExplicitTypeOption : TypePropertyOptionBase
 	{
-		readonly Func<QualifiedName, string> _selector;
-
-		public static QualifiedNameFormatter Default { get; } = new QualifiedNameFormatter();
-
-		QualifiedNameFormatter()
-		{
-			_selector = Get;
-		}
-
-		public string Get(QualifiedName parameter)
-		{
-			var arguments = parameter.GetArguments();
-			var append = arguments.HasValue
-				? $"[{string.Join(",", arguments.Value.Select(_selector))}]"
-				: string.Empty;
-			var result = $"{XmlQualifiedName.ToString(parameter.Name, parameter.Identifier)}{append}";
-			return result;
-		}
-
-		public string Get(XmlQualifiedName parameter) => _selector(QualifiedNameFactory.Default.Get(parameter));
+		public static ExplicitTypeOption Default { get; } = new ExplicitTypeOption();
+		ExplicitTypeOption() : base(TypeProperty.Default) {}
 	}
 }

@@ -21,40 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Xml;
-
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class GenericXmlQualifiedName : XmlQualifiedName, IEquatable<GenericXmlQualifiedName>
+	struct Identity
 	{
-		public GenericXmlQualifiedName(string name, string ns, ImmutableArray<XmlQualifiedName> arguments) : base(name, ns)
+		public Identity(string name) : this(name, string.Empty) {}
+
+		public Identity(string name, string identifier)
 		{
-			Arguments = arguments;
+			Name = name;
+			Identifier = identifier;
 		}
 
-		public ImmutableArray<XmlQualifiedName> Arguments { get; }
-
-		public override bool Equals(object other)
-			=> ((other as GenericXmlQualifiedName)?.Arguments.SequenceEqual(Arguments) ?? false) && base.Equals(other);
-
-		public override string ToString() => QualifiedNameFormatter.Default.Get(this);
-
-		public bool Equals(GenericXmlQualifiedName other)
-			=> !ReferenceEquals(null, other) && (ReferenceEquals(this, other) || Equals(other));
-
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				return (base.GetHashCode() * 397) ^ Arguments.GetHashCode();
-			}
-		}
-
-		public static bool operator ==(GenericXmlQualifiedName left, GenericXmlQualifiedName right) => Equals(left, right);
-
-		public static bool operator !=(GenericXmlQualifiedName left, GenericXmlQualifiedName right) => !Equals(left, right);
+		public string Name { get; }
+		public string Identifier { get; }
 	}
 }

@@ -21,22 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class QualifiedNameParser : Cache<string, QualifiedName>, IQualifiedNameParser
+	class ArgumentNames : IArgumentNames
 	{
-		public static QualifiedNameParser Default { get; } = new QualifiedNameParser();
-		QualifiedNameParser() : base(Implementation.Instance.Get) {}
+		public static ArgumentNames Default { get; } = new ArgumentNames();
+		ArgumentNames() : this(Names.Default.Get) {}
 
-		public class Implementation : ParserBase<QualifiedName>
+		readonly Func<TypeInfo, XName> _names;
+
+		public ArgumentNames(Func<TypeInfo, XName> names)
 		{
-			public static Implementation Instance { get; } = new Implementation();
-			Implementation() : this(GenericQualifiedNameParser.Default.Get, BasicQualifiedNameParser.Default.Get) {}
-
-			public Implementation(Parser<QualifiedName> generic, Parser<QualifiedName> name) : base(generic.Or(name)) {}
+			_names = names;
 		}
+
+		public ImmutableArray<XName> Get(TypeInfo parameter)
+			=> parameter.GetGenericArguments().YieldMetadata().Select(_names).ToImmutableArray();
 	}
 }

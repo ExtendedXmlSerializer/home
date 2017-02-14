@@ -21,41 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeExtractor : ITypeExtractor
+	abstract class TypePropertyOptionBase : Option<IXmlReader, TypeInfo>, ITypeOption
 	{
-		public static TypeExtractor Default { get; } = new TypeExtractor();
-		TypeExtractor() : this(Types.Default, TypeProperty.Default, ItemQualifiedNameProperty.Default, TypeArgumentsProperty.Default) {}
-
-		readonly ITypes _types;
-		readonly IQualifiedNameProperty _type, _item;
-		readonly IQualifiedNameArgumentsProperty _arguments;
-
-		public TypeExtractor(ITypes types, IQualifiedNameProperty type, IQualifiedNameProperty item, IQualifiedNameArgumentsProperty arguments)
-		{
-			_types = types;
-			_type = type;
-			_item = item;
-			_arguments = arguments;
-		}
-
-		public TypeInfo Get(IXmlReader parameter)
-		{
-			var result = 
-				parameter.Property(_arguments) ?? 
-				parameter.Property(_item)?.MakeArrayType().GetTypeInfo() ?? 
-				_types.Get(parameter.Name) ?? 
-				parameter.Property(_type);
-			if (result == null)
-			{
-				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter.Name}.'");
-			}
-			return result;
-		}
+		protected TypePropertyOptionBase(ITypeProperty property)
+			: base(new ContainsNameSpecification(property.Name), property.Get) {}
 	}
 }

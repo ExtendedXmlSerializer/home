@@ -22,25 +22,21 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public struct QualifiedName
+	class TypesList : FixedParser<IEnumerable<ParsedName>>
 	{
-		readonly Func<ImmutableArray<QualifiedName>> _arguments;
+		public static TypesList Default { get; } = new TypesList();
+		TypesList() : this(() => Parser.Default.Get()) {}
 
-		public QualifiedName(string name, string identifier = "", Func<ImmutableArray<QualifiedName>> arguments = null)
-		{
-			_arguments = arguments;
-			Identifier = identifier;
-			Name = name;
-		}
-
-		public string Identifier { get; }
-		public string Name { get; }
-		public ImmutableArray<QualifiedName>? GetArguments() => _arguments?.Invoke();
-
-		public override string ToString() => QualifiedNameFormatter.Default.Get(this);
+		public TypesList(Func<Parser<ParsedName>> reference)
+			: base(Parse.Ref(reference)
+			            .DelimitedBy(Parsing.List)
+			            .Token()
+			) {}
 	}
 }

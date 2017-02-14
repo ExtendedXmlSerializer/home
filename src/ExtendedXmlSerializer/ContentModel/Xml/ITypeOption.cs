@@ -21,20 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	abstract class FrameworkPropertyBase<T> : ConverterBase<T>, IProperty<T>
-	{
-		protected FrameworkPropertyBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
-
-		protected FrameworkPropertyBase(XName name)
-		{
-			Name = name;
-		}
-
-		public XName Name { get; }
-	}
+	public interface ITypeOption : IOption<IXmlReader, TypeInfo> {}
 }

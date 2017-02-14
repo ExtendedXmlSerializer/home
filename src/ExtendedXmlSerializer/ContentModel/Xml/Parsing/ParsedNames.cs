@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public interface IQualifiedName
+	class ParsedNames : Cache<string, ParsedName>, IParsedNames
 	{
-		XName Name { get; }
+		public static ParsedNames Default { get; } = new ParsedNames();
+		ParsedNames() : base(Parser.Default.Get) {}
 	}
 }

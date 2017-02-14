@@ -27,11 +27,11 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class AssemblyPathParser : ParserBase<AssemblyPath>
+	class AssemblyPathParser : FixedParser<AssemblyPath>
 	{
 		readonly static Parser<string>
-			Namespace = Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars('_', '.'))),
-			Assembly = Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars(',', ' ', '_', '.')));
+			Namespace = new Identifier('_', '.'),
+			Assembly = new Identifier(',', ' ', '_', '.');
 
 		public static AssemblyPathParser Default { get; } = new AssemblyPathParser();
 

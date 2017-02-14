@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IQualifiedNameProperty : IProperty<QualifiedName> {}
+	public interface IEntity
+	{
+		XName Name { get; }
+	}
 }

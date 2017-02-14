@@ -21,9 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public interface IQualifiedNameParser : IParser<QualifiedName> {}
+	public class FixedParser<T> : ParserBase<T>
+	{
+		readonly Parser<T> _parser;
+
+		public FixedParser(Parser<T> parser)
+		{
+			_parser = parser;
+		}
+
+		public override Parser<T> Get() => _parser;
+
+		public static implicit operator Parser<T>(FixedParser<T> instance) => instance._parser;
+	}
 }

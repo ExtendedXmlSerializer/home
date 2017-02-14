@@ -21,14 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using System.Linq;
+using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class ContentOption : FixedOption<TypeInfo, ISerializer>, IContentOption
+	class NameConverter : ConverterBase<ParsedName>, INameConverter
 	{
-		public ContentOption(ISpecification<TypeInfo> specification, ISerializer serializer) : base(specification, serializer) {}
+		public static NameConverter Default { get; } = new NameConverter();
+		NameConverter() : this(Parser.Default) {}
+
+		readonly Parser<ParsedName> _parser;
+		readonly Func<ParsedName, string> _selector;
+
+		public NameConverter(Parser<ParsedName> parser)
+		{
+			_parser = parser;
+			_selector = Format;
+		}
+
+		public override ParsedName Parse(string data) => _parser.Parse(data);
+
+		public override string Format(ParsedName instance)
+		{
+			var arguments = instance.GetArguments();
+			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;
+			var result = $"{XmlQualifiedName.ToString(instance.Identity.Name, instance.Identity.Identifier)}{append}";
+			return result;
+		}
 	}
 }

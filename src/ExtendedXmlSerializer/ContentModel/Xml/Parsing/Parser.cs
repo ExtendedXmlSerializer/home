@@ -21,26 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	abstract class QualifiedNamePropertyBase : FrameworkPropertyBase<QualifiedName>
+	class Parser : FixedParser<ParsedName>
 	{
-		readonly IQualifiedNameFormatter _formatter;
-		readonly IQualifiedNameParser _parser;
+		public static Parser Default { get; } = new Parser();
+		Parser() : this(Identities.Default, TypesList.Default.Get().Contained(Parsing.Start, Parsing.Finish).Accept) {}
 
-		protected QualifiedNamePropertyBase(string displayName) : this(QualifiedNameFormatter.Default, QualifiedNameParser.Default, displayName) {}
-
-		protected QualifiedNamePropertyBase(IQualifiedNameFormatter formatter, IQualifiedNameParser parser, string displayName)
-			: base(displayName)
-		{
-			_formatter = formatter;
-			_parser = parser;
-		}
-
-		public override string Format(QualifiedName instance) => _formatter.Get(instance);
-
-		public override QualifiedName Parse(string data) => _parser.Get(data);
+		public Parser(Parser<Identity> name, Func<Identity, Parser<IEnumerable<ParsedName>>> arguments)
+			: base(
+				name.SelectMany(arguments,
+				                (item, argument) => new ParsedName(item, argument.ToImmutableArray))
+				    .Or(name.Select(x => new ParsedName(x)))
+			) {}
 	}
 }

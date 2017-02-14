@@ -25,12 +25,14 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public static class Parsing
+	static class Parsing
 	{
 		readonly public static Parser<char>
 			Namespace = Parse.Char(':'),
 			List = Parse.Char(',').Token(),
 			Start = Parse.Char('[').Token(),
 			Finish = Parse.Char(']').Token();
+
+		public static Parser<string> Identifier { get; } = Xml.Parsing.Identifier.Default.Get();
 	}
 }

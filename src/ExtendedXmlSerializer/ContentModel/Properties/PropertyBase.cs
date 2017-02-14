@@ -21,41 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.Core;
-using Sprache;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	public interface IQualifiedNameArgumentsProperty : IProperty<IEnumerable<QualifiedName>> {}
-
-	sealed class TypeArgumentsProperty : FrameworkPropertyBase<IEnumerable<QualifiedName>>, IQualifiedNameArgumentsProperty
+	abstract class PropertyBase<T> : IProperty<T>
 	{
-		readonly IQualifiedNameProperty _property;
-		readonly Parser<IEnumerable<QualifiedName>> _parser;
-		public static TypeArgumentsProperty Default { get; } = new TypeArgumentsProperty();
-		TypeArgumentsProperty() : this(TypeProperty.Default, QualifiedNameListParser.Default.Get()) {}
+		protected PropertyBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
 
-		public TypeArgumentsProperty(IQualifiedNameProperty property, Parser<IEnumerable<QualifiedName>> parser) : base("arguments")
+		protected PropertyBase(XName name)
 		{
-			_property = property;
-			_parser = parser;
+			Name = name;
 		}
 
-		public override string Format(IEnumerable<QualifiedName> instance) => string.Join(",", FormatNames(instance.Fixed()));
+		public XName Name { get; }
 
-		string[] FormatNames(QualifiedName[] names)
+		public virtual T Get(IXmlReader parameter) => Parse(parameter, parameter[Name]);
+		protected abstract T Parse(IXmlReader parameter, string data);
+
+		public virtual void Write(IXmlWriter writer, T instance)
 		{
-			var length = names.Length;
-			var result = new string[length];
-			for (var i = 0; i < length; i++)
-			{
-				result[i] = _property.Format(names[i]);
-			}
-			return result;
+			var format = Format(writer, instance);
+			writer.Attribute(Name, format);
 		}
 
-		public override IEnumerable<QualifiedName> Parse(string data) => _parser.Parse(data);
+		protected abstract string Format(IXmlWriter writer, T instance);
 	}
 }

@@ -31,14 +31,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class VariableTypeWriter : DecoratedWriter
 	{
+		readonly static ITypeProperty Property = TypeProperty.Default;
+
 		readonly ISpecification<Type> _type;
 		readonly ISerializer _runtime;
-		readonly IQualifiedNameProperty _property;
+		readonly ITypeProperty _property;
 
 		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
-			: this(type, runtime, body, TypeProperty.Default) {}
+			: this(type, runtime, body, Property) {}
 
-		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, IQualifiedNameProperty property)
+		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
 			: base(body)
 		{
 			_type = type;
@@ -51,7 +53,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var type = instance.GetType();
 			if (_type.IsSatisfiedBy(type))
 			{
-				writer.Property(_property, writer.Get(type.GetTypeInfo()));
+				_property.Write(writer, type.GetTypeInfo());
 				_runtime.Write(writer, instance);
 			}
 			else

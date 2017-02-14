@@ -21,16 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Properties;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class NameIdentifierParser : ParserBase<string>
+	class GenericTypeOption : TypeOption
 	{
-		public static NameIdentifierParser Default { get; } = new NameIdentifierParser();
+		public new static GenericTypeOption Default { get; } = new GenericTypeOption();
+		GenericTypeOption() : this(ArgumentsProperty.Default) {}
 
-		NameIdentifierParser()
-			: base(Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars('-', '_')))) {}
+		readonly IArgumentsProperty _property;
+
+		public GenericTypeOption(IArgumentsProperty property) : base(new ContainsNameSpecification(property.Name))
+		{
+			_property = property;
+		}
+
+		public override TypeInfo Get(IXmlReader parameter)
+		{
+			var arguments = _property.Get(parameter).ToArray();
+			var result = base.Get(parameter).MakeGenericType(arguments).GetTypeInfo();
+			return result;
+		}
 	}
 }

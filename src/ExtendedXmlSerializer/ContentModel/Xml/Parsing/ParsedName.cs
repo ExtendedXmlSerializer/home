@@ -21,17 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class QualifiedNameListParser : ParserBase<IEnumerable<QualifiedName>>
+	struct ParsedName
 	{
-		public static QualifiedNameListParser Default { get; } = new QualifiedNameListParser();
+		readonly Func<ImmutableArray<ParsedName>> _arguments;
 
-		QualifiedNameListParser()
-			: base(QualifiedNameParser.Implementation.Instance.Get().DelimitedBy(Parsing.List).Token()) {}
+		public ParsedName(Identity identity, Func<ImmutableArray<ParsedName>> arguments = null)
+		{
+			Identity = identity;
+			_arguments = arguments;
+		}
+
+		public Identity Identity { get; }
+
+		public ImmutableArray<ParsedName>? GetArguments() => _arguments?.Invoke();
 	}
 }
