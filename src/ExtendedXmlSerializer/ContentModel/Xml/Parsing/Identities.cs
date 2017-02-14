@@ -21,10 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public interface ITypeExtractor : IParameterizedSource<IXmlReader, TypeInfo> {}
+	class Identities : FixedParser<Identity>
+	{
+		readonly static Func<string, Parser<char>> Selector = Parsing.Namespace.Accept;
+
+		public static Identities Default { get; } = new Identities();
+		Identities() : this(Parsing.Identifier) {}
+
+		public Identities(Parser<string> identifier)
+			: base(
+				identifier
+					.SelectMany(Selector, (prefix, _) => prefix)
+					.SelectMany(identifier.Accept, (prefix, name) => new Identity(name, prefix))
+					.Or(identifier.Select(x => new Identity(x)))
+			) {}
+	}
 }

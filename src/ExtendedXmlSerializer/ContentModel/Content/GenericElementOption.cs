@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -32,6 +33,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static GenericElementOption Default { get; } = new GenericElementOption();
 		GenericElementOption() : base(IsGenericTypeSpecification.Default) {}
 
-		public override IWriter Create(XName name, TypeInfo classification) => new GenericElement(name, classification);
+		public override IWriter Create(XName name, TypeInfo classification)
+			=> new GenericElement(name, classification.GetGenericArguments().ToImmutableArray());
 	}
 }

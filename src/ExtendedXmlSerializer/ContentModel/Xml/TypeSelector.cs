@@ -22,23 +22,30 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IEntity, IParser<XNamespace>, IDisposable
+	class TypeSelector : Selector<IXmlReader, TypeInfo>, ITypeSelector
 	{
-		bool Contains(XName name);
+		public static TypeSelector Default { get; } = new TypeSelector();
 
-		string this[XName name] { get; }
+		TypeSelector() : base(
+			ArrayTypeOption.Default,
+			GenericTypeOption.Default,
+			ExplicitTypeOption.Default,
+			TypeOption.Default
+		) {}
 
-
-		string Value();
-
-		IEnumerator<string> Members();
-
-		IEnumerator<string> Items();
+		public override TypeInfo Get(IXmlReader parameter)
+		{
+			var result = base.Get(parameter);
+			if (result == null)
+			{
+				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter}.'");
+			}
+			return result;
+		}
 	}
 }

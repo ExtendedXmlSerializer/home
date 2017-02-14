@@ -23,10 +23,11 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-
 #if CORE
+using Microsoft.DotNet.PlatformAbstractions;
 using System.Linq;
 using Microsoft.Extensions.DependencyModel;
+
 #endif
 
 namespace ExtendedXmlSerialization.TypeModel
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerialization.TypeModel
 #if CORE
 			return DependencyContext
 				.Default
-				.GetRuntimeAssemblyNames(Microsoft.DotNet.PlatformAbstractions.RuntimeEnvironment.GetRuntimeIdentifier())
+				.GetRuntimeAssemblyNames(RuntimeEnvironment.GetRuntimeIdentifier())
 				.Select(x => new AssemblyName(x.Name))
 				.Select(Assembly.Load);
 #else

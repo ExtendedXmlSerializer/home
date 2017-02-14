@@ -25,17 +25,12 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public abstract class ParserBase<T> : DelegatedSource<string, T>, IParseContext<T>
+	public abstract class ParserBase<T> : IParseContext<T>
 	{
-		readonly Parser<T> _parser;
+		public abstract Parser<T> Get();
 
-		protected ParserBase(Parser<T> parser) : base(parser.Parse)
-		{
-			_parser = parser;
-		}
+		public IResult<T> Get(IInput parameter) => Get().Invoke(parameter);
 
-		public IResult<T> Get(IInput parameter) => _parser(parameter);
-
-		public Parser<T> Get() => _parser;
+		public T Get(string parameter) => Get().Parse(parameter);
 	}
 }

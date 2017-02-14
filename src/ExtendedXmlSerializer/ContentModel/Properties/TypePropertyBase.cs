@@ -21,24 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	public interface IXmlReader : IEntity, IParser<XNamespace>, IDisposable
+	abstract class TypePropertyBase : PropertyBase<TypeInfo>, ITypeProperty
 	{
-		bool Contains(XName name);
+		protected TypePropertyBase(string displayName) : base(displayName) {}
 
-		string this[XName name] { get; }
+		protected override string Format(IXmlWriter writer, TypeInfo instance) => new TypeFormatter(writer).Get(instance);
 
-
-		string Value();
-
-		IEnumerator<string> Members();
-
-		IEnumerator<string> Items();
+		protected override TypeInfo Parse(IXmlReader parameter, string data) => new TypeParser(parameter).Get(data);
 	}
 }

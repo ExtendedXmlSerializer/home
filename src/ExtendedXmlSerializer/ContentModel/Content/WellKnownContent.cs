@@ -33,7 +33,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public WellKnownContent(IAlteration<IConverter> alteration)
 			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
 
-		public WellKnownContent(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration, params IContentOption[] others) :
+		public WellKnownContent(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
+		                        params IContentOption[] others) :
 			base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
 	}
 }

@@ -21,20 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class GenericArgumentsParser : ParserBase<IEnumerable<QualifiedName>>
-	{
-		public static GenericArgumentsParser Default { get; } = new GenericArgumentsParser();
-
-		GenericArgumentsParser() : base(Parse.Ref(() => QualifiedNameParser.Implementation.Instance.Get())
-		                                     .DelimitedBy(Parsing.List)
-		                                     .Token()
-		                                     .Contained(Parsing.Start, Parsing.Finish)
-		                                     ) {}
-	}
+	public interface IArgumentsProperty : IProperty<ImmutableArray<Type>> {}
 }

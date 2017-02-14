@@ -21,9 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	interface IQualifiedNameFormatter : IFormatter<QualifiedName> {}
+	sealed class ItemTypeProperty : TypePropertyBase
+	{
+		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
+		ItemTypeProperty() : base("item") {}
+
+		public override TypeInfo Get(IXmlReader parameter)
+		{
+			var typeInfo = base.Get(parameter);
+			var info = typeInfo?.MakeArrayType().GetTypeInfo();
+			return info;
+		}
+	}
 }

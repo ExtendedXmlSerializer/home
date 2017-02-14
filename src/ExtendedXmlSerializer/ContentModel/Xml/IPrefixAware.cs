@@ -21,11 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class ItemQualifiedNameProperty : QualifiedNamePropertyBase, IQualifiedNameProperty
-	{
-		public static ItemQualifiedNameProperty Default { get; } = new ItemQualifiedNameProperty();
-		ItemQualifiedNameProperty() : base("item") {}
-	}
+	public interface IPrefixAware : IFormatter<XNamespace> {}
 }

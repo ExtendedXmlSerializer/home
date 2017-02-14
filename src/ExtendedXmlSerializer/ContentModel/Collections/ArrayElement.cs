@@ -32,23 +32,22 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayElement : Element
 	{
-		readonly static XName XName = Names.Default.Get(typeof(Array).GetTypeInfo());
+		readonly ITypeProperty _property;
+		readonly TypeInfo _element;
+		readonly static XName Name = Names.Default.Get(typeof(Array).GetTypeInfo());
 
-		readonly TypeInfo _elementType;
-		readonly IQualifiedNameProperty _property;
+		public ArrayElement(TypeInfo element) : this(ItemTypeProperty.Default, element) {}
 
-		public ArrayElement(TypeInfo element) : this(XName, element, ItemQualifiedNameProperty.Default) {}
-
-		public ArrayElement(XName name, TypeInfo elementType, IQualifiedNameProperty property) : base(name)
+		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Name)
 		{
-			_elementType = elementType;
 			_property = property;
+			_element = element;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
-			writer.Property(_property, writer.Get(_elementType));
+			_property.Write(writer, _element);
 		}
 	}
 }

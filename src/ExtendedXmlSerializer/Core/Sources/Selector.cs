@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_options = options;
 		}
 
-		public TResult Get(TParameter parameter)
+		public virtual TResult Get(TParameter parameter)
 		{
 			var length = _options.Length;
 			for (var i = 0; i < length; i++)

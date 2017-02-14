@@ -21,24 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using ExtendedXmlSerialization.ContentModel.Properties;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class BasicQualifiedNameParser : ParserBase<QualifiedName>
+	class ArrayTypeOption : TypePropertyOptionBase
 	{
-		readonly static Func<string, Parser<char>> Namespace = Parsing.Namespace.Accept;
-
-		public static BasicQualifiedNameParser Default { get; } = new BasicQualifiedNameParser();
-		BasicQualifiedNameParser() : this(NameIdentifierParser.Default.Get) {}
-
-		public BasicQualifiedNameParser(Parser<string> identifier) : base(
-			identifier
-				.SelectMany(Namespace, (prefix, _) => prefix)
-				.SelectMany(identifier.Accept, (prefix, local) => new QualifiedName(local, prefix))
-				.Or(identifier.Select(item => new QualifiedName(item)))) {}
+		public static ArrayTypeOption Default { get; } = new ArrayTypeOption();
+		ArrayTypeOption() : base(ItemTypeProperty.Default) {}
 	}
 }

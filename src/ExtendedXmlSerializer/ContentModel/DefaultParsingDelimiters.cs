@@ -36,6 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel
 		{
 			NestedClass = nestedClass;
 		}
+
 		public Delimiter NestedClass { get; }
 	}
 }

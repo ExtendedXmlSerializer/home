@@ -21,24 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IEntity, IParser<XNamespace>, IDisposable
+	class Identifier : FixedParser<string>
 	{
-		bool Contains(XName name);
-
-		string this[XName name] { get; }
-
-
-		string Value();
-
-		IEnumerator<string> Members();
-
-		IEnumerator<string> Items();
+		public Identifier(params char[] allowed)
+			: base(Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars(allowed)))) {}
 	}
 }

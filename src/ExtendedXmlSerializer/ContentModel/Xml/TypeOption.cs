@@ -21,24 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IEntity, IParser<XNamespace>, IDisposable
+	class TypeOption : OptionBase<IXmlReader, TypeInfo>, ITypeOption
 	{
-		bool Contains(XName name);
+		readonly static Types Types = Types.Default;
 
-		string this[XName name] { get; }
+		public static TypeOption Default { get; } = new TypeOption();
+		TypeOption() : this(AlwaysSpecification<IXmlReader>.Default) {}
 
+		readonly ITypes _types;
 
-		string Value();
+		public TypeOption(ISpecification<IXmlReader> specification) : this(Types, specification) {}
 
-		IEnumerator<string> Members();
+		public TypeOption(ITypes types, ISpecification<IXmlReader> specification) : base(specification)
+		{
+			_types = types;
+		}
 
-		IEnumerator<string> Items();
+		public override TypeInfo Get(IXmlReader parameter) => _types.Get(parameter.Name);
 	}
 }

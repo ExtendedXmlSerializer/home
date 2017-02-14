@@ -21,33 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	public interface IQualifiedNamePartsFactory : IParameterizedSource<XmlQualifiedName, QualifiedName> {}
-
-	class QualifiedNameFactory : IQualifiedNamePartsFactory
-	{
-		readonly Func<XmlQualifiedName, QualifiedName> _selector;
-		public static QualifiedNameFactory Default { get; } = new QualifiedNameFactory();
-
-		QualifiedNameFactory()
-		{
-			_selector = Get;
-		}
-
-		public QualifiedName Get(XmlQualifiedName parameter)
-		{
-			var generic = parameter as GenericXmlQualifiedName;
-			var result = generic != null
-				? new QualifiedName(parameter.Name, parameter.Namespace, generic.Arguments.Select(_selector).ToImmutableArray)
-				: new QualifiedName(parameter.Name, parameter.Namespace);
-			return result;
-		}
-	}
+	public interface ITypeProperty : IProperty<TypeInfo> {}
 }

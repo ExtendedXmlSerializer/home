@@ -32,23 +32,23 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContainerDefinitions : IContainerDefinitions
 	{
-		readonly IContentOption _content;
+		readonly IContentOption _known;
 
 		public ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
 
 		public ContainerDefinitions(IAlteration<IConverter> alteration)
 			: this(new CompositeContentOption(new WellKnownContent(alteration).ToArray())) {}
 
-		public ContainerDefinitions(IContentOption content)
+		public ContainerDefinitions(IContentOption known)
 		{
-			_content = content;
+			_known = known;
 		}
 
 		public IEnumerable<ContainerDefinition> Get(IContainers parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
 			var variable = new VariableTypeMemberOption(parameter, runtime);
-			yield return new ContainerDefinition(ElementOption.Default, _content);
+			yield return new ContainerDefinition(ElementOption.Default, _known);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
 			yield return new ContainerDefinition(new DictionaryContentOption(variable));
 			yield return new ContainerDefinition(new CollectionContentOption(parameter));

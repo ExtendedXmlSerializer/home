@@ -23,9 +23,10 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class TypeProperty : QualifiedNamePropertyBase, IQualifiedNameProperty
+	sealed class TypeProperty : TypePropertyBase
 	{
 		public static TypeProperty Default { get; } = new TypeProperty();
+
 		TypeProperty() : base("type") {}
 	}
 }

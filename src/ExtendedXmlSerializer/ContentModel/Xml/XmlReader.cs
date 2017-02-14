@@ -23,12 +23,10 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
@@ -41,14 +39,14 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			                                                      IgnoreProcessingInstructions = true
 		                                                      };
 
-		readonly ITypes _types;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(Stream stream) : this(Xml.Types.Default, System.Xml.XmlReader.Create(stream, XmlReaderSettings)) {}
+		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
 
-		public XmlReader(ITypes types, System.Xml.XmlReader reader)
+		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
+
+		public XmlReader(System.Xml.XmlReader reader)
 		{
-			_types = types;
 			_reader = reader;
 			switch (_reader.MoveToContent())
 			{
@@ -59,8 +57,9 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			}
 		}
 
-		public string DisplayName => _reader.LocalName;
 		public XName Name => XName.Get(_reader.LocalName, _reader.NamespaceURI);
+
+		/*public TypeInfo Classification { get; }*/
 
 		public string Value()
 		{
@@ -70,48 +69,31 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			return result;
 		}
 
-		public IEnumerator Members() => Items(); // Same for now...
-		public IEnumerator Items() => new Enumerator(_reader, _reader.Depth + 1);
+		public IEnumerator<string> Members() => Items(); // Same for now...
+		public IEnumerator<string> Items() => new Enumerator(_reader, _reader.Depth + 1);
+
+		public bool Contains(XName name)
+			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName);
 
 		public string this[XName name]
-			=> _reader.HasAttributes ? _reader.GetAttribute(name.LocalName, name.NamespaceName) : null;
-
-		public TypeInfo Get(QualifiedName parameter)
 		{
-			var type = Type(parameter);
-			var result = type.IsGenericType
-				? type.MakeGenericType(Types(parameter).ToArray()).GetTypeInfo()
-				: type;
-			return result;
-		}
-
-		TypeInfo Type(QualifiedName name) => _types.Get(XName.Get(name.Name, LookupNamespace(name.Identifier)));
-
-		string LookupNamespace(string prefix)
-			=>
-				!string.IsNullOrEmpty(prefix) ? (_reader.LookupNamespace(prefix) ?? prefix) : _reader.LookupNamespace(string.Empty);
-
-		Type[] Types(QualifiedName name)
-		{
-			var names = name.GetArguments();
-			if (names.HasValue)
+			get
 			{
-				var list = names.Value;
-				var length = list.Length;
-				var result = new Type[length];
-				for (var i = 0; i < length; i++)
-				{
-					result[i] = Get(list[i]).AsType();
-				}
+				var result = _reader.Value;
+				_reader.MoveToElement();
 				return result;
 			}
-			throw new InvalidOperationException(
-				$"A qualified name of '{XmlQualifiedName.ToString(name.Name, name.Identifier)}' was provided, but it does not contain any type argument names to process.");
 		}
+
+		public XNamespace Get(string parameter) => XNamespace.Get(_reader.LookupNamespace(parameter));
+
+		public override string ToString()
+			=> $"{base.ToString()} - {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
 
 		public void Dispose() => _reader.Dispose();
 
-		sealed class Enumerator : IEnumerator
+
+		sealed class Enumerator : IEnumerator<string>
 		{
 			readonly System.Xml.XmlReader _reader;
 			readonly int _depth;
@@ -122,7 +104,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				_depth = depth;
 			}
 
-			public object Current => _reader;
+			public string Current => _reader.LocalName;
+			object IEnumerator.Current => _reader;
 
 			public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
 
@@ -130,6 +113,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			{
 				throw new NotSupportedException();
 			}
+
+			public void Dispose() => Reset();
 		}
 	}
 }

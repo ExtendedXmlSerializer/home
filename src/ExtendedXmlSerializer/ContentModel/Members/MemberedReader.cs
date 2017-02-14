@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var members = parameter.Members();
 			while (members.MoveNext())
 			{
-				var member = _members.Get(parameter.DisplayName);
+				var member = _members.Get(members.Current);
 				member?.Assign(result, ((IReader) member).Get(parameter));
 			}
 

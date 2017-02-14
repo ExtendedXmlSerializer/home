@@ -21,21 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class GenericQualifiedNameParser : ParserBase<QualifiedName>, IQualifiedNameParser
+	class ContainsNameSpecification : ISpecification<IXmlReader>
 	{
-		public static GenericQualifiedNameParser Default { get; } = new GenericQualifiedNameParser();
-		GenericQualifiedNameParser() : this(GenericArgumentsParser.Default.Get, BasicQualifiedNameParser.Default.Get) {}
+		readonly XName _name;
 
-		public GenericQualifiedNameParser(Parser<IEnumerable<QualifiedName>> arguments, Parser<QualifiedName> name)
-			: base(name.SelectMany(arguments.Accept,
-			                       (item, argument) => new QualifiedName(item.Name, item.Identifier, argument.ToImmutableArray))) {}
+		public ContainsNameSpecification(XName name)
+		{
+			_name = name;
+		}
+
+		public bool IsSatisfiedBy(IXmlReader parameter) => parameter.Contains(_name);
 	}
 }
