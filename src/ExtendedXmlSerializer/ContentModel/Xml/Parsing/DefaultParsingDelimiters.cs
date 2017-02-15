@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,12 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	public interface IArgumentNames : IParameterizedSource<TypeInfo, ImmutableArray<XName>> {}
+	class DefaultParsingDelimiters
+	{
+		public static DefaultParsingDelimiters Default { get; } = new DefaultParsingDelimiters();
+
+		DefaultParsingDelimiters()
+			: this(new Delimiter('-')) {}
+
+		public DefaultParsingDelimiters(Delimiter nestedClass)
+		{
+			NestedClass = nestedClass;
+		}
+
+		public Delimiter NestedClass { get; }
+	}
 }

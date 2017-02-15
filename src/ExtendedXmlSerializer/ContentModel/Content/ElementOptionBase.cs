@@ -29,8 +29,6 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	public abstract class ElementOptionBase : OptionBase<TypeInfo, IWriter>, IElementOption
 	{
-		protected ElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
-
 		protected ElementOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
 	}
 }

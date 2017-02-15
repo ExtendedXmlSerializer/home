@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_activators = activators;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 			var reader = new CollectionReader(activator, item);
