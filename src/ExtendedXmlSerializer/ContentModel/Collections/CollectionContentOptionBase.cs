@@ -49,10 +49,10 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var itemType = _locator.Get(parameter);
-			var result = Create(_containers.Get(itemType), itemType, parameter);
+			var result = Create(_containers.Get(itemType), parameter);
 			return result;
 		}
 
-		protected abstract ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification);
+		protected abstract ISerializer Create(ISerializer item, TypeInfo classification);
 	}
 }

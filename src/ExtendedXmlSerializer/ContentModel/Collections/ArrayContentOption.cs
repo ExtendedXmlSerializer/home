@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		public ArrayContentOption(IContainers container) : base(IsArraySpecification.Default, container) {}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo itemType, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var reader = new ArrayReader(item);
 			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));

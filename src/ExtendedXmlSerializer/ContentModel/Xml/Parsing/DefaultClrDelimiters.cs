@@ -23,9 +23,9 @@
 
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class DefaultClrDelimiters : IClrDelimiters
+	class DefaultClrDelimiters
 	{
 		public static DefaultClrDelimiters Default { get; } = new DefaultClrDelimiters();
 		DefaultClrDelimiters() : this(new Delimiter('+'), new Delimiter('`')) {}
