@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Xml;
+
 namespace ExtendedXmlSerialization.Configuration
 {
 	public interface IExtendedXmlConfiguration
@@ -29,7 +31,7 @@ namespace ExtendedXmlSerialization.Configuration
 		IExtendedXmlConfiguration UseAutoProperties();
 		IExtendedXmlConfiguration UseNamespaces();
 		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
-
 		IExtendedXmlSerializer Create();
+	    IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings);
 	}
 }
