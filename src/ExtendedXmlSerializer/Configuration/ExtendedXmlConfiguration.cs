@@ -80,11 +80,16 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create() => _factory.Get(this);
 
-	    public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
+	    public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
 	    {
 	        ReaderSettings = readerSettings;
-	        WriterSettings = writerSettings;
 	        return this;
 	    }
-	}
+
+        public IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings)
+        {
+            WriterSettings = writerSettings;
+            return this;
+        }
+    }
 }
