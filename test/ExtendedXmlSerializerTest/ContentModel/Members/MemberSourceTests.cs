@@ -34,9 +34,9 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			var expected = new TestClassWithXmlElementAttribute {Id = 123};
             var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
-    expected,
-    @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
-);
+                expected,
+                @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
+            );
             Assert.Equal(expected.Id, actual.Id);
 		}
 
