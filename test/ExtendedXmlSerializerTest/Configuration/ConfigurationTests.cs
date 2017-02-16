@@ -52,7 +52,18 @@ namespace ExtendedXmlSerialization.Test.Configuration
             Assert.Null(configType);
 	    }
 
-	    [Fact]
+        [Fact]
+        public void ConfigureNameForType()
+        {
+            var config = GetConfiguration(cfg =>
+            {
+                cfg.ConfigureType<TestClassPrimitiveTypes>().Name("TestClass");
+            });
+            var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
+            Assert.Equal(configType.Name, "TestClass");
+        }
+
+        [Fact]
 	    public void ConfigureEntityType()
 	    {
 	        var config = GetConfiguration(cfg =>

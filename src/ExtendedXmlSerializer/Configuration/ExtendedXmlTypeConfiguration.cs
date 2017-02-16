@@ -49,7 +49,9 @@ namespace ExtendedXmlSerialization.Configuration
 		/// </summary>
 		public int Version { get; private set; }
 
-		public void Map(Type targetType, XElement currentNode)
+	    public string Name { get; private set; }
+
+	    public void Map(Type targetType, XElement currentNode)
 		{
 			var currentNodeVer = 0;
 			var ver = currentNode.Attribute("ver");
@@ -145,7 +147,13 @@ namespace ExtendedXmlSerialization.Configuration
 	    public IExtendedXmlTypeConfiguration<T> EnableReferences()
 	    {
 	        IsObjectReference = true;
+	        return this;
+	    }
+
+	    IExtendedXmlTypeConfiguration<T> IExtendedXmlTypeConfiguration<T>.Name(string name)
+        {
+            Name = name;
             return this;
         }
-	}
+    }
 }
