@@ -21,20 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class ContainsNameSpecification : ISpecification<IXmlReader>
+	class Identity : IIdentity, IEquatable<IIdentity>
 	{
-		readonly XName _name;
+		readonly static IdentityComparer IdentityComparer = IdentityComparer.Default;
+		readonly int _code;
 
-		public ContainsNameSpecification(XName name)
+		public Identity(string name, string identifier)
 		{
-			_name = name;
+			Name = name;
+			Identifier = identifier;
+			_code = IdentityComparer.GetHashCode(this);
 		}
 
-		public bool IsSatisfiedBy(IXmlReader parameter) => parameter.Contains(_name);
+		public string Name { get; }
+		public string Identifier { get; }
+
+		public static bool operator ==(Identity left, Identity right) => left._code == right._code;
+		public static bool operator !=(Identity left, Identity right) => left._code != right._code;
+		public bool Equals(IIdentity other) => _code == other.GetHashCode();
+		public override int GetHashCode() => _code;
+		public override bool Equals(object obj) => obj is IIdentity && Equals((IIdentity) obj);
 	}
 }

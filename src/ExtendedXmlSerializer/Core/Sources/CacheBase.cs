@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
@@ -30,7 +31,9 @@ namespace ExtendedXmlSerialization.Core.Sources
 	{
 		readonly Func<TKey, TValue> _create;
 
-		protected CacheBase()
+		protected CacheBase() : this(EqualityComparer<TKey>.Default) {}
+
+		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
 		{
 			_create = Create;
 		}

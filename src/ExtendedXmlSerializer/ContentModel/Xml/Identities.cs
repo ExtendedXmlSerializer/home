@@ -21,32 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public class OptimizedXmlWriterFactory : IXmlWriterFactory
+	class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
 	{
-		readonly IXmlWriterFactory _factory;
-		readonly IObjectNamespaces _namespaces;
+		public static Identities Default { get; } = new Identities();
+		Identities() : this(ContentModel.Identities.Default, TypeAliases.Default, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
 
-		public OptimizedXmlWriterFactory() : this(new Containers()) {}
+		readonly ContentModel.IIdentities _source;
+		readonly IAliases _alias;
+		readonly ITypeFormatter _formatter;
+		readonly IIdentifiers _identifiers;
 
-		public OptimizedXmlWriterFactory(IContainers containers)
-			: this(XmlWriterFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
-
-		public OptimizedXmlWriterFactory(IXmlWriterFactory factory, IObjectNamespaces namespaces)
+		public Identities(ContentModel.IIdentities source, IAliases alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{
-			_factory = factory;
-			_namespaces = namespaces;
+			_source = source;
+			_alias = alias;
+			_formatter = formatter;
+			_identifiers = identifiers;
 		}
 
-		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
-		{
-			var origin = _factory.Create(writer, instance);
-			var result = new OptimizedXmlWriter(origin, writer, _namespaces.Get(instance));
-			return result;
-		}
+		protected override IIdentity Create(TypeInfo parameter)
+			=> _source.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _identifiers.Get(parameter));
 	}
 }

@@ -45,6 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			{
 				throw new InvalidOperationException($"Could not locate the type for the Xml reader '{parameter}.'");
 			}
+
 			return result;
 		}
 	}

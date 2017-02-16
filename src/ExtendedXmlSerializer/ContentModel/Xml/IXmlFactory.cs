@@ -21,19 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+using System.IO;
+
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	struct Identity
+	public interface IXmlFactory
 	{
-		public Identity(string name) : this(name, string.Empty) {}
+		IXmlWriter Create(Stream stream, object instance);
 
-		public Identity(string name, string identifier)
-		{
-			Name = name;
-			Identifier = identifier;
-		}
-
-		public string Name { get; }
-		public string Identifier { get; }
+		IXmlReader Create(Stream stream);
 	}
 }

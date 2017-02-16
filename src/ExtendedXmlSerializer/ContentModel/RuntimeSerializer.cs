@@ -29,22 +29,17 @@ namespace ExtendedXmlSerialization.ContentModel
 {
 	sealed class RuntimeSerializer : SerializerBase
 	{
-		readonly static TypeSelector Selector = TypeSelector.Default;
-
-		readonly ITypeSelector _selector;
+		
 		readonly IContainers _containers;
 
-		public RuntimeSerializer(IContainers containers) : this(Selector, containers) {}
-
-		public RuntimeSerializer(ITypeSelector selector, IContainers containers)
+		public RuntimeSerializer(IContainers containers)
 		{
-			_selector = selector;
 			_containers = containers;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
 			=> _containers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
 
-		public override object Get(IXmlReader reader) => _containers.Content(_selector.Get(reader)).Get(reader);
+		public override object Get(IXmlReader reader) => _containers.Content(reader.Classification).Get(reader);
 	}
 }

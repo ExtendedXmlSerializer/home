@@ -21,31 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Names : ReferenceCacheBase<TypeInfo, XName>, INames
+	class ContainsSpecification : ISpecification<IXmlReader>
 	{
-		public static Names Default { get; } = new Names();
-		Names() : this(TypeAliases.Default, ContentModel.TypeFormatter.Default, Identities.Default) {}
+		readonly IIdentity _identity;
 
-		readonly IAliases _alias;
-		readonly ITypeFormatter _formatter;
-		readonly IIdentities _identities;
-
-		public Names(IAliases alias, ITypeFormatter formatter, IIdentities identities)
+		public ContainsSpecification(IIdentity identity)
 		{
-			_alias = alias;
-			_formatter = formatter;
-			_identities = identities;
+			_identity = identity;
 		}
 
-		protected override XName Create(TypeInfo parameter)
-			=> XName.Get(_alias.Get(parameter) ?? _formatter.Get(parameter), _identities.Get(parameter));
+		public bool IsSatisfiedBy(IXmlReader parameter) => parameter.Contains(_identity);
 	}
 }

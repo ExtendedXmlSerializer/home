@@ -26,17 +26,19 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	struct ParsedName
+	struct ParsedName : IIdentity
 	{
 		readonly Func<ImmutableArray<ParsedName>> _arguments;
 
-		public ParsedName(Identity identity, Func<ImmutableArray<ParsedName>> arguments = null)
+		public ParsedName(string name, string identifier = "", Func<ImmutableArray<ParsedName>> arguments = null)
 		{
-			Identity = identity;
+			Name = name;
+			Identifier = identifier;
 			_arguments = arguments;
 		}
 
-		public Identity Identity { get; }
+		public string Identifier { get; }
+		public string Name { get; }
 
 		public ImmutableArray<ParsedName>? GetArguments() => _arguments?.Invoke();
 	}

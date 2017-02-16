@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
@@ -31,43 +31,43 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 	{
 		readonly static string Prefix = nameof(XNamespace.Xmlns).ToLower();
 		readonly IXmlWriter _writer;
-		readonly System.Xml.XmlWriter _native;
 		readonly ImmutableArray<Namespace> _namespaces;
+		readonly ConditionMonitor _first = new ConditionMonitor();
 
-		public OptimizedXmlWriter(IXmlWriter writer, System.Xml.XmlWriter native, ImmutableArray<Namespace> namespaces)
+		public OptimizedXmlWriter(IXmlWriter writer, ImmutableArray<Namespace> namespaces)
 		{
 			_writer = writer;
-			_native = native;
 			_namespaces = namespaces;
 		}
 
-		public void Element(XName name)
+		public void Element(IIdentity name)
 		{
-			var write = _native.WriteState;
 			_writer.Element(name);
 
-			switch (write)
+			if (_first.Apply())
 			{
-				case WriteState.Start:
-					var length = _namespaces.Length;
-					for (var i = 0; i < length; i++)
-					{
-						var ns = _namespaces[i];
-						switch (i)
-						{
-							case 0:
-								_native.WriteAttributeString(Prefix, ns.Identity);
-								break;
-							default:
-								_native.WriteAttributeString(Prefix, ns.Prefix, string.Empty, ns.Identity);
-								break;
-						}
-					}
-					break;
+				var length = _namespaces.Length;
+				for (var i = 0; i < length; i++)
+				{
+					var attribute = Attribute(i);
+					_writer.Attribute(attribute);
+				}
 			}
 		}
 
-		public void Attribute(XName name, string value) => _writer.Attribute(name, value);
+		Attribute Attribute(int index)
+		{
+			var ns = _namespaces[index];
+			switch (index)
+			{
+				case 0:
+					return new Attribute(Prefix, ns.Identifier);
+				default:
+					return new Attribute(ns.Name, ns.Identifier, new Namespace(Prefix));
+			}
+		}
+
+		public void Attribute(Attribute attribute) => _writer.Attribute(attribute);
 
 		public void Write(string text) => _writer.Write(text);
 
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 
 		public void Member(string name) => _writer.Member(name);
 
-		public string Get(XNamespace parameter) => _writer.Get(parameter);
+		public string Get(string parameter) => _writer.Get(parameter);
 
 		public void Dispose() => _writer.Dispose();
 	}

@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	class ObjectNamespaces : IObjectNamespaces
 	{
-		readonly static Func<TypeInfo, string> Identities = Namespacing.Identities.Default.Get;
+		readonly static Func<TypeInfo, string> Identities = Identifiers.Default.Get;
 
 		readonly IMembers _members;
 		readonly Func<TypeInfo, string> _names;

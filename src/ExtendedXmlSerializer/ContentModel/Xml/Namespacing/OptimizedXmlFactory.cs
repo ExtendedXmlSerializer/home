@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,49 +22,34 @@
 // SOFTWARE.
 
 using System.IO;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Members;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	public class OptimizedXmlFactory : IXmlFactory
 	{
-		readonly static TypeSelector Selector = TypeSelector.Default;
-		readonly static XmlFactory Factory = XmlFactory.Default;
-
-		readonly ITypeSelector _selector;
 		readonly IXmlFactory _factory;
-		readonly IContainers _containers;
+		readonly IObjectNamespaces _namespaces;
 
-		public ExtendedXmlSerializer() : this(Factory) {}
+		public OptimizedXmlFactory() : this(new Containers()) {}
 
-		public ExtendedXmlSerializer(IXmlFactory factory) : this(Selector, factory, new Containers()) {}
+		public OptimizedXmlFactory(IContainers containers)
+			: this(XmlFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
 
-		public ExtendedXmlSerializer(ITypeSelector selector, IXmlFactory factory, IContainers containers)
+		public OptimizedXmlFactory(IXmlFactory factory, IObjectNamespaces namespaces)
 		{
-			_selector = selector;
 			_factory = factory;
-			_containers = containers;
+			_namespaces = namespaces;
 		}
 
-		public void Serialize(Stream stream, object instance)
+		public IXmlWriter Create(Stream stream, object instance)
 		{
-			using (var writer = _factory.Create(stream, instance))
-			{
-				_containers.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
-			}
+			var origin = _factory.Create(stream, instance);
+			var result = new OptimizedXmlWriter(origin, _namespaces.Get(instance));
+			return result;
 		}
 
-		public object Deserialize(Stream stream)
-		{
-			using (var reader = _factory.Create(stream))
-			{
-				return _containers.Get(_selector.Get(reader)).Get(reader);
-			}
-		}
+		public IXmlReader Create(Stream stream) => _factory.Create(stream);
 	}
 }

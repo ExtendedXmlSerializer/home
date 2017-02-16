@@ -21,29 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using System.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class ArrayReader : CollectionReader
+	class IdentityFormatter<T> : IFormatter<T> where T : IIdentity
 	{
-		readonly static AddDelegates Add = AddDelegates.Default;
+		public static IdentityFormatter<T> Default { get; } = new IdentityFormatter<T>();
+		IdentityFormatter() {}
 
-		public ArrayReader(ISerializer item) : this(item, Add) {}
-
-		public ArrayReader(ISerializer item, IAddDelegates add) : base(Activator<ArrayList>.Default, item, add)
-		{
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var elementType = parameter.Classification.GetElementType();
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(elementType);
-			return result;
-		}
+		public string Get(T parameter) => XmlQualifiedName.ToString(parameter.Name, parameter.Identifier);
 	}
 }

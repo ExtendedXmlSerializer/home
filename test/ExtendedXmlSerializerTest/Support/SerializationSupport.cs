@@ -2,14 +2,14 @@
 
 namespace ExtendedXmlSerialization.Test.Support
 {
-	class ExtendedXmlSerializerTestSupport : IExtendedXmlSerializerTestSupport
+	class SerializationSupport : IExtendedXmlSerializerTestSupport
 	{
-		public static ExtendedXmlSerializerTestSupport Default { get; } = new ExtendedXmlSerializerTestSupport();
-		ExtendedXmlSerializerTestSupport() : this(new ExtendedXmlSerializer()) {}
+		public static SerializationSupport Default { get; } = new SerializationSupport();
+		SerializationSupport() : this(new ExtendedXmlSerializer()) {}
 
 		readonly IExtendedXmlSerializer _serializer;
 
-		protected ExtendedXmlSerializerTestSupport(IExtendedXmlSerializer serializer)
+		protected SerializationSupport(IExtendedXmlSerializer serializer)
 		{
 			_serializer = serializer;
 		}

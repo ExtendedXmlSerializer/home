@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> definitions)
 		{
 			var selector = new ContainerSelector(definitions(this).ToArray());
-			_selector = selector.ReferenceCache().Get;
+			_selector = selector.Cache().Get;
 			_content = selector.Content;
 		}
 

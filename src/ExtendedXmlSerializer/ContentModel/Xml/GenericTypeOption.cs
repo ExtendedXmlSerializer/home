@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		readonly IArgumentsProperty _property;
 
-		public GenericTypeOption(IArgumentsProperty property) : base(new ContainsNameSpecification(property.Name))
+		public GenericTypeOption(IArgumentsProperty property) : base(new ContainsSpecification(property))
 		{
 			_property = property;
 		}

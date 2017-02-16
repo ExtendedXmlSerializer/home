@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
@@ -31,6 +30,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static ElementOption Default { get; } = new ElementOption();
 		ElementOption() {}
 
-		public override IWriter Create(XName name, TypeInfo classification) => new Element(name);
+		public override IWriter Create(IIdentity identity, TypeInfo classification)
+			=> new Element(identity.Name, identity.Identifier);
 	}
 }

@@ -42,10 +42,20 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_writer = writer;
 		}
 
-		public void Attribute(XName name, string value) =>
-			_writer.WriteAttributeString(Get(name.Namespace), name.LocalName, name.NamespaceName, value);
+		public void Attribute(Attribute attribute)
+		{
+			if (attribute.Namespace.HasValue)
+			{
+				_writer.WriteAttributeString(attribute.Namespace?.Name, attribute.Name, attribute.Namespace?.Identifier, attribute.Identifier);
+			}
+			else
+			{
+				_writer.WriteAttributeString(attribute.Name, attribute.Identifier);
+			}
+			// _writer.WriteAttributeString();
+		}
 
-		public void Element(XName name) => _writer.WriteStartElement(name.LocalName, name.NamespaceName);
+		public void Element(IIdentity name) => _writer.WriteStartElement(name.Name, name.Identifier);
 
 		public void Member(string name) => _writer.WriteStartElement(name);
 
@@ -55,13 +65,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public void Dispose() => _writer.Dispose();
 
-		public string Get(XNamespace parameter)
-			=> _writer.LookupPrefix(parameter.NamespaceName) ?? Create(parameter.NamespaceName);
+		public string Get(string identifier) => _writer.LookupPrefix(identifier) ?? Create(identifier);
 
-		string Create(XNamespace @namespace)
+		string Create(string identifier)
 		{
-			_writer.WriteAttributeString(_prefixes.Get(@namespace), Xmlns, @namespace.NamespaceName);
-			return _writer.LookupPrefix(@namespace.NamespaceName);
+			_writer.WriteAttributeString(_prefixes.Get(identifier), Xmlns, identifier);
+			return _writer.LookupPrefix(identifier);
 		}
 	}
 }

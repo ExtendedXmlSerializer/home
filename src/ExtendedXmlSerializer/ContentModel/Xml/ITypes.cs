@@ -22,10 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface ITypes : IParameterizedSource<XName, TypeInfo> {}
+	public interface ITypes : IParameterizedSource<IIdentity, TypeInfo> {}
 }

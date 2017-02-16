@@ -21,29 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	abstract class PropertyBase<T> : IProperty<T>
+	abstract class PropertyBase<T> : Identity, IProperty<T>
 	{
-		protected PropertyBase(string displayName) : this(XName.Get(displayName, Defaults.Namespace)) {}
+		protected PropertyBase(string name) : this(name, Defaults.Namespace) {}
 
-		protected PropertyBase(XName name)
-		{
-			Name = name;
-		}
+		protected PropertyBase(string name, string identifier) : base(name, identifier) {}
 
-		public XName Name { get; }
-
-		public virtual T Get(IXmlReader parameter) => Parse(parameter, parameter[Name]);
+		public virtual T Get(IXmlReader parameter) => Parse(parameter, parameter.Value());
 		protected abstract T Parse(IXmlReader parameter, string data);
 
 		public virtual void Write(IXmlWriter writer, T instance)
 		{
-			var format = Format(writer, instance);
-			writer.Attribute(Name, format);
+			var identifier = Format(writer, instance);
+			var ns = new Namespace(writer.Get(Identifier), Identifier);
+			var attribute = new Attribute(Name, identifier, ns);
+			writer.Attribute(attribute);
 		}
 
 		protected abstract string Format(IXmlWriter writer, T instance);

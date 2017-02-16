@@ -22,12 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	public abstract class AliasesBase<T> : ReferenceCacheBase<T, string>, IAliases<T> where T : MemberInfo
+	public abstract class AliasesBase<T> : IAliases<T> where T : MemberInfo
 	{
-		// public abstract string Get(T parameter);
+		public abstract string Get(T parameter);
 	}
 }

@@ -28,19 +28,19 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class Identities : FixedParser<Identity>
+	class Identities : FixedParser<Key>
 	{
-		readonly static Func<string, Parser<char>> Selector = Parsing.Namespace.Accept;
+		readonly static Func<string, Parser<char>> Separator = Parse.Char(':').Accept;
 
 		public static Identities Default { get; } = new Identities();
-		Identities() : this(Parsing.Identifier) {}
+		Identities() : this(Identifier.Default) {}
 
 		public Identities(Parser<string> identifier)
 			: base(
 				identifier
-					.SelectMany(Selector, (prefix, _) => prefix)
-					.SelectMany(identifier.Accept, (prefix, name) => new Identity(name, prefix))
-					.Or(identifier.Select(x => new Identity(x)))
+					.SelectMany(Separator, (prefix, _) => prefix)
+					.SelectMany(identifier.Accept, (prefix, name) => new Key(name, prefix))
+					.Or(identifier.Select(x => new Key(x)))
 			) {}
 	}
 }

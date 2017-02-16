@@ -21,18 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Sprache;
+using System;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel
 {
-	static class Parsing
+	class Identities : Cache<string, Func<string, IIdentity>>, IIdentities
 	{
-		readonly public static Parser<char>
-			Namespace = Parse.Char(':'),
-			List = Parse.Char(',').Token(),
-			Start = Parse.Char('[').Token(),
-			Finish = Parse.Char(']').Token();
+		public static Identities Default { get; } = new Identities();
+		Identities() : base(i => new Names(i).Get) {}
 
-		public static Parser<string> Identifier { get; } = Xml.Parsing.Identifier.Default.Get();
+		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
+
+		class Names : CacheBase<string, IIdentity>
+		{
+			readonly string _identifier;
+
+			public Names(string identifier)
+			{
+				_identifier = identifier;
+			}
+
+			protected override IIdentity Create(string parameter) => new Identity(parameter, _identifier);
+		}
 	}
 }

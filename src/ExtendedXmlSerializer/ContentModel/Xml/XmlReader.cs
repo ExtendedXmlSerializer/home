@@ -24,74 +24,63 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System.Reflection;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlReader : IXmlReader
 	{
-		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
-		                                                      {
-			                                                      IgnoreWhitespace = true,
-			                                                      IgnoreComments = true,
-			                                                      IgnoreProcessingInstructions = true
-		                                                      };
+		readonly static TypeSelector TypeSelector = TypeSelector.Default;
+		readonly static ContentModel.Identities Identities = ContentModel.Identities.Default;
 
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(Stream stream) : this(stream, XmlReaderSettings) {}
-
-		public XmlReader(Stream stream, XmlReaderSettings settings) : this(System.Xml.XmlReader.Create(stream, settings)) {}
-
 		public XmlReader(System.Xml.XmlReader reader)
 		{
-			_reader = reader;
-			switch (_reader.MoveToContent())
+			switch (reader.MoveToContent())
 			{
 				case XmlNodeType.Element:
+					_reader = reader;
 					break;
 				default:
-					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{_reader}.'");
+					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{reader}.'");
 			}
+			
 		}
 
-		public XName Name => XName.Get(_reader.LocalName, _reader.NamespaceURI);
-
-		/*public TypeInfo Classification { get; }*/
+		public IIdentity Identity => Identities.Get(_reader.LocalName, _reader.NamespaceURI);
+		public TypeInfo Classification => TypeSelector.Get(this);
 
 		public string Value()
 		{
-			_reader.Read();
-			var result = _reader.Value;
-			_reader.Read();
-			return result;
+			switch (_reader.NodeType)
+			{
+				case XmlNodeType.Attribute:
+					var attribute = _reader.Value;
+					_reader.MoveToElement();
+					return attribute;
+
+				default:
+					_reader.Read();
+					var result = _reader.Value;
+					_reader.Read();
+					return result;
+			}
 		}
 
 		public IEnumerator<string> Members() => Items(); // Same for now...
 		public IEnumerator<string> Items() => new Enumerator(_reader, _reader.Depth + 1);
 
-		public bool Contains(XName name)
-			=> _reader.HasAttributes && _reader.MoveToAttribute(name.LocalName, name.NamespaceName);
+		public bool Contains(IIdentity identity)
+			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);
 
-		public string this[XName name]
-		{
-			get
-			{
-				var result = _reader.Value;
-				_reader.MoveToElement();
-				return result;
-			}
-		}
-
-		public XNamespace Get(string parameter) => XNamespace.Get(_reader.LookupNamespace(parameter));
+		public string Get(string parameter) => _reader.LookupNamespace(parameter);
 
 		public override string ToString()
-			=> $"{base.ToString()} - {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
+			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
 
 		public void Dispose() => _reader.Dispose();
-
 
 		sealed class Enumerator : IEnumerator<string>
 		{

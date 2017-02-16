@@ -23,17 +23,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IEntity, IParser<XNamespace>, IDisposable
+	public interface IXmlReader : IPrefixAware, IDisposable
 	{
-		bool Contains(XName name);
+		TypeInfo Classification { get; }
 
-		string this[XName name] { get; }
+		IIdentity Identity { get; }
 
+		bool Contains(IIdentity identity);
 
 		string Value();
 

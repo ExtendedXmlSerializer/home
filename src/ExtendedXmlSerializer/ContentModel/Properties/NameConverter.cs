@@ -23,34 +23,35 @@
 
 using System;
 using System.Linq;
-using System.Xml;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using Sprache;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	class NameConverter : ConverterBase<ParsedName>, INameConverter
 	{
 		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(Parser.Default) {}
+		NameConverter() : this(IdentityFormatter<ParsedName>.Default, ParsedNames.Default) {}
 
-		readonly Parser<ParsedName> _parser;
+		readonly IFormatter<ParsedName> _formatter;
+		readonly IParsedNames _names;
 		readonly Func<ParsedName, string> _selector;
 
-		public NameConverter(Parser<ParsedName> parser)
+		public NameConverter(IFormatter<ParsedName> formatter, IParsedNames names)
 		{
-			_parser = parser;
+			_formatter = formatter;
+			_names = names;
 			_selector = Format;
 		}
 
-		public override ParsedName Parse(string data) => _parser.Parse(data);
+		public override ParsedName Parse(string data) => _names.Get(data);
 
 		public override string Format(ParsedName instance)
 		{
 			var arguments = instance.GetArguments();
 			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;
-			var result = $"{XmlQualifiedName.ToString(instance.Identity.Name, instance.Identity.Identifier)}{append}";
+			var result = $"{_formatter.Get(instance)}{append}";
 			return result;
 		}
 	}

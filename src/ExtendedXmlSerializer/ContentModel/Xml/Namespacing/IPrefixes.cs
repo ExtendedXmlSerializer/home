@@ -22,12 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public interface IPrefixes : IParameterizedSource<TypeInfo, string>,
-	                             IParameterizedSource<XNamespace, string>,
-	                             IParameterizedSource<string, XNamespace> {}
+	public interface IPrefixes : IPrefixAware, IParameterizedSource<TypeInfo, string> {}
 }

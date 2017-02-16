@@ -21,11 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	public interface INames : IParameterizedSource<TypeInfo, XName> {}
+	class Identifiers : IIdentifiers
+	{
+		public static Identifiers Default { get; } = new Identifiers();
+		Identifiers() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+
+		readonly IDictionary<Assembly, Namespace> _known;
+		readonly ITypeFormatter _formatter;
+
+		public Identifiers(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		{
+			_known = known;
+			_formatter = formatter;
+		}
+
+		public string Get(TypeInfo parameter)
+			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+	}
 }

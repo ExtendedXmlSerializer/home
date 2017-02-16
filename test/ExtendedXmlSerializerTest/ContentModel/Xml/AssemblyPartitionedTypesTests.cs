@@ -22,10 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using Xunit;
+using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 {
@@ -36,7 +37,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var type = AssemblyPartitionedTypes.Default.Get(XName.Get(TypeFormatter.Default.Get(expected), @namespace));
+			var type = AssemblyPartitionedTypes.Default.Get(new Identity(TypeFormatter.Default.Get(expected), @namespace));
 			Assert.Equal(expected, type);
 		}
 

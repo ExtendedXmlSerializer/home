@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 		public ContainerSelector(params ContainerDefinition[] definitions)
 			: this(
-				new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).ReferenceCache(), definitions) {}
+				new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache(), definitions) {}
 
 		public ContainerSelector(IParameterizedSource<TypeInfo, ISerializer> content, params ContainerDefinition[] definitions)
 			: base(definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray())

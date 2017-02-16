@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -34,11 +33,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		readonly ITypeProperty _property;
 		readonly TypeInfo _element;
-		readonly static XName Name = Names.Default.Get(typeof(Array).GetTypeInfo());
+		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
 
 		public ArrayElement(TypeInfo element) : this(ItemTypeProperty.Default, element) {}
 
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Name)
+		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity.Name, Identity.Identifier)
 		{
 			_property = property;
 			_element = element;
