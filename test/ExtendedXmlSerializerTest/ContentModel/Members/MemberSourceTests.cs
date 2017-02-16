@@ -30,10 +30,14 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 	public class MemberSourceTests
 	{
 		[Fact]
-		public void MetadataAlias()
+		public void XmlElementAttribute()
 		{
 			var expected = new TestClassWithXmlElementAttribute {Id = 123};
-			Assert.Equal(expected.Id, ExtendedXmlSerializerTestSupport.Default.Cycle(expected).Id);
+            var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+                expected,
+                @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
+            );
+            Assert.Equal(expected.Id, actual.Id);
 		}
 
 		[Fact]

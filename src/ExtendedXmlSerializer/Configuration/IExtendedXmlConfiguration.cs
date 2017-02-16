@@ -32,6 +32,7 @@ namespace ExtendedXmlSerialization.Configuration
 		IExtendedXmlConfiguration UseNamespaces();
 		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
 		IExtendedXmlSerializer Create();
-	    IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings);
+	    IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings);
+	    IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings);
 	}
 }
