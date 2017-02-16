@@ -24,7 +24,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
@@ -37,7 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		WellKnownTypeLocator()
 			: this(WellKnownNamespaces.Default.ToDictionary(
-				       x => x.Value.Identity,
+				       x => x.Value.Identifier,
 				       x => new Func<string, TypeInfo>(
 					       x.Key.ExportedTypes
 					        .YieldMetadata(CanPartitionSpecification.Default.IsSatisfiedBy)
@@ -53,6 +52,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_types = types;
 		}
 
-		public TypeInfo Get(XName parameter) => _types.Invoke(parameter.NamespaceName)?.Invoke(parameter.LocalName);
+		public TypeInfo Get(IIdentity parameter) => _types.Invoke(parameter.Identifier)?.Invoke(parameter.Name);
 	}
 }

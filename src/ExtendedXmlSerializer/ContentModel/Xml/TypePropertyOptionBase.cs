@@ -29,7 +29,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	abstract class TypePropertyOptionBase : Option<IXmlReader, TypeInfo>, ITypeOption
 	{
-		protected TypePropertyOptionBase(ITypeProperty property)
-			: base(new ContainsNameSpecification(property.Name), property.Get) {}
+		protected TypePropertyOptionBase(ITypeProperty property) : base(new ContainsSpecification(property), property.Get) {}
 	}
 }

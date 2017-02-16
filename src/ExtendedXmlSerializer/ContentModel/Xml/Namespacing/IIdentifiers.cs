@@ -21,13 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
-{
-	class XmlWriterFactory : IXmlWriterFactory
-	{
-		public static XmlWriterFactory Default { get; } = new XmlWriterFactory();
-		XmlWriterFactory() {}
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance) => new XmlWriter(writer);
-	}
+namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+{
+	public interface IIdentifiers : IParameterizedSource<TypeInfo, string> {}
 }

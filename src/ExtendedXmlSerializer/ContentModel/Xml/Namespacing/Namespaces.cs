@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	class Namespaces : INamespaces
@@ -39,6 +37,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 		}
 
 		public Namespace Get(string parameter)
-			=> new Namespace(_prefixes.Get(XNamespace.Get(parameter)) ?? _prefixer.Get(parameter), parameter);
+			=> new Namespace(_prefixes.Get(parameter) ?? _prefixer.Get(parameter), parameter);
 	}
 }

@@ -30,16 +30,32 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
+	public struct Key : IIdentity
+	{
+		public Key(string name) : this(name, string.Empty) {}
+
+		public Key(string name, string identifier)
+		{
+			Name = name;
+			Identifier = identifier;
+		}
+
+		public string Identifier { get; }
+		public string Name { get; }
+	}
+
 	class Parser : FixedParser<ParsedName>
 	{
-		public static Parser Default { get; } = new Parser();
-		Parser() : this(Identities.Default, TypesList.Default.Get().Contained(Parsing.Start, Parsing.Finish).Accept) {}
+		readonly static Parser<char> Start = Parse.Char('[').Token(), Finish = Parse.Char(']').Token();
 
-		public Parser(Parser<Identity> name, Func<Identity, Parser<IEnumerable<ParsedName>>> arguments)
+		public static Parser Default { get; } = new Parser();
+		Parser() : this(Identities.Default, TypesList.Default.Get().Contained(Start, Finish).Accept) {}
+
+		public Parser(Parser<Key> keys, Func<Key, Parser<IEnumerable<ParsedName>>> arguments)
 			: base(
-				name.SelectMany(arguments,
-				                (item, argument) => new ParsedName(item, argument.ToImmutableArray))
-				    .Or(name.Select(x => new ParsedName(x)))
+				keys.SelectMany(arguments,
+				                (key, argument) => new ParsedName(key.Name, key.Identifier, argument.ToImmutableArray))
+				    .Or(keys.Select(key => new ParsedName(key.Name, key.Identifier)))
 			) {}
 	}
 }

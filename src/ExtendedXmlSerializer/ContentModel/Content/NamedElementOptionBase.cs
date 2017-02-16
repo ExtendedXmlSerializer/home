@@ -22,27 +22,25 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public abstract class NamedElementOptionBase : ElementOptionBase
+	abstract class NamedElementOptionBase : ElementOptionBase
 	{
-		readonly INames _names;
+		readonly Xml.IIdentities _identities;
 
 		protected NamedElementOptionBase() : this(AlwaysSpecification<TypeInfo>.Default) {}
 
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Names.Default) {}
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Xml.Identities.Default) {}
 
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, INames names) : base(specification)
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, Xml.IIdentities identities) : base(specification)
 		{
-			_names = names;
+			_identities = identities;
 		}
 
-		public override IWriter Get(TypeInfo parameter) => Create(_names.Get(parameter), parameter);
+		public override IWriter Get(TypeInfo parameter) => Create(_identities.Get(parameter), parameter);
 
-		public abstract IWriter Create(XName name, TypeInfo classification);
+		public abstract IWriter Create(IIdentity identity, TypeInfo classification);
 	}
 }

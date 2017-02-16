@@ -21,29 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
-
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class ArrayReader : CollectionReader
+	public interface IIdentity
 	{
-		readonly static AddDelegates Add = AddDelegates.Default;
-
-		public ArrayReader(ISerializer item) : this(item, Add) {}
-
-		public ArrayReader(ISerializer item, IAddDelegates add) : base(Activator<ArrayList>.Default, item, add)
-		{
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var elementType = parameter.Classification.GetElementType();
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(elementType);
-			return result;
-		}
+		string Identifier { get; }
+		string Name { get; }
 	}
 }

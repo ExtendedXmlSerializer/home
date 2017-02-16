@@ -33,18 +33,18 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void XmlElementAttribute()
 		{
 			var expected = new TestClassWithXmlElementAttribute {Id = 123};
-            var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
-                expected,
-                @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
-            );
-            Assert.Equal(expected.Id, actual.Id);
+			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+				expected,
+				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
+			);
+			Assert.Equal(expected.Id, actual.Id);
 		}
 
 		[Fact]
 		public void XmlElementWithOrder()
 		{
 			var expected = new TestClassWithOrderParameters {A = "A", B = "B"};
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithOrderParameters xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><A>A</A><B>B</B></TestClassWithOrderParameters>"
 			);
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void XmlElementWithOrderExt()
 		{
 			var expected = new TestClassWithOrderParametersExt {A = "A", B = "B", C = "C", D = "D"};
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithOrderParametersExt xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><A>A</A><B>B</B><D>D</D><C>C</C></TestClassWithOrderParametersExt>"
 			);
@@ -70,7 +70,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void TestClassInheritanceWithOrder()
 		{
 			var expected = TestObject.TestClassInheritanceWithOrder.Create();
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassInheritanceWithOrder xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Id2>3</Id2><Id>2</Id></TestClassInheritanceWithOrder>"
 			);
@@ -82,7 +82,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void TestClassInterfaceInheritanceWithOrder()
 		{
 			var expected = new TestClassInterfaceInheritanceWithOrder {Id = 1, Id2 = 2};
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassInterfaceInheritanceWithOrder xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Id2>2</Id2><Id>1</Id></TestClassInterfaceInheritanceWithOrder>"
 			);
@@ -94,7 +94,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void XmlRoot()
 		{
 			var expected = new TestClassWithXmlRootAttribute {Id = 123};
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Id>123</Id></TestClass>"
 			);

@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 using Sprache;
@@ -50,16 +49,16 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_names = names;
 		}
 
-		public TypeInfo Get(XName parameter)
+		public TypeInfo Get(IIdentity parameter)
 		{
-			var parse = _parser.Get().TryParse(parameter.NamespaceName);
+			var parse = _parser.Get().TryParse(parameter.Identifier);
 			if (parse.WasSuccessful)
 			{
 				var assembly = _loader.Get(parse.Value.Path);
 
 				var result =
-					assembly.GetType($"{parse.Value.Namespace}.{_names.Get(parameter.LocalName)}", false, false)?.GetTypeInfo() ??
-					_partitions.Get(assembly)?.Invoke(parse.Value.Namespace)?.Invoke(parameter.LocalName);
+					assembly.GetType($"{parse.Value.Namespace}.{_names.Get(parameter.Name)}", false, false)?.GetTypeInfo() ??
+					_partitions.Get(assembly)?.Invoke(parse.Value.Namespace)?.Invoke(parameter.Name);
 				return result;
 			}
 			return null;

@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 
@@ -34,15 +33,18 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	{
 		readonly static Types Types = Types.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
+		readonly static Identities Identities = Identities.Default;
 
+		readonly IIdentities _identities;
 		readonly ITypes _types;
 		readonly INameConverter _converter;
 		readonly IXmlReader _reader;
 
-		public TypeParser(IXmlReader reader) : this(Types, Converter, reader) {}
+		public TypeParser(IXmlReader reader) : this(Identities, Types, Converter, reader) {}
 
-		public TypeParser(ITypes types, INameConverter converter, IXmlReader reader)
+		public TypeParser(IIdentities identities, ITypes types, INameConverter converter, IXmlReader reader)
 		{
+			_identities = identities;
 			_types = types;
 			_converter = converter;
 			_reader = reader;
@@ -57,9 +59,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 
 		public TypeInfo Get(ParsedName name)
 		{
-			var identity = name.Identity;
-			var key = XName.Get(identity.Name, _reader.Get(identity.Identifier).NamespaceName);
-			var typeInfo = _types.Get(key);
+			var identity = _identities.Get(name.Name, _reader.Get(name.Identifier));
+			var typeInfo = _types.Get(identity);
 			var arguments = name.GetArguments();
 			var result = arguments.HasValue ? typeInfo.MakeGenericType(Arguments(arguments.Value)).GetTypeInfo() : typeInfo;
 			return result;

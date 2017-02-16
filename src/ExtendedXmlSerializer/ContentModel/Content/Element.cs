@@ -21,20 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Element : IWriter
+	class Element : Identity, IWriter
 	{
-		readonly XName _name;
+		public Element(string name, string identifier) : base(name, identifier) {}
 
-		public Element(XName name)
-		{
-			_name = name;
-		}
-
-		public virtual void Write(IXmlWriter writer, object instance) => writer.Element(_name);
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Element(this);
 	}
 }

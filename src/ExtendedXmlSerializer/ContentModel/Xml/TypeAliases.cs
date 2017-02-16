@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_names = names;
 		}
 
-		protected override string Create(TypeInfo parameter)
+		public override string Get(TypeInfo parameter)
 			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
 using Sprache;
 using Xunit;
@@ -42,27 +43,25 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 
 		[Fact]
 		public void Local()
-			=> Assert.Equal(new Identity("SomeType"), ParsedNames.Default.Get(Type).Identity, IdentityEqualityComparer.Default);
+			=> Assert.Equal(new ParsedName("SomeType"), ParsedNames.Default.Get(Type), ParsedNameEqualityComparer.Default);
 
 		[Fact]
 		public void Qualified()
 		{
-			var expected = new Identity("SomeType", "ns1");
-			var identity = ParsedNames.Default.Get(QualifiedType).Identity;
-			Assert.Equal(expected, identity,
-			             IdentityEqualityComparer.Default);
+			var expected = new ParsedName("SomeType", "ns1");
+			var identity = ParsedNames.Default.Get(QualifiedType);
+			Assert.Equal(expected, identity, ParsedNameEqualityComparer.Default);
 		}
 
 		[Fact]
 		public void Generic()
 		{
-			var expected = new ParsedName(new Identity("GenericType", "ns123"), new[]
-			                                                                    {
-				                                                                    new ParsedName(new Identity("string", "sys")),
-				                                                                    new ParsedName(new Identity("int")),
-				                                                                    new ParsedName(new Identity("SomeOtherType",
-				                                                                                                "ns4"))
-			                                                                    }.ToImmutableArray);
+			var expected = new ParsedName("GenericType", "ns123", new[]
+			                                                      {
+				                                                      new ParsedName("string", "sys"),
+				                                                      new ParsedName("int"),
+				                                                      new ParsedName("SomeOtherType", "ns4")
+			                                                      }.ToImmutableArray);
 
 			var actual = ParsedNames.Default.Get(GenericType);
 			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
@@ -72,17 +71,17 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 		[Fact]
 		public void CompoundGeneric()
 		{
-			var expected = new ParsedName(new Identity("CompoundGenericType", "ns100"), new[]
-			                                                                           {
-				                                                                           new ParsedName(new Identity("string", "sys")),
-				                                                                           new ParsedName(new Identity("AnotherGenericType", "exs"),
-					                                                                           new[]
-					                                                                           {
-						                                                                           new ParsedName(new Identity("AnotherType", "ns5")),
-						                                                                           new ParsedName(new Identity("OneMoreType","ns6"))
-					                                                                           }.ToImmutableArray),
-				                                                                           new ParsedName(new Identity("SomeOtherType", "ns40"))
-			                                                                           }.ToImmutableArray);
+			var expected = new ParsedName("CompoundGenericType", "ns100", new[]
+			                                                              {
+				                                                              new ParsedName("string", "sys"),
+				                                                              new ParsedName("AnotherGenericType", "exs",
+				                                                                             new[]
+				                                                                             {
+					                                                                             new ParsedName("AnotherType", "ns5"),
+					                                                                             new ParsedName("OneMoreType", "ns6")
+				                                                                             }.ToImmutableArray),
+				                                                              new ParsedName("SomeOtherType", "ns40")
+			                                                              }.ToImmutableArray);
 
 			var actual = ParsedNames.Default.Get(CompoundGenericType);
 			Assert.Equal(CompoundGenericType.Replace(" ", ""), NameConverter.Default.Format(actual));
@@ -94,11 +93,11 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 		{
 			var actual = TypesList.Default.Get("sys:string, int, ns4:SomeOtherType");
 			Assert.True(new[]
-			             {
-				             new ParsedName(new Identity("string", "sys")),
-				             new ParsedName(new Identity("int")),
-				             new ParsedName(new Identity("SomeOtherType", "ns4"))
-			             }.ToImmutableArray().SequenceEqual(actual, ParsedNameEqualityComparer.Default));
+			            {
+				            new ParsedName("string", "sys"),
+				            new ParsedName("int"),
+				            new ParsedName("SomeOtherType", "ns4")
+			            }.ToImmutableArray().SequenceEqual(actual, ParsedNameEqualityComparer.Default));
 		}
 
 		[Fact]
@@ -125,26 +124,10 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 			Assert.Equal("Dictionary", result);
 		}
 
-		sealed class IdentityEqualityComparer : IEqualityComparer<Identity>
-		{
-			public static IdentityEqualityComparer Default { get; } = new IdentityEqualityComparer();
-			IdentityEqualityComparer() {}
-
-			public bool Equals(Identity x, Identity y)
-				=> string.Equals(x.Name, y.Name) && string.Equals(x.Identifier, y.Identifier);
-
-			public int GetHashCode(Identity obj)
-			{
-				unchecked
-				{
-					return ((obj.Name?.GetHashCode() ?? 0) * 397) ^
-					       (obj.Identifier?.GetHashCode() ?? 0);
-				}
-			}
-		}
-
 		sealed class ParsedNameEqualityComparer : IEqualityComparer<ParsedName>
 		{
+			readonly static IdentityComparer<ParsedName> Comparer = IdentityComparer<ParsedName>.Default;
+
 			public static ParsedNameEqualityComparer Default { get; } = new ParsedNameEqualityComparer();
 			ParsedNameEqualityComparer() {}
 
@@ -154,7 +137,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 				var argumentsY = y.GetArguments().GetValueOrDefault(ImmutableArray<ParsedName>.Empty);
 
 				var arguments = argumentsX.SequenceEqual(argumentsY, this);
-				var identity = IdentityEqualityComparer.Default.Equals(x.Identity, y.Identity);
+				var identity = Comparer.Equals(x, y);
 				var result = arguments && identity;
 				return result;
 			}
@@ -163,8 +146,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 			{
 				unchecked
 				{
-					return ((obj.GetArguments()?.GetHashCode() ?? 0) * 397) ^
-					       IdentityEqualityComparer.Default.GetHashCode(obj.Identity);
+					return ((obj.GetArguments()?.GetHashCode() ?? 0) * 397) ^ Comparer.GetHashCode(obj);
 				}
 			}
 		}

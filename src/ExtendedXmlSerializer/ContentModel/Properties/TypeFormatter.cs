@@ -32,19 +32,19 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	class TypeFormatter : ITypeFormatter
 	{
-		readonly static Names Names = Names.Default;
+		readonly static Xml.Identities Identities = Xml.Identities.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
 
 		readonly IXmlWriter _writer;
-		readonly INames _names;
+		readonly Xml.IIdentities _identities;
 		readonly INameConverter _converter;
 
-		public TypeFormatter(IXmlWriter writer) : this(writer, Names, Converter) {}
+		public TypeFormatter(IXmlWriter writer) : this(writer, Identities, Converter) {}
 
-		public TypeFormatter(IXmlWriter writer, INames names, INameConverter converter)
+		public TypeFormatter(IXmlWriter writer, Xml.IIdentities identities, INameConverter converter)
 		{
 			_writer = writer;
-			_names = names;
+			_identities = identities;
 			_converter = converter;
 		}
 
@@ -52,12 +52,10 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 
 		ParsedName Name(TypeInfo parameter)
 		{
-			var name = _names.Get(parameter);
-			var parsed = new ParsedName(
-				new Identity(name.LocalName, _writer.Get(name.NamespaceName)),
-				parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null
-			);
-			return parsed;
+			var identity = _identities.Get(parameter);
+			var result = new ParsedName(identity.Name, _writer.Get(identity.Identifier),
+			                            parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
+			return result;
 		}
 
 		Func<ImmutableArray<ParsedName>> Arguments(Type[] types)

@@ -29,6 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	static class Defaults
 	{
 		readonly static TypeInfo Type = ContentModel.Defaults.FrameworkType;
-		public static string Namespace { get; } = Identities.Default.Get(Type);
+
+		public static string Namespace { get; } = Identifiers.Default.Get(Type);
 	}
 }

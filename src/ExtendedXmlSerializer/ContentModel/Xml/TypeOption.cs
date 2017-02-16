@@ -43,6 +43,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_types = types;
 		}
 
-		public override TypeInfo Get(IXmlReader parameter) => _types.Get(parameter.Name);
+		public override TypeInfo Get(IXmlReader parameter) => _types.Get(parameter.Identity);
 	}
 }

@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Core.Sources;
 using Sprache;
@@ -30,13 +29,9 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
 	class TypesList : FixedParser<IEnumerable<ParsedName>>
 	{
-		public static TypesList Default { get; } = new TypesList();
-		TypesList() : this(() => Parser.Default.Get()) {}
+		readonly static Parser<char> List = Parse.Char(',').Token();
 
-		public TypesList(Func<Parser<ParsedName>> reference)
-			: base(Parse.Ref(reference)
-			            .DelimitedBy(Parsing.List)
-			            .Token()
-			) {}
+		public static TypesList Default { get; } = new TypesList();
+		TypesList() : base(Parse.Ref(() => Parser.Default.Get()).DelimitedBy(List).Token()) {}
 	}
 }

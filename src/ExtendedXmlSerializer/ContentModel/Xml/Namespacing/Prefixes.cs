@@ -24,26 +24,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Prefixes : DuplexTableSource<XNamespace, string>, IPrefixes
+	class Prefixes : TableSource<string, string>, IPrefixes
 	{
 		public static Prefixes Default { get; } = new Prefixes();
 
 		Prefixes() : this(WellKnownNamespaces.Default,
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => XNamespace.Get(x.Identity), x => x.Prefix)) {}
+		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Identifier, x => x.Name)) {}
 
 		readonly IDictionary<Assembly, Namespace> _known;
 
-		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<XNamespace, string> names) : base(names)
+		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<string, string> names) : base(names)
 		{
 			_known = known;
 		}
 
-		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Prefix;
+		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Name;
 	}
 }

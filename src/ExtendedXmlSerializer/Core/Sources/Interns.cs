@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml.Linq;
-
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public interface IEntity
+	public class Interns : Cache<string, string>, IAlteration<string>
 	{
-		XName Name { get; }
+		// TODO: replace when .NET standard 2.0 is available.
+		// https://github.com/IronLanguages/main/issues/1381
+		public static Interns Default { get; } = new Interns();
+		Interns() : base(x => x) {}
 	}
 }

@@ -23,7 +23,6 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
@@ -33,7 +32,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static GenericElementOption Default { get; } = new GenericElementOption();
 		GenericElementOption() : base(IsGenericTypeSpecification.Default) {}
 
-		public override IWriter Create(XName name, TypeInfo classification)
-			=> new GenericElement(name, classification.GetGenericArguments().ToImmutableArray());
+		public override IWriter Create(IIdentity identity, TypeInfo classification)
+			=> new GenericElement(identity.Name, identity.Identifier, classification.GetGenericArguments().ToImmutableArray());
 	}
 }

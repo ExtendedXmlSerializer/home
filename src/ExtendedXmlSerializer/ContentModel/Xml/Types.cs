@@ -24,33 +24,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Types : ReferenceCacheBase<XName, TypeInfo>, ITypes
+	class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		public static Types Default { get; } = new Types();
 
 		Types()
 			: this(
-				WellKnownAliases.Default.Select(x => x.Key).YieldMetadata().ToDictionary(Names.Default.Get),
+				WellKnownAliases.Default
+								.Select(x => x.Key)
+				                .YieldMetadata()
+				                .ToDictionary(Identities.Default.Get),
 				WellKnownTypeLocator.Default,
 				AssemblyPartitionedTypes.Default) {}
 
-		readonly IDictionary<XName, TypeInfo> _aliased;
+		readonly IDictionary<IIdentity, TypeInfo> _aliased;
 		readonly ITypes _known, _partitions;
 
-		public Types(IDictionary<XName, TypeInfo> aliased, ITypes known, ITypes partitions)
+		public Types(IDictionary<IIdentity, TypeInfo> aliased, ITypes known, ITypes partitions)
 		{
 			_aliased = aliased;
 			_known = known;
 			_partitions = partitions;
 		}
 
-		protected override TypeInfo Create(XName parameter)
+		protected override TypeInfo Create(IIdentity parameter)
 			=> _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
 	}
 }

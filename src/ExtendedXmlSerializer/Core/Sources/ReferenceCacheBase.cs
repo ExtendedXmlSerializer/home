@@ -38,6 +38,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 
 		protected abstract TValue Create(TKey parameter);
 
-		public TValue Get(TKey key) => _cache.GetValue(key, _callback);
+		public virtual TValue Get(TKey key) => _cache.GetValue(key, _callback);
 	}
 }

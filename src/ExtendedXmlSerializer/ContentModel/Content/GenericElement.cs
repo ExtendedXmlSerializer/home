@@ -23,7 +23,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
@@ -34,9 +33,11 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly IArgumentsProperty _property;
 		readonly ImmutableArray<Type> _arguments;
 
-		public GenericElement(XName name, ImmutableArray<Type> arguments) : this(ArgumentsProperty.Default, name, arguments) {}
+		public GenericElement(string name, string identifier, ImmutableArray<Type> arguments)
+			: this(ArgumentsProperty.Default, name, identifier, arguments) {}
 
-		public GenericElement(IArgumentsProperty property, XName name, ImmutableArray<Type> arguments) : base(name)
+		public GenericElement(IArgumentsProperty property, string name, string identifier, ImmutableArray<Type> arguments)
+			: base(name, identifier)
 		{
 			_property = property;
 			_arguments = arguments;
