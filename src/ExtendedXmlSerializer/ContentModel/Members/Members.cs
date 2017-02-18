@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly IParameterizedSource<TypeInfo, IEnumerable<IMember>> _source;
 
-		public Members(ISelector selector) : this(new MemberSource(selector)) {}
+		public Members(ISerializers serializers, ISelector selector) : this(new MemberSource(serializers, selector)) {}
 
 		public Members(IParameterizedSource<TypeInfo, IEnumerable<IMember>> source)
 		{

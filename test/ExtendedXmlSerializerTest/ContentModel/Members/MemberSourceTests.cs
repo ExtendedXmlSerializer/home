@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void XmlElementAttribute()
 		{
 			var expected = new TestClassWithXmlElementAttribute {Id = 123};
-			var actual = ExtendedXmlSerializerTestSupport.Default.Assert(
+			var actual = SerializationSupport.Default.Assert(
 				expected,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithXmlElementAttribute xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Identifier>123</Identifier></TestClassWithXmlElementAttribute>"
 			);

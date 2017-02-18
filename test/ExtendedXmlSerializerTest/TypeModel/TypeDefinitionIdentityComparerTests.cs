@@ -21,27 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
+using Xunit;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.Test.TypeModel
 {
-	sealed class ContainerSelector : Selector<TypeInfo, ISerializer>, IContainers
+	public class TypeDefinitionIdentityComparerTests
 	{
-		readonly IParameterizedSource<TypeInfo, ISerializer> _content;
-
-		public ContainerSelector(params ContainerDefinition[] definitions)
-			: this(
-				new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache(), definitions) {}
-
-		public ContainerSelector(IParameterizedSource<TypeInfo, ISerializer> content, params ContainerDefinition[] definitions)
-			: base(definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray())
+		[Fact]
+		public void Verify()
 		{
-			_content = content;
-		}
+			var expected = typeof(IDictionary<,>).GetTypeInfo();
+			var actual = typeof(Dictionary<,>).GetInterfaces().First().GetTypeInfo();
+			Assert.NotStrictEqual(expected, actual);
+			Assert.NotSame(expected, actual);
 
-		public ISerializer Content(TypeInfo parameter) => _content.Get(parameter);
+			var sut = TypeDefinitionIdentityComparer.Default;
+
+			Assert.Equal(expected, actual, sut);
+			var info = typeof(IDictionary<object, object>).GetTypeInfo();
+
+			Assert.NotStrictEqual(expected, info);
+			Assert.Equal(expected, info, sut);
+
+			Assert.False(typeof(IDictionary<,>).IsAssignableFrom(typeof(Dictionary<,>)));
+			Assert.True(typeof(IDictionary<string, object>).IsAssignableFrom(typeof(Dictionary<string, object>)));
+		}
 	}
 }

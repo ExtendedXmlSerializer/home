@@ -33,24 +33,24 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISetterFactory _setter;
 
-		public MemberOption(IContainers containers)
-			: this(AssignableMemberSpecification.Default, containers) {}
+		public MemberOption(ISerializers serializers)
+			: this(AssignableMemberSpecification.Default, serializers) {}
 
-		public MemberOption(ISpecification<MemberInformation> specification, IContainers containers)
-			: this(specification, containers, SetterFactory.Default) {}
+		public MemberOption(IMemberSpecification specification, ISerializers serializers)
+			: this(specification, serializers, SetterFactory.Default) {}
 
-		public MemberOption(ISpecification<MemberInformation> specification, IContainers containers, ISetterFactory setter)
-			: base(specification, containers)
+		public MemberOption(IMemberSpecification specification, ISerializers serializers, ISetterFactory setter)
+			: base(specification, serializers)
 		{
 			_setter = setter;
 		}
 
-		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
-		                                  ISerializer body, MemberInfo metadata)
+		protected override IMember Create(ISpecification<object> emit, string displayName, TypeInfo classification,
+		                                  Func<object, object> getter, ISerializer body, MemberInfo metadata)
 			=> CreateMember(displayName, classification, _setter.Get(metadata), getter, body);
 
 		protected virtual IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
 		                                       Func<object, object> getter, ISerializer body)
-			=> new Member(displayName, getter, setter, body);
+			=> new Member(AssignedSpecification.Default, displayName, getter, setter, body);
 	}
 }

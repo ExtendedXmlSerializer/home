@@ -23,24 +23,38 @@
 
 using System;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class Member : Container, IMember
 	{
+		readonly ISpecification<object> _emit;
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public Member(string displayName, Func<object, object> getter, Action<object, object> setter, ISerializer body)
-			: this(displayName, getter, setter, new Content.Member(displayName), body) {}
+		public Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
+		              Action<object, object> setter, ISerializer body)
+			: this(emit, displayName, getter, setter, new Content.Member(displayName), body) {}
 
-		protected Member(string displayName, Func<object, object> getter, Action<object, object> setter, IWriter element,
-		                 ISerializer body)
-			: base(element, body)
+		protected Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
+		                 Action<object, object> setter, IWriter element,
+		                 ISerializer content) : base(element, content)
 		{
 			DisplayName = displayName;
+			_emit = emit;
 			_setter = setter;
 			_getter = getter;
+		}
+
+		public override void Write(IXmlWriter writer, object instance)
+		{
+			var value = Get(instance);
+			if (_emit.IsSatisfiedBy(value))
+			{
+				base.Write(writer, value);
+			}
 		}
 
 

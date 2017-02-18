@@ -28,24 +28,22 @@ namespace ExtendedXmlSerialization.Core.Specifications
 {
 	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{
-		readonly Type _genericType;
+		readonly IGenericDefinitionCandidates _candidates;
+		readonly Type _genericDefinition;
 
-		public IsAssignableGenericSpecification(Type genericType)
+		public IsAssignableGenericSpecification(Type genericType) : this(GenericDefinitionCandidates.Default, genericType) {}
+
+		public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
 		{
-			_genericType = genericType;
+			_candidates = candidates;
+			_genericDefinition = genericDefinition;
 		}
 
-		// ATTRIBUTION: http://stackoverflow.com/a/5461399/3602057
 		public bool IsSatisfiedBy(TypeInfo parameter)
+			=> _candidates.Get(parameter).Contains(_genericDefinition) || Base(parameter);
+
+		bool Base(TypeInfo parameter)
 		{
-			var interfaceTypes = parameter.GetInterfaces();
-
-			foreach (var it in interfaceTypes.Appending(parameter.AsType()))
-			{
-				if (it.GetTypeInfo().IsGenericType && it.GetGenericTypeDefinition() == _genericType)
-					return true;
-			}
-
 			var baseType = parameter.BaseType?.GetTypeInfo();
 			var result = baseType != null && IsSatisfiedBy(baseType);
 			return result;

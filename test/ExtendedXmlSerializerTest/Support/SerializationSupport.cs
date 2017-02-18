@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using ExtendedXmlSerialization.Configuration;
 
 namespace ExtendedXmlSerialization.Test.Support
 {
 	class SerializationSupport : IExtendedXmlSerializerTestSupport
 	{
 		public static SerializationSupport Default { get; } = new SerializationSupport();
-		SerializationSupport() : this(new ExtendedXmlSerializer()) {}
+		SerializationSupport() : this(new ExtendedXmlConfiguration().Create()) {}
 
 		readonly IExtendedXmlSerializer _serializer;
 

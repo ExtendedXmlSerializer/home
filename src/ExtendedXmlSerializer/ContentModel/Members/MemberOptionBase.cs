@@ -32,19 +32,17 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
-		readonly IContainers _containers;
+		readonly ISerializers _serializers;
 		readonly IAliases<MemberInfo> _alias;
 		readonly IGetterFactory _getter;
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers)
-			: this(specification, containers, MemberAliases.Default, GetterFactory.Default) {}
+		protected MemberOptionBase(IMemberSpecification specification, ISerializers serializers)
+			: this(specification, serializers, MemberAliases.Default, GetterFactory.Default) {}
 
-		protected MemberOptionBase(ISpecification<MemberInformation> specification, IContainers containers,
-		                           IAliases<MemberInfo> alias, IGetterFactory getter
-		)
-			: base(specification)
+		protected MemberOptionBase(IMemberSpecification specification, ISerializers serializers, IAliases<MemberInfo> alias,
+		                           IGetterFactory getter) : base(specification)
 		{
-			_containers = containers;
+			_serializers = serializers;
 			_alias = alias;
 			_getter = getter;
 		}
@@ -52,13 +50,14 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public override IMember Get(MemberInformation parameter)
 		{
 			var getter = _getter.Get(parameter.Metadata);
-			var body = _containers.Content(parameter.MemberType);
-			var result = Create(_alias.Get(parameter.Metadata) ?? parameter.Metadata.Name, parameter.MemberType, getter, body,
-			                    parameter.Metadata);
+			var body = _serializers.Content(parameter.MemberType);
+			var result = Create(AssignedSpecification.Default, _alias.Get(parameter.Metadata) ?? parameter.Metadata.Name,
+			                    parameter.MemberType, getter, body, parameter.Metadata);
 			return result;
 		}
 
-		protected abstract IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
+		protected abstract IMember Create(ISpecification<object> emit, string displayName, TypeInfo classification,
+		                                  Func<object, object> getter,
 		                                  ISerializer body, MemberInfo metadata);
 	}
 }

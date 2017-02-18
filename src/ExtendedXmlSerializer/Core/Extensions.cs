@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
@@ -33,6 +34,14 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
+		public static IReadOnlyList<T> AsReadOnly<T>(this IEnumerable<T> @this) => new ReadOnlyCollection<T>(@this.ToArray());
+
+		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
+			=> new AnySpecification<T>(@this.Yield().Concat(others).Fixed());
+
+		public static ISpecification<T> And<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
+			=> new AllSpecification<T>(@this.Yield().Concat(others).Fixed());
+
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
 		public static Func<TParameter, TResult> Alter<TParameter, TResult>(this IAlteration<TResult> @this,

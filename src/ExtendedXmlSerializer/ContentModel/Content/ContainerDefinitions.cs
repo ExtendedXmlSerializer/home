@@ -44,16 +44,18 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_known = known;
 		}
 
-		public IEnumerable<ContainerDefinition> Get(IContainers parameter)
+		public IEnumerable<ContainerDefinition> Get(ISerializers parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
 			var variable = new VariableTypeMemberOption(parameter, runtime);
+			var members = new Members.Members(parameter, new Selector(parameter, variable));
+
 			yield return new ContainerDefinition(ElementOption.Default, _known);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
-			yield return new ContainerDefinition(new DictionaryContentOption(variable));
+			yield return new ContainerDefinition(new DictionaryContentOption(members, variable));
 			yield return new ContainerDefinition(new CollectionContentOption(parameter));
 
-			yield return new ContainerDefinition(new MemberedContentOption(new Selector(parameter, variable)));
+			yield return new ContainerDefinition(new MemberedContentOption(members));
 			yield return new ContainerDefinition(new RuntimeContentOption(runtime));
 		}
 	}

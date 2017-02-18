@@ -22,17 +22,19 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlConfiguration
+	public interface IExtendedXmlConfiguration : ISource<IMemberPolicy>
 	{
 		IExtendedXmlTypeConfiguration<T> ConfigureType<T>();
 		IExtendedXmlConfiguration UseAutoProperties();
 		IExtendedXmlConfiguration UseNamespaces();
 		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
 		IExtendedXmlSerializer Create();
-	    IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings);
-	    IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings);
+		IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings);
+		IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings);
 	}
 }

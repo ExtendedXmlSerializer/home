@@ -23,10 +23,12 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface IContainers : IParameterizedSource<TypeInfo, ISerializer>
+	public interface ISerializers : IParameterizedSource<TypeInfo, ISerializer>, ISpecification<PropertyInfo>,
+	                                ISpecification<FieldInfo>
 	{
 		ISerializer Content(TypeInfo parameter);
 	}

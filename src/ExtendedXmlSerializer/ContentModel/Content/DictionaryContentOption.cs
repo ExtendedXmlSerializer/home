@@ -21,24 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryContentOption : ContentOptionBase
 	{
+		readonly static AllSpecification<TypeInfo> Specification =
+			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
+
+		readonly IMembers _members;
 		readonly IDictionaryItems _items;
 		readonly IActivators _activators;
 
-		public DictionaryContentOption(IMemberOption variable)
-			: this(new DictionaryItems(variable), Activators.Default) {}
+		public DictionaryContentOption(IMembers members, IMemberOption variable)
+			: this(members, new DictionaryItems(variable), Activators.Default) {}
 
-		public DictionaryContentOption(IDictionaryItems items, IActivators activators)
-			: base(IsDictionaryTypeSpecification.Default)
+		public DictionaryContentOption(IMembers members, IDictionaryItems items, IActivators activators)
+			: base(Specification)
 		{
+			_members = members;
 			_items = items;
 			_activators = activators;
 		}
@@ -46,9 +53,13 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var item = _items.Get(parameter);
+			var members = _members.Get(parameter);
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var reader = new CollectionReader(activator, item, DictionaryAddDelegates.Default);
-			var result = new DecoratedSerializer(reader, new DictionaryWriter(item));
+			var dictionary = members.ToDictionary(x => x.DisplayName);
+			var memberedReader = new MemberedReader(activator, dictionary);
+			var reader = new CollectionReader(memberedReader, item, DictionaryAddDelegates.Default);
+			var writer = new MemberedCollectionWriter(new MemberWriter(members), new DictionaryEntryWriter(item));
+			var result = new Serializer(reader, writer);
 			return result;
 		}
 	}

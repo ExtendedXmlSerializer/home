@@ -33,10 +33,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(IContainers containers) : this(containers, new RuntimeSerializer(containers)) {}
+		public VariableTypeMemberOption(ISerializers serializers) : this(serializers, new RuntimeSerializer(serializers)) {}
 
-		public VariableTypeMemberOption(IContainers containers, ISerializer runtime)
-			: base(VariableTypeMemberSpecification.Default, containers)
+		public VariableTypeMemberOption(ISerializers serializers, ISerializer runtime)
+			: base(VariableTypeMemberSpecification.Default, serializers)
 		{
 			_runtime = runtime;
 		}
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		                                        Func<object, object> getter, ISerializer body)
 		{
 			var specification = new EqualitySpecification<Type>(classification.AsType()).Inverse();
-			var converter = new DecoratedSerializer(body, new VariableTypeWriter(specification, _runtime, body));
+			var converter = new Serializer(body, new VariableTypeWriter(specification, _runtime, body));
 			var member = base.CreateMember(displayName, classification, setter, getter, converter);
 			var result = new VariableTypeMember(specification, member);
 			return result;

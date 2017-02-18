@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.TypeModel
 
 		static MethodInfo Get(TypeInfo type, TypeInfo elementType)
 		{
-			foreach (var candidate in AllInterfaces.Instance.Yield(type))
+			foreach (var candidate in AllInterfaces.Default.Get(type))
 			{
 				var method = candidate.GetMethod(Add);
 				var parameters = method?.GetParameters();

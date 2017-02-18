@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System.Linq;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class DictionaryWriter : EnumerableWriter<IDictionary>
+	public class ImplementedTypeComparer : ITypeComparer
 	{
-		public DictionaryWriter(IWriter item) : base(item) {}
+		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
+		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
 
-		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
+		readonly IInterfaceIdentities _interfaces;
+		readonly ITypeComparer _identity;
+
+		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
+		{
+			_interfaces = interfaces;
+			_identity = identity;
+		}
+
+		public bool Equals(TypeInfo x, TypeInfo y)
+		{
+			var left = x.IsInterface;
+			if (left != y.IsInterface)
+			{
+				var @interface = left ? x : y;
+				var implementation = left ? y : x;
+				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
+				return contains;
+			}
+			var result = _identity.Equals(x, y);
+			return result;
+		}
+
+		public int GetHashCode(TypeInfo obj) => _identity.GetHashCode(obj);
 	}
 }

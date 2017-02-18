@@ -40,12 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var length = _members.Length;
 			for (var i = 0; i < length; i++)
 			{
-				var member = _members[i];
-				var value = member.Get(instance);
-				if (value != null)
-				{
-					member.Write(writer, value);
-				}
+				_members[i].Write(writer, instance);
 			}
 		}
 	}
