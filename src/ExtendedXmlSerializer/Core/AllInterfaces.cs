@@ -25,24 +25,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Core
 {
-	public sealed class AllInterfaces
+	public sealed class AllInterfaces : ReferenceCacheBase<TypeInfo, IReadOnlyList<TypeInfo>>, IAllInterfaces
 	{
 		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
-		public static AllInterfaces Instance { get; } = new AllInterfaces();
+		public static AllInterfaces Default { get; } = new AllInterfaces();
 
 		AllInterfaces()
 		{
 			_selector = Yield;
 		}
 
-		public IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
-			new[] {parameter}
-				.Concat(parameter.ImplementedInterfaces.Select(x => x.GetTypeInfo()).SelectMany(_selector))
-				.Where(x => x.IsInterface)
-				.Distinct();
+		IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
+			parameter.Yield()
+			         .Concat(parameter.ImplementedInterfaces.YieldMetadata().SelectMany(_selector))
+			         .Where(x => x.IsInterface)
+			         .Distinct();
+
+		protected override IReadOnlyList<TypeInfo> Create(TypeInfo parameter) => Yield(parameter).AsReadOnly();
 	}
 }

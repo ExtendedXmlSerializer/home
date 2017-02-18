@@ -21,22 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class DecoratedSerializer : SerializerBase
-	{
-		readonly IReader _reader;
-		readonly IWriter _writer;
-
-		public DecoratedSerializer(IReader reader, IWriter writer)
-		{
-			_reader = reader;
-			_writer = writer;
-		}
-
-		public override void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
-		public override object Get(IXmlReader reader) => _reader.Get(reader);
-	}
+	public interface IMemberPolicy : ISpecification<MemberInfo> {}
 }

@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var value = Create(Value, pair.ValueType);
 			var members = ImmutableArray.Create(key, value);
 			var reader = new MemberedReader(Activator<DictionaryEntry>.Default, members.ToDictionary(x => x.DisplayName));
-			var converter = new DecoratedSerializer(reader, new MemberWriter(members));
+			var converter = new Serializer(reader, new MemberWriter(members));
 			var result = new Container(_element, converter);
 			return result;
 		}

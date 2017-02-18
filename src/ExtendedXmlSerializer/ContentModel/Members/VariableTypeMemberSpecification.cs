@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class VariableTypeMemberSpecification : DecoratedSpecification<MemberInformation>
+	class VariableTypeMemberSpecification : DecoratedSpecification<MemberInformation>, IMemberSpecification
 	{
 		public static VariableTypeMemberSpecification Default { get; } = new VariableTypeMemberSpecification();
 		VariableTypeMemberSpecification() : this(FixedTypeSpecification.Default.Inverse()) {}

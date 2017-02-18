@@ -31,10 +31,10 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		readonly IActivators _activators;
 
-		public CollectionContentOption(IContainers containers) : this(containers, Activators.Default) {}
+		public CollectionContentOption(ISerializers serializers) : this(serializers, Activators.Default) {}
 
-		public CollectionContentOption(IContainers containers, IActivators activators)
-			: base(containers)
+		public CollectionContentOption(ISerializers serializers, IActivators activators)
+			: base(serializers)
 		{
 			_activators = activators;
 		}
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		{
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 			var reader = new CollectionReader(activator, item);
-			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));
+			var result = new Serializer(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}

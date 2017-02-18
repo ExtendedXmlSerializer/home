@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,28 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class Containers : IContainers
+	class Serializer : SerializerBase
 	{
-		readonly Func<TypeInfo, ISerializer> _selector, _content;
+		readonly IReader _reader;
+		readonly IWriter _writer;
 
-		public Containers() : this(new ContainerDefinitions().Get) {}
-
-		public Containers(Func<IContainers, IEnumerable<ContainerDefinition>> definitions)
+		public Serializer(IReader reader, IWriter writer)
 		{
-			var selector = new ContainerSelector(definitions(this).ToArray());
-			_selector = selector.Cache().Get;
-			_content = selector.Content;
+			_reader = reader;
+			_writer = writer;
 		}
 
-		public ISerializer Get(TypeInfo parameter) => _selector(parameter);
-		public ISerializer Content(TypeInfo parameter) => _content(parameter);
+		public override void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
+		public override object Get(IXmlReader reader) => _reader.Get(reader);
 	}
 }

@@ -32,28 +32,32 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class ReadOnlyCollectionMemberOption : MemberOptionBase
 	{
+		readonly static MemberTypeSpecification Specification =
+			new MemberTypeSpecification(IsCollectionTypeSpecification.Default);
+
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(IContainers containers) : this(containers, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(ISerializers serializers) : this(serializers, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(IContainers containers, IAddDelegates add)
-			: base(Specification.Instance, containers)
+		public ReadOnlyCollectionMemberOption(ISerializers serializers, IAddDelegates add) : base(Specification, serializers)
 		{
 			_add = add;
 		}
 
-		protected override IMember Create(string displayName, TypeInfo classification, Func<object, object> getter,
-		                                  ISerializer body, MemberInfo metadata)
+		protected override IMember Create(ISpecification<object> emit, string displayName, TypeInfo classification,
+		                                  Func<object, object> getter, ISerializer body, MemberInfo metadata)
 		{
 			var add = _add.Get(classification);
-			var result = add != null ? new ReadOnlyCollectionMember(displayName, getter, add, body) : null;
+			var result = add != null ? new ReadOnlyCollectionMember(emit, displayName, getter, add, body) : null;
 			return result;
 		}
 
 		class ReadOnlyCollectionMember : Member
 		{
-			public ReadOnlyCollectionMember(string displayName, Func<object, object> getter, Action<object, object> add,
-			                                ISerializer context) : base(displayName, getter, add, context) {}
+			public ReadOnlyCollectionMember(ISpecification<object> emit, string displayName, Func<object, object> getter,
+			                                Action<object, object> add,
+			                                ISerializer context)
+				: base(new AllSpecification<object>(ContainsItemsSpecification.Default, emit), displayName, getter, add, context) {}
 
 			public override void Assign(object instance, object value)
 			{
@@ -63,20 +67,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 					base.Assign(collection, element);
 				}
 			}
-		}
-
-		sealed class Specification : ISpecification<MemberInformation>
-		{
-			public static Specification Instance { get; } = new Specification();
-			Specification() : this(IsCollectionTypeSpecification.Default) {}
-			readonly ISpecification<TypeInfo> _specification;
-
-			Specification(ISpecification<TypeInfo> specification)
-			{
-				_specification = specification;
-			}
-
-			public bool IsSatisfiedBy(MemberInformation parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
 		}
 	}
 }

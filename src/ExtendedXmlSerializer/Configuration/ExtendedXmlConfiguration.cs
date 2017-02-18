@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.Configuration
 {
@@ -40,9 +41,9 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public bool AutoProperties { get; set; }
 		public bool Namespaces { get; set; }
-        public XmlReaderSettings ReaderSettings { get; set; }
-        public XmlWriterSettings WriterSettings { get; set; }
-        public IPropertyEncryption EncryptionAlgorithm { get; set; }
+		public XmlReaderSettings ReaderSettings { get; set; }
+		public XmlWriterSettings WriterSettings { get; set; }
+		public IPropertyEncryption EncryptionAlgorithm { get; set; }
 
 		IExtendedXmlTypeConfiguration IInternalExtendedXmlConfiguration.GetTypeConfiguration(Type type)
 		{
@@ -80,16 +81,25 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create() => _factory.Get(this);
 
-	    public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
-	    {
-	        ReaderSettings = readerSettings;
-	        return this;
-	    }
+		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
+		{
+			ReaderSettings = readerSettings;
+			return this;
+		}
 
-        public IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings)
-        {
-            WriterSettings = writerSettings;
-            return this;
-        }
-    }
+		public IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings)
+		{
+			WriterSettings = writerSettings;
+			return this;
+		}
+		
+		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
+		{
+			ReaderSettings = readerSettings;
+			WriterSettings = writerSettings;
+			return this;
+		}
+
+		public IMemberPolicy Get() => Defaults.MemberPolicy; // TODO. Create policy.
+	}
 }

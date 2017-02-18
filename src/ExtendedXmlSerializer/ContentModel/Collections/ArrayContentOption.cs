@@ -29,12 +29,12 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayContentOption : CollectionContentOptionBase
 	{
-		public ArrayContentOption(IContainers container) : base(IsArraySpecification.Default, container) {}
+		public ArrayContentOption(ISerializers serializer) : base(IsArraySpecification.Default, serializer) {}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var reader = new ArrayReader(item);
-			var result = new DecoratedSerializer(reader, new EnumerableWriter(item));
+			var result = new Serializer(reader, new EnumerableWriter(item));
 			return result;
 		}
 	}

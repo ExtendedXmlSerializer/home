@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -33,11 +31,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	class MemberedContentOption : ContentOptionBase
 	{
 		readonly IActivators _activators;
-		readonly IParameterizedSource<TypeInfo, ImmutableArray<IMember>> _members;
+		readonly IMembers _members;
 
-		public MemberedContentOption(ISelector selector) : this(Activators.Default, new Members(selector)) {}
+		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
 
-		public MemberedContentOption(IActivators activators, IParameterizedSource<TypeInfo, ImmutableArray<IMember>> members)
+		public MemberedContentOption(IActivators activators, IMembers members)
 			: base(IsActivatedTypeSpecification.Default)
 		{
 			_activators = activators;
@@ -49,7 +47,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var members = _members.Get(parameter);
 			var activate = _activators.Get(parameter.AsType());
 			var reader = new MemberedReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
-			var result = new DecoratedSerializer(reader, new MemberWriter(members));
+			var result = new Serializer(reader, new MemberWriter(members));
 			return result;
 		}
 	}

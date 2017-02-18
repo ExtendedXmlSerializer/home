@@ -32,10 +32,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 		readonly IXmlFactory _factory;
 		readonly IObjectNamespaces _namespaces;
 
-		public OptimizedXmlFactory() : this(new Containers()) {}
-
-		public OptimizedXmlFactory(IContainers containers)
-			: this(XmlFactory.Default, new ObjectNamespaces(new Members.Members(new Selector(containers)))) {}
+		public OptimizedXmlFactory(ISerializers serializers)
+			: this(XmlFactory.Default, new ObjectNamespaces(new Members.Members(serializers, new Selector(serializers)))) {}
 
 		public OptimizedXmlFactory(IXmlFactory factory, IObjectNamespaces namespaces)
 		{

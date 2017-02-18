@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface IContainerDefinitions : IParameterizedSource<IContainers, IEnumerable<ContainerDefinition>> {}
+	public interface IContainerDefinitions : IParameterizedSource<ISerializers, IEnumerable<ContainerDefinition>> {}
 }

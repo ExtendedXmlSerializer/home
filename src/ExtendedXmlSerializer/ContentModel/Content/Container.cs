@@ -23,8 +23,15 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Container : DecoratedSerializer
+	class Container : Serializer, IContainer
 	{
-		public Container(IWriter element, ISerializer body) : base(body, new Enclosure(element, body)) {}
+		readonly ISerializer _content;
+
+		public Container(IWriter element, ISerializer content) : base(content, new Enclosure(element, content))
+		{
+			_content = content;
+		}
+
+		public ISerializer Get() => _content;
 	}
 }

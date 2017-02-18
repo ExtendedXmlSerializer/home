@@ -25,9 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
@@ -35,52 +34,42 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly static Func<MemberInformation, int> Order = MemberOrder.Default.Get;
 
-		readonly static MemberSpecification<FieldInfo> Field =
-			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
-
-		readonly static MemberSpecification<PropertyInfo> Property =
-			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
-
 		readonly Func<MemberInformation, int> _order;
-		readonly Func<MemberInformation, IMember> _selector;
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
+		readonly ISerializers _serializers;
+		readonly Func<MemberInformation, IMember> _select;
 
-		public MemberSource(IParameterizedSource<MemberInformation, IMember> selector) : this(Order, selector.Get) {}
+		public MemberSource(ISerializers serializers, ISelector selector) : this(Order, serializers, selector.Get) {}
 
-		public MemberSource(Func<MemberInformation, int> order, Func<MemberInformation, IMember> selector)
-			: this(order, selector, Property, Field) {}
-
-		public MemberSource(Func<MemberInformation, int> order, Func<MemberInformation, IMember> selector,
-		                    ISpecification<PropertyInfo> property,
-		                    ISpecification<FieldInfo> field)
+		public MemberSource(Func<MemberInformation, int> order, ISerializers serializers,
+		                    Func<MemberInformation, IMember> select)
 		{
 			_order = order;
-			_selector = selector;
-			_property = property;
-			_field = field;
+			_serializers = serializers;
+			_select = select;
 		}
 
 		public IEnumerable<IMember> Get(TypeInfo parameter)
-			=> Yield(parameter).OrderBy(_order).Select(_selector).Where(x => x != null);
+			=> Yield(parameter).OrderBy(_order).Select(_select).Where(x => x != null);
 
 		IEnumerable<MemberInformation> Yield(TypeInfo parameter)
 		{
 			var properties = parameter.GetProperties();
-			for (var i = 0; i < properties.Length; i++)
+			var length = properties.Length;
+			for (var i = 0; i < length; i++)
 			{
 				var property = properties[i];
-				if (_property.IsSatisfiedBy(property))
+				if (_serializers.IsSatisfiedBy(property))
 				{
 					yield return Create(property, property.PropertyType, property.CanWrite);
 				}
 			}
 
 			var fields = parameter.GetFields();
-			for (var i = 0; i < fields.Length; i++)
+			var l = fields.Length;
+			for (var i = 0; i < l; i++)
 			{
 				var field = fields[i];
-				if (_field.IsSatisfiedBy(field))
+				if (_serializers.IsSatisfiedBy(field))
 				{
 					yield return Create(field, field.FieldType, !field.IsInitOnly);
 				}

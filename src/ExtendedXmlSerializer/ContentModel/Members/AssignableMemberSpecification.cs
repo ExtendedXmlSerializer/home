@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class AssignableMemberSpecification : DelegatedSpecification<MemberInformation>
+	class AssignableMemberSpecification : DelegatedSpecification<MemberInformation>, IMemberSpecification
 	{
 		public static AssignableMemberSpecification Default { get; } = new AssignableMemberSpecification();
 		AssignableMemberSpecification() : base(x => x.Assignable) {}

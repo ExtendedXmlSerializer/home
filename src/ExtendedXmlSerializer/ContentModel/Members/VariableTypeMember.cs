@@ -22,9 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -33,9 +31,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly IMember _member;
 		readonly ISpecification<Type> _specification;
-
-		public VariableTypeMember(TypeInfo classification, IMember member)
-			: this(new EqualitySpecification<Type>(classification.AsType()).Inverse(), member) {}
 
 		public VariableTypeMember(ISpecification<Type> specification, IMember member)
 		{

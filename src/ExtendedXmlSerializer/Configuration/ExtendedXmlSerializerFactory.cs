@@ -21,16 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
+
 namespace ExtendedXmlSerialization.Configuration
 {
 	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
 	{
+		readonly static TypeSelector Selector = TypeSelector.Default;
+		readonly static XmlFactory XmlFactory = XmlFactory.Default;
+
 		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() {}
+		ExtendedXmlSerializerFactory() : this(Defaults.Property, Defaults.Field) {}
+
+		readonly ISpecification<PropertyInfo> _property;
+		readonly ISpecification<FieldInfo> _field;
+
+		public ExtendedXmlSerializerFactory(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		{
+			_property = property;
+			_field = field;
+		}
 
 		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 		{
-			return new ExtendedXmlSerializer();
+			var policy = parameter.Get();
+			var serializers = new Serializers(_property.And(policy), _field.And(policy));
+			var result = new ExtendedXmlSerializer(Selector, XmlFactory, serializers);
+			return result;
 		}
 	}
 }
