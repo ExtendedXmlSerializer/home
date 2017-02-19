@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class AssemblyTypePartitions : ReferenceCacheBase<Assembly, Partition>, ITypePartitions
 	{
 		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
-		readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
+		readonly static IApplicationTypes ApplicationTypes = TypeModel.ApplicationTypes.All;
 
 		public static AssemblyTypePartitions Default { get; } = new AssemblyTypePartitions();
 		AssemblyTypePartitions() : this(HasAliasSpecification.Default) {}

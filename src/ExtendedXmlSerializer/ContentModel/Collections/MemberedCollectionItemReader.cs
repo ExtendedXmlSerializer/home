@@ -21,12 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	public interface IContentsReader
+	class MemberedCollectionItemReader : ICollectionItemReader
 	{
-		void Read(IXmlReader reader, object instance);
+		readonly ICollectionItemReader _item;
+		readonly IDictionary<string, IMember> _members;
+
+		public MemberedCollectionItemReader(ICollectionItemReader item, IDictionary<string, IMember> members)
+		{
+			_item = item;
+			_members = members;
+		}
+
+		public void Read(IXmlReader reader, object instance, IList list)
+		{
+			if (reader.Prefix == string.Empty)
+			{
+				var member = _members.Get(reader.Name);
+				if (member != null)
+				{
+					member.Assign(instance, ((IReader) member).Get(reader));
+					return;
+				}
+			}
+			_item.Read(reader, instance, list);
+		}
 	}
 }

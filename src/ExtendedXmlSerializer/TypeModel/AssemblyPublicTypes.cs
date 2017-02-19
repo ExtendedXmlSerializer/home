@@ -21,19 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class MemberedCollectionContentsReader : ContentsReader
+	class AssemblyPublicTypes : IAssemblyTypes
 	{
-		public MemberedCollectionContentsReader(ImmutableArray<IMember> members, ISerializer item)
-			: this(members, item, Lists.Default) {}
+		public static AssemblyPublicTypes Default { get; } = new AssemblyPublicTypes();
+		AssemblyPublicTypes() {}
 
-		public MemberedCollectionContentsReader(ImmutableArray<IMember> members, ISerializer item, ILists lists) : base(
-			new SelectingContentsReader(members.ToDictionary(x => x.DisplayName), new CollectionItemContentsReader(item, lists))) {}
+		public IEnumerable<TypeInfo> Get(Assembly parameter) => parameter.ExportedTypes.YieldMetadata();
 	}
 }

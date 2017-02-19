@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -31,38 +32,31 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryContentOption : ContentOptionBase
 	{
-		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
-
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
 		readonly IMembers _members;
-		readonly IDictionaryItems _items;
+		readonly IDictionaryEntries _entries;
 		readonly IActivators _activators;
 
 		public DictionaryContentOption(IMembers members, IMemberOption variable)
-			: this(members, new DictionaryItems(variable), Activators.Default) {}
+			: this(members, new DictionaryEntries(variable), Activators.Default) {}
 
-		public DictionaryContentOption(IMembers members, IDictionaryItems items, IActivators activators)
+		public DictionaryContentOption(IMembers members, IDictionaryEntries entries, IActivators activators)
 			: base(Specification)
 		{
 			_members = members;
-			_items = items;
+			_entries = entries;
 			_activators = activators;
 		}
 
 		public override ISerializer Get(TypeInfo parameter)
 		{
-			var item = _items.Get(parameter);
 			var members = _members.Get(parameter);
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-
-			var reader = new ActivatedContentsReader(
-				activator,
-				new MemberedCollectionContentsReader(members, item, Lists)
-			);
-
-			var writer = new MemberedCollectionWriter(new MemberWriter(members), new DictionaryEntryWriter(item));
+			var entry = _entries.Get(parameter);
+			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.DisplayName));
+			var writer = new MemberedCollectionWriter(new MemberWriter(members), new DictionaryEntryWriter(entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

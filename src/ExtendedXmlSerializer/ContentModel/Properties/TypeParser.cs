@@ -26,10 +26,11 @@ using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class TypeParser : ITypeParser
+	class TypeParser : ReferenceCacheBase<string, TypeInfo>, ITypeParser
 	{
 		readonly static Identities Identities = Identities.Default;
 		readonly static GenericTypes GenericTypes = GenericTypes.Default;
@@ -50,7 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_reader = reader;
 		}
 
-		public TypeInfo Get(string parameter)
+		protected override TypeInfo Create(string parameter)
 		{
 			var parsed = _converter.Parse(parameter);
 			var result = Get(parsed);

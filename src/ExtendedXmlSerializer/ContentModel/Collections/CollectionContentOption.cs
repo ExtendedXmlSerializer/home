@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -47,7 +48,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		{
 			var members = _members.Get(classification);
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
-			var reader = new ActivatedContentsReader(activator, new MemberedCollectionContentsReader(members, item));
+
+			var items = new CollectionItemReader(item);
+			var membered = new MemberedCollectionItemReader(items, members.ToDictionary(x => x.DisplayName));
+
+			var reader = new CollectionContentsReader(activator, membered);
 			var writer = new MemberedCollectionWriter(new MemberWriter(members), new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;

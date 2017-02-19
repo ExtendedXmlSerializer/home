@@ -21,19 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class DecoratedContentsReader : IContentsReader
-	{
-		readonly IContentsReader _reader;
-
-		public DecoratedContentsReader(IContentsReader reader)
-		{
-			_reader = reader;
-		}
-
-		public virtual void Read(IXmlReader reader, object instance) => _reader.Read(reader, instance);
-	}
+	public interface IAssemblyTypes : IParameterizedSource<Assembly, IEnumerable<TypeInfo>> {}
 }

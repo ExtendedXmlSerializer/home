@@ -23,29 +23,18 @@
 
 using System.Collections;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class ArrayReader : CollectionContentsReader
+	class CollectionItemReader : ICollectionItemReader
 	{
-		readonly ITypeSelector _selector;
-		readonly static TypeSelector TypeSelector = TypeSelector.Default;
+		readonly IReader _item;
 
-		public ArrayReader(ISerializer item) : this(TypeSelector, item) {}
-
-		public ArrayReader(ITypeSelector selector, ISerializer item) : base(Activator<ArrayList>.Default, item)
+		public CollectionItemReader(IReader item)
 		{
-			_selector = selector;
+			_item = item;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var classification = _selector.Get(parameter);
-			var elementType = classification.GetElementType();
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(elementType);
-			return result;
-		}
+		public void Read(IXmlReader reader, object instance, IList list) => list.Add(_item.Get(reader));
 	}
 }
