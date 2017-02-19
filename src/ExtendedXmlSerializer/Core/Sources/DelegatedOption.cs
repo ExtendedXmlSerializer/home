@@ -21,39 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
+using System;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	public class DelegatedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
 	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
+		readonly Func<TParameter, TResult> _source;
 
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
+		public DelegatedOption(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
+			: this(new DelegatedSpecification<TParameter>(specification), source) {}
 
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
+		public DelegatedOption(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
+			: base(specification)
 		{
-			_interfaces = interfaces;
-			_identity = identity;
+			_source = source;
 		}
 
-		public bool Equals(TypeInfo x, TypeInfo y)
-		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
-		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
+		public override TResult Get(TParameter parameter) => _source(parameter);
 	}
 }

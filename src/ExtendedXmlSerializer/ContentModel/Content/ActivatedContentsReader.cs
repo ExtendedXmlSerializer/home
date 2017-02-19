@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,36 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class CollectionReader : DecoratedReader
+	class ActivatedContentsReader : DecoratedReader
 	{
-		readonly ISerializer _item;
-		readonly IAddDelegates _add;
+		readonly IContentsReader _contents;
 
-		public CollectionReader(IReader activator, ISerializer item) : this(activator, item, AddDelegates.Default) {}
-
-		public CollectionReader(IReader activator, ISerializer item, IAddDelegates add) : base(activator)
+		public ActivatedContentsReader(IReader activator, IContentsReader contents) : base(activator)
 		{
-			_item = item;
-			_add = add;
+			_contents = contents;
 		}
 
 		public override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
-			var list = result as IList ?? new ListAdapter(result, _add.Get(result.GetType().GetTypeInfo()));
-			var items = parameter.Items();
-			while (items.MoveNext())
-			{
-				list.Add(_item.Get(parameter));
-			}
+			_contents.Read(parameter, result);
 			return result;
 		}
 	}

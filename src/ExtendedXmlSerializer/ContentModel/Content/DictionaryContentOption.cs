@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -32,6 +31,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryContentOption : ContentOptionBase
 	{
+		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
+
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
@@ -55,9 +56,12 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var item = _items.Get(parameter);
 			var members = _members.Get(parameter);
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
-			var dictionary = members.ToDictionary(x => x.DisplayName);
-			var memberedReader = new MemberedReader(activator, dictionary);
-			var reader = new CollectionReader(memberedReader, item, DictionaryAddDelegates.Default);
+
+			var reader = new ActivatedContentsReader(
+				activator,
+				new MemberedCollectionContentsReader(members, item, Lists)
+			);
+
 			var writer = new MemberedCollectionWriter(new MemberWriter(members), new DictionaryEntryWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;

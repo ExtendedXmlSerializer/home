@@ -50,6 +50,6 @@ namespace ExtendedXmlSerialization.TypeModel
 			return false;
 		}
 
-		public int GetHashCode(TypeInfo obj) => obj.GetHashCode();
+		public int GetHashCode(TypeInfo obj) => 0;
 	}
 }

@@ -21,15 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class CanPartitionSpecification : AnySpecification<TypeInfo>
+	class ContentsReader : DecoratedContentsReader
 	{
-		public static CanPartitionSpecification Default { get; } = new CanPartitionSpecification();
-		CanPartitionSpecification() : base(GenericActivatedTypeSpecification.Default, HasAliasSpecification.Default) {}
+		public ContentsReader(IContentsReader contents) : base(contents) {}
+
+		public override void Read(IXmlReader reader, object instance)
+		{
+			var target = reader.Depth + 1;
+			while (reader.Advance() && reader.Depth == target)
+			{
+				base.Read(reader, instance);
+			}
+		}
 	}
 }

@@ -41,5 +41,16 @@ namespace ExtendedXmlSerialization.Test.TypeModel
 
 			Assert.Equal(expected, actual, sut);
 		}
+
+		[Fact]
+		public void Inherited()
+		{
+			var expected = typeof(IDictionary<,>).GetTypeInfo();
+			var sut = ImplementedTypeComparer.Default;
+
+			Assert.Equal(expected, typeof(Dictionary).GetTypeInfo(), sut);
+		}
+
+		class Dictionary : Dictionary<string, string> {}
 	}
 }

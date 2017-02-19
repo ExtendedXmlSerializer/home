@@ -21,32 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class MemberedReader : DecoratedReader
+	class TypeLoader : ITypePartitions
 	{
-		readonly IDictionary<string, IMember> _members;
+		public static TypeLoader Default { get; } = new TypeLoader();
+		TypeLoader() : this(TypeNameAlteration.Default) {}
 
-		public MemberedReader(IReader reader, IDictionary<string, IMember> members) : base(reader)
+		readonly IAlteration<string> _names;
+
+		public TypeLoader(IAlteration<string> names)
 		{
-			_members = members;
+			_names = names;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-			var members = parameter.Members();
-			while (members.MoveNext())
-			{
-				var member = _members.Get(members.Current);
-				member?.Assign(result, ((IReader) member).Get(parameter));
-			}
-
-			return result;
-		}
+		public TypeInfo Get(TypePartition parameter)
+			=> parameter.Assembly.GetType($"{parameter.Namespace}.{_names.Get(parameter.Name)}", false, false)?.GetTypeInfo();
 	}
 }

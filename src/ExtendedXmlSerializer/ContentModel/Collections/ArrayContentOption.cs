@@ -32,10 +32,6 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		public ArrayContentOption(ISerializers serializer) : base(IsArraySpecification.Default, serializer) {}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification)
-		{
-			var reader = new ArrayReader(item);
-			var result = new Serializer(reader, new EnumerableWriter(item));
-			return result;
-		}
+			=> new Serializer(new ArrayReader(item), new EnumerableWriter(item));
 	}
 }

@@ -49,5 +49,19 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				Assert.True(sut.IsSatisfiedBy(property));
 			}
 		}
+
+		[Fact]
+		public void Inherited()
+		{
+			const string name = nameof(IDictionary<object, object>.Keys);
+			var ignore = typeof(IDictionary<,>).GetRuntimeProperty(name);
+			var sut = new BlacklistMemberPolicy(ignore);
+			var instance = new Dictionary();
+			var type = instance.GetType();
+			var candidate = type.GetRuntimeProperty(name);
+			var allowed = sut.IsSatisfiedBy(candidate);
+			Assert.False(allowed);
+		}
+		class Dictionary : Dictionary<string, string> {}
 	}
 }

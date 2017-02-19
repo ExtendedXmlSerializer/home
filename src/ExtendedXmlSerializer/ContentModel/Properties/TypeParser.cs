@@ -31,16 +31,16 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	class TypeParser : ITypeParser
 	{
-		readonly static Types Types = Types.Default;
-		readonly static NameConverter Converter = NameConverter.Default;
 		readonly static Identities Identities = Identities.Default;
+		readonly static GenericTypes GenericTypes = GenericTypes.Default;
+		readonly static NameConverter Converter = NameConverter.Default;
 
 		readonly IIdentities _identities;
 		readonly ITypes _types;
 		readonly INameConverter _converter;
 		readonly IXmlReader _reader;
 
-		public TypeParser(IXmlReader reader) : this(Identities, Types, Converter, reader) {}
+		public TypeParser(IXmlReader reader) : this(Identities, GenericTypes, Converter, reader) {}
 
 		public TypeParser(IIdentities identities, ITypes types, INameConverter converter, IXmlReader reader)
 		{

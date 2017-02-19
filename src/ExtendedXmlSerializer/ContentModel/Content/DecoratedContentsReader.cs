@@ -21,20 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class WellKnownContent : Items<IContentOption>
+	class DecoratedContentsReader : IContentsReader
 	{
-		public WellKnownContent(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		readonly IContentsReader _reader;
 
-		public WellKnownContent(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                        params IContentOption[] others) :
-			base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public DecoratedContentsReader(IContentsReader reader)
+		{
+			_reader = reader;
+		}
+
+		public virtual void Read(IXmlReader reader, object instance) => _reader.Read(reader, instance);
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	class MemberedCollectionContentsReader : ContentsReader
 	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
+		public MemberedCollectionContentsReader(ImmutableArray<IMember> members, ISerializer item)
+			: this(members, item, Lists.Default) {}
 
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
-
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
-		{
-			_interfaces = interfaces;
-			_identity = identity;
-		}
-
-		public bool Equals(TypeInfo x, TypeInfo y)
-		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
-		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
+		public MemberedCollectionContentsReader(ImmutableArray<IMember> members, ISerializer item, ILists lists) : base(
+			new SelectingContentsReader(members.ToDictionary(x => x.DisplayName), new CollectionItemContentsReader(item, lists))) {}
 	}
 }

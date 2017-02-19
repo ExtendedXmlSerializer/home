@@ -59,7 +59,10 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var key = Create(Key, pair.KeyType);
 			var value = Create(Value, pair.ValueType);
 			var members = ImmutableArray.Create(key, value);
-			var reader = new MemberedReader(Activator<DictionaryEntry>.Default, members.ToDictionary(x => x.DisplayName));
+			var reader = new ActivatedContentsReader(Activator<DictionaryEntry>.Default,
+			                                         new ContentsReader(
+				                                         new MemberContentsReader(members.ToDictionary(x => x.DisplayName)))
+			);
 			var converter = new Serializer(reader, new MemberWriter(members));
 			var result = new Container(_element, converter);
 			return result;

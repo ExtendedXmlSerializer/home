@@ -23,27 +23,33 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class CollectionContentOption : CollectionContentOptionBase
 	{
+		readonly IMembers _members;
 		readonly IActivators _activators;
 
-		public CollectionContentOption(ISerializers serializers) : this(serializers, Activators.Default) {}
+		public CollectionContentOption(IMembers members, ISerializers serializers)
+			: this(members, serializers, Activators.Default) {}
 
-		public CollectionContentOption(ISerializers serializers, IActivators activators)
+		public CollectionContentOption(IMembers members, ISerializers serializers, IActivators activators)
 			: base(serializers)
 		{
+			_members = members;
 			_activators = activators;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
+			var members = _members.Get(classification);
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
-			var reader = new CollectionReader(activator, item);
-			var result = new Serializer(reader, new EnumerableWriter(item));
+			var reader = new ActivatedContentsReader(activator, new MemberedCollectionContentsReader(members, item));
+			var writer = new MemberedCollectionWriter(new MemberWriter(members), new EnumerableWriter(item));
+			var result = new Serializer(reader, writer);
 			return result;
 		}
 	}

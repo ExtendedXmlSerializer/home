@@ -21,26 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using Xunit;
-using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
+using ExtendedXmlSerialization.ContentModel.Content;
 
-namespace ExtendedXmlSerialization.Test.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	public class AssemblyPartitionedTypesTests
+	class CollectionContentsReader : ContentsReader
 	{
-		[Fact]
-		public void TestName()
-		{
-			var expected = typeof(Subject).GetTypeInfo();
-			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var type = AssemblyPartitionedTypes.Default.Get(new Identity(TypeFormatter.Default.Get(expected), @namespace));
-			Assert.Equal(expected, type);
-		}
+		public CollectionContentsReader(ISerializer item) : this(new CollectionItemContentsReader(item)) {}
 
-		sealed class Subject {}
+		public CollectionContentsReader(IContentsReader contents) : base(contents) {}
 	}
 }
