@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	class GenericTypes : Types
 	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
+		readonly static GenericActivatedTypeSpecification Specification = GenericActivatedTypeSpecification.Default;
 
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
+		public new static GenericTypes Default { get; } = new GenericTypes();
+		GenericTypes() : this(Types.Default) {}
 
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
+		readonly ITypes _types;
+
+		public GenericTypes(ITypes types) : base(Specification, new AssemblyTypePartitions(Specification), TypeLoader.Default)
 		{
-			_interfaces = interfaces;
-			_identity = identity;
+			_types = types;
 		}
 
-		public bool Equals(TypeInfo x, TypeInfo y)
-		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
-		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
+		protected override TypeInfo Create(IIdentity parameter) => base.Create(parameter) ?? _types.Get(parameter);
 	}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface ITypePartitions : IParameterizedSource<Assembly, Partition> {}
+	public interface ITypePartitions : IParameterizedSource<TypePartition, TypeInfo> {}
 }

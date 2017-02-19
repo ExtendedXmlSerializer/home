@@ -26,10 +26,16 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
+	class IdentityFormatter : IdentityFormatter<IIdentity>
+	{
+		public new static IdentityFormatter Default { get; } = new IdentityFormatter();
+		IdentityFormatter() {}
+	}
+
 	class IdentityFormatter<T> : IFormatter<T> where T : IIdentity
 	{
 		public static IdentityFormatter<T> Default { get; } = new IdentityFormatter<T>();
-		IdentityFormatter() {}
+		protected IdentityFormatter() {}
 
 		public string Get(T parameter) => XmlQualifiedName.ToString(parameter.Name, parameter.Identifier);
 	}

@@ -21,37 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class WellKnownTypeLocator : ITypes
+	class SelectingContentsReader : DecoratedContentsReader
 	{
-		public static WellKnownTypeLocator Default { get; } = new WellKnownTypeLocator();
+		readonly IDictionary<string, IMember> _members;
 
-		WellKnownTypeLocator()
-			: this(WellKnownNamespaces.Default.ToDictionary(
-				       x => x.Value.Identifier,
-				       x => new Func<string, TypeInfo>(
-					       x.Key.ExportedTypes
-					        .YieldMetadata(CanPartitionSpecification.Default.IsSatisfiedBy)
-					        .ToLookup(TypeFormatter.Default.Get)
-					        .ToDictionary(y => y.Key, y => y.First())
-					        .Get)
-			       ).Get) {}
-
-		readonly Partition _types;
-
-		public WellKnownTypeLocator(Partition types)
+		public SelectingContentsReader(IDictionary<string, IMember> members, IContentsReader reader) : base(reader)
 		{
-			_types = types;
+			_members = members;
 		}
 
-		public TypeInfo Get(IIdentity parameter) => _types.Invoke(parameter.Identifier)?.Invoke(parameter.Name);
+		public override void Read(IXmlReader reader, object instance)
+		{
+			if (reader.Prefix == string.Empty)
+			{
+				var member = _members.Get(reader.Name);
+				if (member != null)
+				{
+					member.Assign(instance, ((IReader) member).Get(reader));
+					return;
+				}
+			}
+			base.Read(reader, instance);
+		}
 	}
 }

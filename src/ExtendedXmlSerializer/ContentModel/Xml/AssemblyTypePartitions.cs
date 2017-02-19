@@ -22,41 +22,49 @@
 // SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeOption : OptionBase<IXmlReader, TypeInfo>, ITypeOption
+	class AssemblyTypePartitions : ReferenceCacheBase<Assembly, Partition>, ITypePartitions
 	{
-		readonly static ContentModel.Identities Identities = ContentModel.Identities.Default;
+		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
+		readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
 
-		public static TypeOption Default { get; } = new TypeOption();
-		TypeOption() : this(AlwaysSpecification<IXmlReader>.Default, Types.Default) {}
+		public static AssemblyTypePartitions Default { get; } = new AssemblyTypePartitions();
+		AssemblyTypePartitions() : this(HasAliasSpecification.Default) {}
 
-		readonly ITypes _types;
-		readonly ContentModel.IIdentities _identities;
+		readonly IApplicationTypes _types;
+		readonly Func<TypeInfo, bool> _specification;
+		readonly Func<TypeInfo, string> _key;
 
-		public TypeOption(ISpecification<IXmlReader> specification, ITypes types) : this(specification, types, Identities) {}
+		public AssemblyTypePartitions(ISpecification<TypeInfo> specification)
+			: this(ApplicationTypes, specification.IsSatisfiedBy, x => x.Namespace) {}
 
-		public TypeOption(ISpecification<IXmlReader> specification, ITypes types, ContentModel.IIdentities identities)
-			: base(specification)
+		public AssemblyTypePartitions(IApplicationTypes types, Func<TypeInfo, bool> specification, Func<TypeInfo, string> key)
 		{
 			_types = types;
-			_identities = identities;
+			_specification = specification;
+			_key = key;
 		}
 
-		public override TypeInfo Get(IXmlReader parameter)
+		protected override Partition Create(Assembly parameter) =>
+			_types.Get(parameter)
+			      .Where(_specification)
+			      .ToLookup(_key)
+			      .ToDictionary(x => x.Key, x => new Func<string, TypeInfo>(x.ToDictionary(Formatter).Get))
+			      .Get;
+
+		public TypeInfo Get(TypePartition parameter)
 		{
-			var identity = _identities.Get(parameter.Name, parameter.Identifier);
-			var result = _types.Get(identity);
-			if (result == null)
-			{
-				var name = IdentityFormatter.Default.Get(identity);
-				throw new InvalidOperationException(
-					$"An attempt was made to load a type with the fully qualified name of '{name}', but no type could be located with that name.");
-			}
+			var partition = base.Get(parameter.Assembly);
+			var ns = partition?.Invoke(parameter.Namespace);
+			var result = ns?.Invoke(parameter.Name);
 			return result;
 		}
 	}

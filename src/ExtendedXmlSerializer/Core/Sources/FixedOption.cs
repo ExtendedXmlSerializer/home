@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
@@ -28,6 +29,11 @@ namespace ExtendedXmlSerialization.Core.Sources
 	public class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
 	{
 		readonly TResult _instance;
+
+		public FixedOption(TResult instance) : this(x => true, instance) {}
+
+		public FixedOption(Func<TParameter, bool> specification, TResult instance)
+			: this(new DelegatedSpecification<TParameter>(specification), instance) {}
 
 		public FixedOption(ISpecification<TParameter> specification, TResult instance) : base(specification)
 		{

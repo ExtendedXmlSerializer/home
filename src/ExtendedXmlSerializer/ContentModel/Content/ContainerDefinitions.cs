@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
 
 		public ContainerDefinitions(IAlteration<IConverter> alteration)
-			: this(new CompositeContentOption(new WellKnownContent(alteration).ToArray())) {}
+			: this(new CompositeContentOption(new ContentOptions(alteration).ToArray())) {}
 
 		public ContainerDefinitions(IContentOption known)
 		{
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			yield return new ContainerDefinition(ElementOption.Default, _known);
 			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
 			yield return new ContainerDefinition(new DictionaryContentOption(members, variable));
-			yield return new ContainerDefinition(new CollectionContentOption(parameter));
+			yield return new ContainerDefinition(new CollectionContentOption(members, parameter));
 
 			yield return new ContainerDefinition(new MemberedContentOption(members));
 			yield return new ContainerDefinition(new RuntimeContentOption(runtime));

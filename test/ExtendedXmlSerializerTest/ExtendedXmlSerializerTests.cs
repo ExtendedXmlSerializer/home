@@ -35,6 +35,7 @@ namespace ExtendedXmlSerialization.Test
 {
 	public class ExtendedXmlSerializerTests
 	{
+		const string HelloWorld = "Hello World!";
 		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
 
 		[Fact]
@@ -53,21 +54,21 @@ namespace ExtendedXmlSerialization.Test
 		[Fact]
 		public void SimpleInstance()
 		{
-			var instance = new SimpleNestedClass {PropertyName = "Hello World!"};
+			var instance = new SimpleNestedClass {PropertyName = HelloWorld};
 			var data = _serializer.Serialize(instance);
 			Assert.Equal(
 				@"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-SimpleNestedClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></ExtendedXmlSerializerTests-SimpleNestedClass>",
 				data);
 			var read = _serializer.Deserialize<SimpleNestedClass>(data);
 			Assert.NotNull(read);
-			Assert.Equal("Hello World!", read.PropertyName);
+			Assert.Equal(HelloWorld, read.PropertyName);
 		}
 
 		[Fact]
 		public void ComplexInstance()
 		{
 			const string expected =
-				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassOtherClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Other><Test><Id>2</Id><Name>Other Name</Name></Test><Double>7.3453145324</Double></Other><Primitive1><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive1><Primitive2><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive2><ListProperty><TestClassItem><Id>0</Id><Name>Name 000</Name></TestClassItem><TestClassItem><Id>1</Id><Name>Name 001</Name></TestClassItem><TestClassItem><Id>2</Id><Name>Name 002</Name></TestClassItem><TestClassItem><Id>3</Id><Name>Name 003</Name></TestClassItem><TestClassItem><Id>4</Id><Name>Name 004</Name></TestClassItem><TestClassItem><Id>5</Id><Name>Name 005</Name></TestClassItem><TestClassItem><Id>6</Id><Name>Name 006</Name></TestClassItem><TestClassItem><Id>7</Id><Name>Name 007</Name></TestClassItem><TestClassItem><Id>8</Id><Name>Name 008</Name></TestClassItem><TestClassItem><Id>9</Id><Name>Name 009</Name></TestClassItem><TestClassItem><Id>10</Id><Name>Name 0010</Name></TestClassItem><TestClassItem><Id>11</Id><Name>Name 0011</Name></TestClassItem><TestClassItem><Id>12</Id><Name>Name 0012</Name></TestClassItem><TestClassItem><Id>13</Id><Name>Name 0013</Name></TestClassItem><TestClassItem><Id>14</Id><Name>Name 0014</Name></TestClassItem><TestClassItem><Id>15</Id><Name>Name 0015</Name></TestClassItem><TestClassItem><Id>16</Id><Name>Name 0016</Name></TestClassItem><TestClassItem><Id>17</Id><Name>Name 0017</Name></TestClassItem><TestClassItem><Id>18</Id><Name>Name 0018</Name></TestClassItem><TestClassItem><Id>19</Id><Name>Name 0019</Name></TestClassItem></ListProperty></TestClassOtherClass>";
+				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassOtherClass xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Other><Test><Id>2</Id><Name>Other Name</Name></Test><Double>7.3453145324</Double></Other><Primitive1><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive1><Primitive2><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></Primitive2><ListProperty><Capacity>32</Capacity><TestClassItem><Id>0</Id><Name>Name 000</Name></TestClassItem><TestClassItem><Id>1</Id><Name>Name 001</Name></TestClassItem><TestClassItem><Id>2</Id><Name>Name 002</Name></TestClassItem><TestClassItem><Id>3</Id><Name>Name 003</Name></TestClassItem><TestClassItem><Id>4</Id><Name>Name 004</Name></TestClassItem><TestClassItem><Id>5</Id><Name>Name 005</Name></TestClassItem><TestClassItem><Id>6</Id><Name>Name 006</Name></TestClassItem><TestClassItem><Id>7</Id><Name>Name 007</Name></TestClassItem><TestClassItem><Id>8</Id><Name>Name 008</Name></TestClassItem><TestClassItem><Id>9</Id><Name>Name 009</Name></TestClassItem><TestClassItem><Id>10</Id><Name>Name 0010</Name></TestClassItem><TestClassItem><Id>11</Id><Name>Name 0011</Name></TestClassItem><TestClassItem><Id>12</Id><Name>Name 0012</Name></TestClassItem><TestClassItem><Id>13</Id><Name>Name 0013</Name></TestClassItem><TestClassItem><Id>14</Id><Name>Name 0014</Name></TestClassItem><TestClassItem><Id>15</Id><Name>Name 0015</Name></TestClassItem><TestClassItem><Id>16</Id><Name>Name 0016</Name></TestClassItem><TestClassItem><Id>17</Id><Name>Name 0017</Name></TestClassItem><TestClassItem><Id>18</Id><Name>Name 0018</Name></TestClassItem><TestClassItem><Id>19</Id><Name>Name 0019</Name></TestClassItem></ListProperty></TestClassOtherClass>";
 			var instance = TestClassOtherClass.Create();
 			var data = _serializer.Serialize(instance);
 
@@ -96,12 +97,64 @@ namespace ExtendedXmlSerialization.Test
 		}
 
 		[Fact]
+		public void ListProperties()
+		{
+			var expected = new ListWithProperties {"Hello", "World", "Hope", "This", "Works!"};
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<ListWithProperties>(data);
+			Assert.Equal(expected, actual);
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
+		}
+
+		[Fact]
+		public void GenericListProperties()
+		{
+			var expected = new ListWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<ListWithProperties<string>>(data);
+			Assert.Equal(expected, actual);
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
+		}
+
+		[Fact]
 		public void BasicHashSet()
 		{
 			var expected = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"};
 			var data = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<HashSet<string>>(data);
 			Assert.True(actual.SetEquals(expected));
+		}
+
+		[Fact]
+		public void HashSetProperties()
+		{
+			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<HashSetWithProperties>(data);
+			Assert.True(actual.SetEquals(expected));
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
+		}
+
+		[Fact]
+		public void GenericHashSetWithProperties()
+		{
+			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<HashSetWithProperties<string>>(data);
+			Assert.True(actual.SetEquals(expected));
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
 		}
 
 		[Fact]
@@ -120,6 +173,96 @@ namespace ExtendedXmlSerialization.Test
 			{
 				Assert.Equal(expected[entry.Key], entry.Value);
 			}
+		}
+
+		[Fact]
+		public void DictionaryProperties()
+		{
+			var expected = new DictionaryWithProperties
+			               {
+				               {"First", 1},
+				               {"Second", 2},
+				               {"Other", 3}
+			               };
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<DictionaryWithProperties>(data);
+			Assert.NotNull(actual);
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
+			Assert.Equal(expected.Count, actual.Count);
+			foreach (var entry in actual)
+			{
+				Assert.Equal(expected[entry.Key], entry.Value);
+			}
+		}
+
+		[Fact]
+		public void GenericDictionaryProperties()
+		{
+			var expected = new GenericDictionaryWithProperties<int, string>
+			               {
+				               {1, "First"},
+				               {2, "Second"},
+				               {3, "Other"}
+			               };
+			expected.Message = HelloWorld;
+			expected.Number = 6776;
+
+			var data = _serializer.Serialize(expected);
+			var actual = _serializer.Deserialize<GenericDictionaryWithProperties<int, string>>(data);
+			Assert.NotNull(actual);
+			Assert.Equal(HelloWorld, actual.Message);
+			Assert.Equal(6776, actual.Number);
+			Assert.Equal(expected.Count, actual.Count);
+			foreach (var entry in actual)
+			{
+				Assert.Equal(expected[entry.Key], entry.Value);
+			}
+		}
+
+		public class ListWithProperties : List<string>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
+		}
+
+		public class ListWithProperties<T> : List<T>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
+		}
+
+		public class HashSetWithProperties<T> : HashSet<T>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
+		}
+
+		public class HashSetWithProperties : HashSet<string>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
+		}
+
+		public class GenericDictionaryWithProperties<TKey, TValue> : Dictionary<TKey, TValue>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
+		}
+
+		public class DictionaryWithProperties : Dictionary<string, int>
+		{
+			public string Message { get; set; }
+
+			public int Number { get; set; }
 		}
 
 		[Fact]

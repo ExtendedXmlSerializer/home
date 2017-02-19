@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using Xunit;
+using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	public class PartitionedTypesTests
 	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
-
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
-
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
+		[Fact]
+		public void TestName()
 		{
-			_interfaces = interfaces;
-			_identity = identity;
+			var expected = typeof(Subject).GetTypeInfo();
+			var @namespace = NamespaceFormatter.Default.Get(expected);
+			var type = PartitionedTypes.Default.Get(new Identity(TypeFormatter.Default.Get(expected), @namespace));
+			Assert.Equal(expected, type);
 		}
 
-		public bool Equals(TypeInfo x, TypeInfo y)
-		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
-		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
+		sealed class Subject {}
 	}
 }

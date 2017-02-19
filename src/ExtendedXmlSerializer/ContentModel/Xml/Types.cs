@@ -26,24 +26,27 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
-		public static Types Default { get; } = new Types();
+		readonly static Dictionary<IIdentity, TypeInfo> Aliased = WellKnownAliases.Default
+		                                                                          .Select(x => x.Key)
+		                                                                          .YieldMetadata()
+		                                                                          .ToDictionary(Identities.Default.Get);
 
-		Types()
-			: this(
-				WellKnownAliases.Default
-								.Select(x => x.Key)
-				                .YieldMetadata()
-				                .ToDictionary(Identities.Default.Get),
-				WellKnownTypeLocator.Default,
-				AssemblyPartitionedTypes.Default) {}
+		public static Types Default { get; } = new Types();
+		Types() : this(HasAliasSpecification.Default, TypeLoader.Default, AssemblyTypePartitions.Default) {}
 
 		readonly IDictionary<IIdentity, TypeInfo> _aliased;
+
 		readonly ITypes _known, _partitions;
+
+		public Types(ISpecification<TypeInfo> specification, params ITypePartitions[] partitions)
+			: this(Aliased, new IdentityPartitionedTypes(specification), new PartitionedTypes(partitions)) {}
 
 		public Types(IDictionary<IIdentity, TypeInfo> aliased, ITypes known, ITypes partitions)
 		{

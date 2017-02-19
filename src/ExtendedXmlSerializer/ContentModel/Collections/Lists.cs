@@ -21,47 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
-using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class AssemblyPartitionedTypes : ITypes
+	class Lists : ReferenceCacheBase<object, IList>, ILists
 	{
-		public static AssemblyPartitionedTypes Default { get; } = new AssemblyPartitionedTypes();
+		public static Lists Default { get; } = new Lists();
+		Lists() : this(AddDelegates.Default) {}
 
-		AssemblyPartitionedTypes()
-			: this(AssemblyPathParser.Default, AssemblyLoader.Default, TypePartitions.Default, TypeNameAlteration.Default) {}
+		readonly IAddDelegates _add;
 
-		readonly IParseContext<AssemblyPath> _parser;
-		readonly IAssemblyLoader _loader;
-		readonly ITypePartitions _partitions;
-		readonly IAlteration<string> _names;
-
-		public AssemblyPartitionedTypes(IParseContext<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions,
-		                                IAlteration<string> names)
+		public Lists(IAddDelegates add)
 		{
-			_parser = parser;
-			_loader = loader;
-			_partitions = partitions;
-			_names = names;
+			_add = add;
 		}
 
-		public TypeInfo Get(IIdentity parameter)
-		{
-			var parse = _parser.Get().TryParse(parameter.Identifier);
-			if (parse.WasSuccessful)
-			{
-				var assembly = _loader.Get(parse.Value.Path);
-
-				var result =
-					assembly.GetType($"{parse.Value.Namespace}.{_names.Get(parameter.Name)}", false, false)?.GetTypeInfo() ??
-					_partitions.Get(assembly)?.Invoke(parse.Value.Namespace)?.Invoke(parameter.Name);
-				return result;
-			}
-			return null;
-		}
+		protected override IList Create(object parameter)
+			=> new ListAdapter(parameter, _add.Get(parameter.GetType().GetTypeInfo()));
 	}
 }

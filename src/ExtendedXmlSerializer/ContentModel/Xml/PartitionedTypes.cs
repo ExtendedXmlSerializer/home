@@ -21,19 +21,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
+using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IIdentity, IPrefixAware, IDisposable
+	class PartitionedTypes : ITypes
 	{
-		bool Contains(IIdentity identity);
+		public static PartitionedTypes Default { get; } = new PartitionedTypes();
+		PartitionedTypes() : this(TypeLoader.Default, AssemblyTypePartitions.Default) {}
 
-		string Value();
+		public PartitionedTypes(params ITypePartitions[] partitions)
+			: this(AssemblyPathParser.Default, AssemblyLoader.Default, new TypePartitions(partitions)) {}
 
-		string Prefix { get; }
-		int Depth { get; }
+		readonly IParseContext<AssemblyPath> _parser;
+		readonly IAssemblyLoader _loader;
+		readonly ITypePartitions _partitions;
 
-		bool Advance();
+		public PartitionedTypes(IParseContext<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions)
+		{
+			_parser = parser;
+			_loader = loader;
+			_partitions = partitions;
+		}
+
+		public TypeInfo Get(IIdentity parameter)
+		{
+			var parse = _parser.Get().TryParse(parameter.Identifier);
+			if (parse.WasSuccessful)
+			{
+				var path = parse.Value;
+				var partition = new TypePartition(_loader.Get(path.Path), path.Namespace, parameter.Name);
+				var result = _partitions.Get(partition);
+				return result;
+			}
+			return null;
+		}
 	}
 }

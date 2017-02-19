@@ -22,18 +22,12 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlReader : IXmlReader
 	{
-		readonly static TypeSelector TypeSelector = TypeSelector.Default;
-		readonly static ContentModel.Identities Identities = ContentModel.Identities.Default;
-
 		readonly System.Xml.XmlReader _reader;
 
 		public XmlReader(System.Xml.XmlReader reader)
@@ -46,11 +40,11 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				default:
 					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{reader}.'");
 			}
-			
 		}
 
-		public IIdentity Identity => Identities.Get(_reader.LocalName, _reader.NamespaceURI);
-		public TypeInfo Classification => TypeSelector.Get(this);
+		public string Name => _reader.LocalName;
+		public string Identifier => _reader.NamespaceURI;
+		public string Prefix => _reader.Prefix;
 
 		public string Value()
 		{
@@ -69,41 +63,18 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			}
 		}
 
-		public IEnumerator<string> Members() => Items(); // Same for now...
-		public IEnumerator<string> Items() => new Enumerator(_reader, _reader.Depth + 1);
+		public int Depth => _reader.Depth;
+		public bool Advance() => _reader.Read() && _reader.IsStartElement();
 
 		public bool Contains(IIdentity identity)
 			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);
 
 		public string Get(string parameter) => _reader.LookupNamespace(parameter);
 
+
 		public override string ToString()
 			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
 
 		public void Dispose() => _reader.Dispose();
-
-		sealed class Enumerator : IEnumerator<string>
-		{
-			readonly System.Xml.XmlReader _reader;
-			readonly int _depth;
-
-			public Enumerator(System.Xml.XmlReader reader, int depth)
-			{
-				_reader = reader;
-				_depth = depth;
-			}
-
-			public string Current => _reader.LocalName;
-			object IEnumerator.Current => _reader;
-
-			public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
-
-			public void Reset()
-			{
-				throw new NotSupportedException();
-			}
-
-			public void Dispose() => Reset();
-		}
 	}
 }

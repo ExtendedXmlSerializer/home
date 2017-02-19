@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
+using System.Collections;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	class CollectionItemContentsReader : IContentsReader
 	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
+		readonly ISerializer _item;
+		readonly ILists _lists;
 
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
+		public CollectionItemContentsReader(ISerializer item) : this(item, Lists.Default) {}
 
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
+		public CollectionItemContentsReader(ISerializer item, ILists lists)
 		{
-			_interfaces = interfaces;
-			_identity = identity;
+			_item = item;
+			_lists = lists;
 		}
 
-		public bool Equals(TypeInfo x, TypeInfo y)
+		public void Read(IXmlReader reader, object instance)
 		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
+			var list = instance as IList ?? _lists.Get(instance);
+			var item = _item.Get(reader);
+			list.Add(item);
 		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
 	}
 }

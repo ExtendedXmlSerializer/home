@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	abstract class TypePropertyOptionBase : Option<IXmlReader, TypeInfo>, ITypeOption
+	abstract class TypePropertyOptionBase : DelegatedOption<IXmlReader, TypeInfo>, ITypeOption
 	{
 		protected TypePropertyOptionBase(ITypeProperty property) : base(new ContainsSpecification(property), property.Get) {}
 	}

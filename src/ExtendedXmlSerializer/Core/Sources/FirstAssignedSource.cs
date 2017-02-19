@@ -21,21 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class Option<TParameter, TResult> : OptionBase<TParameter, TResult>
+	public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
-		readonly Func<TParameter, TResult> _source;
+		readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;
 
-		public Option(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
-			: base(specification)
+		public FirstAssignedSource(params IParameterizedSource<TParameter, TResult>[] sources)
 		{
-			_source = source;
+			_sources = sources.ToImmutableArray();
 		}
 
-		public override TResult Get(TParameter parameter) => _source(parameter);
+		public TResult Get(TParameter parameter)
+		{
+			var length = _sources.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var result = _sources[i].Get(parameter);
+				if (!Equals(result, default(TResult)))
+				{
+					return result;
+				}
+			}
+			return default(TResult);
+		}
 	}
 }

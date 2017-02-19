@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,39 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class ImplementedTypeComparer : ITypeComparer
-	{
-		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
-		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}
-
-		readonly IInterfaceIdentities _interfaces;
-		readonly ITypeComparer _identity;
-
-		public ImplementedTypeComparer(IInterfaceIdentities interfaces, ITypeComparer identity)
-		{
-			_interfaces = interfaces;
-			_identity = identity;
-		}
-
-		public bool Equals(TypeInfo x, TypeInfo y)
-		{
-			var left = x.IsInterface;
-			if (left != y.IsInterface)
-			{
-				var @interface = left ? x : y;
-				var implementation = left ? y : x;
-				var contains = _interfaces.Get(implementation).Contains(@interface.GUID);
-				return contains;
-			}
-			var result = _identity.Equals(x, y);
-			return result;
-		}
-
-		public int GetHashCode(TypeInfo obj) => 0;
-	}
+	public interface IApplicationTypes : IParameterizedSource<Assembly, IReadOnlyList<TypeInfo>> {}
 }
