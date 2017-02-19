@@ -28,7 +28,7 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class PartitionedTypes : ITypes
+	class PartitionedTypes : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		public static PartitionedTypes Default { get; } = new PartitionedTypes();
 		PartitionedTypes() : this(TypeLoader.Default, AssemblyTypePartitions.Default) {}
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_partitions = partitions;
 		}
 
-		public TypeInfo Get(IIdentity parameter)
+		protected override TypeInfo Create(IIdentity parameter)
 		{
 			var parse = _parser.Get().TryParse(parameter.Identifier);
 			if (parse.WasSuccessful)

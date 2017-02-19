@@ -26,20 +26,25 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class GenericTypes : Types
+	class GenericTypes : ITypes
 	{
+		readonly ITypes _generic;
 		readonly static GenericActivatedTypeSpecification Specification = GenericActivatedTypeSpecification.Default;
 
-		public new static GenericTypes Default { get; } = new GenericTypes();
-		GenericTypes() : this(Types.Default) {}
+		public static GenericTypes Default { get; } = new GenericTypes();
+
+		GenericTypes() : this(
+			new Types(Specification, new AssemblyTypePartitions(Specification), TypeLoader.Default),
+			Types.Default) {}
 
 		readonly ITypes _types;
 
-		public GenericTypes(ITypes types) : base(Specification, new AssemblyTypePartitions(Specification), TypeLoader.Default)
+		public GenericTypes(ITypes generic, ITypes types)
 		{
+			_generic = generic;
 			_types = types;
 		}
 
-		protected override TypeInfo Create(IIdentity parameter) => base.Create(parameter) ?? _types.Get(parameter);
+		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
 	}
 }

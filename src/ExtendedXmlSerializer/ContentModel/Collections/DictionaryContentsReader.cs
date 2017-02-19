@@ -21,30 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class CollectionItemContentsReader : IContentsReader
+	class DictionaryContentsReader : CollectionContentsReader
 	{
-		readonly ISerializer _item;
-		readonly ILists _lists;
+		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
-		public CollectionItemContentsReader(ISerializer item) : this(item, Lists.Default) {}
-
-		public CollectionItemContentsReader(ISerializer item, ILists lists)
-		{
-			_item = item;
-			_lists = lists;
-		}
-
-		public void Read(IXmlReader reader, object instance)
-		{
-			var list = instance as IList ?? _lists.Get(instance);
-			var item = _item.Get(reader);
-			list.Add(item);
-		}
+		public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
+			: base(reader, new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists) {}
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,25 +22,30 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberContentsReader : IContentsReader
+	class MemberContentsReader : DecoratedReader
 	{
 		readonly IDictionary<string, IMember> _members;
 
-		public MemberContentsReader(IDictionary<string, IMember> members)
+		public MemberContentsReader(IReader activator, IDictionary<string, IMember> members) : base(activator)
 		{
 			_members = members;
 		}
 
-		public void Read(IXmlReader reader, object instance)
+		public override object Get(IXmlReader parameter)
 		{
-			var member = _members.Get(reader.Name);
-			member?.Assign(instance, ((IReader) member).Get(reader));
+			var target = parameter.Depth + 1;
+			var result = base.Get(parameter);
+			while (parameter.Advance() && parameter.Depth == target)
+			{
+				var member = _members.Get(parameter.Name);
+				member?.Assign(result, ((IReader) member).Get(parameter));
+			}
+			return result;
 		}
 	}
 }

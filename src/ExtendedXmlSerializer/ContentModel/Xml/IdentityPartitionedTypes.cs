@@ -35,14 +35,14 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class IdentityPartitionedTypes : ITypes
 	{
+		readonly Partition _partition;
+
 		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification) : this(specification, TypeFormatter.Default) {}
 
 		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 			: this(WellKnownNamespaces.Default
 			                          .ToDictionary(x => x.Value.Identifier, new TypeNamePartition(specification, formatter).Get)
 			                          .Get) {}
-
-		readonly Partition _partition;
 
 		public IdentityPartitionedTypes(Partition partition)
 		{

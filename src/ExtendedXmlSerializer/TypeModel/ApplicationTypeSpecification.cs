@@ -21,21 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class ContentsReader : DecoratedContentsReader
+	class ApplicationTypeSpecification : ISpecification<TypeInfo>
 	{
-		public ContentsReader(IContentsReader contents) : base(contents) {}
+		readonly static Type AttributeType = typeof(CompilerGeneratedAttribute);
 
-		public override void Read(IXmlReader reader, object instance)
-		{
-			var target = reader.Depth + 1;
-			while (reader.Advance() && reader.Depth == target)
-			{
-				base.Read(reader, instance);
-			}
-		}
+		public static ApplicationTypeSpecification Default { get; } = new ApplicationTypeSpecification();
+		ApplicationTypeSpecification() {}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => !parameter.IsDefined(AttributeType);
 	}
 }

@@ -22,34 +22,15 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class SelectingContentsReader : DecoratedContentsReader
+	class AssemblyTypes : IAssemblyTypes
 	{
-		readonly IDictionary<string, IMember> _members;
+		public static AssemblyTypes Default { get; } = new AssemblyTypes();
+		AssemblyTypes() {}
 
-		public SelectingContentsReader(IDictionary<string, IMember> members, IContentsReader reader) : base(reader)
-		{
-			_members = members;
-		}
-
-		public override void Read(IXmlReader reader, object instance)
-		{
-			if (reader.Prefix == string.Empty)
-			{
-				var member = _members.Get(reader.Name);
-				if (member != null)
-				{
-					member.Assign(instance, ((IReader) member).Get(reader));
-					return;
-				}
-			}
-			base.Read(reader, instance);
-		}
+		public IEnumerable<TypeInfo> Get(Assembly parameter) => parameter.DefinedTypes;
 	}
 }
