@@ -33,26 +33,26 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsCollectionTypeSpecification.Default);
 
-		readonly ISerializers _serializers;
+		readonly ISerialization _serialization;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(ISerializers serializers)
-			: this(Specification, serializers) {}
+		protected CollectionContentOptionBase(ISerialization serialization)
+			: this(Specification, serialization) {}
 
-		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerializers serializers)
-			: this(specification, serializers, CollectionItemTypeLocator.Default) {}
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerialization serialization)
+			: this(specification, serialization, CollectionItemTypeLocator.Default) {}
 
-		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerializers serializers,
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerialization serialization,
 		                                      ICollectionItemTypeLocator locator) : base(specification)
 		{
-			_serializers = serializers;
+			_serialization = serialization;
 			_locator = locator;
 		}
 
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var itemType = _locator.Get(parameter);
-			var result = Create(_serializers.Get(itemType), parameter);
+			var result = Create(_serialization.Get(itemType), parameter);
 			return result;
 		}
 

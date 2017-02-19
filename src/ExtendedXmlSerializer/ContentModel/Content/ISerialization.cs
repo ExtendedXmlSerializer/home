@@ -27,9 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface ISerializers : IParameterizedSource<TypeInfo, ISerializer>, ISpecification<PropertyInfo>,
-	                                ISpecification<FieldInfo>
-	{
-		ISerializer Content(TypeInfo parameter);
-	}
+	public interface ISerialization : IParameterizedSource<TypeInfo, IContainer>, 
+									ISpecification<PropertyInfo>,
+	                                ISpecification<FieldInfo> {}
 }

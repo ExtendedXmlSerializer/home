@@ -309,7 +309,7 @@ namespace ExtendedXmlSerialization.Test
 
 			public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 			{
-				var serializers = new Serializers(Defaults.Property, Defaults.Field);
+				var serializers = new Serialization(Defaults.Property, Defaults.Field);
 				var result = new ExtendedXmlSerializer(TypeSelector.Default, new OptimizedXmlFactory(serializers), serializers);
 				return result;
 			}

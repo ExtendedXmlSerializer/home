@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,20 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
+
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public struct ContainerDefinition
+	class Serialization : ISerialization
 	{
-		public ContainerDefinition(IContentOption content) : this(ElementOptions.Default, content) {}
+		readonly ISpecification<PropertyInfo> _property;
+		readonly ISpecification<FieldInfo> _field;
 
-		public ContainerDefinition(IElementOption element, IContentOption content)
+		readonly Func<TypeInfo, IContainer> _selector;
+
+		public Serialization(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+			: this(property, field, new ContainerOptions().Get) {}
+
+		public Serialization(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
+		                   Func<ISerialization, IEnumerable<IContainerOption>> options)
 		{
-			Element = element;
-			Content = content;
+			_property = property;
+			_field = field;
+
+			_selector = new Selector<TypeInfo, IContainer>(options(this).ToArray()).Cache().Get;
 		}
 
-		public IElementOption Element { get; }
+		public IContainer Get(TypeInfo parameter) => _selector(parameter);
+		
+		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
 
-		public IContentOption Content { get; }
+		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
 	}
 }

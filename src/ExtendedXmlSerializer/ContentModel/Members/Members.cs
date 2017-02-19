@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly IParameterizedSource<TypeInfo, IEnumerable<IMember>> _source;
 
-		public Members(ISerializers serializers, ISelector selector) : this(new MemberSource(serializers, selector)) {}
+		public Members(ISerialization serialization, ISelector selector) : this(new MemberSource(serialization, selector)) {}
 
 		public Members(IParameterizedSource<TypeInfo, IEnumerable<IMember>> source)
 		{

@@ -33,10 +33,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(ISerializers serializers) : this(serializers, new RuntimeSerializer(serializers)) {}
+		public VariableTypeMemberOption(ISerialization serialization) : this(serialization, new RuntimeSerializer(serialization)) {}
 
-		public VariableTypeMemberOption(ISerializers serializers, ISerializer runtime)
-			: base(VariableTypeMemberSpecification.Default, serializers)
+		public VariableTypeMemberOption(ISerialization serialization, ISerializer runtime)
+			: base(VariableTypeMemberSpecification.Default, serialization)
 		{
 			_runtime = runtime;
 		}

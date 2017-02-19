@@ -30,33 +30,33 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ContainerDefinitions : IContainerDefinitions
+	class ContainerOptions : IContainerOptions
 	{
 		readonly IContentOption _known;
 
-		public ContainerDefinitions() : this(OptimizedConverterAlteration.Default) {}
+		public ContainerOptions() : this(OptimizedConverterAlteration.Default) {}
 
-		public ContainerDefinitions(IAlteration<IConverter> alteration)
+		public ContainerOptions(IAlteration<IConverter> alteration)
 			: this(new CompositeContentOption(new ContentOptions(alteration).ToArray())) {}
 
-		public ContainerDefinitions(IContentOption known)
+		public ContainerOptions(IContentOption known)
 		{
 			_known = known;
 		}
 
-		public IEnumerable<ContainerDefinition> Get(ISerializers parameter)
+		public IEnumerable<IContainerOption> Get(ISerialization parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
 			var variable = new VariableTypeMemberOption(parameter, runtime);
 			var members = new Members.Members(parameter, new Selector(parameter, variable));
 
-			yield return new ContainerDefinition(ElementOption.Default, _known);
-			yield return new ContainerDefinition(ArrayElementOption.Default, new ArrayContentOption(parameter));
-			yield return new ContainerDefinition(new DictionaryContentOption(members, variable));
-			yield return new ContainerDefinition(new CollectionContentOption(members, parameter));
+			yield return new ContainerOption(ElementOption.Default, _known);
+			yield return new ContainerOption(ArrayElementOption.Default, new ArrayContentOption(parameter));
+			yield return new ContainerOption(ElementOptions.Default, new DictionaryContentOption(members, variable));
+			yield return new ContainerOption(ElementOptions.Default, new CollectionContentOption(members, parameter));
 
-			yield return new ContainerDefinition(new MemberedContentOption(members));
-			yield return new ContainerDefinition(new RuntimeContentOption(runtime));
+			yield return new ContainerOption(ElementOptions.Default, new MemberedContentOption(members));
+			yield return new ContainerOption(ElementOptions.Default, new RuntimeContentOption(runtime));
 		}
 	}
 }

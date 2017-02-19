@@ -32,17 +32,17 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public abstract class MemberOptionBase : OptionBase<MemberInformation, IMember>, IMemberOption
 	{
-		readonly ISerializers _serializers;
+		readonly ISerialization _serialization;
 		readonly IAliases<MemberInfo> _alias;
 		readonly IGetterFactory _getter;
 
-		protected MemberOptionBase(IMemberSpecification specification, ISerializers serializers)
-			: this(specification, serializers, MemberAliases.Default, GetterFactory.Default) {}
+		protected MemberOptionBase(IMemberSpecification specification, ISerialization serialization)
+			: this(specification, serialization, MemberAliases.Default, GetterFactory.Default) {}
 
-		protected MemberOptionBase(IMemberSpecification specification, ISerializers serializers, IAliases<MemberInfo> alias,
+		protected MemberOptionBase(IMemberSpecification specification, ISerialization serialization, IAliases<MemberInfo> alias,
 		                           IGetterFactory getter) : base(specification)
 		{
-			_serializers = serializers;
+			_serialization = serialization;
 			_alias = alias;
 			_getter = getter;
 		}
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public override IMember Get(MemberInformation parameter)
 		{
 			var getter = _getter.Get(parameter.Metadata);
-			var body = _serializers.Content(parameter.MemberType);
+			var body = _serialization.Get(parameter.MemberType).Get();
 			var result = Create(AssignedSpecification.Default, _alias.Get(parameter.Metadata) ?? parameter.Metadata.Name,
 			                    parameter.MemberType, getter, body, parameter.Metadata);
 			return result;

@@ -37,9 +37,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(ISerializers serializers) : this(serializers, AddDelegates.Default) {}
+		public ReadOnlyCollectionMemberOption(ISerialization serialization) : this(serialization, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionMemberOption(ISerializers serializers, IAddDelegates add) : base(Specification, serializers)
+		public ReadOnlyCollectionMemberOption(ISerialization serialization, IAddDelegates add) : base(Specification, serialization)
 		{
 			_add = add;
 		}

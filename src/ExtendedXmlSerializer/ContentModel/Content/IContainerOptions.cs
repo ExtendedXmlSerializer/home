@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,28 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	sealed class SerializerSelector : Selector<TypeInfo, ISerializer>
-	{
-		readonly IParameterizedSource<TypeInfo, ISerializer> _content;
-
-		public SerializerSelector(params ContainerDefinition[] definitions)
-			: this(
-				new Selector<TypeInfo, ISerializer>(definitions.Select(x => x.Content).ToArray()).Cache(), definitions) {}
-
-		public SerializerSelector(IParameterizedSource<TypeInfo, ISerializer> content,
-		                          params ContainerDefinition[] definitions)
-			: base(definitions.Select(x => new ContainerOption(x.Element, x.Content)).ToArray())
-		{
-			_content = content;
-		}
-
-		public ISerializer Content(TypeInfo parameter) => _content.Get(parameter);
-	}
+	public interface IContainerOptions : IParameterizedSource<ISerialization, IEnumerable<IContainerOption>> {}
 }
