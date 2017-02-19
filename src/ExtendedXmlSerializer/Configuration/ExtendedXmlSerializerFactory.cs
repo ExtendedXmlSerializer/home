@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Configuration
 		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 		{
 			var policy = parameter.Get();
-			var serializers = new Serializers(_property.And(policy), _field.And(policy));
+			var serializers = new Serialization(_property.And(policy), _field.And(policy));
 			var result = new ExtendedXmlSerializer(Selector, XmlFactory, serializers);
 			return result;
 		}

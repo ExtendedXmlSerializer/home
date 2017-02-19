@@ -35,20 +35,20 @@ namespace ExtendedXmlSerialization
 	{
 		readonly ITypeSelector _selector;
 		readonly IXmlFactory _factory;
-		readonly ISerializers _serializers;
+		readonly ISerialization _serialization;
 
-		public ExtendedXmlSerializer(ITypeSelector selector, IXmlFactory factory, ISerializers serializers)
+		public ExtendedXmlSerializer(ITypeSelector selector, IXmlFactory factory, ISerialization serialization)
 		{
 			_selector = selector;
 			_factory = factory;
-			_serializers = serializers;
+			_serialization = serialization;
 		}
 
 		public void Serialize(Stream stream, object instance)
 		{
 			using (var writer = _factory.Create(stream, instance))
 			{
-				_serializers.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+				_serialization.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization
 		{
 			using (var reader = _factory.Create(stream))
 			{
-				return _serializers.Get(_selector.Get(reader)).Get(reader);
+				return _serialization.Get(_selector.Get(reader)).Get(reader);
 			}
 		}
 	}

@@ -35,16 +35,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly static Func<MemberInformation, int> Order = MemberOrder.Default.Get;
 
 		readonly Func<MemberInformation, int> _order;
-		readonly ISerializers _serializers;
+		readonly ISerialization _serialization;
 		readonly Func<MemberInformation, IMember> _select;
 
-		public MemberSource(ISerializers serializers, ISelector selector) : this(Order, serializers, selector.Get) {}
+		public MemberSource(ISerialization serialization, ISelector selector) : this(Order, serialization, selector.Get) {}
 
-		public MemberSource(Func<MemberInformation, int> order, ISerializers serializers,
+		public MemberSource(Func<MemberInformation, int> order, ISerialization serialization,
 		                    Func<MemberInformation, IMember> select)
 		{
 			_order = order;
-			_serializers = serializers;
+			_serialization = serialization;
 			_select = select;
 		}
 
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			for (var i = 0; i < length; i++)
 			{
 				var property = properties[i];
-				if (_serializers.IsSatisfiedBy(property))
+				if (_serialization.IsSatisfiedBy(property))
 				{
 					yield return Create(property, property.PropertyType, property.CanWrite);
 				}
@@ -69,7 +69,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			for (var i = 0; i < l; i++)
 			{
 				var field = fields[i];
-				if (_serializers.IsSatisfiedBy(field))
+				if (_serialization.IsSatisfiedBy(field))
 				{
 					yield return Create(field, field.FieldType, !field.IsInitOnly);
 				}

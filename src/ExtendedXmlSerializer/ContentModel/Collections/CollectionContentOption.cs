@@ -34,11 +34,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly IMembers _members;
 		readonly IActivators _activators;
 
-		public CollectionContentOption(IMembers members, ISerializers serializers)
-			: this(members, serializers, Activators.Default) {}
+		public CollectionContentOption(IMembers members, ISerialization serialization)
+			: this(members, serialization, Activators.Default) {}
 
-		public CollectionContentOption(IMembers members, ISerializers serializers, IActivators activators)
-			: base(serializers)
+		public CollectionContentOption(IMembers members, ISerialization serialization, IActivators activators)
+			: base(serialization)
 		{
 			_members = members;
 			_activators = activators;

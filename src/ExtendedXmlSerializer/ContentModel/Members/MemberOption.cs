@@ -33,14 +33,14 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISetterFactory _setter;
 
-		public MemberOption(ISerializers serializers)
-			: this(AssignableMemberSpecification.Default, serializers) {}
+		public MemberOption(ISerialization serialization)
+			: this(AssignableMemberSpecification.Default, serialization) {}
 
-		public MemberOption(IMemberSpecification specification, ISerializers serializers)
-			: this(specification, serializers, SetterFactory.Default) {}
+		public MemberOption(IMemberSpecification specification, ISerialization serialization)
+			: this(specification, serialization, SetterFactory.Default) {}
 
-		public MemberOption(IMemberSpecification specification, ISerializers serializers, ISetterFactory setter)
-			: base(specification, serializers)
+		public MemberOption(IMemberSpecification specification, ISerialization serialization, ISetterFactory setter)
+			: base(specification, serialization)
 		{
 			_setter = setter;
 		}

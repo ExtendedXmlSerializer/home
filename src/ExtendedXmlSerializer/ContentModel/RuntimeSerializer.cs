@@ -32,23 +32,23 @@ namespace ExtendedXmlSerialization.ContentModel
 		readonly static TypeSelector TypeSelector = TypeSelector.Default;
 
 		readonly ITypeSelector _selector;
-		readonly ISerializers _serializers;
+		readonly ISerialization _serialization;
 
-		public RuntimeSerializer(ISerializers serializers) : this(TypeSelector, serializers) {}
+		public RuntimeSerializer(ISerialization serialization) : this(TypeSelector, serialization) {}
 
-		public RuntimeSerializer(ITypeSelector selector, ISerializers serializers)
+		public RuntimeSerializer(ITypeSelector selector, ISerialization serialization)
 		{
 			_selector = selector;
-			_serializers = serializers;
+			_serialization = serialization;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
-			=> _serializers.Content(instance.GetType().GetTypeInfo()).Write(writer, instance);
+			=> _serialization.Get(instance.GetType().GetTypeInfo()).Get().Write(writer, instance);
 
 		public override object Get(IXmlReader reader)
 		{
 			var classification = _selector.Get(reader);
-			var content = _serializers.Content(classification);
+			var content = _serialization.Get(classification).Get();
 			var result = content.Get(reader);
 			return result;
 		}
