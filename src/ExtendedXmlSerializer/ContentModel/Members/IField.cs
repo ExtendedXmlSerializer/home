@@ -21,20 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ContentOptions : CompositeContentOption
-	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
-
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
-	}
+	public interface IField : IMember<FieldInfo> {}
 }

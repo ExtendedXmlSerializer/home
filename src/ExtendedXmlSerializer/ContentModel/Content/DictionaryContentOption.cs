@@ -32,6 +32,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryContentOption : ContentOptionBase
 	{
+		readonly static Activators Activators = Activators.Default;
+
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
@@ -39,8 +41,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly IDictionaryEntries _entries;
 		readonly IActivators _activators;
 
-		public DictionaryContentOption(IMembers members, IMemberOption variable)
-			: this(members, new DictionaryEntries(variable), Activators.Default) {}
+		public DictionaryContentOption(IMembers members, IDictionaryEntries entries) : this(members, entries, Activators) {}
 
 		public DictionaryContentOption(IMembers members, IDictionaryEntries entries, IActivators activators)
 			: base(Specification)

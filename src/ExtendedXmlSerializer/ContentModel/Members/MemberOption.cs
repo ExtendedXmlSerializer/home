@@ -22,35 +22,31 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberOption : MemberOptionBase
 	{
+		readonly static SetterFactory SetterFactory = SetterFactory.Default;
+
+		public static MemberOption Default { get; } = new MemberOption();
+		MemberOption() : this(AssignableMemberSpecification.Default) {}
+
 		readonly ISetterFactory _setter;
 
-		public MemberOption(ISerialization serialization)
-			: this(AssignableMemberSpecification.Default, serialization) {}
+		public MemberOption(IMemberSpecification specification) : this(specification, SetterFactory) {}
 
-		public MemberOption(IMemberSpecification specification, ISerialization serialization)
-			: this(specification, serialization, SetterFactory.Default) {}
-
-		public MemberOption(IMemberSpecification specification, ISerialization serialization, ISetterFactory setter)
-			: base(specification, serialization)
+		public MemberOption(IMemberSpecification specification, ISetterFactory setter) : base(specification)
 		{
 			_setter = setter;
 		}
 
-		protected override IMember Create(ISpecification<object> emit, string displayName, TypeInfo classification,
-		                                  Func<object, object> getter, ISerializer body, MemberInfo metadata)
-			=> CreateMember(displayName, classification, _setter.Get(metadata), getter, body);
+		protected override IMember Create(IMemberProfile profile, Func<object, object> getter)
+			=> CreateMember(profile, getter, _setter.Get(profile.Metadata), profile.Content);
 
-		protected virtual IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
-		                                       Func<object, object> getter, ISerializer body)
-			=> new Member(AssignedSpecification.Default, displayName, getter, setter, body);
+		protected virtual IMember CreateMember(IMemberProfile profile, Func<object, object> getter,
+		                                       Action<object, object> setter, ISerializer content)
+			=> new Member(profile, getter, setter, content);
 	}
 }

@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -36,8 +35,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 		public ContainerOptions() : this(OptimizedConverterAlteration.Default) {}
 
-		public ContainerOptions(IAlteration<IConverter> alteration)
-			: this(new CompositeContentOption(new ContentOptions(alteration).ToArray())) {}
+		public ContainerOptions(IAlteration<IConverter> alteration) : this(new ContentOptions(alteration)) {}
 
 		public ContainerOptions(IContentOption known)
 		{
@@ -47,16 +45,19 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public IEnumerable<IContainerOption> Get(ISerialization parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
-			var variable = new VariableTypeMemberOption(parameter, runtime);
-			var members = new Members.Members(parameter, new Selector(parameter, variable));
+			var variable = new VariableTypeMemberOption(runtime);
+			var members = new Members.Members(parameter, new Selector(variable));
+			var options = ElementOptions.Default;
 
 			yield return new ContainerOption(ElementOption.Default, _known);
-			yield return new ContainerOption(ArrayElementOption.Default, new ArrayContentOption(parameter));
-			yield return new ContainerOption(ElementOptions.Default, new DictionaryContentOption(members, variable));
-			yield return new ContainerOption(ElementOptions.Default, new CollectionContentOption(members, parameter));
 
-			yield return new ContainerOption(ElementOptions.Default, new MemberedContentOption(members));
-			yield return new ContainerOption(ElementOptions.Default, new RuntimeContentOption(runtime));
+			yield return new ContainerOption(ArrayElementOption.Default, new ArrayContentOption(parameter));
+			yield return new ContainerOption(options,
+			                                 new DictionaryContentOption(members, new DictionaryEntries(parameter, variable)));
+			yield return new ContainerOption(options, new CollectionContentOption(members, parameter));
+
+			yield return new ContainerOption(options, new MemberedContentOption(members));
+			yield return new ContainerOption(options, new RuntimeContentOption(runtime));
 		}
 	}
 }

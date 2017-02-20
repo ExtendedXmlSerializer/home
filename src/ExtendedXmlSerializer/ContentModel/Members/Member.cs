@@ -34,9 +34,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
-		              Action<object, object> setter, ISerializer body)
-			: this(emit, displayName, getter, setter, new Content.Member(displayName), body) {}
+		public Member(IMemberProfile profile, Func<object, object> getter, Action<object, object> setter)
+			: this(profile, getter, setter, profile.Content) {}
+
+		public Member(IMemberProfile profile, Func<object, object> getter, Action<object, object> setter, ISerializer content)
+			: this(profile, profile.DisplayName, getter, setter, profile.Element, content) {}
 
 		protected Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
 		                 Action<object, object> setter, IWriter element,

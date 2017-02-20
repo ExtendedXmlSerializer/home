@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberOption : IOption<MemberInformation, IMember> {}
+	public interface IMemberOption : IOption<IMemberProfile, IMember> {}
 }

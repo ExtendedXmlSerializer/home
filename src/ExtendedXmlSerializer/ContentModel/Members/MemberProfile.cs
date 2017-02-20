@@ -21,20 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ContentOptions : CompositeContentOption
+	class MemberProfile : DelegatedSpecification<object>, IMemberProfile
 	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		public MemberProfile(
+			ISpecification<object> emit,
+			string displayName,
+			bool allowWrite,
+			int order,
+			MemberInfo metadata,
+			TypeInfo memberType,
+			IWriter element,
+			ISerializer content)
+			: base(emit.IsSatisfiedBy)
+		{
+			DisplayName = displayName;
+			AllowWrite = allowWrite;
+			Order = order;
+			Metadata = metadata;
+			MemberType = memberType;
+			Element = element;
+			Content = content;
+		}
 
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public string DisplayName { get; }
+
+		public bool AllowWrite { get; }
+
+		public int Order { get; }
+
+		public MemberInfo Metadata { get; }
+
+		public TypeInfo MemberType { get; }
+
+		public IWriter Element { get; }
+
+		public ISerializer Content { get; }
 	}
 }

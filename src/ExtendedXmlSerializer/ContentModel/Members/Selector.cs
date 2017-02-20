@@ -21,16 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Selector : Selector<MemberInformation, IMember>, ISelector
+	class Selector : Selector<IMemberProfile, IMember>, ISelector
 	{
-		public Selector(ISerialization serialization) : this(serialization, new VariableTypeMemberOption(serialization)) {}
+		public Selector(ISerializer runtime) : this(new VariableTypeMemberOption(runtime)) {}
 
-		public Selector(ISerialization serialization, IMemberOption variable)
-			: base(variable, new MemberOption(serialization), new ReadOnlyCollectionMemberOption(serialization)) {}
+		public Selector(IMemberOption variable)
+			: base(
+				variable,
+				MemberOption.Default,
+				ReadOnlyCollectionMemberOption.Default
+			) {}
 	}
 }

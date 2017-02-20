@@ -22,38 +22,32 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class Serialization : ISerialization
 	{
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
-
 		readonly Func<TypeInfo, IContainer> _selector;
+		readonly Func<IProperty, IMemberProfile> _properties;
+		readonly Func<IField, IMemberProfile> _fields;
 
-		public Serialization(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
-			: this(property, field, new ContainerOptions().Get) {}
-
-		public Serialization(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                   Func<ISerialization, IEnumerable<IContainerOption>> options)
+		public Serialization(Func<ISerialization, ISerializationProfile> profile)
 		{
-			_property = property;
-			_field = field;
-
-			_selector = new Selector<TypeInfo, IContainer>(options(this).ToArray()).Cache().Get;
+			var instance = profile(this);
+			_selector = new Selector<TypeInfo, IContainer>(instance.ToArray()).Cache().Get;
+			_properties = new DelegatedSource<IProperty, IMemberProfile>(instance.Get).Cache().Get;
+			_fields = new DelegatedSource<IField, IMemberProfile>(instance.Get).Cache().Get;
 		}
 
 		public IContainer Get(TypeInfo parameter) => _selector(parameter);
-		
-		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
 
-		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
+		public IMemberProfile Get(IProperty parameter) => _properties(parameter);
+
+		public IMemberProfile Get(IField parameter) => _fields(parameter);
 	}
 }

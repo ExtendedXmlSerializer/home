@@ -22,10 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -35,38 +31,22 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly static MemberTypeSpecification Specification =
 			new MemberTypeSpecification(IsCollectionTypeSpecification.Default);
 
+
+		public static ReadOnlyCollectionMemberOption Default { get; } = new ReadOnlyCollectionMemberOption();
+		ReadOnlyCollectionMemberOption() : this(AddDelegates.Default) {}
+
 		readonly IAddDelegates _add;
 
-		public ReadOnlyCollectionMemberOption(ISerialization serialization) : this(serialization, AddDelegates.Default) {}
-
-		public ReadOnlyCollectionMemberOption(ISerialization serialization, IAddDelegates add) : base(Specification, serialization)
+		public ReadOnlyCollectionMemberOption(IAddDelegates add) : base(Specification)
 		{
 			_add = add;
 		}
 
-		protected override IMember Create(ISpecification<object> emit, string displayName, TypeInfo classification,
-		                                  Func<object, object> getter, ISerializer body, MemberInfo metadata)
+		protected override IMember Create(IMemberProfile profile, Func<object, object> getter)
 		{
-			var add = _add.Get(classification);
-			var result = add != null ? new ReadOnlyCollectionMember(emit, displayName, getter, add, body) : null;
+			var add = _add.Get(profile.MemberType);
+			var result = add != null ? new ReadOnlyCollectionMember(profile, getter, add) : null;
 			return result;
-		}
-
-		class ReadOnlyCollectionMember : Member
-		{
-			public ReadOnlyCollectionMember(ISpecification<object> emit, string displayName, Func<object, object> getter,
-			                                Action<object, object> add,
-			                                ISerializer context)
-				: base(new AllSpecification<object>(ContainsItemsSpecification.Default, emit), displayName, getter, add, context) {}
-
-			public override void Assign(object instance, object value)
-			{
-				var collection = Get(instance);
-				foreach (var element in (IEnumerable) value)
-				{
-					base.Assign(collection, element);
-				}
-			}
 		}
 	}
 }

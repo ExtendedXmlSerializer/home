@@ -22,12 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface ISerialization : IParameterizedSource<TypeInfo, IContainer>, 
-									ISpecification<PropertyInfo>,
-	                                ISpecification<FieldInfo> {}
+	public interface ISerialization : IParameterizedSource<TypeInfo, IContainer>, IMemberSerialization {}
 }
