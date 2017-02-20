@@ -21,20 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ContentOptions : CompositeContentOption
+	class Property : MemberBase<PropertyInfo>, IEquatable<IProperty>, IProperty
 	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		public Property(PropertyInfo member) : this(member, member.PropertyType.GetTypeInfo()) {}
+		public Property(PropertyInfo member, TypeInfo memberType) : base(member, memberType) {}
 
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public override bool Equals(object obj) => !ReferenceEquals(null, obj) &&
+		                                           (ReferenceEquals(this, obj) || Equals((IProperty) obj));
+
+		public bool Equals(IProperty other) => GetHashCode().Equals(other.GetHashCode());
+		public override int GetHashCode() => Get().GetHashCode() ^ MemberType.GetHashCode();
+
+		public static bool operator ==(Property left, Property right) => Equals(left, right);
+
+		public static bool operator !=(Property left, Property right) => !Equals(left, right);
 	}
 }

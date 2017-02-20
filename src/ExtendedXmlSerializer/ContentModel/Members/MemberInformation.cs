@@ -22,10 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public struct MemberInformation
+/*
+	public struct MemberInformation : IEquatable<MemberInformation>
 	{
 		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
 		{
@@ -37,5 +39,21 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public MemberInfo Metadata { get; }
 		public TypeInfo MemberType { get; }
 		public bool Assignable { get; }
+
+		public bool Equals(MemberInformation other) => Equals(Metadata, other.Metadata);
+
+		public override bool Equals(object obj) => !ReferenceEquals(null, obj) && (obj is MemberInformation && Equals((MemberInformation) obj));
+
+		public override int GetHashCode() => Metadata.GetHashCode();
+
+		public static bool operator ==(MemberInformation left, MemberInformation right) => left.Equals(right);
+
+		public static bool operator !=(MemberInformation left, MemberInformation right) => !left.Equals(right);
+	}
+*/
+
+	public interface IMember<out T> : ISource<T> where T : MemberInfo
+	{
+		TypeInfo MemberType { get; }
 	}
 }

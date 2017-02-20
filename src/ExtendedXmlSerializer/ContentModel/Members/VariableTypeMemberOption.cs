@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -33,20 +31,17 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(ISerialization serialization) : this(serialization, new RuntimeSerializer(serialization)) {}
-
-		public VariableTypeMemberOption(ISerialization serialization, ISerializer runtime)
-			: base(VariableTypeMemberSpecification.Default, serialization)
+		public VariableTypeMemberOption(ISerializer runtime) : base(VariableTypeMemberSpecification.Default)
 		{
 			_runtime = runtime;
 		}
 
-		protected override IMember CreateMember(string displayName, TypeInfo classification, Action<object, object> setter,
-		                                        Func<object, object> getter, ISerializer body)
+		protected override IMember CreateMember(IMemberProfile profile, Func<object, object> getter,
+		                                        Action<object, object> setter, ISerializer content)
 		{
-			var specification = new EqualitySpecification<Type>(classification.AsType()).Inverse();
-			var converter = new Serializer(body, new VariableTypeWriter(specification, _runtime, body));
-			var member = base.CreateMember(displayName, classification, setter, getter, converter);
+			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
+			var body = new Serializer(content, new VariableTypeWriter(specification, _runtime, content));
+			var member = base.CreateMember(profile, getter, setter, body);
 			var result = new VariableTypeMember(specification, member);
 			return result;
 		}

@@ -36,22 +36,27 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly static PropertyInfo Key = Type.GetProperty(nameof(DictionaryEntry.Key));
 		readonly static PropertyInfo Value = Type.GetProperty(nameof(DictionaryEntry.Value));
 		readonly static IWriter Element = ElementOption.Default.Get(Type);
+		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
+		readonly ISerialization _serialization;
 		readonly IMemberOption _variable;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
-		public DictionaryEntries(IMemberOption variable) : this(variable, Element, DictionaryPairTypesLocator.Default) {}
+		public DictionaryEntries(ISerialization serialization, IMemberOption variable)
+			: this(serialization, variable, Element, Pairs) {}
 
-		public DictionaryEntries(IMemberOption variable, IWriter element, IDictionaryPairTypesLocator locator)
+		public DictionaryEntries(ISerialization serialization, IMemberOption variable, IWriter element,
+		                         IDictionaryPairTypesLocator locator)
 		{
+			_serialization = serialization;
 			_variable = variable;
 			_element = element;
 			_locator = locator;
 		}
 
-		IMember Create(MemberInfo metadata, TypeInfo classification)
-			=> _variable.Get(new MemberInformation(metadata, classification, true));
+		IMember Create(PropertyInfo metadata, TypeInfo classification)
+			=> _variable.Get(new MemberProfile(_serialization.Get(new Property(metadata, classification)), classification));
 
 		public ISerializer Get(TypeInfo parameter)
 		{
@@ -63,6 +68,33 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var converter = new Serializer(reader, new MemberWriter(members));
 			var result = new Container(_element, converter);
 			return result;
+		}
+
+		class MemberProfile : IMemberProfile
+		{
+			readonly IMemberProfile _profile;
+
+			public MemberProfile(IMemberProfile profile, TypeInfo memberType)
+			{
+				_profile = profile;
+				MemberType = memberType;
+			}
+
+			public TypeInfo MemberType { get; }
+
+			public string DisplayName => _profile.DisplayName;
+
+			public bool IsSatisfiedBy(object parameter) => _profile.IsSatisfiedBy(parameter);
+
+			public bool AllowWrite => _profile.AllowWrite;
+
+			public int Order => _profile.Order;
+
+			public MemberInfo Metadata => _profile.Metadata;
+
+			IWriter IMemberProfile.Element => _profile.Element;
+
+			public ISerializer Content => _profile.Content;
 		}
 	}
 }

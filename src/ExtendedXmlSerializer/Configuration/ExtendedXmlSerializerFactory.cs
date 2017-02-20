@@ -21,37 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
 	{
-		readonly static TypeSelector Selector = TypeSelector.Default;
-		readonly static XmlFactory XmlFactory = XmlFactory.Default;
-
 		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(Defaults.Property, Defaults.Field) {}
+		ExtendedXmlSerializerFactory() : this(TypeSelector.Default, XmlFactory.Default, SerializationFactory.Default) {}
 
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
+		readonly ITypeSelector _selector;
+		readonly IXmlFactory _xml;
+		readonly ISerializationFactory _serialization;
 
-		public ExtendedXmlSerializerFactory(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public ExtendedXmlSerializerFactory(ITypeSelector selector, IXmlFactory xml, ISerializationFactory serialization)
 		{
-			_property = property;
-			_field = field;
+			_selector = selector;
+			_xml = xml;
+			_serialization = serialization;
 		}
 
 		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
-		{
-			var policy = parameter.Get();
-			var serializers = new Serialization(_property.And(policy), _field.And(policy));
-			var result = new ExtendedXmlSerializer(Selector, XmlFactory, serializers);
-			return result;
-		}
+			=> new ExtendedXmlSerializer(_selector, _xml, _serialization.Get(parameter));
 	}
 }

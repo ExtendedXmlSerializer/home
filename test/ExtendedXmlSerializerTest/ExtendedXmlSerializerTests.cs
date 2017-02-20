@@ -25,7 +25,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.Test.TestObject;
@@ -309,7 +309,7 @@ namespace ExtendedXmlSerialization.Test
 
 			public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
 			{
-				var serializers = new Serialization(Defaults.Property, Defaults.Field);
+				var serializers = SerializationFactory.Default.Get(parameter);
 				var result = new ExtendedXmlSerializer(TypeSelector.Default, new OptimizedXmlFactory(serializers), serializers);
 				return result;
 			}

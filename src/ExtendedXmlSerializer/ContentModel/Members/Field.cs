@@ -21,20 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ContentOptions : CompositeContentOption
+	class Field : MemberBase<FieldInfo>, IEquatable<IField>, IField
 	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		public Field(FieldInfo member) : this(member, member.FieldType.GetTypeInfo()) {}
+		public Field(FieldInfo member, TypeInfo memberType) : base(member, memberType) {}
 
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public bool Equals(IField other) => GetHashCode().Equals(other.GetHashCode());
+		public override int GetHashCode() => Get().GetHashCode() ^ MemberType.GetHashCode();
+
+		public override bool Equals(object obj) => !ReferenceEquals(null, obj) &&
+		                                           (ReferenceEquals(this, obj) || Equals((IField) obj));
+
+		public static bool operator ==(Field left, Field right) => Equals(left, right);
+
+		public static bool operator !=(Field left, Field right) => !Equals(left, right);
 	}
 }

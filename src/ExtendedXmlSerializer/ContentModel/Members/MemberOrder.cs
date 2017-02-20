@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public static MemberOrder Default { get; } = new MemberOrder();
 		MemberOrder() {}
 
-		public int Get(MemberInformation parameter)
-			=> parameter.Metadata.GetCustomAttribute<XmlElementAttribute>(false)?.Order ?? parameter.Metadata.MetadataToken;
+		public int Get(MemberInfo parameter)
+			=> parameter.GetCustomAttribute<XmlElementAttribute>(false)?.Order ?? parameter.MetadataToken;
 	}
 }

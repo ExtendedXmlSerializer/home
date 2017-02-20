@@ -26,41 +26,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberSource : IMemberSource
 	{
-		readonly static Func<MemberInformation, int> Order = MemberOrder.Default.Get;
-
-		readonly Func<MemberInformation, int> _order;
 		readonly ISerialization _serialization;
-		readonly Func<MemberInformation, IMember> _select;
+		readonly Func<IMemberProfile, IMember> _select;
 
-		public MemberSource(ISerialization serialization, ISelector selector) : this(Order, serialization, selector.Get) {}
+		public MemberSource(ISerialization serialization, ISelector selector) : this(serialization, selector.Get) {}
 
-		public MemberSource(Func<MemberInformation, int> order, ISerialization serialization,
-		                    Func<MemberInformation, IMember> select)
+		public MemberSource(ISerialization serialization, Func<IMemberProfile, IMember> select)
 		{
-			_order = order;
 			_serialization = serialization;
 			_select = select;
 		}
 
 		public IEnumerable<IMember> Get(TypeInfo parameter)
-			=> Yield(parameter).OrderBy(_order).Select(_select).Where(x => x != null);
+			=> Yield(parameter).OrderBy(x => x.Order).Select(_select).Where(x => x != null);
 
-		IEnumerable<MemberInformation> Yield(TypeInfo parameter)
+		IEnumerable<IMemberProfile> Yield(TypeInfo parameter)
 		{
 			var properties = parameter.GetProperties();
 			var length = properties.Length;
 			for (var i = 0; i < length; i++)
 			{
-				var property = properties[i];
-				if (_serialization.IsSatisfiedBy(property))
+				var profile = _serialization.Get(new Property(properties[i]));
+				if (profile != null)
 				{
-					yield return Create(property, property.PropertyType, property.CanWrite);
+					yield return profile;
 				}
 			}
 
@@ -68,15 +62,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var l = fields.Length;
 			for (var i = 0; i < l; i++)
 			{
-				var field = fields[i];
-				if (_serialization.IsSatisfiedBy(field))
+				var profile = _serialization.Get(new Field(fields[i]));
+				if (profile != null)
 				{
-					yield return Create(field, field.FieldType, !field.IsInitOnly);
+					yield return profile;
 				}
 			}
 		}
-
-		static MemberInformation Create(MemberInfo metadata, Type memberType, bool assignable)
-			=> new MemberInformation(metadata, memberType.GetTypeInfo().AccountForNullable(), assignable);
 	}
 }

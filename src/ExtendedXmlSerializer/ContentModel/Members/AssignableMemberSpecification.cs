@@ -25,9 +25,9 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class AssignableMemberSpecification : DelegatedSpecification<MemberInformation>, IMemberSpecification
+	class AssignableMemberSpecification : DelegatedSpecification<IMemberProfile>, IMemberSpecification
 	{
 		public static AssignableMemberSpecification Default { get; } = new AssignableMemberSpecification();
-		AssignableMemberSpecification() : base(x => x.Assignable) {}
+		AssignableMemberSpecification() : base(x => x.AllowWrite) {}
 	}
 }

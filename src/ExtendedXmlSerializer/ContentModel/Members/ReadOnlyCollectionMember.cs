@@ -21,20 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using System.Collections;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ContentOptions : CompositeContentOption
+	class ReadOnlyCollectionMember : Member
 	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		public ReadOnlyCollectionMember(IMemberProfile profile, Func<object, object> getter, Action<object, object> add)
+			: base(
+				ContainsItemsSpecification.Default.And(profile), profile.DisplayName, getter, add, profile.Element, profile.Content) {}
 
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public override void Assign(object instance, object value)
+		{
+			var collection = Get(instance);
+			foreach (var element in (IEnumerable) value)
+			{
+				base.Assign(collection, element);
+			}
+		}
 	}
 }

@@ -22,27 +22,22 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class VariableTypeMember : IVariableTypeMember
+	class VariableTypeMember : Serializer, IVariableTypeMember
 	{
 		readonly IMember _member;
 		readonly ISpecification<Type> _specification;
 
-		public VariableTypeMember(ISpecification<Type> specification, IMember member)
+		public VariableTypeMember(ISpecification<Type> specification, IMember member) : base(member, member)
 		{
-			_member = member;
 			_specification = specification;
+			_member = member;
 		}
 
 		public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
-
-		public object Get(IXmlReader parameter) => ((IReader) _member).Get(parameter);
-
-		public void Write(IXmlWriter writer, object instance) => _member.Write(writer, instance);
 
 		public string DisplayName => _member.DisplayName;
 

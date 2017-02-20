@@ -35,6 +35,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_specification = specification;
 		}
 
-		public bool IsSatisfiedBy(MemberInformation parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
+		public bool IsSatisfiedBy(IMemberProfile parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
 	}
 }
