@@ -21,38 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class CollectionContentsReader : DecoratedReader
+	public struct AttributeReading
 	{
-		readonly static Lists Lists = Lists.Default;
+		readonly System.Xml.XmlReader _reader;
 
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		public AttributeReading(System.Xml.XmlReader reader)
 		{
-			_item = item;
-			_lists = lists;
+			_reader = reader;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public bool IsMember() => _reader.Prefix == string.Empty; // TODO: Might need a more reliable method for this.
+
+		public bool Next()
 		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
+			switch (_reader.NodeType)
 			{
-				_item.Read(reading, result, list);
+				case XmlNodeType.Attribute:
+					return _reader.MoveToNextAttribute();
+				default:
+					return _reader.MoveToFirstAttribute();
 			}
-			return result;
 		}
 	}
 }

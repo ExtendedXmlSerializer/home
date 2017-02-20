@@ -23,37 +23,41 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class SerializationFactory : ISerializationFactory
+	class SerializationProfileFactory : IParameterizedSource<ISerialization, ISerializationProfile>
 	{
-		public static SerializationFactory Default { get; } = new SerializationFactory();
-		SerializationFactory() : this(Configuration.Defaults.Property, Configuration.Defaults.Field) {}
-
+		readonly IContainerOptions _options;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
+		readonly IRuntimeMemberSpecifications _specifications;
+		readonly Members.IAliases _aliases;
+		readonly IMemberConverters _converters;
 
-		public SerializationFactory(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
+		public SerializationProfileFactory(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
+		                                   IRuntimeMemberSpecifications specifications, Members.IAliases aliases,
+		                                   IMemberConverters converters, IContainerOptions options)
 		{
+			_options = options;
 			_property = property;
 			_field = field;
+			_specifications = specifications;
+			_aliases = aliases;
+			_converters = converters;
 		}
 
-		public ISerialization Get(ISerializationConfiguration parameter)
-		{
-			var factory = new SerializationProfileFactory(
-				_property.And(parameter.MemberPolicy),
-				_field.And(parameter.MemberPolicy),
-				parameter,
-				parameter.Aliases, parameter.Converters,
-				new ContainerOptions()
-			).ToDelegate();
-			var result = new Serialization(factory);
-			return result;
-		}
+		public ISerializationProfile Get(ISerialization parameter)
+			=> new SerializationProfile(_property, _field,
+			                            parameter,
+			                            new MemberSerializers(_specifications, _converters),
+			                            _aliases,
+			                            MemberOrder.Default,
+			                            _options.Get(parameter).AsReadOnly()
+			);
 	}
 }

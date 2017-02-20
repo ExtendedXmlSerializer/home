@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	abstract class TypePropertyBase : PropertyBase<TypeInfo>, ITypeProperty
+	abstract class TypePropertyBase : FrameworkPropertyBase<TypeInfo>, ITypeProperty
 	{
 		protected TypePropertyBase(string displayName) : base(displayName) {}
 

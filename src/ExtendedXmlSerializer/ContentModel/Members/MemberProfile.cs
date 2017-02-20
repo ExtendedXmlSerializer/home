@@ -26,30 +26,32 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberProfile : DelegatedSpecification<object>, IMemberProfile
+	class MemberProfile : Identity, IMemberProfile
 	{
+		readonly ISerializer _serializer;
+
 		public MemberProfile(
-			ISpecification<object> emit,
-			string displayName,
+			ISpecification<object> specification,
+			string name,
 			bool allowWrite,
 			int order,
 			MemberInfo metadata,
 			TypeInfo memberType,
-			IWriter element,
-			ISerializer content)
-			: base(emit.IsSatisfiedBy)
+			ISerializer serializer,
+			IWriter writer)
+			: base(name, string.Empty)
 		{
-			DisplayName = displayName;
+			_serializer = serializer;
+			Specification = specification;
 			AllowWrite = allowWrite;
 			Order = order;
 			Metadata = metadata;
 			MemberType = memberType;
-			Element = element;
-			Content = content;
+			Writer = writer;
+			Reader = serializer;
 		}
 
-		public string DisplayName { get; }
-
+		public ISpecification<object> Specification { get; }
 		public bool AllowWrite { get; }
 
 		public int Order { get; }
@@ -58,8 +60,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public TypeInfo MemberType { get; }
 
-		public IWriter Element { get; }
+		public IReader Reader { get; }
+		public IWriter Writer { get; }
 
-		public ISerializer Content { get; }
+		public ISerializer Get() => _serializer;
 	}
 }

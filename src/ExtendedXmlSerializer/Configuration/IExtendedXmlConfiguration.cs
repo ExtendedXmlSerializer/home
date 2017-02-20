@@ -22,12 +22,10 @@
 // SOFTWARE.
 
 using System.Xml;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlConfiguration : ISource<IMemberPolicy>
+	public interface IExtendedXmlConfiguration
 	{
 		IExtendedXmlTypeConfiguration<T> ConfigureType<T>();
 		IExtendedXmlConfiguration UseAutoProperties();

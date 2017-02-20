@@ -28,61 +28,57 @@ using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
-using Member = ExtendedXmlSerialization.ContentModel.Content.Member;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
 	class SerializationProfile : ISerializationProfile
 	{
-		readonly ISerialization _serialization;
+		readonly static AlwaysSpecification<object> AlwaysSpecification = AlwaysSpecification<object>.Default;
+
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
+		readonly IMemberSerializers _serializers;
+		readonly ISerialization _serialization;
 		readonly Members.IAliases _aliases;
 		readonly IMemberOrder _order;
 		readonly IReadOnlyList<IContainerOption> _options;
 
 		public SerializationProfile(
-			ISerialization serialization,
 			ISpecification<PropertyInfo> property,
 			ISpecification<FieldInfo> field,
+			ISerialization serialization,
+			IMemberSerializers serializers,
 			Members.IAliases aliases,
 			IMemberOrder order,
 			IReadOnlyList<IContainerOption> options)
 		{
-			_serialization = serialization;
 			_property = property;
 			_field = field;
+			_serializers = serializers;
+			_serialization = serialization;
 			_aliases = aliases;
 			_order = order;
 			_options = options;
 		}
 
 		public IMemberProfile Get(IProperty parameter)
-		{
-			var propertyInfo = parameter.Get();
-			return _property.IsSatisfiedBy(propertyInfo)
-				? Create(propertyInfo, parameter.MemberType, propertyInfo.CanWrite)
-				: null;
-		}
+			=> _property.IsSatisfiedBy(parameter.Metadata) ? Create(parameter, parameter.Metadata.CanWrite) : null;
 
 		public IMemberProfile Get(IField parameter)
-		{
-			var fieldInfo = parameter.Get();
-			return _field.IsSatisfiedBy(fieldInfo)
-				? Create(fieldInfo, parameter.MemberType, !fieldInfo.IsInitOnly)
-				: null;
-		}
+			=> _field.IsSatisfiedBy(parameter.Metadata) ? Create(parameter, !parameter.Metadata.IsInitOnly) : null;
 
-		IMemberProfile Create(MemberInfo metadata, TypeInfo memberType, bool assignable)
+		IMemberProfile Create(IMetadata metadata, bool assignable)
 		{
-			var name = _aliases.Get(metadata) ?? metadata.Name;
-			var order = _order.Get(metadata);
-			var element = new Member(name);
-			var type = memberType.AccountForNullable();
-			var content = _serialization.Get(type).Get();
+			var order = _order.Get(metadata.Metadata);
+			var name = _aliases.Get(metadata.Metadata) ?? metadata.Metadata.Name;
+
+			var content = _serialization.Get(metadata.MemberType.AccountForNullable()).Get();
+
+			var writer = _serializers.Create(name, metadata, content);
+
 			var result = new MemberProfile(
-				AlwaysSpecification<object>.Default,
-				name, assignable, order, metadata, type, element, content);
+				AlwaysSpecification, name,
+				assignable, order, metadata.Metadata, metadata.MemberType, content, writer);
 			return result;
 		}
 

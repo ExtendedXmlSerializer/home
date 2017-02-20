@@ -22,16 +22,30 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-using Sprache;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class TypesList : FixedParser<IEnumerable<ParsedName>>
+	class SerializationConfiguration : RuntimeMemberSpecifications, ISerializationConfiguration
 	{
-		readonly static Parser<char> List = Parse.Char(',').Token();
+		public SerializationConfiguration(IDictionary<MemberInfo, IRuntimeMemberSpecification> specifications,
+		                                  ITypeSelector types,
+		                                  Members.IAliases aliases,
+		                                  IMemberConverters converters,
+		                                  IMemberPolicy memberPolicy)
+			: base(specifications)
+		{
+			Types = types;
+			Aliases = aliases;
+			Converters = converters;
+			MemberPolicy = memberPolicy;
+		}
 
-		public static TypesList Default { get; } = new TypesList();
-		TypesList() : base(Parse.Ref(() => Parser.Default.Get()).DelimitedBy(List).Token()) {}
+		public ITypeSelector Types { get; }
+		public Members.IAliases Aliases { get; }
+		public IMemberConverters Converters { get; }
+		public IMemberPolicy MemberPolicy { get; }
 	}
 }

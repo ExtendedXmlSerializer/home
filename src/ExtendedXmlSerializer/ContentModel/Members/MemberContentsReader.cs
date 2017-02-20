@@ -31,21 +31,48 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly IDictionary<string, IMember> _members;
 
-		public MemberContentsReader(IReader activator, IDictionary<string, IMember> members) : base(activator)
+		public MemberContentsReader(IReader activator, IDictionary<string, IMember> members)
+			: base(new MemberAttributesReader(activator, members))
 		{
 			_members = members;
 		}
 
 		public override object Get(IXmlReader parameter)
 		{
-			var target = parameter.Depth + 1;
 			var result = base.Get(parameter);
-			while (parameter.Advance() && parameter.Depth == target)
+
+			var content = parameter.Content();
+			while (content.Next())
 			{
 				var member = _members.Get(parameter.Name);
 				member?.Assign(result, ((IReader) member).Get(parameter));
 			}
+
 			return result;
 		}
+
+		/*object Properties(IXmlReader parameter)
+		{
+			
+			do
+			{
+				var member = _members.Get(parameter.Name);
+				member?.Assign(result, ((IReader) member).Get(parameter));
+			} while ((reading = parameter.ReadContent()) != null && reading.Value.CurrentDepth == target);
+			return result;
+		}
+
+		object Read(IXmlReader parameter)
+		{
+			var reading = parameter.ReadContent();
+			var target = reading?.PreviousDepth + 1;
+			var result = base.Get(parameter);
+			do
+			{
+				var member = _members.Get(parameter.Name);
+				member?.Assign(result, ((IReader) member).Get(parameter));
+			} while ((reading = parameter.ReadContent()) != null && reading.Value.CurrentDepth == target);
+			return result;
+		}*/
 	}
 }

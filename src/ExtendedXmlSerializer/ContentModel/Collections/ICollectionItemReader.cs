@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	public interface ICollectionItemReader
 	{
-		void Read(IXmlReader reader, object instance, IList list);
+		void Read(ContentReading reading, object instance, IList list);
 	}
 }

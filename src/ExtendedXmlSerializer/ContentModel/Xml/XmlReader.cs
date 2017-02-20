@@ -44,16 +44,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public string Name => _reader.LocalName;
 		public string Identifier => _reader.NamespaceURI;
-		public string Prefix => _reader.Prefix;
 
 		public string Value()
 		{
 			switch (_reader.NodeType)
 			{
 				case XmlNodeType.Attribute:
-					var attribute = _reader.Value;
-					_reader.MoveToElement();
-					return attribute;
+					return _reader.Value;
 
 				default:
 					_reader.Read();
@@ -63,8 +60,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			}
 		}
 
-		public int Depth => _reader.Depth;
-		public bool Advance() => _reader.Read() && _reader.IsStartElement();
+		public void Reset() => _reader.MoveToElement();
+
+		public AttributeReading? Attributes()
+			=> _reader.HasAttributes ? new AttributeReading(_reader) : (AttributeReading?) null;
+
+		public ContentReading Content() => new ContentReading(this, _reader);
 
 		public bool Contains(IIdentity identity)
 			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);

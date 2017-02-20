@@ -31,9 +31,10 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		string Value();
 
-		string Prefix { get; }
-		int Depth { get; }
+		void Reset();
 
-		bool Advance();
+		AttributeReading? Attributes();
+
+		ContentReading Content();
 	}
 }

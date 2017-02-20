@@ -43,10 +43,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		protected override IMember Create(IMemberProfile profile, Func<object, object> getter)
-			=> CreateMember(profile, getter, _setter.Get(profile.Metadata), profile.Content);
+			=> CreateMember(profile, getter, _setter.Get(profile.Metadata));
 
 		protected virtual IMember CreateMember(IMemberProfile profile, Func<object, object> getter,
-		                                       Action<object, object> setter, ISerializer content)
-			=> new Member(profile, getter, setter, content);
+		                                       Action<object, object> setter)
+			=> new Member(profile, getter, setter);
 	}
 }

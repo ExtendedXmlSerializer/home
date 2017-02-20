@@ -21,38 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class CollectionContentsReader : DecoratedReader
+	class RuntimeMember : DecoratedWriter
 	{
-		readonly static Lists Lists = Lists.Default;
+		readonly ISpecification<object> _specification;
+		readonly IWriter _property;
 
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		public RuntimeMember(ISpecification<object> specification, IWriter property, IWriter writer) : base(writer)
 		{
-			_item = item;
-			_lists = lists;
+			_specification = specification;
+			_property = property;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
+			if (_specification.IsSatisfiedBy(instance))
 			{
-				_item.Read(reading, result, list);
+				_property.Write(writer, instance);
 			}
-			return result;
+			else
+			{
+				base.Write(writer, instance);
+			}
 		}
 	}
 }

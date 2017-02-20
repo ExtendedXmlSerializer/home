@@ -22,11 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberProfile : IDisplay, ISpecification<object>
+	public interface IMemberProfile : IIdentity, ISource<ISerializer>
 	{
 		bool AllowWrite { get; }
 
@@ -36,8 +37,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		TypeInfo MemberType { get; }
 
-		IWriter Element { get; }
+		IWriter Writer { get; }
 
-		ISerializer Content { get; }
+		IReader Reader { get; }
+
+		ISpecification<object> Specification { get; }
 	}
 }

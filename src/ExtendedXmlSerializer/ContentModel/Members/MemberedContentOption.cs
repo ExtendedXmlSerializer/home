@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var members = _members.Get(parameter);
 			var activate = _activators.Get(parameter.AsType());
 			var reader = new MemberContentsReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
-			var result = new Serializer(reader, new MemberWriter(members));
+			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}
 	}

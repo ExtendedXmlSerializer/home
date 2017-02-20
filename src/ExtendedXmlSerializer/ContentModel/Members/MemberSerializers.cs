@@ -21,27 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using ExtendedXmlSerialization.ContentModel.Xml;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberWriter : IWriter
+	class MemberSerializers : IMemberSerializers
 	{
-		readonly ImmutableArray<IMember> _members;
+		readonly IRuntimeMemberSpecifications _specifications;
+		readonly IMemberConverters _converters;
 
-		public MemberWriter(ImmutableArray<IMember> members)
+		public MemberSerializers(IRuntimeMemberSpecifications specifications, IMemberConverters converters)
 		{
-			_members = members;
+			_specifications = specifications;
+			_converters = converters;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
+		public IWriter Create(string name, IMetadata member, IWriter content)
 		{
-			var length = _members.Length;
-			for (var i = 0; i < length; i++)
+			var converter = _converters.Get(member.Metadata) ?? _converters.Get(member.MemberType);
+			if (converter != null)
 			{
-				_members[i].Write(writer, instance);
+				IWriter property = new MemberProperty(converter, name);
+				var specification = _specifications.Get(member.Metadata);
+				var writer = specification != null ? new RuntimeMember(specification, property, Content(name, content)) : property;
+				return writer;
 			}
+
+			var result = Content(name, content);
+			return result;
 		}
+
+		static Enclosure Content(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
 	}
 }

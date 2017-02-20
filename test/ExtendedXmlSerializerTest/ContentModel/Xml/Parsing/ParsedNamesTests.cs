@@ -91,7 +91,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 		[Fact]
 		public void List()
 		{
-			var actual = TypesList.Default.Get("sys:string, int, ns4:SomeOtherType");
+			var actual = NamesList.Default.Get("sys:string, int, ns4:SomeOtherType");
 			Assert.True(new[]
 			            {
 				            new ParsedName("string", "sys"),
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml.Parsing
 		[Fact]
 		public void InvalidList()
 		{
-			var actual = TypesList.Default.Get().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
+			var actual = NamesList.Default.Get().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
 			Assert.False(actual);
 		}
 

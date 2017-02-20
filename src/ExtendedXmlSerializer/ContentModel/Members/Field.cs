@@ -21,24 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Field : MemberBase<FieldInfo>, IEquatable<IField>, IField
+	class Field : MetadataBase<FieldInfo>, IField
 	{
 		public Field(FieldInfo member) : this(member, member.FieldType.GetTypeInfo()) {}
 		public Field(FieldInfo member, TypeInfo memberType) : base(member, memberType) {}
-
-		public bool Equals(IField other) => GetHashCode().Equals(other.GetHashCode());
-		public override int GetHashCode() => Get().GetHashCode() ^ MemberType.GetHashCode();
-
-		public override bool Equals(object obj) => !ReferenceEquals(null, obj) &&
-		                                           (ReferenceEquals(this, obj) || Equals((IField) obj));
-
-		public static bool operator ==(Field left, Field right) => Equals(left, right);
-
-		public static bool operator !=(Field left, Field right) => !Equals(left, right);
 	}
 }

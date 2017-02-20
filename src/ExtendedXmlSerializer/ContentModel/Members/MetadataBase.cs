@@ -21,38 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class CollectionContentsReader : DecoratedReader
+	abstract class MetadataBase<T> : MetadataBase, IMetadata<T> where T : MemberInfo
 	{
-		readonly static Lists Lists = Lists.Default;
-
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		protected MetadataBase(T metadata, TypeInfo memberType) : base(metadata, memberType)
 		{
-			_item = item;
-			_lists = lists;
+			Metadata = metadata;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public new T Metadata { get; }
+	}
+
+	abstract class MetadataBase : IMetadata, IEquatable<IMetadata>
+	{
+		protected MetadataBase(MemberInfo metadata, TypeInfo memberType)
 		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
-			{
-				_item.Read(reading, result, list);
-			}
-			return result;
+			Metadata = metadata;
+			MemberType = memberType;
 		}
+
+		public MemberInfo Metadata { get; }
+		public TypeInfo MemberType { get; }
+
+		public override bool Equals(object obj) => !ReferenceEquals(null, obj) &&
+		                                           (ReferenceEquals(this, obj) || Equals((IMetadata) obj));
+
+		public bool Equals(IMetadata other) => GetHashCode().Equals(other.GetHashCode());
+		public override int GetHashCode() => Metadata.GetHashCode() ^ MemberType.GetHashCode();
 	}
 }

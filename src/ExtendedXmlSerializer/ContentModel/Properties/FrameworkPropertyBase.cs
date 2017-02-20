@@ -21,37 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class CollectionContentsReader : DecoratedReader
+	abstract class FrameworkPropertyBase<T> : PropertyBase<T>
 	{
-		readonly static Lists Lists = Lists.Default;
+		protected FrameworkPropertyBase(string name) : base(name, Defaults.Namespace) {}
 
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		protected override string Value(IXmlReader parameter)
 		{
-			_item = item;
-			_lists = lists;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
-			{
-				_item.Read(reading, result, list);
-			}
+			var result = base.Value(parameter);
+			parameter.Reset();
 			return result;
 		}
 	}
