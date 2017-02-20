@@ -23,20 +23,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
 		readonly IExtendedXmlSerializerFactory _factory;
+		readonly IDictionary<MemberInfo, IConverter> _converters;
+		readonly IDictionary<MemberInfo, IRuntimeMemberSpecification> _specifications;
 
-		public ExtendedXmlConfiguration() : this(ExtendedXmlSerializerFactory.Default) {}
+		public ExtendedXmlConfiguration()
+			: this(ExtendedXmlSerializerFactory.Default) {}
 
 		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory)
+			: this(factory, new Dictionary<MemberInfo, IConverter>(), new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
+
+		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory, IDictionary<MemberInfo, IConverter> converters,
+		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> specifications)
 		{
 			_factory = factory;
+			_converters = converters;
+			_specifications = specifications;
 		}
 
 		public bool AutoProperties { get; set; }
@@ -79,8 +92,6 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IExtendedXmlSerializer Create() => _factory.Get(this);
-
 		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
 		{
 			ReaderSettings = readerSettings;
@@ -92,7 +103,7 @@ namespace ExtendedXmlSerialization.Configuration
 			WriterSettings = writerSettings;
 			return this;
 		}
-		
+
 		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
 		{
 			ReaderSettings = readerSettings;
@@ -100,6 +111,14 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IMemberPolicy Get() => Defaults.MemberPolicy; // TODO. Create policy.
+		public IExtendedXmlSerializer Create()
+		{
+			var policy = Defaults.MemberPolicy;
+
+			var configuration = new SerializationConfiguration(_specifications, TypeSelector.Default, MemberAliases.Default,
+			                                                   new MemberConverters(_converters), policy);
+			var result = _factory.Get(configuration);
+			return result;
+		}
 	}
 }

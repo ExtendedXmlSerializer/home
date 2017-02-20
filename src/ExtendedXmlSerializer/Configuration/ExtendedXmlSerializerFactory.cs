@@ -29,20 +29,21 @@ namespace ExtendedXmlSerialization.Configuration
 	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
 	{
 		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(TypeSelector.Default, XmlFactory.Default, SerializationFactory.Default) {}
+		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
 
-		readonly ITypeSelector _selector;
 		readonly IXmlFactory _xml;
 		readonly ISerializationFactory _serialization;
 
-		public ExtendedXmlSerializerFactory(ITypeSelector selector, IXmlFactory xml, ISerializationFactory serialization)
+		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
 		{
-			_selector = selector;
 			_xml = xml;
 			_serialization = serialization;
 		}
 
-		public IExtendedXmlSerializer Get(IExtendedXmlConfiguration parameter)
-			=> new ExtendedXmlSerializer(_selector, _xml, _serialization.Get(parameter));
+		public IExtendedXmlSerializer Get(ISerializationConfiguration parameter)
+			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
 	}
+
+	/*public interface IConfiguredSerialization : ITypeSelector
+	{}*/
 }

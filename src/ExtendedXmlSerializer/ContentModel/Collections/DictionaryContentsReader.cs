@@ -32,6 +32,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
 		public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
-			: base(reader, new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists) {}
+			: base(new MemberAttributesReader(reader, members),
+			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists) {}
 	}
 }

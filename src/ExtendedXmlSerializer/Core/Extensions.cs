@@ -34,7 +34,8 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
-		public static IReadOnlyList<T> AsReadOnly<T>(this IEnumerable<T> @this) => new ReadOnlyCollection<T>(@this.ToArray());
+		public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
+			=> new ReadOnlyCollection<T>(@this.ToArray());
 
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(@this.Yield().Concat(others).Fixed());

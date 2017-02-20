@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class CollectionContentsReader : DecoratedReader
+	public interface IMetadata<out T> : IMetadata where T : MemberInfo
 	{
-		readonly static Lists Lists = Lists.Default;
+		new T Metadata { get; }
+	}
 
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
+	public interface IMetadata
+	{
+		MemberInfo Metadata { get; }
 
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
-		{
-			_item = item;
-			_lists = lists;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
-			{
-				_item.Read(reading, result, list);
-			}
-			return result;
-		}
+		TypeInfo MemberType { get; }
 	}
 }

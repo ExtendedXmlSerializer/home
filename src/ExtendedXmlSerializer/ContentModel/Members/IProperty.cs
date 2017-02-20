@@ -25,5 +25,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IProperty : IMember<PropertyInfo> {}
+	public interface IProperty : IMetadata<PropertyInfo> {}
 }

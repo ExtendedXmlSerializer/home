@@ -21,38 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class CollectionContentsReader : DecoratedReader
+	class MemberListWriter : IWriter
 	{
-		readonly static Lists Lists = Lists.Default;
+		readonly ImmutableArray<IMember> _members;
 
-		readonly ICollectionItemReader _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		public MemberListWriter(ImmutableArray<IMember> members)
 		{
-			_item = item;
-			_lists = lists;
+			_members = members;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public void Write(IXmlWriter writer, object instance)
 		{
-			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
+			var length = _members.Length;
+			for (var i = 0; i < length; i++)
 			{
-				_item.Read(reading, result, list);
+				_members[i].Write(writer, instance);
 			}
-			return result;
 		}
 	}
 }

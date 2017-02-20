@@ -21,22 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	abstract class MemberBase<T> : IMember<T> where T : MemberInfo
+	class MemberElement : Identity, IWriter
 	{
-		readonly T _member;
+		public MemberElement(string name) : base(name, string.Empty) {}
 
-		protected MemberBase(T member, TypeInfo memberType)
-		{
-			_member = member;
-			MemberType = memberType;
-		}
-
-		public TypeInfo MemberType { get; }
-
-		public T Get() => _member;
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Member(Name);
 	}
 }

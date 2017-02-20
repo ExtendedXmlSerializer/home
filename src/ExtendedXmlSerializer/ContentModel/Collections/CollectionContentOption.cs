@@ -50,10 +50,12 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 
 			var items = new CollectionItemReader(item);
-			var membered = new MemberedCollectionItemReader(items, members.ToDictionary(x => x.DisplayName));
+			var dictionary = members.ToDictionary(x => x.DisplayName);
+			var membered = new MemberedCollectionItemReader(items, dictionary);
 
-			var reader = new CollectionContentsReader(activator, membered);
-			var writer = new MemberedCollectionWriter(new MemberWriter(members), new EnumerableWriter(item));
+			var attributes = new MemberAttributesReader(activator, dictionary);
+			var reader = new CollectionContentsReader(attributes, membered);
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

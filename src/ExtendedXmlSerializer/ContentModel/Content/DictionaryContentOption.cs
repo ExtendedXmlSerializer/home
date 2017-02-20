@@ -57,7 +57,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.DisplayName));
-			var writer = new MemberedCollectionWriter(new MemberWriter(members), new DictionaryEntryWriter(entry));
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new DictionaryEntryWriter(entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

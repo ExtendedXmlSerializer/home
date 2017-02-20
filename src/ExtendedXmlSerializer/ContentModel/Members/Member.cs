@@ -22,27 +22,22 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Member : Container, IMember
+	class Member : Serializer, IMember
 	{
 		readonly ISpecification<object> _emit;
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
 		public Member(IMemberProfile profile, Func<object, object> getter, Action<object, object> setter)
-			: this(profile, getter, setter, profile.Content) {}
-
-		public Member(IMemberProfile profile, Func<object, object> getter, Action<object, object> setter, ISerializer content)
-			: this(profile, profile.DisplayName, getter, setter, profile.Element, content) {}
+			: this(profile.Specification, profile.Name, getter, setter, profile.Reader, profile.Writer) {}
 
 		protected Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
-		                 Action<object, object> setter, IWriter element,
-		                 ISerializer content) : base(element, content)
+		                 Action<object, object> setter, IReader reader, IWriter writer) : base(reader, writer)
 		{
 			DisplayName = displayName;
 			_emit = emit;

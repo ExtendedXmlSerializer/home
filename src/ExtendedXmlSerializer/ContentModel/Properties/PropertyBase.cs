@@ -28,18 +28,19 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	abstract class PropertyBase<T> : Identity, IProperty<T>
 	{
-		protected PropertyBase(string name) : this(name, Defaults.Namespace) {}
-
 		protected PropertyBase(string name, string identifier) : base(name, identifier) {}
 
-		public virtual T Get(IXmlReader parameter) => Parse(parameter, parameter.Value());
+		public virtual T Get(IXmlReader parameter) => Parse(parameter, Value(parameter));
+
+		protected virtual string Value(IXmlReader parameter) => parameter.Value();
+
 		protected abstract T Parse(IXmlReader parameter, string data);
 
 		public virtual void Write(IXmlWriter writer, T instance)
 		{
-			var identifier = Format(writer, instance);
-			var ns = new Namespace(writer.Get(Identifier), Identifier);
-			var attribute = new Attribute(Name, identifier, ns);
+			var ns = !string.IsNullOrEmpty(Identifier) ? new Namespace(writer.Get(Identifier), Identifier) : (Namespace?) null;
+			var format = Format(writer, instance);
+			var attribute = new Attribute(Name, format, ns);
 			writer.Attribute(attribute);
 		}
 

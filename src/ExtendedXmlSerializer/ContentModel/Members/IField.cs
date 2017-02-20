@@ -25,5 +25,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IField : IMember<FieldInfo> {}
+	public interface IField : IMetadata<FieldInfo> {}
 }

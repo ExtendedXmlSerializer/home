@@ -21,19 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core.Sources;
+using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	class Member : IWriter
+	class NamesList : FixedParser<IEnumerable<ParsedName>>
 	{
-		readonly string _name;
+		readonly static Parser<char> List = Parse.Char(',').Token();
 
-		public Member(string name)
-		{
-			_name = name;
-		}
-
-		public virtual void Write(IXmlWriter writer, object instance) => writer.Member(_name);
+		public static NamesList Default { get; } = new NamesList();
+		NamesList() : base(Parse.Ref(() => Parser.Default.Get()).DelimitedBy(List).Token()) {}
 	}
 }

@@ -37,11 +37,17 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		protected override IMember CreateMember(IMemberProfile profile, Func<object, object> getter,
-		                                        Action<object, object> setter, ISerializer content)
+		                                        Action<object, object> setter)
 		{
+			// TODO: This should be simplified:
+
 			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
-			var body = new Serializer(content, new VariableTypeWriter(specification, _runtime, content));
-			var member = base.CreateMember(profile, getter, setter, body);
+			var content = profile.Get();
+			var writer = new Enclosure(new MemberElement(profile.Name),
+			                           new VariableTypeWriter(specification, _runtime, content));
+			var decorated = new MemberProfile(profile.Specification, profile.Name, profile.AllowWrite, profile.Order,
+			                                  profile.Metadata, profile.MemberType, content, writer);
+			var member = base.CreateMember(decorated, getter, setter);
 			var result = new VariableTypeMember(specification, member);
 			return result;
 		}

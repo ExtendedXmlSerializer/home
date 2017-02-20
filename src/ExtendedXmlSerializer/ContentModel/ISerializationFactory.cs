@@ -21,11 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	public interface ISerializationFactory : IParameterizedSource<IExtendedXmlConfiguration, ISerialization> {}
+	public interface ISerializationFactory : IParameterizedSource<ISerializationConfiguration, ISerialization> {}
 }

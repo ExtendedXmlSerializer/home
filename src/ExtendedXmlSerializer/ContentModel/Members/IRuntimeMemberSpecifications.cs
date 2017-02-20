@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,34 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-/*
-	public struct MemberInformation : IEquatable<MemberInformation>
-	{
-		public MemberInformation(MemberInfo metadata, TypeInfo memberType, bool assignable)
-		{
-			Metadata = metadata;
-			MemberType = memberType;
-			Assignable = assignable;
-		}
-
-		public MemberInfo Metadata { get; }
-		public TypeInfo MemberType { get; }
-		public bool Assignable { get; }
-
-		public bool Equals(MemberInformation other) => Equals(Metadata, other.Metadata);
-
-		public override bool Equals(object obj) => !ReferenceEquals(null, obj) && (obj is MemberInformation && Equals((MemberInformation) obj));
-
-		public override int GetHashCode() => Metadata.GetHashCode();
-
-		public static bool operator ==(MemberInformation left, MemberInformation right) => left.Equals(right);
-
-		public static bool operator !=(MemberInformation left, MemberInformation right) => !left.Equals(right);
-	}
-*/
-
-	public interface IMember<out T> : ISource<T> where T : MemberInfo
-	{
-		TypeInfo MemberType { get; }
-	}
+	public interface IRuntimeMemberSpecifications : IParameterizedSource<MemberInfo, IRuntimeMemberSpecification> {}
 }

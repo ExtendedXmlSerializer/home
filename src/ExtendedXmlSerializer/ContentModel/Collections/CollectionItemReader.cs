@@ -35,6 +35,6 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_item = item;
 		}
 
-		public void Read(IXmlReader reader, object instance, IList list) => list.Add(_item.Get(reader));
+		public void Read(ContentReading reading, object instance, IList list) => list.Add(_item.Get(reading.Owner));
 	}
 }

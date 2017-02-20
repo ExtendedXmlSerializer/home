@@ -32,10 +32,10 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class ArgumentsProperty : PropertyBase<ImmutableArray<Type>>, IArgumentsProperty
+	sealed class ArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, IArgumentsProperty
 	{
 		public static ArgumentsProperty Default { get; } = new ArgumentsProperty();
-		ArgumentsProperty() : this(TypesList.Default) {}
+		ArgumentsProperty() : this(NamesList.Default) {}
 
 		readonly Parser<IEnumerable<ParsedName>> _names;
 
@@ -46,8 +46,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 
 		protected override ImmutableArray<Type> Parse(IXmlReader parameter, string data)
 		{
-			var items = _names.Parse(data);
-			var result = Unpack(parameter, items.ToArray()).ToImmutableArray();
+			var items = _names.Parse(data).ToArray();
+			var result = Unpack(parameter, items).ToImmutableArray();
 			return result;
 		}
 

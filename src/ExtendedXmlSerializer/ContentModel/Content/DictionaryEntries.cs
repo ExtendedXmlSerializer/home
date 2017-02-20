@@ -26,6 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
@@ -65,7 +66,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var value = Create(Value, pair.ValueType);
 			var members = ImmutableArray.Create(key, value);
 			var reader = new MemberContentsReader(Activator<DictionaryEntry>.Default, members.ToDictionary(x => x.DisplayName));
-			var converter = new Serializer(reader, new MemberWriter(members));
+			var converter = new Serializer(reader, new MemberListWriter(members));
 			var result = new Container(_element, converter);
 			return result;
 		}
@@ -81,10 +82,10 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			}
 
 			public TypeInfo MemberType { get; }
+			public IWriter Writer => _profile.Writer;
+			public IReader Reader => _profile.Reader;
 
-			public string DisplayName => _profile.DisplayName;
-
-			public bool IsSatisfiedBy(object parameter) => _profile.IsSatisfiedBy(parameter);
+			public ISpecification<object> Specification => _profile.Specification;
 
 			public bool AllowWrite => _profile.AllowWrite;
 
@@ -92,9 +93,9 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 			public MemberInfo Metadata => _profile.Metadata;
 
-			IWriter IMemberProfile.Element => _profile.Element;
-
-			public ISerializer Content => _profile.Content;
+			public string Name => _profile.Name;
+			public string Identifier => _profile.Identifier;
+			public ISerializer Get() => _profile.Get();
 		}
 	}
 }
