@@ -40,8 +40,8 @@ namespace ExtendedXmlSerialization.TypeModel
 
 		public Action<object, object> Get(TypeInfo parameter) => _action;
 
-		void Add(object dictionary, object item) => Add((IDictionary) dictionary, (DictionaryEntry) item);
+		static void Add(object dictionary, object item) => Add((IDictionary) dictionary, (DictionaryEntry) item);
 
-		void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
+		static void Add(IDictionary dictionary, DictionaryEntry entry) => dictionary.Add(entry.Key, entry.Value);
 	}
 }

@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberSerialization : IParameterizedSource<IProperty, IMemberProfile>,
-	                                        IParameterizedSource<IField, IMemberProfile> {}
+	public interface IMemberSerialization : ISpecification<PropertyInfo>, ISpecification<FieldInfo>,
+	                                        IParameterizedSource<MemberDescriptor, MemberProfile> {}
 }

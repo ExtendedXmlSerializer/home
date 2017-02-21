@@ -42,10 +42,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_setter = setter;
 		}
 
-		protected override IMember Create(IMemberProfile profile, Func<object, object> getter)
+		protected override IMember Create(MemberProfile profile, Func<object, object> getter)
 			=> CreateMember(profile, getter, _setter.Get(profile.Metadata));
 
-		protected virtual IMember CreateMember(IMemberProfile profile, Func<object, object> getter,
+		protected virtual IMember CreateMember(MemberProfile profile, Func<object, object> getter,
 		                                       Action<object, object> setter)
 			=> new Member(profile, getter, setter);
 	}

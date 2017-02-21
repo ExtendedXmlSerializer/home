@@ -26,7 +26,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
@@ -57,7 +56,14 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		}
 
 		IMember Create(PropertyInfo metadata, TypeInfo classification)
-			=> _variable.Get(new MemberProfile(_serialization.Get(new Property(metadata, classification)), classification));
+		{
+			var profile = _serialization.Get(new MemberDescriptor(metadata, classification, true));
+			var decorated = new MemberProfile(profile.Specification, profile.Identity, profile.AllowWrite,
+				                    profile.Order, profile.Metadata, classification, profile.Reader,
+				                    profile.Writer);
+			var result = _variable.Get(decorated);
+			return result;
+		}
 
 		public ISerializer Get(TypeInfo parameter)
 		{
@@ -71,6 +77,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			return result;
 		}
 
+/*
 		class MemberProfile : IMemberProfile
 		{
 			readonly IMemberProfile _profile;
@@ -95,7 +102,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 			public string Name => _profile.Name;
 			public string Identifier => _profile.Identifier;
-			public ISerializer Get() => _profile.Get();
+			
 		}
+*/
 	}
 }

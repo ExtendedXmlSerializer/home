@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberSpecification : ISpecification<IMemberProfile> {}
+	public interface IMemberSpecification : ISpecification<MemberProfile> {}
 }
