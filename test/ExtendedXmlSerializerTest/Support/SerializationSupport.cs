@@ -10,7 +10,7 @@ namespace ExtendedXmlSerialization.Test.Support
 
 		readonly IExtendedXmlSerializer _serializer;
 
-		protected SerializationSupport(IExtendedXmlSerializer serializer)
+		public SerializationSupport(IExtendedXmlSerializer serializer)
 		{
 			_serializer = serializer;
 		}
