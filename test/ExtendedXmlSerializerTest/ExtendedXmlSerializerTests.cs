@@ -97,64 +97,12 @@ namespace ExtendedXmlSerialization.Test
 		}
 
 		[Fact]
-		public void ListProperties()
-		{
-			var expected = new ListWithProperties {"Hello", "World", "Hope", "This", "Works!"};
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<ListWithProperties>(data);
-			Assert.Equal(expected, actual);
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
-		}
-
-		[Fact]
-		public void GenericListProperties()
-		{
-			var expected = new ListWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<ListWithProperties<string>>(data);
-			Assert.Equal(expected, actual);
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
-		}
-
-		[Fact]
 		public void BasicHashSet()
 		{
 			var expected = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"};
 			var data = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<HashSet<string>>(data);
 			Assert.True(actual.SetEquals(expected));
-		}
-
-		[Fact]
-		public void HashSetProperties()
-		{
-			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<HashSetWithProperties>(data);
-			Assert.True(actual.SetEquals(expected));
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
-		}
-
-		[Fact]
-		public void GenericHashSetWithProperties()
-		{
-			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<HashSetWithProperties<string>>(data);
-			Assert.True(actual.SetEquals(expected));
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
 		}
 
 		[Fact]
@@ -173,96 +121,6 @@ namespace ExtendedXmlSerialization.Test
 			{
 				Assert.Equal(expected[entry.Key], entry.Value);
 			}
-		}
-
-		[Fact]
-		public void DictionaryProperties()
-		{
-			var expected = new DictionaryWithProperties
-			               {
-				               {"First", 1},
-				               {"Second", 2},
-				               {"Other", 3}
-			               };
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<DictionaryWithProperties>(data);
-			Assert.NotNull(actual);
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
-			Assert.Equal(expected.Count, actual.Count);
-			foreach (var entry in actual)
-			{
-				Assert.Equal(expected[entry.Key], entry.Value);
-			}
-		}
-
-		[Fact]
-		public void GenericDictionaryProperties()
-		{
-			var expected = new GenericDictionaryWithProperties<int, string>
-			               {
-				               {1, "First"},
-				               {2, "Second"},
-				               {3, "Other"}
-			               };
-			expected.Message = HelloWorld;
-			expected.Number = 6776;
-
-			var data = _serializer.Serialize(expected);
-			var actual = _serializer.Deserialize<GenericDictionaryWithProperties<int, string>>(data);
-			Assert.NotNull(actual);
-			Assert.Equal(HelloWorld, actual.Message);
-			Assert.Equal(6776, actual.Number);
-			Assert.Equal(expected.Count, actual.Count);
-			foreach (var entry in actual)
-			{
-				Assert.Equal(expected[entry.Key], entry.Value);
-			}
-		}
-
-		public class ListWithProperties : List<string>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
-		}
-
-		public class ListWithProperties<T> : List<T>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
-		}
-
-		public class HashSetWithProperties<T> : HashSet<T>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
-		}
-
-		public class HashSetWithProperties : HashSet<string>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
-		}
-
-		public class GenericDictionaryWithProperties<TKey, TValue> : Dictionary<TKey, TValue>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
-		}
-
-		public class DictionaryWithProperties : Dictionary<string, int>
-		{
-			public string Message { get; set; }
-
-			public int Number { get; set; }
 		}
 
 		[Fact]
