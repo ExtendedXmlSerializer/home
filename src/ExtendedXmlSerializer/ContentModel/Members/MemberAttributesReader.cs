@@ -43,9 +43,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var attributes = parameter.Attributes();
 			if (attributes.HasValue)
 			{
-				while (attributes.Value.Next())
+				var reading = attributes.Value;
+				while (reading.Next())
 				{
-					if (attributes.Value.IsMember())
+					if (reading.IsMember())
 					{
 						var member = _members.Get(parameter.Name);
 						member?.Assign(result, ((IReader) member).Get(parameter));

@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	public struct ContentReading
@@ -34,18 +32,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		{
 			Owner = owner;
 			_reader = reader;
-			switch (reader.NodeType)
-			{
-				case XmlNodeType.Attribute:
-					_reader.MoveToElement();
-					break;
-			}
 			_targetDepth = _reader.Depth + 1;
 		}
 
 		public IXmlReader Owner { get; }
 
-		public bool IsMember() => _reader.Prefix == string.Empty; // TODO: Might need a more reliable method for this.
+		public bool IsMember() => _reader.Prefix == string.Empty; // TODO: Might need a more reliable indicator for this.
 
 		public bool Next() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _targetDepth;
 	}

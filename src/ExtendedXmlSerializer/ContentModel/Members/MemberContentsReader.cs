@@ -50,29 +50,5 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 			return result;
 		}
-
-		/*object Properties(IXmlReader parameter)
-		{
-			
-			do
-			{
-				var member = _members.Get(parameter.Name);
-				member?.Assign(result, ((IReader) member).Get(parameter));
-			} while ((reading = parameter.ReadContent()) != null && reading.Value.CurrentDepth == target);
-			return result;
-		}
-
-		object Read(IXmlReader parameter)
-		{
-			var reading = parameter.ReadContent();
-			var target = reading?.PreviousDepth + 1;
-			var result = base.Get(parameter);
-			do
-			{
-				var member = _members.Get(parameter.Name);
-				member?.Assign(result, ((IReader) member).Get(parameter));
-			} while ((reading = parameter.ReadContent()) != null && reading.Value.CurrentDepth == target);
-			return result;
-		}*/
 	}
 }

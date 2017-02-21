@@ -65,7 +65,20 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public AttributeReading? Attributes()
 			=> _reader.HasAttributes ? new AttributeReading(_reader) : (AttributeReading?) null;
 
-		public ContentReading Content() => new ContentReading(this, _reader);
+		public ContentReading Content()
+		{
+			if (_reader.HasAttributes)
+			{
+				switch (_reader.NodeType)
+				{
+					case XmlNodeType.Attribute:
+						Reset();
+						break;
+				}
+			}
+
+			return new ContentReading(this, _reader);
+		}
 
 		public bool Contains(IIdentity identity)
 			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);
