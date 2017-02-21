@@ -21,21 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public struct MemberDescriptor
+	public struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
-		public MemberDescriptor(MemberInfo metadata, TypeInfo memberType, bool writable)
+		readonly static EqualityComparer<int> Comparer = EqualityComparer<int>.Default;
+
+		readonly int _code;
+
+		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable)
+			: this(reflectedType, metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
+
+		MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable, int code)
 		{
+			_code = code;
+			ReflectedType = reflectedType;
 			Metadata = metadata;
 			MemberType = memberType;
 			Writable = writable;
 		}
 
+		public TypeInfo ReflectedType { get; }
 		public MemberInfo Metadata { get; }
 		public TypeInfo MemberType { get; }
 		public bool Writable { get; }
+
+		public bool Equals(MemberDescriptor other) => Comparer.Equals(_code, other._code);
+
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is MemberDescriptor && Equals((MemberDescriptor) obj);
+
+		public override int GetHashCode() => _code;
+
+		public static bool operator ==(MemberDescriptor left, MemberDescriptor right) => left.Equals(right);
+
+		public static bool operator !=(MemberDescriptor left, MemberDescriptor right) => !left.Equals(right);
 	}
 }

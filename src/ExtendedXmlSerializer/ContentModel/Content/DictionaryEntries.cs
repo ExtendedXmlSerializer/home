@@ -55,12 +55,12 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_locator = locator;
 		}
 
-		IMember Create(PropertyInfo metadata, TypeInfo classification)
+		IMember Create(MemberInfo metadata, TypeInfo classification)
 		{
-			var profile = _serialization.Get(new MemberDescriptor(metadata, classification, true));
+			var profile = _serialization.Get(new MemberDescriptor(Type, metadata, classification, true));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity, profile.AllowWrite,
-				                    profile.Order, profile.Metadata, classification, profile.Reader,
-				                    profile.Writer);
+			                                  profile.Order, profile.Metadata, classification, profile.Reader,
+			                                  profile.Writer);
 			var result = _variable.Get(decorated);
 			return result;
 		}

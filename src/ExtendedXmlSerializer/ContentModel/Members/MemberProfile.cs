@@ -36,7 +36,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			MemberInfo metadata,
 			TypeInfo memberType,
 			IReader reader,
-			IWriter writer) : this(specification, new Identity(name, string.Empty), allowWrite, order, metadata, memberType, reader, writer) {}
+			IWriter writer)
+			: this(specification, new Identity(name, string.Empty), allowWrite, order, metadata, memberType, reader, writer) {}
 
 		public MemberProfile(
 			ISpecification<object> specification,
@@ -47,7 +48,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			TypeInfo memberType,
 			IReader reader,
 			IWriter writer)
-			
+
 		{
 			Specification = specification;
 			Identity = identity;
@@ -60,6 +61,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		public ISpecification<object> Specification { get; }
+
 		public IIdentity Identity { get; }
 
 		public bool AllowWrite { get; }

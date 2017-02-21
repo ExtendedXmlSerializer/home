@@ -21,19 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface ISerializationConfiguration : IRuntimeMemberSpecifications
-	{
-		Members.IAliases Aliases { get; }
-
-		ITypeSelector Types { get; }
-
-		IMemberConverters Converters { get; }
-
-		IMemberPolicy MemberPolicy { get; }
-	}
+	public interface IMemberEmitSpecifications : IParameterizedSource<MemberDescriptor, IMemberEmitSpecification> {}
 }

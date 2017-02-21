@@ -43,14 +43,11 @@ namespace ExtendedXmlSerialization.ContentModel
 			_field = field;
 		}
 
-		public ISerialization Get(ISerializationConfiguration parameter)
+		public ISerialization Get(SerializationConfiguration parameter)
 		{
 			var factory = new SerializationProfileFactory(
-				_property.And(parameter.MemberPolicy),
-				_field.And(parameter.MemberPolicy),
-				parameter,
-				parameter.Aliases, parameter.Converters,
-				new ContainerOptions()
+				_property.And(parameter.MemberPolicy), _field.And(parameter.MemberPolicy), parameter.Emit,
+				parameter.Serializers, parameter.Aliases, new ContainerOptions()
 			).ToDelegate();
 			var result = new Serialization(factory);
 			return result;

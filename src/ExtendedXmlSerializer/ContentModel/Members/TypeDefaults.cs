@@ -21,29 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
+	class TypeDefaults : ReferenceCacheBase<TypeInfo, object>, ITypeDefaults
 	{
-		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
+		public static TypeDefaults Default { get; } = new TypeDefaults();
+		TypeDefaults() : this(Activators.Default) {}
 
-		readonly IXmlFactory _xml;
-		readonly ISerializationFactory _serialization;
+		readonly IActivators _activators;
 
-		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
+		public TypeDefaults(IActivators activators)
 		{
-			_xml = xml;
-			_serialization = serialization;
+			_activators = activators;
 		}
 
-		public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
+		protected override object Create(TypeInfo parameter) => _activators.Get(parameter.AsType()).Invoke();
 	}
-
-	/*public interface IConfiguredSerialization : ITypeSelector
-	{}*/
 }

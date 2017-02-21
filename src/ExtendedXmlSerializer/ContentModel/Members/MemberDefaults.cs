@@ -21,29 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
+	class MemberDefaults : ReferenceCacheBase<MemberInfo, object>
 	{
-		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
+		readonly object _instance;
+		readonly IGetterFactory _getter;
 
-		readonly IXmlFactory _xml;
-		readonly ISerializationFactory _serialization;
+		public MemberDefaults(object instance) : this(instance, GetterFactory.Default) {}
 
-		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
+		public MemberDefaults(object instance, IGetterFactory getter)
 		{
-			_xml = xml;
-			_serialization = serialization;
+			_instance = instance;
+			_getter = getter;
 		}
 
-		public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
+		protected override object Create(MemberInfo parameter) => _getter.Get(parameter).Invoke(_instance);
 	}
-
-	/*public interface IConfiguredSerialization : ITypeSelector
-	{}*/
 }

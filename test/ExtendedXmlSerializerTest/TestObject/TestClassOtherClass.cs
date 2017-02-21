@@ -11,7 +11,11 @@ namespace ExtendedXmlSerialization.Test.TestObject
 				             Primitive1 = TestClassPrimitiveTypes.Create(),
 				             Primitive2 = TestClassPrimitiveTypes.Create(),
 				             ListProperty = new List<TestClassItem>(),
-				             Other = new TestClassOther()
+				             Other = new TestClassOther
+				                     {
+					                    Test = new TestClassItem {Id = 2, Name = "Other Name"},
+										Double = 7.3453145324
+				                     }
 			             };
 			for (var i = 0; i < 20; i++)
 			{
@@ -36,12 +40,6 @@ namespace ExtendedXmlSerialization.Test.TestObject
 
 	public class TestClassOther
 	{
-		public TestClassOther()
-		{
-			Test = new TestClassItem {Id = 2, Name = "Other Name"};
-			Double = 7.3453145324;
-		}
-
 		public TestClassItem Test { get; set; }
 
 		public double Double { get; set; }

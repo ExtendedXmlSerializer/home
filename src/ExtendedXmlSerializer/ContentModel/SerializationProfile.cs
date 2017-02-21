@@ -26,17 +26,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
 	class SerializationProfile : ISerializationProfile
 	{
-		readonly static AlwaysSpecification<object> AlwaysSpecification = AlwaysSpecification<object>.Default;
-
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
+		readonly IMemberEmitSpecifications _emit;
 		readonly IMemberSerializers _serializers;
 		readonly ISerialization _serialization;
 		readonly Members.IAliases _aliases;
@@ -46,6 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel
 		public SerializationProfile(
 			ISpecification<PropertyInfo> property,
 			ISpecification<FieldInfo> field,
+			IMemberEmitSpecifications emit,
 			ISerialization serialization,
 			IMemberSerializers serializers,
 			Members.IAliases aliases,
@@ -54,6 +53,7 @@ namespace ExtendedXmlSerialization.ContentModel
 		{
 			_property = property;
 			_field = field;
+			_emit = emit;
 			_serializers = serializers;
 			_serialization = serialization;
 			_aliases = aliases;
@@ -63,18 +63,18 @@ namespace ExtendedXmlSerialization.ContentModel
 
 		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
 		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
-		
+
 		public MemberProfile Get(MemberDescriptor parameter)
 		{
 			var metadata = parameter.Metadata;
 			var order = _order.Get(metadata);
 			var name = _aliases.Get(metadata) ?? metadata.Name;
 
-			var content = _serialization.Get(parameter.MemberType.AccountForNullable()).Get();
+			var content = _serialization.Get(parameter.MemberType).Get();
 
 			var writer = _serializers.Create(name, parameter, content);
 
-			var result = new MemberProfile(AlwaysSpecification, name, parameter.Writable, order, metadata,
+			var result = new MemberProfile(_emit.Get(parameter), name, parameter.Writable, order, metadata,
 			                               parameter.MemberType, content, writer);
 			return result;
 		}

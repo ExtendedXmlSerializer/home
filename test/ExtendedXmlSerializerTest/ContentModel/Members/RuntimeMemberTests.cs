@@ -54,7 +54,9 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                     }
 			                     };
 
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters, specifications);
+			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
+			                                                 specifications);
 
 			var support = new SerializationSupport(configuration.Create());
 			var expected = new SimpleSubject {Message = "Hello World!", Number = 6776};

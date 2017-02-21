@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberAliases : AliasesBase<MemberInfo>, IAliases
+	class InstanceDefaultsMemberSpecifications : IMemberEmitSpecifications
 	{
-		public static MemberAliases Default { get; } = new MemberAliases();
-		MemberAliases() : this(new Dictionary<MemberInfo, string>()) {}
+		readonly ISpecification<TypeInfo> _specification;
+		readonly ITypeMemberDefaults _defaults;
 
-		public MemberAliases(IDictionary<MemberInfo, string> store) : base(store) {}
+		public static InstanceDefaultsMemberSpecifications Default { get; } = new InstanceDefaultsMemberSpecifications();
 
-		public override string Get(MemberInfo parameter)
+		InstanceDefaultsMemberSpecifications()
+			: this(IsActivatedTypeSpecification.Default, TypeMemberDefaults.Default) {}
+
+		public InstanceDefaultsMemberSpecifications(ISpecification<TypeInfo> specification, ITypeMemberDefaults defaults)
 		{
-			return base.Get(parameter) ??
-			       parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			_specification = specification;
+			_defaults = defaults;
+		}
+
+		public IMemberEmitSpecification Get(MemberDescriptor parameter)
+			=> _specification.IsSatisfiedBy(parameter.ReflectedType) ? FromDefault(parameter) : null;
+
+		IMemberEmitSpecification FromDefault(MemberDescriptor parameter)
+		{
+			var defaultValue = _defaults.Get(parameter.ReflectedType).Invoke(parameter.Metadata);
+			var inverse = new EqualitySpecification<object>(defaultValue).Inverse();
+			var result = new MemberEmitSpecification(inverse);
+			return result;
 		}
 	}
 }

@@ -165,7 +165,7 @@ namespace ExtendedXmlSerialization.Test
 			public static Factory Default { get; } = new Factory();
 			Factory() {}
 
-			public IExtendedXmlSerializer Get(ISerializationConfiguration parameter)
+			public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
 			{
 				var serializers = SerializationFactory.Default.Get(parameter);
 				var result = new ExtendedXmlSerializer(TypeSelector.Default, new OptimizedXmlFactory(serializers), serializers);
