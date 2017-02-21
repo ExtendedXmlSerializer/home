@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public IEnumerable<IContainerOption> Get(ISerialization parameter)
 		{
 			var runtime = new RuntimeSerializer(parameter);
-			var variable = new VariableTypeMemberOption(runtime);
+			var variable = new VariableTypeMemberOption(parameter, runtime);
 			var members = new Members.Members(parameter, new Selector(variable));
 			var options = ElementOptions.Default;
 

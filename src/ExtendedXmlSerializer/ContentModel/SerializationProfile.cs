@@ -61,24 +61,21 @@ namespace ExtendedXmlSerialization.ContentModel
 			_options = options;
 		}
 
-		public IMemberProfile Get(IProperty parameter)
-			=> _property.IsSatisfiedBy(parameter.Metadata) ? Create(parameter, parameter.Metadata.CanWrite) : null;
-
-		public IMemberProfile Get(IField parameter)
-			=> _field.IsSatisfiedBy(parameter.Metadata) ? Create(parameter, !parameter.Metadata.IsInitOnly) : null;
-
-		IMemberProfile Create(IMetadata metadata, bool assignable)
+		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
+		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
+		
+		public MemberProfile Get(MemberDescriptor parameter)
 		{
-			var order = _order.Get(metadata.Metadata);
-			var name = _aliases.Get(metadata.Metadata) ?? metadata.Metadata.Name;
+			var metadata = parameter.Metadata;
+			var order = _order.Get(metadata);
+			var name = _aliases.Get(metadata) ?? metadata.Name;
 
-			var content = _serialization.Get(metadata.MemberType.AccountForNullable()).Get();
+			var content = _serialization.Get(parameter.MemberType.AccountForNullable()).Get();
 
-			var writer = _serializers.Create(name, metadata, content);
+			var writer = _serializers.Create(name, parameter, content);
 
-			var result = new MemberProfile(
-				AlwaysSpecification, name,
-				assignable, order, metadata.Metadata, metadata.MemberType, content, writer);
+			var result = new MemberProfile(AlwaysSpecification, name, parameter.Writable, order, metadata,
+			                               parameter.MemberType, content, writer);
 			return result;
 		}
 

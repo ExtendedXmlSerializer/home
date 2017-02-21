@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_add = add;
 		}
 
-		protected override IMember Create(IMemberProfile profile, Func<object, object> getter)
+		protected override IMember Create(MemberProfile profile, Func<object, object> getter)
 		{
 			var add = _add.Get(profile.MemberType);
 			var result = add != null ? new ReadOnlyCollectionMember(profile, getter, add) : null;

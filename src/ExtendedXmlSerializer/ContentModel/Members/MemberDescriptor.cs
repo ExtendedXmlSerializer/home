@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,5 +25,17 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IField : IMetadata<FieldInfo> {}
+	public struct MemberDescriptor
+	{
+		public MemberDescriptor(MemberInfo metadata, TypeInfo memberType, bool writable)
+		{
+			Metadata = metadata;
+			MemberType = memberType;
+			Writable = writable;
+		}
+
+		public MemberInfo Metadata { get; }
+		public TypeInfo MemberType { get; }
+		public bool Writable { get; }
+	}
 }

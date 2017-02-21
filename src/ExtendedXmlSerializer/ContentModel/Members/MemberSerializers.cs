@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_converters = converters;
 		}
 
-		public IWriter Create(string name, IMetadata member, IWriter content)
+		public IWriter Create(string name, MemberDescriptor member, IWriter content)
 		{
 			var converter = _converters.Get(member.Metadata) ?? _converters.Get(member.MemberType);
 			if (converter != null)

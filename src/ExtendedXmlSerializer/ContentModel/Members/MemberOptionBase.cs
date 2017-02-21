@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public abstract class MemberOptionBase : OptionBase<IMemberProfile, IMember>, IMemberOption
+	public abstract class MemberOptionBase : OptionBase<MemberProfile, IMember>, IMemberOption
 	{
 		readonly IGetterFactory _getter;
 
@@ -38,8 +38,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_getter = getter;
 		}
 
-		public override IMember Get(IMemberProfile parameter) => Create(parameter, _getter.Get(parameter.Metadata));
+		public override IMember Get(MemberProfile parameter) => Create(parameter, _getter.Get(parameter.Metadata));
 
-		protected abstract IMember Create(IMemberProfile profile, Func<object, object> getter);
+		protected abstract IMember Create(MemberProfile memberProfile, Func<object, object> getter);
 	}
 }

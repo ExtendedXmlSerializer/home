@@ -30,9 +30,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class ReadOnlyCollectionMember : Member
 	{
-		public ReadOnlyCollectionMember(IMemberProfile profile, Func<object, object> getter, Action<object, object> add)
+		public ReadOnlyCollectionMember(MemberProfile profile, Func<object, object> getter, Action<object, object> add)
 			: base(
-				ContainsItemsSpecification.Default.And(profile.Specification), profile.Name, getter, add, profile.Reader,
+				ContainsItemsSpecification.Default.And(profile.Specification), profile.Identity.Name, getter, add, profile.Reader,
 				profile.Writer) {}
 
 		public override void Assign(object instance, object value)

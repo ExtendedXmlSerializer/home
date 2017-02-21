@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface ISelector : ISelector<IMemberProfile, IMember> {}
+	public interface ISelector : ISelector<MemberProfile, IMember> {}
 }

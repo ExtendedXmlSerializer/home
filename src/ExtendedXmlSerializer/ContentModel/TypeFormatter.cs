@@ -42,13 +42,13 @@ namespace ExtendedXmlSerialization.ContentModel
 			_nested = nested;
 		}
 
-		string Process(TypeInfo type) => type.IsGenericType ? _generic.Get(type.Name) : type.Name;
+		string Format(TypeInfo type) => type.IsGenericType ? _generic.Get(type.Name) : type.Name;
 
 		public string Get(TypeInfo parameter)
 		{
-			var name = Process(parameter);
+			var name = Format(parameter);
 			var result = parameter.IsNested
-				? $"{Process(parameter.DeclaringType.GetTypeInfo())}{_nested}{name}"
+				? $"{Format(parameter.DeclaringType.GetTypeInfo())}{_nested}{name}"
 				: name;
 			return result;
 		}

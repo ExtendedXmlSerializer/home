@@ -32,11 +32,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	class MemberSource : IMemberSource
 	{
 		readonly ISerialization _serialization;
-		readonly Func<IMemberProfile, IMember> _select;
+		readonly Func<MemberProfile, IMember> _select;
 
 		public MemberSource(ISerialization serialization, ISelector selector) : this(serialization, selector.Get) {}
 
-		public MemberSource(ISerialization serialization, Func<IMemberProfile, IMember> select)
+		public MemberSource(ISerialization serialization, Func<MemberProfile, IMember> select)
 		{
 			_serialization = serialization;
 			_select = select;
@@ -48,16 +48,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			                   .Select(_select)
 			                   .Where(x => x != null);
 
-		IEnumerable<IMemberProfile> Yield(TypeInfo parameter)
+		IEnumerable<MemberProfile> Yield(TypeInfo parameter)
 		{
 			var properties = parameter.GetProperties();
 			var length = properties.Length;
 			for (var i = 0; i < length; i++)
 			{
-				var profile = _serialization.Get(new Property(properties[i]));
-				if (profile != null)
+				var property = properties[i];
+				if (_serialization.IsSatisfiedBy(property))
 				{
-					yield return profile;
+					yield return _serialization.Get(new MemberDescriptor(property, property.PropertyType.GetTypeInfo(), property.CanWrite));
 				}
 			}
 
@@ -65,10 +65,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var l = fields.Length;
 			for (var i = 0; i < l; i++)
 			{
-				var profile = _serialization.Get(new Field(fields[i]));
-				if (profile != null)
+				var field = fields[i];
+				if (_serialization.IsSatisfiedBy(field))
 				{
-					yield return profile;
+					yield return _serialization.Get(new MemberDescriptor(field, field.FieldType.GetTypeInfo(), !field.IsInitOnly));
 				}
 			}
 		}

@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class VariableTypeMemberSpecification : DecoratedSpecification<IMemberProfile>, IMemberSpecification
+	class VariableTypeMemberSpecification : DecoratedSpecification<MemberProfile>, IMemberSpecification
 	{
 		public static VariableTypeMemberSpecification Default { get; } = new VariableTypeMemberSpecification();
 		VariableTypeMemberSpecification() : this(FixedTypeSpecification.Default.Inverse()) {}
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_variable = variable;
 		}
 
-		public override bool IsSatisfiedBy(IMemberProfile parameter)
+		public override bool IsSatisfiedBy(MemberProfile parameter)
 			=> base.IsSatisfiedBy(parameter) && _variable.IsSatisfiedBy(parameter.MemberType);
 	}
 }

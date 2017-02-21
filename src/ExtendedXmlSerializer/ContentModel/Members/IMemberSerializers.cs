@@ -25,6 +25,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public interface IMemberSerializers
 	{
-		IWriter Create(string name, IMetadata member, IWriter content);
+		IWriter Create(string name, MemberDescriptor member, IWriter content);
 	}
 }

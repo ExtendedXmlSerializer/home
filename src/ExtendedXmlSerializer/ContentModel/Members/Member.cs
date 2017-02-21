@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly Action<object, object> _setter;
 		readonly Func<object, object> _getter;
 
-		public Member(IMemberProfile profile, Func<object, object> getter, Action<object, object> setter)
-			: this(profile.Specification, profile.Name, getter, setter, profile.Reader, profile.Writer) {}
+		public Member(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
+			: this(profile.Specification, profile.Identity.Name, getter, setter, profile.Reader, profile.Writer) {}
 
 		protected Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
 		                 Action<object, object> setter, IReader reader, IWriter writer) : base(reader, writer)

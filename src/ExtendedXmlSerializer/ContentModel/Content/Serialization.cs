@@ -33,21 +33,22 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	class Serialization : ISerialization
 	{
 		readonly Func<TypeInfo, IContainer> _selector;
-		readonly Func<IProperty, IMemberProfile> _properties;
-		readonly Func<IField, IMemberProfile> _fields;
+		readonly Func<MemberDescriptor, MemberProfile> _members;
+		readonly ISerializationProfile _profile;
 
 		public Serialization(Func<ISerialization, ISerializationProfile> profile)
 		{
-			var instance = profile(this);
-			_selector = new Selector<TypeInfo, IContainer>(instance.ToArray()).Cache().Get;
-			_properties = new DelegatedSource<IProperty, IMemberProfile>(instance.Get).Cache().Get;
-			_fields = new DelegatedSource<IField, IMemberProfile>(instance.Get).Cache().Get;
+			_profile = profile(this);
+			_selector = new Selector<TypeInfo, IContainer>(_profile.ToArray()).Cache().Get;
+			_members = new DelegatedSource<MemberDescriptor, MemberProfile>(_profile.Get).Cache().Get;
 		}
 
 		public IContainer Get(TypeInfo parameter) => _selector(parameter);
 
-		public IMemberProfile Get(IProperty parameter) => _properties(parameter);
+		public MemberProfile Get(MemberDescriptor parameter) => _members(parameter);
 
-		public IMemberProfile Get(IField parameter) => _fields(parameter);
+		public bool IsSatisfiedBy(PropertyInfo parameter) => _profile.IsSatisfiedBy(parameter);
+
+		public bool IsSatisfiedBy(FieldInfo parameter) => _profile.IsSatisfiedBy(parameter);
 	}
 }
