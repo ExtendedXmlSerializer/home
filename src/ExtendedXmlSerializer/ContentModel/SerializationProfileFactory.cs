@@ -35,28 +35,25 @@ namespace ExtendedXmlSerialization.ContentModel
 		readonly IContainerOptions _options;
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
-		readonly IRuntimeMemberSpecifications _specifications;
+		readonly IMemberEmitSpecifications _emit;
+		readonly IMemberSerializers _serializers;
 		readonly Members.IAliases _aliases;
-		readonly IMemberConverters _converters;
 
-		public SerializationProfileFactory(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-		                                   IRuntimeMemberSpecifications specifications, Members.IAliases aliases,
-		                                   IMemberConverters converters, IContainerOptions options)
+		public SerializationProfileFactory(
+			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field, IMemberEmitSpecifications emit,
+			IMemberSerializers serializers, Members.IAliases aliases, IContainerOptions options)
 		{
 			_options = options;
 			_property = property;
 			_field = field;
-			_specifications = specifications;
+			_emit = emit;
+			_serializers = serializers;
 			_aliases = aliases;
-			_converters = converters;
 		}
 
 		public ISerializationProfile Get(ISerialization parameter)
-			=> new SerializationProfile(_property, _field,
-			                            parameter,
-			                            new MemberSerializers(_specifications, _converters),
-			                            _aliases,
-			                            MemberOrder.Default,
+			=> new SerializationProfile(_property, _field, _emit, parameter,
+			                            _serializers, _aliases, MemberOrder.Default,
 			                            _options.Get(parameter).AsReadOnly()
 			);
 	}

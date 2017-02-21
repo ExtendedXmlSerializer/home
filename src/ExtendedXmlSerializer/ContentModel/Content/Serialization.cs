@@ -39,16 +39,16 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public Serialization(Func<ISerialization, ISerializationProfile> profile)
 		{
 			_profile = profile(this);
-			_selector = new Selector<TypeInfo, IContainer>(_profile.ToArray()).Cache().Get;
+			_selector = new SerializationSelector(_profile.ToArray()).Cache().Get;
 			_members = new DelegatedSource<MemberDescriptor, MemberProfile>(_profile.Get).Cache().Get;
 		}
-
-		public IContainer Get(TypeInfo parameter) => _selector(parameter);
-
-		public MemberProfile Get(MemberDescriptor parameter) => _members(parameter);
 
 		public bool IsSatisfiedBy(PropertyInfo parameter) => _profile.IsSatisfiedBy(parameter);
 
 		public bool IsSatisfiedBy(FieldInfo parameter) => _profile.IsSatisfiedBy(parameter);
+
+		public IContainer Get(TypeInfo parameter) => _selector(parameter);
+
+		public MemberProfile Get(MemberDescriptor parameter) => _members(parameter);
 	}
 }

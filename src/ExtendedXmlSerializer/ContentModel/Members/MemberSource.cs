@@ -57,7 +57,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 				var property = properties[i];
 				if (_serialization.IsSatisfiedBy(property))
 				{
-					yield return _serialization.Get(new MemberDescriptor(property, property.PropertyType.GetTypeInfo(), property.CanWrite));
+					yield return
+						_serialization.Get(new MemberDescriptor(parameter, property, property.PropertyType.GetTypeInfo(),
+						                                        property.CanWrite));
 				}
 			}
 
@@ -68,7 +70,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 				var field = fields[i];
 				if (_serialization.IsSatisfiedBy(field))
 				{
-					yield return _serialization.Get(new MemberDescriptor(field, field.FieldType.GetTypeInfo(), !field.IsInitOnly));
+					yield return
+						_serialization.Get(new MemberDescriptor(parameter, field, field.FieldType.GetTypeInfo(), !field.IsInitOnly));
 				}
 			}
 		}

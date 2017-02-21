@@ -21,29 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
+	class FixedMemberEmitSpecifications : IMemberEmitSpecifications
 	{
-		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
+		public static FixedMemberEmitSpecifications Default { get; } = new FixedMemberEmitSpecifications();
+		FixedMemberEmitSpecifications() : this(new MemberEmitSpecification(AlwaysSpecification<object>.Default)) {}
 
-		readonly IXmlFactory _xml;
-		readonly ISerializationFactory _serialization;
+		readonly IMemberEmitSpecification _instance;
 
-		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
+		public FixedMemberEmitSpecifications(IMemberEmitSpecification instance)
 		{
-			_xml = xml;
-			_serialization = serialization;
+			_instance = instance;
 		}
 
-		public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
+		public IMemberEmitSpecification Get(MemberDescriptor parameter) => _instance;
 	}
-
-	/*public interface IConfiguredSerialization : ITypeSelector
-	{}*/
 }

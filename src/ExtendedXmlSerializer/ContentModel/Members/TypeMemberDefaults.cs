@@ -21,29 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
+	class TypeMemberDefaults : ReferenceCacheBase<TypeInfo, Func<MemberInfo, object>>, ITypeMemberDefaults
 	{
-		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
+		public static TypeMemberDefaults Default { get; } = new TypeMemberDefaults();
+		TypeMemberDefaults() : this(TypeDefaults.Default) {}
 
-		readonly IXmlFactory _xml;
-		readonly ISerializationFactory _serialization;
+		readonly ITypeDefaults _instances;
 
-		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
+		public TypeMemberDefaults(ITypeDefaults instances)
 		{
-			_xml = xml;
-			_serialization = serialization;
+			_instances = instances;
 		}
 
-		public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
+		protected override Func<MemberInfo, object> Create(TypeInfo parameter)
+			=> new MemberDefaults(_instances.Get(parameter)).Get;
 	}
-
-	/*public interface IConfiguredSerialization : ITypeSelector
-	{}*/
 }

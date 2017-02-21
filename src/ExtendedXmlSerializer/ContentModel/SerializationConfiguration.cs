@@ -21,31 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class SerializationConfiguration : RuntimeMemberSpecifications, ISerializationConfiguration
+	public struct SerializationConfiguration
 	{
-		public SerializationConfiguration(IDictionary<MemberInfo, IRuntimeMemberSpecification> specifications,
-		                                  ITypeSelector types,
-		                                  Members.IAliases aliases,
-		                                  IMemberConverters converters,
-		                                  IMemberPolicy memberPolicy)
-			: base(specifications)
+		public SerializationConfiguration(
+			IMemberEmitSpecifications emit,
+			IMemberSerializers serializers,
+			ITypeSelector types,
+			Members.IAliases aliases,
+			IMemberPolicy memberPolicy)
 		{
+			Emit = emit;
+			Serializers = serializers;
 			Types = types;
 			Aliases = aliases;
-			Converters = converters;
 			MemberPolicy = memberPolicy;
 		}
 
+		public IMemberEmitSpecifications Emit { get; }
+		public IMemberSerializers Serializers { get; }
 		public ITypeSelector Types { get; }
 		public Members.IAliases Aliases { get; }
-		public IMemberConverters Converters { get; }
 		public IMemberPolicy MemberPolicy { get; }
 	}
 }

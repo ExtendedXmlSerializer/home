@@ -36,20 +36,34 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		readonly IExtendedXmlSerializerFactory _factory;
 		readonly IDictionary<MemberInfo, IConverter> _converters;
-		readonly IDictionary<MemberInfo, IRuntimeMemberSpecification> _specifications;
+		readonly IMemberEmitSpecifications _emit;
+		readonly IDictionary<MemberInfo, IRuntimeMemberSpecification> _runtime;
 
 		public ExtendedXmlConfiguration()
 			: this(ExtendedXmlSerializerFactory.Default) {}
 
 		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory)
-			: this(factory, new Dictionary<MemberInfo, IConverter>(), new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
+			: this(
+				factory,
+				new Dictionary<MemberInfo, IConverter>(),
+				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
+				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
-		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory, IDictionary<MemberInfo, IConverter> converters,
-		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> specifications)
+		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory,
+		                                IDictionary<MemberInfo, IConverter> converters,
+		                                IDictionary<MemberInfo, IMemberEmitSpecification> emit,
+		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+			: this(factory, converters, new MemberEmitSpecifications(emit), runtime) {}
+
+		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory,
+		                                IDictionary<MemberInfo, IConverter> converters,
+		                                IMemberEmitSpecifications emit,
+		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 		{
 			_factory = factory;
 			_converters = converters;
-			_specifications = specifications;
+			_emit = emit;
+			_runtime = runtime;
 		}
 
 		public bool AutoProperties { get; set; }
@@ -115,8 +129,9 @@ namespace ExtendedXmlSerialization.Configuration
 		{
 			var policy = Defaults.MemberPolicy;
 
-			var configuration = new SerializationConfiguration(_specifications, TypeSelector.Default, MemberAliases.Default,
-			                                                   new MemberConverters(_converters), policy);
+			var serializers = new MemberSerializers(new RuntimeMemberSpecifications(_runtime), new MemberConverters(_converters));
+			var configuration = new SerializationConfiguration(_emit, serializers, TypeSelector.Default, MemberAliases.Default,
+			                                                   policy);
 			var result = _factory.Get(configuration);
 			return result;
 		}

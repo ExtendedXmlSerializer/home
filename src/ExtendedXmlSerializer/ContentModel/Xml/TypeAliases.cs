@@ -21,27 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class TypeAliases : AliasesBase<TypeInfo>, IAliases
 	{
 		public static TypeAliases Default { get; } = new TypeAliases();
-		TypeAliases() : this(WellKnownAliases.Default) {}
+		TypeAliases() : this(WellKnownAliases.Default.ToDictionary(x => x.Key.GetTypeInfo(), x => x.Value)) {}
 
-		readonly IDictionary<Type, string> _names;
-
-		public TypeAliases(IDictionary<Type, string> names)
-		{
-			_names = names;
-		}
+		public TypeAliases(IDictionary<TypeInfo, string> names) : base(names) {}
 
 		public override string Get(TypeInfo parameter)
-			=> _names.Get(parameter.AsType()) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
+			=> base.Get(parameter) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

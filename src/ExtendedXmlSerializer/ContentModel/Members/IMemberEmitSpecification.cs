@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ExtendedXmlSerializerFactory : IExtendedXmlSerializerFactory
-	{
-		public static ExtendedXmlSerializerFactory Default { get; } = new ExtendedXmlSerializerFactory();
-		ExtendedXmlSerializerFactory() : this(XmlFactory.Default, SerializationFactory.Default) {}
-
-		readonly IXmlFactory _xml;
-		readonly ISerializationFactory _serialization;
-
-		public ExtendedXmlSerializerFactory(IXmlFactory xml, ISerializationFactory serialization)
-		{
-			_xml = xml;
-			_serialization = serialization;
-		}
-
-		public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			=> new ExtendedXmlSerializer(parameter.Types, _xml, _serialization.Get(parameter));
-	}
-
-	/*public interface IConfiguredSerialization : ITypeSelector
-	{}*/
+	public interface IMemberEmitSpecification : ISpecification<object> {}
 }

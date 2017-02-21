@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	public abstract class AliasesBase<T> : IAliases<T> where T : MemberInfo
+	public abstract class AliasesBase<T> : TableSource<T, string>, IAliases<T> where T : MemberInfo
 	{
-		public abstract string Get(T parameter);
+		protected AliasesBase(IDictionary<T, string> store) : base(store) {}
 	}
 }
