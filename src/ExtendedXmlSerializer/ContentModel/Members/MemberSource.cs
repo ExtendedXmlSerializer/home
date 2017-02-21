@@ -43,7 +43,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		public IEnumerable<IMember> Get(TypeInfo parameter)
-			=> Yield(parameter).OrderBy(x => x.Order).Select(_select).Where(x => x != null);
+			=> Yield(parameter).OrderBy(x => x.Writer is MemberProperty ? 0 : 1)
+			                   .ThenBy(x => x.Order)
+			                   .Select(_select)
+			                   .Where(x => x != null);
 
 		IEnumerable<IMemberProfile> Yield(TypeInfo parameter)
 		{
