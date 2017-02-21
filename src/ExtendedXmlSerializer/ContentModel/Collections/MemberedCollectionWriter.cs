@@ -27,17 +27,17 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class MemberedCollectionWriter : DecoratedWriter
 	{
-		readonly IWriter _entries;
+		readonly IWriter _items;
 
-		public MemberedCollectionWriter(IWriter members, IWriter entries) : base(members)
+		public MemberedCollectionWriter(IWriter members, IWriter items) : base(members)
 		{
-			_entries = entries;
+			_items = items;
 		}
 
 		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
-			_entries.Write(writer, instance);
+			_items.Write(writer, instance);
 		}
 	}
 }
