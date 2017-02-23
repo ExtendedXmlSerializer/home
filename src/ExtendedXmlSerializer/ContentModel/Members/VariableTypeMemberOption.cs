@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -30,13 +29,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class VariableTypeMemberOption : MemberOption
 	{
-		readonly ISerialization _serialization;
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(ISerialization serialization, ISerializer runtime)
-			: base(VariableTypeMemberSpecification.Default)
+		public VariableTypeMemberOption(ISerializer runtime) : base(VariableTypeMemberSpecification.Default)
 		{
-			_serialization = serialization;
 			_runtime = runtime;
 		}
 
@@ -46,11 +42,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			// TODO: This should be simplified:
 
 			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
-			var content = _serialization.Get(profile.MemberType).Get();
 			var writer = new Enclosure(new MemberElement(profile.Identity.Name),
-			                           new VariableTypeWriter(specification, _runtime, content));
+			                           new VariableTypeWriter(specification, _runtime, profile.Content));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity.Name, profile.AllowWrite, profile.Order,
-			                                  profile.Metadata, profile.MemberType, content, writer);
+			                                  profile.Metadata, profile.MemberType, profile.Content, profile.Reader, writer);
 			var member = base.CreateMember(decorated, getter, setter);
 			var result = new VariableTypeMember(specification, member);
 			return result;

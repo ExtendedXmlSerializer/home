@@ -22,9 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface IContainerOptions : IParameterizedSource<ISerialization, IEnumerable<IContainerOption>> {}
+	public interface IContainerOptions : IEnumerable<IContainerOption> {}
 }

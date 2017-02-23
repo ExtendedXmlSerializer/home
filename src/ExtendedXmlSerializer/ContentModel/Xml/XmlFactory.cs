@@ -38,7 +38,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public static XmlFactory Default { get; } = new XmlFactory();
 		XmlFactory() {}
 
-		public IXmlWriter Create(Stream stream, object instance) => new XmlWriter(System.Xml.XmlWriter.Create(stream));
+		public IXmlWriter Create(Stream stream, object instance)
+			=> new XmlWriter(System.Xml.XmlWriter.Create(stream), instance);
 
 		public IXmlReader Create(Stream stream)
 		{

@@ -26,10 +26,10 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class Activator<T> : DelegatedFixedActivator where T : new()
+	class Activator<T> : DelegatedFixedActivator
 	{
 		public static Activator<T> Default { get; } = new Activator<T>();
-		Activator() : base(() => new T()) {}
+		Activator() : base(Activators.Default.Get(typeof(T))) {}
 	}
 
 	class Activator : IReader

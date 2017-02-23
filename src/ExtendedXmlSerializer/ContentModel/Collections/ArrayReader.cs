@@ -32,9 +32,9 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly ITypeSelector _selector;
 		readonly static TypeSelector TypeSelector = TypeSelector.Default;
 
-		public ArrayReader(ISerializer item) : this(TypeSelector, item) {}
+		public ArrayReader(IReader item) : this(TypeSelector, item) {}
 
-		public ArrayReader(ITypeSelector selector, ISerializer item) : base(Activator<ArrayList>.Default, item)
+		public ArrayReader(ITypeSelector selector, IReader item) : base(Activator<ArrayList>.Default, item)
 		{
 			_selector = selector;
 		}

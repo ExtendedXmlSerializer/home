@@ -36,8 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly ISerialization _serialization;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(ISerialization serialization)
-			: this(Specification, serialization) {}
+		protected CollectionContentOptionBase(ISerialization serialization) : this(Specification, serialization) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerialization serialization)
 			: this(specification, serialization, CollectionItemTypeLocator.Default) {}

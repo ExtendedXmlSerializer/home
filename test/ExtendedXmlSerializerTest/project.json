@@ -10,6 +10,7 @@
     "ExtendedXmlSerializer": {
       "target": "project"
     },
+    "JetBrains.Annotations": "10.2.1",
     "System.Data.Common": "4.3.0",
     "System.Numerics.Vectors": "4.3.0",
     "xunit": "2.2.0-beta4-build3444"

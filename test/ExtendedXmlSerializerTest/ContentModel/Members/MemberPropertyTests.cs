@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Message)), StringConverter.Default},
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Number)), IntegerConverter.Default}
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -83,7 +83,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -122,7 +122,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -162,7 +162,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -202,7 +202,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -253,7 +253,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
@@ -320,7 +320,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 

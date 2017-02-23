@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		readonly int _code;
 
-		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable)
+		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable = true)
 			: this(reflectedType, metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
 
 		MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable, int code)

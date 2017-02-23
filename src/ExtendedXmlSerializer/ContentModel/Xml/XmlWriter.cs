@@ -34,25 +34,28 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		readonly System.Xml.XmlWriter _writer;
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
-		public XmlWriter(System.Xml.XmlWriter writer) : this(Prefixes, writer) {}
+		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(Prefixes, writer, root) {}
 
-		public XmlWriter(IPrefixes prefixes, System.Xml.XmlWriter writer)
+		public XmlWriter(IPrefixes prefixes, System.Xml.XmlWriter writer, object root)
 		{
+			Root = root;
 			_prefixes = prefixes;
 			_writer = writer;
 		}
+
+		public object Root { get; }
 
 		public void Attribute(Attribute attribute)
 		{
 			if (attribute.Namespace.HasValue)
 			{
-				_writer.WriteAttributeString(attribute.Namespace?.Name, attribute.Name, attribute.Namespace?.Identifier, attribute.Identifier);
+				_writer.WriteAttributeString(attribute.Namespace?.Name, attribute.Name, attribute.Namespace?.Identifier,
+				                             attribute.Identifier);
 			}
 			else
 			{
 				_writer.WriteAttributeString(attribute.Name, attribute.Identifier);
 			}
-			// _writer.WriteAttributeString();
 		}
 
 		public void Element(IIdentity name) => _writer.WriteStartElement(name.Name, name.Identifier);

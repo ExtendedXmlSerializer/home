@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Extensions;
 
 namespace ExtendedXmlSerialization.Configuration
 {
@@ -29,6 +30,7 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		IExtendedXmlTypeConfiguration<T> ConfigureType<T>();
 		IExtendedXmlConfiguration UseAutoProperties();
+		IExtendedXmlConfiguration Extend(params ISerializerExtension[] extensions);
 		IExtendedXmlConfiguration UseNamespaces();
 		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
 		IExtendedXmlSerializer Create();

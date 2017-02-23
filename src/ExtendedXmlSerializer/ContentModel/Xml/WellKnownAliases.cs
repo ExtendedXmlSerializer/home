@@ -24,12 +24,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class WellKnownAliases : Dictionary<Type, string>
+	class WellKnownAliases : ReadOnlyDictionary<Type, string>
 	{
-		public static WellKnownAliases Default { get; } = new WellKnownAliases();
+		public static IReadOnlyDictionary<Type, string> Default { get; } = new WellKnownAliases();
 
 		WellKnownAliases() : base(new Dictionary<Type, string>
 		                          {

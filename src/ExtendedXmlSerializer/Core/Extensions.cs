@@ -108,8 +108,15 @@ namespace ExtendedXmlSerialization.Core
 
 		public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
 
+		public static IServiceRepository Replace<T>(this IServiceRepository @this, T service)
+			=> @this.Replace(typeof(T), service);
+
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
+
+		public static T GetValid<T>(this IServiceProvider @this)
+			=> @this is T ? (T) @this : @this.GetService(typeof(T)).AsValid<T>($"Could not located service '{typeof(T)}'");
+
 
 		public static T AsValid<T>(this object @this, string message = null)
 		{

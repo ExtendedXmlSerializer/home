@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Core
 	/// </summary>
 	public class ObjectIdGenerator
 	{
-		readonly static int[] Sizes =
+		readonly static uint[] Sizes =
 		{
 			5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717,
 			51437,
@@ -39,8 +39,8 @@ namespace ExtendedXmlSerialization.Core
 		};
 
 
-		int _currentCount, _currentSize;
-		long[] _ids;
+		uint _currentCount, _currentSize;
+		uint[] _ids;
 		object[] _objs;
 
 		/// <summary>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> class.</summary>
@@ -48,14 +48,14 @@ namespace ExtendedXmlSerialization.Core
 		{
 			_currentCount = 1;
 			_currentSize = Sizes[0];
-			_ids = new long[_currentSize * 4];
+			_ids = new uint[_currentSize * 4];
 			_objs = new object[_currentSize * 4];
 		}
 
-		int FindIndex(object obj, out bool found)
+		uint FindIndex(object obj, out bool found)
 		{
 			var hashCode = RuntimeHelpers.GetHashCode(obj);
-			var num1 = 1 + (hashCode & int.MaxValue) % (_currentSize - 2);
+			var num1 = (int) (1 + (hashCode & int.MaxValue) % (_currentSize - 2));
 			while (true)
 			{
 				var num2 = (hashCode & int.MaxValue) % _currentSize * 4;
@@ -65,12 +65,12 @@ namespace ExtendedXmlSerialization.Core
 					if (o == null)
 					{
 						found = false;
-						return index;
+						return (uint) index;
 					}
 					if (o == obj)
 					{
 						found = true;
-						return index;
+						return (uint) index;
 					}
 				}
 				hashCode += num1;
@@ -88,14 +88,14 @@ namespace ExtendedXmlSerialization.Core
 				throw new ArgumentNullException("obj", "ArgumentNull_Obj");
 			bool found;
 			var index = FindIndex(obj, out found);
-			long id;
+			uint id;
 			if (!found)
 			{
 				_objs[index] = obj;
 				var ids = _ids;
 				var currentCount = _currentCount;
 				_currentCount = currentCount + 1;
-				long num = currentCount;
+				var num = currentCount;
 				ids[index] = num;
 				id = _ids[index];
 				if (_currentCount > _currentSize * 4 / 2)
@@ -123,7 +123,7 @@ namespace ExtendedXmlSerialization.Core
 			if (index1 == Sizes.Length)
 				throw new SerializationException("Serialization_TooManyElements");
 			_currentSize = Sizes[index1];
-			var numArray = new long[_currentSize * 4];
+			var numArray = new uint[_currentSize * 4];
 			var objArray = new object[_currentSize * 4];
 			var ids = _ids;
 			var objs = _objs;

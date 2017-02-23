@@ -27,6 +27,10 @@ namespace ExtendedXmlSerialization.Core
 {
 	public interface IServiceRepository : IServiceProvider
 	{
-		void Add(object service);
+		IServiceRepository Add(object service);
+
+		IServiceRepository Replace(Type serviceType, object service);
+
+		IServiceRepository Remove(object service);
 	}
 }

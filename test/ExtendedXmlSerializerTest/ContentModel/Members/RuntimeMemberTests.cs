@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                     }
 			                     };
 
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
+			var configuration = new ExtendedXmlConfiguration(converters,
 			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 			                                                 specifications);
 

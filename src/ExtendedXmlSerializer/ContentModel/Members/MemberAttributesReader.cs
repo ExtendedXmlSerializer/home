@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_members = members;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public sealed override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
 

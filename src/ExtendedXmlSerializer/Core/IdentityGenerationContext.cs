@@ -25,7 +25,7 @@ namespace ExtendedXmlSerialization.Core
 {
 	public struct IdentityGenerationContext
 	{
-		public IdentityGenerationContext(long uniqueId, object instance, bool firstEncounter)
+		public IdentityGenerationContext(uint uniqueId, object instance, bool firstEncounter)
 		{
 			UniqueId = uniqueId;
 			Instance = instance;

@@ -60,8 +60,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			public TypeNamePartition(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 				: this(ApplicationTypes.Default, specification.IsSatisfiedBy, formatter.Get) {}
 
-			public TypeNamePartition(IApplicationTypes types, Func<TypeInfo, bool> specification,
-			                         Func<TypeInfo, string> formatter)
+			TypeNamePartition(IApplicationTypes types, Func<TypeInfo, bool> specification, Func<TypeInfo, string> formatter)
 			{
 				_types = types;
 				_specification = specification;

@@ -29,6 +29,7 @@ using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Test.Support;
 using Xunit;
+using Defaults = ExtendedXmlSerialization.Configuration.Defaults;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Members
 {
@@ -42,7 +43,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><SomeValue>This is a Default Value!</SomeValue></InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue>");
 
 			var configuration = new ExtendedXmlConfiguration(
-				ExtendedXmlSerializerFactory.Default, 
+				Defaults.Property, Defaults.Field,
 				new Dictionary<MemberInfo, IConverter>(), 
 			    new MemberEmitSpecifications(InstanceDefaultsMemberSpecifications.Default, FixedMemberEmitSpecifications.Default), 
 			    new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
