@@ -26,20 +26,4 @@ using ExtendedXmlSerialization.Core.Sources;
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	public interface IContainer : ISerializer, ISource<ISerializer> {}
-
-	/*public class DecoratedContainer : IContainer
-	{
-		readonly IContainer _container;
-
-		public DecoratedContainer(IContainer container)
-		{
-			_container = container;
-		}
-
-		public virtual object Get(IXmlReader parameter) => _container.Get(parameter);
-
-		public virtual void Write(IXmlWriter writer, object instance) => _container.Write(writer, instance);
-
-		public virtual ISerializer Get() => _container.Get();
-	}*/
 }

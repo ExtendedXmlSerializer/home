@@ -51,10 +51,10 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			for (var i = 0; i < length; i++)
 			{
 				var member = members[i];
-				var variable = member as IVariableTypeMember;
+				var variable = member.Adapter as IVariableTypeMemberAdapter;
 				if (variable != null)
 				{
-					var instance = member.Get(input);
+					var instance = member.Adapter.Get(input);
 					var isSatisfiedBy = variable.IsSatisfiedBy(instance.GetType());
 					if (isSatisfiedBy)
 					{

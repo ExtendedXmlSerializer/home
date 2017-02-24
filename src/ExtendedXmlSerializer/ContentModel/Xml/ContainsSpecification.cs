@@ -34,6 +34,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_identity = identity;
 		}
 
-		public bool IsSatisfiedBy(IXmlReader parameter) => parameter.Contains(_identity);
+		public bool IsSatisfiedBy(IXmlReader parameter) => parameter.Attributes.Contains(_identity);
 	}
 }

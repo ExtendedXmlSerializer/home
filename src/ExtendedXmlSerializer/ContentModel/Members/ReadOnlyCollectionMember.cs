@@ -21,26 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ReadOnlyCollectionMember : Member
+	class ReadOnlyMemberAdapter : IMemberAdapter
 	{
-		public ReadOnlyCollectionMember(MemberProfile profile, Func<object, object> getter, Action<object, object> add)
-			: base(
-				ContainsItemsSpecification.Default.And(profile.Specification), profile.Identity.Name, getter, add, profile.Reader,
-				profile.Writer) {}
-
-		public override void Assign(object instance, object value)
+		readonly IMemberAdapter _adapter;
+		public ReadOnlyMemberAdapter(IMemberAdapter adapter)
 		{
-			var collection = Get(instance);
+			_adapter = adapter;
+		}
+
+		public string Identifier => _adapter.Identifier;
+
+		public string Name => _adapter.Name;
+
+		public MemberInfo Metadata => _adapter.Metadata;
+
+		public TypeInfo MemberType => _adapter.MemberType;
+
+		public bool IsWritable => _adapter.IsWritable;
+
+		public object Get(object instance) => _adapter.Get(instance);
+
+		public void Assign(object instance, object value)
+		{
+			var collection = _adapter.Get(instance);
 			foreach (var element in (IEnumerable) value)
 			{
-				base.Assign(collection, element);
+				_adapter.Assign(collection, element);
 			}
 		}
 	}

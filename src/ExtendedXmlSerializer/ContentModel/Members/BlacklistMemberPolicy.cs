@@ -45,12 +45,4 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public bool IsSatisfiedBy(MemberInfo parameter) => !_avoid.Contains(parameter);
 	}
-
-	/*class MemberPolicy : IMemberPolicy
-	{
-		public static MemberPolicy Default { get; } = new MemberPolicy();
-		MemberPolicy() {}
-
-		public bool IsSatisfiedBy(MemberInfo parameter) => true;
-	}*/
 }

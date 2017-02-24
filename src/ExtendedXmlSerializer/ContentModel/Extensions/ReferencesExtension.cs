@@ -26,7 +26,6 @@ using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
@@ -49,8 +48,7 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 			var entities = new Entities(_store);
 			var identities = new Identities(parameter.GetValid<IMembers>(), entities);
 			var altered = new AlteredContentOptions(current,
-			                                        new ReferencesContentAlteration(parameter.GetValid<ITypeSelector>(),
-			                                                                        identities, entities));
+			                                        new ReferencesContentAlteration(identities, entities));
 			var result = parameter.Replace<IContentOptions>(altered);
 			return result;
 		}

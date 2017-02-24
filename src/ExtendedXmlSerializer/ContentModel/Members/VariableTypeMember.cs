@@ -22,27 +22,37 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class VariableTypeMember : Serializer, IVariableTypeMember
+	public interface IVariableTypeMemberAdapter : IMemberAdapter, ISpecification<Type> {}
+
+	sealed class VariableTypeMemberAdapter : IVariableTypeMemberAdapter
 	{
-		readonly IMember _member;
+		readonly IMemberAdapter _adapter;
 		readonly ISpecification<Type> _specification;
 
-		public VariableTypeMember(ISpecification<Type> specification, IMember member) : base(member, member)
+		public VariableTypeMemberAdapter(ISpecification<Type> specification, IMemberAdapter adapter)
 		{
+			_adapter = adapter;
 			_specification = specification;
-			_member = member;
 		}
 
+		public string Identifier => _adapter.Identifier;
+
+		public string Name => _adapter.Name;
+
+		public MemberInfo Metadata => _adapter.Metadata;
+
+		public TypeInfo MemberType => _adapter.MemberType;
+
+		public bool IsWritable => _adapter.IsWritable;
+
+		public object Get(object instance) => _adapter.Get(instance);
+
+		public void Assign(object instance, object value) => _adapter.Assign(instance, value);
 		public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
-
-		public string DisplayName => _member.DisplayName;
-
-		public object Get(object instance) => _member.Get(instance);
-
-		public void Assign(object instance, object value) => _member.Assign(instance, value);
 	}
 }

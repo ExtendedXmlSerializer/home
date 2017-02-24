@@ -47,6 +47,13 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		protected virtual IMember CreateMember(MemberProfile profile, Func<object, object> getter,
 		                                       Action<object, object> setter)
-			=> new Member(profile, getter, setter);
+		{
+			var adapter = new MemberAdapterSelector(getter, setter).Get(profile);
+			var result = CreateMember(profile, adapter);
+			return result;
+		}
+
+		protected virtual IMember CreateMember(MemberProfile profile, IMemberAdapter adapter)
+			=> new Member(profile.Specification, adapter, profile.Reader, profile.Writer);
 	}
 }

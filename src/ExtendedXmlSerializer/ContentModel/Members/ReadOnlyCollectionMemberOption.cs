@@ -26,13 +26,13 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ReadOnlyCollectionMemberOption : MemberOptionBase
+	class ReadOnlyCollectionMemberOption : MemberOption
 	{
 		readonly static MemberTypeSpecification Specification =
 			new MemberTypeSpecification(IsCollectionTypeSpecification.Default);
 
 
-		public static ReadOnlyCollectionMemberOption Default { get; } = new ReadOnlyCollectionMemberOption();
+		public new static ReadOnlyCollectionMemberOption Default { get; } = new ReadOnlyCollectionMemberOption();
 		ReadOnlyCollectionMemberOption() : this(AddDelegates.Default) {}
 
 		readonly IAddDelegates _add;
@@ -45,8 +45,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		protected override IMember Create(MemberProfile profile, Func<object, object> getter)
 		{
 			var add = _add.Get(profile.MemberType);
-			var result = add != null ? new ReadOnlyCollectionMember(profile, getter, add) : null;
+			var result = add != null ? CreateMember(profile, getter, add) : null;
 			return result;
 		}
+
+		protected override IMember CreateMember(MemberProfile profile, IMemberAdapter adapter)
+			=> base.CreateMember(profile, new ReadOnlyMemberAdapter(adapter));
 	}
 }

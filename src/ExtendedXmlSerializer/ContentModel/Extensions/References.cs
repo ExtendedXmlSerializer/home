@@ -33,38 +33,38 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 	{
 		readonly static TypeInfo Reference = typeof(ReferenceIdentity).GetTypeInfo();
 
-		readonly ITypeSelector _types;
 		readonly IEntities _entities;
 
 		readonly IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> _identities =
 			new ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>(
 				_ => new Dictionary<ReferenceIdentity, object>());
 
-		public References(ITypeSelector types, IReader reader, IEntities entities) : base(reader)
+		public References(IReader reader, IEntities entities) : base(reader)
 		{
-			_types = types;
 			_entities = entities;
 		}
 
+/*
 		ReferenceIdentity? GetReference(IXmlReader parameter)
 		{
-			if (parameter.Contains(ReferenceProperty.Default))
+			if (parameter.Attributes.Contains(ReferenceProperty.Default))
 			{
 				return new ReferenceIdentity(Reference, ReferenceProperty.Default.Get(parameter));
 			}
 
-			if (parameter.Contains(EntityProperty.Default))
+			if (parameter.Attributes.Contains(EntityProperty.Default))
 			{
-				var type = _types.Get(parameter);
+				var type = parameter.Classification;
 				var reference = new ReferenceIdentity(type, _entities.Get(type).Get(EntityProperty.Default.Get(parameter)));
 				return reference;
 			}
 			return null;
 		}
+*/
 
 		static ReferenceIdentity? GetIdentity(IXmlReader reader)
 		{
-			if (reader.Contains(IdentityProperty.Default))
+			if (reader.Attributes.Contains(IdentityProperty.Default))
 			{
 				return new ReferenceIdentity(Reference, IdentityProperty.Default.Get(reader));
 			}

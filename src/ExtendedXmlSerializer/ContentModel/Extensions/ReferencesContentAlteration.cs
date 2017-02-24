@@ -22,25 +22,21 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Extensions
 {
 	class ReferencesContentAlteration : IAlteration<IContentOption>
 	{
-		readonly ITypeSelector _types;
 		readonly IIdentities _identities;
 		readonly IEntities _entities;
 
-		public ReferencesContentAlteration(ITypeSelector types, IIdentities identities, IEntities entities)
+		public ReferencesContentAlteration(IIdentities identities, IEntities entities)
 		{
-			_types = types;
 			_identities = identities;
 			_entities = entities;
 		}
 
-		public IContentOption Get(IContentOption parameter)
-			=> new ReferencesContentOption(_types, _identities, _entities, parameter);
+		public IContentOption Get(IContentOption parameter) => new ReferencesContentOption(_identities, _entities, parameter);
 	}
 }

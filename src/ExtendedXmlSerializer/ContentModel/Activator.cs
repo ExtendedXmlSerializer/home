@@ -34,19 +34,13 @@ namespace ExtendedXmlSerialization.ContentModel
 
 	class Activator : IReader
 	{
-		readonly static TypeSelector TypeSelector = TypeSelector.Default;
-
-		readonly ITypeSelector _selector;
 		readonly IActivators _activators;
 
-		public Activator(IActivators activators) : this(TypeSelector, activators) {}
-
-		public Activator(ITypeSelector selector, IActivators activators)
+		public Activator(IActivators activators)
 		{
-			_selector = selector;
 			_activators = activators;
 		}
 
-		public object Get(IXmlReader parameter) => _activators.Get(_selector.Get(parameter).AsType()).Invoke();
+		public object Get(IXmlReader parameter) => _activators.Get(parameter.Classification.AsType()).Invoke();
 	}
 }

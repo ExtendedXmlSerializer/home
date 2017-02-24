@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
 
 			var items = new CollectionItemReader(item);
-			var dictionary = members.ToDictionary(x => x.DisplayName);
+			var dictionary = members.ToDictionary(x => x.Adapter.Name);
 			var membered = new MemberedCollectionItemReader(items, dictionary);
 
 			var attributes = new MemberAttributesReader(activator, dictionary);

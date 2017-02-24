@@ -21,12 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Diagnostics;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Extensions;
-using ExtendedXmlSerialization.Test.Support;
 using JetBrains.Annotations;
-using Xunit;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Extensions
 {

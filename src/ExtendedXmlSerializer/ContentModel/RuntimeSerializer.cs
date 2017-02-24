@@ -29,16 +29,10 @@ namespace ExtendedXmlSerialization.ContentModel
 {
 	sealed class RuntimeSerializer : SerializerBase
 	{
-		readonly static TypeSelector TypeSelector = TypeSelector.Default;
-
-		readonly ITypeSelector _selector;
 		readonly ISerialization _serialization;
 
-		public RuntimeSerializer(ISerialization serialization) : this(TypeSelector, serialization) {}
-
-		public RuntimeSerializer(ITypeSelector selector, ISerialization serialization)
+		public RuntimeSerializer(ISerialization serialization)
 		{
-			_selector = selector;
 			_serialization = serialization;
 		}
 
@@ -47,8 +41,7 @@ namespace ExtendedXmlSerialization.ContentModel
 
 		public override object Get(IXmlReader reader)
 		{
-			var classification = _selector.Get(reader);
-			var content = _serialization.Get(classification).Get();
+			var content = _serialization.Get(reader.Classification).Get();
 			var result = content.Get(reader);
 			return result;
 		}

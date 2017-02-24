@@ -23,26 +23,22 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Extensions
 {
 	class ReferencesContentOption : DecoratedContentOption
 	{
-		readonly ITypeSelector _types;
 		readonly IIdentities _identities;
 		readonly IEntities _entities;
 		readonly ISpecification<TypeInfo> _specification;
 
-		public ReferencesContentOption(ITypeSelector types, IIdentities identities, IEntities entities, IContentOption option)
-			: this(types, identities, entities, IsReferenceSpecification.Default, option) {}
+		public ReferencesContentOption(IIdentities identities, IEntities entities, IContentOption option)
+			: this(IsReferenceSpecification.Default, identities, entities, option) {}
 
-		public ReferencesContentOption(ITypeSelector types, IIdentities identities, IEntities entities,
-		                               ISpecification<TypeInfo> specification,
+		public ReferencesContentOption(ISpecification<TypeInfo> specification, IIdentities identities, IEntities entities,
 		                               IContentOption option) : base(option)
 		{
-			_types = types;
 			_identities = identities;
 			_entities = entities;
 			_specification = specification;
@@ -52,7 +48,7 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 		{
 			var serializer = base.Get(parameter);
 			var result = _specification.IsSatisfiedBy(parameter)
-				? new ReferenceSerializer(_identities, new References(_types, serializer, _entities), serializer)
+				? new ReferenceSerializer(_identities, new References(serializer, _entities), serializer)
 				: serializer;
 			return result;
 		}

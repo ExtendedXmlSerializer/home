@@ -41,11 +41,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			var result = base.Get(parameter);
 
-			var content = parameter.Content();
-			while (content.Next())
+			var token = parameter.Content.New();
+			while (parameter.Content.Next(token))
 			{
 				var member = _members.Get(parameter.Name);
-				member?.Assign(result, ((IReader) member).Get(parameter));
+				member?.Adapter.Assign(result, member.Get(parameter));
 			}
 
 			return result;

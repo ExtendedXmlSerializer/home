@@ -154,7 +154,7 @@ namespace ExtendedXmlSerialization.Configuration
 			);
 
 			var result = services.Get<IExtendedXmlSerializer>() ??
-			             new ExtendedXmlSerializer(services.GetValid<ITypeSelector>(), services.GetValid<IXmlFactory>(), services);
+			             new ExtendedXmlSerializer(services.GetValid<IXmlFactory>(), services);
 			return result;
 		}
 

@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 			_converter = converter;
 		}
 
-		public string Get(object parameter) => _converter.Format(_member.Get(parameter));
+		public string Get(object parameter) => _converter.Format(_member.Adapter.Get(parameter));
 		public object Get(string parameter) => _converter.Parse(parameter);
 	}
 }

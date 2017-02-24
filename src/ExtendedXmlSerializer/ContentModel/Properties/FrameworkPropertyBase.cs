@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		protected override string Value(IXmlReader parameter)
 		{
 			var result = base.Value(parameter);
-			parameter.Reset();
+			parameter.Content.Reset();
 			return result;
 		}
 	}

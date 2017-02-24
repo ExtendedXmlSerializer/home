@@ -36,18 +36,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_runtime = runtime;
 		}
 
-		protected override IMember CreateMember(MemberProfile profile, Func<object, object> getter,
-		                                        Action<object, object> setter)
+		protected override IMember CreateMember(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
 		{
 			// TODO: This should be simplified:
-
 			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
 			var writer = new Enclosure(new MemberElement(profile.Identity.Name),
 			                           new VariableTypeWriter(specification, _runtime, profile.Content));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity.Name, profile.AllowWrite, profile.Order,
 			                                  profile.Metadata, profile.MemberType, profile.Content, profile.Reader, writer);
-			var member = base.CreateMember(decorated, getter, setter);
-			var result = new VariableTypeMember(specification, member);
+			var adapter = new VariableTypeMemberAdapter(specification, new MemberAdapterSelector(getter, setter).Get(profile));
+			var result = base.CreateMember(decorated, adapter);
 			return result;
 		}
 	}

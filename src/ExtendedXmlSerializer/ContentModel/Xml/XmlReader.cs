@@ -22,16 +22,26 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
 using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlReader : IXmlReader
 	{
+		readonly ITypeSelector _selector;
+		//readonly ISource<TypeInfo> _classification;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(System.Xml.XmlReader reader)
+		public XmlReader(ITypeSelector selector, System.Xml.XmlReader reader)
+			: this(selector, new XmlAttributes(reader), new XmlContent(reader), reader) {}
+
+		public XmlReader(ITypeSelector selector, IXmlAttributes attributes, IXmlContent content, System.Xml.XmlReader reader)
 		{
+			_selector = selector;
+			Attributes = attributes;
+			Content = content;
+			// _classification = selector.Fix(this);
 			switch (reader.MoveToContent())
 			{
 				case XmlNodeType.Element:
@@ -44,6 +54,11 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public string Name => _reader.LocalName;
 		public string Identifier => _reader.NamespaceURI;
+
+		public TypeInfo Classification => _selector.Get(this);
+
+		public IXmlAttributes Attributes { get; }
+		public IXmlContent Content { get; }
 
 		public string Value()
 		{
@@ -60,28 +75,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			}
 		}
 
-		public void Reset() => _reader.MoveToElement();
-
-		public AttributeReading? Attributes()
-			=> _reader.HasAttributes ? new AttributeReading(_reader) : (AttributeReading?) null;
-
-		public ContentReading Content()
-		{
-			if (_reader.HasAttributes)
-			{
-				switch (_reader.NodeType)
-				{
-					case XmlNodeType.Attribute:
-						Reset();
-						break;
-				}
-			}
-
-			return new ContentReading(this, _reader);
-		}
-
-		public bool Contains(IIdentity identity)
-			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);
 
 		public string Get(string parameter) => _reader.LookupNamespace(parameter);
 

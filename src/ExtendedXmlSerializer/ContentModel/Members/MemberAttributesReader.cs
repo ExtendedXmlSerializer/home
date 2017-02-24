@@ -40,20 +40,15 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			var result = base.Get(parameter);
 
-			var attributes = parameter.Attributes();
-			if (attributes.HasValue)
+			var attributes = parameter.Attributes;
+			while (attributes.Next())
 			{
-				var reading = attributes.Value;
-				while (reading.Next())
+				if (attributes.Name == string.Empty)
 				{
-					if (reading.IsMember())
-					{
-						var member = _members.Get(parameter.Name);
-						member?.Assign(result, ((IReader) member).Get(parameter));
-					}
+					var member = _members.Get(parameter.Name);
+					member?.Adapter.Assign(result, member.Get(parameter));
 				}
 			}
-
 			return result;
 		}
 	}

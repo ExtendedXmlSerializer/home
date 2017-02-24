@@ -36,15 +36,24 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		                                                      };
 
 		public static XmlFactory Default { get; } = new XmlFactory();
-		XmlFactory() {}
+		XmlFactory() : this(TypeSelector.Default, XmlReaderSettings) {}
+
+		readonly ITypeSelector _selector;
+		readonly XmlReaderSettings _readerSettings;
+
+		public XmlFactory(ITypeSelector selector, XmlReaderSettings readerSettings)
+		{
+			_selector = selector;
+			_readerSettings = readerSettings;
+		}
 
 		public IXmlWriter Create(Stream stream, object instance)
 			=> new XmlWriter(System.Xml.XmlWriter.Create(stream), instance);
 
 		public IXmlReader Create(Stream stream)
 		{
-			var reader = System.Xml.XmlReader.Create(stream, XmlReaderSettings);
-			var result = new XmlReader(reader);
+			var reader = System.Xml.XmlReader.Create(stream, _readerSettings);
+			var result = new XmlReader(_selector, reader);
 			return result;
 		}
 	}
