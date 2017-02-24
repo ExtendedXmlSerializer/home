@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			_members = members;
 		}
 
-		protected override IEnumerable<TypeInfo> Select(object input)
+		protected sealed override IEnumerable<TypeInfo> Select(object input)
 		{
 			var parameter = input.GetType().GetTypeInfo();
 			yield return parameter;

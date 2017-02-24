@@ -77,7 +77,14 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public bool AutoProperties { get; set; }
 		public bool Namespaces { get; set; }
-		public XmlReaderSettings ReaderSettings { get; set; }
+
+		public XmlReaderSettings ReaderSettings { get; set; } = new XmlReaderSettings
+			{
+				IgnoreWhitespace = true,
+				IgnoreComments = true,
+				IgnoreProcessingInstructions = true
+			};
+
 		public XmlWriterSettings WriterSettings { get; set; }
 		public IPropertyEncryption EncryptionAlgorithm { get; set; }
 
@@ -149,7 +156,7 @@ namespace ExtendedXmlSerialization.Configuration
 			);
 
 			var services = new SerializationServices(
-				_property.And(policy), _field.And(policy), _emit, TypeSelector.Default, XmlFactory.Default, writers, content,
+				_property.And(policy), _field.And(policy), _emit, new XmlFactory(ReaderSettings), writers, content,
 				MemberAliases.Default, MemberOrder.Default, _extensions
 			);
 

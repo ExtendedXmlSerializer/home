@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class VariableTypeWriter : DecoratedWriter
+	sealed class VariableTypedMemberWriter : DecoratedWriter
 	{
 		readonly static ITypeProperty Property = TypeProperty.Default;
 
@@ -37,10 +37,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly ISerializer _runtime;
 		readonly ITypeProperty _property;
 
-		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
+		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
 			: this(type, runtime, body, Property) {}
 
-		public VariableTypeWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
+		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
 			: base(body)
 		{
 			_type = type;

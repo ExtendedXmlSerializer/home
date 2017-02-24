@@ -47,6 +47,6 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 			_factory = factory;
 		}
 
-		public override ISerializer Get(TypeInfo parameter) => _factory(parameter);
+		public sealed override ISerializer Get(TypeInfo parameter) => _factory(parameter);
 	}
 }

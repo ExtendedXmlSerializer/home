@@ -21,23 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Serialization : ISerialization
+	class Serialization : Cache<TypeInfo, IContainer>, ISerialization
 	{
-		readonly Func<TypeInfo, IContainer> _selector;
-
-		public Serialization(params IContainerOption[] options) : this(new SerializationSelector(options).Cache().Get) {}
-
-		public Serialization(Func<TypeInfo, IContainer> selector)
-		{
-			_selector = selector;
-		}
-
-		public IContainer Get(TypeInfo parameter) => _selector(parameter);
+		public Serialization(params IContainerOption[] options) : base(new SerializationSelector(options).Get) {}
 	}
 }

@@ -35,6 +35,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_callback = callback;
 		}
 
-		protected override TValue Create(TKey parameter) => _callback(parameter);
+		protected sealed override TValue Create(TKey parameter) => _callback(parameter);
 	}
 }

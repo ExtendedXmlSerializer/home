@@ -29,9 +29,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayReader : CollectionContentsReader
 	{
-		public ArrayReader(IReader item) : base(Activator<ArrayList>.Default, item) {}
+		readonly static Activator<ArrayList> Activator = Activator<ArrayList>.Default;
 
-		public override object Get(IXmlReader parameter)
+		public ArrayReader(IReader item) : base(Activator, item) {}
+
+		public sealed override object Get(IXmlReader parameter)
 		{
 			var classification = parameter.Classification;
 			var elementType = classification.GetElementType();

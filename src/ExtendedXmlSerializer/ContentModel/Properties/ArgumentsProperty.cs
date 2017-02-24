@@ -28,6 +28,8 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
@@ -35,13 +37,18 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	sealed class ArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, IArgumentsProperty
 	{
 		public static ArgumentsProperty Default { get; } = new ArgumentsProperty();
-		ArgumentsProperty() : this(NamesList.Default) {}
+		ArgumentsProperty() : this(NamesList.Default, TypeParser.Defaults, TypeFormatter.Defaults) {}
 
 		readonly Parser<IEnumerable<ParsedName>> _names;
+		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;
+		readonly IParameterizedSource<IXmlWriter, ITypeFormatter> _formatters;
 
-		ArgumentsProperty(Parser<IEnumerable<ParsedName>> names) : base("arguments")
+		ArgumentsProperty(Parser<IEnumerable<ParsedName>> names, IParameterizedSource<IXmlReader, ITypeParser> parsers,
+		                  IParameterizedSource<IXmlWriter, ITypeFormatter> formatters) : base("arguments")
 		{
 			_names = names;
+			_parsers = parsers;
+			_formatters = formatters;
 		}
 
 		protected override ImmutableArray<Type> Parse(IXmlReader parameter, string data)
@@ -51,9 +58,9 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			return result;
 		}
 
-		static Type[] Unpack(IXmlReader reader, params ParsedName[] names)
+		Type[] Unpack(IXmlReader reader, params ParsedName[] names)
 		{
-			var parser = new TypeParser(reader);
+			var parser = _parsers.Get(reader);
 			var length = names.Length;
 			var result = new Type[length];
 			for (var i = 0; i < length; i++)
@@ -66,9 +73,9 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		protected override string Format(IXmlWriter writer, ImmutableArray<Type> instance)
 			=> string.Join(",", Pack(writer, instance));
 
-		static string[] Pack(IXmlWriter writer, ImmutableArray<Type> arguments)
+		string[] Pack(IXmlWriter writer, ImmutableArray<Type> arguments)
 		{
-			var formatter = new TypeFormatter(writer);
+			var formatter = _formatters.Get(writer);
 			var length = arguments.Length;
 			var result = new string[length];
 			for (var i = 0; i < length; i++)

@@ -29,10 +29,10 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	{
 		protected FrameworkPropertyBase(string name) : base(name, Defaults.Namespace) {}
 
-		protected override string Value(IXmlReader parameter)
+		protected sealed override string Value(IXmlReader parameter)
 		{
 			var result = base.Value(parameter);
-			parameter.Content.Reset();
+			parameter.Reset();
 			return result;
 		}
 	}

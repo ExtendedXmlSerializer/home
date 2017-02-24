@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		public void Read(IXmlReader reader, object instance, IList list)
 		{
-			if (reader.Content.Name == string.Empty)
+			if (reader.IsMember())
 			{
 				var member = _members.Get(reader.Name);
 				if (member != null)

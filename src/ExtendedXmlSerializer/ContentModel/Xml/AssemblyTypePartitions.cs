@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class AssemblyTypePartitions : ReferenceCacheBase<Assembly, Partition>, ITypePartitions
+	sealed class AssemblyTypePartitions : CacheBase<Assembly, Partition>, ITypePartitions
 	{
 		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
 		readonly static IApplicationTypes ApplicationTypes = TypeModel.ApplicationTypes.All;
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public TypeInfo Get(TypePartition parameter)
 		{
-			var partition = base.Get(parameter.Assembly);
+			var partition = Get(parameter.Assembly);
 			var ns = partition?.Invoke(parameter.Namespace);
 			var result = ns?.Invoke(parameter.Name);
 			return result;

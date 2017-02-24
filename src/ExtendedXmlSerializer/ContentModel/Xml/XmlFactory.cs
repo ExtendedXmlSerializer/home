@@ -28,33 +28,17 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlFactory : IXmlFactory
 	{
-		readonly static XmlReaderSettings XmlReaderSettings = new XmlReaderSettings
-		                                                      {
-			                                                      IgnoreWhitespace = true,
-			                                                      IgnoreComments = true,
-			                                                      IgnoreProcessingInstructions = true
-		                                                      };
-
-		public static XmlFactory Default { get; } = new XmlFactory();
-		XmlFactory() : this(TypeSelector.Default, XmlReaderSettings) {}
-
-		readonly ITypeSelector _selector;
 		readonly XmlReaderSettings _readerSettings;
 
-		public XmlFactory(ITypeSelector selector, XmlReaderSettings readerSettings)
+		public XmlFactory(XmlReaderSettings readerSettings)
 		{
-			_selector = selector;
 			_readerSettings = readerSettings;
 		}
 
 		public IXmlWriter Create(Stream stream, object instance)
 			=> new XmlWriter(System.Xml.XmlWriter.Create(stream), instance);
 
-		public IXmlReader Create(Stream stream)
-		{
-			var reader = System.Xml.XmlReader.Create(stream, _readerSettings);
-			var result = new XmlReader(_selector, reader);
-			return result;
-		}
+		public IXmlReader Create(Stream stream) => 
+			new XmlReader(System.Xml.XmlReader.Create(stream, _readerSettings));
 	}
 }

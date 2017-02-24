@@ -30,11 +30,13 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class GenericElement : Element
 	{
+		readonly static ArgumentsProperty Property = ArgumentsProperty.Default;
+
 		readonly IArgumentsProperty _property;
 		readonly ImmutableArray<Type> _arguments;
 
 		public GenericElement(string name, string identifier, ImmutableArray<Type> arguments)
-			: this(ArgumentsProperty.Default, name, identifier, arguments) {}
+			: this(Property, name, identifier, arguments) {}
 
 		public GenericElement(IArgumentsProperty property, string name, string identifier, ImmutableArray<Type> arguments)
 			: base(name, identifier)
@@ -43,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_arguments = arguments;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_property.Write(writer, _arguments);

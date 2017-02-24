@@ -29,12 +29,14 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 {
 	class ReferencesContentOption : DecoratedContentOption
 	{
+		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
+
 		readonly IIdentities _identities;
 		readonly IEntities _entities;
 		readonly ISpecification<TypeInfo> _specification;
 
 		public ReferencesContentOption(IIdentities identities, IEntities entities, IContentOption option)
-			: this(IsReferenceSpecification.Default, identities, entities, option) {}
+			: this(IsReferenceSpecification, identities, entities, option) {}
 
 		public ReferencesContentOption(ISpecification<TypeInfo> specification, IIdentities identities, IEntities entities,
 		                               IContentOption option) : base(option)

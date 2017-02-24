@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public MemberAliases(IDictionary<MemberInfo, string> store) : base(store) {}
 
-		public override string Get(MemberInfo parameter)
+		public sealed override string Get(MemberInfo parameter)
 		{
 			return base.Get(parameter) ??
 			       parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??

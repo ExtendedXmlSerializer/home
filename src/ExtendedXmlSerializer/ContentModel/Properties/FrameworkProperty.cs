@@ -35,8 +35,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_converter = converter;
 		}
 
-		protected override T Parse(IXmlReader parameter, string data) => _converter.Parse(data);
+		protected sealed override T Parse(IXmlReader parameter, string data) => _converter.Parse(data);
 
-		protected override string Format(IXmlWriter writer, T instance) => _converter.Format(instance);
+		protected sealed override string Format(IXmlWriter writer, T instance) => _converter.Format(instance);
 	}
 }

@@ -25,6 +25,8 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Performance.Tests.Model;
 
@@ -52,8 +54,17 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		public TestClassOtherClass DeserializationClassWithPrimitive() => _serializer.Deserialize<TestClassOtherClass>(_xml);
 	}
 
+	[Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
+		class Configuration : ManualConfig
+		{
+			public Configuration()
+			{
+				Add(Job.Default.With(new GcMode {Force = false}).WithWarmupCount(5).WithTargetCount(10));
+			}
+		}
+
 		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;

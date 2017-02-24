@@ -28,12 +28,11 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContainerOptions : IContainerOptions
 	{
+		readonly static ElementOption ElementOption = ElementOption.Default;
+
 		readonly IContentOption _known;
 		readonly IElementOptionSelector _selector;
 		readonly IContentOptions _content;
-
-		public ContainerOptions(IContentOption known, IContentOptions content)
-			: this(known, ElementOptionSelector.Default, content) {}
 
 		public ContainerOptions(IContentOption known, IElementOptionSelector selector, IContentOptions content)
 		{
@@ -46,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 		public IEnumerator<IContainerOption> GetEnumerator()
 		{
-			yield return new ContainerOption(ElementOption.Default, _known);
+			yield return new ContainerOption(ElementOption, _known);
 
 			foreach (var option in _content)
 			{

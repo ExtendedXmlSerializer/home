@@ -31,11 +31,13 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class CollectionContentOption : CollectionContentOptionBase
 	{
+		readonly static Activators Activators = Activators.Default;
+
 		readonly IMembers _members;
 		readonly IActivators _activators;
 
 		public CollectionContentOption(IMembers members, ISerialization serialization)
-			: this(members, serialization, Activators.Default) {}
+			: this(members, serialization, Activators) {}
 
 		public CollectionContentOption(IMembers members, ISerialization serialization, IActivators activators)
 			: base(serialization)
@@ -44,7 +46,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_activators = activators;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var members = _members.Get(classification);
 			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));

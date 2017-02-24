@@ -23,52 +23,24 @@
 
 using System;
 using System.Reflection;
-using System.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IIdentity, IPrefixAware, IDisposable
+	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
 	{
 		TypeInfo Classification { get; }
 
 		string Value();
 
-		IXmlAttributes Attributes { get; }
-
-		IXmlContent Content { get; }
+		bool IsMember(); // TODO: Seems like a better way to do this.
 	}
 
-	public interface IXmlContent : IIdentity
+	public interface IXmlContent
 	{
 		int New();
 
 		void Reset();
 
 		bool Next(int depth);
-	}
-
-	class XmlContent : IXmlContent
-	{
-		readonly System.Xml.XmlReader _reader;
-		public XmlContent(System.Xml.XmlReader reader)
-		{
-			_reader = reader;
-		}
-
-		public string Identifier => _reader.Prefix;
-		public string Name => _reader.Prefix;
-
-		public int New()
-		{
-			if (_reader.HasAttributes && _reader.NodeType == XmlNodeType.Attribute)
-			{
-				Reset();
-			}
-			return _reader.Depth + 1;
-		}
-
-		public void Reset() => _reader.MoveToElement();
-
-		public bool Next(int depth) => _reader.Read() && _reader.IsStartElement() && _reader.Depth == depth;
 	}
 }

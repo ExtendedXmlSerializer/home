@@ -31,11 +31,13 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayElement : Element
 	{
+		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
+		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
+
 		readonly ITypeProperty _property;
 		readonly TypeInfo _element;
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
 
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty.Default, element) {}
+		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
 
 		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity.Name, Identity.Identifier)
 		{
@@ -43,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_element = element;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_property.Write(writer, _element);

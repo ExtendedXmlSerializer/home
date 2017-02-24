@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
+	sealed class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		readonly static Dictionary<IIdentity, TypeInfo> Aliased = WellKnownAliases.Default
 		                                                                          .Select(x => x.Key)

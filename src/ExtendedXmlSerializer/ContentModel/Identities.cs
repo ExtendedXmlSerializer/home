@@ -26,14 +26,14 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class Identities : Cache<string, Func<string, IIdentity>>, IIdentities
+	sealed class Identities : Cache<string, Func<string, IIdentity>>, IIdentities
 	{
 		public static Identities Default { get; } = new Identities();
 		Identities() : base(i => new Names(i).Get) {}
 
 		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
 
-		class Names : CacheBase<string, IIdentity>
+		sealed class Names : CacheBase<string, IIdentity>
 		{
 			readonly string _identifier;
 

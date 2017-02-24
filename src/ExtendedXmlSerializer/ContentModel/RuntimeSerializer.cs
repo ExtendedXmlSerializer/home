@@ -39,11 +39,6 @@ namespace ExtendedXmlSerialization.ContentModel
 		public override void Write(IXmlWriter writer, object instance)
 			=> _serialization.Get(instance.GetType().GetTypeInfo()).Get().Write(writer, instance);
 
-		public override object Get(IXmlReader reader)
-		{
-			var content = _serialization.Get(reader.Classification).Get();
-			var result = content.Get(reader);
-			return result;
-		}
+		public override object Get(IXmlReader reader) => _serialization.Get(reader.Classification).Get().Get(reader);
 	}
 }

@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class AssemblyPublicTypes : IAssemblyTypes
+	sealed class AssemblyPublicTypes : IAssemblyTypes
 	{
 		public static AssemblyPublicTypes Default { get; } = new AssemblyPublicTypes();
 		AssemblyPublicTypes() {}

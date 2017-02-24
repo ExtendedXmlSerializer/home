@@ -30,14 +30,16 @@ namespace ExtendedXmlSerialization.Core.Sources
 		readonly ISpecification<TParameter> _specification;
 		readonly IParameterizedSource<TParameter, TResult> _source;
 
+		public DecoratedOption(IOption<TParameter, TResult> option) : this(option, option) {}
+
 		public DecoratedOption(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
 		{
 			_specification = specification;
 			_source = source;
 		}
 
-		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
+		public virtual bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
 
-		public TResult Get(TParameter parameter) => _source.Get(parameter);
+		public virtual TResult Get(TParameter parameter) => _source.Get(parameter);
 	}
 }

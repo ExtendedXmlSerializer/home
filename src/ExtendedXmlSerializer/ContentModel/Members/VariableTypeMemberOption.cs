@@ -29,22 +29,23 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class VariableTypeMemberOption : MemberOption
 	{
+		readonly static VariableTypeMemberSpecification Specification = VariableTypeMemberSpecification.Default;
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(ISerializer runtime) : base(VariableTypeMemberSpecification.Default)
+		public VariableTypeMemberOption(ISerializer runtime) : base(Specification)
 		{
 			_runtime = runtime;
 		}
 
-		protected override IMember CreateMember(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
+		protected sealed override IMember CreateMember(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
 		{
 			// TODO: This should be simplified:
 			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
 			var writer = new Enclosure(new MemberElement(profile.Identity.Name),
-			                           new VariableTypeWriter(specification, _runtime, profile.Content));
+			                           new VariableTypedMemberWriter(specification, _runtime, profile.Content));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity.Name, profile.AllowWrite, profile.Order,
 			                                  profile.Metadata, profile.MemberType, profile.Content, profile.Reader, writer);
-			var adapter = new VariableTypeMemberAdapter(specification, new MemberAdapterSelector(getter, setter).Get(profile));
+			var adapter = new VariableTypeMemberAdapter(specification, new MemberAdapterSelector(getter, setter).Get(decorated));
 			var result = base.CreateMember(decorated, adapter);
 			return result;
 		}

@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static ElementOption Default { get; } = new ElementOption();
 		ElementOption() {}
 
-		public override IWriter Create(IIdentity identity, TypeInfo classification)
+		public sealed override IWriter Create(IIdentity identity, TypeInfo classification)
 			=> new Element(identity.Name, identity.Identifier);
 	}
 }

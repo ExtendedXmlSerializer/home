@@ -27,8 +27,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class Selector : Selector<MemberProfile, IMember>, ISelector
 	{
-		public Selector(ISerializer runtime) : this(new VariableTypeMemberOption(runtime)) {}
-
 		public Selector(IMemberOption variable)
 			: base(
 				variable,

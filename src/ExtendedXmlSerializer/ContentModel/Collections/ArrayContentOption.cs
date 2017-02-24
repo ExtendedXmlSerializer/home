@@ -29,9 +29,10 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayContentOption : CollectionContentOptionBase
 	{
-		public ArrayContentOption(ISerialization serialization) : base(IsArraySpecification.Default, serialization) {}
+		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		public ArrayContentOption(ISerialization serialization) : base(Specification, serialization) {}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
 			=> new Serializer(new ArrayReader(item), new EnumerableWriter(item));
 	}
 }

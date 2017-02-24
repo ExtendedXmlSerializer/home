@@ -25,7 +25,13 @@ using ExtendedXmlSerialization.ContentModel.Properties;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class ArrayTypeOption : TypePropertyOptionBase
+	sealed class ExplicitTypeOption : TypePropertyOptionBase
+	{
+		public static ExplicitTypeOption Default { get; } = new ExplicitTypeOption();
+		ExplicitTypeOption() : base(TypeProperty.Default) {}
+	}
+
+	sealed class ArrayTypeOption : TypePropertyOptionBase
 	{
 		public static ArrayTypeOption Default { get; } = new ArrayTypeOption();
 		ArrayTypeOption() : base(ItemTypeProperty.Default) {}

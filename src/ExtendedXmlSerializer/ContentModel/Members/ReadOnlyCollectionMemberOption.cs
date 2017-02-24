@@ -42,14 +42,14 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_add = add;
 		}
 
-		protected override IMember Create(MemberProfile profile, Func<object, object> getter)
+		protected sealed override IMember Create(MemberProfile profile, Func<object, object> getter)
 		{
 			var add = _add.Get(profile.MemberType);
 			var result = add != null ? CreateMember(profile, getter, add) : null;
 			return result;
 		}
 
-		protected override IMember CreateMember(MemberProfile profile, IMemberAdapter adapter)
+		protected sealed override IMember CreateMember(MemberProfile profile, IMemberAdapter adapter)
 			=> base.CreateMember(profile, new ReadOnlyMemberAdapter(adapter));
 	}
 }

@@ -27,12 +27,14 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberDefaults : ReferenceCacheBase<MemberInfo, object>
+	class MemberDefaults : CacheBase<MemberInfo, object>
 	{
+		readonly static GetterFactory GetterFactory = GetterFactory.Default;
+
 		readonly object _instance;
 		readonly IGetterFactory _getter;
 
-		public MemberDefaults(object instance) : this(instance, GetterFactory.Default) {}
+		public MemberDefaults(object instance) : this(instance, GetterFactory) {}
 
 		public MemberDefaults(object instance, IGetterFactory getter)
 		{
@@ -40,6 +42,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_getter = getter;
 		}
 
-		protected override object Create(MemberInfo parameter) => _getter.Get(parameter).Invoke(_instance);
+		protected sealed override object Create(MemberInfo parameter) => _getter.Get(parameter).Invoke(_instance);
 	}
 }

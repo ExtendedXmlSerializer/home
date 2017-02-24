@@ -25,10 +25,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	class Namespaces : INamespaces
 	{
+		readonly static Prefixes Prefixes = Prefixes.Default;
+
 		readonly IPrefixes _prefixes;
 		readonly IPrefixer _prefixer;
 
-		public Namespaces() : this(Prefixes.Default, new Prefixer()) {}
+		public Namespaces() : this(Prefixes, new Prefixer()) {}
 
 		public Namespaces(IPrefixes prefixes, IPrefixer prefixer)
 		{

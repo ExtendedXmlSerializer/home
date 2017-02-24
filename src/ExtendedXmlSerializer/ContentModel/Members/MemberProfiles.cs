@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_order = order;
 		}
 
-		protected override MemberProfile Create(MemberDescriptor parameter)
+		protected sealed override MemberProfile Create(MemberDescriptor parameter)
 		{
 			var metadata = parameter.Metadata;
 			var order = _order.Get(metadata);

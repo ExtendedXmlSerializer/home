@@ -119,7 +119,7 @@ namespace ExtendedXmlSerialization.Core
 		/// <param name="item">The item in the collection whose type is to be retrieved.</param>
 		/// <exception cref="T:System.ArgumentNullException">
 		/// <paramref name="item" /> is null.</exception>
-		protected override Type GetKeyForItem(TItem item)
+		protected sealed override Type GetKeyForItem(TItem item)
 		{
 			if (item == null)
 				throw new ArgumentNullException(nameof(item));
@@ -131,7 +131,7 @@ namespace ExtendedXmlSerialization.Core
 		/// <param name="item">The object to insert into the collection.</param>
 		/// <exception cref="T:System.ArgumentNullException">
 		/// <paramref name="item" /> is null.</exception>
-		protected override void InsertItem(int index, TItem item)
+		protected sealed override void InsertItem(int index, TItem item)
 		{
 			if (item == null)
 				throw new ArgumentNullException(nameof(item));
@@ -146,7 +146,7 @@ namespace ExtendedXmlSerialization.Core
 		/// <param name="item">The object to add to the collection.</param>
 		/// <exception cref="T:System.ArgumentNullException">
 		/// <paramref name="item" /> is null.</exception>
-		protected override void SetItem(int index, TItem item)
+		protected sealed override void SetItem(int index, TItem item)
 		{
 			if (item == null)
 				throw new ArgumentNullException(nameof(item));

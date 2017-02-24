@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_activators = activators;
 		}
 
-		public override ISerializer Get(TypeInfo parameter)
+		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
 			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));

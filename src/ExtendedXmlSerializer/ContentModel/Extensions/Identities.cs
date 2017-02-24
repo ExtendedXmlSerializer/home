@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Extensions
 {
-	class Identities : ReferenceCacheBase<IXmlWriter, IIdentityProfiles>, IIdentities
+	sealed class Identities : ReferenceCacheBase<IXmlWriter, IIdentityProfiles>, IIdentities
 	{
 		readonly IMembers _members;
 		readonly IEntities _entities;

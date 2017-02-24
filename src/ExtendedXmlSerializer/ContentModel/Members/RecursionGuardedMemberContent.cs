@@ -27,10 +27,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class RecursionGuardedMemberContent : IMemberContent
 	{
+		readonly static Recursions Recursions = Recursions.Default;
+
 		readonly IRecursions _recursions;
 		readonly IMemberContent _content;
 
-		public RecursionGuardedMemberContent(IMemberContent content) : this(Recursions.Default, content) {}
+		public RecursionGuardedMemberContent(IMemberContent content) : this(Recursions, content) {}
 
 		public RecursionGuardedMemberContent(IRecursions recursions, IMemberContent content)
 		{

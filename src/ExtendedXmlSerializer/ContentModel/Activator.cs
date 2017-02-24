@@ -43,4 +43,5 @@ namespace ExtendedXmlSerialization.ContentModel
 
 		public object Get(IXmlReader parameter) => _activators.Get(parameter.Classification.AsType()).Invoke();
 	}
+
 }

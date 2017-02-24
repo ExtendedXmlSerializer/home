@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.ContentModel.Extensions
 
 		static ReferenceIdentity? GetIdentity(IXmlReader reader)
 		{
-			if (reader.Attributes.Contains(IdentityProperty.Default))
+			if (reader.Contains(IdentityProperty.Default))
 			{
 				return new ReferenceIdentity(Reference, IdentityProperty.Default.Get(reader));
 			}

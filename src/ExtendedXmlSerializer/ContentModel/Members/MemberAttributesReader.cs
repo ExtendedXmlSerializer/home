@@ -40,10 +40,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			var result = base.Get(parameter);
 
-			var attributes = parameter.Attributes;
-			while (attributes.Next())
+			while (parameter.Next())
 			{
-				if (attributes.Name == string.Empty)
+				if (parameter.IsMember())
 				{
 					var member = _members.Get(parameter.Name);
 					member?.Adapter.Assign(result, member.Get(parameter));

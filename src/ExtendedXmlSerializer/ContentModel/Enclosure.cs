@@ -28,10 +28,11 @@ namespace ExtendedXmlSerialization.ContentModel
 {
 	class Enclosure : EnclosureBase
 	{
-		readonly IWriter _start;
-		readonly IWriter _finish;
+		readonly static EndCurrentElement End = EndCurrentElement.Default;
 
-		public Enclosure(IWriter start, IWriter body) : this(start, body, EndCurrentElement.Default) {}
+		readonly IWriter _start, _finish;
+
+		public Enclosure(IWriter start, IWriter body) : this(start, body, End) {}
 
 		public Enclosure(IWriter start, IWriter body, IWriter finish) : base(body)
 		{
@@ -39,8 +40,8 @@ namespace ExtendedXmlSerialization.ContentModel
 			_finish = finish;
 		}
 
-		protected override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
+		protected sealed override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
 
-		protected override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
+		protected sealed override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
 	}
 }

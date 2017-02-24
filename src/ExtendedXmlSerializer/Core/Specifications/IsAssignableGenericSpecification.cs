@@ -28,12 +28,14 @@ namespace ExtendedXmlSerialization.Core.Specifications
 {
 	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{
+		readonly static GenericDefinitionCandidates Candidates = GenericDefinitionCandidates.Default;
+
 		readonly IGenericDefinitionCandidates _candidates;
 		readonly Type _genericDefinition;
 
-		public IsAssignableGenericSpecification(Type genericType) : this(GenericDefinitionCandidates.Default, genericType) {}
+		public IsAssignableGenericSpecification(Type genericType) : this(Candidates, genericType) {}
 
-		public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
+        public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
 		{
 			_candidates = candidates;
 			_genericDefinition = genericDefinition;

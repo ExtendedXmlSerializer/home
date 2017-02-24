@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel
 {
-	public interface ITypeOption : IOption<IXmlReader, TypeInfo> {}
+	public interface IActivation : IParameterizedSource<TypeInfo, IReader> {}
+
+	public class Activation : IActivation
+	{
+		public static Activation Default { get; } = new Activation();
+		Activation() : this(Activators.Default) {}
+
+		readonly IActivators _activators;
+
+		public Activation(IActivators activators)
+		{
+			_activators = activators;
+		}
+
+		public IReader Get(TypeInfo parameter)
+		{
+			var activate = _activators.Get(parameter.AsType());
+			var result = new DelegatedFixedActivator(activate);
+			return result;
+		}
+	}
 }

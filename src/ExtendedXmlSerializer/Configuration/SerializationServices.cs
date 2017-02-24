@@ -45,8 +45,7 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public SerializationServices(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IMemberEmitSpecifications specifications,
-			ITypeSelector types, IXmlFactory xml,
+			IMemberEmitSpecifications specifications, IXmlFactory xml,
 			IMemberWriters writers, IContentOption known,
 			IAliases aliases, IMemberOrder order, ICollection<ISerializerExtension> extensions)
 		{
@@ -61,7 +60,7 @@ namespace ExtendedXmlSerialization.Configuration
 			var content = new ContentOptions(this, serialization, members, variable, runtime);
 
 			IServiceRepository seed = new ServiceRepository(
-				property, field, specifications, types, xml, writers, content, aliases, order,
+				property, field, specifications, xml, writers, content, aliases, order,
 				runtime, variable, profiles, serialization, members, known, ElementOptionSelector.Default
 			);
 

@@ -26,10 +26,11 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class GenericTypes : ITypes
+	sealed class GenericTypes : ITypes
 	{
-		readonly ITypes _generic;
 		readonly static GenericActivatedTypeSpecification Specification = GenericActivatedTypeSpecification.Default;
+
+		readonly ITypes _generic;
 
 		public static GenericTypes Default { get; } = new GenericTypes();
 

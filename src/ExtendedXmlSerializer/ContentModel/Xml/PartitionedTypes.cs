@@ -28,18 +28,21 @@ using Sprache;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class PartitionedTypes : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
+	sealed class PartitionedTypes : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
+		readonly static AssemblyPathParser AssemblyPathParser = AssemblyPathParser.Default;
+		readonly static AssemblyLoader AssemblyLoader = AssemblyLoader.Default;
+
 		public static PartitionedTypes Default { get; } = new PartitionedTypes();
 		PartitionedTypes() : this(TypeLoader.Default, AssemblyTypePartitions.Default) {}
 
 		public PartitionedTypes(params ITypePartitions[] partitions)
-			: this(AssemblyPathParser.Default, AssemblyLoader.Default, new TypePartitions(partitions)) {}
+			: this(AssemblyPathParser, AssemblyLoader, new TypePartitions(partitions)) {}
 
 		readonly IParseContext<AssemblyPath> _parser;
 		readonly IAssemblyLoader _loader;
 		readonly ITypePartitions _partitions;
-
+		
 		public PartitionedTypes(IParseContext<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions)
 		{
 			_parser = parser;
