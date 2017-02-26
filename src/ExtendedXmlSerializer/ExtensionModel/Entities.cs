@@ -21,23 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class Entities : TableSource<TypeInfo, IEntity>, IEntities
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
-
-		public sealed override object Get(IXmlReader parameter)
-		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
-		}
+		public Entities(IDictionary<TypeInfo, IEntity> store) : base(store) {}
 	}
 }

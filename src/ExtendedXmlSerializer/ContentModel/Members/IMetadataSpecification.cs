@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,23 +22,34 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ArrayContentOption : CollectionContentOptionBase
+	public interface IMetadataSpecification : ISpecification<PropertyInfo>, ISpecification<FieldInfo> {}
+
+	class MetadataSpecification : IMetadataSpecification
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly static MemberSpecification<PropertyInfo> Property =
+			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
-		readonly IActivation _activation;
+		readonly static MemberSpecification<FieldInfo> Field =
+			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
 
-		public ArrayContentOption(IActivation activation, ISerialization serialization) : base(Specification, serialization)
+		public static MetadataSpecification Default { get; } = new MetadataSpecification();
+		MetadataSpecification() : this(Property, Field) {}
+
+		readonly ISpecification<PropertyInfo> _property;
+		readonly ISpecification<FieldInfo> _field;
+
+		public MetadataSpecification(ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field)
 		{
-			_activation = activation;
+			_property = property;
+			_field = field;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
-			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
+		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
+
+		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
 	}
 }

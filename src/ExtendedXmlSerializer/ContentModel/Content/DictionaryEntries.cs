@@ -38,17 +38,19 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly static IWriter Element = ElementOption.Default.Get(Type);
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
+		readonly IReader _activator;
 		readonly IMemberSerialization _serialization;
 		readonly IMemberOption _variable;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
-		public DictionaryEntries(IMemberSerialization serialization, IMemberOption variable)
-			: this(serialization, variable, Element, Pairs) {}
+		public DictionaryEntries(IActivation activation, IMemberSerialization serialization, IMemberOption variable)
+			: this(activation.Get<DictionaryEntry>(), serialization, variable, Element, Pairs) {}
 
-		public DictionaryEntries(IMemberSerialization serialization, IMemberOption variable, IWriter element,
+		public DictionaryEntries(IReader activator, IMemberSerialization serialization, IMemberOption variable, IWriter element,
 		                         IDictionaryPairTypesLocator locator)
 		{
+			_activator = activator;
 			_serialization = serialization;
 			_variable = variable;
 			_element = element;
@@ -71,7 +73,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var key = Create(Key, pair.KeyType);
 			var value = Create(Value, pair.ValueType);
 			var members = ImmutableArray.Create(key, value);
-			var reader = new MemberContentsReader(Activator<DictionaryEntry>.Default, members.ToDictionary(x => x.Adapter.Name));
+			var reader = new MemberContentsReader(_activator, members.ToDictionary(x => x.Adapter.Name));
 			var converter = new Serializer(reader, new MemberListWriter(members));
 			var result = new Container(_element, converter);
 			return result;

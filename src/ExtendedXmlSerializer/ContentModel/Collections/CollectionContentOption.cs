@@ -25,31 +25,25 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class CollectionContentOption : CollectionContentOptionBase
 	{
-		readonly static Activators Activators = Activators.Default;
-
 		readonly IMembers _members;
-		readonly IActivators _activators;
+		readonly IActivation _activation;
 
-		public CollectionContentOption(IMembers members, ISerialization serialization)
-			: this(members, serialization, Activators) {}
-
-		public CollectionContentOption(IMembers members, ISerialization serialization, IActivators activators)
+		public CollectionContentOption(IActivation activation, IMembers members, ISerialization serialization)
 			: base(serialization)
 		{
 			_members = members;
-			_activators = activators;
+			_activation = activation;
 		}
 
 		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var members = _members.Get(classification);
-			var activator = new DelegatedFixedActivator(_activators.Get(classification.AsType()));
+			var activator = _activation.Get(classification);
 
 			var items = new CollectionItemReader(item);
 			var dictionary = members.ToDictionary(x => x.Adapter.Name);

@@ -21,22 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class ReferencesExtension : ISerializerExtension
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IDictionary<TypeInfo, IEntity> _store;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ReferencesExtension() : this(new Dictionary<TypeInfo, IEntity>()) {}
+
+		public ReferencesExtension(IDictionary<TypeInfo, IEntity> store)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_store = store;
+		}
+
+		public IServiceList Get(IServiceList parameter)
+		{
+			var current = parameter.GetValid<IContentOptions>();
+			var entities = new Entities(_store);
+			var identities = new Identities(parameter.GetValid<IMembers>(), entities);
+			var altered = new AlteredContentOptions(current,
+			                                        new ReferencesContentAlteration(identities, entities));
+			var result = parameter.Replace<IContentOptions>(altered).AsServices();
 			return result;
 		}
 	}

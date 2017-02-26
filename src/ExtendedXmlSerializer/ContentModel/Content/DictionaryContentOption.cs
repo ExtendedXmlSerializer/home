@@ -32,29 +32,25 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryContentOption : ContentOptionBase
 	{
-		readonly static Activators Activators = Activators.Default;
-
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
+		readonly IActivation _activation;
 		readonly IMembers _members;
 		readonly IDictionaryEntries _entries;
-		readonly IActivators _activators;
-
-		public DictionaryContentOption(IMembers members, IDictionaryEntries entries) : this(members, entries, Activators) {}
-
-		public DictionaryContentOption(IMembers members, IDictionaryEntries entries, IActivators activators)
+		
+		public DictionaryContentOption(IActivation activation, IMembers members, IDictionaryEntries entries)
 			: base(Specification)
 		{
+			_activation = activation;
 			_members = members;
 			_entries = entries;
-			_activators = activators;
 		}
 
 		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
-			var activator = new DelegatedFixedActivator(_activators.Get(parameter.AsType()));
+			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.Adapter.Name));
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new DictionaryEntryWriter(entry));

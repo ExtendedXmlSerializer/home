@@ -21,22 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class OptimizedNamespaceExtension : ISerializerExtension
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		public static OptimizedNamespaceExtension Default { get; } = new OptimizedNamespaceExtension();
+		OptimizedNamespaceExtension() {}
 
-		public sealed override object Get(IXmlReader parameter)
+		public IServiceList Get(IServiceList parameter)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			var namespaces = new ObjectNamespaces(parameter.GetValid<IMembers>());
+			var current = parameter.GetValid<IElementOptionSelector>();
+			var result = parameter.Replace<IElementOptionSelector>(new Selector(namespaces, current)).AsServices();
 			return result;
 		}
 	}

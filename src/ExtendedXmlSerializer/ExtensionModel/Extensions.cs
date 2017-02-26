@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,22 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	public static class Extensions
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		public static IServiceList AsServices(this IImmutableList<object> @this)
+			=> @this as IServiceList ?? new ServiceList(@this);
 
-		public sealed override object Get(IXmlReader parameter)
+		public static IImmutableList<object> Replace<T>(this IImmutableList<object> @this, T service)
+			=> @this.Replace(typeof(T), service);
+
+		public static IImmutableList<object> Replace(this IImmutableList<object> @this, Type serviceType, object service)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			var current = @this.AsServices().GetService(serviceType);
+			var result = current != null ? @this.Replace(current, service).Add(service) : @this;
 			return result;
 		}
 	}

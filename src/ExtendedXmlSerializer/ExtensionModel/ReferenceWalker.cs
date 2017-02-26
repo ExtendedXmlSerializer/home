@@ -22,22 +22,57 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class ReferenceWalker : ObjectWalkerBase<object, IEnumerable<object>>, ISource<IReadOnlyList<object>>
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IMembers _members;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ReferenceWalker(IMembers members, object root) : base(root)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
+			_members = members;
 		}
+
+		protected sealed override IEnumerable<object> Select(object input)
+		{
+			var parameter = input.GetType().GetTypeInfo();
+			var members = _members.Get(parameter);
+			var length = members.Length;
+
+			for (var i = 0; i < length; i++)
+			{
+				var member = members[i];
+				var variable = member.Adapter as IVariableTypeMemberAdapter;
+				if (variable != null)
+				{
+					var instance = member.Adapter.Get(input);
+					if (!Schedule(instance))
+					{
+						yield return instance;
+					}
+				}
+			}
+
+			var enumerable = input as IEnumerable;
+			if (enumerable != null)
+			{
+				foreach (var item in enumerable)
+				{
+					if (!Schedule(item))
+					{
+						yield return item;
+					}
+				}
+			}
+		}
+
+		public IReadOnlyList<object> Get() => this.SelectMany(x => x).Distinct().AsReadOnly();
 	}
 }

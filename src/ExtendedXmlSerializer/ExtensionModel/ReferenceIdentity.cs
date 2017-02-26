@@ -21,23 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly int _code;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ReferenceIdentity(TypeInfo type, object identifier)
+			: this((type.GetHashCode() * 397) ^ identifier.GetHashCode()) {}
+
+		public ReferenceIdentity(TypeInfo type, uint identifier) : this((type.GetHashCode() * 397) ^ identifier.GetHashCode()) {}
+
+		ReferenceIdentity(int code)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_code = code;
+		}
+
+		public bool Equals(ReferenceIdentity other)
+		{
+			var code = _code;
+			var result = code.Equals(other._code);
 			return result;
 		}
+
+		public override bool Equals(object obj)
+			=> !ReferenceEquals(null, obj) && obj is ReferenceIdentity && Equals((ReferenceIdentity) obj);
+
+		public override int GetHashCode() => _code;
+
+		public static bool operator ==(ReferenceIdentity left, ReferenceIdentity right) => left.Equals(right);
+
+		public static bool operator !=(ReferenceIdentity left, ReferenceIdentity right) => !left.Equals(right);
 	}
 }

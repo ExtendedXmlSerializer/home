@@ -29,14 +29,16 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class XmlFactory : IXmlFactory
 	{
 		readonly XmlReaderSettings _readerSettings;
+		readonly XmlWriterSettings _writerSettings;
 
-		public XmlFactory(XmlReaderSettings readerSettings)
+		public XmlFactory(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
 		{
 			_readerSettings = readerSettings;
+			_writerSettings = writerSettings;
 		}
 
 		public IXmlWriter Create(Stream stream, object instance)
-			=> new XmlWriter(System.Xml.XmlWriter.Create(stream), instance);
+			=> new XmlWriter(System.Xml.XmlWriter.Create(stream, _writerSettings), instance);
 
 		public IXmlReader Create(Stream stream) => 
 			new XmlReader(System.Xml.XmlReader.Create(stream, _readerSettings));

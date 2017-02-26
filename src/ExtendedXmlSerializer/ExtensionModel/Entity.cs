@@ -21,23 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class Entity : IEntity
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IMember _member;
+		readonly IConverter _converter;
 
-		public sealed override object Get(IXmlReader parameter)
+		public Entity(IMember member, IConverter converter)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
+			_member = member;
+			_converter = converter;
 		}
+
+		public string Get(object parameter) => _converter.Format(_member.Adapter.Get(parameter));
+		public object Get(string parameter) => _converter.Parse(parameter);
 	}
 }

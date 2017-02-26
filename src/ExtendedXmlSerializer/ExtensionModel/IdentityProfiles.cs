@@ -21,22 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class IdentityProfiles : IIdentityProfiles
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IDictionary<object, Identifier> _identifiers;
+		readonly ObjectIdGenerator _generator;
 
-		public sealed override object Get(IXmlReader parameter)
+		public IdentityProfiles(IDictionary<object, Identifier> identifiers)
+			: this(identifiers, new ObjectIdGenerator()) {}
+
+		public IdentityProfiles(IDictionary<object, Identifier> identifiers, ObjectIdGenerator generator)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_identifiers = identifiers;
+			_generator = generator;
+		}
+
+		public IdentityProfile? Get(object instance)
+		{
+			Identifier identifier;
+			var result = _identifiers.TryGetValue(instance, out identifier)
+				? new IdentityProfile(identifier, _generator.For(instance).FirstEncounter)
+				: (IdentityProfile?) null;
 			return result;
 		}
 	}

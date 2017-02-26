@@ -21,22 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	sealed class Identities : ReferenceCacheBase<IXmlWriter, IIdentityProfiles>, IIdentities
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IMembers _members;
+		readonly IEntities _entities;
 
-		public sealed override object Get(IXmlReader parameter)
+		public Identities(IMembers members, IEntities entities)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_members = members;
+			_entities = entities;
+		}
+
+		protected override IIdentityProfiles Create(IXmlWriter parameter)
+		{
+			var selector = new ReferenceIdentifiers(_entities);
+			var identities = new ReferenceWalker(_members, parameter.Root).Get().ToDictionary(x => x, selector.Get);
+			var result = new IdentityProfiles(identities);
 			return result;
 		}
 	}

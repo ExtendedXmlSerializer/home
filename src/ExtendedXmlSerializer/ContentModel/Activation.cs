@@ -23,6 +23,7 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -30,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel
 {
 	public interface IActivation : IParameterizedSource<TypeInfo, IReader> {}
 
-	public class Activation : IActivation
+	class Activation : IActivation
 	{
 		public static Activation Default { get; } = new Activation();
 		Activation() : this(Activators.Default) {}
@@ -42,11 +43,18 @@ namespace ExtendedXmlSerialization.ContentModel
 			_activators = activators;
 		}
 
-		public IReader Get(TypeInfo parameter)
+		public IReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()));
+
+		class Activator : IReader
 		{
-			var activate = _activators.Get(parameter.AsType());
-			var result = new DelegatedFixedActivator(activate);
-			return result;
+			readonly Func<object> _activate;
+
+			public Activator(Func<object> activate)
+			{
+				_activate = activate;
+			}
+
+			public object Get(IXmlReader parameter) => _activate();
 		}
 	}
 }

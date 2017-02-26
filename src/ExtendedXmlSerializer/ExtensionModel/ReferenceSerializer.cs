@@ -21,23 +21,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class ReferenceSerializer : ISerializer
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IIdentities _identities;
+		readonly IReferences _references;
+		readonly ISerializer _serializer;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ReferenceSerializer(IIdentities identities, IReferences references, ISerializer serializer)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
+			_identities = identities;
+			_references = references;
+			_serializer = serializer;
 		}
+
+		public void Write(IXmlWriter writer, object instance)
+		{
+			var context = _identities.Get(writer).Get(instance);
+			if (context != null)
+			{
+				var identifier = context.Value.Identifier;
+
+				var first = context.Value.FirstEncounter;
+				if (identifier.EntityId != null)
+				{
+					if (!first)
+					{
+						EntityProperty.Default.Write(writer, identifier.EntityId);
+					}
+				}
+				else
+				{
+					var property = first ? (IProperty<uint>) IdentityProperty.Default : ReferenceProperty.Default;
+					property.Write(writer, identifier.UniqueId);
+				}
+
+				if (!first)
+				{
+					return;
+				}
+			}
+			_serializer.Write(writer, instance);
+		}
+
+		public object Get(IXmlReader parameter) => _references.Get(parameter);
 	}
 }

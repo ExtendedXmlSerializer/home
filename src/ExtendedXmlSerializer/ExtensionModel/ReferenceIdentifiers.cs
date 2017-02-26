@@ -21,23 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class ReferenceIdentifiers : IParameterizedSource<object, Identifier>
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly IEntities _identities;
+		readonly ObjectIdGenerator _generator;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ReferenceIdentifiers(IEntities identities) : this(identities, new ObjectIdGenerator()) {}
+
+		public ReferenceIdentifiers(IEntities identities, ObjectIdGenerator generator)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
+			_identities = identities;
+			_generator = generator;
 		}
+
+		public Identifier Get(object parameter)
+			=> new Identifier(
+				(uint) _generator.For(parameter).UniqueId,
+				_identities.Get(parameter.GetType().GetTypeInfo())?.Get(parameter)
+			);
 	}
 }

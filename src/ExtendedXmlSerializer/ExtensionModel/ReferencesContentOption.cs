@@ -22,23 +22,38 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayContentOption : CollectionContentOptionBase
+	class ReferencesContentOption : DecoratedContentOption
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
 
-		readonly IActivation _activation;
+		readonly IIdentities _identities;
+		readonly IEntities _entities;
+		readonly ISpecification<TypeInfo> _specification;
 
-		public ArrayContentOption(IActivation activation, ISerialization serialization) : base(Specification, serialization)
+		public ReferencesContentOption(IIdentities identities, IEntities entities, IContentOption option)
+			: this(IsReferenceSpecification, identities, entities, option) {}
+
+		public ReferencesContentOption(ISpecification<TypeInfo> specification, IIdentities identities, IEntities entities,
+		                               IContentOption option) : base(option)
 		{
-			_activation = activation;
+			_identities = identities;
+			_entities = entities;
+			_specification = specification;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
-			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
+		public sealed override ISerializer Get(TypeInfo parameter)
+		{
+			var serializer = base.Get(parameter);
+			var result = _specification.IsSatisfiedBy(parameter)
+				? new ReferenceSerializer(_identities, new References(serializer, _entities), serializer)
+				: serializer;
+			return result;
+		}
 	}
 }

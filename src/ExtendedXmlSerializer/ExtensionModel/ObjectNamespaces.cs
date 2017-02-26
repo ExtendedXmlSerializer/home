@@ -21,22 +21,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ArrayReader : CollectionContentsReader
+	class ObjectNamespaces : IObjectNamespaces
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly static Func<TypeInfo, string> Identities = Identifiers.Default.Get;
 
-		public sealed override object Get(IXmlReader parameter)
+		readonly IMembers _members;
+		readonly Func<TypeInfo, string> _names;
+		readonly Func<string, Namespace> _namespaces;
+
+		public ObjectNamespaces(IMembers members) : this(members, Identities, new Namespaces().Get) {}
+
+		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_members = members;
+			_names = names;
+			_namespaces = namespaces;
+		}
+
+		public ImmutableArray<Namespace> Get(object parameter)
+		{
+			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
+			var items = types.Length > 1 ? types.Add(Defaults.FrameworkType) : types;
+			var result = items
+				.Select(_names)
+				.Distinct()
+				.Select(_namespaces)
+				.ToImmutableArray();
 			return result;
 		}
 	}

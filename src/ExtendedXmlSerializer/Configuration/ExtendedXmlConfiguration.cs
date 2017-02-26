@@ -24,68 +24,44 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Extensions;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
-		readonly IDictionary<MemberInfo, IConverter> _converters;
-		readonly IMemberEmitSpecifications _emit;
-		readonly IDictionary<MemberInfo, IRuntimeMemberSpecification> _runtime;
+		readonly IActivation _activation;
+		readonly IMemberConfiguration _memberConfiguration;
 		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
 
-		public ExtendedXmlConfiguration()
-			: this(new Dictionary<MemberInfo, IConverter>(),
-			       new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			       new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
+		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
 
-		public ExtendedXmlConfiguration(IDictionary<MemberInfo, IConverter> converters,
-		                                IDictionary<MemberInfo, IMemberEmitSpecification> emit,
-		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(Defaults.Property, Defaults.Field, converters, emit, runtime) {}
+		public ExtendedXmlConfiguration(IMemberConfiguration memberConfiguration)
+			: this(Activation.Default, memberConfiguration) {}
 
-		public ExtendedXmlConfiguration(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IDictionary<MemberInfo, IConverter> converters,
-			IDictionary<MemberInfo, IMemberEmitSpecification> emit,
-			IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(property, field, converters, new MemberEmitSpecifications(emit), runtime) {}
-
-		public ExtendedXmlConfiguration(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IDictionary<MemberInfo, IConverter> converters,
-			IMemberEmitSpecifications emit,
-			IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration)
 		{
-			_property = property;
-			_field = field;
-			_converters = converters;
-			_emit = emit;
-			_runtime = runtime;
+			_activation = activation;
+			_memberConfiguration = memberConfiguration;
 		}
 
 		public bool AutoProperties { get; set; }
 		public bool Namespaces { get; set; }
 
 		public XmlReaderSettings ReaderSettings { get; set; } = new XmlReaderSettings
-			{
-				IgnoreWhitespace = true,
-				IgnoreComments = true,
-				IgnoreProcessingInstructions = true
-			};
+		                                                        {
+			                                                        IgnoreWhitespace = true,
+			                                                        IgnoreComments = true,
+			                                                        IgnoreProcessingInstructions = true
+		                                                        };
 
-		public XmlWriterSettings WriterSettings { get; set; }
+		public XmlWriterSettings WriterSettings { get; set; } = new XmlWriterSettings();
 		public IPropertyEncryption EncryptionAlgorithm { get; set; }
 
 		IExtendedXmlTypeConfiguration IInternalExtendedXmlConfiguration.GetTypeConfiguration(Type type)
@@ -143,9 +119,6 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var policy = Defaults.MemberPolicy;
-
-			var writers = new MemberWriters(new RuntimeMemberSpecifications(_runtime), new MemberConverters(_converters));
 			var alteration = OptimizedConverterAlteration.Default;
 			var converters = WellKnownConverters.Default;
 			var content = new CompositeContentOption(
@@ -155,22 +128,17 @@ namespace ExtendedXmlSerialization.Configuration
 					.ToArray()
 			);
 
-			var services = new SerializationServices(
-				_property.And(policy), _field.And(policy), _emit, new XmlFactory(ReaderSettings), writers, content,
-				MemberAliases.Default, MemberOrder.Default, _extensions
-			);
+			var services = new SerializationServices(_activation, _memberConfiguration,
+			                                         new XmlFactory(ReaderSettings, WriterSettings), content, _extensions);
 
 			var result = services.Get<IExtendedXmlSerializer>() ??
 			             new ExtendedXmlSerializer(services.GetValid<IXmlFactory>(), services);
 			return result;
 		}
 
-		public IExtendedXmlConfiguration Extend(params ISerializerExtension[] extensions)
+		public IExtendedXmlConfiguration Extend(ISerializerExtension extension)
 		{
-			foreach (var extension in extensions)
-			{
-				_extensions.Add(extension);
-			}
+			_extensions.Add(extension);
 			return this;
 		}
 	}

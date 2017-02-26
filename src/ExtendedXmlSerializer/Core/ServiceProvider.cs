@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.Core
 {
-	class ArrayReader : CollectionContentsReader
+	public class ServiceProvider : IServiceProvider
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		readonly ImmutableArray<object> _services;
 
-		public sealed override object Get(IXmlReader parameter)
+		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
+
+		public ServiceProvider(ImmutableArray<object> services)
 		{
-			var elementType = parameter.Classification.GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
-			return result;
+			_services = services;
+		}
+
+		public object GetService(Type serviceType)
+		{
+			var info = serviceType.GetTypeInfo();
+			var length = _services.Length;
+
+			for (var i = 0; i < length; i++)
+			{
+				var item = _services[i];
+				if (info.IsInstanceOfType(item))
+				{
+					return item;
+				}
+			}
+
+			for (var i = 0; i < length; i++)
+			{
+				var item = _services[i];
+				if (info.IsInstanceOfType(item))
+				{
+					return item;
+				}
+			}
+
+			return null;
 		}
 	}
 }

@@ -23,71 +23,66 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Extensions;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using IAliases = ExtendedXmlSerialization.ContentModel.Members.IAliases;
+using ExtendedXmlSerialization.ExtensionModel;
 using Selector = ExtendedXmlSerialization.ContentModel.Members.Selector;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	class SerializationServices : ISerialization, IServiceProvider
 	{
-		readonly IServiceRepository _services;
+		readonly IServiceProvider _services;
 		readonly ISerialization _serialization;
 
-		public SerializationServices(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IMemberEmitSpecifications specifications, IXmlFactory xml,
-			IMemberWriters writers, IContentOption known,
-			IAliases aliases, IMemberOrder order, ICollection<ISerializerExtension> extensions)
+		public SerializationServices(IActivation activation, IMemberConfiguration memberConfiguration, IXmlFactory xml,
+		                             IContentOption known, IEnumerable<ISerializerExtension> extensions)
 		{
+			var writers = new MemberWriters(new RuntimeMemberSpecifications(memberConfiguration.Runtime),
+			                                new MemberConverters(memberConfiguration.Converters));
+
 			var runtime = new RuntimeSerializer(this);
 			var variable = new VariableTypeMemberOption(runtime);
 			var memberContent = new RecursionGuardedMemberContent(new MemberContent(this));
-			var profiles = new MemberProfiles(specifications, memberContent, writers, aliases, order);
+			var profiles = new MemberProfiles(new MemberEmitSpecifications(memberConfiguration.EmitSpecifications), memberContent,
+			                                  writers,
+			                                  memberConfiguration.Aliases, memberConfiguration.Order);
+			var property = memberConfiguration.Policy.And<PropertyInfo>(memberConfiguration.Specification);
+			var field = memberConfiguration.Policy.And<FieldInfo>(memberConfiguration.Specification);
 			var serialization = new MemberSerialization(property, field, profiles.Get);
-
 			var members = new Members(serialization, new Selector(variable));
 
-			var content = new ContentOptions(this, serialization, members, variable, runtime);
+			var content = new ContentOptions(activation, this, serialization, members, variable, runtime);
 
-			IServiceRepository seed = new ServiceRepository(
-				property, field, specifications, xml, writers, content, aliases, order,
-				runtime, variable, profiles, serialization, members, known, ElementOptionSelector.Default
-			);
+			var seed = new object[]
+			           {
+				           activation,
+				           memberConfiguration.Specification, memberConfiguration.EmitSpecifications, serialization,
+				           memberConfiguration.Aliases, memberConfiguration.Order, writers, profiles, members,
+						   xml,
+						   content, runtime, variable, known, ElementOptionSelector.Default
+			           }.ToImmutableList().AsServices();
 
-			_services = extensions.Alter(seed);
-			_serialization = Serialization(extensions);
+			_services = new ServiceProvider(extensions.Alter(seed).ToImmutableArray());
+			_serialization = _services.Get<ISerialization>() ?? new Serialization(Options().ToArray());
 		}
 
-		ISerialization Serialization(IEnumerable<ISerializerExtension> extensions)
-		{
-			var seed = new SerializationResult(_services,
-			                                   _services.Get<ISerialization>() ??
-			                                   new Serialization(Options().ToArray()));
-
-			var result = extensions.Alter(seed).Get();
-			return result;
-		}
-
-		IContainerOptions Options() =>
-			_services.Get<IContainerOptions>() ??
-			new ContainerOptions(
-				_services.GetValid<IContentOption>(),
-				_services.GetValid<IElementOptionSelector>(),
-				_services.GetValid<IContentOptions>()
-			);
+		IContainerOptions Options() => _services.Get<IContainerOptions>() ??
+		                               new ContainerOptions(
+			                               _services.GetValid<IContentOption>(),
+			                               _services.GetValid<IElementOptionSelector>(),
+			                               _services.GetValid<IContentOptions>()
+		                               );
 
 		IContainer IParameterizedSource<TypeInfo, IContainer>.Get(TypeInfo parameter) => _serialization.Get(parameter);
 
 		public object GetService(Type serviceType) => _services.GetService(serviceType);
 	}
-}
+} 
