@@ -124,7 +124,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		public void SerializeTimeStamp()
 		{
 			var obj = new TimeSpan(1, 2, 3, 4);
-#if !NET451
+#if CORE
 //Serialization TimeSpan on .net 4.5.1 not work
 			CheckCompatibilityWithDefaultSerializator(obj);
 #endif

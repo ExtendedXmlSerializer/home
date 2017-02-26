@@ -23,7 +23,7 @@
     "Wojciech Nagórski"
   ],
     "frameworks": {
-        "net45": {
+        "net46": {
             "buildOptions": {
                 "define": [ "CLASSIC" ]
             },

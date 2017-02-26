@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.Test.Legacy
 	// ReSharper disable once TestClassNameSuffixWarning
 	public class SerializationStruct : BaseTest
 	{
-#if !NET451
+#if CORE
 //TODO Set Single in struct on .net 4.5.1
 		[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void Struct()
