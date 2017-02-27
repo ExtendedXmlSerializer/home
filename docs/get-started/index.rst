@@ -1,25 +1,34 @@
 |Build status| |NuGet| # ExtendedXmlSerializer Extended Xml Serializer
 for .NET
 
-Support platforms \* .NET 4.5 \* .NET Platform Standard 1.6
+Support platforms 
 
-Support framework: \* ASP.NET Core \* WebApi
+- .NET 4.5 
+- .NET Platform Standard 1.6
 
-Support features \* Deserialization xml from standard XMLSerializer \*
-Serialization class, struct, generic class, primitive type, generic list
-and dictionary, array, enum \* Serialization class with property
-interface \* Serialization circular reference and reference Id \*
-Deserialization of old version of xml \* Property encryption \* Custom
-serializer \* Support XmlElementAttribute and XmlRootAttribute \* POCO -
-all configurations (migrations, custom serializer...) are outside the
-class
+Support framework: 
 
-Standard XML Serializer in .NET is very limited. \* Does not support
-serialization of class with circular reference or class with interface
-property. \* There is no mechanism for reading the old version of XML.
-\* If you want create custom serializer, your class must inherit from
-IXmlSerializable. This means that your class will not be a POCO class.
-\* Does not support IoC
+- ASP.NET Core 
+- WebApi
+
+Support features:
+
+- Deserialization xml from standard XMLSerializer 
+- Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum 
+- Serialization class with property interface 
+- Serialization circular reference and reference Id 
+- Deserialization of old version of xml 
+- Property encryption 
+- Custom serializer 
+- Support XmlElementAttribute and XmlRootAttribute 
+- POCO - all configurations (migrations, custom serializer...) are outside the class
+
+Standard XML Serializer in .NET is very limited. 
+
+- Does not support serialization of class with circular reference or class with interface property.
+- There is no mechanism for reading the old version of XML.
+- If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.
+- Does not support IoC
 
 Serialization
 =============
