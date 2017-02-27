@@ -21,45 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using JetBrains.Annotations;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ObjectNamespaces : IObjectNamespaces
+	class ReferenceIdentities : ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>, IReferenceIdentities
 	{
-		readonly static Func<TypeInfo, string> Identities = Identifiers.Default.Get;
-
-		readonly IMembers _members;
-		readonly Func<TypeInfo, string> _names;
-		readonly Func<string, Namespace> _namespaces;
-
-		[UsedImplicitly]
-		public ObjectNamespaces(IMembers members) : this(members, Identities, new Namespaces().Get) {}
-
-		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
-		{
-			_members = members;
-			_names = names;
-			_namespaces = namespaces;
-		}
-
-		public ImmutableArray<Namespace> Get(object parameter)
-		{
-			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
-			var items = types.Length > 1 ? types.Add(ContentModel.Defaults.FrameworkType) : types;
-			var result = items
-				.Select(_names)
-				.Distinct()
-				.Select(_namespaces)
-				.ToImmutableArray();
-			return result;
-		}
+		public static ReferenceIdentities Default { get; } = new ReferenceIdentities();
+		ReferenceIdentities() : base(_ => new Dictionary<ReferenceIdentity, object>()) {}
 	}
 }

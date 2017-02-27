@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,31 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using JetBrains.Annotations;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Test.ContentModel.Extensions
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public class ReferencesExtensionTests
-	{
-		/*[Fact]
-		public void Verify()
-		{
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(new ReferencesExtension()).Create());
-			var instance = new Subject {PropertyName = "Hello World!"};
-			instance.Self = instance;
-			var actual = support.Assert(instance,
-			               @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Extensions;assembly=ExtendedXmlSerializerTest""><Self exs:reference=""1"" /><PropertyName>Hello World!</PropertyName></ReferencesExtensionTests-Subject>");
-			Assert.NotNull(actual.Self);
-			Assert.Same(actual, actual.Self);
-		}*/
-
-		class Subject
-		{
-			[UsedImplicitly]
-			public Subject Self { get; set; }
-
-			[UsedImplicitly]
-			public string PropertyName { get; set; }
-		}
-	}
+	public interface IReferenceIdentities : IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> {}
 }

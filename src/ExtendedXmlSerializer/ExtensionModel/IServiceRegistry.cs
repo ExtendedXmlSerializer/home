@@ -28,6 +28,8 @@ using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
+	// ATTRIBUTION: https://github.com/seesharper/LightInject/blob/master/src/LightInject/LightInject.cs#L88
+	// Basically using this as a decorated contract for now.
 	public interface IServiceRegistry : IServiceProvider
 	{
 		IEnumerable<ServiceRegistration> AvailableServices { get; }

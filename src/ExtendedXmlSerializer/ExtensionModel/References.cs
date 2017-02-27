@@ -21,39 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class References : DecoratedReader, IReferences
 	{
-		readonly static TypeInfo Reference = typeof(ReferenceIdentity).GetTypeInfo();
-
+		readonly IReferenceIdentities _identities;
 		readonly IEntities _entities;
 
-		readonly IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> _identities =
-			new ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>(
-				_ => new Dictionary<ReferenceIdentity, object>());
+		public References(IReader reader, IEntities entities) : this(reader, ReferenceIdentities.Default, entities) {}
 
-		public References(IReader reader, IEntities entities) : base(reader)
+		public References(IReader reader, IReferenceIdentities identities, IEntities entities) : base(reader)
 		{
+			_identities = identities;
 			_entities = entities;
 		}
 
-/*
 		ReferenceIdentity? GetReference(IXmlReader parameter)
 		{
-			if (parameter.Attributes.Contains(ReferenceProperty.Default))
+			if (parameter.Contains(ReferenceProperty.Default))
 			{
-				return new ReferenceIdentity(Reference, ReferenceProperty.Default.Get(parameter));
+				return new ReferenceIdentity(Defaults.Reference, ReferenceProperty.Default.Get(parameter));
 			}
 
-			if (parameter.Attributes.Contains(EntityProperty.Default))
+			if (parameter.Contains(EntityProperty.Default))
 			{
 				var type = parameter.Classification;
 				var reference = new ReferenceIdentity(type, _entities.Get(type).Get(EntityProperty.Default.Get(parameter)));
@@ -61,55 +56,24 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			}
 			return null;
 		}
-*/
-
-		static ReferenceIdentity? GetIdentity(IXmlReader reader)
-		{
-			if (reader.Contains(IdentityProperty.Default))
-			{
-				return new ReferenceIdentity(Reference, IdentityProperty.Default.Get(reader));
-			}
-			return null;
-		}
-
-		ReferenceIdentity? GetIdentity(object instance)
-		{
-			var typeInfo = instance.GetType().GetTypeInfo();
-			var entity = _entities.Get(typeInfo);
-			if (entity != null)
-			{
-				return new ReferenceIdentity(Reference, entity.Get(instance));
-			}
-			return null;
-		}
 
 		public sealed override object Get(IXmlReader parameter)
 		{
-			/*var reference = GetReference(parameter);
+			var reference = GetReference(parameter);
 			if (reference != null)
 			{
 				var identities = _identities.Get(parameter);
-				var current = identities.Get(reference.Value);
-				if (current == null)
+				var identity = identities.Get(reference.Value);
+				if (identity == null)
 				{
 					var value = base.Get(parameter);
 					identities.Add(reference.Value, value);
 				}
 				return identity;
-			}*/
-
-
-			var declared = GetIdentity(parameter);
-			var result = base.Get(parameter);
-
-			var identity = declared ?? GetIdentity(result);
-			if (identity != null)
-			{
-				var identities = _identities.Get(parameter);
-				identities.Add(identity.Value, result);
 			}
 
 
+			var result = base.Get(parameter);
 			return result;
 		}
 	}

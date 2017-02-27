@@ -21,45 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ObjectNamespaces : IObjectNamespaces
+	static class Defaults
 	{
-		readonly static Func<TypeInfo, string> Identities = Identifiers.Default.Get;
-
-		readonly IMembers _members;
-		readonly Func<TypeInfo, string> _names;
-		readonly Func<string, Namespace> _namespaces;
-
-		[UsedImplicitly]
-		public ObjectNamespaces(IMembers members) : this(members, Identities, new Namespaces().Get) {}
-
-		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
-		{
-			_members = members;
-			_names = names;
-			_namespaces = namespaces;
-		}
-
-		public ImmutableArray<Namespace> Get(object parameter)
-		{
-			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
-			var items = types.Length > 1 ? types.Add(ContentModel.Defaults.FrameworkType) : types;
-			var result = items
-				.Select(_names)
-				.Distinct()
-				.Select(_namespaces)
-				.ToImmutableArray();
-			return result;
-		}
+		public static TypeInfo Reference { get; } = typeof(ReferenceIdentity).GetTypeInfo();
 	}
 }

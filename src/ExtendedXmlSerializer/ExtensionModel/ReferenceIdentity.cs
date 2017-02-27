@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	struct ReferenceIdentity : IEquatable<ReferenceIdentity>
+	public struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{
 		readonly int _code;
 

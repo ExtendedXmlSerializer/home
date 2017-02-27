@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using LightInject;
 
@@ -31,19 +33,25 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferencesExtension : ISerializerExtension
 	{
 		readonly IEntities _entities;
+		readonly Func<IServiceFactory, IActivation, IActivation> _decorate;
 
 		public ReferencesExtension() : this(new Entities(new Dictionary<TypeInfo, IEntity>())) {}
 
 		public ReferencesExtension(IEntities entities)
 		{
 			_entities = entities;
+			_decorate = Decorate;
 		}
 
 		public IServiceRegistry Get(IServiceRegistry parameter) =>
 			parameter.RegisterInstance(_entities)
 			         .Register<IIdentities, Identities>()
+			         .Register<ReferencesContentAlteration>()
+			         .Decorate(_decorate)
 			         .Decorate<IContentOptions>(
 				         (factory, options) =>
 					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()));
+
+		IActivation Decorate(IServiceFactory arg1, IActivation activation) => new ReferenceActivation(activation, _entities);
 	}
 }
