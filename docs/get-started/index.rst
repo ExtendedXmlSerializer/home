@@ -1,5 +1,5 @@
-|Build status| |NuGet| # ExtendedXmlSerializer Extended Xml Serializer
-for .NET
+Information
+=============
 
 Support platforms 
 
@@ -33,7 +33,7 @@ Standard XML Serializer in .NET is very limited.
 Serialization
 =============
 
-.. code:: c#
+.. code:: csharp
 
     ExtendedXmlSerializer serializer = new ExtendedXmlSerializer();
     var obj = new TestClass();
@@ -42,7 +42,7 @@ Serialization
 Deserialization
 ===============
 
-.. code:: c#
+.. code:: ccsharp
 
     var obj2 = serializer.Deserialize<TestClass>(xml);
 
@@ -51,7 +51,7 @@ Serialization of dictionary
 
 You can serialize generic dictionary, that can store any type.
 
-.. code:: c#
+.. code:: csharp
 
     public class TestClass
     {
@@ -93,7 +93,7 @@ Custom serialization
 
 If your class has to be serialized in a non-standard way:
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClass
         {
@@ -107,7 +107,7 @@ If your class has to be serialized in a non-standard way:
 
 You must configure custom serializer:
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
         {
@@ -142,7 +142,7 @@ simple example:
 
 If you had a class:
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClass
         {
@@ -162,7 +162,7 @@ and generated XML look like:
 
 Then you renamed property:
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClass
         {
@@ -183,7 +183,7 @@ and generated XML look like:
 Then, you added new property and you wanted to calculate a new value
 during deserialization.
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClass
         {
@@ -205,7 +205,7 @@ and new XML should look like:
 
 You can migrate (read) old version of XML using migrations:
 
-.. code:: c#
+.. code:: csharp
 
         public class TestClassConfig : ExtendedXmlSerializerConfig<TestClass>
         {
@@ -238,7 +238,7 @@ Object reference and circular reference
 
 If you have a class:
 
-.. code:: c#
+.. code:: csharp
 
         public class Person
         {
@@ -256,7 +256,7 @@ If you have a class:
 
 then you create object with circular reference, like this:
 
-.. code:: c#
+.. code:: csharp
 
         var boss = new Person {Id = 1, Name = "John"};
         boss.Boss = boss; //himself boss
@@ -273,7 +273,7 @@ then you create object with circular reference, like this:
 
 You must configure Person class as reference object:
 
-.. code:: c#
+.. code:: csharp
 
         public class PersonConfig : ExtendedXmlSerializerConfig<Person>
         {
@@ -311,7 +311,7 @@ Property Encryption
 
 If you have a class with a property that needs to be encrypted:
 
-.. code:: c#
+.. code:: csharp
 
         public class Person
         {
@@ -323,7 +323,7 @@ You must implement interface IPropertyEncryption. For example, it will
 show the Base64 encoding, but in the real world better to use something
 safer, eg. RSA.:
 
-.. code:: c#
+.. code:: csharp
 
         public class Base64PropertyEncryption : IPropertyEncryption
         {
@@ -341,7 +341,7 @@ safer, eg. RSA.:
 In the Person class configuration you need to specify which properties
 are to be encrypted:
 
-.. code:: c#
+.. code:: csharp
 
         public class PersonConfig : ExtendedXmlSerializerConfig<Person>
         {
@@ -363,7 +363,7 @@ You can do this in two ways.
 Use SimpleSerializationToolsFactory class
 -----------------------------------------
 
-.. code:: c#
+.. code:: csharp
 
     var toolsFactory = new SimpleSerializationToolsFactory();
 
@@ -378,7 +378,7 @@ Use SimpleSerializationToolsFactory class
 Use Autofac integration
 -----------------------
 
-.. code:: c#
+.. code:: csharp
 
     var builder = new ContainerBuilder();
     // Register ExtendedXmlSerializer module
@@ -410,7 +410,7 @@ Use SimpleSerializationToolsFactory class
 This configuration is very simple. You just need create configuration
 for ExtendedXmlSerializer and add formatters to MVC.
 
-.. code:: c#
+.. code:: csharp
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -440,7 +440,7 @@ and read Autofac
 `documentation <docs.autofac.org/en/latest/integration/aspnetcore.html>`__.
 The following code adds an MVC service and creates a container AutoFac.
 
-.. code:: c#
+.. code:: csharp
 
     public IServiceProvider ConfigureServices(IServiceCollection services)
     {
@@ -476,7 +476,7 @@ The following code adds an MVC service and creates a container AutoFac.
 In this case, you can also inject IExtendedXmlSerializer into your
 controller:
 
-.. code:: c#
+.. code:: csharp
 
         [Route("api/[controller]")]
         public class TestClassController : Controller
@@ -501,7 +501,7 @@ to install
 and configure it in WebApi configuration. You can do it using autofac or
 SimpleSerializationToolsFactory e.g.:
 
-.. code:: c#
+.. code:: csharp
 
     public static void Register(HttpConfiguration config)
     {
