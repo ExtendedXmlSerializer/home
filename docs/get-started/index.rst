@@ -3,8 +3,8 @@ for .NET
 
 Support platforms 
 
-- .NET 4.5
-- .NET Platform Standard 1.6
+* .NET 4.5
+* .NET Platform Standard 1.6
 
 Support framework:
 
@@ -13,15 +13,15 @@ Support framework:
 
 Support features:
 
-- Deserialization xml from standard XMLSerializer
-- Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
-- Serialization class with property interface
-- Serialization circular reference and reference Id
-- Deserialization of old version of xml
-- Property encryption
-- Custom serializer
-- Support XmlElementAttribute and XmlRootAttribute
-- POCO - all configurations (migrations, custom serializer...) are outside the clas
+# Deserialization xml from standard XMLSerializer
+# Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
+# Serialization class with property interface
+# Serialization circular reference and reference Id
+# Deserialization of old version of xml
+# Property encryption
+# Custom serializer
+# Support XmlElementAttribute and XmlRootAttribute
+# POCO - all configurations (migrations, custom serializer...) are outside the clas
 
 Standard XML Serializer in .NET is very limited. 
 
