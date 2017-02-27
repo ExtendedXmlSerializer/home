@@ -26,7 +26,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
@@ -38,6 +37,7 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		readonly IActivation _activation;
 		readonly IMemberConfiguration _memberConfiguration;
+		readonly IEnumerable<IConverter> _converters;
 		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
 
 		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
@@ -46,9 +46,14 @@ namespace ExtendedXmlSerialization.Configuration
 			: this(Activation.Default, memberConfiguration) {}
 
 		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration)
+			: this(activation, memberConfiguration, WellKnownConverters.Default) {}
+
+		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration,
+		                                IEnumerable<IConverter> converters)
 		{
 			_activation = activation;
 			_memberConfiguration = memberConfiguration;
+			_converters = converters;
 		}
 
 		public bool AutoProperties { get; set; }
@@ -119,20 +124,11 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var alteration = OptimizedConverterAlteration.Default;
-			var converters = WellKnownConverters.Default;
-			var content = new CompositeContentOption(
-				converters
-					.Select(alteration.ToContent)
-					.Appending(new EnumerationContentOption(alteration))
-					.ToArray()
-			);
+			var services = new Services(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
+			                            new XmlFactory(ReaderSettings, WriterSettings));
+			var provider = new SerializationServices(_extensions, services.ToArray());
 
-			var services = new SerializationServices(_activation, _memberConfiguration,
-			                                         new XmlFactory(ReaderSettings, WriterSettings), content, _extensions);
-
-			var result = services.Get<IExtendedXmlSerializer>() ??
-			             new ExtendedXmlSerializer(services.GetValid<IXmlFactory>(), services);
+			var result = provider.GetValid<IExtendedXmlSerializer>();
 			return result;
 		}
 

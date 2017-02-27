@@ -27,6 +27,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
@@ -35,6 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly IMemberSerialization _serialization;
 		readonly Func<MemberProfile, IMember> _select;
 
+		[UsedImplicitly]
 		public Members(IMemberSerialization serialization, ISelector selector) : this(serialization, selector.Get) {}
 
 		public Members(IMemberSerialization serialization, Func<MemberProfile, IMember> select)

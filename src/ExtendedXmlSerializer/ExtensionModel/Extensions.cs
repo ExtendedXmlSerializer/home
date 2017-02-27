@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,23 +22,43 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	public static class Extensions
 	{
-		public static IServiceList AsServices(this IImmutableList<object> @this)
-			=> @this as IServiceList ?? new ServiceList(@this);
-
-		public static IImmutableList<object> Replace<T>(this IImmutableList<object> @this, T service)
-			=> @this.Replace(typeof(T), service);
-
-		public static IImmutableList<object> Replace(this IImmutableList<object> @this, Type serviceType, object service)
+		public static IServiceRegistry RegisterInstanceByConvention(this IServiceRegistry registry, object service)
 		{
-			var current = @this.AsServices().GetService(serviceType);
-			var result = current != null ? @this.Replace(current, service).Add(service) : @this;
-			return result;
+			var serviceType = service.GetType();
+			var inherited = AllInterfaces.Default.Get(serviceType.GetTypeInfo().BaseType.GetTypeInfo());
+			var specific = AllInterfaces.Default.Get(serviceType.GetTypeInfo());
+			var interfaces = specific.Except(inherited).ToArray();
+			var convention = interfaces.Length == 1 ? interfaces[0].AsType() : Name(serviceType, interfaces);
+			if (convention != null)
+			{
+				registry.RegisterInstance(convention, service);
+			}
+
+			registry.RegisterInstance(serviceType, service);
+			return registry;
+		}
+
+		static Type Name(Type owner, TypeInfo[] interfaces)
+		{
+			var name = $"I{owner.Name}";
+			var length = interfaces.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var type = interfaces[i];
+				if (type.Name.Equals(name))
+				{
+					return type.AsType();
+				}
+			}
+			return null;
 		}
 	}
 }

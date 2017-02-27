@@ -45,11 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			while (parameter.Next(token))
 			{
 				var member = _members.Get(parameter.Name);
-				if (member != null)
-				{
-					//var temp = parameter.Classification;
-					member.Adapter.Assign(result, member.Get(parameter));
-				}
+				member?.Adapter.Assign(result, member.Get(parameter));
 			}
 
 			return result;

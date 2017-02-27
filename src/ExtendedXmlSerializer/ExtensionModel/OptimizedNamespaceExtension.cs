@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
+using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -32,12 +31,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public static OptimizedNamespaceExtension Default { get; } = new OptimizedNamespaceExtension();
 		OptimizedNamespaceExtension() {}
 
-		public IServiceList Get(IServiceList parameter)
-		{
-			var namespaces = new ObjectNamespaces(parameter.GetValid<IMembers>());
-			var current = parameter.GetValid<IElementOptionSelector>();
-			var result = parameter.Replace<IElementOptionSelector>(new Selector(namespaces, current)).AsServices();
-			return result;
-		}
+		public IServiceRegistry Get(IServiceRegistry parameter) =>
+			parameter.Register<IObjectNamespaces, ObjectNamespaces>()
+			         .Decorate<IElementOptionSelector>(
+				         (factory, selector) => new Selector(factory.GetInstance<IObjectNamespaces>(), selector));
 	}
 }

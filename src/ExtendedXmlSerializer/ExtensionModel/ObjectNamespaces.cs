@@ -29,6 +29,7 @@ using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -40,6 +41,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly Func<TypeInfo, string> _names;
 		readonly Func<string, Namespace> _namespaces;
 
+		[UsedImplicitly]
 		public ObjectNamespaces(IMembers members) : this(members, Identities, new Namespaces().Get) {}
 
 		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)

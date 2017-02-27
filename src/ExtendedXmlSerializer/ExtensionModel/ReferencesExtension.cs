@@ -24,31 +24,26 @@
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
+using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferencesExtension : ISerializerExtension
 	{
-		readonly IDictionary<TypeInfo, IEntity> _store;
+		readonly IEntities _entities;
 
-		public ReferencesExtension() : this(new Dictionary<TypeInfo, IEntity>()) {}
+		public ReferencesExtension() : this(new Entities(new Dictionary<TypeInfo, IEntity>())) {}
 
-		public ReferencesExtension(IDictionary<TypeInfo, IEntity> store)
+		public ReferencesExtension(IEntities entities)
 		{
-			_store = store;
+			_entities = entities;
 		}
 
-		public IServiceList Get(IServiceList parameter)
-		{
-			var current = parameter.GetValid<IContentOptions>();
-			var entities = new Entities(_store);
-			var identities = new Identities(parameter.GetValid<IMembers>(), entities);
-			var altered = new AlteredContentOptions(current,
-			                                        new ReferencesContentAlteration(identities, entities));
-			var result = parameter.Replace<IContentOptions>(altered).AsServices();
-			return result;
-		}
+		public IServiceRegistry Get(IServiceRegistry parameter) =>
+			parameter.RegisterInstance(_entities)
+			         .Register<IIdentities, Identities>()
+			         .Decorate<IContentOptions>(
+				         (factory, options) =>
+					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()));
 	}
 }

@@ -21,19 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
 using System.Reflection;
+using LightInject;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class DecoratedSerialization : ISerialization
+	class ConstructorSelector : IConstructorSelector
 	{
-		readonly ISerialization _serialization;
+		public static ConstructorSelector Default { get; } = new ConstructorSelector();
+		ConstructorSelector() {}
 
-		public DecoratedSerialization(ISerialization serialization)
-		{
-			_serialization = serialization;
-		}
-
-		public virtual IContainer Get(TypeInfo parameter) => _serialization.Get(parameter);
+		public ConstructorInfo Execute(Type implementingType)
+			=> implementingType.GetConstructors().OrderBy(c => c.GetParameters().Length).First();
 	}
 }

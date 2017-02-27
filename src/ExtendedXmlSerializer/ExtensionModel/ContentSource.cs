@@ -21,10 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IDisplay
+	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
 	{
-		string DisplayName { get; }
+		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
+
+		public static ContentSource Default { get; } = new ContentSource();
+		ContentSource() : this(OptimizedConverterAlteration) {}
+
+		readonly IAlteration<IConverter> _alteration;
+
+		public ContentSource(IAlteration<IConverter> alteration)
+		{
+			_alteration = alteration;
+		}
+
+		public IContentOption Get(IEnumerable<IConverter> parameter)
+			=> new CompositeContentOption(
+				parameter
+					.Select(_alteration.ToContent)
+					.Appending(new EnumerationContentOption(_alteration))
+					.ToArray()
+			);
 	}
 }

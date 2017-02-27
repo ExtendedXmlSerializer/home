@@ -52,14 +52,15 @@ namespace ExtendedXmlSerialization.Core
 				}
 			}
 
-			for (var i = 0; i < length; i++)
+			/*for (var i = 0; i < length; i++)
 			{
 				var item = _services[i];
-				if (info.IsInstanceOfType(item))
+				var typeInfo = item.GetType().GetTypeInfo();
+				if (info.IsAssignableFrom(typeInfo))
 				{
 					return item;
 				}
-			}
+			}*/
 
 			return null;
 		}
