@@ -1,7 +1,7 @@
 Information
-=============
+===========
 
-Support platforms 
+Support platforms:
 
 * .NET 4.5
 * .NET Platform Standard 1.6
@@ -23,7 +23,7 @@ Support features:
 - Support XmlElementAttribute and XmlRootAttribute
 - POCO - all configurations (migrations, custom serializer...) are outside the clas
 
-Standard XML Serializer in .NET is very limited. 
+Standard XML Serializer in .NET is very limited:
 
 - Does not support serialization of class with circular reference or class with interface property.
 - There is no mechanism for reading the old version of XML.
