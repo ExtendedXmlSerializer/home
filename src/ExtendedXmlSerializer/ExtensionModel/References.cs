@@ -30,28 +30,30 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class References : DecoratedReader, IReferences
 	{
-		readonly IReferenceIdentities _identities;
+		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
+		readonly static ReferenceProperty ReferenceProperty = ReferenceProperty.Default;
+		readonly static EntityProperty EntityProperty = EntityProperty.Default;
 
-		public References(IReader reader, IEntities entities) : this(reader, ReferenceIdentities.Default, entities) {}
+		public References(IReader reader, IEntities entities) : this(reader, ReferenceMaps.Default, entities) {}
 
-		public References(IReader reader, IReferenceIdentities identities, IEntities entities) : base(reader)
+		public References(IReader reader, IReferenceMaps maps, IEntities entities) : base(reader)
 		{
-			_identities = identities;
+			_maps = maps;
 			_entities = entities;
 		}
 
 		ReferenceIdentity? GetReference(IXmlReader parameter)
 		{
-			if (parameter.Contains(ReferenceProperty.Default))
+			if (parameter.Contains(ReferenceProperty))
 			{
-				return new ReferenceIdentity(Defaults.Reference, ReferenceProperty.Default.Get(parameter));
+				return new ReferenceIdentity(Defaults.Reference, ReferenceProperty.Get(parameter));
 			}
 
-			if (parameter.Contains(EntityProperty.Default))
+			if (parameter.Contains(EntityProperty))
 			{
 				var type = parameter.Classification;
-				var reference = new ReferenceIdentity(type, _entities.Get(type).Get(EntityProperty.Default.Get(parameter)));
+				var reference = new ReferenceIdentity(type, _entities.Get(type).Get(EntityProperty.Get(parameter)));
 				return reference;
 			}
 			return null;
@@ -62,7 +64,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			var reference = GetReference(parameter);
 			if (reference != null)
 			{
-				var identities = _identities.Get(parameter);
+				var identities = _maps.Get(parameter);
 				var identity = identities.Get(reference.Value);
 				if (identity == null)
 				{

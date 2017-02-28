@@ -27,9 +27,9 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceIdentities : ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>, IReferenceIdentities
+	class ReferenceMaps : ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>, IReferenceMaps
 	{
-		public static ReferenceIdentities Default { get; } = new ReferenceIdentities();
-		ReferenceIdentities() : base(_ => new Dictionary<ReferenceIdentity, object>()) {}
+		public static ReferenceMaps Default { get; } = new ReferenceMaps();
+		ReferenceMaps() : base(_ => new Dictionary<ReferenceIdentity, object>()) {}
 	}
 }

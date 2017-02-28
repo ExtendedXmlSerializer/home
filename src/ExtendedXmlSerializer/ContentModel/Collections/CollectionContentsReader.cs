@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
@@ -32,15 +33,17 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		readonly ICollectionItemReader _item;
 		readonly ILists _lists;
+		readonly TypeInfo _itemType;
 
-		public CollectionContentsReader(IReader reader, IReader item) : this(reader, new CollectionItemReader(item)) {}
+		public CollectionContentsReader(IReader reader, IReader item, TypeInfo itemType) : this(reader, new CollectionItemReader(item), itemType) {}
 
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item) : this(reader, item, Lists) {}
+		public CollectionContentsReader(IReader reader, ICollectionItemReader item, TypeInfo itemType) : this(reader, item, Lists, itemType) {}
 
-		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists) : base(reader)
+		public CollectionContentsReader(IReader reader, ICollectionItemReader item, ILists lists, TypeInfo itemType) : base(reader)
 		{
 			_item = item;
 			_lists = lists;
+			_itemType = itemType;
 		}
 
 		public override object Get(IXmlReader parameter)
@@ -48,6 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var result = base.Get(parameter);
 			var token = parameter.New();
 			var list = result as IList ?? _lists.Get(result);
+			//var reader = new TypeAwareXmlReader(parameter, _itemType);
 			while (parameter.Next(token))
 			{
 				_item.Read(parameter, result, list);

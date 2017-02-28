@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -28,6 +29,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Performance.Tests.Model;
 
 namespace ExtendedXmlSerialization.Performance.Tests
@@ -65,14 +67,17 @@ namespace ExtendedXmlSerialization.Performance.Tests
 			}
 		}
 
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Extend(ClassicExtension.Default).Create();
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
 
 		public ExtendedXmlSerializerV2Test()
 		{
-			_xml = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
+			var data = SerializationClassWithPrimitive();
+			_xml = Encoding.UTF8.GetBytes(data);
+			
 			DeserializationClassWithPrimitive();
+			
 		}
 
 		[Benchmark]

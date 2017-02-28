@@ -26,11 +26,17 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class IsReferenceSpecification : ISpecification<TypeInfo>
+	class IsReferenceSpecification : InverseSpecification<TypeInfo>
 	{
 		public static IsReferenceSpecification Default { get; } = new IsReferenceSpecification();
-		IsReferenceSpecification() {}
+		IsReferenceSpecification() : base(IsValueTypeSpecification.Default) {}
+	}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => !parameter.IsValueType;
+	class IsValueTypeSpecification : ISpecification<TypeInfo>
+	{
+		public static IsValueTypeSpecification Default { get; } = new IsValueTypeSpecification();
+		IsValueTypeSpecification() {}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsValueType;
 	}
 }

@@ -23,6 +23,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -32,19 +33,22 @@ using ContainerOptions = ExtendedXmlSerialization.ContentModel.Content.Container
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class DefaultExtension : ISerializerExtension
+	class DefaultRegistrationsExtension : ISerializerExtension
 	{
 		readonly ImmutableArray<object> _services;
 
-		public DefaultExtension(params object[] services) : this(services.ToImmutableArray()) {}
+		public DefaultRegistrationsExtension(params object[] services) : this(services.ToImmutableArray()) {}
 
-		public DefaultExtension(ImmutableArray<object> services)
+		public DefaultRegistrationsExtension(ImmutableArray<object> services)
 		{
 			_services = services;
 		}
 
 		public IServices Get(IServices parameter) =>
 			_services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
+			         .Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
+			         .Register(x => new MappedMemberEmitSpecifications(x.GetInstance<MemberConfiguration>().EmitSpecifications))
+			         .RegisterInstance(DefaultMemberEmitSpecifications.Default)
 			         .Register<ISerializer, RuntimeSerializer>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()

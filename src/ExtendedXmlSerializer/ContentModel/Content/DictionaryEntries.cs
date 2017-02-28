@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class DictionaryEntries : IDictionaryEntries
 	{
-		readonly static TypeInfo Type = typeof(DictionaryEntry).GetTypeInfo();
+		public static TypeInfo Type { get; } = typeof(DictionaryEntry).GetTypeInfo();
 		readonly static PropertyInfo Key = Type.GetProperty(nameof(DictionaryEntry.Key));
 		readonly static PropertyInfo Value = Type.GetProperty(nameof(DictionaryEntry.Value));
 		readonly static IWriter Element = ElementOption.Default.Get(Type);

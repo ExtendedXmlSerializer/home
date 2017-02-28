@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IIdentities : IParameterizedSource<IXmlWriter, IIdentityProfiles> {}
+	public interface IIdentities : IParameterizedSource<IXmlWriter, IReferenceEncounters> {}
 }

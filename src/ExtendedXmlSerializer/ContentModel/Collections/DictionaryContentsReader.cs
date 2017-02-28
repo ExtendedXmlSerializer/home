@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -30,9 +32,10 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	class DictionaryContentsReader : CollectionContentsReader
 	{
 		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
+		readonly static TypeInfo ItemType = DictionaryEntries.Type;
 
 		public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
 			: base(new MemberAttributesReader(reader, members),
-			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists) {}
+			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists, ItemType) {}
 	}
 }

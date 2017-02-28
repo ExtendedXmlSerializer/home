@@ -31,32 +31,32 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferenceActivation : IActivation
 	{
 		readonly IActivation _activation;
-		readonly IReferenceIdentities _identities;
+		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
 
 		public ReferenceActivation(IActivation activation, IEntities entities)
-			: this(activation, entities, ReferenceIdentities.Default) {}
+			: this(activation, entities, ReferenceMaps.Default) {}
 
-		public ReferenceActivation(IActivation activation, IEntities entities, IReferenceIdentities identities)
+		public ReferenceActivation(IActivation activation, IEntities entities, IReferenceMaps maps)
 		{
 			_activation = activation;
-			_identities = identities;
+			_maps = maps;
 			_entities = entities;
 		}
 
-		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _identities);
+		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
 
 		class Activator : IReader
 		{
 			readonly IReader _reader;
 			readonly IEntities _entities;
-			readonly IReferenceIdentities _identities;
+			readonly IReferenceMaps _maps;
 
-			public Activator(IReader reader, IEntities entities, IReferenceIdentities identities)
+			public Activator(IReader reader, IEntities entities, IReferenceMaps maps)
 			{
 				_reader = reader;
 				_entities = entities;
-				_identities = identities;
+				_maps = maps;
 			}
 
 			static ReferenceIdentity? Identity(IXmlReader reader) =>
@@ -84,7 +84,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 				if (identity != null)
 				{
-					_identities.Get(parameter).Add(identity.Value, result);
+					_maps.Get(parameter).Add(identity.Value, result);
 				}
 				return result;
 			}

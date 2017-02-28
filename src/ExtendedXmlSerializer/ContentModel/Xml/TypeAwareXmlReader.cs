@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class IdentityProfiles : IIdentityProfiles
+	class TypeAwareXmlReader : IXmlReader
 	{
-		readonly IDictionary<object, Identifier> _identifiers;
-		readonly ObjectIdGenerator _generator;
+		readonly IXmlReader _reader;
+		readonly TypeInfo _type;
 
-		public IdentityProfiles(IDictionary<object, Identifier> identifiers)
-			: this(identifiers, new ObjectIdGenerator()) {}
-
-		public IdentityProfiles(IDictionary<object, Identifier> identifiers, ObjectIdGenerator generator)
+		public TypeAwareXmlReader(IXmlReader reader, TypeInfo type)
 		{
-			_identifiers = identifiers;
-			_generator = generator;
+			_reader = reader;
+			_type = type;
 		}
 
-		public IdentityProfile? Get(object instance)
-		{
-			Identifier identifier;
-			var result = _identifiers.TryGetValue(instance, out identifier)
-				? new IdentityProfile(identifier, _generator.For(instance).FirstEncounter)
-				: (IdentityProfile?) null;
-			return result;
-		}
+		public string Identifier => _reader.Identifier;
+
+		public string Name => _reader.Name;
+
+		public bool Contains(IIdentity identity) => _reader.Contains(identity);
+
+		public bool Next() => _reader.Next();
+
+		public int New() => _reader.New();
+
+		public void Reset() => _reader.Reset();
+
+		public bool Next(int depth) => _reader.Next(depth);
+
+		public string Get(string parameter) => _reader.Get(parameter);
+
+		public void Dispose() => _reader.Dispose();
+
+		public TypeInfo Classification => _reader.Classification ?? _type;
+
+		public string Value() => _reader.Value();
+
+		public bool IsMember() => _reader.IsMember();
 	}
 }

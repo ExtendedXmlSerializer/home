@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Core.Specifications
-{
-	public class AssignedSpecification : ISpecification<object>
-	{
-		public static AssignedSpecification Default { get; } = new AssignedSpecification();
-		AssignedSpecification() {}
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
-		public bool IsSatisfiedBy(object parameter) => !ReferenceEquals(null, parameter);
-	}
+namespace ExtendedXmlSerialization.ExtensionModel
+{
+	public interface IReferenceMaps : IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> {}
 }

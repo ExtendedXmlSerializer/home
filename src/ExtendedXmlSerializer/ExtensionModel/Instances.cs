@@ -44,21 +44,22 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly IMemberWriters _writers;
 		readonly IElementOptionSelector _selector;
 		readonly IContentOption _content;
+		readonly object[] _additional;
 
 		public Instances(IActivation activation, IMemberConfiguration configuration, IContentOption content,
-		                 IXmlFactory xmlFactory)
+		                 IXmlFactory xmlFactory, params object[] additional)
 			: this(
 				configuration.Policy.And<PropertyInfo>(configuration.Specification),
 				configuration.Policy.And<FieldInfo>(configuration.Specification),
 				activation, xmlFactory, configuration,
 				new MemberWriters(new RuntimeMemberSpecifications(configuration.Runtime),
 				                  new MemberConverters(configuration.Converters)
-				), ElementOptionSelector.Default, content) {}
+				), ElementOptionSelector.Default, content, additional) {}
 
 		public Instances(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
 			IActivation activation, IXmlFactory xmlFactory, IMemberConfiguration memberConfiguration,
-			IMemberWriters writers, IElementOptionSelector selector, IContentOption content)
+			IMemberWriters writers, IElementOptionSelector selector, IContentOption content, params object[] additional)
 		{
 			_property = property;
 			_field = field;
@@ -70,6 +71,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_writers = writers;
 			_selector = selector;
 			_content = content;
+			_additional = additional;
 		}
 
 		public IEnumerator<object> GetEnumerator()
@@ -88,6 +90,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 			yield return _content;
 			yield return _selector;
+			foreach (var o in _additional)
+			{
+				yield return o;
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

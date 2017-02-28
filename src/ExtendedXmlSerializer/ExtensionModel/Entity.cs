@@ -21,23 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class Entity : IEntity
 	{
-		readonly IMember _member;
 		readonly IConverter _converter;
+		readonly Func<object, object> _getter;
 
-		public Entity(IMember member, IConverter converter)
+		public Entity(IConverter converter, Func<object, object> getter)
 		{
-			_member = member;
 			_converter = converter;
+			_getter = getter;
 		}
 
-		public string Get(object parameter) => _converter.Format(_member.Adapter.Get(parameter));
+		public string Get(object parameter) => _converter.Format(_getter.Invoke(parameter));
 		public object Get(string parameter) => _converter.Parse(parameter);
 	}
 }

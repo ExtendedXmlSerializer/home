@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_activation = activation;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{
 			var members = _members.Get(classification);
 			var activator = _activation.Get(classification);
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var membered = new MemberedCollectionItemReader(items, dictionary);
 
 			var attributes = new MemberAttributesReader(activator, dictionary);
-			var reader = new CollectionContentsReader(attributes, membered);
+			var reader = new CollectionContentsReader(attributes, membered, itemType);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;

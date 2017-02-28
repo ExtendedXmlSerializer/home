@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class Identities : ReferenceCacheBase<IXmlWriter, IIdentityProfiles>, IIdentities
+	sealed class Identities : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IIdentities
 	{
 		readonly IMembers _members;
 		readonly IEntities _entities;
@@ -39,11 +39,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_entities = entities;
 		}
 
-		protected override IIdentityProfiles Create(IXmlWriter parameter)
+		protected override IReferenceEncounters Create(IXmlWriter parameter)
 		{
 			var selector = new ReferenceIdentifiers(_entities);
 			var identities = new ReferenceWalker(_members, parameter.Root).Get().ToDictionary(x => x, selector.Get);
-			var result = new IdentityProfiles(identities);
+			var result = new ReferenceEncounters(identities);
 			return result;
 		}
 	}

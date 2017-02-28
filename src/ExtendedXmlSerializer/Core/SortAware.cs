@@ -21,13 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Core.Specifications
-{
-	public class AssignedSpecification : ISpecification<object>
-	{
-		public static AssignedSpecification Default { get; } = new AssignedSpecification();
-		AssignedSpecification() {}
+using System.Collections.Generic;
 
-		public bool IsSatisfiedBy(object parameter) => !ReferenceEquals(null, parameter);
+namespace ExtendedXmlSerialization.Core
+{
+	public interface ISortAware
+	{
+		int Sort { get; }
+	}
+
+	public class SortComparer<T> : IComparer<T>
+	{
+		public static SortComparer<T> Default { get; } = new SortComparer<T>();
+		SortComparer() {}
+
+		public int Compare(T x, T y)
+		{
+			var left = (x as ISortAware)?.Sort ?? 1;
+			var right = (y as ISortAware)?.Sort ?? 1;
+			var result = left.CompareTo(right);
+			return result;
+		}
 	}
 }

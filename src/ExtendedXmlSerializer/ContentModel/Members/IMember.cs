@@ -21,75 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public interface IMember : ISerializer
 	{
 		IMemberAdapter Adapter { get; }
-	}
-
-	public interface IMemberAdapter : IIdentity
-	{
-		MemberInfo Metadata { get; }
-
-		TypeInfo MemberType { get; }
-
-		bool IsWritable { get; }
-
-		object Get(object instance);
-
-		void Assign(object instance, object value);
-	}
-
-	class MemberAdapterSelector : IParameterizedSource<MemberProfile, IMemberAdapter>
-	{
-		readonly Func<object, object> _getter;
-		readonly Action<object, object> _setter;
-
-		public MemberAdapterSelector(Func<object, object> getter, Action<object, object> setter)
-		{
-			_getter = getter;
-			_setter = setter;
-		}
-
-		public IMemberAdapter Get(MemberProfile parameter)
-			=> new MemberAdapter(parameter.Specification, parameter.Identity.Name, parameter.Metadata,
-			                     parameter.MemberType, parameter.AllowWrite, _getter, _setter);
-	}
-
-	sealed class MemberAdapter : Identity, IMemberAdapter
-	{
-		readonly ISpecification<object> _emit;
-		readonly Func<object, object> _get;
-		readonly Action<object, object> _set;
-
-		public MemberAdapter(ISpecification<object> emit, string name, MemberInfo metadata, TypeInfo memberType,
-		                     bool isWritable, Func<object, object> get, Action<object, object> set) : base(name, string.Empty)
-		{
-			_emit = emit;
-			_get = get;
-			_set = set;
-			Metadata = metadata;
-			MemberType = memberType;
-			IsWritable = isWritable;
-		}
-
-		public MemberInfo Metadata { get; }
-		public TypeInfo MemberType { get; }
-		public bool IsWritable { get; }
-		public object Get(object instance) => _get(instance);
-
-		public void Assign(object instance, object value)
-		{
-			if (_emit.IsSatisfiedBy(value))
-			{
-				_set(instance, value);
-			}
-		}
 	}
 }

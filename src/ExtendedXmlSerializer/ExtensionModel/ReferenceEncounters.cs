@@ -21,9 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IIdentityProfiles : IParameterizedSource<object, IdentityProfile?> {}
+	class ReferenceEncounters : IReferenceEncounters
+	{
+		readonly IDictionary<object, Identifier> _identifiers;
+		readonly ObjectIdGenerator _generator;
+
+		public ReferenceEncounters(IDictionary<object, Identifier> identifiers)
+			: this(identifiers, new ObjectIdGenerator()) {}
+
+		public ReferenceEncounters(IDictionary<object, Identifier> identifiers, ObjectIdGenerator generator)
+		{
+			_identifiers = identifiers;
+			_generator = generator;
+		}
+
+		public ReferenceEncounter? Get(object instance)
+		{
+			Identifier identifier;
+			var result = _identifiers.TryGetValue(instance, out identifier)
+				? new ReferenceEncounter(identifier, _generator.For(instance).FirstEncounter)
+				: (ReferenceEncounter?) null;
+			return result;
+		}
+	}
 }

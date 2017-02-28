@@ -21,11 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IReferenceIdentities : IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> {}
+	sealed class VariableTypeMemberAdapter : IVariableTypeMemberAdapter
+	{
+		readonly IMemberAdapter _adapter;
+		readonly ISpecification<Type> _specification;
+
+		public VariableTypeMemberAdapter(ISpecification<Type> specification, IMemberAdapter adapter)
+		{
+			_adapter = adapter;
+			_specification = specification;
+		}
+
+		public string Identifier => _adapter.Identifier;
+
+		public string Name => _adapter.Name;
+
+		public MemberInfo Metadata => _adapter.Metadata;
+
+		public TypeInfo MemberType => _adapter.MemberType;
+
+		public bool IsWritable => _adapter.IsWritable;
+
+		public object Get(object instance) => _adapter.Get(instance);
+
+		public void Assign(object instance, object value) => _adapter.Assign(instance, value);
+		public bool IsSatisfiedBy(Type parameter) => _specification.IsSatisfiedBy(parameter);
+	}
 }

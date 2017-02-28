@@ -23,9 +23,9 @@
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public struct IdentityProfile
+	public struct ReferenceEncounter
 	{
-		public IdentityProfile(Identifier identifier, bool firstEncounter)
+		public ReferenceEncounter(Identifier identifier, bool firstEncounter)
 		{
 			Identifier = identifier;
 			FirstEncounter = firstEncounter;

@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,10 +35,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferenceWalker : ObjectWalkerBase<object, IEnumerable<object>>, ISource<IReadOnlyList<object>>
 	{
 		readonly IMembers _members;
+		readonly Func<object, bool> _check;
 
 		public ReferenceWalker(IMembers members, object root) : base(root)
 		{
 			_members = members;
+			_check = Check;
 		}
 
 		protected sealed override IEnumerable<object> Select(object input)
@@ -53,7 +56,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				if (variable != null)
 				{
 					var instance = member.Adapter.Get(input);
-					if (!Schedule(instance))
+					if (_check(instance))
 					{
 						yield return instance;
 					}
@@ -63,7 +66,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			var enumerable = input as IEnumerable;
 			if (enumerable != null)
 			{
-				foreach (var item in enumerable)
+				foreach (var item in enumerable.Cast<object>().Where(_check))
 				{
 					if (!Schedule(item))
 					{
@@ -72,6 +75,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				}
 			}
 		}
+
+		bool Check(object instance) => (!instance?.GetType().GetTypeInfo().IsValueType ?? false) && !Schedule(instance);
 
 		public IReadOnlyList<object> Get() => this.SelectMany(x => x).Distinct().AsReadOnly();
 	}
