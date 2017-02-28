@@ -21,24 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerialization.Core.Sources
 {
 	public interface ISource<out T>
 	{
 		T Get();
-	}
-
-	public class DelegatedSource<T> : ISource<T>
-	{
-		readonly Func<T> _source;
-
-		public DelegatedSource(Func<T> source)
-		{
-			_source = source;
-		}
-
-		public T Get() => _source();
 	}
 }

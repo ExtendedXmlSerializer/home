@@ -21,36 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
+	public class ConfiguringAlteration<T> : IAlteration<T>
 	{
-		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
+		readonly ICommand<T> _configuration;
 
-		public static ContentSource Default { get; } = new ContentSource();
-		ContentSource() : this(OptimizedConverterAlteration) {}
-
-		readonly Func<IConverter, IContentOption> _content;
-		readonly IContentOption[] _additional;
-
-		public ContentSource(IAlteration<IConverter> alteration)
-			: this(alteration.ToContent, new EnumerationContentOption(alteration)) {}
-
-		public ContentSource(Func<IConverter, IContentOption> content, params IContentOption[] additional)
+		public ConfiguringAlteration(ICommand<T> configuration)
 		{
-			_content = content;
-			_additional = additional;
+			_configuration = configuration;
 		}
 
-		public IContentOption Get(IEnumerable<IConverter> parameter)
-			=> new CompositeContentOption(parameter.Select(_content).Appending(_additional).ToArray());
+		public T Get(T parameter)
+		{
+			_configuration.Execute(parameter);
+			return parameter;
+		}
 	}
 }

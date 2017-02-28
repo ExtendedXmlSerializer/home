@@ -21,36 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
+	class SerializationExtension<T> : ISerializerExtension where T : class, ISerialization
 	{
-		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
+		readonly ISerialization _serialization;
+		readonly IMemberContent _content;
 
-		public static ContentSource Default { get; } = new ContentSource();
-		ContentSource() : this(OptimizedConverterAlteration) {}
+		public SerializationExtension(ISerialization serialization)
+			: this(serialization, new RecursionGuardedMemberContent(new MemberContent(serialization))) {}
 
-		readonly Func<IConverter, IContentOption> _content;
-		readonly IContentOption[] _additional;
-
-		public ContentSource(IAlteration<IConverter> alteration)
-			: this(alteration.ToContent, new EnumerationContentOption(alteration)) {}
-
-		public ContentSource(Func<IConverter, IContentOption> content, params IContentOption[] additional)
+		public SerializationExtension(ISerialization serialization, IMemberContent content)
 		{
+			_serialization = serialization;
 			_content = content;
-			_additional = additional;
 		}
 
-		public IContentOption Get(IEnumerable<IConverter> parameter)
-			=> new CompositeContentOption(parameter.Select(_content).Appending(_additional).ToArray());
+		public IServices Get(IServices parameter) =>
+			parameter.RegisterInstance(_serialization)
+			         .RegisterInstance(_content)
+			         .Register<T>();
 	}
 }

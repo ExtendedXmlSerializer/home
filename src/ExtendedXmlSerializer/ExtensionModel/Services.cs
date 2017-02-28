@@ -21,75 +21,122 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Services : IEnumerable<object>
+	class Services : IServices
 	{
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
-		readonly IActivation _activation;
-		readonly IXmlFactory _xmlFactory;
-		readonly IMemberConfiguration _memberConfiguration;
-		readonly IMemberWriters _writers;
-		readonly IElementOptionSelector _selector;
-		readonly IContentOption _content;
+		readonly IServiceContainer _container;
+		readonly IServiceRegistry _registry;
 
-		public Services(IActivation activation, IMemberConfiguration configuration, IContentOption content,
-		                IXmlFactory xmlFactory)
-			: this(
-				configuration.Policy.And<PropertyInfo>(configuration.Specification),
-				configuration.Policy.And<FieldInfo>(configuration.Specification),
-				activation, xmlFactory, configuration,
-				new MemberWriters(new RuntimeMemberSpecifications(configuration.Runtime),
-				                  new MemberConverters(configuration.Converters)
-				), ElementOptionSelector.Default, content) {}
+		public Services(IServiceContainer container) : this(container, container) {}
 
-		public Services(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IActivation activation, IXmlFactory xmlFactory, IMemberConfiguration memberConfiguration,
-			IMemberWriters writers, IElementOptionSelector selector, IContentOption content)
+		public Services(IServiceContainer container, IServiceRegistry registry)
 		{
-			_property = property;
-			_field = field;
-			_activation = activation;
-			_xmlFactory = xmlFactory;
-			_memberConfiguration = memberConfiguration;
-
-
-			_writers = writers;
-			_selector = selector;
-			_content = content;
+			_container = container;
+			_registry = registry;
 		}
 
-		public IEnumerator<object> GetEnumerator()
-		{
-			yield return _activation;
-			yield return _property;
-			yield return _field;
 
-			yield return _memberConfiguration;
-			yield return _memberConfiguration.EmitSpecifications;
-			yield return _memberConfiguration.Aliases;
-			yield return _memberConfiguration.Order;
+		public IEnumerable<ServiceRegistration> AvailableServices => _registry.AvailableServices;
 
-			yield return _writers;
-			yield return _xmlFactory;
+		public IServices Register(Type serviceType, Type implementingType)
+			=> new Services(_container, _registry.Register(serviceType, implementingType));
 
-			yield return _content;
-			yield return _selector;
-		}
+		/*public IServiceRegistry Register(Type serviceType, Type implementingType, ILifetime lifetime)
+			=> new ServiceRegistry(_container, _registry.Register(serviceType, implementingType, lifetime));*/
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IServices Register(Type serviceType, Type implementingType, string serviceName)
+			=> new Services(_container, _registry.Register(serviceType, implementingType, serviceName));
+
+/*
+		public IServiceRegistry Register(Type serviceType, Type implementingType, string serviceName, ILifetime lifetime)
+			=> new ServiceRegistry(_container, _registry.Register(serviceType, implementingType, serviceName, lifetime));
+*/
+
+		public IServices Register<TService, TImplementation>() where TImplementation : TService
+			=> new Services(_container, _registry.Register<TService, TImplementation>(new PerContainerLifetime()));
+
+		public IServices Register<TService, TImplementation>(string serviceName) where TImplementation : TService
+			=> new Services(_container, _registry.Register<TService, TImplementation>(serviceName));
+
+		public IServices Register<TService>()
+			=> new Services(_container, _registry.Register<TService>(new PerContainerLifetime()));
+
+		public IServices RegisterInstance<TService>(TService instance)
+			=> new Services(_container, _registry.RegisterInstance(instance));
+
+		public IServices RegisterInstance<TService>(TService instance, string serviceName)
+			=> new Services(_container, _registry.RegisterInstance(instance, serviceName));
+
+		public IServices RegisterInstance(Type serviceType, object instance)
+			=> new Services(_container, _registry.RegisterInstance(serviceType, instance));
+
+		public IServices RegisterInstance(Type serviceType, object instance, string serviceName)
+			=> new Services(_container, _registry.RegisterInstance(serviceType, instance, serviceName));
+
+		public IServices Register(Type serviceType) => new Services(_container, _registry.Register(serviceType));
+
+		public IServices Register<TService>(Func<IServiceFactory, TService> factory)
+			=> new Services(_container, _registry.Register(factory, new PerContainerLifetime()));
+
+		public IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory)
+			=> new Services(_container, _registry.Register(factory));
+
+		public IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register(factory, serviceName));
+
+		public IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory)
+			=> new Services(_container, _registry.Register(factory));
+
+		public IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register(factory, serviceName));
+
+		public IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory)
+			=> new Services(_container, _registry.Register(factory));
+
+		public IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory,
+		                                                string serviceName)
+			=> new Services(_container, _registry.Register(factory, serviceName));
+
+		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory)
+			=> new Services(_container, _registry.Register(factory));
+
+		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory,
+		                                                    string serviceName)
+			=> new Services(_container, _registry.Register(factory, serviceName));
+
+		public IServices Register<TService>(Func<IServiceFactory, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register(factory, serviceName));
+
+		public IServices RegisterFallback(Func<Type, bool> predicate, Func<Type, object> factory)
+			=>
+				new Services(_container,
+				             _registry.RegisterFallback((type, s) => predicate(type), request => factory(request.ServiceType)));
+
+		public IServices RegisterConstructorDependency<TDependency>(
+			Func<IServiceFactory, ParameterInfo, TDependency> factory)
+			=> new Services(_container, _registry.RegisterConstructorDependency(factory));
+
+		public IServices RegisterConstructorDependency<TDependency>(
+			Func<IServiceFactory, ParameterInfo, object[], TDependency> factory)
+			=> new Services(_container, _registry.RegisterConstructorDependency(factory));
+
+		public IServices Decorate(Type serviceType, Type decoratorType)
+			=> new Services(_container, _registry.Decorate(serviceType, decoratorType));
+
+		public IServices Decorate<TService, TDecorator>() where TDecorator : TService
+			=> new Services(_container, _registry.Decorate<TService, TDecorator>());
+
+		public IServices Decorate<TService>(Func<IServiceFactory, TService, TService> factory)
+			=> new Services(_container, _registry.Decorate(factory));
+
+		public object GetService(Type serviceType) => _container.GetInstance(serviceType);
+
+		public void Dispose() => _container.Dispose();
 	}
 }

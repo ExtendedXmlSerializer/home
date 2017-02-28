@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 		{
 			public Configuration()
 			{
-				Add(Job.Default.With(new GcMode {Force = false}).WithWarmupCount(5).WithTargetCount(10));
+				Add(Job.Default.WithWarmupCount(5).WithTargetCount(10));
 			}
 		}
 

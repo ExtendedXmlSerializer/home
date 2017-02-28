@@ -21,40 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using LightInject;
 using ContainerOptions = ExtendedXmlSerialization.ContentModel.Content.ContainerOptions;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class DefaultExtension : ISerializerExtension, IParameterizedSource<IServiceProvider, ISerialization>
+	class DefaultExtension : ISerializerExtension
 	{
-		readonly ISerialization _serialization;
-		readonly IMemberContent _content;
 		readonly ImmutableArray<object> _services;
 
-		public DefaultExtension(ISerialization serialization, params object[] services)
-			: this(
-				serialization, new RecursionGuardedMemberContent(new MemberContent(serialization)), services.ToImmutableArray()) {}
+		public DefaultExtension(params object[] services) : this(services.ToImmutableArray()) {}
 
-		public DefaultExtension(ISerialization serialization, IMemberContent content, ImmutableArray<object> services)
+		public DefaultExtension(ImmutableArray<object> services)
 		{
-			_serialization = serialization;
-			_content = content;
 			_services = services;
 		}
 
-		public IServiceRegistry Get(IServiceRegistry parameter) =>
+		public IServices Get(IServices parameter) =>
 			_services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
-			         .RegisterInstance(_serialization)
-			         .RegisterInstance(_content)
 			         .Register<ISerializer, RuntimeSerializer>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()
@@ -64,9 +54,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Register<ISelector, ContentModel.Members.Selector>()
 			         .Register<IMembers, Members>()
 			         .Register<IContentOptions, ContentOptions>()
-			         .Register<IContainerOptions, ContainerOptions>().Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
-
-		public ISerialization Get(IServiceProvider parameter)
-			=> new Serialization(parameter.Get<IContainerOptions>().ToArray());
+			         .Register<IContainerOptions, ContainerOptions>()
+			         .Register(factory => factory.GetInstance<IContainerOptions>().ToArray())
+			         .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
 	}
 }

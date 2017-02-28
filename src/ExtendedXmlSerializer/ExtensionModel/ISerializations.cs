@@ -22,35 +22,11 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
-	{
-		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
-
-		public static ContentSource Default { get; } = new ContentSource();
-		ContentSource() : this(OptimizedConverterAlteration) {}
-
-		readonly Func<IConverter, IContentOption> _content;
-		readonly IContentOption[] _additional;
-
-		public ContentSource(IAlteration<IConverter> alteration)
-			: this(alteration.ToContent, new EnumerationContentOption(alteration)) {}
-
-		public ContentSource(Func<IConverter, IContentOption> content, params IContentOption[] additional)
-		{
-			_content = content;
-			_additional = additional;
-		}
-
-		public IContentOption Get(IEnumerable<IConverter> parameter)
-			=> new CompositeContentOption(parameter.Select(_content).Appending(_additional).ToArray());
-	}
+	public interface ISerializations : IParameterizedSource<ISerialization, ISerializerExtension>,
+	                                   IParameterizedSource<IServiceProvider, ISerialization> {}
 }

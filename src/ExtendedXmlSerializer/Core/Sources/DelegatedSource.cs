@@ -25,6 +25,18 @@ using System;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
+	public class DelegatedSource<T> : ISource<T>
+	{
+		readonly Func<T> _source;
+
+		public DelegatedSource(Func<T> source)
+		{
+			_source = source;
+		}
+
+		public T Get() => _source();
+	}
+
 	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly Func<TParameter, TResult> _source;

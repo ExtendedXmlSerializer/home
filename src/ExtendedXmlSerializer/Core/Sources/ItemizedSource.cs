@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-using LightInject;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class Containers : ISource<IServiceContainer>
+	public class ItemizedSource<T> : ISource<T>, ICommand<T>
 	{
-		readonly IConstructorSelector _selector;
-		readonly ContainerOptions _options;
-		public static Containers Default { get; } = new Containers();
-		Containers() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
+		readonly T[] _store;
 
-		public Containers(IConstructorSelector selector, ContainerOptions options)
+		public ItemizedSource() : this(default(T)) {}
+		public ItemizedSource(T item) : this(new[] {item}) {}
+
+		public ItemizedSource(T[] store)
 		{
-			_selector = selector;
-			_options = options;
+			_store = store;
 		}
 
-		public IServiceContainer Get() => new ServiceContainer(_options) {ConstructorSelector = _selector};
+		public T Get() => _store[0];
+
+		public void Execute(T parameter) => _store[0] = parameter;
 	}
 }

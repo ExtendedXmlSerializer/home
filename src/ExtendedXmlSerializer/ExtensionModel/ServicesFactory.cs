@@ -21,34 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
 using LightInject;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class SerializationServices : ISerialization, IServiceProvider
+	class ServicesFactory : ISource<IServices>
 	{
-		readonly IServiceProvider _services;
-		readonly ISerialization _serialization;
+		readonly IConstructorSelector _selector;
+		readonly ContainerOptions _options;
+		public static ServicesFactory Default { get; } = new ServicesFactory();
+		ServicesFactory() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
 
-		public SerializationServices(IEnumerable<ISerializerExtension> extensions, params object[] services) : this(Containers.Default, extensions, services) {}
-
-		public SerializationServices(ISource<IServiceContainer> containers, IEnumerable<ISerializerExtension> extensions, params object[] services)
+		public ServicesFactory(IConstructorSelector selector, ContainerOptions options)
 		{
-			var extension = new DefaultExtension(this, services);
-			_services = extension.Yield().Concat(extensions).Alter(new ServiceRegistry(containers.Get()));
-			_serialization = extension.Get(_services);
+			_selector = selector;
+			_options = options;
 		}
 
-		public IContainer Get(TypeInfo parameter) => _serialization.Get(parameter);
-
-		public object GetService(Type serviceType) => _services.GetService(serviceType);
+		public IServices Get() => new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
 	}
 }

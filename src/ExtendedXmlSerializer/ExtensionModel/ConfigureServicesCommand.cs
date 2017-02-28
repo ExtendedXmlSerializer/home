@@ -21,36 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
+	class ConfigureServicesCommand : ICommand<IServices>
 	{
-		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
+		readonly static Serializations<Serialization> Serializations = Serializations<Serialization>.Default;
 
-		public static ContentSource Default { get; } = new ContentSource();
-		ContentSource() : this(OptimizedConverterAlteration) {}
+		readonly ISerializations _serializations;
+		readonly IReadOnlyList<ISerializerExtension> _extensions;
 
-		readonly Func<IConverter, IContentOption> _content;
-		readonly IContentOption[] _additional;
+		public ConfigureServicesCommand(IReadOnlyList<ISerializerExtension> extensions) : this(Serializations, extensions) {}
 
-		public ContentSource(IAlteration<IConverter> alteration)
-			: this(alteration.ToContent, new EnumerationContentOption(alteration)) {}
-
-		public ContentSource(Func<IConverter, IContentOption> content, params IContentOption[] additional)
+		public ConfigureServicesCommand(ISerializations serializations, IReadOnlyList<ISerializerExtension> extensions)
 		{
-			_content = content;
-			_additional = additional;
+			_serializations = serializations;
+			_extensions = extensions;
 		}
 
-		public IContentOption Get(IEnumerable<IConverter> parameter)
-			=> new CompositeContentOption(parameter.Select(_content).Appending(_additional).ToArray());
+		public void Execute(IServices parameter)
+		{
+			var serialization = new AssignedSerialization();
+			var provider = _extensions.Appending(_serializations.Get(serialization))
+			                          .Alter(parameter);
+
+			serialization.Execute(_serializations.Get(provider));
+		}
 	}
 }

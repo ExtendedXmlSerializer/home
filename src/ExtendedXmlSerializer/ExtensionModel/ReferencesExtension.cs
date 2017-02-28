@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_decorate = Decorate;
 		}
 
-		public IServiceRegistry Get(IServiceRegistry parameter) =>
+		public IServices Get(IServices parameter) =>
 			parameter.RegisterInstance(_entities)
 			         .Register<IIdentities, Identities>()
 			         .Register<ReferencesContentAlteration>()

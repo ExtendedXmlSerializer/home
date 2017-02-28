@@ -38,6 +38,7 @@ namespace ExtendedXmlSerialization.Configuration
 		readonly IActivation _activation;
 		readonly IMemberConfiguration _memberConfiguration;
 		readonly IEnumerable<IConverter> _converters;
+
 		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
 
 		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
@@ -124,12 +125,15 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var services = new Services(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
-			                            new XmlFactory(ReaderSettings, WriterSettings));
-			var provider = new SerializationServices(_extensions, services.ToArray());
+			var instances = new Instances(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
+			                              new XmlFactory(ReaderSettings, WriterSettings)).ToArray();
 
-			var result = provider.GetValid<IExtendedXmlSerializer>();
-			return result;
+			var extensions = new DefaultExtension(instances).Yield().Concat(_extensions).AsReadOnly();
+			using (var services = new ConfiguredServices(extensions).Get())
+			{
+				var result = services.Get<IExtendedXmlSerializer>();
+				return result;
+			}
 		}
 
 		public IExtendedXmlConfiguration Extend(ISerializerExtension extension)

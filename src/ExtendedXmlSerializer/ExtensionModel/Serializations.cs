@@ -22,35 +22,18 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ContentSource : IParameterizedSource<IEnumerable<IConverter>, IContentOption>
+	class Serializations<T> : ISerializations where T : ISerialization
 	{
-		readonly static OptimizedConverterAlteration OptimizedConverterAlteration = OptimizedConverterAlteration.Default;
+		public static Serializations<T> Default { get; } = new Serializations<T>();
+		Serializations() {}
 
-		public static ContentSource Default { get; } = new ContentSource();
-		ContentSource() : this(OptimizedConverterAlteration) {}
+		public ISerializerExtension Get(ISerialization parameter) => new SerializationExtension<Serialization>(parameter);
 
-		readonly Func<IConverter, IContentOption> _content;
-		readonly IContentOption[] _additional;
-
-		public ContentSource(IAlteration<IConverter> alteration)
-			: this(alteration.ToContent, new EnumerationContentOption(alteration)) {}
-
-		public ContentSource(Func<IConverter, IContentOption> content, params IContentOption[] additional)
-		{
-			_content = content;
-			_additional = additional;
-		}
-
-		public IContentOption Get(IEnumerable<IConverter> parameter)
-			=> new CompositeContentOption(parameter.Select(_content).Appending(_additional).ToArray());
+		public ISerialization Get(IServiceProvider parameter) => parameter.Get<T>();
 	}
 }

@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public static OptimizedNamespaceExtension Default { get; } = new OptimizedNamespaceExtension();
 		OptimizedNamespaceExtension() {}
 
-		public IServiceRegistry Get(IServiceRegistry parameter) =>
+		public IServices Get(IServices parameter) =>
 			parameter.Register<IObjectNamespaces, ObjectNamespaces>()
 			         .Decorate<IElementOptionSelector>(
 				         (factory, selector) => new Selector(factory.GetInstance<IObjectNamespaces>(), selector));
