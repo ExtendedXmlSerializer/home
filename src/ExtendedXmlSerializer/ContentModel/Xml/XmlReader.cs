@@ -151,7 +151,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			public ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader)
 				: this(owner, reader, TypeProperty, ItemTypeProperty, ArgumentsProperty, Identities, GenericTypes, Default) {}
 
-			public ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
+			ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
 			                            IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,
 			                            ITypes types)
 			{

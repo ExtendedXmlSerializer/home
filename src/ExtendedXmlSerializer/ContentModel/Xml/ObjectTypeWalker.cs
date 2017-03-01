@@ -28,7 +28,6 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Legacy.Cache;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
@@ -36,17 +35,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	class ObjectTypeWalker : ObjectWalkerBase<object, IEnumerable<TypeInfo>>, ISource<IEnumerable<TypeInfo>>
 	{
 		readonly IDictionaryPairTypesLocator _pairs;
-		readonly IElementTypeLocator _item;
 		readonly IMembers _members;
 
-		public ObjectTypeWalker(IMembers members, object root)
-			: this(DictionaryPairTypesLocator.Default, ElementTypeLocator.Default, members, root) {}
+		public ObjectTypeWalker(IMembers members, object root) : this(DictionaryPairTypesLocator.Default, members, root) {}
 
-		public ObjectTypeWalker(IDictionaryPairTypesLocator pairs, IElementTypeLocator item, IMembers members, object root)
-			: base(root)
+		public ObjectTypeWalker(IDictionaryPairTypesLocator pairs, IMembers members, object root) : base(root)
 		{
 			_pairs = pairs;
-			_item = item;
 			_members = members;
 		}
 

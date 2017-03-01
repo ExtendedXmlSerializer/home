@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
 	class Prefixer : CacheBase<string, string>, IPrefixer
 	{
-		protected sealed override string Create(string parameter) => $"ns{Count + 1}";
+		protected sealed override string Create(string parameter) => $"ns{(Count + 1).ToString()}";
 	}
 }
