@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ContentModel.Content;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
@@ -37,10 +36,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_runtime = runtime;
 		}
 
-		protected sealed override IMember CreateMember(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
+		protected sealed override IMember CreateMember(MemberProfile profile, Func<object, object> getter,
+		                                               Action<object, object> setter)
 		{
 			// TODO: This should be simplified:
-			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
+			var specification = new VariableTypeSpecification(profile.MemberType.AsType());
 			var writer = new Enclosure(new MemberElement(profile.Identity.Name),
 			                           new VariableTypedMemberWriter(specification, _runtime, profile.Content));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity.Name, profile.AllowWrite, profile.Order,

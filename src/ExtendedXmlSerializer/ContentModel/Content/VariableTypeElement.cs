@@ -23,32 +23,37 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ArrayElement : ElementBase
+	sealed class VariableTypeElement : ElementBase
 	{
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
-		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
+		readonly ISpecification<Type> _specification;
+		readonly Xml.IIdentities _identities;
 
-		readonly ITypeProperty _property;
-		readonly TypeInfo _element;
+		public VariableTypeElement(Type definition, Xml.IIdentities identities, IIdentity identity)
+			: this(new VariableTypeSpecification(definition), identities, identity) {}
 
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
-
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity)
+		public VariableTypeElement(ISpecification<Type> specification, Xml.IIdentities identities, IIdentity identity)
+			: base(identity)
 		{
-			_property = property;
-			_element = element;
+			_specification = specification;
+			_identities = identities;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
-			base.Write(writer, instance);
-			_property.Write(writer, _element);
+			var type = instance.GetType();
+			if (_specification.IsSatisfiedBy(type))
+			{
+				writer.Element(_identities.Get(type.GetTypeInfo()));
+			}
+			else
+			{
+				base.Write(writer, instance);
+			}
 		}
 	}
 }

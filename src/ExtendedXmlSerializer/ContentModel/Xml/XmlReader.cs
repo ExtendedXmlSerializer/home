@@ -30,7 +30,6 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-
 	class XmlReader : IXmlReader
 	{
 		readonly ClassificationSource _classification;
@@ -97,13 +96,15 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		}
 
 
-		public int New()
+		public int? New()
 		{
 			if (_reader.HasAttributes && _reader.NodeType == XmlNodeType.Attribute)
 			{
 				Reset();
 			}
-			return _reader.Depth + 1;
+
+			var result = !_reader.IsEmptyElement ? (int?) (_reader.Depth + 1) : null;
+			return result;
 		}
 
 		public void Reset() => _reader.MoveToElement();
@@ -151,7 +152,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				: this(owner, reader, TypeProperty, ItemTypeProperty, ArgumentsProperty, Identities, GenericTypes, Default) {}
 
 			public ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
-			                            IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic, ITypes types)
+			                            IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,
+			                            ITypes types)
 			{
 				_owner = owner;
 				_reader = reader;
@@ -170,10 +172,11 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			{
 				if (_reader.HasAttributes)
 				{
-					if (_owner.IsMember() && _reader.Depth > 0)
+					if (_owner.Contains(_type))
 					{
-						return _owner.Contains(_type) ? _type.Get(_owner) : null;
+						return _type.Get(_owner);
 					}
+
 					if (_owner.Contains(_item))
 					{
 						return _item.Get(_owner);

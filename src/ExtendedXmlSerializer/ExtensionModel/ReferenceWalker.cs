@@ -63,20 +63,41 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				}
 			}
 
-			var enumerable = input as IEnumerable;
-			if (enumerable != null)
+			var dictionary = input as IDictionary;
+			if (dictionary != null)
 			{
-				foreach (var item in enumerable.Cast<object>().Where(_check))
+				foreach (DictionaryEntry item in dictionary)
 				{
-					if (!Schedule(item))
+					var key = item.Key;
+					if (Check(key))
 					{
-						yield return item;
+						yield return key;
+					}
+
+					var value = item.Value;
+					if (Check(value))
+					{
+						yield return value;
+					}
+				}
+			}
+			else
+			{
+				var enumerable = input as IEnumerable;
+				if (enumerable != null)
+				{
+					foreach (var item in enumerable)
+					{
+						if (_check(item))
+						{
+							yield return item;
+						}
 					}
 				}
 			}
 		}
 
-		bool Check(object instance) => (!instance?.GetType().GetTypeInfo().IsValueType ?? false) && !Schedule(instance);
+		bool Check(object instance) => !Schedule(instance) && (!instance?.GetType().GetTypeInfo().IsValueType ?? false);
 
 		public IReadOnlyList<object> Get() => this.SelectMany(x => x).Distinct().AsReadOnly();
 	}

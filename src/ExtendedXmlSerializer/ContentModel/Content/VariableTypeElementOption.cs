@@ -21,34 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ArrayElement : ElementBase
+	class VariableTypeElementOption : NamedElementOptionBase
 	{
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
-		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
+		readonly Xml.IIdentities _identities;
+		readonly static ISpecification<TypeInfo> Specification = FixedTypeSpecification.Default.Inverse();
 
-		readonly ITypeProperty _property;
-		readonly TypeInfo _element;
+		public static VariableTypeElementOption Default { get; } = new VariableTypeElementOption();
+		VariableTypeElementOption() : this(Xml.Identities.Default) {}
 
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
-
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity)
+		VariableTypeElementOption(Xml.IIdentities identities) : base(Specification)
 		{
-			_property = property;
-			_element = element;
+			_identities = identities;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-			_property.Write(writer, _element);
-		}
+		public override IWriter Create(IIdentity identity, TypeInfo classification)
+			=> new VariableTypeElement(classification.AsType(), _identities, identity);
 	}
 }

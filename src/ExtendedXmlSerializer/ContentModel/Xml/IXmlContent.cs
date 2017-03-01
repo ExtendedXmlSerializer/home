@@ -25,7 +25,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	public interface IXmlContent
 	{
-		int New();
+		int? New();
 
 		void Reset();
 

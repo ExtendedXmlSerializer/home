@@ -23,12 +23,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
+using ExtendedXmlSerialization.Test.TestObject;
 using JetBrains.Annotations;
 using Xunit;
 
@@ -96,6 +100,156 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject Id=""6dbb618f-dbbd-4909-9644-a1d955f06249"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Self xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:entity=""6dbb618f-dbbd-4909-9644-a1d955f06249"" /><PropertyName>Primary Root</PropertyName></ReferencesExtensionTests-Subject>");
 			Assert.NotNull(actual.Self);
 			Assert.Same(actual, actual.Self);
+		}
+
+		[Fact]
+		public void ComplexInstance()
+		{
+			var descriptor =
+				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+
+			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
+			                                                    {
+				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+			                                                    }));
+
+			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			                                                  {
+				                                                  {descriptor.Metadata, IntegerConverter.Default}
+			                                                  });
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extend(sut).Create());
+
+			var instance = new TestClassReference
+			               {
+				               Id = 1,
+				               ObjectA = new TestClassReference {Id = 2}
+			               };
+			instance.CyclicReference = instance;
+			instance.ReferenceToObjectA = instance.ObjectA;
+			instance.Lists = new List<IReference>
+			                 {
+				                 new TestClassReference {Id = 3},
+				                 new TestClassReference {Id = 4}
+			                 };
+
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReference Id=""1"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><CyclicReference xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""2"" /><ReferenceToObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /><Lists><Capacity>4</Capacity><TestClassReference Id=""3"" /><TestClassReference Id=""4"" /></Lists></TestClassReference>");
+			Assert.NotNull(actual.ObjectA);
+			Assert.Same(instance, instance.CyclicReference);
+			Assert.Same(instance.ObjectA, instance.ReferenceToObjectA);
+			Assert.Equal(3, instance.Lists.First().Id);
+			Assert.Equal(4, instance.Lists.Last().Id);
+		}
+
+		[Fact]
+		public void ComplexList()
+		{
+			var descriptor =
+				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+
+			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
+			                                                    {
+				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+			                                                    }));
+
+			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			                                                  {
+				                                                  {descriptor.Metadata, IntegerConverter.Default}
+			                                                  });
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extend(sut).Create());
+
+			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
+			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
+			instance.All = new List<IReference>
+			          {
+				          new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent},
+				          new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other},
+				          other,
+				          instance.Parent
+			          };
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithList xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Parent xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Capacity>4</Capacity><TestClassReference Id=""3""><ObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference Id=""4""><ObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></TestClassReference><TestClassReference xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:entity=""2"" /><TestClassReference xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:entity=""1"" /></All></TestClassReferenceWithList>");
+			Assert.NotNull(actual.Parent);
+			var list = actual.All.Cast<TestClassReference>().ToList();
+			Assert.Same(actual.Parent, list[0].ObjectA);
+			Assert.Same(actual.Parent, list[0].ReferenceToObjectA);
+			Assert.Same(list[1].ObjectA, list[1].ReferenceToObjectA);
+			Assert.Same(list[1].ObjectA.To<TestClassReference>().ObjectA, list[1].ObjectA.To<TestClassReference>().ReferenceToObjectA);
+			Assert.Same(actual.Parent, list[1].ObjectA.To<TestClassReference>().ObjectA);
+			Assert.Same(list[2], list[1].ObjectA);
+			Assert.Same(actual.Parent, list[3]);
+		}
+
+		[Fact]
+		public void Dictionary()
+		{
+			var descriptor =
+				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+
+			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
+			                                                    {
+				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+			                                                    }));
+
+			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			                                                  {
+				                                                  {descriptor.Metadata, IntegerConverter.Default}
+			                                                  });
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extend(sut).Create());
+
+			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
+			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
+
+			instance.All = new Dictionary<int, IReference>
+			          {
+				          {3, new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent}},
+				          {4, new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other}},
+				          {2, other},
+				          {1, instance.Parent}
+			          };
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><Parent xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Item xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Key>3</Key><Value xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></Item><Item xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Key>4</Key><Value xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></Item><Item xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Key>2</Key><Value xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></Item><Item xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Key>1</Key><Value xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></Item></All></TestClassReferenceWithDictionary>");
+			Assert.NotNull(actual.Parent);
+			var list = actual.All;
+			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ObjectA);
+			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ReferenceToObjectA);
+			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[4].To<TestClassReference>().ReferenceToObjectA);
+			Assert.Same(list[4].To<TestClassReference>().ObjectA.To<TestClassReference>().ObjectA, actual.Parent);
+			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[2]);
+			Assert.Same(actual.Parent, list[1]);
+		}
+
+		[Fact]
+		public void List()
+		{
+			var descriptor =
+				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+
+			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
+			                                                    {
+				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+			                                                    }));
+
+			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			                                                  {
+				                                                  {descriptor.Metadata, IntegerConverter.Default}
+			                                                  });
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extend(sut).Create());
+
+			var parent = new TestClassReference {Id = 1};
+			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};
+
+			var instance = new List<IReference>
+			               {
+				               new TestClassReference {Id = 3, ObjectA = parent, ReferenceToObjectA = parent},
+				               new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other},
+				               other,
+				               parent
+			               };
+
+			var actual = support.Assert(instance,
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:ns1=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest"" exs:arguments=""ns1:IReference"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Capacity>4</Capacity><ns1:TestClassReference Id=""3""><ObjectA exs:type=""ns1:TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ns1:TestClassReference><ns1:TestClassReference Id=""4""><ObjectA exs:type=""ns1:TestClassReference"" Id=""2""><ObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""2"" /></ns1:TestClassReference><ns1:TestClassReference exs:entity=""2"" /><ns1:TestClassReference exs:entity=""1"" /></List>");
+			Assert.Same(actual[0].To<TestClassReference>().ObjectA, actual[0].To<TestClassReference>().ReferenceToObjectA);
+			Assert.Same(actual[1].To<TestClassReference>().ObjectA, actual[1].To<TestClassReference>().ReferenceToObjectA);
+			Assert.Same(actual[2], actual[1].To<TestClassReference>().ObjectA);
+			Assert.Same(actual[3], actual[0].To<TestClassReference>().ObjectA);
 		}
 
 		class Subject

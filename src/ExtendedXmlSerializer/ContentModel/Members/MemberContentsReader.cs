@@ -42,12 +42,14 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var result = base.Get(parameter);
 
 			var token = parameter.New();
-			while (parameter.Next(token))
+			if (token.HasValue)
 			{
-				var member = _members.Get(parameter.Name);
-				member?.Adapter.Assign(result, member.Get(parameter));
+				while (parameter.Next(token.Value))
+				{
+					var member = _members.Get(parameter.Name);
+					member?.Adapter.Assign(result, member.Get(parameter));
+				}
 			}
-
 			return result;
 		}
 	}

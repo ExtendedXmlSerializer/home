@@ -28,19 +28,17 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlWriter : IXmlWriter
 	{
-		readonly static Prefixes Prefixes = Prefixes.Default;
-
-		readonly IPrefixes _prefixes;
 		readonly System.Xml.XmlWriter _writer;
+		readonly INamespaces _namespaces;
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
-		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(Prefixes, writer, root) {}
+		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, new Namespaces()) {}
 
-		public XmlWriter(IPrefixes prefixes, System.Xml.XmlWriter writer, object root)
+		public XmlWriter(System.Xml.XmlWriter writer, object root, INamespaces namespaces)
 		{
 			Root = root;
-			_prefixes = prefixes;
 			_writer = writer;
+			_namespaces = namespaces;
 		}
 
 		public object Root { get; }
@@ -72,7 +70,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		string Create(string identifier)
 		{
-			_writer.WriteAttributeString(_prefixes.Get(identifier), Xmlns, identifier);
+			_writer.WriteAttributeString(_namespaces.Get(identifier).Name, Xmlns, identifier);
 			return _writer.LookupPrefix(identifier);
 		}
 	}

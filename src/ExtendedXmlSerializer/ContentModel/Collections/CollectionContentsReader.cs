@@ -47,11 +47,13 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		{
 			var result = base.Get(parameter);
 			var token = parameter.New();
-			var list = result as IList ?? _lists.Get(result);
-			//var reader = new TypeAwareXmlReader(parameter, _itemType);
-			while (parameter.Next(token))
+			if (token.HasValue)
 			{
-				_item.Read(parameter, result, list);
+				var list = result as IList ?? _lists.Get(result);
+				while (parameter.Next(token.Value))
+				{
+					_item.Read(parameter, result, list);
+				}
 			}
 			return result;
 		}

@@ -23,32 +23,14 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ArrayElement : ElementBase
+	class VariableTypeSpecification : InverseSpecification<Type>, ISpecification<TypeInfo>
 	{
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
-		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
+		public VariableTypeSpecification(Type type) : base(new EqualitySpecification<Type>(type)) {}
 
-		readonly ITypeProperty _property;
-		readonly TypeInfo _element;
-
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
-
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity)
-		{
-			_property = property;
-			_element = element;
-		}
-
-		public sealed override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-			_property.Write(writer, _element);
-		}
+		bool ISpecification<TypeInfo>.IsSatisfiedBy(TypeInfo parameter) => IsSatisfiedBy(parameter.AsType());
 	}
 }

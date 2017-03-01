@@ -21,34 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ArrayElement : ElementBase
+	abstract class ElementBase : IWriter
 	{
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
-		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
+		readonly IIdentity _identity;
 
-		readonly ITypeProperty _property;
-		readonly TypeInfo _element;
-
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
-
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity)
+		protected ElementBase(IIdentity identity)
 		{
-			_property = property;
-			_element = element;
+			_identity = identity;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
-		{
-			base.Write(writer, instance);
-			_property.Write(writer, _element);
-		}
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Element(_identity);
 	}
 }

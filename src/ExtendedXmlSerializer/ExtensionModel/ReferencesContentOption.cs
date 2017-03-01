@@ -51,9 +51,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var serializer = base.Get(parameter);
-			var result = _specification.IsSatisfiedBy(parameter)
-				? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
-				: serializer;
+			var result = serializer as RuntimeSerializer ??
+			             (_specification.IsSatisfiedBy(parameter)
+				             ? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
+				             : serializer);
 			return result;
 		}
 	}
