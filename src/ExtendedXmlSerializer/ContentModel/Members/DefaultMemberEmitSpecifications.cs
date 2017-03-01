@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	class DefaultMemberEmitSpecifications : FixedMemberEmitSpecifications, ISortAware
 	{
-		TypeInfo Classification { get; }
+		public static DefaultMemberEmitSpecifications Default { get; } = new DefaultMemberEmitSpecifications();
 
-		string Value();
+		DefaultMemberEmitSpecifications() : base(new MemberEmitSpecification(AssignedSpecification.Default)) {}
 
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		public int Sort => 100;
 	}
 }

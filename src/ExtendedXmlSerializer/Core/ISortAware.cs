@@ -21,17 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Core
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	public interface ISortAware
 	{
-		TypeInfo Classification { get; }
-
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		int Sort { get; }
 	}
 }

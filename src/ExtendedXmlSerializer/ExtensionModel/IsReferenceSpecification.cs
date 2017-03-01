@@ -31,12 +31,4 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public static IsReferenceSpecification Default { get; } = new IsReferenceSpecification();
 		IsReferenceSpecification() : base(IsValueTypeSpecification.Default) {}
 	}
-
-	class IsValueTypeSpecification : ISpecification<TypeInfo>
-	{
-		public static IsValueTypeSpecification Default { get; } = new IsValueTypeSpecification();
-		IsValueTypeSpecification() {}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsValueType;
-	}
 }

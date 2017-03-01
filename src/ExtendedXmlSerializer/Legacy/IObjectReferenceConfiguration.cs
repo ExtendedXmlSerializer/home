@@ -22,16 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Legacy
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	[Obsolete(Support.Message)]
+	// ReSharper disable once UnusedTypeParameter
+	public interface IObjectReferenceConfiguration<T>
 	{
-		TypeInfo Classification { get; }
-
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		void ExtractToList(string name);
 	}
 }

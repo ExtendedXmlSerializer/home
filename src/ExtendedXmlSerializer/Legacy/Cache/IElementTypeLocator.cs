@@ -22,16 +22,11 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Legacy.Cache
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	public interface IElementTypeLocator
 	{
-		TypeInfo Classification { get; }
-
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		Type Locate(Type type);
 	}
 }

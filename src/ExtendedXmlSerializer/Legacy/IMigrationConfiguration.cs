@@ -22,16 +22,13 @@
 // SOFTWARE.
 
 using System;
-using System.Reflection;
+using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Legacy
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	[Obsolete(Support.Message)]
+	public interface IMigrationConfiguration<T>
 	{
-		TypeInfo Classification { get; }
-
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		IMigrationConfiguration<T> AddMigration(Action<XElement> migration);
 	}
 }

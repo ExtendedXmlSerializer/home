@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	class IsValueTypeSpecification : ISpecification<TypeInfo>
 	{
-		TypeInfo Classification { get; }
+		public static IsValueTypeSpecification Default { get; } = new IsValueTypeSpecification();
+		IsValueTypeSpecification() {}
 
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsValueType;
 	}
 }

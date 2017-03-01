@@ -21,17 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Properties;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	sealed class ExplicitTypeOption : TypePropertyOptionBase
 	{
-		TypeInfo Classification { get; }
-
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		public static ExplicitTypeOption Default { get; } = new ExplicitTypeOption();
+		ExplicitTypeOption() : base(TypeProperty.Default) {}
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface ISortAware
+	class AlwaysEmitMemberSpecification : MemberEmitSpecification
 	{
-		int Sort { get; }
-	}
-
-	public class SortComparer<T> : IComparer<T>
-	{
-		public static SortComparer<T> Default { get; } = new SortComparer<T>();
-		SortComparer() {}
-
-		public int Compare(T x, T y)
-		{
-			var left = (x as ISortAware)?.Sort ?? 1;
-			var right = (y as ISortAware)?.Sort ?? 1;
-			var result = left.CompareTo(right);
-			return result;
-		}
+		public static AlwaysEmitMemberSpecification Default { get; } = new AlwaysEmitMemberSpecification();
+		AlwaysEmitMemberSpecification() : base(AlwaysSpecification<object>.Default) {}
 	}
 }

@@ -24,13 +24,10 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	public interface IActivation : IParameterizedSource<TypeInfo, IReader> {}
-
 	class Activation : IActivation
 	{
 		public static Activation Default { get; } = new Activation();

@@ -21,20 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class DefaultMemberEmitSpecifications : FixedMemberEmitSpecifications, ISortAware
-	{
-		public static DefaultMemberEmitSpecifications Default { get; } = new DefaultMemberEmitSpecifications();
-
-		DefaultMemberEmitSpecifications() : base(new MemberEmitSpecification(AssignedSpecification.Default)) {}
-
-		public int Sort => 100;
-	}
-
 	class FixedMemberEmitSpecifications : IMemberEmitSpecifications
 	{
 		readonly IMemberEmitSpecification _instance;

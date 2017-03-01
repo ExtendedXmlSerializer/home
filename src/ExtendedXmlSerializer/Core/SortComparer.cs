@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Core
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	public class SortComparer<T> : IComparer<T>
 	{
-		TypeInfo Classification { get; }
+		public static SortComparer<T> Default { get; } = new SortComparer<T>();
+		SortComparer() {}
 
-		string Value();
-
-		bool IsMember(); // TODO: Seems like a better way to do this.
+		public int Compare(T x, T y)
+		{
+			var left = (x as ISortAware)?.Sort ?? 1;
+			var right = (y as ISortAware)?.Sort ?? 1;
+			var result = left.CompareTo(right);
+			return result;
+		}
 	}
 }

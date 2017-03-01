@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Legacy.Cache
@@ -30,32 +29,5 @@ namespace ExtendedXmlSerialization.Legacy.Cache
 	public interface IAddMethodLocator
 	{
 		MethodInfo Locate(Type type, Type elementType);
-	}
-
-	public sealed class AddMethodLocator : ConcurrentDictionary<Type, MethodInfo>, IAddMethodLocator
-	{
-		const string Add = "Add";
-
-		public static AddMethodLocator Default { get; } = new AddMethodLocator();
-		AddMethodLocator() {}
-
-		public MethodInfo Locate(Type type, Type elementType)
-		{
-			return GetOrAdd(type, t => Get(type, elementType));
-		}
-
-		static MethodInfo Get(Type type, Type elementType)
-		{
-			foreach (var candidate in AllInterfaces.Instance.Yield(type))
-			{
-				var method = candidate.GetMethod(Add);
-				var parameters = method?.GetParameters();
-				if (parameters?.Length == 1 && elementType.IsAssignableFrom(parameters[0].ParameterType))
-				{
-					return method;
-				}
-			}
-			return null;
-		}
 	}
 }
