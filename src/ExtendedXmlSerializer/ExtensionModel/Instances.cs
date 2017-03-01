@@ -52,9 +52,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				configuration.Policy.And<PropertyInfo>(configuration.Specification),
 				configuration.Policy.And<FieldInfo>(configuration.Specification),
 				activation, xmlFactory, configuration,
-				new MemberWriters(new RuntimeMemberSpecifications(configuration.Runtime),
-				                  new MemberConverters(configuration.Converters)
-				), ElementOptionSelector.Default, content, additional) {}
+				new MemberWriters(configuration.Runtime, configuration.Converters),
+				ElementOptionSelector.Default, content, additional) {}
 
 		public Instances(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
@@ -81,7 +80,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			yield return _field;
 
 			yield return _memberConfiguration;
-			yield return _memberConfiguration.EmitSpecifications;
+			yield return _memberConfiguration.Converters;
+			yield return _memberConfiguration.Runtime;
+			yield return _memberConfiguration.Specification;
 			yield return _memberConfiguration.Aliases;
 			yield return _memberConfiguration.Order;
 

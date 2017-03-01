@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -30,17 +31,21 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class References : DecoratedReader, IReferences
 	{
+		readonly static ReferenceProperty ReferenceProperty = ReferenceProperty.Default;
+		readonly static ReferenceMaps ReferenceMaps = ReferenceMaps.Default;
+
 		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
-		readonly static ReferenceProperty ReferenceProperty = ReferenceProperty.Default;
-		readonly static EntityProperty EntityProperty = EntityProperty.Default;
+		readonly TypeInfo _definition;
 
-		public References(IReader reader, IEntities entities) : this(reader, ReferenceMaps.Default, entities) {}
+		public References(IReader reader, IEntities entities, TypeInfo definition)
+			: this(reader, ReferenceMaps, entities, definition) {}
 
-		public References(IReader reader, IReferenceMaps maps, IEntities entities) : base(reader)
+		public References(IReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition) : base(reader)
 		{
 			_maps = maps;
 			_entities = entities;
+			_definition = definition;
 		}
 
 		ReferenceIdentity? GetReference(IXmlReader parameter)
@@ -50,30 +55,23 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				return new ReferenceIdentity(Defaults.Reference, ReferenceProperty.Get(parameter));
 			}
 
-			if (parameter.Contains(EntityProperty))
+			var type = parameter.Classification ?? _definition;
+			var entity = _entities.Get(type)?.Reference(parameter);
+			if (entity != null)
 			{
-				var type = parameter.Classification;
-				var reference = new ReferenceIdentity(type, _entities.Get(type).Get(EntityProperty.Get(parameter)));
-				return reference;
+				return new ReferenceIdentity(type, entity);
 			}
 			return null;
 		}
 
 		public sealed override object Get(IXmlReader parameter)
 		{
-			var reference = GetReference(parameter);
-			if (reference != null)
+			var identity = GetReference(parameter);
+			if (identity != null)
 			{
-				var identities = _maps.Get(parameter);
-				var identity = identities.Get(reference.Value);
-				if (identity == null)
-				{
-					var value = base.Get(parameter);
-					identities.Add(reference.Value, value);
-				}
-				return identity;
+				var reference = _maps.Get(parameter).Get(identity.Value);
+				return reference;
 			}
-
 
 			var result = base.Get(parameter);
 			return result;

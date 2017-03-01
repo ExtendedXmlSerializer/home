@@ -39,7 +39,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			return base.Get(parameter) ??
 			       parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ?? parameter.Name;
 		}
 	}
 }

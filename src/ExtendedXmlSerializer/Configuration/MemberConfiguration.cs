@@ -28,27 +28,12 @@ using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IMemberConfiguration
-	{
-		IMetadataSpecification Specification { get; }
-		IDictionary<MemberInfo, IMemberEmitSpecification> EmitSpecifications { get; }
-
-		IDictionary<MemberInfo, IConverter> Converters { get; }
-		IDictionary<MemberInfo, IRuntimeMemberSpecification> Runtime { get; }
-
-		IMemberPolicy Policy { get; }
-
-		IAliases Aliases { get; }
-		IMemberOrder Order { get; }
-	}
-
-
 	public class MemberConfiguration : IMemberConfiguration
 	{
 		public MemberConfiguration()
 			: this(
 				MetadataSpecification.Default, new Dictionary<MemberInfo, IConverter>(),
-				new Dictionary<MemberInfo, IMemberEmitSpecification>(), 
+				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
 		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters)
@@ -56,19 +41,22 @@ namespace ExtendedXmlSerialization.Configuration
 				MetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
-		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters, IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters,
+		                           IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 			: this(
 				MetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
 
 		public MemberConfiguration(IMetadataSpecification specification, IDictionary<MemberInfo, IConverter> converters,
-		                           IDictionary<MemberInfo, IMemberEmitSpecification> emit, IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(specification, converters, emit, runtime, MemberOrder.Default, MemberAliases.Default, Defaults.MemberPolicy) {}
+		                           IDictionary<MemberInfo, IMemberEmitSpecification> emit,
+		                           IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+			: this(specification, new MemberConverters(converters), new MappedMemberEmitSpecifications(emit),
+			       new RuntimeMemberSpecifications(runtime), MemberOrder.Default, MemberAliases.Default, Defaults.MemberPolicy) {}
 
 		public MemberConfiguration(
 			IMetadataSpecification specification,
-			IDictionary<MemberInfo, IConverter> converters,
-			IDictionary<MemberInfo, IMemberEmitSpecification> specifications,
-			IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime, IMemberOrder order, IAliases aliases, IMemberPolicy policy)
+			IMemberConverters converters,
+			IMemberEmitSpecifications specifications,
+			IRuntimeMemberSpecifications runtime, IMemberOrder order, IAliases aliases, IMemberPolicy policy)
 		{
 			Specification = specification;
 			Converters = converters;
@@ -80,9 +68,9 @@ namespace ExtendedXmlSerialization.Configuration
 		}
 
 		public IMetadataSpecification Specification { get; }
-		public IDictionary<MemberInfo, IConverter> Converters { get; }
-		public IDictionary<MemberInfo, IMemberEmitSpecification> EmitSpecifications { get; }
-		public IDictionary<MemberInfo, IRuntimeMemberSpecification> Runtime { get; }
+		public IMemberConverters Converters { get; }
+		public IMemberEmitSpecifications EmitSpecifications { get; }
+		public IRuntimeMemberSpecifications Runtime { get; }
 		public IMemberOrder Order { get; }
 		public IAliases Aliases { get; }
 		public IMemberPolicy Policy { get; }

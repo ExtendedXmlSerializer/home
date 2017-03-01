@@ -36,21 +36,25 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class DefaultRegistrationsExtension : ISerializerExtension
 	{
 		readonly ImmutableArray<object> _services;
+		readonly IMemberEmitSpecifications _specifications;
 
 		public DefaultRegistrationsExtension(params object[] services) : this(services.ToImmutableArray()) {}
 
 		public DefaultRegistrationsExtension(ImmutableArray<object> services)
+			: this(services, services.OfType<MemberConfiguration>().Single().EmitSpecifications) {}
+
+		public DefaultRegistrationsExtension(ImmutableArray<object> services, IMemberEmitSpecifications specifications)
 		{
 			_services = services;
+			_specifications = specifications;
 		}
 
 		public IServices Get(IServices parameter) =>
 			_services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
 			         .Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
-			         .Register(x => new MappedMemberEmitSpecifications(x.GetInstance<MemberConfiguration>().EmitSpecifications))
+			         .RegisterInstance(_specifications.GetType(), _specifications)
 			         .RegisterInstance(DefaultMemberEmitSpecifications.Default)
 			         .Register<ISerializer, RuntimeSerializer>()
-			         .Register<IMemberOption, VariableTypeMemberOption>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()
 			         .Register<MemberProfiles>()
 			         .Register(factory => factory.GetInstance<MemberProfiles>().ToDelegate())

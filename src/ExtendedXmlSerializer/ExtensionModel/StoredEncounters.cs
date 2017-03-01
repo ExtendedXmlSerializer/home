@@ -21,45 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Entities : CacheBase<TypeInfo, IEntity>, IEntities
+	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
 	{
-		readonly IEntityMembers _registered;
-		readonly IMemberConverters _converters;
 		readonly IMembers _members;
+		readonly IEntities _entities;
 
-		public Entities(IEntityMembers registered, IMemberConverters converters, IMembers members)
+		public StoredEncounters(IMembers members, IEntities entities)
 		{
-			_registered = registered;
-			_converters = converters;
 			_members = members;
+			_entities = entities;
 		}
 
-		protected override IEntity Create(TypeInfo parameter)
+		protected override IReferenceEncounters Create(IXmlWriter parameter)
 		{
-			var memberInfo = _registered.Get(parameter);
-			var result = memberInfo != null ? new Entity(_converters.Get(memberInfo), Locate(parameter, memberInfo)) : null;
+			var selector = new ReferenceIdentifiers(_entities);
+			var identities = new ReferenceWalker(_members, parameter.Root).Get().ToDictionary(x => x, selector.Get);
+			var result = new ReferenceEncounters(identities);
 			return result;
-		}
-
-		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
-		{
-			var members = _members.Get(parameter);
-			var length = members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = members[i];
-				if (Equals(member.Adapter.Metadata, memberInfo))
-				{
-					return member;
-				}
-			}
-			return null;
 		}
 	}
 }

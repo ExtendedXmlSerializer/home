@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 
@@ -30,7 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayReader : CollectionContentsReader
 	{
-		public ArrayReader(IActivation activation, IReader item, TypeInfo itemType) : base(activation.Get<ArrayList>(), item, itemType) {}
+		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
 
 		public sealed override object Get(IXmlReader parameter)
 		{

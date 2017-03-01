@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -80,7 +79,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 			
 		}
 
-		[Benchmark]
+		//[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
 		[Benchmark]

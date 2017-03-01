@@ -21,45 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Entities : CacheBase<TypeInfo, IEntity>, IEntities
+	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
 	{
-		readonly IEntityMembers _registered;
-		readonly IMemberConverters _converters;
-		readonly IMembers _members;
+		readonly static AlwaysEmitMemberSpecification Always = AlwaysEmitMemberSpecification.Default;
 
-		public Entities(IEntityMembers registered, IMemberConverters converters, IMembers members)
+		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
+		ClassicEmitMemberSpecifications() : this(IsAssignableSpecification<Enum>.Default) {}
+
+		readonly ISpecification<TypeInfo> _valueType;
+
+		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
 		{
-			_registered = registered;
-			_converters = converters;
-			_members = members;
+			_valueType = valueType;
 		}
 
-		protected override IEntity Create(TypeInfo parameter)
-		{
-			var memberInfo = _registered.Get(parameter);
-			var result = memberInfo != null ? new Entity(_converters.Get(memberInfo), Locate(parameter, memberInfo)) : null;
-			return result;
-		}
-
-		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
-		{
-			var members = _members.Get(parameter);
-			var length = members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = members[i];
-				if (Equals(member.Adapter.Metadata, memberInfo))
-				{
-					return member;
-				}
-			}
-			return null;
-		}
+		public IMemberEmitSpecification Get(MemberDescriptor parameter)
+			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : null;
 	}
 }

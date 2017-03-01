@@ -30,6 +30,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly int _code;
 
+		public MemberDescriptor(PropertyInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+
+		public MemberDescriptor(TypeInfo reflectedType, PropertyInfo metadata)
+			: this(reflectedType, metadata, metadata.PropertyType.GetTypeInfo(), metadata.CanWrite) {}
+
+		public MemberDescriptor(FieldInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+
+		public MemberDescriptor(TypeInfo reflectedType, FieldInfo metadata)
+			: this(reflectedType, metadata, metadata.FieldType.GetTypeInfo(), !metadata.IsInitOnly) {}
+
 		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable = true)
 			: this(reflectedType, metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
 

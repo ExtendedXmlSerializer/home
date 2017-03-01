@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,43 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class TypeAwareXmlReader : IXmlReader
+	class ClassicExtension : ISerializerExtension
 	{
-		readonly IXmlReader _reader;
-		readonly TypeInfo _type;
+		public static ClassicExtension Default { get; } = new ClassicExtension();
+		ClassicExtension() {}
 
-		public TypeAwareXmlReader(IXmlReader reader, TypeInfo type)
-		{
-			_reader = reader;
-			_type = type;
-		}
-
-		public string Identifier => _reader.Identifier;
-
-		public string Name => _reader.Name;
-
-		public bool Contains(IIdentity identity) => _reader.Contains(identity);
-
-		public bool Next() => _reader.Next();
-
-		public int New() => _reader.New();
-
-		public void Reset() => _reader.Reset();
-
-		public bool Next(int depth) => _reader.Next(depth);
-
-		public string Get(string parameter) => _reader.Get(parameter);
-
-		public void Dispose() => _reader.Dispose();
-
-		public TypeInfo Classification => _reader.Classification ?? _type;
-
-		public string Value() => _reader.Value();
-
-		public bool IsMember() => _reader.IsMember();
+		public IServices Get(IServices parameter)
+			=>
+				parameter.Register<IContentOptions, ClassicContentOptions>()
+				         .RegisterInstance(ClassicEmitMemberSpecifications.Default);
 	}
 }

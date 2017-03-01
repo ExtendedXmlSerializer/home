@@ -29,30 +29,30 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferenceSerializer : ISerializer
 	{
-		readonly IIdentities _identities;
+		readonly IStoredEncounters _encounters;
 		readonly IReferences _references;
 		readonly ISerializer _serializer;
 
-		public ReferenceSerializer(IIdentities identities, IReferences references, ISerializer serializer)
+		public ReferenceSerializer(IStoredEncounters encounters, IReferences references, ISerializer serializer)
 		{
-			_identities = identities;
+			_encounters = encounters;
 			_references = references;
 			_serializer = serializer;
 		}
 
 		public void Write(IXmlWriter writer, object instance)
 		{
-			var context = _identities.Get(writer).Get(instance);
+			var context = _encounters.Get(writer).Get(instance);
 			if (context != null)
 			{
 				var identifier = context.Value.Identifier;
 
 				var first = context.Value.FirstEncounter;
-				if (identifier.EntityId != null)
+				if (identifier.Entity != null)
 				{
 					if (!first)
 					{
-						EntityProperty.Default.Write(writer, identifier.EntityId);
+						EntityProperty.Default.Write(writer, identifier.Entity.Get(instance));
 					}
 				}
 				else

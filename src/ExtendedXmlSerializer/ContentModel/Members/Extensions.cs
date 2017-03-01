@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,34 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.ContentModel.Converters;
+
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberWriters : IMemberWriters
+	public static class Extensions
 	{
-		readonly IRuntimeMemberSpecifications _specifications;
-		readonly IMemberConverters _converters;
-
-		public MemberWriters(IRuntimeMemberSpecifications specifications, IMemberConverters converters)
-		{
-			_specifications = specifications;
-			_converters = converters;
-		}
-
-		public IWriter Create(string name, MemberDescriptor member, IWriter content)
-		{
-			var converter = _converters.Get(member);
-			if (converter != null)
-			{
-				IWriter property = new MemberProperty(converter, name);
-				var specification = _specifications.Get(member.Metadata);
-				var writer = specification != null ? new RuntimeMember(specification, property, Wrap(name, content)) : property;
-				return writer;
-			}
-
-			var result = Wrap(name, content);
-			return result;
-		}
-
-		static Enclosure Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
+		public static IConverter Get(this IMemberConverters @this, MemberDescriptor descriptor)
+			=> @this.Get(descriptor.Metadata) ?? @this.Get(descriptor.MemberType);
 	}
 }

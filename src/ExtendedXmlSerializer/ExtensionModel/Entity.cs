@@ -21,23 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class Entity : IEntity
 	{
-		readonly IConverter _converter;
-		readonly Func<object, object> _getter;
+		readonly static EntityProperty EntityProperty = EntityProperty.Default;
 
-		public Entity(IConverter converter, Func<object, object> getter)
+		readonly IConverter _converter;
+		readonly IMember _adapter;
+
+		public Entity(IConverter converter, IMember adapter)
 		{
 			_converter = converter;
-			_getter = getter;
+			_adapter = adapter;
 		}
 
-		public string Get(object parameter) => _converter.Format(_getter.Invoke(parameter));
-		public object Get(string parameter) => _converter.Parse(parameter);
+		public string Get(object parameter) => _converter.Format(_adapter.Adapter.Get(parameter));
+
+		public object Get(IXmlReader parameter) => parameter.Contains(_adapter.Adapter) ? _adapter.Get(parameter) : null;
+
+		public object Reference(IXmlReader parameter)
+			=> parameter.Contains(EntityProperty) ? _converter.Parse(EntityProperty.Get(parameter)) : null;
 	}
 }

@@ -21,45 +21,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Entities : CacheBase<TypeInfo, IEntity>, IEntities
+	class ClassicContentOptions : IContentOptions
 	{
-		readonly IEntityMembers _registered;
-		readonly IMemberConverters _converters;
+		readonly ISerialization _owner;
 		readonly IMembers _members;
+		readonly IMemberOption _variable;
+		readonly ISerializer _runtime;
+		readonly IActivation _activation;
+		readonly IMemberSerialization _memberSerialization;
 
-		public Entities(IEntityMembers registered, IMemberConverters converters, IMembers members)
+		public ClassicContentOptions(
+			IActivation activation,
+			ISerialization owner,
+			IMemberSerialization memberSerialization,
+			IMembers members,
+			IMemberOption variable, ISerializer runtime)
 		{
-			_registered = registered;
-			_converters = converters;
+			_owner = owner;
+			_memberSerialization = memberSerialization;
 			_members = members;
+			_variable = variable;
+			_runtime = runtime;
+			_activation = activation;
 		}
 
-		protected override IEntity Create(TypeInfo parameter)
-		{
-			var memberInfo = _registered.Get(parameter);
-			var result = memberInfo != null ? new Entity(_converters.Get(memberInfo), Locate(parameter, memberInfo)) : null;
-			return result;
-		}
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
+		public IEnumerator<IContentOption> GetEnumerator()
 		{
-			var members = _members.Get(parameter);
-			var length = members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = members[i];
-				if (Equals(member.Adapter.Metadata, memberInfo))
-				{
-					return member;
-				}
-			}
-			return null;
+			yield return new ArrayContentOption(_activation, _owner);
+			var entries = new DictionaryEntries(_activation, _memberSerialization, _variable);
+			yield return new ClassicDictionaryContentOption(_activation, _members, entries);
+			yield return new ClassicCollectionContentOption(_activation, _owner);
+			yield return new MemberedContentOption(_activation, _members);
+			yield return new RuntimeContentOption(_runtime);
 		}
 	}
 }

@@ -31,8 +31,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferenceActivation : IActivation
 	{
 		readonly IActivation _activation;
-		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
+		readonly IReferenceMaps _maps;
 
 		public ReferenceActivation(IActivation activation, IEntities entities)
 			: this(activation, entities, ReferenceMaps.Default) {}
@@ -40,21 +40,21 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public ReferenceActivation(IActivation activation, IEntities entities, IReferenceMaps maps)
 		{
 			_activation = activation;
-			_maps = maps;
 			_entities = entities;
+			_maps = maps;
 		}
 
 		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
 
 		class Activator : IReader
 		{
-			readonly IReader _reader;
+			readonly IReader _activator;
 			readonly IEntities _entities;
 			readonly IReferenceMaps _maps;
 
-			public Activator(IReader reader, IEntities entities, IReferenceMaps maps)
+			public Activator(IReader activator, IEntities entities, IReferenceMaps maps)
 			{
-				_reader = reader;
+				_activator = activator;
 				_entities = entities;
 				_maps = maps;
 			}
@@ -64,12 +64,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 					? (ReferenceIdentity?) new ReferenceIdentity(Defaults.Reference, IdentityProperty.Default.Get(reader))
 					: null;
 
-			ReferenceIdentity? Entity(object instance)
+			ReferenceIdentity? Entity(IXmlReader reader, object instance)
 			{
 				var typeInfo = instance.GetType().GetTypeInfo();
-				var entity = _entities.Get(typeInfo);
+				var entity = _entities.Get(typeInfo)?.Get(reader);
 				var result = entity != null
-					? (ReferenceIdentity?) new ReferenceIdentity(Defaults.Reference, entity.Get(instance))
+					? (ReferenceIdentity?) new ReferenceIdentity(typeInfo, entity)
 					: null;
 				return result;
 			}
@@ -78,9 +78,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			public object Get(IXmlReader parameter)
 			{
 				var declared = Identity(parameter);
-				var result = _reader.Get(parameter);
+				var result = _activator.Get(parameter);
 
-				var identity = declared ?? Entity(result);
+				var identity = declared ?? Entity(parameter, result);
 
 				if (identity != null)
 				{

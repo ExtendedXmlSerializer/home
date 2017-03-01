@@ -21,40 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferencesContentOption : DecoratedContentOption
+	class ClassicDictionaryContentOption : ContentOptionBase
 	{
-		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
+		readonly static AllSpecification<TypeInfo> Specification =
+			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
-		readonly IStoredEncounters _encounters;
-		readonly IEntities _entities;
-		readonly ISpecification<TypeInfo> _specification;
+		readonly IActivation _activation;
+		readonly IMembers _members;
+		readonly IDictionaryEntries _entries;
 
-		public ReferencesContentOption(IStoredEncounters encounters, IEntities entities, IContentOption option)
-			: this(IsReferenceSpecification, encounters, entities, option) {}
-
-		public ReferencesContentOption(ISpecification<TypeInfo> specification, IStoredEncounters encounters,
-		                               IEntities entities,
-		                               IContentOption option) : base(option)
+		public ClassicDictionaryContentOption(IActivation activation, IMembers members, IDictionaryEntries entries)
+			: base(Specification)
 		{
-			_encounters = encounters;
-			_entities = entities;
-			_specification = specification;
+			_activation = activation;
+			_members = members;
+			_entries = entries;
 		}
 
 		public sealed override ISerializer Get(TypeInfo parameter)
 		{
-			var serializer = base.Get(parameter);
-			var result = _specification.IsSatisfiedBy(parameter)
-				? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
-				: serializer;
+			var activator = _activation.Get(parameter);
+			var entry = _entries.Get(parameter);
+			var reader = new DictionaryContentsReader(activator, entry, _members.Get(parameter).ToDictionary(x => x.Adapter.Name));
+			var result = new Serializer(reader, new DictionaryEntryWriter(entry));
 			return result;
+		}
+
+		class DictionaryContentsReader : CollectionContentsReader
+		{
+			readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
+
+			public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
+				: base(new MemberAttributesReader(reader, members),
+				       new CollectionItemReader(entry), Lists) {}
 		}
 	}
 }

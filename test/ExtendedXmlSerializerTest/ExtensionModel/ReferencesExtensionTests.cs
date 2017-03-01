@@ -22,7 +22,11 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using JetBrains.Annotations;
@@ -68,15 +72,20 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void SimpleEntity()
 		{
-			/*var typeInfo = typeof(Subject).GetTypeInfo();
-			var id = typeInfo.GetProperty(nameof(Subject.Id));
-			var entities = new Dictionary<TypeInfo, IEntity>
+			var descriptor = new MemberDescriptor(typeof(Subject).GetTypeInfo().GetProperty(nameof(Subject.Id)));
+			var entities = new Dictionary<TypeInfo, MemberInfo>
 			               {
-				               {typeInfo, new Entity(GuidConverter.Default, GetterFactory.Default.Get(id))}
+				               {descriptor.ReflectedType, descriptor.Metadata}
 			               };
-			var support =
-				new SerializationSupport(
-					new ExtendedXmlConfiguration().Extend(new ReferencesExtension(new Entities(entities))).Create());
+
+			var converters = new Dictionary<MemberInfo, IConverter>
+			                 {
+				                 {descriptor.Metadata, GuidConverter.Default}
+			                 };
+			var sut = new ReferencesExtension(new EntityMembers(entities));
+
+			var memberConfiguration = new MemberConfiguration(converters);
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extend(sut).Create());
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -84,9 +93,9 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			               };
 			expected.Self = expected;
 			var actual = support.Assert(expected,
-			                            @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Id>6dbb618f-dbbd-4909-9644-a1d955f06249</Id><Self xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:entity=""6dbb618f-dbbd-4909-9644-a1d955f06249"" /><PropertyName>Primary Root</PropertyName></ReferencesExtensionTests-Subject>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject Id=""6dbb618f-dbbd-4909-9644-a1d955f06249"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Self xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:entity=""6dbb618f-dbbd-4909-9644-a1d955f06249"" /><PropertyName>Primary Root</PropertyName></ReferencesExtensionTests-Subject>");
 			Assert.NotNull(actual.Self);
-			Assert.Same(actual, actual.Self);*/
+			Assert.Same(actual, actual.Self);
 		}
 
 		class Subject

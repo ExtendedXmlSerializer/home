@@ -22,24 +22,27 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredServices : ISource<IServices>
+	class ConfiguredServices : DefaultRegistrationsExtension,
+	                           IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
 	{
 		readonly ISource<IServices> _source;
-		readonly IAlteration<IServices> _alteration;
 
-		public ConfiguredServices(IReadOnlyList<ISerializerExtension> extensions)
-			: this(ServicesFactory.Default, new ConfiguringAlteration<IServices>(new ConfigureServicesCommand(extensions))) {}
+		public ConfiguredServices(params object[] instances) : this(ServicesFactory.Default, instances) {}
 
-		public ConfiguredServices(ISource<IServices> source, IAlteration<IServices> alteration)
+		public ConfiguredServices(ISource<IServices> source, params object[] instances) : base(instances)
 		{
 			_source = source;
-			_alteration = alteration;
 		}
 
-		public IServices Get() => _alteration.Get(_source.Get());
+		public IServices Get(IEnumerable<ISerializerExtension> parameter)
+			=>
+				new ConfiguringAlteration<IServices>(new ConfigureServicesCommand(this.Yield().Concat(parameter).AsReadOnly()))
+					.Get(_source.Get());
 	}
 }

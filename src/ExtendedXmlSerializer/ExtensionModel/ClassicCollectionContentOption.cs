@@ -22,44 +22,25 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Content;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Entities : CacheBase<TypeInfo, IEntity>, IEntities
+	class ClassicCollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IEntityMembers _registered;
-		readonly IMemberConverters _converters;
-		readonly IMembers _members;
+		readonly IActivation _activation;
 
-		public Entities(IEntityMembers registered, IMemberConverters converters, IMembers members)
+		public ClassicCollectionContentOption(IActivation activation, ISerialization serialization)
+			: base(serialization)
 		{
-			_registered = registered;
-			_converters = converters;
-			_members = members;
+			_activation = activation;
 		}
 
-		protected override IEntity Create(TypeInfo parameter)
-		{
-			var memberInfo = _registered.Get(parameter);
-			var result = memberInfo != null ? new Entity(_converters.Get(memberInfo), Locate(parameter, memberInfo)) : null;
-			return result;
-		}
-
-		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
-		{
-			var members = _members.Get(parameter);
-			var length = members.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var member = members[i];
-				if (Equals(member.Adapter.Metadata, memberInfo))
-				{
-					return member;
-				}
-			}
-			return null;
-		}
+		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
+			=>
+				new Serializer(new CollectionContentsReader(_activation.Get(classification), item),
+				               new EnumerableWriter(item));
 	}
 }

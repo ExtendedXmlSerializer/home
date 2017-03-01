@@ -28,15 +28,15 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferencesContentAlteration : IAlteration<IContentOption>
 	{
-		readonly IIdentities _identities;
+		readonly IStoredEncounters _encounters;
 		readonly IEntities _entities;
 
-		public ReferencesContentAlteration(IIdentities identities, IEntities entities)
+		public ReferencesContentAlteration(IStoredEncounters encounters, IEntities entities)
 		{
-			_identities = identities;
+			_encounters = encounters;
 			_entities = entities;
 		}
 
-		public IContentOption Get(IContentOption parameter) => new ReferencesContentOption(_identities, _entities, parameter);
+		public IContentOption Get(IContentOption parameter) => new ReferencesContentOption(_encounters, _entities, parameter);
 	}
 }

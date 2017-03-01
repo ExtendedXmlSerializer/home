@@ -25,13 +25,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	public struct Identifier
 	{
-		public Identifier(uint uniqueId, string entityId = null)
+		public Identifier(uint uniqueId, IEntity entity = null)
 		{
 			UniqueId = uniqueId;
-			EntityId = entityId;
+			Entity = entity;
 		}
 
 		public uint UniqueId { get; }
-		public string EntityId { get; }
+		public IEntity Entity { get; }
 	}
 }

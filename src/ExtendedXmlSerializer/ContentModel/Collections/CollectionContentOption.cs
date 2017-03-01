@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var membered = new MemberedCollectionItemReader(items, dictionary);
 
 			var attributes = new MemberAttributesReader(activator, dictionary);
-			var reader = new CollectionContentsReader(attributes, membered, itemType);
+			var reader = new CollectionContentsReader(attributes, membered);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;

@@ -50,6 +50,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		public IMemberAdapter Adapter { get; }
-		public object Get(IXmlReader parameter) => _reader.Get(parameter/*new TypeAwareXmlReader(parameter, Adapter.MemberType)*/);
+		public object Get(IXmlReader parameter) => _reader.Get(parameter);
 	}
 }

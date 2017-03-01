@@ -23,12 +23,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
@@ -130,8 +128,7 @@ namespace ExtendedXmlSerialization.Configuration
 			var instances = new Instances(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
 			                              new XmlFactory(ReaderSettings, WriterSettings)).ToArray();
 
-			var extensions = new DefaultRegistrationsExtension(instances).Yield().Concat(_extensions).AsReadOnly();
-			using (var services = new ConfiguredServices(extensions).Get())
+			using (var services = new ConfiguredServices(instances).Get(_extensions))
 			{
 				var result = services.Get<IExtendedXmlSerializer>();
 				return result;

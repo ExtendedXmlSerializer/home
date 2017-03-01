@@ -29,21 +29,18 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferenceIdentifiers : IParameterizedSource<object, Identifier>
 	{
-		readonly IEntities _identities;
+		readonly IEntities _entities;
 		readonly ObjectIdGenerator _generator;
 
-		public ReferenceIdentifiers(IEntities identities) : this(identities, new ObjectIdGenerator()) {}
+		public ReferenceIdentifiers(IEntities entities) : this(entities, new ObjectIdGenerator()) {}
 
-		public ReferenceIdentifiers(IEntities identities, ObjectIdGenerator generator)
+		public ReferenceIdentifiers(IEntities entities, ObjectIdGenerator generator)
 		{
-			_identities = identities;
+			_entities = entities;
 			_generator = generator;
 		}
 
 		public Identifier Get(object parameter)
-			=> new Identifier(
-				(uint) _generator.For(parameter).UniqueId,
-				_identities.Get(parameter.GetType().GetTypeInfo())?.Get(parameter)
-			);
+			=> new Identifier((uint) _generator.For(parameter).UniqueId, _entities.Get(parameter.GetType().GetTypeInfo()));
 	}
 }

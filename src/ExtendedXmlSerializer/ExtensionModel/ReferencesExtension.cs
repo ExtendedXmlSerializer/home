@@ -32,26 +32,28 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferencesExtension : ISerializerExtension
 	{
-		readonly IEntities _entities;
+		readonly IEntityMembers _members;
 		readonly Func<IServiceFactory, IActivation, IActivation> _decorate;
 
-		public ReferencesExtension() : this(new Entities(new Dictionary<TypeInfo, IEntity>())) {}
+		public ReferencesExtension() : this(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>())) {}
 
-		public ReferencesExtension(IEntities entities)
+		public ReferencesExtension(IEntityMembers members)
 		{
-			_entities = entities;
+			_members = members;
 			_decorate = Decorate;
 		}
 
 		public IServices Get(IServices parameter) =>
-			parameter.RegisterInstance(_entities)
-			         .Register<IIdentities, Identities>()
+			parameter.RegisterInstance(_members)
+			         .Register<IStoredEncounters, StoredEncounters>()
+			         .Register<IEntities, Entities>()
 			         .Register<ReferencesContentAlteration>()
 			         .Decorate(_decorate)
 			         .Decorate<IContentOptions>(
 				         (factory, options) =>
 					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()));
 
-		IActivation Decorate(IServiceFactory arg1, IActivation activation) => new ReferenceActivation(activation, _entities);
+		IActivation Decorate(IServiceFactory factory, IActivation activation)
+			=> new ReferenceActivation(activation, factory.GetInstance<IEntities>());
 	}
 }
