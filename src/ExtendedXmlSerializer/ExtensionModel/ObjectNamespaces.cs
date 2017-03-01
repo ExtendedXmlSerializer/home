@@ -28,6 +28,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.Core;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -52,13 +53,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public ImmutableArray<Namespace> Get(object parameter)
 		{
-			var types = new ObjectTypeWalker(_members, parameter).Get().Distinct().ToImmutableArray();
-			var items = types.Length > 1 ? types.Add(ContentModel.Defaults.FrameworkType) : types;
-			var result = items
+			var identifiers = new ObjectTypeWalker(_members, parameter)
+				.Get()
 				.Select(_names)
-				.Distinct()
-				.Select(_namespaces)
-				.ToImmutableArray();
+				.Distinct().ToArray();
+			var result =
+				new Namespace(Defaults.Xmlns.Name, identifiers[0]).Yield()
+				                                                  .Concat(identifiers.Skip(1).Select(_namespaces))
+				                                                  .ToImmutableArray();
 			return result;
 		}
 	}

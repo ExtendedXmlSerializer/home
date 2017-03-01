@@ -22,11 +22,15 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	static class Defaults
 	{
 		public static TypeInfo Reference { get; } = typeof(ReferenceIdentity).GetTypeInfo();
+
+		public static Namespace Xmlns { get; } = new Namespace(nameof(XNamespace.Xmlns).ToLower());
 	}
 }

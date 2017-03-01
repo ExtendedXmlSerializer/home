@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -63,8 +62,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		class Writer : ReferenceCache<IXmlWriter, ConditionMonitor>, IWriter
 		{
-			readonly static string Prefix = nameof(XNamespace.Xmlns).ToLower();
-
 			readonly IObjectNamespaces _namespaces;
 			readonly IWriter _writer;
 
@@ -78,27 +75,17 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			{
 				_writer.Write(writer, instance);
 
-				var apply = instance == writer.Root && Get(writer).Apply();
-				if (apply)
+				if (instance == writer.Root && Get(writer).Apply())
 				{
 					var namespaces = _namespaces.Get(writer.Root);
 					var length = namespaces.Length;
 					for (var i = 0; i < length; i++)
 					{
-						var attribute = Attribute(namespaces[i], i);
+						var ns = namespaces[i];
+						var @namespace = !ns.Name.Equals(Defaults.Xmlns.Name) ? (Namespace?) Defaults.Xmlns : null;
+						var attribute = new Attribute(ns.Name, ns.Identifier, @namespace);
 						writer.Attribute(attribute);
 					}
-				}
-			}
-
-			static Attribute Attribute(Namespace ns, int index)
-			{
-				switch (index)
-				{
-					case 0:
-						return new Attribute(Prefix, ns.Identifier);
-					default:
-						return new Attribute(ns.Name, ns.Identifier, new Namespace(Prefix));
 				}
 			}
 		}

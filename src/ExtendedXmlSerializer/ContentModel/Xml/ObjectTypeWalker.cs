@@ -28,15 +28,25 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Legacy.Cache;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class ObjectTypeWalker : ObjectWalkerBase<object, IEnumerable<TypeInfo>>, ISource<IEnumerable<TypeInfo>>
 	{
+		readonly IDictionaryPairTypesLocator _pairs;
+		readonly IElementTypeLocator _item;
 		readonly IMembers _members;
 
-		public ObjectTypeWalker(IMembers members, object root) : base(root)
+		public ObjectTypeWalker(IMembers members, object root)
+			: this(DictionaryPairTypesLocator.Default, ElementTypeLocator.Default, members, root) {}
+
+		public ObjectTypeWalker(IDictionaryPairTypesLocator pairs, IElementTypeLocator item, IMembers members, object root)
+			: base(root)
 		{
+			_pairs = pairs;
+			_item = item;
 			_members = members;
 		}
 
@@ -54,21 +64,45 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				var variable = member.Adapter as IVariableTypeMemberAdapter;
 				if (variable != null)
 				{
-					var instance = member.Adapter.Get(input);
-					var isSatisfiedBy = variable.IsSatisfiedBy(instance.GetType());
-					if (isSatisfiedBy)
+					var instance = variable.Get(input);
+					var type = instance.GetType();
+					if (Schedule(instance) && variable.IsSatisfiedBy(type))
 					{
-						Schedule(instance);
+						yield return Defaults.FrameworkType;
 					}
 				}
 			}
 
-			var enumerable = input as IEnumerable;
-			if (enumerable != null)
+			var dictionary = input as IDictionary;
+			if (dictionary != null)
 			{
-				foreach (var item in enumerable)
+				var types = _pairs.Get(dictionary.GetType().GetTypeInfo());
+				foreach (DictionaryEntry item in dictionary)
 				{
-					Schedule(item);
+					var key = item.Key;
+					var keyType = key.GetType().GetTypeInfo();
+					if (Schedule(item.Key) && !Equals(keyType, types.KeyType))
+					{
+						yield return Defaults.FrameworkType;
+					}
+
+					var value = item.Value;
+					var valueType = value.GetType().GetTypeInfo();
+					if (Schedule(item.Value) && !Equals(valueType, types.ValueType))
+					{
+						yield return Defaults.FrameworkType;
+					}
+				}
+			}
+			else
+			{
+				var enumerable = input as IEnumerable;
+				if (enumerable != null)
+				{
+					foreach (var item in enumerable)
+					{
+						Schedule(item);
+					}
 				}
 			}
 		}

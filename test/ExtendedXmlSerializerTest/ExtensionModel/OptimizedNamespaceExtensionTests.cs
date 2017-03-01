@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ExtensionModel;
@@ -43,27 +44,20 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			Assert.Equal(expected, data);
 		}
 
+		[Fact]
+		public void OptimizedList()
+		{
+			const string expected = 
 #if CORE
-		[Fact]
-		public void OptimizedList()
-		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:ns2=""clr-namespace:System.Collections.Generic;assembly=System.Collections"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns2:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
-			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
-			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
-			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
-		}
+			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Collections"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
 #else
-		[Fact]
-		public void OptimizedList()
-		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:ns2=""clr-namespace:System.Collections.Generic;assembly=System.Core"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns2:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Core"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#endif
 			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
 			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}
-#endif
 
 		class ClassWithDifferingPropertyType
 		{
