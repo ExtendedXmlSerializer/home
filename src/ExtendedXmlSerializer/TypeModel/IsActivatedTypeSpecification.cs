@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -31,11 +30,18 @@ namespace ExtendedXmlSerialization.TypeModel
 	{
 		readonly static TypeInfo GeneralObject = typeof(object).GetTypeInfo();
 		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
-		IsActivatedTypeSpecification() {}
+		IsActivatedTypeSpecification() : this(ConstructorLocator.Default) {}
+
+		readonly IConstructorLocator _locator;
+
+		public IsActivatedTypeSpecification(IConstructorLocator locator)
+		{
+			_locator = locator;
+		}
 
 		public bool IsSatisfiedBy(TypeInfo parameter)
 			=> parameter.IsValueType ||
 			   !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject) &&
-			   parameter.GetConstructor(Type.EmptyTypes) != null;
+			   _locator.Get(parameter) != null;
 	}
 }

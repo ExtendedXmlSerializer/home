@@ -21,41 +21,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ObjectTypeWalker : MemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
+	public abstract class MemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{
-		public ObjectTypeWalker(IMembers members, object root) : base(members, root) {}
+		readonly IMembers _members;
 
-		protected override IEnumerable<TypeInfo> Yield(IMember member, object instance)
+		protected MemberWalkerBase(IMembers members, object root) : base(root)
 		{
-			var variable = member.Adapter as IVariableTypeMemberAdapter;
-			if (variable != null)
+			_members = members;
+		}
+
+		protected override IEnumerable<T> Select(object input)
+		{
+			var parameter = input.GetType().GetTypeInfo();
+
+			foreach (var item in Members(input, parameter))
 			{
-				var current = variable.Get(instance);
-				if (Schedule(current) && variable.IsSatisfiedBy(current.GetType()))
+				yield return item;
+			}
+
+			var iterator = (input as IDictionary)?.GetEnumerator() ?? (input as IEnumerable)?.GetEnumerator();
+			while (iterator?.MoveNext() ?? false)
+			{
+				foreach (var item in Yield(iterator.Current))
 				{
-					yield return Defaults.FrameworkType;
+					yield return item;
 				}
 			}
 		}
 
-		protected override IEnumerable<TypeInfo> Yield(object instance)
+		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)
 		{
-			Schedule(instance);
-			yield break;
+			var members = _members.Get(parameter);
+			var length = members.Length;
+
+			for (var i = 0; i < length; i++)
+			{
+				var member = members[i];
+
+				foreach (var item in Yield(member, input))
+				{
+					yield return item;
+				}
+			}
 		}
 
-		protected override IEnumerable<TypeInfo> Members(object input, TypeInfo parameter)
-			=> parameter.Yield().Concat(base.Members(input, parameter));
+		protected abstract IEnumerable<T> Yield(IMember member, object instance);
 
-		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
+		protected abstract IEnumerable<T> Yield(object instance);
 	}
 }

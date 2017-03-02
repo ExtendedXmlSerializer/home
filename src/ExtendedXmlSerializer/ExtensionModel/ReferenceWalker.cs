@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,68 +30,23 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceWalker : ObjectWalkerBase<object, IEnumerable<object>>, ISource<IReadOnlyList<object>>
+	class ReferenceWalker : MemberWalkerBase<object>, ISource<IReadOnlyList<object>>
 	{
-		readonly IMembers _members;
-		readonly Func<object, bool> _check;
+		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
+		public ReferenceWalker(IMembers members, object root) : base(members, root) {}
 
-		public ReferenceWalker(IMembers members, object root) : base(root)
+		protected override IEnumerable<object> Yield(IMember member, object instance)
 		{
-			_members = members;
-			_check = Check;
+			var variable = member.Adapter as IVariableTypeMemberAdapter;
+			var result = variable != null ? Yield(member.Adapter.Get(instance)) : Empty;
+			return result;
 		}
 
-		protected sealed override IEnumerable<object> Select(object input)
+		protected override IEnumerable<object> Yield(object instance)
 		{
-			var parameter = input.GetType().GetTypeInfo();
-			var members = _members.Get(parameter);
-			var length = members.Length;
-
-			for (var i = 0; i < length; i++)
+			if (Check(instance))
 			{
-				var member = members[i];
-				var variable = member.Adapter as IVariableTypeMemberAdapter;
-				if (variable != null)
-				{
-					var instance = member.Adapter.Get(input);
-					if (_check(instance))
-					{
-						yield return instance;
-					}
-				}
-			}
-
-			var dictionary = input as IDictionary;
-			if (dictionary != null)
-			{
-				foreach (DictionaryEntry item in dictionary)
-				{
-					var key = item.Key;
-					if (Check(key))
-					{
-						yield return key;
-					}
-
-					var value = item.Value;
-					if (Check(value))
-					{
-						yield return value;
-					}
-				}
-			}
-			else
-			{
-				var enumerable = input as IEnumerable;
-				if (enumerable != null)
-				{
-					foreach (var item in enumerable)
-					{
-						if (_check(item))
-						{
-							yield return item;
-						}
-					}
-				}
+				yield return instance;
 			}
 		}
 
