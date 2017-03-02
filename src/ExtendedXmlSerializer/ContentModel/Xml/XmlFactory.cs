@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public IXmlWriter Create(Stream stream, object instance)
 			=> new XmlWriter(System.Xml.XmlWriter.Create(stream, _writerSettings), instance);
 
-		public IXmlReader Create(Stream stream) => 
+		public IXmlReader Create(Stream stream) =>
 			new XmlReader(System.Xml.XmlReader.Create(stream, _readerSettings));
 	}
 }

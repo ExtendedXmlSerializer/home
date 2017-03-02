@@ -21,29 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Core.Specifications
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	public class VariableTypeSpecification : InverseSpecification<TypeInfo>
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
-
-		public StoredEncounters(IRootReferences references, IEntities entities)
-		{
-			_references = references;
-			_entities = entities;
-		}
-
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
-		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
-		}
+		public static VariableTypeSpecification Default { get; } = new VariableTypeSpecification();
+		VariableTypeSpecification() : base(FixedTypeSpecification.Default) {}
 	}
 }

@@ -30,9 +30,10 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceWalker : MemberWalkerBase<object>, ISource<IReadOnlyList<object>>
+	class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<IReadOnlyList<object>>
 	{
 		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
+
 		public ReferenceWalker(IMembers members, object root) : base(members, root) {}
 
 		protected override IEnumerable<object> Yield(IMember member, object instance)

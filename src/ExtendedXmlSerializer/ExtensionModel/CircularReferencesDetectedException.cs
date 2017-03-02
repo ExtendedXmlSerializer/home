@@ -21,29 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
+using System;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	class CircularReferencesDetectedException : Exception
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
-
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		public CircularReferencesDetectedException(string message, IXmlWriter writer) : base(message)
 		{
-			_references = references;
-			_entities = entities;
+			Writer = writer;
 		}
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
-		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
-		}
+		public IXmlWriter Writer { get; }
 	}
 }

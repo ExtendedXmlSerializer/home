@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
@@ -30,7 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	class VariableTypeElementOption : NamedElementOptionBase
 	{
 		readonly Xml.IIdentities _identities;
-		readonly static ISpecification<TypeInfo> Specification = FixedTypeSpecification.Default.Inverse();
+		readonly static ISpecification<TypeInfo> Specification = Core.Specifications.VariableTypeSpecification.Default;
 
 		public static VariableTypeElementOption Default { get; } = new VariableTypeElementOption();
 		VariableTypeElementOption() : this(Xml.Identities.Default) {}

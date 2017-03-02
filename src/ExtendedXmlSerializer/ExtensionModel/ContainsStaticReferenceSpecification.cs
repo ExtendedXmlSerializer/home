@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
+		public ContainsStaticReferenceSpecification(IMembers members) : base(new Cache(members).Get) {}
 
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		sealed class Cache : CacheBase<TypeInfo, bool>
 		{
-			_references = references;
-			_entities = entities;
-		}
+			readonly IMembers _members;
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
-		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
+			public Cache(IMembers members)
+			{
+				_members = members;
+			}
+
+			protected override bool Create(TypeInfo parameter)
+			{
+				var variables = new VariableTypeWalker(_members, parameter).Get();
+				var length = variables.Count;
+				for (var i = 0; i < length; i++)
+				{
+					var first = variables[i];
+					for (var j = 0; j < length; j++)
+					{
+						var second = variables[j];
+						if (i != j &&
+						    (first.IsInterface || second.IsInterface || first.IsAssignableFrom(second) || second.IsAssignableFrom(first))
+						)
+						{
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		}
 	}
 }

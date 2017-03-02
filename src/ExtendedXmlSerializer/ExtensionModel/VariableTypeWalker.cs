@@ -21,29 +21,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IReadOnlyList<TypeInfo>>
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
+		readonly ISpecification<TypeInfo> _specification;
 
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		public VariableTypeWalker(IMembers members, TypeInfo root) : this(VariableTypeSpecification.Default, members, root) {}
+
+		public VariableTypeWalker(ISpecification<TypeInfo> specification, IMembers members, TypeInfo root)
+			: base(members, root)
 		{
-			_references = references;
-			_entities = entities;
+			_specification = specification;
 		}
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
+		protected override IEnumerable<TypeInfo> Select(TypeInfo type)
 		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
+			foreach (var typeInfo in type.Yield().Concat(base.Select(type)))
+			{
+				if (_specification.IsSatisfiedBy(typeInfo))
+				{
+					yield return typeInfo;
+				}
+			}
 		}
+
+		protected override IEnumerable<TypeInfo> Yield(IMember member)
+		{
+			var type = member.Adapter.MemberType;
+			if (!Schedule(type))
+			{
+				yield return type;
+			}
+		}
+
+		public IReadOnlyList<TypeInfo> Get() => this.SelectMany(x => x).AsReadOnly();
 	}
 }

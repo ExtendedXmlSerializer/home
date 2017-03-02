@@ -21,29 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	abstract class TypeMemberWalkerBase<T> : ObjectWalkerBase<TypeInfo, IEnumerable<T>>
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
+		readonly IMembers _members;
 
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		protected TypeMemberWalkerBase(IMembers members, TypeInfo root) : base(root)
 		{
-			_references = references;
-			_entities = entities;
+			_members = members;
 		}
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
+		protected override IEnumerable<T> Select(TypeInfo type)
 		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
+			foreach (var item in Members(type))
+			{
+				yield return item;
+			}
 		}
+
+		protected virtual IEnumerable<T> Members(TypeInfo parameter)
+		{
+			var members = _members.Get(parameter);
+			var length = members.Length;
+
+			for (var i = 0; i < length; i++)
+			{
+				var member = members[i];
+
+				foreach (var item in Yield(member))
+				{
+					yield return item;
+				}
+			}
+		}
+
+		protected abstract IEnumerable<T> Yield(IMember member);
 	}
 }

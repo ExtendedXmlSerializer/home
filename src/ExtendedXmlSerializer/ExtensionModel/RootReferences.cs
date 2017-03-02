@@ -21,29 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	sealed class RootReferences : ReferenceCacheBase<IXmlWriter, IReadOnlyList<object>>, IRootReferences
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
+		readonly IMembers _members;
 
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		public RootReferences(IMembers members)
 		{
-			_references = references;
-			_entities = entities;
+			_members = members;
 		}
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
-		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
-		}
+		protected override IReadOnlyList<object> Create(IXmlWriter parameter)
+			=> new ReferenceWalker(_members, parameter.Root).Get();
 	}
 }
