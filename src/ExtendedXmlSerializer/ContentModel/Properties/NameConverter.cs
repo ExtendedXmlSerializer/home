@@ -45,9 +45,9 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_selector = Format;
 		}
 
-		public override ParsedName Parse(string data) => _names.Get(data);
+		public sealed override ParsedName Parse(string data) => _names.Get(data);
 
-		public override string Format(ParsedName instance)
+		public sealed override string Format(ParsedName instance)
 		{
 			var arguments = instance.GetArguments();
 			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;

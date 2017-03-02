@@ -39,6 +39,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_source = source;
 		}
 
-		public override TResult Get(TParameter parameter) => _source(parameter);
+		public sealed override TResult Get(TParameter parameter) => _source(parameter);
 	}
 }

@@ -34,6 +34,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_factory = factory;
 		}
 
-		protected override TValue Create(TKey parameter) => _factory(parameter);
+		protected sealed override TValue Create(TKey parameter) => _factory(parameter);
 	}
 }

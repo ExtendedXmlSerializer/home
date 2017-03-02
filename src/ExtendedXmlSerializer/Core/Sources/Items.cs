@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_items = items;
 		}
 
-		public override IEnumerator<T> GetEnumerator()
+		public sealed override IEnumerator<T> GetEnumerator()
 		{
 			var length = _items.Length;
 			for (var i = 0; i < length; i++)

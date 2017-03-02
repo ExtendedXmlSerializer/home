@@ -36,8 +36,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_converter = converter;
 		}
 
-		protected override object Parse(IXmlReader parameter, string data) => _converter.Parse(data);
+		protected sealed override object Parse(IXmlReader parameter, string data) => _converter.Parse(data);
 
-		protected override string Format(IXmlWriter writer, object instance) => _converter.Format(instance);
+		protected sealed override string Format(IXmlWriter writer, object instance) => _converter.Format(instance);
 	}
 }

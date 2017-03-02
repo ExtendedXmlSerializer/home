@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class ApplicationTypes : CacheBase<Assembly, IReadOnlyList<TypeInfo>>, IApplicationTypes
+	sealed class ApplicationTypes : CacheBase<Assembly, IReadOnlyList<TypeInfo>>, IApplicationTypes
 	{
 		readonly static Func<TypeInfo, bool> Specification = ApplicationTypeSpecification.Default.IsSatisfiedBy;
 

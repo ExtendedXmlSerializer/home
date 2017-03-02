@@ -23,53 +23,51 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using System.Xml;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
-		readonly IExtendedXmlSerializerFactory _factory;
-		readonly IDictionary<MemberInfo, IConverter> _converters;
-		readonly IMemberEmitSpecifications _emit;
-		readonly IDictionary<MemberInfo, IRuntimeMemberSpecification> _runtime;
+		readonly IActivation _activation;
+		readonly IMemberConfiguration _memberConfiguration;
+		readonly IEnumerable<IConverter> _converters;
 
-		public ExtendedXmlConfiguration()
-			: this(ExtendedXmlSerializerFactory.Default) {}
+		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
 
-		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory)
-			: this(
-				factory,
-				new Dictionary<MemberInfo, IConverter>(),
-				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
+		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
 
-		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory,
-		                                IDictionary<MemberInfo, IConverter> converters,
-		                                IDictionary<MemberInfo, IMemberEmitSpecification> emit,
-		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(factory, converters, new MemberEmitSpecifications(emit), runtime) {}
+		public ExtendedXmlConfiguration(IMemberConfiguration memberConfiguration)
+			: this(Activation.Default, memberConfiguration) {}
 
-		public ExtendedXmlConfiguration(IExtendedXmlSerializerFactory factory,
-		                                IDictionary<MemberInfo, IConverter> converters,
-		                                IMemberEmitSpecifications emit,
-		                                IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration)
+			: this(activation, memberConfiguration, WellKnownConverters.Default) {}
+
+		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration,
+		                                IEnumerable<IConverter> converters)
 		{
-			_factory = factory;
+			_activation = activation;
+			_memberConfiguration = memberConfiguration;
 			_converters = converters;
-			_emit = emit;
-			_runtime = runtime;
 		}
 
 		public bool AutoProperties { get; set; }
 		public bool Namespaces { get; set; }
-		public XmlReaderSettings ReaderSettings { get; set; }
-		public XmlWriterSettings WriterSettings { get; set; }
+
+		public XmlReaderSettings ReaderSettings { get; set; } = new XmlReaderSettings
+		                                                        {
+			                                                        IgnoreWhitespace = true,
+			                                                        IgnoreComments = true,
+			                                                        IgnoreProcessingInstructions = true
+		                                                        };
+
+		public XmlWriterSettings WriterSettings { get; set; } = new XmlWriterSettings();
 		public IPropertyEncryption EncryptionAlgorithm { get; set; }
 
 		IExtendedXmlTypeConfiguration IInternalExtendedXmlConfiguration.GetTypeConfiguration(Type type)
@@ -127,13 +125,20 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var policy = Defaults.MemberPolicy;
+			var instances = new Instances(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
+			                              new XmlFactory(ReaderSettings, WriterSettings)).ToArray();
 
-			var serializers = new MemberSerializers(new RuntimeMemberSpecifications(_runtime), new MemberConverters(_converters));
-			var configuration = new SerializationConfiguration(_emit, serializers, TypeSelector.Default, MemberAliases.Default,
-			                                                   policy);
-			var result = _factory.Get(configuration);
-			return result;
+			using (var services = new ConfiguredServices(instances).Get(_extensions))
+			{
+				var result = services.Get<IExtendedXmlSerializer>();
+				return result;
+			}
+		}
+
+		public IExtendedXmlConfiguration Extend(ISerializerExtension extension)
+		{
+			_extensions.Add(extension);
+			return this;
 		}
 	}
 }

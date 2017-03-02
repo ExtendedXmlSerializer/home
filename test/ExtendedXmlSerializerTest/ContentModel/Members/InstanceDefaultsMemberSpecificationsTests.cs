@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using Xunit;
 
@@ -38,18 +36,20 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		public void EmitValuesBasedOnInstanceDefaults()
 		{
 			var instance = new SubjectWithDefaultValue();
-			SerializationSupport.Default.Assert(instance, 
-				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><SomeValue>This is a Default Value!</SomeValue></InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue>");
+			SerializationSupport.Default.Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><SomeValue>This is a Default Value!</SomeValue></InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue>");
 
-			var configuration = new ExtendedXmlConfiguration(
-				ExtendedXmlSerializerFactory.Default, 
-				new Dictionary<MemberInfo, IConverter>(), 
-			    new MemberEmitSpecifications(InstanceDefaultsMemberSpecifications.Default, FixedMemberEmitSpecifications.Default), 
-			    new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
+			var configuration = new ExtendedXmlConfiguration().Extend(new Extension());
 
 			var support = new SerializationSupport(configuration.Create());
-			support.Assert(instance, 
-				@"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest"" />");
+			support.Assert(instance,
+			               @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest"" />");
+		}
+
+		class Extension : ISerializerExtension
+		{
+			public IServices Get(IServices parameter) =>
+				parameter.RegisterInstance(InstanceDefaultsMemberSpecifications.Default);
 		}
 
 		[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
@@ -61,6 +61,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 			{
 				SomeValue = someValue;
 			}
+
 			public string SomeValue { get; set; }
 		}
 	}

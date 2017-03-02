@@ -34,10 +34,10 @@ namespace ExtendedXmlSerialization.Test.Legacy
 		protected ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer Serializer { get; set; } = new ExtendedXmlSerialization.Legacy.ExtendedXmlSerializer();
 
 
-#if NET451
-		const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-#else
+#if CORE
 		private const string CoreLib = "System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e";
+#else
+		const string CoreLib = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #endif
 
 		static string SerializeObject(object toSerialize)

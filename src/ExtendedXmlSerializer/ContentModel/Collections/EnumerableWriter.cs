@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
 
-		public override void Write(IXmlWriter writer, T instance)
+		public sealed override void Write(IXmlWriter writer, T instance)
 		{
 			var enumerator = Get(instance);
 			while (enumerator.MoveNext())

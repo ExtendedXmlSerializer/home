@@ -27,19 +27,19 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class TypeMemberDefaults : ReferenceCacheBase<TypeInfo, Func<MemberInfo, object>>, ITypeMemberDefaults
+	sealed class TypeMemberDefaults : ReferenceCacheBase<TypeInfo, Func<MemberInfo, object>>, ITypeMemberDefaults
 	{
 		public static TypeMemberDefaults Default { get; } = new TypeMemberDefaults();
 		TypeMemberDefaults() : this(TypeDefaults.Default) {}
 
-		readonly ITypeDefaults _instances;
+		readonly ITypeDefaults _defaults;
 
-		public TypeMemberDefaults(ITypeDefaults instances)
+		public TypeMemberDefaults(ITypeDefaults defaults)
 		{
-			_instances = instances;
+			_defaults = defaults;
 		}
 
 		protected override Func<MemberInfo, object> Create(TypeInfo parameter)
-			=> new MemberDefaults(_instances.Get(parameter)).Get;
+			=> new MemberDefaults(_defaults.Get(parameter)).Get;
 	}
 }

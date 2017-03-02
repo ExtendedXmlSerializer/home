@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel
 		public static bool operator ==(Identity left, Identity right) => left._code == right._code;
 		public static bool operator !=(Identity left, Identity right) => left._code != right._code;
 		public bool Equals(IIdentity other) => _code == other.GetHashCode();
-		public override int GetHashCode() => _code;
-		public override bool Equals(object obj) => obj is IIdentity && Equals((IIdentity) obj);
+		public sealed override int GetHashCode() => _code;
+		public sealed override bool Equals(object obj) => obj is IIdentity && Equals((IIdentity) obj);
 	}
 }

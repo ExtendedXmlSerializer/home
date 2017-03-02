@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class TypeDefaults : ReferenceCacheBase<TypeInfo, object>, ITypeDefaults
+	sealed class TypeDefaults : ReferenceCacheBase<TypeInfo, object>, ITypeDefaults
 	{
 		public static TypeDefaults Default { get; } = new TypeDefaults();
 		TypeDefaults() : this(Activators.Default) {}

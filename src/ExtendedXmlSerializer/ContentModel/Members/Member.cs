@@ -21,50 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Member : Serializer, IMember
+	sealed class Member : IMember
 	{
 		readonly ISpecification<object> _emit;
-		readonly Action<object, object> _setter;
-		readonly Func<object, object> _getter;
+		readonly IReader _reader;
+		readonly IWriter _writer;
 
-		public Member(MemberProfile profile, Func<object, object> getter, Action<object, object> setter)
-			: this(profile.Specification, profile.Identity.Name, getter, setter, profile.Reader, profile.Writer) {}
-
-		protected Member(ISpecification<object> emit, string displayName, Func<object, object> getter,
-		                 Action<object, object> setter, IReader reader, IWriter writer) : base(reader, writer)
+		public Member(ISpecification<object> emit, IMemberAdapter adapter, IReader reader, IWriter writer)
 		{
-			DisplayName = displayName;
+			Adapter = adapter;
 			_emit = emit;
-			_setter = setter;
-			_getter = getter;
+			_reader = reader;
+			_writer = writer;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public void Write(IXmlWriter writer, object instance)
 		{
-			var value = Get(instance);
+			var value = Adapter.Get(instance);
 			if (_emit.IsSatisfiedBy(value))
 			{
-				base.Write(writer, value);
+				_writer.Write(writer, value);
 			}
 		}
 
-
-		public string DisplayName { get; }
-
-		public virtual object Get(object instance) => _getter(instance);
-
-		public virtual void Assign(object instance, object value)
-		{
-			if (value != null)
-			{
-				_setter(instance, value);
-			}
-		}
+		public IMemberAdapter Adapter { get; }
+		public object Get(IXmlReader parameter) => _reader.Get(parameter);
 	}
 }

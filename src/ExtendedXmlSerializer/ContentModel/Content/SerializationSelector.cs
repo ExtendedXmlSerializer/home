@@ -31,6 +31,6 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	{
 		public SerializationSelector(params IOption<TypeInfo, IContainer>[] options) : base(options) {}
 
-		public override IContainer Get(TypeInfo parameter) => base.Get(parameter.AccountForNullable());
+		public sealed override IContainer Get(TypeInfo parameter) => base.Get(parameter.AccountForNullable());
 	}
 }

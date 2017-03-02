@@ -23,36 +23,30 @@
 
 using System;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class VariableTypeMemberOption : MemberOption
 	{
-		readonly ISerialization _serialization;
+		readonly static VariableTypeMemberSpecification Specification = VariableTypeMemberSpecification.Default;
 		readonly ISerializer _runtime;
 
-		public VariableTypeMemberOption(ISerialization serialization, ISerializer runtime)
-			: base(VariableTypeMemberSpecification.Default)
+		public VariableTypeMemberOption(ISerializer runtime) : base(Specification)
 		{
-			_serialization = serialization;
 			_runtime = runtime;
 		}
 
-		protected override IMember CreateMember(MemberProfile profile, Func<object, object> getter,
-		                                        Action<object, object> setter)
+		protected sealed override IMember CreateMember(MemberProfile profile, Func<object, object> getter,
+		                                               Action<object, object> setter)
 		{
 			// TODO: This should be simplified:
-
-			var specification = new EqualitySpecification<Type>(profile.MemberType.AsType()).Inverse();
-			var content = _serialization.Get(profile.MemberType).Get();
+			var specification = new VariableTypeSpecification(profile.MemberType.AsType());
 			var writer = new Enclosure(new MemberElement(profile.Identity.Name),
-			                           new VariableTypeWriter(specification, _runtime, content));
+			                           new VariableTypedMemberWriter(specification, _runtime, profile.Content));
 			var decorated = new MemberProfile(profile.Specification, profile.Identity.Name, profile.AllowWrite, profile.Order,
-			                                  profile.Metadata, profile.MemberType, content, writer);
-			var member = base.CreateMember(decorated, getter, setter);
-			var result = new VariableTypeMember(specification, member);
+			                                  profile.Metadata, profile.MemberType, profile.Content, profile.Reader, writer);
+			var adapter = new VariableTypeMemberAdapter(specification, new MemberAdapterSelector(getter, setter).Get(decorated));
+			var result = base.CreateMember(decorated, adapter);
 			return result;
 		}
 	}

@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_items = items;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_items.Write(writer, instance);

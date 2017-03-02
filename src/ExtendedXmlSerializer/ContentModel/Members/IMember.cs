@@ -23,10 +23,8 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMember : ISerializer, IDisplay
+	public interface IMember : ISerializer
 	{
-		object Get(object instance);
-
-		void Assign(object instance, object value);
+		IMemberAdapter Adapter { get; }
 	}
 }

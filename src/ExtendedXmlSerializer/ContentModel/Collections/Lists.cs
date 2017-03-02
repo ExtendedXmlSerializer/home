@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class Lists : ReferenceCacheBase<object, IList>, ILists
+	sealed class Lists : ReferenceCacheBase<object, IList>, ILists
 	{
 		public static Lists Default { get; } = new Lists();
 		Lists() : this(AddDelegates.Default) {}

@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_parser = parser;
 		}
 
-		public override Parser<T> Get() => _parser;
+		public sealed override Parser<T> Get() => _parser;
 
 		public static implicit operator Parser<T>(FixedParser<T> instance) => instance._parser;
 	}

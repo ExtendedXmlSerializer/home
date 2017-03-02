@@ -30,12 +30,6 @@ namespace ExtendedXmlSerialization.Configuration
 {
 	static class Defaults
 	{
-		public static MemberSpecification<FieldInfo> Field { get; } =
-			new MemberSpecification<FieldInfo>(FieldMemberSpecification.Default);
-
-		public static MemberSpecification<PropertyInfo> Property { get; } =
-			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
-
 		public static IMemberPolicy MemberPolicy { get; } = new BlacklistMemberPolicy(
 			typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Keys)),
 			typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Values))

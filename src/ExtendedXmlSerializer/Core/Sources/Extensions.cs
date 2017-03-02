@@ -22,11 +22,16 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
 	public static class Extensions
 	{
+		public static T Alter<T>(this IEnumerable<IAlteration<T>> @this, T seed)
+			=> @this.Aggregate(seed, (current, alteration) => alteration.Get(current));
+
 		public static Func<TResult> Build<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                       TParameter parameter)
 			=> @this.Fix(parameter).Singleton().Get;

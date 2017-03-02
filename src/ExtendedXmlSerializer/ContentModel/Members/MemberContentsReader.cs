@@ -37,17 +37,19 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_members = members;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public sealed override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
 
-			var content = parameter.Content();
-			while (content.Next())
+			var token = parameter.New();
+			if (token.HasValue)
 			{
-				var member = _members.Get(parameter.Name);
-				member?.Assign(result, ((IReader) member).Get(parameter));
+				while (parameter.Next(token.Value))
+				{
+					var member = _members.Get(parameter.Name);
+					member?.Adapter.Assign(result, member.Get(parameter));
+				}
 			}
-
 			return result;
 		}
 	}

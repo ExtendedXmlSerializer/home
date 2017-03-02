@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Specifications;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class FixedMemberEmitSpecifications : IMemberEmitSpecifications
 	{
-		public static FixedMemberEmitSpecifications Default { get; } = new FixedMemberEmitSpecifications();
-		FixedMemberEmitSpecifications() : this(new MemberEmitSpecification(AlwaysSpecification<object>.Default)) {}
-
 		readonly IMemberEmitSpecification _instance;
 
 		public FixedMemberEmitSpecifications(IMemberEmitSpecification instance)

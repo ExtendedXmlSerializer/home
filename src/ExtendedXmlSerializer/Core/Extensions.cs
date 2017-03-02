@@ -34,6 +34,8 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
+		public static IEnumerable<T> Sorted<T>(this IEnumerable<T> @this) => @this.OrderBy(x => x, SortComparer<T>.Default);
+
 		public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
 			=> new ReadOnlyCollection<T>(@this.ToArray());
 
@@ -110,6 +112,10 @@ namespace ExtendedXmlSerialization.Core
 
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
+
+		public static T GetValid<T>(this IServiceProvider @this)
+			=> @this is T ? (T) @this : @this.GetService(typeof(T)).AsValid<T>($"Could not located service '{typeof(T)}'");
+
 
 		public static T AsValid<T>(this object @this, string message = null)
 		{

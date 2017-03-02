@@ -28,6 +28,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class RuntimeContentOption : FixedContentOption
 	{
-		public RuntimeContentOption(ISerializer runtime) : base(AlwaysSpecification<TypeInfo>.Default, runtime) {}
+		readonly static AlwaysSpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
+
+		public RuntimeContentOption(ISerializer runtime) : base(Specification, runtime) {}
 	}
 }

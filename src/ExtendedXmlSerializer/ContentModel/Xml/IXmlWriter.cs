@@ -22,26 +22,13 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public struct Attribute : IIdentity
-	{
-		public Attribute(string name, string identifier, Namespace? @namespace = null)
-		{
-			Name = name;
-			Identifier = identifier;
-			Namespace = @namespace;
-		}
-
-		public string Name { get; }
-		public string Identifier { get; }
-		public Namespace? Namespace { get; }
-	}
-
 	public interface IXmlWriter : IPrefixAware, IDisposable
 	{
+		object Root { get; }
+
 		void Element(IIdentity identity);
 
 		void EndCurrent();

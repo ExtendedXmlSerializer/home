@@ -29,7 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel
 	{
 		protected EnclosureBase(IWriter body) : base(body) {}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IXmlWriter writer, object instance)
 		{
 			Start(writer, instance);
 			Body(writer, instance);

@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.Core.Specifications
 		public static ContainsItemsSpecification Default { get; } = new ContainsItemsSpecification();
 		ContainsItemsSpecification() {}
 
-		protected override bool IsSatisfiedBy(ICollection parameter) => parameter.Count > 0;
+		protected sealed override bool IsSatisfiedBy(ICollection parameter) => parameter.Count > 0;
 	}
 }

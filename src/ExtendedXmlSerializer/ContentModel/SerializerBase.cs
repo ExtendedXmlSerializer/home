@@ -31,11 +31,4 @@ namespace ExtendedXmlSerialization.ContentModel
 
 		public abstract object Get(IXmlReader reader);
 	}
-
-	/*public abstract class SerializerBase<T> : ISerializer<T>
-	{
-		public abstract void Write(IXmlWriter writer, T instance);
-
-		public abstract T Get(IXmlReader reader);
-	}*/
 }

@@ -29,22 +29,14 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayReader : CollectionContentsReader
 	{
-		readonly ITypeSelector _selector;
-		readonly static TypeSelector TypeSelector = TypeSelector.Default;
+		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
 
-		public ArrayReader(ISerializer item) : this(TypeSelector, item) {}
-
-		public ArrayReader(ITypeSelector selector, ISerializer item) : base(Activator<ArrayList>.Default, item)
+		public sealed override object Get(IXmlReader parameter)
 		{
-			_selector = selector;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var classification = _selector.Get(parameter);
-			var elementType = classification.GetElementType();
-			var list = base.Get(parameter).AsValid<ArrayList>();
-			var result = list.ToArray(elementType);
+			var elementType = parameter.Classification.GetElementType();
+			var result = base.Get(parameter)
+			                 .AsValid<ArrayList>()
+			                 .ToArray(elementType);
 			return result;
 		}
 	}

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
+	sealed class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
 	{
 		public static Identities Default { get; } = new Identities();
 		Identities() : this(ContentModel.Identities.Default, TypeAliases.Default, ContentModel.TypeFormatter.Default, Identifiers.Default) {}

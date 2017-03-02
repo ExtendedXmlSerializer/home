@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_property = property;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IXmlWriter writer, object instance)
 		{
 			if (_specification.IsSatisfiedBy(instance))
 			{

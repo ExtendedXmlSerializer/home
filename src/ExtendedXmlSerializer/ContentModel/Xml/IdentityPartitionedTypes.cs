@@ -35,9 +35,11 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class IdentityPartitionedTypes : ITypes
 	{
+		readonly static TypeFormatter TypeFormatter = TypeFormatter.Default;
+
 		readonly Partition _partition;
 
-		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification) : this(specification, TypeFormatter.Default) {}
+		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification) : this(specification, TypeFormatter) {}
 
 		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 			: this(WellKnownNamespaces.Default
@@ -53,15 +55,16 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		class TypeNamePartition : IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, TypeInfo>>
 		{
+			readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
+
 			readonly IApplicationTypes _types;
 			readonly Func<TypeInfo, bool> _specification;
 			readonly Func<TypeInfo, string> _formatter;
 
 			public TypeNamePartition(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
-				: this(ApplicationTypes.Default, specification.IsSatisfiedBy, formatter.Get) {}
+				: this(ApplicationTypes, specification.IsSatisfiedBy, formatter.Get) {}
 
-			public TypeNamePartition(IApplicationTypes types, Func<TypeInfo, bool> specification,
-			                         Func<TypeInfo, string> formatter)
+			TypeNamePartition(IApplicationTypes types, Func<TypeInfo, bool> specification, Func<TypeInfo, string> formatter)
 			{
 				_types = types;
 				_specification = specification;

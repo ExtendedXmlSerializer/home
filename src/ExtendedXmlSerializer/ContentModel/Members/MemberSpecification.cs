@@ -29,7 +29,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
 	{
-		public MemberSpecification(ISpecification<T> specification) : base(specification, AllowSpecification.Default) {}
+		readonly static AllowSpecification Specification = AllowSpecification.Default;
+
+		public MemberSpecification(ISpecification<T> specification) : base(specification, Specification) {}
 
 		sealed class AllowSpecification : ISpecification<MemberInfo>
 		{

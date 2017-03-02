@@ -30,8 +30,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class TypeParser : ReferenceCacheBase<string, TypeInfo>, ITypeParser
+	sealed class TypeParser : CacheBase<string, TypeInfo>, ITypeParser
 	{
+		public static IParameterizedSource<IXmlReader, ITypeParser> Defaults { get; } =
+			new ReferenceCache<IXmlReader, ITypeParser>(x => new TypeParser(x));
+
 		readonly static Identities Identities = Identities.Default;
 		readonly static GenericTypes GenericTypes = GenericTypes.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
@@ -41,7 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		readonly INameConverter _converter;
 		readonly IXmlReader _reader;
 
-		public TypeParser(IXmlReader reader) : this(Identities, GenericTypes, Converter, reader) {}
+		TypeParser(IXmlReader reader) : this(Identities, GenericTypes, Converter, reader) {}
 
 		public TypeParser(IIdentities identities, ITypes types, INameConverter converter, IXmlReader reader)
 		{

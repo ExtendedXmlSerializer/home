@@ -27,6 +27,6 @@ namespace ExtendedXmlSerialization.Core.Specifications
 	{
 		public InverseSpecification(ISpecification<T> inner) : base(inner.IsSatisfiedBy) {}
 
-		public override bool IsSatisfiedBy(T parameter) => !base.IsSatisfiedBy(parameter);
+		public sealed override bool IsSatisfiedBy(T parameter) => !base.IsSatisfiedBy(parameter);
 	}
 }

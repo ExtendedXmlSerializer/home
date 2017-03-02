@@ -29,7 +29,9 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	class EnumerationContentOption : ConverterContentOption
 	{
+		readonly static IsAssignableSpecification<Enum> IsAssignableSpecification = IsAssignableSpecification<Enum>.Default;
+
 		public EnumerationContentOption(IAlteration<IConverter> alteration)
-			: base(x => new EnumerationConverter(x.AsType()), alteration, IsAssignableSpecification<Enum>.Default) {}
+			: base(x => new EnumerationConverter(x.AsType()), alteration, IsAssignableSpecification) {}
 	}
 }

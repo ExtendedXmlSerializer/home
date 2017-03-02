@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
 	public interface ISerializer : IReader, IWriter {}
 
-	public interface ISerializer<T> : IParameterizedSource<IXmlReader, T>
+	public interface ISerializer<T> : IActivator<T>
 	{
 		void Write(IXmlWriter writer, T instance);
 	}

@@ -46,11 +46,14 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		public override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
-			var reading = parameter.Content();
-			var list = result as IList ?? _lists.Get(result);
-			while (reading.Next())
+			var token = parameter.New();
+			if (token.HasValue)
 			{
-				_item.Read(reading, result, list);
+				var list = result as IList ?? _lists.Get(result);
+				while (parameter.Next(token.Value))
+				{
+					_item.Read(parameter, result, list);
+				}
 			}
 			return result;
 		}

@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Container : Serializer, IContainer
+	sealed class Container : Serializer, IContainer
 	{
 		readonly ISerializer _content;
 

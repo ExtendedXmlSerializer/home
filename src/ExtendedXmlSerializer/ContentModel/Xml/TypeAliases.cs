@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		public TypeAliases(IDictionary<TypeInfo, string> names) : base(names) {}
 
-		public override string Get(TypeInfo parameter)
+		public sealed override string Get(TypeInfo parameter)
 			=> base.Get(parameter) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

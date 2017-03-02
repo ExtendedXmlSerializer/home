@@ -21,34 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Serialization : ISerialization
+	class Serialization : Cache<TypeInfo, IContainer>, ISerialization
 	{
-		readonly Func<TypeInfo, IContainer> _selector;
-		readonly Func<MemberDescriptor, MemberProfile> _members;
-		readonly ISerializationProfile _profile;
-
-		public Serialization(Func<ISerialization, ISerializationProfile> profile)
-		{
-			_profile = profile(this);
-			_selector = new SerializationSelector(_profile.ToArray()).Cache().Get;
-			_members = new DelegatedSource<MemberDescriptor, MemberProfile>(_profile.Get).Cache().Get;
-		}
-
-		public bool IsSatisfiedBy(PropertyInfo parameter) => _profile.IsSatisfiedBy(parameter);
-
-		public bool IsSatisfiedBy(FieldInfo parameter) => _profile.IsSatisfiedBy(parameter);
-
-		public IContainer Get(TypeInfo parameter) => _selector(parameter);
-
-		public MemberProfile Get(MemberDescriptor parameter) => _members(parameter);
+		public Serialization(params IContainerOption[] options) : base(new SerializationSelector(options).Get) {}
 	}
 }

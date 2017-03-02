@@ -29,18 +29,19 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class VariableTypeMemberSpecification : DecoratedSpecification<MemberProfile>, IMemberSpecification
 	{
+		readonly static AssignableMemberSpecification Specification = AssignableMemberSpecification.Default;
+
 		public static VariableTypeMemberSpecification Default { get; } = new VariableTypeMemberSpecification();
 		VariableTypeMemberSpecification() : this(FixedTypeSpecification.Default.Inverse()) {}
 
 		readonly ISpecification<TypeInfo> _variable;
-
-		public VariableTypeMemberSpecification(ISpecification<TypeInfo> variable)
-			: base(AssignableMemberSpecification.Default)
+		
+		public VariableTypeMemberSpecification(ISpecification<TypeInfo> variable) : base(Specification)
 		{
 			_variable = variable;
 		}
 
-		public override bool IsSatisfiedBy(MemberProfile parameter)
+		public sealed override bool IsSatisfiedBy(MemberProfile parameter)
 			=> base.IsSatisfiedBy(parameter) && _variable.IsSatisfiedBy(parameter.MemberType);
 	}
 }

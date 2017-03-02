@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		public DictionaryEntryWriter(IWriter entry) : base(entry) {}
 
-		protected override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
+		protected sealed override IEnumerator Get(IDictionary instance) => instance.GetEnumerator();
 	}
 }

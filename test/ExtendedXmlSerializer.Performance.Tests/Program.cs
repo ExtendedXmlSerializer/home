@@ -28,16 +28,11 @@ namespace ExtendedXmlSerialization.Performance.Tests
 	class Program
 	{
 		// ReSharper disable once UnusedMember.Local
-		static void Main(string[] args)
-		{
-			// Job.Default.With(new GcMode {Force = false});
-			var switcher = new BenchmarkSwitcher(new[]
-			                                     {
-				                                     typeof(ExtendedXmlSerializerTest),
-				                                     typeof(ExtendedXmlSerializerV2Test),
-				                                     typeof(XmlSerializerTest)
-			                                     });
-			switcher.Run(args);
-		}
+		static void Main(string[] args) => new BenchmarkSwitcher(new[]
+		                                                         {
+			                                                         typeof(ExtendedXmlSerializerTest),
+			                                                         typeof(ExtendedXmlSerializerV2Test),
+			                                                         typeof(XmlSerializerTest)
+		                                                         }).Run(args);
 	}
 }

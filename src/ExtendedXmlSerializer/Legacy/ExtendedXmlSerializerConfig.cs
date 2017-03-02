@@ -31,21 +31,6 @@ using System.Xml.Linq;
 namespace ExtendedXmlSerialization.Legacy
 {
 	[Obsolete(Support.Message)]
-	public interface IMigrationConfiguration<T>
-	{
-		IMigrationConfiguration<T> AddMigration(Action<XElement> migration);
-	}
-
-	
-	[Obsolete(Support.Message)]
-	// ReSharper disable once UnusedTypeParameter
-	public interface IObjectReferenceConfiguration<T>
-	{
-		void ExtractToList(string name);
-	}
-
-
-	[Obsolete(Support.Message)]
 	public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
 	                                              IExtendedXmlSerializerConfig
 	{

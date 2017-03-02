@@ -25,9 +25,6 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -149,51 +146,6 @@ namespace ExtendedXmlSerialization.Test
 			Assert.Equal(message, implementation.PropertyName);
 		}
 
-		[Fact]
-		public void Optimized()
-		{
-			const string message = "Hello World!  This is a value set in a property with a variable type.", 
-				expected = @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""ExtendedXmlSerializerTests-Implementation""><PropertyName>Hello World!  This is a value set in a property with a variable type.</PropertyName></Interface></ExtendedXmlSerializerTests-ClassWithDifferingPropertyType>";
-			var instance = new ClassWithDifferingPropertyType { Interface = new Implementation { PropertyName = message } };
-			var serializer = new ExtendedXmlConfiguration(Factory.Default).Create();
-			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
-		}
-
-		class Factory : IExtendedXmlSerializerFactory
-		{
-			public static Factory Default { get; } = new Factory();
-			Factory() {}
-
-			public IExtendedXmlSerializer Get(SerializationConfiguration parameter)
-			{
-				var serializers = SerializationFactory.Default.Get(parameter);
-				var result = new ExtendedXmlSerializer(TypeSelector.Default, new OptimizedXmlFactory(serializers), serializers);
-				return result;
-			}
-		}
-
-#if CORE
-		[Fact]
-		public void OptimizedList()
-		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Collections"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""ExtendedXmlSerializerTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></ExtendedXmlSerializerTests-ClassWithDifferingPropertyType>";
-			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
-			var serializer = new ExtendedXmlConfiguration(Factory.Default).Create();
-			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
-		}
-#else
-		[Fact]
-		public void OptimizedList()
-		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test;assembly=ExtendedXmlSerializerTest"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Core"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""ExtendedXmlSerializerTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></ExtendedXmlSerializerTests-ClassWithDifferingPropertyType>";
-			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
-			var serializer = new ExtendedXmlConfiguration(Factory.Default).Create();
-			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
-		}
-#endif
 		class SimpleNestedClass
 		{
 			public string PropertyName { get; set; }
@@ -209,11 +161,6 @@ namespace ExtendedXmlSerialization.Test
 		class Implementation : IInterface
 		{
 			public string PropertyName { get; set; }
-		}
-
-		class GeneralImplementation : IInterface
-		{
-			public object Instance { get; set; }
 		}
 	}
 }

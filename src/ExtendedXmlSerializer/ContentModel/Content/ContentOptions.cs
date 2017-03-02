@@ -1,40 +1,44 @@
-// MIT License
-// 
-// Copyright (c) 2016 Wojciech Nagórski
-//                    Michael DeMond
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ContentOptions : CompositeContentOption
+	class ContentOptions : IContentOptions
 	{
-		public ContentOptions(IAlteration<IConverter> alteration)
-			: this(WellKnownConverters.Default, alteration, new EnumerationContentOption(alteration)) {}
+		readonly ISerialization _owner;
+		readonly IMembers _members;
+		readonly IMemberOption _variable;
+		readonly ISerializer _runtime;
+		readonly IActivation _activation;
+		readonly IMemberSerialization _memberSerialization;
 
-		public ContentOptions(IEnumerable<IConverter> converters, IAlteration<IConverter> alteration,
-		                      params IContentOption[] others)
-			: base(converters.Select(alteration.ToContent).Concat(others).ToArray()) {}
+		public ContentOptions(
+			IActivation activation,
+			ISerialization owner,
+			IMemberSerialization memberSerialization,
+			IMembers members,
+			IMemberOption variable, ISerializer runtime)
+		{
+			_owner = owner;
+			_memberSerialization = memberSerialization;
+			_members = members;
+			_variable = variable;
+			_runtime = runtime;
+			_activation = activation;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<IContentOption> GetEnumerator()
+		{
+			yield return new ArrayContentOption(_activation, _owner);
+			var entries = new DictionaryEntries(_activation, _memberSerialization, _variable);
+			yield return new DictionaryContentOption(_activation, _members, entries);
+			yield return new CollectionContentOption(_activation, _members, _owner);
+			yield return new MemberedContentOption(_activation, _members);
+			yield return new RuntimeContentOption(_runtime);
+		}
 	}
 }

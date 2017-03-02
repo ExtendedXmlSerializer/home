@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Members
@@ -43,9 +42,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Message)), StringConverter.Default},
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Number)), IntegerConverter.Default}
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 
 			var serializer = configuration.Create();
 
@@ -83,9 +80,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 
 			var serializer = configuration.Create();
 
@@ -116,15 +111,12 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			var converters = new Dictionary<MemberInfo, IConverter>
 			                 {
-				                 //{typeof(ListWithProperties<string>).GetRuntimeProperty(nameof(Subject.Message)), StringConverter.Default},
 				                 {
 					                 typeof(ListWithProperties<string>).GetRuntimeProperty(nameof(SimpleSubject.Number)),
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 
 			var serializer = configuration.Create();
 
@@ -156,16 +148,12 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			var converters = new Dictionary<MemberInfo, IConverter>
 			                 {
-				                 //{typeof(ListWithProperties<string>).GetRuntimeProperty(nameof(Subject.Message)), StringConverter.Default},
 				                 {
 					                 typeof(HashSetWithProperties).GetRuntimeProperty(nameof(SimpleSubject.Number)),
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
-
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 			var serializer = configuration.Create();
 
 			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
@@ -196,16 +184,12 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			var converters = new Dictionary<MemberInfo, IConverter>
 			                 {
-				                 //{typeof(ListWithProperties<string>).GetRuntimeProperty(nameof(Subject.Message)), StringConverter.Default},
 				                 {
 					                 typeof(HashSetWithProperties<string>).GetRuntimeProperty(nameof(SimpleSubject.Number)),
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
-
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 			var serializer = configuration.Create();
 
 			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
@@ -247,15 +231,13 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			var converters = new Dictionary<MemberInfo, IConverter>
 			                 {
-				                 //{typeof(ListWithProperties<string>).GetRuntimeProperty(nameof(Subject.Message)), StringConverter.Default},
 				                 {
 					                 typeof(DictionaryWithProperties).GetRuntimeProperty(nameof(SimpleSubject.Number)),
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
+
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 
 			var serializer = configuration.Create();
 
@@ -320,10 +302,8 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(ExtendedXmlSerializerFactory.Default, converters,
-			                                                 new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-			                                                 new Dictionary<MemberInfo, IRuntimeMemberSpecification>());
 
+			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
 			var serializer = configuration.Create();
 
 			var expected = new GenericDictionaryWithProperties<int, string>

@@ -22,18 +22,25 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
-		readonly static EqualityComparer<int> Comparer = EqualityComparer<int>.Default;
-
 		readonly int _code;
 
-		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable)
+		public MemberDescriptor(PropertyInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+
+		public MemberDescriptor(TypeInfo reflectedType, PropertyInfo metadata)
+			: this(reflectedType, metadata, metadata.PropertyType.GetTypeInfo(), metadata.CanWrite) {}
+
+		public MemberDescriptor(FieldInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+
+		public MemberDescriptor(TypeInfo reflectedType, FieldInfo metadata)
+			: this(reflectedType, metadata, metadata.FieldType.GetTypeInfo(), !metadata.IsInitOnly) {}
+
+		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable = true)
 			: this(reflectedType, metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
 
 		MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable, int code)
@@ -50,7 +57,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public TypeInfo MemberType { get; }
 		public bool Writable { get; }
 
-		public bool Equals(MemberDescriptor other) => Comparer.Equals(_code, other._code);
+		public bool Equals(MemberDescriptor other)
+		{
+			var code = _code;
+			return code.Equals(other._code);
+		}
 
 		public override bool Equals(object obj)
 			=> !ReferenceEquals(null, obj) && obj is MemberDescriptor && Equals((MemberDescriptor) obj);

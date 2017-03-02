@@ -31,11 +31,6 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
 		ItemTypeProperty() : base("item") {}
 
-		public override TypeInfo Get(IXmlReader parameter)
-		{
-			var typeInfo = base.Get(parameter);
-			var info = typeInfo?.MakeArrayType().GetTypeInfo();
-			return info;
-		}
+		public override TypeInfo Get(IXmlReader parameter) => base.Get(parameter)?.MakeArrayType().GetTypeInfo();
 	}
 }

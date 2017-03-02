@@ -29,16 +29,18 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public abstract class MemberOptionBase : OptionBase<MemberProfile, IMember>, IMemberOption
 	{
-		readonly IGetterFactory _getter;
+		readonly static GetterFactory GetterFactory = GetterFactory.Default;
 
-		protected MemberOptionBase(IMemberSpecification specification) : this(specification, GetterFactory.Default) {}
+		readonly IGetterFactory _getter;
+		
+		protected MemberOptionBase(IMemberSpecification specification) : this(specification, GetterFactory) {}
 
 		protected MemberOptionBase(IMemberSpecification specification, IGetterFactory getter) : base(specification)
 		{
 			_getter = getter;
 		}
 
-		public override IMember Get(MemberProfile parameter) => Create(parameter, _getter.Get(parameter.Metadata));
+		public sealed override IMember Get(MemberProfile parameter) => Create(parameter, _getter.Get(parameter.Metadata));
 
 		protected abstract IMember Create(MemberProfile memberProfile, Func<object, object> getter);
 	}

@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	class ElementOptions : CompositeOption<TypeInfo, IWriter>, IElementOption
 	{
 		public static ElementOptions Default { get; } = new ElementOptions();
-		ElementOptions() : base(GenericElementOption.Default, ElementOption.Default) {}
+		ElementOptions() : base(GenericElementOption.Default, VariableTypeElementOption.Default, ElementOption.Default) {}
 	}
 }

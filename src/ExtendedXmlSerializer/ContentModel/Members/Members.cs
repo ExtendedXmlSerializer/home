@@ -21,25 +21,62 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Members : IMembers
+	class Members : CacheBase<TypeInfo, ImmutableArray<IMember>>, IMembers
 	{
-		readonly IParameterizedSource<TypeInfo, IEnumerable<IMember>> _source;
+		readonly IMemberSerialization _serialization;
+		readonly Func<MemberProfile, IMember> _select;
 
-		public Members(ISerialization serialization, ISelector selector) : this(new MemberSource(serialization, selector)) {}
+		[UsedImplicitly]
+		public Members(IMemberSerialization serialization, ISelector selector) : this(serialization, selector.Get) {}
 
-		public Members(IParameterizedSource<TypeInfo, IEnumerable<IMember>> source)
+		public Members(IMemberSerialization serialization, Func<MemberProfile, IMember> select)
 		{
-			_source = source;
+			_serialization = serialization;
+			_select = select;
 		}
 
-		public ImmutableArray<IMember> Get(TypeInfo parameter) => _source.Get(parameter).ToImmutableArray();
+		protected sealed override ImmutableArray<IMember> Create(TypeInfo parameter) =>
+			Yield(parameter).OrderBy(x => x.Writer is MemberProperty ? 0 : 1)
+			                .ThenBy(x => x.Order)
+			                .Select(_select)
+			                .Where(x => x != null)
+			                .ToImmutableArray();
+
+		IEnumerable<MemberProfile> Yield(TypeInfo parameter)
+		{
+			var properties = parameter.GetProperties();
+			var length = properties.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var property = properties[i];
+				if (_serialization.IsSatisfiedBy(property))
+				{
+					yield return
+						_serialization.Get(new MemberDescriptor(parameter, property));
+				}
+			}
+
+			var fields = parameter.GetFields();
+			var l = fields.Length;
+			for (var i = 0; i < l; i++)
+			{
+				var field = fields[i];
+				if (_serialization.IsSatisfiedBy(field))
+				{
+					yield return
+						_serialization.Get(new MemberDescriptor(parameter, field));
+				}
+			}
+		}
 	}
 }

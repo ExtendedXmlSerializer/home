@@ -37,6 +37,6 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_content = content;
 		}
 
-		public override IContainer Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
+		public sealed override IContainer Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
 	}
 }

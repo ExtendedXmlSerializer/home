@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Core.Specifications
 			_specification = specification;
 		}
 
-		protected override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+		protected sealed override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
 	}
 }

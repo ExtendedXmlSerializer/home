@@ -33,14 +33,15 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsCollectionTypeSpecification.Default);
 
+		readonly static CollectionItemTypeLocator Locator = CollectionItemTypeLocator.Default;
+
 		readonly ISerialization _serialization;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(ISerialization serialization)
-			: this(Specification, serialization) {}
+		protected CollectionContentOptionBase(ISerialization serialization) : this(Specification, serialization) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerialization serialization)
-			: this(specification, serialization, CollectionItemTypeLocator.Default) {}
+			: this(specification, serialization, Locator) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerialization serialization,
 		                                      ICollectionItemTypeLocator locator) : base(specification)
@@ -49,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_locator = locator;
 		}
 
-		public override ISerializer Get(TypeInfo parameter)
+		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var itemType = _locator.Get(parameter);
 			var result = Create(_serialization.Get(itemType), parameter);

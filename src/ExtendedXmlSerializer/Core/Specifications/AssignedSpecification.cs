@@ -28,6 +28,6 @@ namespace ExtendedXmlSerialization.Core.Specifications
 		public static AssignedSpecification Default { get; } = new AssignedSpecification();
 		AssignedSpecification() {}
 
-		public bool IsSatisfiedBy(object parameter) => parameter != null;
+		public bool IsSatisfiedBy(object parameter) => !ReferenceEquals(null, parameter);
 	}
 }

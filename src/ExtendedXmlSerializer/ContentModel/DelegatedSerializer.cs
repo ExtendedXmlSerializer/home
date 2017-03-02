@@ -40,8 +40,8 @@ namespace ExtendedXmlSerialization.ContentModel
 			_serialize = serialize;
 		}
 
-		public override void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
+		public sealed override void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
 
-		public override object Get(IXmlReader reader) => _deserialize(reader.Value());
+		public sealed override object Get(IXmlReader reader) => _deserialize(reader.Value());
 	}
 }

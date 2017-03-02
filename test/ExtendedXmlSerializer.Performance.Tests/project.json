@@ -26,12 +26,12 @@
     },
 
   "frameworks": {
-    "net45": {
+    "net46": {
       "buildOptions": {
         "define": [ "CLASSIC" ]
       },
       "frameworkAssemblies": {
-        "System.Reflection": "4.0.0.0"
+        
       },
         "dependencies": {
             "BenchmarkDotNet": "0.10.2",

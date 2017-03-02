@@ -13,6 +13,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_intern = intern;
 		}
 
-		public override T Get(string key) => base.Get(_intern.Get(key));
+		public sealed override T Get(string key) => base.Get(_intern.Get(key));
 	}
 }

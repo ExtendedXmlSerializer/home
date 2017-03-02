@@ -28,31 +28,32 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlWriter : IXmlWriter
 	{
-		readonly static Prefixes Prefixes = Prefixes.Default;
-
-		readonly IPrefixes _prefixes;
 		readonly System.Xml.XmlWriter _writer;
+		readonly INamespaces _namespaces;
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
-		public XmlWriter(System.Xml.XmlWriter writer) : this(Prefixes, writer) {}
+		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, new Namespaces()) {}
 
-		public XmlWriter(IPrefixes prefixes, System.Xml.XmlWriter writer)
+		public XmlWriter(System.Xml.XmlWriter writer, object root, INamespaces namespaces)
 		{
-			_prefixes = prefixes;
+			Root = root;
 			_writer = writer;
+			_namespaces = namespaces;
 		}
+
+		public object Root { get; }
 
 		public void Attribute(Attribute attribute)
 		{
 			if (attribute.Namespace.HasValue)
 			{
-				_writer.WriteAttributeString(attribute.Namespace?.Name, attribute.Name, attribute.Namespace?.Identifier, attribute.Identifier);
+				_writer.WriteAttributeString(attribute.Namespace?.Name, attribute.Name, attribute.Namespace?.Identifier,
+				                             attribute.Identifier);
 			}
 			else
 			{
 				_writer.WriteAttributeString(attribute.Name, attribute.Identifier);
 			}
-			// _writer.WriteAttributeString();
 		}
 
 		public void Element(IIdentity name) => _writer.WriteStartElement(name.Name, name.Identifier);
@@ -69,7 +70,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		string Create(string identifier)
 		{
-			_writer.WriteAttributeString(_prefixes.Get(identifier), Xmlns, identifier);
+			_writer.WriteAttributeString(_namespaces.Get(identifier).Name, Xmlns, identifier);
 			return _writer.LookupPrefix(identifier);
 		}
 	}

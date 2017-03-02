@@ -26,20 +26,23 @@ using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	class TypeFormatter : ITypeFormatter
+	sealed class TypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
 	{
 		readonly static Xml.Identities Identities = Xml.Identities.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
+		public static IParameterizedSource<IXmlWriter, ITypeFormatter> Defaults { get; } =
+			new ReferenceCache<IXmlWriter, ITypeFormatter>(x => new TypeFormatter(x));
 
 		readonly IXmlWriter _writer;
 		readonly Xml.IIdentities _identities;
 		readonly INameConverter _converter;
 
-		public TypeFormatter(IXmlWriter writer) : this(writer, Identities, Converter) {}
+		TypeFormatter(IXmlWriter writer) : this(writer, Identities, Converter) {}
 
 		public TypeFormatter(IXmlWriter writer, Xml.IIdentities identities, INameConverter converter)
 		{
@@ -48,7 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_converter = converter;
 		}
 
-		public string Get(TypeInfo parameter) => _converter.Format(Name(parameter));
+		protected override string Create(TypeInfo parameter) => _converter.Format(Name(parameter));
 
 		ParsedName Name(TypeInfo parameter)
 		{

@@ -40,19 +40,18 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_members = members;
 		}
 
-		public void Read(ContentReading reading, object instance, IList list)
+		public void Read(IXmlReader reader, object instance, IList list)
 		{
-			if (reading.IsMember())
+			if (reader.IsMember())
 			{
-				var reader = reading.Owner;
 				var member = _members.Get(reader.Name);
 				if (member != null)
 				{
-					member.Assign(instance, ((IReader) member).Get(reader));
+					member.Adapter.Assign(instance, member.Get(reader));
 					return;
 				}
 			}
-			_item.Read(reading, instance, list);
+			_item.Read(reader, instance, list);
 		}
 	}
 }

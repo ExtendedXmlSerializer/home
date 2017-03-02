@@ -30,6 +30,6 @@ namespace ExtendedXmlSerialization.TypeModel
 		public static TypeIdentityComparer Default { get; } = new TypeIdentityComparer();
 		TypeIdentityComparer() {}
 
-		public override int GetHashCode(TypeInfo obj) => obj.GetHashCode();
+		public sealed override int GetHashCode(TypeInfo obj) => obj.GetHashCode();
 	}
 }

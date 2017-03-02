@@ -30,22 +30,24 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberedContentOption : ContentOptionBase
 	{
-		readonly IActivators _activators;
+		readonly static IsActivatedTypeSpecification Specification = IsActivatedTypeSpecification.Default;
+
+		readonly IActivation _activation;
 		readonly IMembers _members;
 
-		public MemberedContentOption(IMembers members) : this(Activators.Default, members) {}
-
-		public MemberedContentOption(IActivators activators, IMembers members) : base(IsActivatedTypeSpecification.Default)
+		public MemberedContentOption(IActivation activation, IMembers members)
+			: base(Specification)
 		{
-			_activators = activators;
+			_activation = activation;
 			_members = members;
 		}
 
-		public override ISerializer Get(TypeInfo parameter)
+		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
-			var activate = _activators.Get(parameter.AsType());
-			var reader = new MemberContentsReader(new DelegatedFixedActivator(activate), members.ToDictionary(x => x.DisplayName));
+			var activator = _activation.Get(parameter);
+			var reader = new MemberContentsReader(activator,
+			                                      members.ToDictionary(x => x.Adapter.Name));
 			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}

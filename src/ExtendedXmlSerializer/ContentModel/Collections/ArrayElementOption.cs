@@ -29,16 +29,18 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayElementOption : ElementOptionBase
 	{
+		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+
 		public static ArrayElementOption Default { get; } = new ArrayElementOption();
 		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}
 
 		readonly ICollectionItemTypeLocator _locator;
-
-		public ArrayElementOption(ICollectionItemTypeLocator locator) : base(IsArraySpecification.Default)
+		
+		public ArrayElementOption(ICollectionItemTypeLocator locator) : base(Specification)
 		{
 			_locator = locator;
 		}
 
-		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
+		public sealed override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
 	}
 }

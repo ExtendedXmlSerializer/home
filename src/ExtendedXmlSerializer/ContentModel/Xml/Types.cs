@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
+	sealed class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		readonly static Dictionary<IIdentity, TypeInfo> Aliased = WellKnownAliases.Default
 		                                                                          .Select(x => x.Key)
@@ -56,6 +56,9 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		}
 
 		protected override TypeInfo Create(IIdentity parameter)
-			=> _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
+		{
+			var typeInfo = _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
+			return typeInfo;
+		}
 	}
 }

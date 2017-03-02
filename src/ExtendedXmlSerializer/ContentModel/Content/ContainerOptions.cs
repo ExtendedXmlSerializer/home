@@ -21,43 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Collections;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContainerOptions : IContainerOptions
 	{
+		readonly static ElementOption ElementOption = ElementOption.Default;
+
 		readonly IContentOption _known;
+		readonly IElementOptionSelector _selector;
+		readonly IContentOptions _content;
 
-		public ContainerOptions() : this(OptimizedConverterAlteration.Default) {}
-
-		public ContainerOptions(IAlteration<IConverter> alteration) : this(new ContentOptions(alteration)) {}
-
-		public ContainerOptions(IContentOption known)
+		public ContainerOptions(IContentOption known, IElementOptionSelector selector, IContentOptions content)
 		{
 			_known = known;
+			_selector = selector;
+			_content = content;
 		}
 
-		public IEnumerable<IContainerOption> Get(ISerialization parameter)
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<IContainerOption> GetEnumerator()
 		{
-			var runtime = new RuntimeSerializer(parameter);
-			var variable = new VariableTypeMemberOption(parameter, runtime);
-			var members = new Members.Members(parameter, new Selector(variable));
-			var options = ElementOptions.Default;
+			yield return new ContainerOption(ElementOption, _known);
 
-			yield return new ContainerOption(ElementOption.Default, _known);
-
-			yield return new ContainerOption(ArrayElementOption.Default, new ArrayContentOption(parameter));
-			yield return new ContainerOption(options,
-			                                 new DictionaryContentOption(members, new DictionaryEntries(parameter, variable)));
-			yield return new ContainerOption(options, new CollectionContentOption(members, parameter));
-
-			yield return new ContainerOption(options, new MemberedContentOption(members));
-			yield return new ContainerOption(options, new RuntimeContentOption(runtime));
+			foreach (var option in _content)
+			{
+				yield return new ContainerOption(_selector.Get(option), option);
+			}
 		}
 	}
 }

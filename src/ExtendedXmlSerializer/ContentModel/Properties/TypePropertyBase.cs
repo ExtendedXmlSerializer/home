@@ -23,15 +23,26 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	abstract class TypePropertyBase : FrameworkPropertyBase<TypeInfo>, ITypeProperty
 	{
-		protected TypePropertyBase(string displayName) : base(displayName) {}
+		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;
+		readonly IParameterizedSource<IXmlWriter, ITypeFormatter> _formatters;
+		protected TypePropertyBase(string displayName) : this(displayName, TypeParser.Defaults, TypeFormatter.Defaults) {}
 
-		protected override string Format(IXmlWriter writer, TypeInfo instance) => new TypeFormatter(writer).Get(instance);
+		protected TypePropertyBase(string displayName, IParameterizedSource<IXmlReader, ITypeParser> parsers,
+		                           IParameterizedSource<IXmlWriter, ITypeFormatter> formatters) : base(displayName)
+		{
+			_parsers = parsers;
+			_formatters = formatters;
+		}
 
-		protected override TypeInfo Parse(IXmlReader parameter, string data) => new TypeParser(parameter).Get(data);
+		protected sealed override string Format(IXmlWriter writer, TypeInfo instance) => _formatters.Get(writer).Get(instance);
+
+		protected sealed override TypeInfo Parse(IXmlReader parameter, string data) => _parsers.Get(parameter).Get(data);
 	}
 }

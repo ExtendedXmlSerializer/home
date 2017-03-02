@@ -24,15 +24,14 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class GetterFactory : IGetterFactory
+	public class GetterFactory : ReferenceCacheBase<MemberInfo, Func<object, object>>, IGetterFactory
 	{
 		public static GetterFactory Default { get; } = new GetterFactory();
 		GetterFactory() {}
-
-		public Func<object, object> Get(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
 
 		static Func<object, object> Get(Type type, string name)
 		{
@@ -51,5 +50,7 @@ namespace ExtendedXmlSerialization.TypeModel
 			var result = lambda.Compile();
 			return result;
 		}
+
+		protected override Func<object, object> Create(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
 	}
 }

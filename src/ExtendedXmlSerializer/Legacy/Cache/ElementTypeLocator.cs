@@ -29,11 +29,6 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Legacy.Cache
 {
-	public interface IElementTypeLocator
-	{
-		Type Locate(Type type);
-	}
-
 	public class ElementTypeLocator : ConcurrentDictionary<Type, Type>, IElementTypeLocator
 	{
 		readonly static Func<Type, Type> PerformLocationDelegate = PerformLocation;
