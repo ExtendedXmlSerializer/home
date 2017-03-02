@@ -28,9 +28,10 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlWriter : IXmlWriter
 	{
+		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
+
 		readonly System.Xml.XmlWriter _writer;
 		readonly INamespaces _namespaces;
-		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
 		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, new Namespaces()) {}
 

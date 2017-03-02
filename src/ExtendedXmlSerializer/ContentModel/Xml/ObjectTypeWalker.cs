@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class ObjectTypeWalker : MemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
+	class ObjectTypeWalker : InstanceMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
 		public ObjectTypeWalker(IMembers members, object root) : base(members, root) {}
 

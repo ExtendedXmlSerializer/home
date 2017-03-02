@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -32,10 +31,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly static AssignableMemberSpecification Specification = AssignableMemberSpecification.Default;
 
 		public static VariableTypeMemberSpecification Default { get; } = new VariableTypeMemberSpecification();
-		VariableTypeMemberSpecification() : this(FixedTypeSpecification.Default.Inverse()) {}
+		VariableTypeMemberSpecification() : this(VariableTypeSpecification.Default) {}
 
 		readonly ISpecification<TypeInfo> _variable;
-		
+
 		public VariableTypeMemberSpecification(ISpecification<TypeInfo> variable) : base(Specification)
 		{
 			_variable = variable;

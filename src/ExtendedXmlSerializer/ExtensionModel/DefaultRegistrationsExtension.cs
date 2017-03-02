@@ -27,6 +27,7 @@ using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 using LightInject;
 using ContainerOptions = ExtendedXmlSerialization.ContentModel.Content.ContainerOptions;
@@ -64,6 +65,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Register<IContentOptions, ContentOptions>()
 			         .Register<IContainerOptions, ContainerOptions>()
 			         .Register(factory => factory.GetInstance<IContainerOptions>().ToArray())
+			         .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
+			         .Register<ContainsStaticReferenceSpecification>()
+			         .Register<IRootReferences, RootReferences>()
+			         .Decorate<IXmlFactory>(
+				         (factory, xmlFactory) =>
+					         new ReferentialAwareXmlFactory(factory.GetInstance<IStaticReferenceSpecification>(),
+					                                        factory.GetInstance<IRootReferences>(), xmlFactory)
+			         )
 			         .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
 	}
 }

@@ -28,11 +28,11 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public abstract class MemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
+	public abstract class InstanceMemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{
 		readonly IMembers _members;
 
-		protected MemberWalkerBase(IMembers members, object root) : base(root)
+		protected InstanceMemberWalkerBase(IMembers members, object root) : base(root)
 		{
 			_members = members;
 		}
