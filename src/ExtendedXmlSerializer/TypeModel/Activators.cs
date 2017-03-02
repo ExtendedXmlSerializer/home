@@ -22,20 +22,40 @@
 // SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class Activators : IActivators
+	class Activators : ReferenceCacheBase<Type, Func<object>>, IActivators
 	{
 		public static Activators Default { get; } = new Activators();
-		Activators() {}
+		Activators() : this(ConstructorLocator.Default) {}
 
-		public Func<object> Get(Type parameter)
+		readonly IConstructorLocator _locator;
+
+		public Activators(IConstructorLocator locator)
 		{
-			var newExp = Expression.Convert(Expression.New(parameter), typeof(object));
-			var lambda = Expression.Lambda<Func<object>>(newExp);
+			_locator = locator;
+		}
+
+		protected override Func<object> Create(Type parameter)
+		{
+			var typeInfo = parameter.GetTypeInfo();
+			var expression = typeInfo.IsValueType ? Expression.New(parameter) : Reference(typeInfo);
+			var convert = Expression.Convert(expression, typeof(object));
+			var lambda = Expression.Lambda<Func<object>>(convert);
 			var result = lambda.Compile();
+			return result;
+		}
+
+		NewExpression Reference(TypeInfo typeInfo)
+		{
+			var constructor = _locator.Get(typeInfo);
+			var arguments = constructor.GetParameters().Select(x => Expression.Default(x.ParameterType));
+			var result = Expression.New(constructor, arguments);
 			return result;
 		}
 	}

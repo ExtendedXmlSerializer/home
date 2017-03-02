@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,41 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	class ObjectTypeWalker : MemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
+	public class ConstructorLocator : ReferenceCacheBase<TypeInfo, ConstructorInfo>, IConstructorLocator
 	{
-		public ObjectTypeWalker(IMembers members, object root) : base(members, root) {}
+		public static ConstructorLocator Default { get; } = new ConstructorLocator();
+		ConstructorLocator() {}
 
-		protected override IEnumerable<TypeInfo> Yield(IMember member, object instance)
+		protected override ConstructorInfo Create(TypeInfo parameter)
 		{
-			var variable = member.Adapter as IVariableTypeMemberAdapter;
-			if (variable != null)
+			var constructors = parameter.GetConstructors();
+			var length = constructors.Length;
+			for (var i = 0; i < length; i++)
 			{
-				var current = variable.Get(instance);
-				if (Schedule(current) && variable.IsSatisfiedBy(current.GetType()))
+				var constructor = constructors[i];
+				var parameters = constructor.GetParameters();
+				var l = parameters.Length;
+				if (l == 0 || parameters.All(x => x.IsOptional))
 				{
-					yield return Defaults.FrameworkType;
+					return constructor;
 				}
 			}
+			return null;
 		}
-
-		protected override IEnumerable<TypeInfo> Yield(object instance)
-		{
-			Schedule(instance);
-			yield break;
-		}
-
-		protected override IEnumerable<TypeInfo> Members(object input, TypeInfo parameter)
-			=> parameter.Yield().Concat(base.Members(input, parameter));
-
-		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x).Distinct();
 	}
 }

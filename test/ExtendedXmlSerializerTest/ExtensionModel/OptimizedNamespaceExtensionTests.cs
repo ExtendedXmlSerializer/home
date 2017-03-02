@@ -24,6 +24,8 @@
 using System.Collections.Generic;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ExtensionModel;
+using LightInject;
+using Microsoft.DotNet.ProjectModel;
 using Xunit;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -56,6 +58,26 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
+		}
+
+		[Fact]
+		public void OptimizedDictionary()
+		{
+			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:ns1=""clr-namespace:LightInject;assembly=LightInject"" xmlns:ns2=""clr-namespace:Microsoft.DotNet.ProjectModel;assembly=Microsoft.DotNet.ProjectModel""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:AnalyzerOptions"" /><Value exs:type=""ns1:DecoratorRegistration""><Index>0</Index></Value></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+			var instance = new ClassWithDifferingPropertyType
+			               {
+				               Interface = new GeneralImplementation
+				                           {
+					                           Instance = new Dictionary<object, object>
+					                                      {
+						                                      {new AnalyzerOptions(), new DecoratorRegistration()}
+					                                      }
+				                           }
+			               };
+			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
+			var data = serializer.Serialize(instance);
+			Assert.Equal(expected, data);
+			
 		}
 
 		class ClassWithDifferingPropertyType

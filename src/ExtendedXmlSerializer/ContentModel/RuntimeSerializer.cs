@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -41,6 +42,10 @@ namespace ExtendedXmlSerialization.ContentModel
 			var typeInfo = instance.GetType().GetTypeInfo();
 			var container = _serialization.Get(typeInfo);
 			var serializer = container.Get();
+			if (serializer is RuntimeSerializer)
+			{
+				throw new InvalidOperationException($"Could not locate the appropriate serializer for {typeInfo}.");
+			}
 			serializer.Write(writer, instance);
 		}
 

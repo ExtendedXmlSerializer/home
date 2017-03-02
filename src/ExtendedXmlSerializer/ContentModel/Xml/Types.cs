@@ -56,9 +56,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		}
 
 		protected override TypeInfo Create(IIdentity parameter)
-		{
-			var typeInfo = _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
-			return typeInfo;
-		}
+			=> _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
 	}
 }
