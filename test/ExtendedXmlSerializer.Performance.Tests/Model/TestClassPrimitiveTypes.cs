@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 		EnumValue2
 	}
 
-	public class TestClassOtherClass
+	public sealed class TestClassOtherClass
 	{
 		public TestClassOtherClass Init()
 		{
@@ -58,13 +58,13 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 		public List<TestClassItem> ListProperty { get; set; }
 	}
 
-	public class TestClassItem
+	public sealed class TestClassItem
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
 	}
 
-	public class TestClassOther
+	public sealed class TestClassOther
 	{
 		public TestClassItem Test { get; set; }
 		public double Double { get; set; }
@@ -76,7 +76,7 @@ namespace ExtendedXmlSerialization.Performance.Tests.Model
 		}
 	}
 
-	public class TestClassPrimitiveTypes
+	public sealed class TestClassPrimitiveTypes
 	{
 		public void Init()
 		{

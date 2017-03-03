@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -34,5 +35,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			=>
 				parameter.Register<IContentOptions, ClassicContentOptions>()
 				         .RegisterInstance(ClassicEmitMemberSpecifications.Default);
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

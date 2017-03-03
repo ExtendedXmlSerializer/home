@@ -28,10 +28,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ServicesFactory : ISource<IServices>
 	{
-		readonly IConstructorSelector _selector;
-		readonly ContainerOptions _options;
 		public static ServicesFactory Default { get; } = new ServicesFactory();
 		ServicesFactory() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
+
+		readonly IConstructorSelector _selector;
+		readonly ContainerOptions _options;
 
 		public ServicesFactory(IConstructorSelector selector, ContainerOptions options)
 		{

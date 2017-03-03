@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
 using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -53,9 +53,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Decorate<IContentOptions>(
 				         (factory, options) =>
 					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()))
-			         .Decorate<IXmlFactory>((factory, xmlFactory) => new ReferenceSupportedXmlFactory(xmlFactory));
+			         .Decorate<ISerializationContext>((factory, context) => new CircularReferenceEnabledSerialization(context));
 
 		static IActivation Decorate(IServiceFactory factory, IActivation activation)
 			=> new ReferenceActivation(activation, factory.GetInstance<IEntities>());
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

@@ -25,18 +25,20 @@ using System.IO;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization
 {
 	/// <summary>
 	/// Extended Xml Serializer
 	/// </summary>
+	[UsedImplicitly]
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
 		readonly IXmlFactory _factory;
-		readonly ISerialization _serialization;
+		readonly ISerializationContext _serialization;
 
-		public ExtendedXmlSerializer(IXmlFactory factory, ISerialization serialization)
+		public ExtendedXmlSerializer(IXmlFactory factory, ISerializationContext serialization)
 		{
 			_factory = factory;
 			_serialization = serialization;

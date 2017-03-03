@@ -21,14 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class AssignedSerialization : ItemizedSource<ISerialization>, ISerialization
+	public abstract class StructureCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
+	                                                                                            where TValue : struct
 	{
-		public IContainer Get(TypeInfo parameter) => Get().Get(parameter);
+		readonly ConditionalWeakTable<TKey, Structure> _cache = new ConditionalWeakTable<TKey, Structure>();
+		readonly ConditionalWeakTable<TKey, Structure>.CreateValueCallback _callback;
+
+		protected StructureCacheBase()
+		{
+			_callback = CreateStructure;
+		}
+
+		Structure CreateStructure(TKey parameter) => new Structure(Create(parameter));
+
+		protected abstract TValue Create(TKey parameter);
+
+		public virtual TValue Get(TKey key) => _cache.GetValue(key, _callback).Item;
+
+		class Structure
+		{
+			public Structure(TValue item)
+			{
+				Item = item;
+			}
+
+			public TValue Item { get; }
+		}
 	}
 }

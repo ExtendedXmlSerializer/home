@@ -24,6 +24,7 @@
 using System.Diagnostics.CodeAnalysis;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using Xunit;
@@ -50,6 +51,8 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		{
 			public IServices Get(IServices parameter) =>
 				parameter.RegisterInstance(InstanceDefaultsMemberSpecifications.Default);
+
+			void ICommand<IServices>.Execute(IServices parameter) {}
 		}
 
 		[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]

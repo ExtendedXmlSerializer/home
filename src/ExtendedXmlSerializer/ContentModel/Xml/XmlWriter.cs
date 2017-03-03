@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
@@ -31,15 +33,18 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
 		readonly System.Xml.XmlWriter _writer;
-		readonly INamespaces _namespaces;
+		readonly Source _source;
 
-		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, new Namespaces()) {}
+		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, () => new Namespaces()) {}
 
-		public XmlWriter(System.Xml.XmlWriter writer, object root, INamespaces namespaces)
+		public XmlWriter(System.Xml.XmlWriter writer, object root, Func<INamespaces> namespaces)
+			: this(writer, root, new Source(namespaces)) {}
+
+		XmlWriter(System.Xml.XmlWriter writer, object root, Source source)
 		{
 			Root = root;
 			_writer = writer;
-			_namespaces = namespaces;
+			_source = source;
 		}
 
 		public object Root { get; }
@@ -71,8 +76,24 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		string Create(string identifier)
 		{
-			_writer.WriteAttributeString(_namespaces.Get(identifier).Name, Xmlns, identifier);
+			var source = _source;
+			_writer.WriteAttributeString(source.Get().Get(identifier).Name, Xmlns, identifier);
 			return _writer.LookupPrefix(identifier);
+		}
+
+		struct Source : ISource<INamespaces>
+		{
+			readonly Func<INamespaces> _source;
+
+			INamespaces _field;
+
+			public Source(Func<INamespaces> source, INamespaces field = null)
+			{
+				_source = source;
+				_field = field;
+			}
+
+			public INamespaces Get() => _field ?? (_field = _source());
 		}
 	}
 }

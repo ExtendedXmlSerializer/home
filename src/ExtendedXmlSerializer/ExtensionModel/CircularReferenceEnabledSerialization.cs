@@ -21,41 +21,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferentialAwareXmlFactory : IXmlFactory
+	class CircularReferenceEnabledSerialization : ISerializationContext
 	{
-		readonly IStaticReferenceSpecification _specification;
-		readonly IRootReferences _references;
-		readonly IXmlFactory _factory;
+		readonly ISerializationContext _context;
 
-		public ReferentialAwareXmlFactory(IStaticReferenceSpecification specification, IRootReferences references,
-		                                  IXmlFactory factory)
+		public CircularReferenceEnabledSerialization(ISerializationContext context)
 		{
-			_specification = specification;
-			_references = references;
-			_factory = factory;
+			_context = context;
 		}
 
-		public IXmlWriter Create(Stream stream, object instance)
+		public IContainer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
+
+		class Container : IContainer
 		{
-			var result = _factory.Create(stream, instance);
-			var typeInfo = instance.GetType().GetTypeInfo();
-			var readOnlyList = _references.Get(result);
-			if (_specification.IsSatisfiedBy(typeInfo) && readOnlyList.Any())
+			readonly IContainer _container;
+
+			public Container(IContainer container)
 			{
-				throw new CircularReferencesDetectedException(
-					$"The provided instance of type '{typeInfo}' contains circular references within its graph. Serializing this instance would result in a recursive, endless loop. To properly serialize this instance, please create a serializer that has referential support enabled by extending it with the ReferencesExtension.",
-					result);
+				_container = container;
 			}
-			return result;
-		}
 
-		public IXmlReader Create(Stream stream) => _factory.Create(stream);
+			public object Get(IXmlReader parameter) => _container.Get(parameter);
+
+			public void Write(IXmlWriter writer, object instance)
+			{
+				try
+				{
+					_container.Write(writer, instance);
+				}
+				catch (CircularReferencesDetectedException e)
+				{
+					e.Writer.Write(writer, instance);
+				}
+			}
+
+			public ISerializer Get() => _container.Get();
+		}
 	}
 }

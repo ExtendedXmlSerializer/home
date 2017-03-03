@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Sources;
@@ -43,8 +44,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 			protected override bool Create(TypeInfo parameter)
 			{
-				var variables = new VariableTypeWalker(_members, parameter).Get();
-				var length = variables.Count;
+				var variables = new VariableTypeWalker(_members, parameter).Get().ToArray();
+				var length = variables.Length;
 				for (var i = 0; i < length; i++)
 				{
 					var first = variables[i];

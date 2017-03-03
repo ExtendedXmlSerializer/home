@@ -21,35 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ConfigureServicesCommand : ICommand<IServices>
-	{
-		readonly static Serializations<Serialization> Serializations = Serializations<Serialization>.Default;
-
-		readonly ISerializations _serializations;
-		readonly IReadOnlyList<ISerializerExtension> _extensions;
-
-		public ConfigureServicesCommand(IReadOnlyList<ISerializerExtension> extensions) : this(Serializations, extensions) {}
-
-		public ConfigureServicesCommand(ISerializations serializations, IReadOnlyList<ISerializerExtension> extensions)
-		{
-			_serializations = serializations;
-			_extensions = extensions;
-		}
-
-		public void Execute(IServices parameter)
-		{
-			var serialization = new AssignedSerialization();
-			var provider = _extensions.Appending(_serializations.Get(serialization))
-			                          .Alter(parameter);
-
-			serialization.Execute(_serializations.Get(provider));
-		}
-	}
+	public interface ISerializationContext : ISerialization {}
 }

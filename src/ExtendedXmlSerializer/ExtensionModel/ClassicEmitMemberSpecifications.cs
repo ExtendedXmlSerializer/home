@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Specifications;
@@ -30,10 +29,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
 	{
-		readonly static AlwaysEmitMemberSpecification Always = AlwaysEmitMemberSpecification.Default;
+		readonly static IMemberEmitSpecification Always =
+				AlwaysEmitMemberSpecification.Default,
+			Assigned = AssignedEmitMemberSpecification.Default;
 
 		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsAssignableSpecification<Enum>.Default) {}
+		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
 
 		readonly ISpecification<TypeInfo> _valueType;
 
@@ -43,6 +44,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		}
 
 		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : null;
+			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
 	}
 }

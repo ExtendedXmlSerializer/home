@@ -21,28 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class SerializationExtension<T> : ISerializerExtension where T : class, ISerialization
+	class AssignedEmitMemberSpecification : MemberEmitSpecification
 	{
-		readonly ISerialization _serialization;
-		readonly IMemberContent _content;
-
-		public SerializationExtension(ISerialization serialization)
-			: this(serialization, new RecursionGuardedMemberContent(new MemberContent(serialization))) {}
-
-		public SerializationExtension(ISerialization serialization, IMemberContent content)
-		{
-			_serialization = serialization;
-			_content = content;
-		}
-
-		public IServices Get(IServices parameter) =>
-			parameter.RegisterInstance(_serialization)
-			         .RegisterInstance(_content)
-			         .Register<T>();
+		public static AssignedEmitMemberSpecification Default { get; } = new AssignedEmitMemberSpecification();
+		AssignedEmitMemberSpecification() : base(AssignedSpecification.Default) {}
 	}
 }

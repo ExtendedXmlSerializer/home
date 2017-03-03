@@ -21,32 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceSupportedXmlFactory : IXmlFactory
+	class ConfiguredSerialization : ItemizedSource<ISerialization>, ISerialization
 	{
-		readonly IXmlFactory _factory;
-
-		public ReferenceSupportedXmlFactory(IXmlFactory factory)
-		{
-			_factory = factory;
-		}
-
-		public IXmlWriter Create(Stream stream, object instance)
-		{
-			try
-			{
-				return _factory.Create(stream, instance);
-			}
-			catch (CircularReferencesDetectedException err)
-			{
-				return err.Writer;
-			}
-		}
-
-		public IXmlReader Create(Stream stream) => _factory.Create(stream);
+		public IContainer Get(TypeInfo parameter) => Get().Get(parameter);
 	}
 }

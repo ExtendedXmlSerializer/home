@@ -23,17 +23,38 @@
 
 using System;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Serializations<T> : ISerializations where T : ISerialization
+	class Serializations : Serializations<Serialization>
 	{
-		public static Serializations<T> Default { get; } = new Serializations<T>();
+		public static Serializations Default { get; } = new Serializations();
 		Serializations() {}
+	}
 
-		public ISerializerExtension Get(ISerialization parameter) => new SerializationExtension<Serialization>(parameter);
-
+	class Serializations<T> : ISerializations, ISerializerExtension where T : class, ISerializationContext
+	{
 		public ISerialization Get(IServiceProvider parameter) => parameter.Get<T>();
+
+		public IServices Get(IServices parameter)
+		{
+			var serialization = new ConfiguredSerialization();
+			var result = parameter.RegisterInstance<ISerialization>(serialization)
+			                      .RegisterInstance(serialization)
+			                      .Register<IMemberContent, MemberContent>()
+			                      .Decorate<IMemberContent>((factory, content) => new RecursionGuardedMemberContent(content))
+			                      .Register<T>();
+			return result;
+		}
+
+		public void Execute(IServices parameter)
+		{
+			var configured = parameter.Get<ConfiguredSerialization>();
+			var context = parameter.Get<T>();
+			configured.Execute(context);
+			parameter.RegisterInstance<ISerializationContext>(context);
+		}
 	}
 }

@@ -72,14 +72,11 @@ namespace ExtendedXmlSerialization.Performance.Tests
 
 		public ExtendedXmlSerializerV2Test()
 		{
-			var data = SerializationClassWithPrimitive();
-			_xml = Encoding.UTF8.GetBytes(data);
-			
+			_xml = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
 			DeserializationClassWithPrimitive();
-			
 		}
 
-		//[Benchmark]
+		[Benchmark]
 		public string SerializationClassWithPrimitive() => _serializer.Serialize(_obj);
 
 		[Benchmark]

@@ -22,26 +22,32 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class IsActivatedTypeSpecification : ISpecification<TypeInfo>
+	public class IsActivatedTypeSpecification : DelegatedSpecification<TypeInfo>
 	{
 		readonly static TypeInfo GeneralObject = typeof(object).GetTypeInfo();
 		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
 		IsActivatedTypeSpecification() : this(ConstructorLocator.Default) {}
 
-		readonly IConstructorLocator _locator;
+		public IsActivatedTypeSpecification(IConstructorLocator locator) : base(new Implementation(locator).Get) {}
 
-		public IsActivatedTypeSpecification(IConstructorLocator locator)
+		sealed class Implementation : StructureCacheBase<TypeInfo, bool>
 		{
-			_locator = locator;
-		}
+			readonly IConstructorLocator _locator;
 
-		public bool IsSatisfiedBy(TypeInfo parameter)
-			=> parameter.IsValueType ||
-			   !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject) &&
-			   _locator.Get(parameter) != null;
+			public Implementation(IConstructorLocator locator)
+			{
+				_locator = locator;
+			}
+
+			protected override bool Create(TypeInfo parameter)
+				=> parameter.IsValueType ||
+				   !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject) &&
+				   _locator.Get(parameter) != null;
+		}
 	}
 }

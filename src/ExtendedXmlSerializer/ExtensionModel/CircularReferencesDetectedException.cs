@@ -22,17 +22,17 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class CircularReferencesDetectedException : Exception
 	{
-		public CircularReferencesDetectedException(string message, IXmlWriter writer) : base(message)
+		public CircularReferencesDetectedException(string message, IWriter writer) : base(message)
 		{
 			Writer = writer;
 		}
 
-		public IXmlWriter Writer { get; }
+		public IWriter Writer { get; }
 	}
 }

@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class SerializationSelector : Selector<TypeInfo, IContainer>
+	class SerializationSelector : Selector<TypeInfo, IContainer>, ISerialization
 	{
 		public SerializationSelector(params IOption<TypeInfo, IContainer>[] options) : base(options) {}
 

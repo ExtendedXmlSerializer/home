@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IReadOnlyList<TypeInfo>>
+	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
 		readonly ISpecification<TypeInfo> _specification;
 
@@ -63,6 +63,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			}
 		}
 
-		public IReadOnlyList<TypeInfo> Get() => this.SelectMany(x => x).AsReadOnly();
+		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x);
 	}
 }
