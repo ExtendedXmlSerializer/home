@@ -44,7 +44,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var token = parameter.New();
 			if (token.HasValue)
 			{
-				while (parameter.Next(token.Value))
+				var t = token.Value;
+				while (parameter.Next(t))
 				{
 					var member = _members.Get(parameter.Name);
 					member?.Adapter.Assign(result, member.Get(parameter));

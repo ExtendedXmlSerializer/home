@@ -152,8 +152,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 				: this(owner, reader, TypeProperty, ItemTypeProperty, ArgumentsProperty, Identities, GenericTypes, Default) {}
 
 			ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
-			                            IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,
-			                            ITypes types)
+			                     IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,
+			                     ITypes types)
 			{
 				_owner = owner;
 				_reader = reader;

@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
 using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -35,5 +36,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			parameter.Register<IObjectNamespaces, ObjectNamespaces>()
 			         .Decorate<IElementOptionSelector>(
 				         (factory, selector) => new Selector(factory.GetInstance<IObjectNamespaces>(), selector));
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

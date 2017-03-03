@@ -28,21 +28,34 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredServices : DefaultRegistrationsExtension,
-	                           IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
+	class ConfiguredServices : IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
 	{
+		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+
 		readonly ISource<IServices> _source;
+		readonly IReadOnlyList<ISerializerExtension> _roots;
 
-		public ConfiguredServices(params object[] instances) : this(ServicesFactory.Default, instances) {}
+		public ConfiguredServices(params object[] instances)
+			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
 
-		public ConfiguredServices(ISource<IServices> source, params object[] instances) : base(instances)
+		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
 		{
 			_source = source;
+			_roots = roots.AsReadOnly();
 		}
 
 		public IServices Get(IEnumerable<ISerializerExtension> parameter)
-			=>
-				new ConfiguringAlteration<IServices>(new ConfigureServicesCommand(this.Yield().Concat(parameter).AsReadOnly()))
-					.Get(_source.Get());
+		{
+			var services = _source.Get();
+			var extensions = _roots.Concat(parameter).ToArray();
+			var result = extensions.Alter(services);
+
+			foreach (var extension in extensions)
+			{
+				extension.Execute(result);
+			}
+
+			return result;
+		}
 	}
 }

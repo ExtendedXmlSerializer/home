@@ -44,18 +44,20 @@ namespace ExtendedXmlSerialization.TypeModel
 		protected override Func<object> Create(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
-			var expression = typeInfo.IsValueType ? Expression.New(parameter) : Reference(typeInfo);
+			var expression = typeInfo.IsValueType ? Expression.New(parameter) : Reference(parameter, typeInfo);
 			var convert = Expression.Convert(expression, typeof(object));
 			var lambda = Expression.Lambda<Func<object>>(convert);
 			var result = lambda.Compile();
 			return result;
 		}
 
-		NewExpression Reference(TypeInfo typeInfo)
+		NewExpression Reference(Type parameter, TypeInfo typeInfo)
 		{
 			var constructor = _locator.Get(typeInfo);
-			var arguments = constructor.GetParameters().Select(x => Expression.Default(x.ParameterType));
-			var result = Expression.New(constructor, arguments);
+			var parameters = constructor.GetParameters();
+			var result = parameters.Length > 0
+				? Expression.New(constructor, parameters.Select(x => Expression.Default(x.ParameterType)))
+				: Expression.New(parameter);
 			return result;
 		}
 	}
