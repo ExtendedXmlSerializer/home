@@ -34,8 +34,8 @@
         
       },
         "dependencies": {
-            "BenchmarkDotNet": "0.10.2",
-            "BenchmarkDotNet.Diagnostics.Windows": "0.10.2"
+            "BenchmarkDotNet": "0.10.3",
+            "BenchmarkDotNet.Diagnostics.Windows": "0.10.3"
         }
     },
     "netcoreapp1.0": {
