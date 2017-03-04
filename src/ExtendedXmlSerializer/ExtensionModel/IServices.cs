@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -32,15 +31,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	// Basically using this as a decorated contract for now.
 	public interface IServices : IServiceProvider, IDisposable
 	{
-		IEnumerable<ServiceRegistration> AvailableServices { get; }
+		IEnumerable<TypeInfo> AvailableServices { get; }
 
 		IServices Register(Type serviceType, Type implementingType);
 
-		/*IServiceRegistry Register(Type serviceType, Type implementingType, ILifetime lifetime);*/
-
 		IServices Register(Type serviceType, Type implementingType, string serviceName);
-
-		/*IServiceRegistry Register(Type serviceType, Type implementingType, string serviceName, ILifetime lifetime);*/
 
 		IServices Register<TService, TImplementation>() where TImplementation : TService;
 
@@ -57,46 +52,34 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		IServices Register(Type serviceType);
 
-		IServices Register<TService>(Func<IServiceFactory, TService> factory);
-		IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory);
-		IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory, string serviceName);
-		IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory);
-		IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory, string serviceName);
-		IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory);
+		IServices Register<TService>(Func<IServiceProvider, TService> factory);
+		IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory);
+		IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory, string serviceName);
+		IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory);
+		IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory, string serviceName);
+		IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory);
 
-		IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory,
+		IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory,
 		                                                string serviceName);
 
-		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory);
+		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory);
 
-		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory,
+		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
 		                                                    string serviceName);
 
-		IServices Register<TService>(Func<IServiceFactory, TService> factory, string serviceName);
+		IServices Register<TService>(Func<IServiceProvider, TService> factory, string serviceName);
 		IServices RegisterFallback(Func<Type, bool> predicate, Func<Type, object> factory);
 
 
-		/*IServiceRegistry Register<TService, TImplementation>(ILifetime lifetime) where TImplementation : TService;
-		IServiceRegistry Register<TService, TImplementation>(string serviceName, ILifetime lifetime) where TImplementation : TService;
-		IServiceRegistry Register<TService>(ILifetime lifetime);
-		IServiceRegistry Register(Type serviceType, ILifetime lifetime);
-		IServiceRegistry Register<TService>(Func<IServiceFactory, TService> factory, ILifetime lifetime);
-		IServiceRegistry Register<TService>(Func<IServiceFactory, TService> factory, string serviceName, ILifetime lifetime);	 
-		IServiceRegistry RegisterFallback(Func<Type, string, bool> predicate, Func<ServiceRequest, object> factory, ILifetime lifetime);
-
-					IServiceRegistry Decorate(Type serviceType, Type decoratorType, Func<ServiceRegistration, bool> predicate);
-					IServiceRegistry Decorate(DecoratorRegistration decoratorRegistration);
-					IServiceRegistry Override(Func<ServiceRegistration, bool> serviceSelector, Func<IServiceFactory, ServiceRegistration, ServiceRegistration> serviceRegistrationFactory);
-					*/
-		IServices RegisterConstructorDependency<TDependency>(Func<IServiceFactory, ParameterInfo, TDependency> factory);
+		IServices RegisterConstructorDependency<TDependency>(Func<IServiceProvider, ParameterInfo, TDependency> factory);
 
 		IServices RegisterConstructorDependency<TDependency>(
-			Func<IServiceFactory, ParameterInfo, object[], TDependency> factory);
+			Func<IServiceProvider, ParameterInfo, object[], TDependency> factory);
 
 
 		IServices Decorate(Type serviceType, Type decoratorType);
 
 		IServices Decorate<TService, TDecorator>() where TDecorator : TService;
-		IServices Decorate<TService>(Func<IServiceFactory, TService, TService> factory);
+		IServices Decorate<TService>(Func<IServiceProvider, TService, TService> factory);
 	}
 }

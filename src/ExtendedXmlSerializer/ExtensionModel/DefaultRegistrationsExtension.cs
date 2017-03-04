@@ -29,7 +29,6 @@ using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using LightInject;
 using ContainerOptions = ExtendedXmlSerialization.ContentModel.Content.ContainerOptions;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -58,20 +57,20 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Register<ISerializer, RuntimeSerializer>()
 			         .Register<IMemberOption, VariableTypeMemberOption>()
 			         .Register<MemberProfiles>()
-			         .Register(factory => factory.GetInstance<MemberProfiles>().ToDelegate())
+			         .Register(factory => factory.Get<MemberProfiles>().ToDelegate())
 			         .Register<IMemberSerialization, MemberSerialization>()
 			         .Register<ISelector, ContentModel.Members.Selector>()
 			         .Register<IMembers, Members>()
 			         .Register<IContentOptions, ContentOptions>()
 			         .Register<IContainerOptions, ContainerOptions>()
-			         .Register(factory => factory.GetInstance<IContainerOptions>().ToArray())
+			         .Register(factory => factory.Get<IContainerOptions>().ToArray())
 			         .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
 			         .Register<ContainsStaticReferenceSpecification>()
 			         .Register<IRootReferences, RootReferences>()
 			         .Decorate<ISerialization>((factory, context)
 				                                          => new ReferentialAwareSerialization(
-					                                          factory.GetInstance<IStaticReferenceSpecification>(),
-					                                          factory.GetInstance<IRootReferences>(),
+					                                          factory.Get<IStaticReferenceSpecification>(),
+					                                          factory.Get<IRootReferences>(),
 					                                          context
 				                                          )
 			         )

@@ -23,7 +23,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -42,21 +44,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		}
 
 
-		public IEnumerable<ServiceRegistration> AvailableServices => _registry.AvailableServices;
+		public IEnumerable<TypeInfo> AvailableServices => _registry.AvailableServices.Select(x => x.ServiceType.GetTypeInfo());
 
 		public IServices Register(Type serviceType, Type implementingType)
 			=> new Services(_container, _registry.Register(serviceType, implementingType));
 
-		/*public IServiceRegistry Register(Type serviceType, Type implementingType, ILifetime lifetime)
-			=> new ServiceRegistry(_container, _registry.Register(serviceType, implementingType, lifetime));*/
-
 		public IServices Register(Type serviceType, Type implementingType, string serviceName)
 			=> new Services(_container, _registry.Register(serviceType, implementingType, serviceName));
-
-/*
-		public IServiceRegistry Register(Type serviceType, Type implementingType, string serviceName, ILifetime lifetime)
-			=> new ServiceRegistry(_container, _registry.Register(serviceType, implementingType, serviceName, lifetime));
-*/
 
 		public IServices Register<TService, TImplementation>() where TImplementation : TService
 			=> new Services(_container, _registry.Register<TService, TImplementation>(new PerContainerLifetime()));
@@ -81,37 +75,54 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServices Register(Type serviceType) => new Services(_container, _registry.Register(serviceType));
 
-		public IServices Register<TService>(Func<IServiceFactory, TService> factory)
-			=> new Services(_container, _registry.Register(factory, new PerContainerLifetime()));
+		public IServices Register<TService>(Func<IServiceProvider, TService> factory)
+			=> new Services(_container, _registry.Register(new Registration<TService>(factory).Get, new PerContainerLifetime()));
 
-		public IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory)
-			=> new Services(_container, _registry.Register(factory));
+		class Providers : ReferenceCache<IServiceFactory, Providers.Provider>
+		{
+			public static Providers Default { get; } = new Providers();
+			Providers() : base(x => new Provider(x)) {}
 
-		public IServices Register<T, TService>(Func<IServiceFactory, T, TService> factory, string serviceName)
-			=> new Services(_container, _registry.Register(factory, serviceName));
+			public class Provider : IServiceProvider
+			{
+				readonly IServiceFactory _factory;
+				public Provider(IServiceFactory factory)
+				{
+					_factory = factory;
+				}
 
-		public IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory)
-			=> new Services(_container, _registry.Register(factory));
+				public object GetService(Type serviceType) => _factory.GetInstance(serviceType);
+			}
+		}
 
-		public IServices Register<T1, T2, TService>(Func<IServiceFactory, T1, T2, TService> factory, string serviceName)
-			=> new Services(_container, _registry.Register(factory, serviceName));
+		public IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory)
+			=> new Services(_container, _registry.Register<T, TService>(new Registration<T,TService>(factory).Get));
 
-		public IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory)
-			=> new Services(_container, _registry.Register(factory));
+		public IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register<T, TService>(new Registration<T,TService>(factory).Get, serviceName));
 
-		public IServices Register<T1, T2, T3, TService>(Func<IServiceFactory, T1, T2, T3, TService> factory,
+		public IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory)
+			=> new Services(_container, _registry.Register<T1, T2, TService>(new Registration<T1, T2, TService>(factory).Get));
+
+		public IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register<T1, T2, TService>(new Registration<T1, T2, TService>(factory).Get, serviceName));
+
+		public IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory)
+			=> new Services(_container, _registry.Register<T1, T2, T3, TService>(new Registration<T1, T2, T3, TService>(factory).Get));
+
+		public IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory,
 		                                                string serviceName)
-			=> new Services(_container, _registry.Register(factory, serviceName));
+			=> new Services(_container, _registry.Register<T1, T2, T3, TService>(new Registration<T1, T2, T3, TService>(factory).Get, serviceName));
 
-		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory)
-			=> new Services(_container, _registry.Register(factory));
+		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory)
+			=> new Services(_container, _registry.Register<T1, T2, T3, T4, TService>(new Registration<T1, T2, T3, T4, TService>(factory).Get));
 
-		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceFactory, T1, T2, T3, T4, TService> factory,
+		public IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
 		                                                    string serviceName)
-			=> new Services(_container, _registry.Register(factory, serviceName));
+			=> new Services(_container, _registry.Register<T1, T2, T3, T4, TService>(new Registration<T1, T2, T3, T4, TService>(factory).Get, serviceName));
 
-		public IServices Register<TService>(Func<IServiceFactory, TService> factory, string serviceName)
-			=> new Services(_container, _registry.Register(factory, serviceName));
+		public IServices Register<TService>(Func<IServiceProvider, TService> factory, string serviceName)
+			=> new Services(_container, _registry.Register(new Registration<TService>(factory).Get, serviceName));
 
 		public IServices RegisterFallback(Func<Type, bool> predicate, Func<Type, object> factory)
 			=>
@@ -119,12 +130,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				             _registry.RegisterFallback((type, s) => predicate(type), request => factory(request.ServiceType)));
 
 		public IServices RegisterConstructorDependency<TDependency>(
-			Func<IServiceFactory, ParameterInfo, TDependency> factory)
-			=> new Services(_container, _registry.RegisterConstructorDependency(factory));
+			Func<IServiceProvider, ParameterInfo, TDependency> factory)
+			=> new Services(_container, _registry.RegisterConstructorDependency(new Dependency<TDependency>(factory).Get));
 
 		public IServices RegisterConstructorDependency<TDependency>(
-			Func<IServiceFactory, ParameterInfo, object[], TDependency> factory)
-			=> new Services(_container, _registry.RegisterConstructorDependency(factory));
+			Func<IServiceProvider, ParameterInfo, object[], TDependency> factory)
+			=> new Services(_container, _registry.RegisterConstructorDependency(new Arguments<TDependency>(factory).Get));
 
 		public IServices Decorate(Type serviceType, Type decoratorType)
 			=> new Services(_container, _registry.Decorate(serviceType, decoratorType));
@@ -132,11 +143,106 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServices Decorate<TService, TDecorator>() where TDecorator : TService
 			=> new Services(_container, _registry.Decorate<TService, TDecorator>());
 
-		public IServices Decorate<TService>(Func<IServiceFactory, TService, TService> factory)
-			=> new Services(_container, _registry.Decorate(factory));
+		public IServices Decorate<TService>(Func<IServiceProvider, TService, TService> factory)
+			=> new Services(_container, _registry.Decorate<TService>(new Decoration<TService>(factory).Get));
 
 		public object GetService(Type serviceType) => _container.GetInstance(serviceType);
 
 		public void Dispose() => _container.Dispose();
+
+		class Arguments<T>
+		{
+			readonly Func<IServiceProvider, ParameterInfo, object[], T> _factory;
+
+			public Arguments(Func<IServiceProvider, ParameterInfo, object[], T> factory)
+			{
+				_factory = factory;
+			}
+
+			public T Get(IServiceFactory factory, ParameterInfo parameter, object[] arguments) => _factory(Providers.Default.Get(factory), parameter, arguments);
+		}
+
+		class Decoration<T>
+		{
+			readonly Func<IServiceProvider, T, T> _factory;
+			public Decoration(Func<IServiceProvider, T, T> factory)
+			{
+				_factory = factory;
+			}
+
+			public T Get(IServiceFactory factory, T parameter) => _factory(Providers.Default.Get(factory), parameter);
+		}
+
+		class Dependency<T>
+		{
+			readonly Func<IServiceProvider, ParameterInfo, T> _factory;
+
+			public Dependency(Func<IServiceProvider, ParameterInfo, T> factory)
+			{
+				_factory = factory;
+			}
+
+			public T Get(IServiceFactory factory, ParameterInfo parameter) => _factory(Providers.Default.Get(factory), parameter);
+		}
+
+		class Registration<T>
+		{
+			readonly Func<IServiceProvider, T> _factory;
+
+			public Registration(Func<IServiceProvider, T> factory)
+			{
+				_factory = factory;
+			}
+
+			public T Get(IServiceFactory factory) => _factory(Providers.Default.Get(factory));
+		}
+
+		class Registration<T, TService>
+		{
+			readonly Func<IServiceProvider, T, TService> _factory;
+
+			public Registration(Func<IServiceProvider, T, TService> factory)
+			{
+				_factory = factory;
+			}
+
+			public TService Get(IServiceFactory factory, T parameter) => _factory(Providers.Default.Get(factory), parameter);
+		}
+
+		class Registration<T1, T2, TService>
+		{
+			readonly Func<IServiceProvider, T1, T2, TService> _factory;
+
+			public Registration(Func<IServiceProvider, T1, T2, TService> factory)
+			{
+				_factory = factory;
+			}
+
+			public TService Get(IServiceFactory factory, T1 first, T2 second) => _factory(Providers.Default.Get(factory), first, second);
+		}
+
+		class Registration<T1, T2, T3, TService>
+		{
+			readonly Func<IServiceProvider, T1, T2, T3, TService> _factory;
+
+			public Registration(Func<IServiceProvider, T1, T2, T3, TService> factory)
+			{
+				_factory = factory;
+			}
+
+			public TService Get(IServiceFactory factory, T1 first, T2 second, T3 third) => _factory(Providers.Default.Get(factory), first, second, third);
+		}
+
+		class Registration<T1, T2, T3, T4, TService>
+		{
+			readonly Func<IServiceProvider, T1, T2, T3, T4, TService> _factory;
+
+			public Registration(Func<IServiceProvider, T1, T2, T3, T4, TService> factory)
+			{
+				_factory = factory;
+			}
+
+			public TService Get(IServiceFactory factory, T1 first, T2 second, T3 third, T4 forth) => _factory(Providers.Default.Get(factory), first, second, third, forth);
+		}
 	}
 }
