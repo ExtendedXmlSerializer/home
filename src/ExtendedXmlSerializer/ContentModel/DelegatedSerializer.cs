@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
@@ -32,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel
 		readonly Func<string, object> _deserialize;
 		readonly Func<object, string> _serialize;
 
-		public DelegatedSerializer(IConverter converter) : this(converter.Parse, converter.Format) {}
+		//public DelegatedSerializer(IConverter converter) : this(converter.Parse, converter.Format) {}
 
 		public DelegatedSerializer(Func<string, object> deserialize, Func<object, string> serialize)
 		{

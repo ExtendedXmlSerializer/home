@@ -21,41 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public class DelegateAlterations<TParameter, TResult> :
-		ReferenceCache<IAlteration<TResult>, IAlteration<Func<TParameter, TResult>>>
-	{
-		public static DelegateAlterations<TParameter, TResult> Default { get; } =
-			new DelegateAlterations<TParameter, TResult>();
-
-		DelegateAlterations() : base(x => new DelegateAlteration(x)) {}
-
-		class DelegateAlteration : IAlteration<Func<TParameter, TResult>>
-		{
-			readonly IAlteration<TResult> _alteration;
-
-			public DelegateAlteration(IAlteration<TResult> alteration)
-			{
-				_alteration = alteration;
-			}
-
-			public Func<TParameter, TResult> Get(Func<TParameter, TResult> parameter)
-				=> new DelegateAlterationSource(parameter, _alteration).Get;
-		}
-
-		sealed class DelegateAlterationSource : DelegatedSource<TParameter, TResult>
-		{
-			readonly IAlteration<TResult> _alteration;
-
-			public DelegateAlterationSource(Func<TParameter, TResult> source, IAlteration<TResult> alteration) : base(source)
-			{
-				_alteration = alteration;
-			}
-
-			public override TResult Get(TParameter parameter) => _alteration.Get(base.Get(parameter));
-		}
-	}
+	public interface IConverters : IEnumerable<IConverter> {}
 }

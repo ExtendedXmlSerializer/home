@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public static ClassicExtension Default { get; } = new ClassicExtension();
 		ClassicExtension() {}
 
-		public IServices Get(IServices parameter)
+		public IServiceRepository Get(IServiceRepository parameter)
 			=>
 				parameter.Register<IContentOptions, ClassicContentOptions>()
 				         .RegisterInstance(ClassicEmitMemberSpecifications.Default);

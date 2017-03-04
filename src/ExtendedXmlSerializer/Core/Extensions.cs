@@ -47,9 +47,9 @@ namespace ExtendedXmlSerialization.Core
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
-		public static Func<TParameter, TResult> Alter<TParameter, TResult>(this IAlteration<TResult> @this,
+		/*public static Func<TParameter, TResult> Alter<TParameter, TResult>(this IAlteration<TResult> @this,
 		                                                                   Func<TParameter, TResult> factory)
-			=> DelegateAlterations<TParameter, TResult>.Default.Get(@this).Get(factory);
+			=> DelegateAlterations<TParameter, TResult>.Default.Get(@this).Get(factory);*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;

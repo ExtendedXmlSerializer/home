@@ -23,7 +23,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.Test.ExtensionModel;
+using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using Xunit;
 

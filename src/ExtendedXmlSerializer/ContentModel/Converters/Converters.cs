@@ -21,41 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class ConfiguredServices : IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
+	class Converters : IConverters
 	{
-		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+		readonly IEnumerable<IConverter> _converters;
 
-		readonly ISource<IServices> _source;
-		readonly IReadOnlyList<ISerializerExtension> _roots;
-
-		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
-
-		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
+		public Converters(IEnumerable<IConverter> converters)
 		{
-			_source = source;
-			_roots = roots.AsReadOnly();
+			_converters = converters;
 		}
 
-		public IServices Get(IEnumerable<ISerializerExtension> parameter)
-		{
-			var result = _source.Get();
-			var extensions = _roots.Concat(parameter).ToArray();
-			extensions.Alter(result);
+		public IEnumerator<IConverter> GetEnumerator() => _converters.GetEnumerator();
 
-			foreach (var extension in extensions)
-			{
-				extension.Execute(result);
-			}
-
-			return result;
-		}
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _converters).GetEnumerator();
 	}
 }

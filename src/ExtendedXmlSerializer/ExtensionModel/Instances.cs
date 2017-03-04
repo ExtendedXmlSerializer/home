@@ -27,6 +27,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
@@ -41,40 +42,44 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly IActivation _activation;
 		readonly IXmlFactory _xmlFactory;
 		readonly IMemberConfiguration _memberConfiguration;
+		readonly IEnumerable<IConverter> _converters;
 		readonly IMemberSerializers _serializers;
 		readonly IElementOptionSelector _selector;
-		readonly IContentOption _content;
 		readonly object[] _additional;
 
-		public Instances(IActivation activation, IMemberConfiguration configuration, IContentOption content,
-		                 IXmlFactory xmlFactory, params object[] additional)
+		public Instances(IActivation activation, IMemberConfiguration configuration, IEnumerable<IConverter> converters,
+		                 IXmlFactory xmlFactory,
+		                 params object[] additional)
 			: this(
 				configuration.Policy.And<PropertyInfo>(configuration.Specification),
 				configuration.Policy.And<FieldInfo>(configuration.Specification),
-				activation, xmlFactory, configuration,
+				activation, xmlFactory, configuration, converters,
 				new MemberSerializers(configuration.Runtime, configuration.Converters),
-				ElementOptionSelector.Default, content, additional) {}
+				ElementOptionSelector.Default, additional) {}
 
 		public Instances(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
 			IActivation activation, IXmlFactory xmlFactory, IMemberConfiguration memberConfiguration,
-			IMemberSerializers serializers, IElementOptionSelector selector, IContentOption content, params object[] additional)
+			IEnumerable<IConverter> converters,
+			IMemberSerializers serializers, IElementOptionSelector selector, params object[] additional)
 		{
 			_property = property;
 			_field = field;
 			_activation = activation;
 			_xmlFactory = xmlFactory;
 			_memberConfiguration = memberConfiguration;
+			_converters = converters;
 
 
 			_serializers = serializers;
 			_selector = selector;
-			_content = content;
 			_additional = additional;
 		}
 
 		public IEnumerator<object> GetEnumerator()
 		{
+			yield return _converters;
+
 			yield return _activation;
 			yield return _property;
 			yield return _field;
@@ -89,7 +94,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			yield return _serializers;
 			yield return _xmlFactory;
 
-			yield return _content;
 			yield return _selector;
 			foreach (var o in _additional)
 			{

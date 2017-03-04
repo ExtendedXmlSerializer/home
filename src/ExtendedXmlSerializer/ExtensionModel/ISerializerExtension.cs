@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface ISerializerExtension : IAlteration<IServices>, ICommand<IServices> {}
+	public interface ISerializerExtension : IAlteration<IServiceRepository>, ICommand<IServices> {}
 }

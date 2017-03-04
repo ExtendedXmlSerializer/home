@@ -26,8 +26,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using JetBrains.Annotations;
@@ -89,22 +87,5 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			[UsedImplicitly]
 			public string Message { get; set; }
 		}
-	}
-
-	class EmitBehaviorExtension : ISerializerExtension
-	{
-		public static EmitBehaviorExtension Default { get; } = new EmitBehaviorExtension();
-		EmitBehaviorExtension() : this(InstanceDefaultsMemberSpecifications.Default)  {}
-
-		readonly IMemberEmitSpecifications _specifications;
-
-		public EmitBehaviorExtension(IMemberEmitSpecifications specifications)
-		{
-			_specifications = specifications;
-		}
-
-		public IServices Get(IServices parameter) => parameter.RegisterInstance(_specifications);
-
-		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

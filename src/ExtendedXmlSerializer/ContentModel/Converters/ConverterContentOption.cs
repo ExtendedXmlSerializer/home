@@ -25,7 +25,6 @@ using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
@@ -34,14 +33,17 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 	{
 		readonly Func<TypeInfo, ISerializer> _factory;
 
-		public ConverterContentOption(IConverter converter, IAlteration<IConverter> alteration)
+		/*public ConverterContentOption(IConverter converter, IAlteration<IConverter> alteration)
 			: this(converter.Accept, alteration, converter) {}
 
 		public ConverterContentOption(Func<TypeInfo, IConverter> factory, IAlteration<IConverter> alteration,
 		                              ISpecification<TypeInfo> specification)
-			: this(new SerializerFactory(alteration.Alter(factory)).ToDelegate(), specification) {}
+			: this(new Serializers(alteration.Alter(factory)).ToDelegate(), specification) {}*/
 
-		public ConverterContentOption(Func<TypeInfo, ISerializer> factory, ISpecification<TypeInfo> specification)
+		public ConverterContentOption(IConverter converter)
+			: this(converter, new DelegatedSerializer(converter.Parse, converter.Format).Accept) {}
+
+		public ConverterContentOption(ISpecification<TypeInfo> specification, Func<TypeInfo, ISerializer> factory)
 			: base(specification)
 		{
 			_factory = factory;

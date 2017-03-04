@@ -125,8 +125,9 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var instances = new Instances(_activation, _memberConfiguration, ContentSource.Default.Get(_converters),
-			                              new XmlFactory(ReaderSettings, WriterSettings)).ToArray();
+			var instances =
+				new Instances(_activation, _memberConfiguration, _converters, new XmlFactory(ReaderSettings, WriterSettings))
+					.ToArray();
 
 			using (var services = new ConfiguredServices(instances).Get(_extensions))
 			{

@@ -30,7 +30,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	public static class Extensions
 	{
-		public static IServices RegisterInstanceByConvention(this IServices registry, object service)
+		public static IServiceRepository RegisterInstanceByConvention(this IServiceRepository registry, object service)
 		{
 			var serviceType = service.GetType();
 			var inherited = AllInterfaces.Default.Get(serviceType.GetTypeInfo().BaseType.GetTypeInfo());

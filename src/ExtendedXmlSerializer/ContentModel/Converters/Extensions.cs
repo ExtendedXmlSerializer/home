@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Sources;
-
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	public static class Extensions
 	{
-		public static IContentOption ToContent(this IAlteration<IConverter> @this, IConverter converter)
-			=> new ConverterContentOption(converter, @this);
+		/*public static IContentOption ToContent(this IAlteration<IConverter> @this, IConverter converter)
+			=> new ConverterContentOption(@this, converter);*/
+
+		public static ISerializer ToSerializer(this IConverter converter)
+			=> new DelegatedSerializer(converter.Parse, converter.Format);
 	}
 }

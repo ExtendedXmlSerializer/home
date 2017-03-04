@@ -32,6 +32,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_alteration = alteration;
 		}
 
-		public T Get(T parameter) => _alteration.Get(parameter);
+		public virtual T Get(T parameter) => _alteration.Get(parameter);
 	}
 }
