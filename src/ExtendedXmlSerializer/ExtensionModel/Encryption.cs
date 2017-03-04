@@ -21,31 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
-using JetBrains.Annotations;
+using ExtendedXmlSerialization.ContentModel.Converters;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
+	class Encryption : ConverterBase<string>, IEncryption
 	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
+		public static Encryption Default { get; } = new Encryption();
+		Encryption() : this(Encrypt.Default, Decrypt.Default) {}
 
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
+		readonly IEncrypt _encrypt;
+		readonly IDecrypt _decrypt;
 
-		readonly ISpecification<TypeInfo> _valueType;
-
-		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
+		public Encryption(IEncrypt encrypt, IDecrypt decrypt)
 		{
-			_valueType = valueType;
+			_encrypt = encrypt;
+			_decrypt = decrypt;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
+		public override string Parse(string data) => _decrypt.Get(data);
+
+		public override string Format(string instance) => _encrypt.Get(instance);
 	}
 }

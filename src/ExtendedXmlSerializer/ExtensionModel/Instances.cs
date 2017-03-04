@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly IActivation _activation;
 		readonly IXmlFactory _xmlFactory;
 		readonly IMemberConfiguration _memberConfiguration;
-		readonly IMemberWriters _writers;
+		readonly IMemberSerializers _serializers;
 		readonly IElementOptionSelector _selector;
 		readonly IContentOption _content;
 		readonly object[] _additional;
@@ -52,13 +52,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				configuration.Policy.And<PropertyInfo>(configuration.Specification),
 				configuration.Policy.And<FieldInfo>(configuration.Specification),
 				activation, xmlFactory, configuration,
-				new MemberWriters(configuration.Runtime, configuration.Converters),
+				new MemberSerializers(configuration.Runtime, configuration.Converters),
 				ElementOptionSelector.Default, content, additional) {}
 
 		public Instances(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
 			IActivation activation, IXmlFactory xmlFactory, IMemberConfiguration memberConfiguration,
-			IMemberWriters writers, IElementOptionSelector selector, IContentOption content, params object[] additional)
+			IMemberSerializers serializers, IElementOptionSelector selector, IContentOption content, params object[] additional)
 		{
 			_property = property;
 			_field = field;
@@ -67,7 +67,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_memberConfiguration = memberConfiguration;
 
 
-			_writers = writers;
+			_serializers = serializers;
 			_selector = selector;
 			_content = content;
 			_additional = additional;
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			yield return _memberConfiguration.Aliases;
 			yield return _memberConfiguration.Order;
 
-			yield return _writers;
+			yield return _serializers;
 			yield return _xmlFactory;
 
 			yield return _content;

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,31 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
-using JetBrains.Annotations;
+using ExtendedXmlSerialization.ContentModel.Converters;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
+	class EncryptedConverter : ConverterBase<object>, IConverter
 	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
+		readonly IEncryption _encryption;
+		readonly IConverter _converter;
 
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
-
-		readonly ISpecification<TypeInfo> _valueType;
-
-		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
+		public EncryptedConverter(IEncryption encryption, IConverter converter)
 		{
-			_valueType = valueType;
+			_encryption = encryption;
+			_converter = converter;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
+		public override string Format(object instance) => _encryption.Format(_converter.Format(instance));
+
+		public override object Parse(string data) => _converter.Parse(_encryption.Parse(data));
 	}
 }

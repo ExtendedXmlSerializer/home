@@ -21,31 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
-using JetBrains.Annotations;
+using ExtendedXmlSerialization.ContentModel.Converters;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
-	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
-
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
-
-		readonly ISpecification<TypeInfo> _valueType;
-
-		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
-		{
-			_valueType = valueType;
-		}
-
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
-	}
+	public interface IEncryption : IConverter<string> {}
 }

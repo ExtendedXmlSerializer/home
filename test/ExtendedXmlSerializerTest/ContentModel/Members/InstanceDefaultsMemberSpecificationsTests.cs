@@ -23,9 +23,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerialization.Test.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using Xunit;
 
@@ -40,19 +38,11 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 			SerializationSupport.Default.Assert(instance,
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><SomeValue>This is a Default Value!</SomeValue></InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue>");
 
-			var configuration = new ExtendedXmlConfiguration().Extend(new Extension());
+			var configuration = new ExtendedXmlConfiguration().Extend(EmitBehaviorExtension.Default);
 
 			var support = new SerializationSupport(configuration.Create());
 			support.Assert(instance,
 			               @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest"" />");
-		}
-
-		class Extension : ISerializerExtension
-		{
-			public IServices Get(IServices parameter) =>
-				parameter.RegisterInstance(InstanceDefaultsMemberSpecifications.Default);
-
-			void ICommand<IServices>.Execute(IServices parameter) {}
 		}
 
 		[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]

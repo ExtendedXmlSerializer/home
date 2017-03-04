@@ -46,7 +46,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		protected sealed override ImmutableArray<IMember> Create(TypeInfo parameter) =>
-			Yield(parameter).OrderBy(x => x.Writer is MemberProperty ? 0 : 1)
+			Yield(parameter).OrderBy(x => x.Writer is IPropertySerializer ? 0 : 1)
 			                .ThenBy(x => x.Order)
 			                .Select(_select)
 			                .Where(x => x != null)

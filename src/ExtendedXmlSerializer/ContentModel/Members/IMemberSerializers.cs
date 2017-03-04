@@ -21,31 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
-using JetBrains.Annotations;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
+	public interface IMemberSerializers
 	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
-
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
-
-		readonly ISpecification<TypeInfo> _valueType;
-
-		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
-		{
-			_valueType = valueType;
-		}
-
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
+		ISerializer Create(string name, MemberDescriptor member, ISerializer content);
 	}
 }

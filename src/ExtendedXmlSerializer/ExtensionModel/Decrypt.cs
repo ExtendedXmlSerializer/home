@@ -21,31 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
+using System.Text;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
+	class Decrypt : IDecrypt
 	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
+		public static Decrypt Default { get; } = new Decrypt();
+		Decrypt() : this(Encoding.UTF8) {}
 
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
-
-		readonly ISpecification<TypeInfo> _valueType;
+		readonly Encoding _encoding;
 
 		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
+		public Decrypt(Encoding encoding)
 		{
-			_valueType = valueType;
+			_encoding = encoding;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
+		public string Get(string parameter) => _encoding.GetString(Convert.FromBase64String(parameter));
 	}
 }
