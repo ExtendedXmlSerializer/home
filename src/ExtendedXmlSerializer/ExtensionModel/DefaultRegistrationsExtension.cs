@@ -68,7 +68,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
 			         .Register<ContainsStaticReferenceSpecification>()
 			         .Register<IRootReferences, RootReferences>()
-			         .Decorate<ISerializationContext>((factory, context)
+			         .Decorate<ISerialization>((factory, context)
 				                                          => new ReferentialAwareSerialization(
 					                                          factory.GetInstance<IStaticReferenceSpecification>(),
 					                                          factory.GetInstance<IRootReferences>(),

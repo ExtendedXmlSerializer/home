@@ -28,11 +28,11 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class CircularReferenceEnabledSerialization : ISerializationContext
+	class CircularReferenceEnabledSerialization : ISerialization
 	{
-		readonly ISerializationContext _context;
+		readonly ISerialization _context;
 
-		public CircularReferenceEnabledSerialization(ISerializationContext context)
+		public CircularReferenceEnabledSerialization(ISerialization context)
 		{
 			_context = context;
 		}

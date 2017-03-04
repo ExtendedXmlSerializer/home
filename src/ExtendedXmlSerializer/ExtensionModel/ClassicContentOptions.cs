@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ClassicContentOptions : IContentOptions
 	{
-		readonly ISerialization _owner;
+		readonly IContainers _owner;
 		readonly IMembers _members;
 		readonly IMemberOption _variable;
 		readonly ISerializer _runtime;
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public ClassicContentOptions(
 			IActivation activation,
-			ISerialization owner,
+			IContainers owner,
 			IMemberSerialization memberSerialization,
 			IMembers members,
 			IMemberOption variable, ISerializer runtime)

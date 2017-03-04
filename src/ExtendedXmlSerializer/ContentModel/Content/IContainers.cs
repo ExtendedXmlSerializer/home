@@ -22,15 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class SerializationSelector : Selector<TypeInfo, IContainer>, ISerialization
-	{
-		public SerializationSelector(params IOption<TypeInfo, IContainer>[] options) : base(options) {}
-
-		public sealed override IContainer Get(TypeInfo parameter) => base.Get(parameter.AccountForNullable());
-	}
+	public interface IContainers : IParameterizedSource<TypeInfo, IContainer> {}
 }

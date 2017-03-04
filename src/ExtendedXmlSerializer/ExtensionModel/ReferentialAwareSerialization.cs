@@ -29,14 +29,14 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferentialAwareSerialization : ISerializationContext
+	class ReferentialAwareSerialization : ISerialization
 	{
 		readonly IStaticReferenceSpecification _specification;
 		readonly IRootReferences _references;
-		readonly ISerializationContext _context;
+		readonly ISerialization _context;
 
 		public ReferentialAwareSerialization(IStaticReferenceSpecification specification, IRootReferences references,
-		                                     ISerializationContext context)
+		                                     ISerialization context)
 		{
 			_specification = specification;
 			_references = references;
