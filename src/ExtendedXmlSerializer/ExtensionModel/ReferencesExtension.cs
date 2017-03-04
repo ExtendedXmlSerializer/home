@@ -27,14 +27,13 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
-using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferencesExtension : ISerializerExtension
 	{
 		readonly IEntityMembers _members;
-		readonly Func<IServiceFactory, IActivation, IActivation> _decorate;
+		readonly Func<IServiceProvider, IActivation, IActivation> _decorate;
 
 		public ReferencesExtension() : this(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>())) {}
 
@@ -52,11 +51,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Decorate(_decorate)
 			         .Decorate<IContentOptions>(
 				         (factory, options) =>
-					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()))
+					         new AlteredContentOptions(options, factory.Get<ReferencesContentAlteration>()))
 			         .Decorate<ISerialization>((factory, context) => new CircularReferenceEnabledSerialization(context));
 
-		static IActivation Decorate(IServiceFactory factory, IActivation activation)
-			=> new ReferenceActivation(activation, factory.GetInstance<IEntities>());
+		static IActivation Decorate(IServiceProvider factory, IActivation activation)
+			=> new ReferenceActivation(activation, factory.Get<IEntities>());
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
