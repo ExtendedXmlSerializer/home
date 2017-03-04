@@ -22,16 +22,25 @@
 // SOFTWARE.
 
 using System;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class EnumerationContentOption : ConverterContentOption
+	class EnumerationContentOption : ContentOptionBase
 	{
 		readonly static IsAssignableSpecification<Enum> IsAssignableSpecification = IsAssignableSpecification<Enum>.Default;
 
-		public EnumerationContentOption(IAlteration<IConverter> alteration)
-			: base(x => new EnumerationConverter(x.AsType()), alteration, IsAssignableSpecification) {}
+		readonly IAlteration<IConverter> _alteration;
+
+		public EnumerationContentOption(IAlteration<IConverter> alteration) : base(IsAssignableSpecification)
+		{
+			_alteration = alteration;
+		}
+
+		public override ISerializer Get(TypeInfo parameter) => _alteration.Get(new EnumerationConverter(parameter.AsType()))
+		                                                                  .ToSerializer();
 	}
 }

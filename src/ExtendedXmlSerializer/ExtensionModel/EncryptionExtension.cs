@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_encryption = encryption;
 		}
 
-		public IServices Get(IServices parameter) => parameter;
+		public IServiceRepository Get(IServiceRepository parameter) => parameter;
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 

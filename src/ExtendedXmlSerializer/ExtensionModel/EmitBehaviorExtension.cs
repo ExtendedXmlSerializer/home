@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,41 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredServices : IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
+	class EmitBehaviorExtension : ISerializerExtension
 	{
-		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+		public static EmitBehaviorExtension Default { get; } = new EmitBehaviorExtension();
+		EmitBehaviorExtension() : this(InstanceDefaultsMemberSpecifications.Default) {}
 
-		readonly ISource<IServices> _source;
-		readonly IReadOnlyList<ISerializerExtension> _roots;
+		readonly IMemberEmitSpecifications _specifications;
 
-		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
-
-		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
+		public EmitBehaviorExtension(IMemberEmitSpecifications specifications)
 		{
-			_source = source;
-			_roots = roots.AsReadOnly();
+			_specifications = specifications;
 		}
 
-		public IServices Get(IEnumerable<ISerializerExtension> parameter)
-		{
-			var result = _source.Get();
-			var extensions = _roots.Concat(parameter).ToArray();
-			extensions.Alter(result);
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.RegisterInstance(_specifications);
 
-			foreach (var extension in extensions)
-			{
-				extension.Execute(result);
-			}
-
-			return result;
-		}
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

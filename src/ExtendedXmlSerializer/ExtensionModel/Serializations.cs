@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
@@ -36,9 +35,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 	class Serializations<T> : ISerializations, ISerializerExtension where T : class, ISerialization
 	{
-		public IContainers Get(IServiceProvider parameter) => parameter.Get<T>();
+		public IContainers Get(System.IServiceProvider parameter) => parameter.Get<T>();
 
-		public IServices Get(IServices parameter)
+		public IServiceRepository Get(IServiceRepository parameter)
 		{
 			var serialization = new ConfiguredContainers();
 			var result = parameter.RegisterInstance<IContainers>(serialization)

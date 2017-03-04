@@ -21,41 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredServices : IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
+	public interface IServiceProvider : System.IServiceProvider
 	{
-		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+		object GetInstance(Type serviceType);
 
-		readonly ISource<IServices> _source;
-		readonly IReadOnlyList<ISerializerExtension> _roots;
+		object GetInstance(Type serviceType, object[] arguments);
 
-		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
+		object GetInstance(Type serviceType, string serviceName, object[] arguments);
 
-		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
-		{
-			_source = source;
-			_roots = roots.AsReadOnly();
-		}
+		object GetInstance(Type serviceType, string serviceName);
 
-		public IServices Get(IEnumerable<ISerializerExtension> parameter)
-		{
-			var result = _source.Get();
-			var extensions = _roots.Concat(parameter).ToArray();
-			extensions.Alter(result);
+		object TryGetInstance(Type serviceType);
 
-			foreach (var extension in extensions)
-			{
-				extension.Execute(result);
-			}
+		object TryGetInstance(Type serviceType, string serviceName);
 
-			return result;
-		}
+		IEnumerable<object> GetAllInstances(Type serviceType);
+
+		object Create(Type serviceType);
 	}
 }

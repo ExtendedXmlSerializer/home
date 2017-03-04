@@ -22,64 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	// ATTRIBUTION: Based on https://github.com/seesharper/LightInject/blob/master/src/LightInject/LightInject.cs#L88
-	// Basically using this as a decorated contract for now.
-	public interface IServices : IServiceProvider, IDisposable
-	{
-		IEnumerable<TypeInfo> AvailableServices { get; }
-
-		IServices Register(Type serviceType, Type implementingType);
-
-		IServices Register(Type serviceType, Type implementingType, string serviceName);
-
-		IServices Register<TService, TImplementation>() where TImplementation : TService;
-
-		IServices Register<TService, TImplementation>(string serviceName) where TImplementation : TService;
-
-		IServices Register<TService>();
-
-		IServices RegisterInstance<TService>(TService instance);
-		IServices RegisterInstance<TService>(TService instance, string serviceName);
-		IServices RegisterInstance(Type serviceType, object instance);
-
-		IServices RegisterInstance(Type serviceType, object instance, string serviceName);
-
-
-		IServices Register(Type serviceType);
-
-		IServices Register<TService>(Func<IServiceProvider, TService> factory);
-		IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory);
-		IServices Register<T, TService>(Func<IServiceProvider, T, TService> factory, string serviceName);
-		IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory);
-		IServices Register<T1, T2, TService>(Func<IServiceProvider, T1, T2, TService> factory, string serviceName);
-		IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory);
-
-		IServices Register<T1, T2, T3, TService>(Func<IServiceProvider, T1, T2, T3, TService> factory,
-		                                                string serviceName);
-
-		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory);
-
-		IServices Register<T1, T2, T3, T4, TService>(Func<IServiceProvider, T1, T2, T3, T4, TService> factory,
-		                                                    string serviceName);
-
-		IServices Register<TService>(Func<IServiceProvider, TService> factory, string serviceName);
-		IServices RegisterFallback(Func<Type, bool> predicate, Func<Type, object> factory);
-
-
-		IServices RegisterConstructorDependency<TDependency>(Func<IServiceProvider, ParameterInfo, TDependency> factory);
-
-		IServices RegisterConstructorDependency<TDependency>(
-			Func<IServiceProvider, ParameterInfo, object[], TDependency> factory);
-
-
-		IServices Decorate(Type serviceType, Type decoratorType);
-
-		IServices Decorate<TService, TDecorator>() where TDecorator : TService;
-		IServices Decorate<TService>(Func<IServiceProvider, TService, TService> factory);
-	}
+	public interface IServices : IServiceRepository, IServiceProvider, IDisposable {}
 }

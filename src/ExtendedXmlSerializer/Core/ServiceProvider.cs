@@ -22,20 +22,28 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core
 {
-	public class ServiceProvider : IServiceProvider
+	public class ServiceProvider : ISpecification<Type>, IServiceProvider
 	{
 		readonly ImmutableArray<object> _services;
+		readonly IReadOnlyList<TypeInfo> _types;
 
 		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
 
 		public ServiceProvider(ImmutableArray<object> services)
+			: this(services, services.Select(x => x.GetType().GetTypeInfo()).AsReadOnly()) {}
+
+		public ServiceProvider(ImmutableArray<object> services, IReadOnlyList<TypeInfo> types)
 		{
 			_services = services;
+			_types = types;
 		}
 
 		public object GetService(Type serviceType)
@@ -54,5 +62,8 @@ namespace ExtendedXmlSerialization.Core
 
 			return null;
 		}
+
+		public bool IsSatisfiedBy(Type parameter)
+			=> _types.Any(IsAssignableSpecification.Delegates.Get(parameter.GetTypeInfo()));
 	}
 }

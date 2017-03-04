@@ -21,11 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class OptimizedConverterAlteration : IAlteration<IConverter>
+	class OptimizedConverterAlteration : IConverterAlteration
 	{
 		public static OptimizedConverterAlteration Default { get; } = new OptimizedConverterAlteration();
 		OptimizedConverterAlteration() {}

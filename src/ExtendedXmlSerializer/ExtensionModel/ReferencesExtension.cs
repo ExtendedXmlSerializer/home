@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferencesExtension : ISerializerExtension
 	{
 		readonly IEntityMembers _members;
-		readonly Func<IServiceProvider, IActivation, IActivation> _decorate;
+		readonly Func<System.IServiceProvider, IActivation, IActivation> _decorate;
 
 		public ReferencesExtension() : this(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>())) {}
 
@@ -43,18 +43,17 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_decorate = Decorate;
 		}
 
-		public IServices Get(IServices parameter) =>
+		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter.RegisterInstance(_members)
 			         .Register<IStoredEncounters, StoredEncounters>()
 			         .Register<IEntities, Entities>()
 			         .Register<ReferencesContentAlteration>()
 			         .Decorate(_decorate)
-			         .Decorate<IContentOptions>(
-				         (factory, options) =>
-					         new AlteredContentOptions(options, factory.Get<ReferencesContentAlteration>()))
+			         .Decorate<IContentOptions>((factory, options) =>
+				                                    new AlteredContentOptions(options, factory.Get<ReferencesContentAlteration>()))
 			         .Decorate<ISerialization>((factory, context) => new CircularReferenceEnabledSerialization(context));
 
-		static IActivation Decorate(IServiceProvider factory, IActivation activation)
+		static IActivation Decorate(System.IServiceProvider factory, IActivation activation)
 			=> new ReferenceActivation(activation, factory.Get<IEntities>());
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

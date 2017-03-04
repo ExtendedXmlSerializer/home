@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,41 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredServices : IParameterizedSource<IEnumerable<ISerializerExtension>, IServices>
+	public class CustomXmlExtension : ISerializerExtension
 	{
-		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+		readonly ICollection<TypeInfo> _supported;
 
-		readonly ISource<IServices> _source;
-		readonly IReadOnlyList<ISerializerExtension> _roots;
-
-		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
-
-		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
+		public CustomXmlExtension(ICollection<TypeInfo> supported)
 		{
-			_source = source;
-			_roots = roots.AsReadOnly();
+			_supported = supported;
 		}
 
-		public IServices Get(IEnumerable<ISerializerExtension> parameter)
+		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var result = _source.Get();
-			var extensions = _roots.Concat(parameter).ToArray();
-			extensions.Alter(result);
+			throw new NotImplementedException();
+		}
 
-			foreach (var extension in extensions)
-			{
-				extension.Execute(result);
-			}
-
-			return result;
+		public void Execute(IServices parameter)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

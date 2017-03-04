@@ -21,60 +21,71 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ContainerOptions = ExtendedXmlSerialization.ContentModel.Content.ContainerOptions;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class DefaultRegistrationsExtension : ISerializerExtension
 	{
 		readonly ImmutableArray<object> _services;
-		readonly IMemberEmitSpecifications _specifications;
 
 		public DefaultRegistrationsExtension(params object[] services) : this(services.ToImmutableArray()) {}
 
 		public DefaultRegistrationsExtension(ImmutableArray<object> services)
-			: this(services, services.OfType<MemberConfiguration>().Single().EmitSpecifications) {}
-
-		public DefaultRegistrationsExtension(ImmutableArray<object> services, IMemberEmitSpecifications specifications)
 		{
 			_services = services;
-			_specifications = specifications;
 		}
 
-		public IServices Get(IServices parameter) =>
-			_services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
-			         .Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
-			         .RegisterInstance(_specifications.GetType(), _specifications)
-			         .RegisterInstance(DefaultMemberEmitSpecifications.Default)
-			         .Register<ISerializer, RuntimeSerializer>()
-			         .Register<IMemberOption, VariableTypeMemberOption>()
-			         .Register<MemberProfiles>()
-			         .Register(factory => factory.Get<MemberProfiles>().ToDelegate())
-			         .Register<IMemberSerialization, MemberSerialization>()
-			         .Register<ISelector, ContentModel.Members.Selector>()
-			         .Register<IMembers, Members>()
-			         .Register<IContentOptions, ContentOptions>()
-			         .Register<IContainerOptions, ContainerOptions>()
-			         .Register(factory => factory.Get<IContainerOptions>().ToArray())
-			         .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
-			         .Register<ContainsStaticReferenceSpecification>()
-			         .Register<IRootReferences, RootReferences>()
-			         .Decorate<ISerialization>((factory, context)
-				                                          => new ReferentialAwareSerialization(
-					                                          factory.Get<IStaticReferenceSpecification>(),
-					                                          factory.Get<IRootReferences>(),
-					                                          context
-				                                          )
-			         )
-			         .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			var fallback = new ServiceProvider(_services);
+			return parameter.Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
+			                .Register(provider => provider.Get<MemberConfiguration>().EmitSpecifications, "MemberConfiguration")
+			                .RegisterInstance(DefaultMemberEmitSpecifications.Default)
+			                .Register<ISerializer, RuntimeSerializer>()
+			                .Register<IMemberOption, VariableTypeMemberOption>()
+			                .Register<MemberProfiles>()
+			                .Register(factory => factory.Get<MemberProfiles>().ToDelegate())
+			                .Register<IMemberSerialization, MemberSerialization>()
+			                .Register<ISelector, ContentModel.Members.Selector>()
+			                .Register<IMembers, Members>()
+			                .RegisterConstructorDependency(fallback.AsDependency<IEnumerable<IConverter>>)
+			                .Register<IConverters, Converters>()
+			                .RegisterInstance<IConverterAlteration>(OptimizedConverterAlteration.Default)
+			                .Decorate<IConverters>(
+				                (provider, converters) => new AlteredConverters(provider.Get<IConverterAlteration>(), converters))
+			                .Register<ConverterContent>()
+			                .Register<EnumerationContentOption>()
+			                .RegisterConstructorDependency<IContentOption>(
+				                (provider, info) =>
+					                new CompositeContentOption(provider.Get<ConverterContent>()
+					                                                   .Concat(provider.GetAllInstances<IContentOption>())
+					                                                   .ToArray()))
+			                .Register<IContentOptions, ContentOptions>()
+			                .Register<IContainerOptions, ContainerOptions>()
+			                .Register(factory => factory.Get<IContainerOptions>().ToArray())
+			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
+			                .Register<ContainsStaticReferenceSpecification>()
+			                .Register<IRootReferences, RootReferences>()
+			                .Decorate<ISerialization>((factory, context) => new ReferentialAwareSerialization(
+				                                          factory.Get<IStaticReferenceSpecification>(),
+				                                          factory.Get<IRootReferences>(),
+				                                          context
+			                                          )
+			                )
+			                .RegisterFallback(fallback.IsSatisfiedBy, fallback.GetService)
+			                .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
+		}
+
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
