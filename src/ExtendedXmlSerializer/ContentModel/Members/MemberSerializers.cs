@@ -23,8 +23,35 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberWriters
+	class MemberSerializers : IMemberSerializers
 	{
-		IWriter Create(string name, MemberDescriptor member, IWriter content);
+		readonly IRuntimeMemberSpecifications _specifications;
+		readonly IMemberConverters _converters;
+
+		public MemberSerializers(IRuntimeMemberSpecifications specifications, IMemberConverters converters)
+		{
+			_specifications = specifications;
+			_converters = converters;
+		}
+
+		public ISerializer Create(string name, MemberDescriptor member, ISerializer content)
+		{
+			var converter = _converters.Get(member);
+			if (converter != null)
+			{
+				ISerializer property = new MemberProperty(converter, name);
+				var specification = _specifications.Get(member.Metadata);
+				var writer = specification != null
+					? (IWriter) new RuntimeMember(specification, property, Wrap(name, content))
+					: property;
+				var serializer = new PropertySerializer(property, writer);
+				return serializer;
+			}
+
+			var result = new Serializer(content, Wrap(name, content));
+			return result;
+		}
+
+		static Enclosure Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
 	}
 }

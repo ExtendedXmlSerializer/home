@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,31 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
-using JetBrains.Annotations;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicEmitMemberSpecifications : IMemberEmitSpecifications
+	class EncryptionExtension : ISerializerExtension, IAlteration<IConverter>
 	{
-		readonly static IMemberEmitSpecification
-			Always = AlwaysEmitMemberSpecification.Default,
-			Assigned = AssignedEmitMemberSpecification.Default;
+		readonly IEncryption _encryption;
 
-		public static ClassicEmitMemberSpecifications Default { get; } = new ClassicEmitMemberSpecifications();
-		ClassicEmitMemberSpecifications() : this(IsValueTypeSpecification.Default) {}
+		public EncryptionExtension() : this(Encryption.Default) {}
 
-		readonly ISpecification<TypeInfo> _valueType;
-
-		[UsedImplicitly]
-		public ClassicEmitMemberSpecifications(ISpecification<TypeInfo> valueType)
+		public EncryptionExtension(IEncryption encryption)
 		{
-			_valueType = valueType;
+			_encryption = encryption;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
+		public IServices Get(IServices parameter) => parameter;
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		public IConverter Get(IConverter parameter) => new EncryptedConverter(_encryption, parameter);
 	}
 }

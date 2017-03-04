@@ -29,19 +29,19 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		readonly IMemberContent _content;
 		readonly IMemberEmitSpecifications _emit;
-		readonly IMemberWriters _writers;
+		readonly IMemberSerializers _serializers;
 		readonly IAliases _aliases;
 		readonly IMemberOrder _order;
 
 		public MemberProfiles(IMemberEmitSpecifications emit,
 		                      IMemberContent content,
-		                      IMemberWriters writers,
+		                      IMemberSerializers serializers,
 		                      IAliases aliases,
 		                      IMemberOrder order)
 		{
 			_content = content;
 			_emit = emit;
-			_writers = writers;
+			_serializers = serializers;
 			_aliases = aliases;
 			_order = order;
 		}
@@ -54,10 +54,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 			var content = _content.Get(parameter);
 
-			var writer = _writers.Create(name, parameter, content);
+			var serializer = _serializers.Create(name, parameter, content);
 
 			var result = new MemberProfile(_emit.Get(parameter), name, parameter.Writable, order, metadata,
-			                               parameter.MemberType, content, content, writer);
+			                               parameter.MemberType, content, serializer, serializer);
 			return result;
 		}
 	}

@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.IO;
 using ExtendedXmlSerialization.Configuration;
 
@@ -49,5 +50,11 @@ namespace ExtendedXmlSerialization.Test.Support
 		public void Serialize(Stream stream, object instance) => _serializer.Serialize(stream, instance);
 
 		public object Deserialize(Stream stream) => _serializer.Deserialize(stream);
+
+		public void WriteLine(object instance)
+		{
+			// https://github.com/aspnet/Tooling/issues/324#issuecomment-275236780
+			throw new InvalidOperationException(_serializer.Serialize(instance));
+		}
 	}
 }

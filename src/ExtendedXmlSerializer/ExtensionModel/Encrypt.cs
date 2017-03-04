@@ -21,34 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+using System;
+using System.Text;
+using JetBrains.Annotations;
+
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class MemberWriters : IMemberWriters
+	class Encrypt : IEncrypt
 	{
-		readonly IRuntimeMemberSpecifications _specifications;
-		readonly IMemberConverters _converters;
+		public static Encrypt Default { get; } = new Encrypt();
+		Encrypt() : this(Encoding.UTF8) {}
 
-		public MemberWriters(IRuntimeMemberSpecifications specifications, IMemberConverters converters)
+		readonly Encoding _encoding;
+
+		[UsedImplicitly]
+		public Encrypt(Encoding encoding)
 		{
-			_specifications = specifications;
-			_converters = converters;
+			_encoding = encoding;
 		}
 
-		public IWriter Create(string name, MemberDescriptor member, IWriter content)
-		{
-			var converter = _converters.Get(member);
-			if (converter != null)
-			{
-				IWriter property = new MemberProperty(converter, name);
-				var specification = _specifications.Get(member.Metadata);
-				var writer = specification != null ? new RuntimeMember(specification, property, Wrap(name, content)) : property;
-				return writer;
-			}
-
-			var result = Wrap(name, content);
-			return result;
-		}
-
-		static Enclosure Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
+		public string Get(string parameter) => Convert.ToBase64String(_encoding.GetBytes(parameter));
 	}
 }

@@ -31,6 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public static FieldMemberSpecification Default { get; } = new FieldMemberSpecification();
 		FieldMemberSpecification() {}
 
-		public bool IsSatisfiedBy(FieldInfo parameter) => parameter.IsInitOnly ? !parameter.IsLiteral : !parameter.IsStatic;
+		public bool IsSatisfiedBy(FieldInfo parameter)
+			=> !parameter.IsStatic && (!parameter.IsInitOnly || !parameter.IsLiteral);
 	}
 }
