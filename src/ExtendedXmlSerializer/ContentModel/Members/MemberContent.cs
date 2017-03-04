@@ -27,13 +27,13 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberContent : IMemberContent
 	{
-		readonly ISerialization _serialization;
+		readonly IContainers _containers;
 
-		public MemberContent(ISerialization serialization)
+		public MemberContent(IContainers containers)
 		{
-			_serialization = serialization;
+			_containers = containers;
 		}
 
-		public ISerializer Get(MemberDescriptor parameter) => _serialization.Get(parameter.MemberType).Get();
+		public ISerializer Get(MemberDescriptor parameter) => _containers.Get(parameter.MemberType).Get();
 	}
 }

@@ -24,6 +24,7 @@
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
@@ -32,11 +33,16 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public static ElementOptionSelector Default { get; } = new ElementOptionSelector();
 
 		ElementOptionSelector() : this(
-			new FixedOption<IContentOption, IElementOption>(IsTypeSpecification<ArrayContentOption>.Default,
-			                                                ArrayElementOption.Default),
-			new FixedOption<IContentOption, IElementOption>(AlwaysSpecification<IContentOption>.Default, ElementOptions.Default)
+			new Option(IsTypeSpecification<ArrayContentOption>.Default, ArrayElementOption.Default),
+			new Option(AlwaysSpecification<IContentOption>.Default, ElementOptions.Default)
 		) {}
 
+		[UsedImplicitly]
 		public ElementOptionSelector(params IOption<IContentOption, IElementOption>[] options) : base(options) {}
+
+		class Option : FixedOption<IContentOption, IElementOption>
+		{
+			public Option(ISpecification<IContentOption> specification, IElementOption instance) : base(specification, instance) {}
+		}
 	}
 }

@@ -7,7 +7,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ContentOptions : IContentOptions
 	{
-		readonly ISerialization _owner;
+		readonly IContainers _owner;
 		readonly IMembers _members;
 		readonly IMemberOption _variable;
 		readonly ISerializer _runtime;
@@ -16,7 +16,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 		public ContentOptions(
 			IActivation activation,
-			ISerialization owner,
+			IContainers owner,
 			IMemberSerialization memberSerialization,
 			IMembers members,
 			IMemberOption variable, ISerializer runtime)

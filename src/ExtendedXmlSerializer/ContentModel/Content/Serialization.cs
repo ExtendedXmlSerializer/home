@@ -23,11 +23,13 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class Serialization : Cache<TypeInfo, IContainer>, ISerializationContext
+	[UsedImplicitly]
+	class Serialization : Cache<TypeInfo, IContainer>, ISerialization
 	{
-		public Serialization(params IContainerOption[] options) : base(new SerializationSelector(options).Get) {}
+		public Serialization(params IContainerOption[] options) : base(new Containers(options).Get) {}
 	}
 }

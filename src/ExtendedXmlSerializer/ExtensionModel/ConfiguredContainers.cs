@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ConfiguredSerialization : ItemizedSource<ISerialization>, ISerialization
+	class ConfiguredContainers : ItemizedSource<IContainers>, IContainers
 	{
 		public IContainer Get(TypeInfo parameter) => Get().Get(parameter);
 	}

@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		readonly IMembers _members;
 		readonly IActivation _activation;
 
-		public CollectionContentOption(IActivation activation, IMembers members, ISerialization serialization)
-			: base(serialization)
+		public CollectionContentOption(IActivation activation, IMembers members, IContainers containers)
+			: base(containers)
 		{
 			_members = members;
 			_activation = activation;

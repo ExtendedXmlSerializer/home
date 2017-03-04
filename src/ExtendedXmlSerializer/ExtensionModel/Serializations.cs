@@ -34,14 +34,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		Serializations() {}
 	}
 
-	class Serializations<T> : ISerializations, ISerializerExtension where T : class, ISerializationContext
+	class Serializations<T> : ISerializations, ISerializerExtension where T : class, ISerialization
 	{
-		public ISerialization Get(IServiceProvider parameter) => parameter.Get<T>();
+		public IContainers Get(IServiceProvider parameter) => parameter.Get<T>();
 
 		public IServices Get(IServices parameter)
 		{
-			var serialization = new ConfiguredSerialization();
-			var result = parameter.RegisterInstance<ISerialization>(serialization)
+			var serialization = new ConfiguredContainers();
+			var result = parameter.RegisterInstance<IContainers>(serialization)
 			                      .RegisterInstance(serialization)
 			                      .Register<IMemberContent, MemberContent>()
 			                      .Decorate<IMemberContent>((factory, content) => new RecursionGuardedMemberContent(content))
@@ -51,10 +51,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public void Execute(IServices parameter)
 		{
-			var configured = parameter.Get<ConfiguredSerialization>();
+			var configured = parameter.Get<ConfiguredContainers>();
 			var context = parameter.Get<T>();
 			configured.Execute(context);
-			parameter.RegisterInstance<ISerializationContext>(context);
+			parameter.RegisterInstance<ISerialization>(context);
 		}
 	}
 }

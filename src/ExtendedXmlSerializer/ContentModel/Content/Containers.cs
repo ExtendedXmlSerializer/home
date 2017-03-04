@@ -21,7 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface ISerializationContext : ISerialization {}
+	class Containers : Selector<TypeInfo, IContainer>, IContainers
+	{
+		public Containers(params IOption<TypeInfo, IContainer>[] options) : base(options) {}
+
+		public sealed override IContainer Get(TypeInfo parameter) => base.Get(parameter.AccountForNullable());
+	}
 }

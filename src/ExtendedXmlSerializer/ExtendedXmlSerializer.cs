@@ -36,9 +36,9 @@ namespace ExtendedXmlSerialization
 	public class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
 		readonly IXmlFactory _factory;
-		readonly ISerializationContext _serialization;
+		readonly ISerialization _serialization;
 
-		public ExtendedXmlSerializer(IXmlFactory factory, ISerializationContext serialization)
+		public ExtendedXmlSerializer(IXmlFactory factory, ISerialization serialization)
 		{
 			_factory = factory;
 			_serialization = serialization;

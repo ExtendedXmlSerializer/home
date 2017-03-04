@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Decorate<IContentOptions>(
 				         (factory, options) =>
 					         new AlteredContentOptions(options, factory.GetInstance<ReferencesContentAlteration>()))
-			         .Decorate<ISerializationContext>((factory, context) => new CircularReferenceEnabledSerialization(context));
+			         .Decorate<ISerialization>((factory, context) => new CircularReferenceEnabledSerialization(context));
 
 		static IActivation Decorate(IServiceFactory factory, IActivation activation)
 			=> new ReferenceActivation(activation, factory.GetInstance<IEntities>());
