@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,22 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using System;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class ArrayReader : CollectionContentsReader
+	static class Extensions
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
-
-		public sealed override object Get(IXmlReader parameter)
+		public static TypeInfo GetClassification(this IXmlReader @this)
 		{
-			var elementType = parameter.GetClassification().GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			var result = @this.Classification;
+			if (result == null)
+			{
+				var name = IdentityFormatter.Default.Get(@this);
+				throw new InvalidOperationException(
+					$"An attempt was made to load a type with the fully qualified name of '{name}', but no type could be located with that name.");
+			}
 			return result;
 		}
 	}
