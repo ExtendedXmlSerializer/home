@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class CollectionContentsReader : DecoratedReader
+	sealed class CollectionContentsReader : DecoratedReader
 	{
 		readonly static Lists Lists = Lists.Default;
 

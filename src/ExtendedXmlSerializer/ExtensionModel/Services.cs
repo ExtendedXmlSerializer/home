@@ -79,7 +79,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServiceRepository Register<TService>(Func<IServiceProvider, TService> factory)
 			=> new Services(_container, _registry.Register(new Registration<TService>(factory).Get, new PerContainerLifetime()));
 
-		class Providers : ReferenceCache<IServiceFactory, IServiceProvider>
+		sealed class Providers : ReferenceCache<IServiceFactory, IServiceProvider>
 		{
 			public static Providers Default { get; } = new Providers();
 			Providers() : base(x => new Provider(x)) {}

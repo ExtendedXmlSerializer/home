@@ -25,8 +25,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Prefixer : CacheBase<string, string>, IPrefixer
+	sealed class Prefixer : CacheBase<string, string>, IPrefixer
 	{
-		protected sealed override string Create(string parameter) => $"ns{(Count + 1).ToString()}";
+		protected override string Create(string parameter) => $"ns{(Count + 1).ToString()}";
 	}
 }

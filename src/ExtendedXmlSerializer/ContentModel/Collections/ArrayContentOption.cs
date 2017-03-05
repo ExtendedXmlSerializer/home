@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class ArrayContentOption : CollectionContentOptionBase
+	sealed class ArrayContentOption : CollectionContentOptionBase
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_activation = activation;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
 	}
 }

@@ -27,11 +27,10 @@ using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicContentOptions : ContentOptions
+	class ClassicContentOptions : ContentOptionsBase
 	{
 		public ClassicContentOptions(
-			ArrayContentOption array,
-			ClassicDictionaryContentOption dictionary,
+			ArrayContentOption array, ClassicDictionaryContentOption dictionary,
 			ClassicCollectionContentOption collection, MemberedContentOption membered,
 			RuntimeContentOption runtime) : base(array, dictionary, collection, membered, runtime) {}
 	}

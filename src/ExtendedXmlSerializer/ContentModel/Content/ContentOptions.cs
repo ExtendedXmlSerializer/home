@@ -28,7 +28,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ContentOptions : Items<IContentOption>
+	class ContentOptions : ContentOptionsBase
 	{
 		[UsedImplicitly]
 		public ContentOptions(
@@ -39,6 +39,10 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			RuntimeContentOption runtime
 		) : base(array, dictionary, collection, membered, runtime) {}
 
-		protected ContentOptions(params IContentOption[] items) : base(items) {}
+	}
+
+	abstract class ContentOptionsBase : Items<IContentOption>
+	{
+		protected ContentOptionsBase(params IContentOption[] items) : base(items) {}
 	}
 }

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberedContentOption : ContentOptionBase
+	sealed class MemberedContentOption : ContentOptionBase
 	{
 		readonly static IsActivatedTypeSpecification Specification = IsActivatedTypeSpecification.Default;
 
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_members = members;
 		}
 
-		public sealed override ISerializer Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
 			var activator = _activation.Get(parameter);

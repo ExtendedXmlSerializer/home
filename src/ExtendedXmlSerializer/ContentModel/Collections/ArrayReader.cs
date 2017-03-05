@@ -27,11 +27,11 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class ArrayReader : CollectionContentsReader
+	sealed class ArrayReader : DecoratedReader
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(activation.Get<ArrayList>(), item) {}
+		public ArrayReader(IActivation activation, IReader item) : base(new CollectionContentsReader(activation.Get<ArrayList>(), item) ) {}
 
-		public sealed override object Get(IXmlReader parameter)
+		public override object Get(IXmlReader parameter)
 		{
 			var elementType = parameter.GetClassification().GetElementType();
 			var result = base.Get(parameter)

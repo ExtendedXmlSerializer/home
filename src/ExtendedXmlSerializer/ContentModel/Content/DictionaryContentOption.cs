@@ -30,7 +30,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class DictionaryContentOption : ContentOptionBase
+	sealed class DictionaryContentOption : ContentOptionBase
 	{
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_entries = entries;
 		}
 
-		public sealed override ISerializer Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
 			var activator = _activation.Get(parameter);

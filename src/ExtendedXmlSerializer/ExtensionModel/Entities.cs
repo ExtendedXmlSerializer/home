@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Entities : CacheBase<TypeInfo, IEntity>, IEntities
+	sealed class Entities : CacheBase<TypeInfo, IEntity>, IEntities
 	{
 		readonly IEntityMembers _registered;
 		readonly IMemberConverters _converters;

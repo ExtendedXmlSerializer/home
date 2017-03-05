@@ -21,31 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberSerialization : IMemberSerialization
+	sealed class MemberSerialization : CacheBase<MemberDescriptor, MemberProfile>, IMemberSerialization
 	{
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
-		readonly Func<MemberDescriptor, MemberProfile> _profiles;
+		readonly IMemberEmitSpecifications _emit;
+		readonly IMemberContent _content;
+		readonly IMemberSerializers _serializers;
+		readonly IAliases _aliases;
+		readonly IMemberOrder _order;
 
 		public MemberSerialization(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			Func<MemberDescriptor, MemberProfile> profiles
-		)
+			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field, IMemberEmitSpecifications emit,
+			IMemberContent content, IMemberSerializers serializers, IAliases aliases, IMemberOrder order)
 		{
 			_property = property;
 			_field = field;
-			_profiles = profiles;
+			_emit = emit;
+			_content = content;
+			_serializers = serializers;
+			_aliases = aliases;
+			_order = order;
 		}
 
 		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
 		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
 
-		public MemberProfile Get(MemberDescriptor parameter) => _profiles(parameter);
+		protected override MemberProfile Create(MemberDescriptor parameter)
+		{
+			var metadata = parameter.Metadata;
+			var order = _order.Get(metadata);
+			var name = _aliases.Get(metadata) ?? metadata.Name;
+
+			var content = _content.Get(parameter);
+
+			var serializer = _serializers.Create(name, parameter, content);
+
+			var result = new MemberProfile(_emit.Get(parameter), name, parameter.Writable, order, metadata,
+			                               parameter.MemberType, content, serializer, serializer);
+			return result;
+		}
 	}
 }

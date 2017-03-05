@@ -26,12 +26,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Members : CacheBase<TypeInfo, ImmutableArray<IMember>>, IMembers
+	sealed class Members : IMembers
 	{
 		readonly IMemberSerialization _serialization;
 		readonly Func<MemberProfile, IMember> _select;
@@ -45,7 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_select = select;
 		}
 
-		protected sealed override ImmutableArray<IMember> Create(TypeInfo parameter) =>
+		public ImmutableArray<IMember> Get(TypeInfo parameter) =>
 			Yield(parameter).OrderBy(x => x.Writer is IPropertySerializer ? 0 : 1)
 			                .ThenBy(x => x.Order)
 			                .Select(_select)

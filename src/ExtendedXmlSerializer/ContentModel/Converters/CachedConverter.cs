@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class CachedConverter : Converter<object>
+	sealed class CachedConverter : Converter<object>
 	{
 		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
 

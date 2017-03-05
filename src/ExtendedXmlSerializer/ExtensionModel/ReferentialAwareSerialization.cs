@@ -26,10 +26,11 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferentialAwareSerialization : ISerialization
+	sealed class ReferentialAwareSerialization : CacheBase<TypeInfo, IContainer>, ISerialization
 	{
 		readonly IStaticReferenceSpecification _specification;
 		readonly IRootReferences _references;
@@ -43,14 +44,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_serialization = serialization;
 		}
 
-		public IContainer Get(TypeInfo parameter)
+		protected override IContainer Create(TypeInfo parameter)
 		{
 			var container = _serialization.Get(parameter);
 			var result = _specification.IsSatisfiedBy(parameter) ? new Container(_references, container) : container;
 			return result;
 		}
 
-		class Container : IContainer
+		sealed class Container : IContainer
 		{
 			readonly IRootReferences _references;
 			readonly IContainer _container;

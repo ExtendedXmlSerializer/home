@@ -47,7 +47,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			parameter.RegisterInstance(_members)
 			         .Register<IStoredEncounters, StoredEncounters>()
 			         .Register<IEntities, Entities>()
-			         //.Register<ReferencesContentAlteration>()
 			         .Decorate(_decorate)
 			         .Decorate<IContents>((factory, contents) =>
 				                              new ReferenceContents(factory.Get<IStoredEncounters>(), factory.Get<IEntities>(),

@@ -33,7 +33,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicDictionaryContentOption : ContentOptionBase
+	sealed class ClassicDictionaryContentOption : ContentOptionBase
 	{
 		readonly static AllSpecification<TypeInfo> Specification =
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_entries = entries;
 		}
 
-		public sealed override ISerializer Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
@@ -59,13 +59,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			return result;
 		}
 
-		class DictionaryContentsReader : CollectionContentsReader
+		sealed class DictionaryContentsReader : DecoratedReader
 		{
 			readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
 			public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
-				: base(new MemberAttributesReader(reader, members),
-				       new CollectionItemReader(entry), Lists) {}
+				: base(new CollectionContentsReader(new MemberAttributesReader(reader, members),
+				       new CollectionItemReader(entry), Lists)) {}
 		}
 	}
 }

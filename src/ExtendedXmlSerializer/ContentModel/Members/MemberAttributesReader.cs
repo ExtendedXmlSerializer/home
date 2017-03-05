@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberAttributesReader : DecoratedReader
+	sealed class MemberAttributesReader : DecoratedReader
 	{
 		readonly IDictionary<string, IMember> _members;
 
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_members = members;
 		}
 
-		public sealed override object Get(IXmlReader parameter)
+		public override object Get(IXmlReader parameter)
 		{
 			var result = base.Get(parameter);
 

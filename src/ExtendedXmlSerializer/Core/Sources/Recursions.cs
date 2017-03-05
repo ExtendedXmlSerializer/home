@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	class Recursions : ReferenceCache<object, ISpecification<object>>, IRecursions
+	sealed class Recursions : ReferenceCache<object, ISpecification<object>>, IRecursions
 	{
 		public static Recursions Default { get; } = new Recursions();
 		Recursions() : base(_ => new RecursionSpecification()) {}

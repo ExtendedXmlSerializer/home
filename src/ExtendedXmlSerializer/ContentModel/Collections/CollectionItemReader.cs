@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class CollectionItemReader : ICollectionItemReader
+	sealed class CollectionItemReader : ICollectionItemReader
 	{
 		readonly IReader _item;
 

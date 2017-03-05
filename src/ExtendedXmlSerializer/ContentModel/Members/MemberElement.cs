@@ -29,6 +29,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		public MemberElement(string name) : base(name, string.Empty) {}
 
-		public virtual void Write(IXmlWriter writer, object instance) => writer.Member(Name);
+		public void Write(IXmlWriter writer, object instance) => writer.Member(Name);
 	}
 }

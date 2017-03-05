@@ -31,7 +31,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Elements : IElements
+	sealed class Elements : IElements
 	{
 		readonly IObjectNamespaces _namespaces;
 		readonly IElements _elements;
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IWriter Get(TypeInfo parameter) => new Writer(_namespaces, _elements.Get(parameter));
 
-		class Writer : ReferenceCache<IXmlWriter, ConditionMonitor>, IWriter
+		sealed class Writer : ReferenceCache<IXmlWriter, ConditionMonitor>, IWriter
 		{
 			readonly IObjectNamespaces _namespaces;
 			readonly IWriter _writer;

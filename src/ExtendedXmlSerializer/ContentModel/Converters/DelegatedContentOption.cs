@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class DelegatedContentOption : ContentOptionBase
+	sealed class DelegatedContentOption : ContentOptionBase
 	{
 		readonly Func<TypeInfo, IConverter> _converter;
 

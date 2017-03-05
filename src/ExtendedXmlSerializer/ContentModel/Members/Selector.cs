@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class Selector : Selector<MemberProfile, IMember>, ISelector
+	sealed class Selector : Selector<MemberProfile, IMember>, ISelector
 	{
 		public Selector(IMemberOption variable)
 			: base(

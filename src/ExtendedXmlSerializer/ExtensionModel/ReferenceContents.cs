@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceContents : DecoratedSource<TypeInfo, ISerializer>, IContents
+	sealed class ReferenceContents : DecoratedSource<TypeInfo, ISerializer>, IContents
 	{
 		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
 
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_specification = specification;
 		}
 
-		public sealed override ISerializer Get(TypeInfo parameter)
+		public override ISerializer Get(TypeInfo parameter)
 		{
 			var serializer = base.Get(parameter);
 			var result = serializer as RuntimeSerializer ??
