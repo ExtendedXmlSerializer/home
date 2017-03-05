@@ -27,9 +27,10 @@ using System.Linq;
 using System.Xml;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
+using Elements = ExtendedXmlSerialization.ContentModel.Content.Elements;
 
 namespace ExtendedXmlSerialization.Configuration
 {
@@ -126,8 +127,12 @@ namespace ExtendedXmlSerialization.Configuration
 		public IExtendedXmlSerializer Create()
 		{
 			var instances =
-				new Instances(_activation, _memberConfiguration, _converters, new XmlFactory(ReaderSettings, WriterSettings))
-					.ToArray();
+				new Instances(_memberConfiguration,
+				              Elements.Default,
+				              OptimizedConverterAlteration.Default,
+				              DefaultMemberEmitSpecifications.Default,
+				              EnumerationConverters.Default.Yield().AsReadOnly(),
+				              _activation, _converters, ReaderSettings, WriterSettings).ToArray();
 
 			using (var services = new ConfiguredServices(instances).Get(_extensions))
 			{

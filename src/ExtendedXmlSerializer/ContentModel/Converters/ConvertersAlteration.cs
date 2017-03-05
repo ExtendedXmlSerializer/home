@@ -21,30 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerialization.Core.Sources;
+using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class AlteredContentOptions : IContentOptions
+	[UsedImplicitly]
+	class ConvertersAlteration : IAlteration<IConverters>
 	{
-		readonly IContentOptions _options;
-		readonly Func<IContentOption, IContentOption> _alteration;
+		readonly IAlteration<IConverter> _alteration;
 
-		public AlteredContentOptions(IContentOptions options, IAlteration<IContentOption> alteration)
-			: this(options, alteration.Get) {}
-
-		public AlteredContentOptions(IContentOptions options, Func<IContentOption, IContentOption> alteration)
+		public ConvertersAlteration(IAlteration<IConverter> alteration)
 		{
-			_options = options;
 			_alteration = alteration;
 		}
 
-		public IEnumerator<IContentOption> GetEnumerator() => _options.Select(_alteration).GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IConverters Get(IConverters parameter) => new AlteredConverters(_alteration, parameter);
 	}
 }

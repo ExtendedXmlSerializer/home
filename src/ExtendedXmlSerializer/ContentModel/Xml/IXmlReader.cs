@@ -23,10 +23,12 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, IDisposable
+	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, ISource<System.Xml.XmlReader>,
+	                              IDisposable
 	{
 		TypeInfo Classification { get; }
 

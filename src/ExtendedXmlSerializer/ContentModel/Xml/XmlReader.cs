@@ -128,6 +128,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
 
 		public void Dispose() => _reader.Dispose();
+		public System.Xml.XmlReader Get() => _reader;
 
 		struct ClassificationSource : ISource<TypeInfo>
 		{

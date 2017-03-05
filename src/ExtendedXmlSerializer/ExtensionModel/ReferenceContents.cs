@@ -21,22 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferencesContentAlteration : IAlteration<IContentOption>
+	class ReferenceContents : DecoratedSource<TypeInfo, ISerializer>, IContents
 	{
+		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
+
 		readonly IStoredEncounters _encounters;
 		readonly IEntities _entities;
+		readonly ISpecification<TypeInfo> _specification;
 
-		public ReferencesContentAlteration(IStoredEncounters encounters, IEntities entities)
+		public ReferenceContents(IStoredEncounters encounters, IEntities entities, IContents option)
+			: this(IsReferenceSpecification, encounters, entities, option) {}
+
+		public ReferenceContents(ISpecification<TypeInfo> specification, IStoredEncounters encounters,
+		                         IEntities entities,
+		                         IContents option) : base(option)
 		{
 			_encounters = encounters;
 			_entities = entities;
+			_specification = specification;
 		}
 
-		public IContentOption Get(IContentOption parameter) => new ReferencesContentOption(_encounters, _entities, parameter);
+		public sealed override ISerializer Get(TypeInfo parameter)
+		{
+			var serializer = base.Get(parameter);
+			var result = serializer as RuntimeSerializer ??
+			             (_specification.IsSatisfiedBy(parameter)
+				             ? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
+				             : serializer);
+			return result;
+		}
 	}
 }

@@ -33,8 +33,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter.Register<IObjectNamespaces, ObjectNamespaces>()
-			         .Decorate<IElementOptionSelector>(
-				         (factory, selector) => new Selector(factory.Get<IObjectNamespaces>(), selector));
+			         .Decorate<IElements>(
+				         (factory, elements) => new Elements(factory.Get<IObjectNamespaces>(), elements));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

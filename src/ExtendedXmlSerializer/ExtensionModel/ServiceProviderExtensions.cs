@@ -76,5 +76,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			=> (TService) factory.Create(typeof(TService));
 
 		public static T AsDependency<T>(this System.IServiceProvider @this, object _, ParameterInfo __) => @this.Get<T>();
+		public static T Get<T>(this System.IServiceProvider @this, IServiceProvider _) => @this.Get<T>();
 	}
 }

@@ -27,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.TypeModel;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
@@ -44,10 +45,12 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
+		[UsedImplicitly]
 		public DictionaryEntries(IActivation activation, IMemberSerialization serialization, IMemberOption variable)
 			: this(activation.Get<DictionaryEntry>(), serialization, variable, Element, Pairs) {}
 
-		public DictionaryEntries(IReader activator, IMemberSerialization serialization, IMemberOption variable, IWriter element,
+		public DictionaryEntries(IReader activator, IMemberSerialization serialization, IMemberOption variable,
+		                         IWriter element,
 		                         IDictionaryPairTypesLocator locator)
 		{
 			_activator = activator;

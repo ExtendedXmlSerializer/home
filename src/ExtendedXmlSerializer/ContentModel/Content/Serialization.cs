@@ -22,14 +22,29 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	[UsedImplicitly]
-	class Serialization : Cache<TypeInfo, IContainer>, ISerialization
+	sealed class Serialization : CacheBase<TypeInfo, IContainer>, ISerialization
 	{
-		public Serialization(params IContainerOption[] options) : base(new Containers(options).Get) {}
+		readonly IElements _elements;
+		readonly IContents _contents;
+
+		public Serialization(IElements elements, IContents contents)
+		{
+			_elements = elements;
+			_contents = contents;
+		}
+
+		protected override IContainer Create(TypeInfo parameter)
+		{
+			var type = parameter.AccountForNullable();
+			var result = new Container(_elements.Get(type), _contents.Get(type));
+			return result;
+		}
 	}
 }

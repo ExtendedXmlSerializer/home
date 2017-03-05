@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
 
@@ -33,7 +34,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=>
-				parameter.Register<IContentOptions, ClassicContentOptions>()
+				parameter.Register<IEnumerable<IContentOption>, ClassicContentOptions>()
+				         .Register<ClassicDictionaryContentOption>()
+				         .Register<ClassicCollectionContentOption>()
 				         .RegisterInstance(ClassicEmitMemberSpecifications.Default);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

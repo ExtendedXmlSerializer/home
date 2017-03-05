@@ -21,13 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
-{
-	class ConverterAlteration : IConverterAlteration
-	{
-		public static ConverterAlteration Default { get; } = new ConverterAlteration();
-		ConverterAlteration() {}
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 
-		public IConverter Get(IConverter parameter) => parameter;
+namespace ExtendedXmlSerialization.ExtensionModel
+{
+	class SerializationExtension : ISerializerExtension
+	{
+		public static SerializationExtension Default { get; } = new SerializationExtension();
+		SerializationExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			var serialization = new ConfiguredContainers();
+			var result = parameter.RegisterInstance<IContainers>(serialization)
+			                      .RegisterInstance(serialization)
+			                      .Register<IMemberContent, MemberContent>()
+			                      .Decorate<IMemberContent>((factory, content) => new RecursionGuardedMemberContent(content))
+			                      .Register<ISerialization, Serialization>()
+				;
+			return result;
+		}
+
+		public void Execute(IServices parameter)
+		{
+			var configured = parameter.Get<ConfiguredContainers>();
+			var context = parameter.Get<ISerialization>();
+			configured.Execute(context);
+		}
 	}
 }

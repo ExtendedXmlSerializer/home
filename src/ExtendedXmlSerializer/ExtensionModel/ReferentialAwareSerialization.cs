@@ -33,29 +33,29 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		readonly IStaticReferenceSpecification _specification;
 		readonly IRootReferences _references;
-		readonly ISerialization _context;
+		readonly ISerialization _serialization;
 
 		public ReferentialAwareSerialization(IStaticReferenceSpecification specification, IRootReferences references,
-		                                     ISerialization context)
+		                                     ISerialization serialization)
 		{
 			_specification = specification;
 			_references = references;
-			_context = context;
+			_serialization = serialization;
 		}
 
 		public IContainer Get(TypeInfo parameter)
 		{
-			var container = _context.Get(parameter);
-			var result = _specification.IsSatisfiedBy(parameter) ? new Serializer(_references, container) : container;
+			var container = _serialization.Get(parameter);
+			var result = _specification.IsSatisfiedBy(parameter) ? new Container(_references, container) : container;
 			return result;
 		}
 
-		class Serializer : IContainer
+		class Container : IContainer
 		{
 			readonly IRootReferences _references;
 			readonly IContainer _container;
 
-			public Serializer(IRootReferences references, IContainer container)
+			public Container(IRootReferences references, IContainer container)
 			{
 				_references = references;
 				_container = container;

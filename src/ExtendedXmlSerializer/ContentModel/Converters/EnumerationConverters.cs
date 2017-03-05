@@ -21,14 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public abstract class SerializerBase : ISerializer
+	class EnumerationConverters : DecoratedSpecification<TypeInfo>, IConverters
 	{
-		public abstract void Write(IXmlWriter writer, object instance);
+		public static EnumerationConverters Default { get; } = new EnumerationConverters();
+		EnumerationConverters() : base(IsAssignableSpecification<Enum>.Default) {}
 
-		public abstract object Get(IXmlReader reader);
+		public IConverter Get(TypeInfo parameter) => new EnumerationConverter(parameter.AsType());
 	}
 }

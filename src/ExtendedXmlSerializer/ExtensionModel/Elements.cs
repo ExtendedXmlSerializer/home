@@ -24,38 +24,54 @@
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferencesContentOption : DecoratedContentOption
+	class Elements : IElements
 	{
-		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
+		readonly IObjectNamespaces _namespaces;
+		readonly IElements _elements;
 
-		readonly IStoredEncounters _encounters;
-		readonly IEntities _entities;
-		readonly ISpecification<TypeInfo> _specification;
-
-		public ReferencesContentOption(IStoredEncounters encounters, IEntities entities, IContentOption option)
-			: this(IsReferenceSpecification, encounters, entities, option) {}
-
-		public ReferencesContentOption(ISpecification<TypeInfo> specification, IStoredEncounters encounters,
-		                               IEntities entities,
-		                               IContentOption option) : base(option)
+		public Elements(IObjectNamespaces namespaces, IElements elements)
 		{
-			_encounters = encounters;
-			_entities = entities;
-			_specification = specification;
+			_namespaces = namespaces;
+			_elements = elements;
 		}
 
-		public sealed override ISerializer Get(TypeInfo parameter)
+		public IWriter Get(TypeInfo parameter) => new Writer(_namespaces, _elements.Get(parameter));
+
+		class Writer : ReferenceCache<IXmlWriter, ConditionMonitor>, IWriter
 		{
-			var serializer = base.Get(parameter);
-			var result = serializer as RuntimeSerializer ??
-			             (_specification.IsSatisfiedBy(parameter)
-				             ? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
-				             : serializer);
-			return result;
+			readonly IObjectNamespaces _namespaces;
+			readonly IWriter _writer;
+
+			public Writer(IObjectNamespaces namespaces, IWriter writer) : base(_ => new ConditionMonitor())
+			{
+				_namespaces = namespaces;
+				_writer = writer;
+			}
+
+			public void Write(IXmlWriter writer, object instance)
+			{
+				_writer.Write(writer, instance);
+
+				if (instance == writer.Root && Get(writer).Apply())
+				{
+					var namespaces = _namespaces.Get(writer.Root);
+					var length = namespaces.Length;
+					for (var i = 0; i < length; i++)
+					{
+						var ns = namespaces[i];
+						var @namespace = !ns.Name.Equals(Defaults.Xmlns.Name) ? (Namespace?) Defaults.Xmlns : null;
+						var attribute = new Attribute(ns.Name, ns.Identifier, @namespace);
+						writer.Attribute(attribute);
+					}
+				}
+			}
 		}
 	}
 }

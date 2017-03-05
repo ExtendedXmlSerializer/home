@@ -47,10 +47,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			parameter.RegisterInstance(_members)
 			         .Register<IStoredEncounters, StoredEncounters>()
 			         .Register<IEntities, Entities>()
-			         .Register<ReferencesContentAlteration>()
+			         //.Register<ReferencesContentAlteration>()
 			         .Decorate(_decorate)
-			         .Decorate<IContentOptions>((factory, options) =>
-				                                    new AlteredContentOptions(options, factory.Get<ReferencesContentAlteration>()))
+			         .Decorate<IContents>((factory, contents) =>
+				                              new ReferenceContents(factory.Get<IStoredEncounters>(), factory.Get<IEntities>(),
+				                                                    contents))
 			         .Decorate<ISerialization>((factory, context) => new CircularReferenceEnabledSerialization(context));
 
 		static IActivation Decorate(System.IServiceProvider factory, IActivation activation)

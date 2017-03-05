@@ -21,28 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Collections;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ElementOptionSelector : Selector<IContentOption, IElementOption>, IElementOptionSelector
+	[UsedImplicitly]
+	sealed class Contents : Selector<TypeInfo, ISerializer>, IContents
 	{
-		public static ElementOptionSelector Default { get; } = new ElementOptionSelector();
-
-		ElementOptionSelector() : this(
-			new Option(IsTypeSpecification<ArrayContentOption>.Default, ArrayElementOption.Default),
-			new Option(AlwaysSpecification<IContentOption>.Default, ElementOptions.Default)
-		) {}
-
-		[UsedImplicitly]
-		public ElementOptionSelector(params IOption<IContentOption, IElementOption>[] options) : base(options) {}
-
-		class Option : FixedOption<IContentOption, IElementOption>
-		{
-			public Option(ISpecification<IContentOption> specification, IElementOption instance) : base(specification, instance) {}
-		}
+		public Contents(params IContentOption[] options) : base(options) {}
 	}
 }

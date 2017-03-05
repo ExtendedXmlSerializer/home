@@ -26,9 +26,11 @@ using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
@@ -48,33 +50,47 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
 			var fallback = new ServiceProvider(_services);
-			return parameter.Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
-			                .Register(provider => provider.Get<MemberConfiguration>().EmitSpecifications, "MemberConfiguration")
-			                .RegisterInstance(DefaultMemberEmitSpecifications.Default)
+			var specifications = fallback.Get<MemberConfiguration>().EmitSpecifications;
+			return _services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
+			                .RegisterFallback(fallback.IsSatisfiedBy, fallback.GetService)
+			                .Register(fallback.Get<IEnumerable<IConverter>>)
+			                .Register(fallback.Get<IEnumerable<IConverters>>)
+			                .Register(fallback.Get<IAlteration<IConverter>>)
+			                .Register<IAlteration<IConverters>, ConvertersAlteration>()
+			                .Decorate<IEnumerable<IConverter>>(
+				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverter>>().Get))
+			                .Decorate<IEnumerable<IConverters>>(
+				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverters>>().Get))
+			                .Register<EnumerationConverters>()
 			                .Register<ISerializer, RuntimeSerializer>()
+			                .Register<IXmlFactory, XmlFactory>()
+			                .Register<ArrayContentOption>()
+			                .Register<IDictionaryEntries, DictionaryEntries>()
+			                .Register<DictionaryContentOption>()
+			                .Register<CollectionContentOption>()
+			                .Register<MemberedContentOption>()
+			                .Register<RuntimeContentOption>()
+			                .Register<IEnumerable<IContentOption>, ContentOptions>()
+			                .Register(
+				                provider => provider.GetAllInstances<IConverter>()
+				                                    .Select(x => new FixedContentOption(x, x.ToSerializer()))
+				                                    .Concat(provider.GetAllInstances<IConverters>()
+				                                                    .Select<IConverters, IContentOption>(
+					                                                    x => new DelegatedContentOption(x, x.Get)))
+				                                    .Concat(provider.GetAllInstances<IContentOption>())
+				                                    .ToArray())
+			                .Register<IContents, Contents>()
+			                .Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
+			                .RegisterInstance(specifications.GetType(), specifications)
 			                .Register<IMemberOption, VariableTypeMemberOption>()
 			                .Register<MemberProfiles>()
 			                .Register(factory => factory.Get<MemberProfiles>().ToDelegate())
+			                .Register<IMemberSerializers, MemberSerializers>()
 			                .Register<IMemberSerialization, MemberSerialization>()
-			                .Register<ISelector, ContentModel.Members.Selector>()
+			                .Register<ISelector, Selector>()
 			                .Register<IMembers, Members>()
-			                .RegisterConstructorDependency(fallback.AsDependency<IEnumerable<IConverter>>)
-			                .Register<IConverters, Converters>()
-			                .RegisterInstance<IConverterAlteration>(OptimizedConverterAlteration.Default)
-			                .Decorate<IConverters>(
-				                (provider, converters) => new AlteredConverters(provider.Get<IConverterAlteration>(), converters))
-			                .Register<ConverterContent>()
-			                .Register<EnumerationContentOption>()
-			                .RegisterConstructorDependency<IContentOption>(
-				                (provider, info) =>
-					                new CompositeContentOption(provider.Get<ConverterContent>()
-					                                                   .Concat(provider.GetAllInstances<IContentOption>())
-					                                                   .ToArray()))
-			                .Register<IContentOptions, ContentOptions>()
-			                .Register<IContainerOptions, ContainerOptions>()
-			                .Register(factory => factory.Get<IContainerOptions>().ToArray())
-			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
 			                .Register<ContainsStaticReferenceSpecification>()
+			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
 			                .Register<IRootReferences, RootReferences>()
 			                .Decorate<ISerialization>((factory, context) => new ReferentialAwareSerialization(
 				                                          factory.Get<IStaticReferenceSpecification>(),
@@ -82,10 +98,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				                                          context
 			                                          )
 			                )
-			                .RegisterFallback(fallback.IsSatisfiedBy, fallback.GetService)
 			                .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
 		}
-
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

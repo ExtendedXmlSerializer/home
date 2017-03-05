@@ -21,29 +21,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public class CustomXmlExtension : ISerializerExtension
+	public class CustomXmlExtension : TableSource<TypeInfo, IExtendedXmlCustomSerializer>, ISerializerExtension
 	{
-		readonly ICollection<TypeInfo> _supported;
+		public CustomXmlExtension(IDictionary<TypeInfo, IExtendedXmlCustomSerializer> store) : base(store) {}
 
-		public CustomXmlExtension(ICollection<TypeInfo> supported)
-		{
-			_supported = supported;
-		}
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
-		public IServiceRepository Get(IServiceRepository parameter)
-		{
-			throw new NotImplementedException();
-		}
+		IContents Register(IServiceProvider _, IContents contents) => new Contents(this, contents);
 
-		public void Execute(IServices parameter)
+		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		class Contents : IContents
 		{
-			throw new NotImplementedException();
+			readonly IParameterizedSource<TypeInfo, IExtendedXmlCustomSerializer> _custom;
+			readonly IContents _contents;
+
+			public Contents(IParameterizedSource<TypeInfo, IExtendedXmlCustomSerializer> custom, IContents contents)
+			{
+				_custom = custom;
+				_contents = contents;
+			}
+
+			public ISerializer Get(TypeInfo parameter)
+			{
+				var custom = _custom.Get(parameter);
+				var result = custom != null ? new Serializer(custom) : _contents.Get(parameter);
+				return result;
+			}
+
+			class Serializer : ISerializer
+			{
+				readonly IExtendedXmlCustomSerializer _custom;
+
+				public Serializer(IExtendedXmlCustomSerializer custom)
+				{
+					_custom = custom;
+				}
+
+				public object Get(IXmlReader parameter) => _custom.Deserialize(XElement.Load(parameter.Get()));
+
+				public void Write(IXmlWriter writer, object instance) => _custom.Serializer(writer.Get(), instance);
+			}
 		}
 	}
 }

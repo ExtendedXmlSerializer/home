@@ -26,12 +26,10 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class DelegatedSerializer : SerializerBase
+	class DelegatedSerializer : ISerializer
 	{
 		readonly Func<string, object> _deserialize;
 		readonly Func<object, string> _serialize;
-
-		//public DelegatedSerializer(IConverter converter) : this(converter.Parse, converter.Format) {}
 
 		public DelegatedSerializer(Func<string, object> deserialize, Func<object, string> serialize)
 		{
@@ -39,8 +37,8 @@ namespace ExtendedXmlSerialization.ContentModel
 			_serialize = serialize;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
+		public void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
 
-		public sealed override object Get(IXmlReader reader) => _deserialize(reader.Value());
+		public object Get(IXmlReader reader) => _deserialize(reader.Value());
 	}
 }

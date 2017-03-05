@@ -23,78 +23,58 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
+using System.Xml;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class Instances : IEnumerable<object>
 	{
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
-		readonly IActivation _activation;
-		readonly IXmlFactory _xmlFactory;
-		readonly IMemberConfiguration _memberConfiguration;
-		readonly IEnumerable<IConverter> _converters;
-		readonly IMemberSerializers _serializers;
-		readonly IElementOptionSelector _selector;
-		readonly object[] _additional;
+		readonly IMemberConfiguration _configuration;
+		readonly ImmutableArray<object> _additional;
 
-		public Instances(IActivation activation, IMemberConfiguration configuration, IEnumerable<IConverter> converters,
-		                 IXmlFactory xmlFactory,
-		                 params object[] additional)
-			: this(
-				configuration.Policy.And<PropertyInfo>(configuration.Specification),
-				configuration.Policy.And<FieldInfo>(configuration.Specification),
-				activation, xmlFactory, configuration, converters,
-				new MemberSerializers(configuration.Runtime, configuration.Converters),
-				ElementOptionSelector.Default, additional) {}
+		public Instances(IMemberConfiguration configuration)
+			: this(configuration,
+			       ContentModel.Content.Elements.Default,
+			       OptimizedConverterAlteration.Default,
+			       DefaultMemberEmitSpecifications.Default,
+			       WellKnownConverters.Default,
+			       EnumerationConverters.Default.Yield().AsReadOnly(),
+			       Activation.Default,
+			       new XmlReaderSettings(),
+			       new XmlWriterSettings()) {}
 
-		public Instances(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field,
-			IActivation activation, IXmlFactory xmlFactory, IMemberConfiguration memberConfiguration,
-			IEnumerable<IConverter> converters,
-			IMemberSerializers serializers, IElementOptionSelector selector, params object[] additional)
+		public Instances(IMemberConfiguration configuration, params object[] additional)
+			: this(configuration,
+			       new object[]
+			       {
+				       configuration.Policy.And<PropertyInfo>(configuration.Specification),
+				       configuration.Policy.And<FieldInfo>(configuration.Specification)
+			       }.Concat(additional).ToImmutableArray()
+			) {}
+
+		public Instances(IMemberConfiguration configuration, ImmutableArray<object> additional)
 		{
-			_property = property;
-			_field = field;
-			_activation = activation;
-			_xmlFactory = xmlFactory;
-			_memberConfiguration = memberConfiguration;
-			_converters = converters;
-
-
-			_serializers = serializers;
-			_selector = selector;
+			_configuration = configuration;
 			_additional = additional;
 		}
 
 		public IEnumerator<object> GetEnumerator()
 		{
-			yield return _converters;
+			yield return _configuration;
+			yield return _configuration.Converters;
+			yield return _configuration.Runtime;
+			yield return _configuration.Specification;
+			yield return _configuration.Aliases;
+			yield return _configuration.Order;
 
-			yield return _activation;
-			yield return _property;
-			yield return _field;
-
-			yield return _memberConfiguration;
-			yield return _memberConfiguration.Converters;
-			yield return _memberConfiguration.Runtime;
-			yield return _memberConfiguration.Specification;
-			yield return _memberConfiguration.Aliases;
-			yield return _memberConfiguration.Order;
-
-			yield return _serializers;
-			yield return _xmlFactory;
-
-			yield return _selector;
 			foreach (var o in _additional)
 			{
 				yield return o;

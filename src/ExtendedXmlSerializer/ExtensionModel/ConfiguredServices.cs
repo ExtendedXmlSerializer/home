@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly IReadOnlyList<ISerializerExtension> _roots;
 
 		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), Serializations.Default) {}
+			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), SerializationExtension.Default) {}
 
 		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
 		{

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,22 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class ContainerOption : OptionBase<TypeInfo, IContainer>, IContainerOption
+	public class AlteredItems<T> : Items<T>
 	{
-		readonly IElementOption _element;
-		readonly IContentOption _content;
-
-		public ContainerOption(IElementOption element, IContentOption content) : base(content)
-		{
-			_element = element;
-			_content = content;
-		}
-
-		public sealed override IContainer Get(TypeInfo parameter) => new Container(_element.Get(parameter), _content.Get(parameter));
+		public AlteredItems(IAlteration<T> alteration, IEnumerable<T> converters)
+			: base(converters.Select(alteration.Get).ToImmutableArray()) {}
 	}
 }
