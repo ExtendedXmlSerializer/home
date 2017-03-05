@@ -21,9 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public interface IContentOptions : IEnumerable<IContentOption> {}
+	class DelegatedContentOption : ContentOptionBase
+	{
+		readonly Func<TypeInfo, IConverter> _converter;
+
+		public DelegatedContentOption(ISpecification<TypeInfo> specification, Func<TypeInfo, IConverter> converter)
+			: base(specification)
+		{
+			_converter = converter;
+		}
+
+		public override ISerializer Get(TypeInfo parameter) => _converter(parameter).ToSerializer();
+	}
 }

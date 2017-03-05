@@ -21,9 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	public interface IConverterAlteration : IAlteration<IConverter> {}
+	public sealed class AlteredSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
+	{
+		readonly IAlteration<TResult> _alteration;
+		readonly IParameterizedSource<TParameter, TResult> _source;
+
+		public AlteredSource(IAlteration<TResult> alteration, IParameterizedSource<TParameter, TResult> source) : base(source)
+		{
+			_alteration = alteration;
+			_source = source;
+		}
+
+		public override TResult Get(TParameter parameter) => _alteration.Get(_source.Get(parameter));
+	}
 }

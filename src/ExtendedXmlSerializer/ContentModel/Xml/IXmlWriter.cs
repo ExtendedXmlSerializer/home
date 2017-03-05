@@ -22,10 +22,11 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public interface IXmlWriter : IPrefixAware, IDisposable
+	public interface IXmlWriter : IPrefixAware, IDisposable, ISource<System.Xml.XmlWriter>
 	{
 		object Root { get; }
 

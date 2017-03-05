@@ -32,4 +32,11 @@ namespace ExtendedXmlSerialization.Configuration
 
 		void Serializer(XmlWriter xmlWriter, T obj);
 	}
+
+	public interface IExtendedXmlCustomSerializer
+	{
+		object Deserialize(XElement xElement);
+
+		void Serializer(XmlWriter xmlWriter, object instance);
+	}
 }

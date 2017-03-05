@@ -25,20 +25,21 @@ using System;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
 #pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs
 {
-	public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>
+	public class TestClassWithSerializerConfig : ExtendedXmlSerializerConfig<TestClassWithSerializer>, IExtendedXmlCustomSerializer<TestClassWithSerializer>
 	{
 		public TestClassWithSerializerConfig()
 		{
-			CustomSerializer(Serializer, XmlDeserialize);
+			CustomSerializer(Serializer, Deserialize);
 		}
 
-		public TestClassWithSerializer XmlDeserialize(XElement element)
+		public TestClassWithSerializer Deserialize(XElement element)
 		{
 			var xElement = element.Element("String");
 			var xElement1 = element.Element("Int");

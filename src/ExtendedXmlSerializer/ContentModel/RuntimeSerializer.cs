@@ -24,10 +24,12 @@
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	sealed class RuntimeSerializer : SerializerBase
+	[UsedImplicitly]
+	sealed class RuntimeSerializer : ISerializer
 	{
 		readonly IContainers _containers;
 
@@ -36,9 +38,9 @@ namespace ExtendedXmlSerialization.ContentModel
 			_containers = containers;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public void Write(IXmlWriter writer, object instance)
 			=> _containers.Get(instance.GetType().GetTypeInfo()).Get().Write(writer, instance);
 
-		public override object Get(IXmlReader reader) => _containers.Get(reader.GetClassification()).Get().Get(reader);
+		public object Get(IXmlReader reader) => _containers.Get(reader.GetClassification()).Get().Get(reader);
 	}
 }

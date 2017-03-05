@@ -21,12 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Converters;
+using System.Xml;
+using System.Xml.Linq;
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class EnumerationContentOption : ContentModel.Converters.EnumerationContentOption
+	class Adapter<T> : IExtendedXmlCustomSerializer
 	{
-		public EnumerationContentOption(IConverterAlteration alteration) : base(alteration) {}
+		readonly IExtendedXmlCustomSerializer<T> _configuration;
+
+		public Adapter(IExtendedXmlCustomSerializer<T> configuration)
+		{
+			_configuration = configuration;
+		}
+
+		public object Deserialize(XElement xElement) => _configuration.Deserialize(xElement);
+
+		public void Serializer(XmlWriter xmlWriter, object instance)
+			=> _configuration.Serializer(xmlWriter, instance.AsValid<T>());
 	}
 }

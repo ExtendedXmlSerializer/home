@@ -22,20 +22,20 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class DecoratedContentOption : IContentOption
+	sealed class Elements : Selector<TypeInfo, IWriter>, IElements
 	{
-		readonly IContentOption _option;
+		public static Elements Default { get; } = new Elements();
 
-		public DecoratedContentOption(IContentOption option)
-		{
-			_option = option;
-		}
+		Elements() : this(ArrayElementOption.Default,
+		                  GenericElementOption.Default,
+		                  VariableTypeElementOption.Default,
+		                  ElementOption.Default) {}
 
-		public virtual bool IsSatisfiedBy(TypeInfo parameter) => _option.IsSatisfiedBy(parameter);
-
-		public virtual ISerializer Get(TypeInfo parameter) => _option.Get(parameter);
+		public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}
 }

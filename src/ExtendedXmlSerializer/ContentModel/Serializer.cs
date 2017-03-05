@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class Serializer : SerializerBase
+	class Serializer : ISerializer
 	{
 		readonly IReader _reader;
 		readonly IWriter _writer;
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.ContentModel
 			_writer = writer;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
-		public sealed override object Get(IXmlReader reader) => _reader.Get(reader);
+		public void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
+		public object Get(IXmlReader reader) => _reader.Get(reader);
 	}
 }

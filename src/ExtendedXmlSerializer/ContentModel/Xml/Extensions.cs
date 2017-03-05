@@ -23,11 +23,15 @@
 
 using System;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	static class Extensions
 	{
+		public static XElement Member(this XElement @this, string name)
+			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
+
 		public static TypeInfo GetClassification(this IXmlReader @this)
 		{
 			var result = @this.Classification;

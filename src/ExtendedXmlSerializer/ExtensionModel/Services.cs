@@ -179,9 +179,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServiceRepository Decorate<TService>(Func<IServiceProvider, TService, TService> factory)
 			=> new Services(_container, _registry.Decorate<TService>(new Decoration<TService>(factory).Get));
 
+		public object Create(Type serviceType) => _container.Create(serviceType);
+
 		public object GetService(Type serviceType) => _container.GetInstance(serviceType);
 
-		public void Dispose() => _container.Dispose();
 		public object GetInstance(Type serviceType) => _container.GetInstance(serviceType);
 
 		public object GetInstance(Type serviceType, object[] arguments) => _container.GetInstance(serviceType, arguments);
@@ -198,7 +199,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IEnumerable<object> GetAllInstances(Type serviceType) => _container.GetAllInstances(serviceType);
 
-		public object Create(Type serviceType) => _container.Create(serviceType);
+
+		public void Dispose() => _container.Dispose();
 
 		class Arguments<T>
 		{

@@ -81,6 +81,8 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			return _writer.LookupPrefix(identifier);
 		}
 
+		public System.Xml.XmlWriter Get() => _writer;
+
 		struct Source : ISource<INamespaces>
 		{
 			readonly Func<INamespaces> _source;
