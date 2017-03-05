@@ -29,9 +29,11 @@ namespace ExtendedXmlSerialization.Core.Sources
 {
 	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IParameterizedSource<TKey, TValue>
 	{
+		readonly static EqualityComparer<TKey> EqualityComparer = EqualityComparer<TKey>.Default;
+
 		readonly Func<TKey, TValue> _create;
 
-		protected CacheBase() : this(EqualityComparer<TKey>.Default) {}
+		protected CacheBase() : this(EqualityComparer) {}
 
 		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
 		{

@@ -33,7 +33,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public class CustomXmlExtension : TableSource<TypeInfo, IExtendedXmlCustomSerializer>, ISerializerExtension
+	sealed class CustomXmlExtension : TableSource<TypeInfo, IExtendedXmlCustomSerializer>, ISerializerExtension
 	{
 		public CustomXmlExtension(IDictionary<TypeInfo, IExtendedXmlCustomSerializer> store) : base(store) {}
 
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		class Contents : IContents
+		sealed class Contents : IContents
 		{
 			readonly IParameterizedSource<TypeInfo, IExtendedXmlCustomSerializer> _custom;
 			readonly IContents _contents;
@@ -61,7 +61,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				return result;
 			}
 
-			class Serializer : ISerializer
+			sealed class Serializer : ISerializer
 			{
 				readonly IExtendedXmlCustomSerializer _custom;
 

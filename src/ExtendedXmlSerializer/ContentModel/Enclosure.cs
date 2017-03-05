@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel
 {
-	class Enclosure : EnclosureBase
+	sealed class Enclosure : EnclosureBase
 	{
 		readonly static EndCurrentElement End = EndCurrentElement.Default;
 
@@ -40,8 +40,8 @@ namespace ExtendedXmlSerialization.ContentModel
 			_finish = finish;
 		}
 
-		protected sealed override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
+		protected override void Start(IXmlWriter writer, object instance) => _start.Write(writer, instance);
 
-		protected sealed override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
+		protected override void Finish(IXmlWriter writer, object instance) => _finish.Write(writer, instance);
 	}
 }

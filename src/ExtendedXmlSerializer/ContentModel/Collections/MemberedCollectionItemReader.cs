@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class MemberedCollectionItemReader : ICollectionItemReader
+	sealed class MemberedCollectionItemReader : ICollectionItemReader
 	{
 		readonly ICollectionItemReader _item;
 		readonly IDictionary<string, IMember> _members;

@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.ContentModel.Content;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicCollectionContentOption : CollectionContentOptionBase
+	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
 	{
 		readonly IActivation _activation;
 
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_activation = activation;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 			=>
 				new Serializer(new CollectionContentsReader(_activation.Get(classification), item),
 				               new EnumerableWriter(item));

@@ -31,7 +31,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class DictionaryEntries : IDictionaryEntries
+	sealed class DictionaryEntries : IDictionaryEntries
 	{
 		public static TypeInfo Type { get; } = typeof(DictionaryEntry).GetTypeInfo();
 		readonly static PropertyInfo Key = Type.GetProperty(nameof(DictionaryEntry.Key));

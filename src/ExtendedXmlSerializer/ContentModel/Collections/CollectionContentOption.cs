@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.ContentModel.Members;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class CollectionContentOption : CollectionContentOptionBase
+	sealed class CollectionContentOption : CollectionContentOptionBase
 	{
 		readonly IMembers _members;
 		readonly IActivation _activation;
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			_activation = activation;
 		}
 
-		protected sealed override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification)
 		{
 			var members = _members.Get(classification);
 			var activator = _activation.Get(classification);

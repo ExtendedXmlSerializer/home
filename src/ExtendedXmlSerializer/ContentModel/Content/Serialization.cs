@@ -23,13 +23,12 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	[UsedImplicitly]
-	sealed class Serialization : CacheBase<TypeInfo, IContainer>, ISerialization
+	sealed class Serialization : ISerialization
 	{
 		readonly IElements _elements;
 		readonly IContents _contents;
@@ -40,11 +39,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			_contents = contents;
 		}
 
-		protected override IContainer Create(TypeInfo parameter)
-		{
-			var type = parameter.AccountForNullable();
-			var result = new Container(_elements.Get(type), _contents.Get(type));
-			return result;
-		}
+		public IContainer Get(TypeInfo parameter) => Create(parameter.AccountForNullable());
+
+		IContainer Create(TypeInfo parameter) => new Container(_elements.Get(parameter), _contents.Get(parameter));
 	}
 }

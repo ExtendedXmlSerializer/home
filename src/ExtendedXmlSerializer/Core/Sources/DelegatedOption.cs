@@ -30,9 +30,6 @@ namespace ExtendedXmlSerialization.Core.Sources
 	{
 		readonly Func<TParameter, TResult> _source;
 
-		public DelegatedOption(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
-			: this(new DelegatedSpecification<TParameter>(specification), source) {}
-
 		public DelegatedOption(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
 			: base(specification)
 		{

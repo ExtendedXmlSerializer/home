@@ -27,12 +27,12 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class DictionaryContentsReader : CollectionContentsReader
+	sealed class DictionaryContentsReader : DecoratedReader
 	{
 		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
 		public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
-			: base(new MemberAttributesReader(reader, members),
-			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists) {}
+			: base(new CollectionContentsReader(new MemberAttributesReader(reader, members),
+			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists)) {}
 	}
 }

@@ -32,19 +32,20 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	sealed class TypeParser : CacheBase<string, TypeInfo>, ITypeParser
 	{
-		public static IParameterizedSource<IXmlReader, ITypeParser> Defaults { get; } =
-			new ReferenceCache<IXmlReader, ITypeParser>(x => new TypeParser(x));
-
 		readonly static Identities Identities = Identities.Default;
 		readonly static GenericTypes GenericTypes = GenericTypes.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
+
+		
+		public static IParameterizedSource<IXmlReader, ITypeParser> Defaults { get; } =
+			new ReferenceCache<IXmlReader, ITypeParser>(x => new TypeParser(x));
+
+		TypeParser(IXmlReader reader) : this(Identities, GenericTypes, Converter, reader) {}
 
 		readonly IIdentities _identities;
 		readonly ITypes _types;
 		readonly INameConverter _converter;
 		readonly IXmlReader _reader;
-
-		TypeParser(IXmlReader reader) : this(Identities, GenericTypes, Converter, reader) {}
 
 		public TypeParser(IIdentities identities, ITypes types, INameConverter converter, IXmlReader reader)
 		{
@@ -54,12 +55,7 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 			_reader = reader;
 		}
 
-		protected override TypeInfo Create(string parameter)
-		{
-			var parsed = _converter.Parse(parameter);
-			var result = Get(parsed);
-			return result;
-		}
+		protected override TypeInfo Create(string parameter) => Get(_converter.Parse(parameter));
 
 		public TypeInfo Get(ParsedName name)
 		{

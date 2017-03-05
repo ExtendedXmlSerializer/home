@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class RuntimeContentOption : FixedContentOption
+	sealed class RuntimeContentOption : FixedContentOption
 	{
 		readonly static AlwaysSpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
 

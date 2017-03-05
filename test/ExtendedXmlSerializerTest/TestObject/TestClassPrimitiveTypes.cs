@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Test.TestObject
 		EnumValue2
 	}
 
-	public class TestClassPrimitiveTypes
+	public sealed class TestClassPrimitiveTypes
 	{
 		public static TestClassPrimitiveTypes Create()
 		{

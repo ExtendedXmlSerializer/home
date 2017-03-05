@@ -2,7 +2,7 @@
 
 namespace ExtendedXmlSerialization.Test.TestObject
 {
-	public class TestClassOtherClass
+	public sealed class TestClassOtherClass
 	{
 		public static TestClassOtherClass Create()
 		{
@@ -32,13 +32,13 @@ namespace ExtendedXmlSerialization.Test.TestObject
 		public List<TestClassItem> ListProperty { get; set; }
 	}
 
-	public class TestClassItem
+	public sealed class TestClassItem
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
 	}
 
-	public class TestClassOther
+	public sealed class TestClassOther
 	{
 		public TestClassItem Test { get; set; }
 

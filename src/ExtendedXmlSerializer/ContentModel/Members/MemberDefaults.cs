@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberDefaults : CacheBase<MemberInfo, object>
+	sealed class MemberDefaults : CacheBase<MemberInfo, object>
 	{
 		readonly static GetterFactory GetterFactory = GetterFactory.Default;
 
@@ -42,6 +42,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_getter = getter;
 		}
 
-		protected sealed override object Create(MemberInfo parameter) => _getter.Get(parameter).Invoke(_instance);
+		protected override object Create(MemberInfo parameter) => _getter.Get(parameter).Invoke(_instance);
 	}
 }
