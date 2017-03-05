@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization
 		{
 			using (var reader = _factory.Create(stream))
 			{
-				return _serialization.Get(reader.Classification).Get(reader);
+				return _serialization.Get(reader.GetClassification()).Get(reader);
 			}
 		}
 	}
