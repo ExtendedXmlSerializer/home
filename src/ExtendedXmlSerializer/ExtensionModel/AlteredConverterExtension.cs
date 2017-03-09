@@ -22,20 +22,32 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public class SortComparer<T> : IComparer<T>
+	class AlteredConverterExtension : ISerializerExtension
 	{
-		public static SortComparer<T> Default { get; } = new SortComparer<T>();
-		SortComparer() {}
+		readonly IAlteration<IConverter> _converters;
 
-		public int Compare(T x, T y)
+		public AlteredConverterExtension(IAlteration<IConverter> converters)
 		{
-			var left = (x as ISortAware)?.Sort ?? 1;
-			var right = (y as ISortAware)?.Sort ?? 1;
-			var result = left.CompareTo(right);
-			return result;
+			_converters = converters;
 		}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			return parameter.RegisterInstance(_converters)
+			                .Register<IAlteration<IConverterSource>, ConvertersAlteration>()
+			                .Decorate<IEnumerable<IConverter>>(
+				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverter>>().Get))
+			                .Decorate<IEnumerable<IConverterSource>>(
+				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverterSource>>().Get));
+		}
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

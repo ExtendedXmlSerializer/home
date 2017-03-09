@@ -66,7 +66,7 @@ namespace ExtendedXmlSerialization.Performance.Tests
 			}
 		}
 
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Extend(ClassicExtension.Default).Create();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Extended(ClassicExtension.Default).Create();
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
 

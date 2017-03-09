@@ -25,37 +25,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
-using Elements = ExtendedXmlSerialization.ContentModel.Content.Elements;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
 	{
-		readonly IActivation _activation;
 		readonly IMemberConfiguration _memberConfiguration;
-		readonly IEnumerable<IConverter> _converters;
 
 		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
 
 		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
 
 		public ExtendedXmlConfiguration(IMemberConfiguration memberConfiguration)
-			: this(Activation.Default, memberConfiguration) {}
-
-		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration)
-			: this(activation, memberConfiguration, WellKnownConverters.Default) {}
-
-		public ExtendedXmlConfiguration(IActivation activation, IMemberConfiguration memberConfiguration,
-		                                IEnumerable<IConverter> converters)
 		{
-			_activation = activation;
 			_memberConfiguration = memberConfiguration;
-			_converters = converters;
 		}
 
 		public bool AutoProperties { get; set; }
@@ -69,7 +54,7 @@ namespace ExtendedXmlSerialization.Configuration
 		                                                        };
 
 		public XmlWriterSettings WriterSettings { get; set; } = new XmlWriterSettings();
-		public IPropertyEncryption EncryptionAlgorithm { get; set; }
+		public IEncryption EncryptionAlgorithm { get; set; }
 
 		IExtendedXmlTypeConfiguration IInternalExtendedXmlConfiguration.GetTypeConfiguration(Type type)
 		{
@@ -87,7 +72,7 @@ namespace ExtendedXmlSerialization.Configuration
 			return configType;
 		}
 
-		public IExtendedXmlConfiguration UseAutoProperties()
+		/*public IExtendedXmlConfiguration UseAutoProperties()
 		{
 			AutoProperties = true;
 			return this;
@@ -99,11 +84,11 @@ namespace ExtendedXmlSerialization.Configuration
 			return this;
 		}
 
-		public IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption)
+		public IExtendedXmlConfiguration UseEncryptionAlgorithm(IEncryption propertyEncryption)
 		{
 			EncryptionAlgorithm = propertyEncryption;
 			return this;
-		}
+		}*/
 
 		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
 		{
@@ -126,13 +111,7 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IExtendedXmlSerializer Create()
 		{
-			var instances =
-				new Instances(_memberConfiguration,
-				              Elements.Default,
-				              OptimizedConverterAlteration.Default,
-				              DefaultMemberEmitSpecifications.Default,
-				              EnumerationConverters.Default.Yield().AsReadOnly(),
-				              _activation, _converters, ReaderSettings, WriterSettings).ToArray();
+			var instances = new Instances(_memberConfiguration, ReaderSettings, WriterSettings).ToArray();
 
 			using (var services = new ConfiguredServices(instances).Get(_extensions))
 			{
@@ -141,10 +120,6 @@ namespace ExtendedXmlSerialization.Configuration
 			}
 		}
 
-		public IExtendedXmlConfiguration Extend(ISerializerExtension extension)
-		{
-			_extensions.Add(extension);
-			return this;
-		}
+		public void Extend(ISerializerExtension extension) => _extensions.Add(extension);
 	}
 }

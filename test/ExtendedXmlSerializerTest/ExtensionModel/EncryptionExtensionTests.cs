@@ -49,7 +49,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			                 };
 
 			var memberConfiguration = new MemberConfiguration(converters);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extend(EmitBehaviorExtension.Default, sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extended(EmitBehaviorExtension.Default, sut).Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" />");
@@ -71,7 +71,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			                 };
 
 			var memberConfiguration = new MemberConfiguration(converters);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extend(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extended(sut).Create());
 			var expected = new SimpleSubject {Identifier = identifier, Message = message};
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");

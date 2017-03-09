@@ -28,6 +28,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
+		public static MemberDescriptor From(MemberInfo member)
+			=> member is PropertyInfo ? new MemberDescriptor((PropertyInfo) member) : new MemberDescriptor((FieldInfo) member);
+
 		readonly int _code;
 
 		public MemberDescriptor(PropertyInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}

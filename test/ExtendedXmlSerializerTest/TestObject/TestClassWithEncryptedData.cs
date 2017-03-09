@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test.TestObject
 		}
 	}
 
-	public class Base64PropertyEncryption : IPropertyEncryption, ExtendedXmlSerialization.Legacy.IPropertyEncryption
+	public class Base64PropertyEncryption : IPropertyEncryption
 	{
 		public string Encrypt(string value)
 		{

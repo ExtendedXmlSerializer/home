@@ -21,17 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class FixedMemberEmitSpecifications : IMemberEmitSpecifications
+	class DecoratedSerializerExtension : ISerializerExtension
 	{
-		readonly IMemberEmitSpecification _instance;
+		readonly ISerializerExtension _extension;
 
-		public FixedMemberEmitSpecifications(IMemberEmitSpecification instance)
+		public DecoratedSerializerExtension(ISerializerExtension extension)
 		{
-			_instance = instance;
+			_extension = extension;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter) => _instance;
+		public IServiceRepository Get(IServiceRepository parameter) => _extension.Get(parameter);
+
+		public void Execute(IServices parameter) => _extension.Execute(parameter);
 	}
 }

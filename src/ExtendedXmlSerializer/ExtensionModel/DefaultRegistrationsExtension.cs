@@ -28,11 +28,9 @@ using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -50,18 +48,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
 			var fallback = new ServiceProvider(_services);
-			var specifications = fallback.Get<MemberConfiguration>().EmitSpecifications;
+			var configuration = fallback.Get<MemberConfiguration>();
+
 			return _services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
+			                .RegisterInstance<IElements>(ContentModel.Content.Elements.Default)
+			                .RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
+			                .RegisterInstance<IActivation>(Activation.Default)
 			                .RegisterFallback(fallback.IsSatisfiedBy, fallback.GetService)
-			                .Register(fallback.Get<IEnumerable<IConverter>>)
-			                .Register(fallback.Get<IEnumerable<IConverters>>)
-			                .Register(fallback.Get<IAlteration<IConverter>>)
-			                .Register<IAlteration<IConverters>, ConvertersAlteration>()
-			                .Decorate<IEnumerable<IConverter>>(
-				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverter>>().Get))
-			                .Decorate<IEnumerable<IConverters>>(
-				                (provider, converters) => converters.Select(provider.Get<IAlteration<IConverters>>().Get))
-			                .Register<EnumerationConverters>()
 			                .Register<ISerializer, RuntimeSerializer>()
 			                .Register<IXmlFactory, XmlFactory>()
 			                .Register<ArrayContentOption>()
@@ -71,18 +64,15 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			                .Register<MemberedContentOption>()
 			                .Register<RuntimeContentOption>()
 			                .Register<IEnumerable<IContentOption>, ContentOptions>()
-			                .Register(
-				                provider => provider.GetAllInstances<IConverter>()
-				                                    .Select(x => new FixedContentOption(x, x.ToSerializer()))
-				                                    .Concat(provider.GetAllInstances<IConverters>()
-				                                                    .Select<IConverters, IContentOption>(
-					                                                    x => new DelegatedContentOption(x, x.Get)))
-				                                    .Concat(provider.GetAllInstances<IContentOption>())
-				                                    .ToArray())
+			                .Register(provider => provider.GetAllInstances<IContentOption>().ToArray())
 			                .Register<IContents, Contents>()
-			                .Register<IMemberEmitSpecifications, MemberEmitSpecifications>()
-			                .RegisterInstance(specifications.GetType(), specifications)
-			                .RegisterConstructorDependency<IMemberOption>((provider, info) => provider.Create<VariableTypeMemberOption>())
+			                .RegisterInstance(configuration.EmitSpecifications)
+			                .Decorate<IMemberEmitSpecifications>(
+				                (provider, defaults) =>
+					                new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()))
+			                .RegisterInstance(configuration.Runtime)
+			                .RegisterConstructorDependency<IMemberOption>(
+				                (provider, info) => provider.Create<VariableTypeMemberOption>())
 			                .Register<IMemberSerializers, MemberSerializers>()
 			                .Register<IMemberSerialization, MemberSerialization>()
 			                .Register<ISelector, Selector>()

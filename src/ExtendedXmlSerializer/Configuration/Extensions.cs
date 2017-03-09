@@ -27,7 +27,8 @@ namespace ExtendedXmlSerialization.Configuration
 {
 	public static class Extensions
 	{
-		public static IExtendedXmlConfiguration Extend(this IExtendedXmlConfiguration @this, params ISerializerExtension[] extensions)
+		public static IExtendedXmlConfiguration Extended(this IExtendedXmlConfiguration @this,
+		                                                 params ISerializerExtension[] extensions)
 		{
 			foreach (var extension in extensions)
 			{
@@ -35,5 +36,16 @@ namespace ExtendedXmlSerialization.Configuration
 			}
 			return @this;
 		}
+
+		public static IExtendedXmlConfiguration UseEncryptionAlgorithm(this IExtendedXmlConfiguration @this,
+		                                                               IEncryption encryption)
+			=> @this.Extended(new EncryptionExtension(encryption));
+
+		public static IExtendedXmlConfiguration UseAutoProperties(this IExtendedXmlConfiguration @this,
+		                                                          int maxTextLength = 128)
+			=> @this.Extended(new AutoAttributesExtension(maxTextLength));
+
+		public static IExtendedXmlConfiguration UseOptimizedNamespaces(this IExtendedXmlConfiguration @this)
+			=> @this.Extended(OptimizedNamespaceExtension.Default);
 	}
 }

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public interface IPropertyEncryption
+	/*sealed class CachedConverter : Converter<object>
 	{
-		string Encrypt(string value);
-		string Decrypt(string value);
+		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
+
+		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
+		                       Func<object, string> serialize)
+			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
+	}*/
+
+	public interface IOptimizationContainer
+	{
+		void Clear();
 	}
 }

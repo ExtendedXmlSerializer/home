@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public class Encryption : ConverterBase<string>, IEncryption
+	class ConverterExtension : ISerializerExtension
 	{
-		public static Encryption Default { get; } = new Encryption();
-		Encryption() : this(Encrypt.Default, Decrypt.Default) {}
+		readonly static IEnumerable<EnumerationConverters> Converters = EnumerationConverters.Default.Yield();
 
-		readonly IEncrypt _encrypt;
-		readonly IDecrypt _decrypt;
+		public static ConverterExtension Default { get; } = new ConverterExtension();
+		ConverterExtension() : this(WellKnownConverters.Default) {}
 
-		public Encryption(IEncrypt encrypt, IDecrypt decrypt)
+		readonly IEnumerable<IConverter> _converters;
+		readonly IEnumerable<IConverterSource> _sources;
+
+		public ConverterExtension(IEnumerable<IConverter> converters) : this(converters, Converters) {}
+
+		public ConverterExtension(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
 		{
-			_encrypt = encrypt;
-			_decrypt = decrypt;
+			_converters = converters;
+			_sources = sources;
 		}
 
-		public override string Parse(string data) => _decrypt.Get(data);
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			return parameter
+				.RegisterInstance(_converters)
+				.RegisterInstance(_sources)
+				.Register<ConverterContentOptions>()
+				.Decorate<IEnumerable<IContentOption>>(
+					(provider, options) => provider.Get<ConverterContentOptions>().Concat(options));
+		}
 
-		public override string Format(string instance) => _encrypt.Get(instance);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class EnumerationConverters : DecoratedSpecification<TypeInfo>, IConverters
+	class EnumerationConverters : DecoratedSpecification<TypeInfo>, IConverterSource
 	{
 		public static EnumerationConverters Default { get; } = new EnumerationConverters();
 		EnumerationConverters() : base(IsAssignableSpecification<Enum>.Default) {}
