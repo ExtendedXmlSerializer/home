@@ -23,13 +23,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Core
 {
-	public sealed class AllInterfaces : ReferenceCacheBase<TypeInfo, IReadOnlyList<TypeInfo>>, IAllInterfaces
+	public sealed class AllInterfaces : StructureCacheBase<TypeInfo, ImmutableArray<TypeInfo>>, IAllInterfaces
 	{
 		readonly Func<TypeInfo, IEnumerable<TypeInfo>> _selector;
 
@@ -46,6 +47,6 @@ namespace ExtendedXmlSerialization.Core
 			         .Where(x => x.IsInterface)
 			         .Distinct();
 
-		protected override IReadOnlyList<TypeInfo> Create(TypeInfo parameter) => Yield(parameter).AsReadOnly();
+		protected override ImmutableArray<TypeInfo> Create(TypeInfo parameter) => Yield(parameter).ToImmutableArray();
 	}
 }

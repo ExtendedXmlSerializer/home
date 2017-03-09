@@ -22,15 +22,14 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class ApplicationTypes : CacheBase<Assembly, IReadOnlyList<TypeInfo>>, IApplicationTypes
+	sealed class ApplicationTypes : CacheBase<Assembly, ImmutableArray<TypeInfo>>, IApplicationTypes
 	{
 		readonly static Func<TypeInfo, bool> Specification = ApplicationTypeSpecification.Default.IsSatisfiedBy;
 
@@ -50,8 +49,8 @@ namespace ExtendedXmlSerialization.TypeModel
 			_types = types;
 		}
 
-		protected override IReadOnlyList<TypeInfo> Create(Assembly parameter) => _types.Get(parameter)
+		protected override ImmutableArray<TypeInfo> Create(Assembly parameter) => _types.Get(parameter)
 		                                                                               .Where(_specification)
-		                                                                               .AsReadOnly();
+		                                                                               .ToImmutableArray();
 	}
 }

@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -64,7 +65,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				var migrator = _migrators.Get(parameter);
 				var content = _contents.Get(parameter);
 				var result = migrator != null
-					? new Serializer(new Migrator(migrator.GetAllMigrations().AsReadOnly()), content)
+					? new Serializer(new Migrator(migrator.GetAllMigrations().ToImmutableArray()), content)
 					: content;
 				return result;
 			}
@@ -75,12 +76,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			{
 				readonly static MigrationVersionProperty Property = MigrationVersionProperty.Default;
 
-				readonly IReadOnlyList<Action<XElement>> _migrations;
+				readonly ImmutableArray<Action<XElement>> _migrations;
 				readonly IMigrationVersionProperty _property;
 
-				public Migrator(IReadOnlyList<Action<XElement>> migrations) : this(Property, migrations) {}
+				public Migrator(ImmutableArray<Action<XElement>> migrations) : this(Property, migrations) {}
 
-				public Migrator(IMigrationVersionProperty property, IReadOnlyList<Action<XElement>> migrations)
+				public Migrator(IMigrationVersionProperty property, ImmutableArray<Action<XElement>> migrations)
 				{
 					_migrations = migrations;
 					_property = property;
@@ -91,9 +92,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 					var fullName = parameter.Classification.FullName;
 					var version = parameter.Contains(_property) ? _property.Get(parameter) : 0;
 
-					if (version > _migrations.Count)
+					var length = _migrations.Length;
+
+					if (version > length)
 					{
-						throw new XmlException($"Unknown varsion number {version} for type {parameter.Classification}.");
+						throw new XmlException($"Unknown varsion number {version.ToString()} for type {parameter.Classification}.");
 					}
 					if (_migrations == null)
 					{
@@ -101,20 +104,20 @@ namespace ExtendedXmlSerialization.ExtensionModel
 					}
 
 					var element = XElement.Load(parameter.Get());
-					for (var i = version; i < _migrations.Count; i++)
+					for (var i = version; i < length; i++)
 					{
 						var index = (int) i;
 						var migration = _migrations.ElementAtOrDefault(index);
 						if (migration == null)
 							throw new XmlException(
-								$"Migrations for type {fullName} contains invalid migration at index {i}.");
+								$"Migrations for type {fullName} contains invalid migration at index {i.ToString()}.");
 						_migrations[index].Invoke(element);
 					}
 					var result = new XmlReader(element.CreateReader());
 					return result;
 				}
 
-				uint Version => (uint) _migrations.Count;
+				uint Version => (uint) _migrations.Length;
 				public void Write(IXmlWriter writer, object instance) => _property.Write(writer, Version);
 			}
 

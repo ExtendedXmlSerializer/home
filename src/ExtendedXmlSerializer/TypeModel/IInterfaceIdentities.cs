@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface IInterfaceIdentities : IParameterizedSource<TypeInfo, IReadOnlyList<Guid>> {}
+	public interface IInterfaceIdentities : IParameterizedSource<TypeInfo, ImmutableArray<Guid>> {}
 }

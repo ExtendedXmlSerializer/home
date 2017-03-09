@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
@@ -36,8 +35,8 @@ namespace ExtendedXmlSerialization.Core
 	{
 		// public static IEnumerable<T> Sorted<T>(this IEnumerable<T> @this) => @this.OrderBy(x => x, SortComparer<T>.Default);
 
-		public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
-			=> new ReadOnlyCollection<T>(@this.ToArray());
+		/*public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
+			=> new ReadOnlyCollection<T>(@this.ToArray());*/
 
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(@this.Yield().Concat(others).Fixed());

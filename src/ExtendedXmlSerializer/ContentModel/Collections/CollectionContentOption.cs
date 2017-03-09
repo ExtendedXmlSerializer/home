@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var attributes = new MemberAttributesReader(activator, dictionary);
 			var reader = new CollectionContentsReader(attributes, membered);
 
-			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
 			var member = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
 
 			var writer = new MemberedCollectionWriter(member, new EnumerableWriter(item));

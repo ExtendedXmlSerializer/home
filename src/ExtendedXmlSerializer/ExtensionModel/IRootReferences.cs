@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IRootReferences : IParameterizedSource<IXmlWriter, IReadOnlyList<object>> {}
+	public interface IRootReferences : IParameterizedSource<IXmlWriter, ImmutableArray<object>> {}
 }

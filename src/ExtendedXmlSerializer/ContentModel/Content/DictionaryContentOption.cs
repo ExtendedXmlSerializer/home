@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.Adapter.Name));
 
-			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
 			var list = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
 
 			var writer = new MemberedCollectionWriter(list, new DictionaryEntryWriter(entry));

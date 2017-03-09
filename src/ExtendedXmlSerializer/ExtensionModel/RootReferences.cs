@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class RootReferences : ReferenceCacheBase<IXmlWriter, IReadOnlyList<object>>, IRootReferences
+	sealed class RootReferences : StructureCacheBase<IXmlWriter, ImmutableArray<object>>, IRootReferences
 	{
 		readonly IMembers _members;
 
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_members = members;
 		}
 
-		protected override IReadOnlyList<object> Create(IXmlWriter parameter)
+		protected override ImmutableArray<object> Create(IXmlWriter parameter)
 			=> new ReferenceWalker(_members, parameter.Root).Get();
 	}
 }

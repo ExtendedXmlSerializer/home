@@ -22,32 +22,31 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class RuntimeMemberListWriter : IWriter
 	{
-		readonly IReadOnlyList<IRuntimeMember> _runtime;
-		readonly IReadOnlyList<Writer> _properties, _content;
+		readonly ImmutableArray<IRuntimeMember> _runtime;
+		readonly ImmutableArray<Writer> _properties, _content;
 
-		public RuntimeMemberListWriter(IReadOnlyList<IRuntimeMember> runtime, IReadOnlyList<IMember> members)
-			: this(members.OfType<IPropertyMember>().AsReadOnly(), runtime, members) {}
+		public RuntimeMemberListWriter(ImmutableArray<IRuntimeMember> runtime, ImmutableArray<IMember> members)
+			: this(members.OfType<IPropertyMember>().ToImmutableArray(), runtime, members) {}
 
-		public RuntimeMemberListWriter(IReadOnlyList<IPropertyMember> properties,
-		                               IReadOnlyList<IRuntimeMember> runtime, IReadOnlyList<IMember> members)
-			: this(properties, runtime, members.Except(properties).Except(runtime)) {}
+		RuntimeMemberListWriter(ImmutableArray<IPropertyMember> properties,
+		                        ImmutableArray<IRuntimeMember> runtime, ImmutableArray<IMember> members)
+			: this(properties.Select(x => new Writer(x, x.Adapter)).ToImmutableArray(),
+			       runtime,
+			       members.RemoveRange(properties.CastArray<IMember>())
+			              .RemoveRange(runtime.CastArray<IMember>())
+			              .Select(x => new Writer(x, x.Adapter))
+			              .ToImmutableArray()) {}
 
-		public RuntimeMemberListWriter(IReadOnlyList<IMember> properties, IReadOnlyList<IRuntimeMember> runtime,
-		                               IEnumerable<IMember> content) : this(
-			properties.Select(x => new Writer(x, x.Adapter)).AsReadOnly(),
-			runtime,
-			content.Select(x => new Writer(x, x.Adapter)).AsReadOnly()) {}
-
-		RuntimeMemberListWriter(IReadOnlyList<Writer> properties, IReadOnlyList<IRuntimeMember> runtime,
-		                        IReadOnlyList<Writer> content)
+		RuntimeMemberListWriter(ImmutableArray<Writer> properties, ImmutableArray<IRuntimeMember> runtime,
+		                        ImmutableArray<Writer> content)
 		{
 			_properties = properties;
 			_runtime = runtime;
@@ -56,18 +55,22 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public void Write(IXmlWriter writer, object instance)
 		{
+			var runtime = _runtime.ToArray();
+			var properties = _properties.ToArray();
+			var contents = _content.ToArray();
+			
 			var runtimeProperties = Properties(instance).ToArray();
 
-			var runtimeContents = _runtime.Except(runtimeProperties).ToArray();
-
-			foreach (var property in _properties.Concat(runtimeProperties.Select(x => new Writer(x.Property, x.Adapter)))
+			foreach (var property in properties.Concat(runtimeProperties.Select(x => new Writer(x.Property, x.Adapter)))
 			                                    .OrderBy(x => x.Adapter.Order))
 			{
 				var value = property.Implementation is IMember ? instance : property.Adapter.Get(instance);
 				property.Implementation.Write(writer, value);
 			}
 
-			foreach (var content in _content.Concat(runtimeContents.Select(x => new Writer(x, x.Adapter)))
+			var runtimeContents = runtime.Except(runtimeProperties).ToArray();
+			
+			foreach (var content in contents.Concat(runtimeContents.Select(x => new Writer(x, x.Adapter)))
 			                                .OrderBy(x => x.Adapter.Order))
 			{
 				var value = content.Implementation is IMember ? instance : content.Adapter.Get(instance);

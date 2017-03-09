@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
@@ -33,14 +32,14 @@ namespace ExtendedXmlSerialization.Core
 	public class ServiceProvider : ISpecification<Type>, IServiceProvider
 	{
 		readonly ImmutableArray<object> _services;
-		readonly IReadOnlyList<TypeInfo> _types;
+		readonly ImmutableArray<TypeInfo> _types;
 
 		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
 
 		public ServiceProvider(ImmutableArray<object> services)
-			: this(services, services.Select(x => x.GetType().GetTypeInfo()).AsReadOnly()) {}
+			: this(services, services.Select(x => x.GetType().GetTypeInfo()).ToImmutableArray()) {}
 
-		public ServiceProvider(ImmutableArray<object> services, IReadOnlyList<TypeInfo> types)
+		public ServiceProvider(ImmutableArray<object> services, ImmutableArray<TypeInfo> types)
 		{
 			_services = services;
 			_types = types;

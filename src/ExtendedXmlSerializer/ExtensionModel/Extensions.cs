@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			var serviceType = service.GetType();
 			var inherited = AllInterfaces.Default.Get(serviceType.GetTypeInfo().BaseType.GetTypeInfo());
 			var specific = AllInterfaces.Default.Get(serviceType.GetTypeInfo());
-			var interfaces = specific.Except(inherited).ToArray();
+			var interfaces = specific.RemoveRange(inherited).ToArray();
 			var convention = interfaces.Length == 1 ? interfaces[0].AsType() : Name(serviceType, interfaces);
 			if (convention != null)
 			{
