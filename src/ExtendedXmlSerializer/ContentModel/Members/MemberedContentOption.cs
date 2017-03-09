@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var reader = new MemberContentsReader(activator,
 			                                      members.ToDictionary(x => x.Adapter.Name));
 
-			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
 			var writer = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
 			var result = new Serializer(reader, writer);
 			return result;

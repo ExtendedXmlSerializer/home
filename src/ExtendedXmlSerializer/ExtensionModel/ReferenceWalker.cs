@@ -22,15 +22,15 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<IReadOnlyList<object>>
+	class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<ImmutableArray<object>>
 	{
 		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
 
@@ -53,6 +53,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		bool Check(object instance) => !Schedule(instance) && (!instance?.GetType().GetTypeInfo().IsValueType ?? false);
 
-		public IReadOnlyList<object> Get() => this.SelectMany(x => x).Distinct().AsReadOnly();
+		public ImmutableArray<object> Get() => this.SelectMany(x => x).Distinct().ToImmutableArray();
 	}
 }

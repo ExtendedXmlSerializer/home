@@ -50,7 +50,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
 		{
 			var members = _members.Get(parameter);
-			var length = members.Count;
+			var length = members.Length;
 			for (var i = 0; i < length; i++)
 			{
 				var member = members[i];

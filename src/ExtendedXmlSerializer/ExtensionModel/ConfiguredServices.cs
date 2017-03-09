@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
 
 		readonly ISource<IServices> _source;
-		readonly IReadOnlyList<ISerializerExtension> _roots;
+		readonly ImmutableArray<ISerializerExtension> _roots;
 
 		public ConfiguredServices(params object[] instances)
 			: this(
@@ -43,14 +43,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
 		{
 			_source = source;
-			_roots = roots.AsReadOnly();
+			_roots = roots.ToImmutableArray();
 		}
 
 		public IServices Get(IEnumerable<ISerializerExtension> parameter)
 		{
 			var result = _source.Get();
 			var input = parameter.ToArray();
-			var extensions = _roots.Union(input, TypeEqualityComparer<ISerializerExtension>.Default).ToArray();
+			var extensions = _roots.ToArray().Union(input, TypeEqualityComparer<ISerializerExtension>.Default).ToArray();
 			extensions.Alter(result);
 
 			foreach (var extension in extensions)

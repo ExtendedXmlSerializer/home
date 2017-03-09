@@ -22,21 +22,21 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	class Converters : CacheBase<TypeInfo, IConverter>, IConverterSource
 	{
-		readonly IReadOnlyList<IConverter> _converters;
-		readonly IReadOnlyList<IConverterSource> _sources;
+		readonly ImmutableArray<IConverter> _converters;
+		readonly ImmutableArray<IConverterSource> _sources;
 
 		public Converters(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
 		{
-			_converters = converters.AsReadOnly();
-			_sources = sources.AsReadOnly();
+			_converters = converters.ToImmutableArray();
+			_sources = sources.ToImmutableArray();
 		}
 
 		protected override IConverter Create(TypeInfo parameter)

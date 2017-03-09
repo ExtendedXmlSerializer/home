@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
@@ -41,6 +41,6 @@ namespace ExtendedXmlSerialization.TypeModel
 			_interfaces = interfaces;
 		}
 
-		public IReadOnlyList<Guid> Get(TypeInfo parameter) => _interfaces.Get(parameter).Select(x => x.GUID).AsReadOnly();
+		public ImmutableArray<Guid> Get(TypeInfo parameter) => _interfaces.Get(parameter).Select(x => x.GUID).ToImmutableArray();
 	}
 }
