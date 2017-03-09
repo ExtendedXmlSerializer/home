@@ -43,7 +43,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				                 }
 			                 };
 			var support =
-				new SerializationSupport(new ExtendedXmlConfiguration().Extend(new MigrationsExtension(migrations)).Create());
+				new SerializationSupport(new ExtendedXmlConfiguration().Extended(new MigrationsExtension(migrations)).Create());
 			var instance = new Subject {PropertyName = "Hello World!"};
 			support.Assert(instance,
 			               @"<?xml version=""1.0"" encoding=""utf-8""?><MigrationsExtensionTests-Subject xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:version=""1"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></MigrationsExtensionTests-Subject>");

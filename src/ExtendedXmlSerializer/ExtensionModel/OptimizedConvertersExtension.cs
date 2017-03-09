@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,32 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class RuntimeMember : DecoratedWriter
+	class OptimizedConvertersExtension : AlteredConverterExtension, IOptimizationContainer
 	{
-		readonly ISpecification<object> _specification;
-		readonly IWriter _property;
+		readonly IOptimizationContainer _container;
 
-		public RuntimeMember(ISpecification<object> specification, IWriter property, IWriter writer) : base(writer)
+		public OptimizedConvertersExtension() : this(new OptimizedConverterAlteration()) {}
+		OptimizedConvertersExtension(OptimizedConverterAlteration alteration) : this(alteration, alteration) {}
+
+		public OptimizedConvertersExtension(IAlteration<IConverter> alteration, IOptimizationContainer container)
+			: base(alteration)
 		{
-			_specification = specification;
-			_property = property;
+			_container = container;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
-		{
-			if (_specification.IsSatisfiedBy(instance))
-			{
-				_property.Write(writer, instance);
-			}
-			else
-			{
-				base.Write(writer, instance);
-			}
-		}
+		public void Clear() => _container.Clear();
 	}
 }

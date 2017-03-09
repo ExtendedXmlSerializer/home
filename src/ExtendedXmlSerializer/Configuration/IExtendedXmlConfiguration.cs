@@ -29,11 +29,11 @@ namespace ExtendedXmlSerialization.Configuration
 	public interface IExtendedXmlConfiguration
 	{
 		IExtendedXmlTypeConfiguration<T> ConfigureType<T>();
-		IExtendedXmlConfiguration UseAutoProperties();
-		IExtendedXmlConfiguration Extend(ISerializerExtension extension);
-		IExtendedXmlConfiguration UseNamespaces();
-		IExtendedXmlConfiguration UseEncryptionAlgorithm(IPropertyEncryption propertyEncryption);
+
+		void Extend(ISerializerExtension extension);
+
 		IExtendedXmlSerializer Create();
+
 		IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings);
 		IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings);
 	}

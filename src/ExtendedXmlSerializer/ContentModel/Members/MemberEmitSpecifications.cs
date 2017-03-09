@@ -21,18 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using JetBrains.Annotations;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	[UsedImplicitly]
-	class MemberEmitSpecifications : FirstAssignedSource<MemberDescriptor, IMemberEmitSpecification>,
-	                                 IMemberEmitSpecifications
+	class MemberEmitSpecifications : IMemberEmitSpecifications
 	{
-		public MemberEmitSpecifications(params IParameterizedSource<MemberDescriptor, IMemberEmitSpecification>[] sources)
-			: base(sources.Sorted().ToArray()) {}
+		readonly IMemberEmitSpecifications _specifications;
+		readonly IMemberEmitSpecification _instance;
+
+		public MemberEmitSpecifications(IMemberEmitSpecifications specifications, IMemberEmitSpecification instance)
+		{
+			_specifications = specifications;
+			_instance = instance;
+		}
+
+		public IMemberEmitSpecification Get(MemberDescriptor parameter) => _specifications.Get(parameter) ?? _instance;
 	}
 }

@@ -28,9 +28,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -41,15 +38,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly ImmutableArray<object> _additional;
 
 		public Instances(IMemberConfiguration configuration)
-			: this(configuration,
-			       ContentModel.Content.Elements.Default,
-			       OptimizedConverterAlteration.Default,
-			       DefaultMemberEmitSpecifications.Default,
-			       WellKnownConverters.Default,
-			       EnumerationConverters.Default.Yield().AsReadOnly(),
-			       Activation.Default,
-			       new XmlReaderSettings(),
-			       new XmlWriterSettings()) {}
+			: this(configuration, new XmlReaderSettings(), new XmlWriterSettings()) {}
 
 		public Instances(IMemberConfiguration configuration, params object[] additional)
 			: this(configuration,

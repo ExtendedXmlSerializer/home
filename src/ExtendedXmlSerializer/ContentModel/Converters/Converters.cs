@@ -21,11 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	public interface IConverters : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, IConverter> {}
+	class Converters : CacheBase<TypeInfo, IConverter>, IConverterSource
+	{
+		readonly IReadOnlyList<IConverter> _converters;
+		readonly IReadOnlyList<IConverterSource> _sources;
+
+		public Converters(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
+		{
+			_converters = converters.AsReadOnly();
+			_sources = sources.AsReadOnly();
+		}
+
+		protected override IConverter Create(TypeInfo parameter)
+		{
+			foreach (var converter in _converters)
+			{
+				if (converter.IsSatisfiedBy(parameter))
+				{
+					return converter;
+				}
+			}
+
+			foreach (var source in _sources)
+			{
+				if (source.IsSatisfiedBy(parameter))
+				{
+					return source.Get(parameter);
+				}
+			}
+			return null;
+		}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => Get(parameter) != null;
+	}
 }

@@ -21,19 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	sealed class CachedConverter : Converter<object>
+	sealed class AlteredConverterSource : DelegatedOption<TypeInfo, IConverter>, IConverterSource
 	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
-
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
+		public AlteredConverterSource(IAlteration<IConverter> alteration, IConverterSource converterSource)
+			: base(converterSource, new AlteredSource<TypeInfo, IConverter>(alteration, converterSource).Get) {}
 	}
 }

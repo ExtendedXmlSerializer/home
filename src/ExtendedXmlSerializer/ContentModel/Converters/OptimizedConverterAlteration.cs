@@ -21,15 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class OptimizedConverterAlteration : IAlteration<IConverter>
+	class OptimizedConverterAlteration : IAlteration<IConverter>, IOptimizationContainer
 	{
-		public static OptimizedConverterAlteration Default { get; } = new OptimizedConverterAlteration();
-		OptimizedConverterAlteration() {}
+		readonly ICollection<Action> _containers = new HashSet<Action>();
 
-		public IConverter Get(IConverter parameter) => new CachedConverter(parameter);
+		public IConverter Get(IConverter parameter)
+		{
+			var parse = Create<string, object>(parameter.Parse);
+			var format = Create<object, string>(parameter.Format);
+			var result = new Converter<object>(parameter, parse, format);
+			return result;
+		}
+
+		Func<TParameter, TResult> Create<TParameter, TResult>(Func<TParameter, TResult> source)
+		{
+			var cache = new Cache<TParameter, TResult>(source);
+			var result = cache.ToDelegate();
+			_containers.Add(cache.Clear);
+			return result;
+		}
+
+		public void Clear()
+		{
+			foreach (var container in _containers)
+			{
+				container.Invoke();
+			}
+		}
 	}
 }

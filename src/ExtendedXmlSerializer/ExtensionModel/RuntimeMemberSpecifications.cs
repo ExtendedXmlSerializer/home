@@ -21,32 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class RuntimeMember : DecoratedWriter
+	class RuntimeMemberSpecifications : IRuntimeMemberSpecifications
 	{
-		readonly ISpecification<object> _specification;
-		readonly IWriter _property;
+		readonly IConverterSource _source;
+		readonly IRuntimeMemberSpecification _text;
+		readonly IRuntimeMemberSpecifications _specifications;
+		readonly static TypeInfo Type = typeof(string).GetTypeInfo();
+		readonly static RuntimeMemberSpecification Always = new RuntimeMemberSpecification(AlwaysSpecification<object>.Default);
 
-		public RuntimeMember(ISpecification<object> specification, IWriter property, IWriter writer) : base(writer)
+		public RuntimeMemberSpecifications(IConverterSource source, IRuntimeMemberSpecification text,
+		                                   IRuntimeMemberSpecifications specifications)
 		{
-			_specification = specification;
-			_property = property;
+			_source = source;
+			_text = text;
+			_specifications = specifications;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public IRuntimeMemberSpecification Get(MemberInfo parameter)
+			=> _specifications.Get(parameter) ?? From(MemberDescriptor.From(parameter).MemberType);
+
+		IRuntimeMemberSpecification From(TypeInfo memberType)
 		{
-			if (_specification.IsSatisfiedBy(instance))
-			{
-				_property.Write(writer, instance);
-			}
-			else
-			{
-				base.Write(writer, instance);
-			}
+			var supported = _source.IsSatisfiedBy(memberType);
+			var result = supported ? Equals(memberType, Type) ? _text : Always : null;
+			return result;
 		}
 	}
 }

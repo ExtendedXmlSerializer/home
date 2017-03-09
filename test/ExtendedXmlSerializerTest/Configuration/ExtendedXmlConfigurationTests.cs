@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
+using Xunit;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.Test.Configuration
 {
-	class DefaultMemberEmitSpecifications : FixedMemberEmitSpecifications, ISortAware
+	public class ExtendedXmlConfigurationTests
 	{
-		public static DefaultMemberEmitSpecifications Default { get; } = new DefaultMemberEmitSpecifications();
-
-		DefaultMemberEmitSpecifications() : base(new MemberEmitSpecification(AssignedSpecification.Default)) {}
-
-		public int Sort => 100;
+		[Fact]
+		public void Verify()
+		{
+			
+		}
 	}
 }

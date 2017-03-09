@@ -27,7 +27,7 @@ using JetBrains.Annotations;
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	[UsedImplicitly]
-	class ConvertersAlteration : IAlteration<IConverters>
+	class ConvertersAlteration : IAlteration<IConverterSource>
 	{
 		readonly IAlteration<IConverter> _alteration;
 
@@ -36,6 +36,6 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 			_alteration = alteration;
 		}
 
-		public IConverters Get(IConverters parameter) => new AlteredConverters(_alteration, parameter);
+		public IConverterSource Get(IConverterSource parameter) => new AlteredConverterSource(_alteration, parameter);
 	}
 }

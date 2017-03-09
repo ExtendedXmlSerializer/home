@@ -38,15 +38,15 @@ namespace ExtendedXmlSerialization.Configuration
 		IExtendedXmlTypeConfiguration<T> AddMigration(Action<XElement> migration);
 		IExtendedXmlTypeConfiguration<T> AddMigration(IExtendedXmlTypeMigrator migrator);
 
-	    IExtendedXmlTypeConfiguration<T> EnableReferences();
-        IExtendedXmlTypeConfiguration<T> Name(string name);
+		IExtendedXmlTypeConfiguration<T> EnableReferences();
+		IExtendedXmlTypeConfiguration<T> Name(string name);
 	}
 
 	interface IExtendedXmlTypeConfiguration
 	{
 		IExtendedXmlPropertyConfiguration GetPropertyConfiguration(string name);
 		int Version { get; }
-        string Name { get; }
+		string Name { get; }
 		void Map(Type targetType, XElement currentNode);
 		object ReadObject(XElement element);
 		void WriteObject(XmlWriter writer, object obj);

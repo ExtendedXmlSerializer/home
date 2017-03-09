@@ -21,14 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Content;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	sealed class AlteredConverters : DelegatedOption<TypeInfo, IConverter>, IConverters
+	class ConverterContentOptions : IEnumerable<IContentOption>
 	{
-		public AlteredConverters(IAlteration<IConverter> alteration, IConverters converters)
-			: base(converters, new AlteredSource<TypeInfo, IConverter>(alteration, converters).Get) {}
+		readonly IEnumerable<IConverter> _converters;
+		readonly IEnumerable<IConverterSource> _sources;
+
+		public ConverterContentOptions(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
+		{
+			_converters = converters;
+			_sources = sources;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IEnumerator<IContentOption> GetEnumerator()
+		{
+			return
+				_converters.Select(x => new FixedContentOption(x, x.ToSerializer()))
+				           .Concat(_sources.Select<IConverterSource, IContentOption>(
+					                   x => new DelegatedContentOption(x, x.Get)))
+				           .GetEnumerator();
+		}
 	}
 }

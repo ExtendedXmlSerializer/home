@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Core
+using ExtendedXmlSerialization.Core.Sources;
+
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	public interface ISortAware
+	abstract class ContentOptionsBase : Items<IContentOption> /*, IContentOptions*/
 	{
-		int Sort { get; }
+		protected ContentOptionsBase(params IContentOption[] items) : base(items) {}
 	}
 }

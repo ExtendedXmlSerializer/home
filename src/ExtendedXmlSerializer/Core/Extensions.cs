@@ -34,7 +34,7 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
-		public static IEnumerable<T> Sorted<T>(this IEnumerable<T> @this) => @this.OrderBy(x => x, SortComparer<T>.Default);
+		// public static IEnumerable<T> Sorted<T>(this IEnumerable<T> @this) => @this.OrderBy(x => x, SortComparer<T>.Default);
 
 		public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
 			=> new ReadOnlyCollection<T>(@this.ToArray());

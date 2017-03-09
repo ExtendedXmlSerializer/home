@@ -23,12 +23,11 @@
 
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class ContentOptions : ContentOptionsBase
+	sealed class ContentOptions : ContentOptionsBase
 	{
 		[UsedImplicitly]
 		public ContentOptions(
@@ -38,11 +37,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			MemberedContentOption membered,
 			RuntimeContentOption runtime
 		) : base(array, dictionary, collection, membered, runtime) {}
-
 	}
 
-	abstract class ContentOptionsBase : Items<IContentOption>
-	{
-		protected ContentOptionsBase(params IContentOption[] items) : base(items) {}
-	}
+	/*public interface IContentOptions : IEnumerable<IContentOption> {}*/
 }

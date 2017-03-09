@@ -36,7 +36,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly IReadOnlyList<ISerializerExtension> _roots;
 
 		public ConfiguredServices(params object[] instances)
-			: this(ServicesFactory, new DefaultRegistrationsExtension(instances), SerializationExtension.Default) {}
+			: this(
+				ServicesFactory, new DefaultRegistrationsExtension(instances), ConverterExtension.Default,
+				SerializationExtension.Default) {}
 
 		public ConfiguredServices(ISource<IServices> source, params ISerializerExtension[] roots)
 		{
@@ -47,7 +49,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		public IServices Get(IEnumerable<ISerializerExtension> parameter)
 		{
 			var result = _source.Get();
-			var extensions = _roots.Concat(parameter).ToArray();
+			var input = parameter.ToArray();
+			var extensions = _roots.Union(input, TypeEqualityComparer<ISerializerExtension>.Default).ToArray();
 			extensions.Alter(result);
 
 			foreach (var extension in extensions)
@@ -56,6 +59,16 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			}
 
 			return result;
+		}
+
+		class TypeEqualityComparer<T> : IEqualityComparer<T>
+		{
+			public static TypeEqualityComparer<T> Default { get; } = new TypeEqualityComparer<T>();
+			TypeEqualityComparer() {}
+
+			public bool Equals(T x, T y) => x.GetType() == y.GetType();
+
+			public int GetHashCode(T obj) => 0;
 		}
 	}
 }

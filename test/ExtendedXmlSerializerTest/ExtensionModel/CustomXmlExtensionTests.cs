@@ -48,7 +48,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				             {typeInfo, new Adapter<TestClassWithSerializer>(new CustomSerializer())}
 			             };
 			var sut = new CustomXmlExtension(custom);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extended(sut).Create());
 			var expected = new TestClassWithSerializer("String", 17);
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithSerializer xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><String>String</String><Int>17</Int></TestClassWithSerializer>"
