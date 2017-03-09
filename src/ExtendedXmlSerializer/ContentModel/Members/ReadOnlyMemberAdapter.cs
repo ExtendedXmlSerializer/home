@@ -29,6 +29,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	class ReadOnlyMemberAdapter : IMemberAdapter
 	{
 		readonly IMemberAdapter _adapter;
+
 		public ReadOnlyMemberAdapter(IMemberAdapter adapter)
 		{
 			_adapter = adapter;
@@ -43,6 +44,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		public TypeInfo MemberType => _adapter.MemberType;
 
 		public bool IsWritable => _adapter.IsWritable;
+		public int Order => _adapter.Order;
 
 		public object Get(object instance) => _adapter.Get(instance);
 

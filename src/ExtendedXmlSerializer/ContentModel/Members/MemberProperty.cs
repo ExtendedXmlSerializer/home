@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberProperty : PropertyBase<object>, ISerializer
+	class MemberProperty : PropertyBase<object>, IPropertySerializer
 	{
 		readonly IConverter _converter;
 

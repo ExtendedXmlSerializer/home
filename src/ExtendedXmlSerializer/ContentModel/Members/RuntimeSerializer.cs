@@ -21,44 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class MemberAdapter : Identity, IMemberAdapter
+	sealed class RuntimeSerializer : DecoratedSpecification<object>, IRuntimeSerializer
 	{
-		readonly ISpecification<object> _emit;
-		readonly Func<object, object> _get;
-		readonly Action<object, object> _set;
+		readonly IWriter _content;
+		readonly IReader _reader;
 
-		public MemberAdapter(ISpecification<object> emit, string name, MemberInfo metadata, TypeInfo memberType,
-		                     bool isWritable, int order, Func<object, object> get, Action<object, object> set)
-			: base(name, string.Empty)
+		public RuntimeSerializer(ISpecification<object> specification, IReader reader, IWriter property, IWriter content)
+			: base(specification)
 		{
-			_emit = emit;
-			_get = get;
-			_set = set;
-			Metadata = metadata;
-			MemberType = memberType;
-			IsWritable = isWritable;
-			Order = order;
+			Property = property;
+			_content = content;
+			_reader = reader;
 		}
 
-		public MemberInfo Metadata { get; }
-		public TypeInfo MemberType { get; }
-		public bool IsWritable { get; }
-		public int Order { get; }
+		public IWriter Property { get; }
 
-		public object Get(object instance) => _get(instance);
+		public void Write(IXmlWriter writer, object instance) => _content.Write(writer, instance);
 
-		public void Assign(object instance, object value)
-		{
-			if (_emit.IsSatisfiedBy(value))
-			{
-				_set(instance, value);
-			}
-		}
+		public object Get(IXmlReader parameter) => _reader.Get(parameter);
 	}
 }

@@ -21,23 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class MemberListWriter : IWriter
 	{
-		readonly ImmutableArray<IMember> _members;
+		readonly IReadOnlyList<IMember> _members;
 
-		public MemberListWriter(ImmutableArray<IMember> members)
+		public MemberListWriter(IReadOnlyList<IMember> members)
 		{
 			_members = members;
 		}
 
 		public void Write(IXmlWriter writer, object instance)
 		{
-			var length = _members.Length;
+			var length = _members.Count;
 			for (var i = 0; i < length; i++)
 			{
 				_members[i].Write(writer, instance);

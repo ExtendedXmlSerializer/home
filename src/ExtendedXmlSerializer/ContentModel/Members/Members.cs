@@ -23,9 +23,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -44,12 +44,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_select = select;
 		}
 
-		public ImmutableArray<IMember> Get(TypeInfo parameter) =>
+		public IReadOnlyList<IMember> Get(TypeInfo parameter) =>
 			Yield(parameter).OrderBy(x => x.Writer is IPropertySerializer ? 0 : 1)
 			                .ThenBy(x => x.Order)
 			                .Select(_select)
 			                .Where(x => x != null)
-			                .ToImmutableArray();
+			                .AsReadOnly();
 
 		IEnumerable<MemberProfile> Yield(TypeInfo parameter)
 		{

@@ -48,8 +48,13 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		protected virtual IMember CreateMember(MemberProfile profile, Func<object, object> getter,
 		                                       Action<object, object> setter)
 		{
+			var runtime = profile.Writer as IRuntimeSerializer;
+			var property = profile.Writer is IPropertySerializer;
+
 			var adapter = new MemberAdapterSelector(getter, setter).Get(profile);
-			var result = CreateMember(profile, adapter);
+
+			var member = CreateMember(profile, adapter);
+			var result = runtime != null ? new RuntimeMember(member, runtime) : property ? new PropertyMember(member) : member;
 			return result;
 		}
 

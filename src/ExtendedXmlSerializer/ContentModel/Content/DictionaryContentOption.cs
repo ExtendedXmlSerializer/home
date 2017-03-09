@@ -25,6 +25,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly IActivation _activation;
 		readonly IMembers _members;
 		readonly IDictionaryEntries _entries;
-		
+
 		public DictionaryContentOption(IActivation activation, IMembers members, IDictionaryEntries entries)
 			: base(Specification)
 		{
@@ -53,7 +54,11 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.Adapter.Name));
-			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new DictionaryEntryWriter(entry));
+
+			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var list = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
+
+			var writer = new MemberedCollectionWriter(list, new DictionaryEntryWriter(entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

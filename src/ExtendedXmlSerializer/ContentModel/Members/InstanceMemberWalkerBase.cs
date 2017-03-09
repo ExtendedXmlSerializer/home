@@ -59,7 +59,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)
 		{
 			var members = _members.Get(parameter);
-			var length = members.Length;
+			var length = members.Count;
 
 			for (var i = 0; i < length; i++)
 			{

@@ -31,6 +31,7 @@ using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
+using RuntimeSerializer = ExtendedXmlSerialization.ContentModel.RuntimeSerializer;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {

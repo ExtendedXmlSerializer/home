@@ -25,6 +25,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
@@ -51,7 +52,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 			var attributes = new MemberAttributesReader(activator, dictionary);
 			var reader = new CollectionContentsReader(attributes, membered);
-			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(item));
+
+			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var member = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
+
+			var writer = new MemberedCollectionWriter(member, new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;
 		}
