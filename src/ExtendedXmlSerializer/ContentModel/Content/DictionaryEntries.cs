@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 using JetBrains.Annotations;
 
@@ -73,11 +73,13 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		public ISerializer Get(TypeInfo parameter)
 		{
 			var pair = _locator.Get(parameter);
-			var key = Create(Key, pair.KeyType);
-			var value = Create(Value, pair.ValueType);
-			var members = ImmutableArray.Create(key, value);
+			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)};
 			var reader = new MemberContentsReader(_activator, members.ToDictionary(x => x.Adapter.Name));
-			var converter = new Serializer(reader, new MemberListWriter(members));
+
+			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var writer = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
+
+			var converter = new Serializer(reader, writer);
 			var result = new Container(_element, converter);
 			return result;
 		}

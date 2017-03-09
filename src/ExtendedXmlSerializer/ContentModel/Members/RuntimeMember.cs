@@ -22,31 +22,28 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class RuntimeMember : DecoratedWriter
+	class RuntimeMember : IRuntimeMember
 	{
-		readonly ISpecification<object> _specification;
-		readonly IWriter _property;
+		readonly IMember _member;
+		readonly IRuntimeWriter _writer;
 
-		public RuntimeMember(ISpecification<object> specification, IWriter property, IWriter writer) : base(writer)
+		public RuntimeMember(IMember member, IRuntimeWriter writer)
 		{
-			_specification = specification;
-			_property = property;
+			_member = member;
+			_writer = writer;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
-		{
-			if (_specification.IsSatisfiedBy(instance))
-			{
-				_property.Write(writer, instance);
-			}
-			else
-			{
-				base.Write(writer, instance);
-			}
-		}
+		public object Get(IXmlReader parameter) => _member.Get(parameter);
+
+		public void Write(IXmlWriter writer, object instance) => _member.Write(writer, instance);
+
+		public IMemberAdapter Adapter => _member.Adapter;
+
+		public bool IsSatisfiedBy(object parameter) => _writer.IsSatisfiedBy(parameter);
+
+		public IWriter Property => _writer.Property;
 	}
 }

@@ -24,6 +24,7 @@
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
@@ -48,7 +49,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var activator = _activation.Get(parameter);
 			var reader = new MemberContentsReader(activator,
 			                                      members.ToDictionary(x => x.Adapter.Name));
-			var result = new Serializer(reader, new MemberListWriter(members));
+
+			var runtime = members.OfType<IRuntimeMember>().AsReadOnly();
+			var writer = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
+			var result = new Serializer(reader, writer);
 			return result;
 		}
 	}

@@ -36,22 +36,22 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public ISerializer Create(string name, MemberDescriptor member, ISerializer content)
 		{
+			var result = new Serializer(content, Wrap(name, content));
+
 			var converter = _converters.Get(member);
 			if (converter != null)
 			{
 				ISerializer property = new MemberProperty(converter, name);
 				var specification = _specifications.Get(member.Metadata);
-				var writer = specification != null
-					? (IWriter) new RuntimeMember(specification, property, Wrap(name, content))
+				return specification != null
+					? new RuntimeSerializer(specification, content, property, result)
 					: property;
-				var serializer = new PropertySerializer(property, writer);
-				return serializer;
 			}
 
-			var result = new Serializer(content, Wrap(name, content));
+
 			return result;
 		}
 
-		static Enclosure Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
+		static IWriter Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
 	}
 }
