@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -34,21 +33,21 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var serialization = new ConfiguredContainers();
-			var result = parameter.RegisterInstance<IContainers>(serialization)
-			                      .RegisterInstance(serialization)
-			                      .Register<IMemberContent, MemberContent>()
-			                      .Decorate<IMemberContent>((factory, content) => new RecursionGuardedMemberContent(content))
-			                      .Register<ISerialization, Serialization>()
+			var result = parameter
+					.Register<ISerializers, Serializers>()
+					.Decorate<ISerializers>((factory, serializers) => new ReferenceAwareSerializers(
+						                        factory.Get<IStaticReferenceSpecification>(),
+						                        factory.Get<IRootReferences>(),
+						                        serializers
+					                        )
+					)
+					.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+					.Register<IContents, Contents>()
+					.Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents))
 				;
 			return result;
 		}
 
-		public void Execute(IServices parameter)
-		{
-			var configured = parameter.Get<ConfiguredContainers>();
-			var context = parameter.Get<ISerialization>();
-			configured.Execute(context);
-		}
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

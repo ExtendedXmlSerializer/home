@@ -28,41 +28,39 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class CircularReferenceEnabledSerialization : ISerialization
+	class CircularReferenceEnabledSerialization : ISerializers
 	{
-		readonly ISerialization _context;
+		readonly ISerializers _context;
 
-		public CircularReferenceEnabledSerialization(ISerialization context)
+		public CircularReferenceEnabledSerialization(ISerializers context)
 		{
 			_context = context;
 		}
 
-		public IContainer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
+		public ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
-		class Container : IContainer
+		class Container : ISerializer
 		{
-			readonly IContainer _container;
+			readonly ISerializer _serializer;
 
-			public Container(IContainer container)
+			public Container(ISerializer serializer)
 			{
-				_container = container;
+				_serializer = serializer;
 			}
 
-			public object Get(IXmlReader parameter) => _container.Get(parameter);
+			public object Get(IXmlReader parameter) => _serializer.Get(parameter);
 
 			public void Write(IXmlWriter writer, object instance)
 			{
 				try
 				{
-					_container.Write(writer, instance);
+					_serializer.Write(writer, instance);
 				}
 				catch (CircularReferencesDetectedException e)
 				{
 					e.Writer.Write(writer, instance);
 				}
 			}
-
-			public ISerializer Get() => _container.Get();
 		}
 	}
 }

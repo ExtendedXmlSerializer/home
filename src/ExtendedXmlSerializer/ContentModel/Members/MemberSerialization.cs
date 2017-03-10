@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 
@@ -32,20 +33,23 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;
 		readonly IMemberEmitSpecifications _emit;
-		readonly IMemberContent _content;
-		readonly IMemberSerializers _serializers;
+		readonly IRuntimeMemberSpecifications _specifications;
+		readonly IMemberConverters _converters;
+		readonly IContents _content;
 		readonly IAliases _aliases;
 		readonly IMemberOrder _order;
 
 		public MemberSerialization(
 			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field, IMemberEmitSpecifications emit,
-			IMemberContent content, IMemberSerializers serializers, IAliases aliases, IMemberOrder order)
+			IRuntimeMemberSpecifications specifications, IMemberConverters converters, IContents content, 
+			IAliases aliases, IMemberOrder order)
 		{
 			_property = property;
 			_field = field;
 			_emit = emit;
+			_specifications = specifications;
+			_converters = converters;
 			_content = content;
-			_serializers = serializers;
 			_aliases = aliases;
 			_order = order;
 		}
@@ -59,13 +63,32 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			var order = _order.Get(metadata);
 			var name = _aliases.Get(metadata) ?? metadata.Name;
 
-			var content = _content.Get(parameter);
+			var content = _content.Get(parameter.MemberType);
 
-			var serializer = _serializers.Create(name, parameter, content);
+			var serializer = Create(name, parameter, content);
 
 			var result = new MemberProfile(_emit.Get(parameter), name, parameter.Writable, order, metadata,
 			                               parameter.MemberType, content, serializer, serializer);
 			return result;
 		}
+
+		ISerializer Create(string name, MemberDescriptor member, ISerializer content)
+		{
+			var result = new Serializer(content, Wrap(name, content));
+
+			var converter = _converters.Get(member);
+			if (converter != null)
+			{
+				ISerializer property = new MemberProperty(converter, name);
+				var specification = _specifications.Get(member.Metadata);
+				return specification != null
+					? new RuntimeSerializer(specification, content, property, result)
+					: property;
+			}
+			
+			return result;
+		}
+
+		static IWriter Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
 	}
 }

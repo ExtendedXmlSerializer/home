@@ -21,10 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public interface IContainers : IParameterizedSource<TypeInfo, IContainer> {}
+	sealed class DeferredContents : CacheBase<TypeInfo, ISerializer>, IContents
+	{
+		readonly Func<IContents> _contents;
+
+		public DeferredContents(Func<IContents> contents)
+		{
+			_contents = contents;
+		}
+
+		protected override ISerializer Create(TypeInfo parameter) => _contents().Get(parameter);
+	}
 }

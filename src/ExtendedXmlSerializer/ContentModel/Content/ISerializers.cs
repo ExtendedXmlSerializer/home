@@ -21,31 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class RecursionGuardedMemberContent : IMemberContent
-	{
-		readonly static Recursions Recursions = Recursions.Default;
-
-		readonly IRecursions _recursions;
-		readonly IMemberContent _content;
-
-		public RecursionGuardedMemberContent(IMemberContent content) : this(Recursions, content) {}
-
-		public RecursionGuardedMemberContent(IRecursions recursions, IMemberContent content)
-		{
-			_recursions = recursions;
-			_content = content;
-		}
-
-		public ISerializer Get(MemberDescriptor parameter)
-		{
-			var result = _recursions.Get(this).IsSatisfiedBy(parameter.Metadata)
-				? _content.Get(parameter)
-				: new DeferredSerializer(_content.Build(parameter));
-			return result;
-		}
-	}
+	public interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
 }

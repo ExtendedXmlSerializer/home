@@ -66,7 +66,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			                .Register<RuntimeContentOption>()
 			                .Register<IEnumerable<IContentOption>, ContentOptions>()
 			                .Register(provider => provider.GetAllInstances<IContentOption>().ToArray())
-			                .Register<IContents, Contents>()
 			                .RegisterInstance(configuration.EmitSpecifications)
 			                .Decorate<IMemberEmitSpecifications>(
 				                (provider, defaults) =>
@@ -74,19 +73,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			                .RegisterInstance(configuration.Runtime)
 			                .RegisterConstructorDependency<IMemberOption>(
 				                (provider, info) => provider.Create<VariableTypeMemberOption>())
-			                .Register<IMemberSerializers, MemberSerializers>()
 			                .Register<IMemberSerialization, MemberSerialization>()
 			                .Register<ISelector, Selector>()
 			                .Register<IMembers, Members>()
 			                .Register<ContainsStaticReferenceSpecification>()
 			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
 			                .Register<IRootReferences, RootReferences>()
-			                .Decorate<ISerialization>((factory, context) => new ReferentialAwareSerialization(
-				                                          factory.Get<IStaticReferenceSpecification>(),
-				                                          factory.Get<IRootReferences>(),
-				                                          context
-			                                          )
-			                )
 			                .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
 		}
 
