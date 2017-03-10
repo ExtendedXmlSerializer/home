@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		readonly IActivation _activation;
 
-		public ArrayContentOption(IActivation activation, IContainers containers) : base(Specification, containers)
+		public ArrayContentOption(IActivation activation, ISerializers serializers) : base(Specification, serializers)
 		{
 			_activation = activation;
 		}

@@ -112,6 +112,9 @@ namespace ExtendedXmlSerialization.Core
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
 
+		/*public static Func<T> Defer<T>(this IServiceProvider @this) where T : class
+			=> new Deferred<T>(@this.Get<T>).Get;*/
+
 		public static T GetValid<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).AsValid<T>($"Could not located service '{typeof(T)}'");
 

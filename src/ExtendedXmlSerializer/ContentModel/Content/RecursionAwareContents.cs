@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	sealed class Recursions : ReferenceCache<object, ISpecification<object>>, IRecursions
+	sealed class RecursionAwareContents : CacheBase<TypeInfo, ISerializer>, IContents
 	{
-		public static Recursions Default { get; } = new Recursions();
-		Recursions() : base(_ => new RecursionSpecification()) {}
+		readonly IContents _contents;
+		readonly ISet<int> _types; // TODO: Originally made this an ISet<TypeInfo> but suffered from GC quirks in benchmarks.
+
+		public RecursionAwareContents(IContents contents) : this(contents, new HashSet<int>()) {}
+
+		public RecursionAwareContents(IContents contents, ISet<int> types)
+		{
+			_contents = contents;
+			_types = types;
+		}
+
+		protected override ISerializer Create(TypeInfo parameter)
+		{
+			var code = parameter.GetHashCode();
+			var result = _types.Add(code)
+				? _contents.Get(parameter)
+				: new DeferredSerializer(_contents.Build(parameter));
+			_types.Remove(code);
+			return result;
+		}
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
+using JetBrains.Annotations;
+
+namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	class MemberSerializers : IMemberSerializers
+	[UsedImplicitly]
+	sealed class Serializers : ISerializers
 	{
-		readonly IRuntimeMemberSpecifications _specifications;
-		readonly IMemberConverters _converters;
+		readonly IElements _elements;
+		readonly IContents _contents;
 
-		public MemberSerializers(IRuntimeMemberSpecifications specifications, IMemberConverters converters)
+		public Serializers(IElements elements, IContents contents)
 		{
-			_specifications = specifications;
-			_converters = converters;
+			_elements = elements;
+			_contents = contents;
 		}
 
-		public ISerializer Create(string name, MemberDescriptor member, ISerializer content)
-		{
-			var result = new Serializer(content, Wrap(name, content));
+		public ISerializer Get(TypeInfo parameter) => Create(parameter.AccountForNullable());
 
-			var converter = _converters.Get(member);
-			if (converter != null)
-			{
-				ISerializer property = new MemberProperty(converter, name);
-				var specification = _specifications.Get(member.Metadata);
-				return specification != null
-					? new RuntimeSerializer(specification, content, property, result)
-					: property;
-			}
-
-
-			return result;
-		}
-
-		static IWriter Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
+		ISerializer Create(TypeInfo parameter) => new Container(_elements.Get(parameter), _contents.Get(parameter));
 	}
 }

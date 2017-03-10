@@ -30,33 +30,33 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class ReferentialAwareSerialization : CacheBase<TypeInfo, IContainer>, ISerialization
+	sealed class ReferenceAwareSerializers : CacheBase<TypeInfo, ISerializer>, ISerializers
 	{
 		readonly IStaticReferenceSpecification _specification;
 		readonly IRootReferences _references;
-		readonly ISerialization _serialization;
+		readonly ISerializers _serializers;
 
-		public ReferentialAwareSerialization(IStaticReferenceSpecification specification, IRootReferences references,
-		                                     ISerialization serialization)
+		public ReferenceAwareSerializers(IStaticReferenceSpecification specification, IRootReferences references,
+		                                     ISerializers serializers)
 		{
 			_specification = specification;
 			_references = references;
-			_serialization = serialization;
+			_serializers = serializers;
 		}
 
-		protected override IContainer Create(TypeInfo parameter)
+		protected override ISerializer Create(TypeInfo parameter)
 		{
-			var container = _serialization.Get(parameter);
-			var result = _specification.IsSatisfiedBy(parameter) ? new Container(_references, container) : container;
+			var serializer = _serializers.Get(parameter);
+			var result = _specification.IsSatisfiedBy(parameter) ? new Serializer(_references, serializer) : serializer;
 			return result;
 		}
 
-		sealed class Container : IContainer
+		sealed class Serializer : ISerializer
 		{
 			readonly IRootReferences _references;
-			readonly IContainer _container;
+			readonly ISerializer _container;
 
-			public Container(IRootReferences references, IContainer container)
+			public Serializer(IRootReferences references, ISerializer container)
 			{
 				_references = references;
 				_container = container;
@@ -76,8 +76,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				}
 				_container.Write(writer, instance);
 			}
-
-			public ISerializer Get() => _container.Get();
 		}
 	}
 }

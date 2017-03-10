@@ -35,25 +35,25 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 
 		readonly static CollectionItemTypeLocator Locator = CollectionItemTypeLocator.Default;
 
-		readonly IContainers _containers;
+		readonly ISerializers _serializers;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(IContainers containers) : this(Specification, containers) {}
+		protected CollectionContentOptionBase(ISerializers serializers) : this(Specification, serializers) {}
 
-		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers)
-			: this(specification, containers, Locator) {}
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerializers serializers)
+			: this(specification, serializers, Locator) {}
 
-		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, IContainers containers,
+		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerializers serializers,
 		                                      ICollectionItemTypeLocator locator) : base(specification)
 		{
-			_containers = containers;
+			_serializers = serializers;
 			_locator = locator;
 		}
 
 		public sealed override ISerializer Get(TypeInfo parameter)
 		{
 			var itemType = _locator.Get(parameter);
-			var result = Create(_containers.Get(itemType), parameter);
+			var result = Create(_serializers.Get(itemType), parameter);
 			return result;
 		}
 

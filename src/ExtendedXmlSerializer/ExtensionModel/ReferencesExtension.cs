@@ -51,7 +51,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			         .Decorate<IContents>((factory, contents) =>
 				                              new ReferenceContents(factory.Get<IStoredEncounters>(), factory.Get<IEntities>(),
 				                                                    contents))
-			         .Decorate<ISerialization>((factory, context) => new CircularReferenceEnabledSerialization(context));
+			         .Decorate<ISerializers>((factory, serializers) => new CircularReferenceEnabledSerialization(serializers))
+			         .Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents));
 
 		static IActivation Decorate(System.IServiceProvider factory, IActivation activation)
 			=> new ReferenceActivation(activation, factory.Get<IEntities>());

@@ -32,8 +32,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		readonly IActivation _activation;
 
-		public ClassicCollectionContentOption(IActivation activation, IContainers containers)
-			: base(containers)
+		public ClassicCollectionContentOption(IActivation activation, ISerializers serializers)
+			: base(serializers)
 		{
 			_activation = activation;
 		}
