@@ -21,13 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Converters;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public static class Extensions
 	{
-		public static IConverter Get(this IMemberConverters @this, MemberDescriptor descriptor)
+		public static IConverter Get(this IMemberConverters @this, IMember descriptor)
 			=> @this.Get(descriptor.Metadata) ?? @this.Get(descriptor.MemberType);
+
+		public static TypeInfo GetReflectedType(this MemberInfo @this) => ReflectedTypes.Default.Get(@this);
 	}
 }

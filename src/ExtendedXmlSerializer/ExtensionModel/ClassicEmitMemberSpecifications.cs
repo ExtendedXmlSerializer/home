@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_valueType = valueType;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
+		public IMemberEmitSpecification Get(IMember parameter)
 			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
 	}
 }

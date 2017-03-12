@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.TypeModel;
@@ -34,9 +32,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		readonly static IsActivatedTypeSpecification Specification = IsActivatedTypeSpecification.Default;
 
 		readonly IActivation _activation;
-		readonly IMembers _members;
+		readonly IMemberSerializations _members;
 
-		public MemberedContentOption(IActivation activation, IMembers members)
+		public MemberedContentOption(IActivation activation, IMemberSerializations members)
 			: base(Specification)
 		{
 			_activation = activation;
@@ -47,11 +45,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			var members = _members.Get(parameter);
 			var activator = _activation.Get(parameter);
-			var reader = new MemberContentsReader(activator,
-			                                      members.ToDictionary(x => x.Adapter.Name));
+			var reader = new MemberContentsReader(activator, members);
 
-			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
-			var writer = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
+			var writer = new MemberListWriter(members);
 			var result = new Serializer(reader, writer);
 			return result;
 		}

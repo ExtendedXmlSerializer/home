@@ -44,12 +44,16 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_defaults = defaults;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
-			=> _specification.IsSatisfiedBy(parameter.ReflectedType) ? FromDefault(parameter) : null;
-
-		IMemberEmitSpecification FromDefault(MemberDescriptor parameter)
+		public IMemberEmitSpecification Get(IMember parameter)
 		{
-			var defaultValue = _defaults.Get(parameter.ReflectedType).Invoke(parameter.Metadata);
+			var type = parameter.Metadata.GetReflectedType();
+			var result = _specification.IsSatisfiedBy(type) ? FromDefault(type, parameter.Metadata) : null;
+			return result;
+		}
+
+		IMemberEmitSpecification FromDefault(TypeInfo reflectedType, MemberInfo parameter)
+		{
+			var defaultValue = _defaults.Get(reflectedType).Invoke(parameter);
 			var inverse = new EqualitySpecification<object>(defaultValue).Inverse();
 			var result = new MemberEmitSpecification(inverse);
 			return result;

@@ -33,11 +33,13 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
+		readonly static VariableTypeSpecification Specification = VariableTypeSpecification.Default;
+
 		readonly ISpecification<TypeInfo> _specification;
 
-		public VariableTypeWalker(IMembers members, TypeInfo root) : this(VariableTypeSpecification.Default, members, root) {}
+		public VariableTypeWalker(ITypeMembers members, TypeInfo root) : this(Specification, members, root) {}
 
-		public VariableTypeWalker(ISpecification<TypeInfo> specification, IMembers members, TypeInfo root)
+		public VariableTypeWalker(ISpecification<TypeInfo> specification, ITypeMembers members, TypeInfo root)
 			: base(members, root)
 		{
 			_specification = specification;
@@ -56,7 +58,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		protected override IEnumerable<TypeInfo> Yield(IMember member)
 		{
-			var type = member.Adapter.MemberType;
+			var type = member.MemberType;
 			if (!Schedule(type))
 			{
 				yield return type;

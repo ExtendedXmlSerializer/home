@@ -34,6 +34,6 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 			_instance = instance;
 		}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter) => _specifications.Get(parameter) ?? _instance;
+		public IMemberEmitSpecification Get(IMember parameter) => _specifications.Get(parameter) ?? _instance;
 	}
 }

@@ -23,21 +23,11 @@
 
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberProperty : PropertyBase<object>, IPropertySerializer
+	sealed class MemberProperty : ConverterProperty<object>, IMemberProperty
 	{
-		readonly IConverter _converter;
-
-		public MemberProperty(IConverter converter, string name) : base(name, string.Empty)
-		{
-			_converter = converter;
-		}
-
-		protected sealed override object Parse(IXmlReader parameter, string data) => _converter.Parse(data);
-
-		protected sealed override string Format(IXmlWriter writer, object instance) => _converter.Format(instance);
+		public MemberProperty(IConverter converter, string name) : base(converter, name, string.Empty) {}
 	}
 }

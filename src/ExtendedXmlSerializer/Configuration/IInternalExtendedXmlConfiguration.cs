@@ -32,7 +32,7 @@ namespace ExtendedXmlSerialization.Configuration
 		bool Namespaces { get; set; }
 		XmlReaderSettings ReaderSettings { get; set; }
 		XmlWriterSettings WriterSettings { get; set; }
-		/*IPropertyEncryption EncryptionAlgorithm { get; set; }*/
+		
 		IExtendedXmlTypeConfiguration GetTypeConfiguration(Type type);
 	}
 }

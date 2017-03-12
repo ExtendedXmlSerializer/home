@@ -25,5 +25,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberEmitSpecifications : IParameterizedSource<MemberDescriptor, IMemberEmitSpecification> {}
+	public interface IMemberEmitSpecifications : IParameterizedSource<IMember, IMemberEmitSpecification> {}
 }

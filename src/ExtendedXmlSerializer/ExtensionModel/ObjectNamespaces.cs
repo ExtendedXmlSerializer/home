@@ -37,23 +37,27 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		readonly static Func<TypeInfo, string> Identities = Identifiers.Default.Get;
 
-		readonly IMembers _members;
+		readonly ITypeMembers _members;
+		readonly IMemberAccessors _accessors;
 		readonly Func<TypeInfo, string> _names;
 		readonly Func<string, Namespace> _namespaces;
 
 		[UsedImplicitly]
-		public ObjectNamespaces(IMembers members) : this(members, Identities, new Namespaces().Get) {}
+		public ObjectNamespaces(ITypeMembers members, IMemberAccessors accessors)
+			: this(members, accessors, Identities, new Namespaces().Get) {}
 
-		public ObjectNamespaces(IMembers members, Func<TypeInfo, string> names, Func<string, Namespace> namespaces)
+		public ObjectNamespaces(ITypeMembers members, IMemberAccessors accessors, Func<TypeInfo, string> names,
+		                        Func<string, Namespace> namespaces)
 		{
 			_members = members;
+			_accessors = accessors;
 			_names = names;
 			_namespaces = namespaces;
 		}
 
 		public ImmutableArray<Namespace> Get(object parameter)
 		{
-			var identifiers = new ObjectTypeWalker(_members, parameter)
+			var identifiers = new ObjectTypeWalker(_members, _accessors, parameter)
 				.Get()
 				.Select(_names)
 				.Distinct().ToArray();

@@ -24,10 +24,11 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class AddDelegates : IAddDelegates
+	class AddDelegates : ReferenceCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
 	{
 		public static AddDelegates Default { get; } = new AddDelegates();
 		AddDelegates() : this(CollectionItemTypeLocator.Default, AddMethodLocator.Default) {}
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerialization.TypeModel
 			_add = add;
 		}
 
-		public Action<object, object> Get(TypeInfo parameter)
+		protected override Action<object, object> Create(TypeInfo parameter)
 		{
 			var elementType = _locator.Get(parameter);
 			if (elementType != null)

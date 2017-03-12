@@ -28,11 +28,16 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	abstract class PropertyBase<T> : Identity, IProperty<T>
 	{
-		protected PropertyBase(string name, string identifier) : base(name, identifier) {}
+		readonly IValueReader _reader;
 
-		public virtual T Get(IXmlReader parameter) => Parse(parameter, Value(parameter));
+		protected PropertyBase(string name, string identifier) : this(ValueReader.Default, name, identifier) {}
 
-		protected virtual string Value(IXmlReader parameter) => parameter.Value();
+		protected PropertyBase(IValueReader reader, string name, string identifier) : base(name, identifier)
+		{
+			_reader = reader;
+		}
+
+		public virtual T Get(IXmlReader parameter) => Parse(parameter, _reader.Get(parameter));
 
 		protected abstract T Parse(IXmlReader parameter, string data);
 

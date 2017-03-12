@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		public MappedMemberEmitSpecifications(IDictionary<MemberInfo, IMemberEmitSpecification> store) : base(store) {}
 
-		public IMemberEmitSpecification Get(MemberDescriptor parameter)
+		public IMemberEmitSpecification Get(IMember parameter)
 			=> base.Get(parameter.Metadata) ?? base.Get(parameter.MemberType);
 	}
 }

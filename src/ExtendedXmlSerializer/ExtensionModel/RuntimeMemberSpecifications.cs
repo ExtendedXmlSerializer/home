@@ -30,27 +30,27 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class RuntimeMemberSpecifications : IRuntimeMemberSpecifications
 	{
-		readonly IConverterSource _source;
-		readonly IRuntimeMemberSpecification _text;
-		readonly IRuntimeMemberSpecifications _specifications;
 		readonly static TypeInfo Type = typeof(string).GetTypeInfo();
 		readonly static RuntimeMemberSpecification Always = new RuntimeMemberSpecification(AlwaysSpecification<object>.Default);
 
-		public RuntimeMemberSpecifications(IConverterSource source, IRuntimeMemberSpecification text,
-		                                   IRuntimeMemberSpecifications specifications)
+		readonly IConverterSource _source;
+		readonly IRuntimeMemberSpecification _text;
+		readonly IRuntimeMemberSpecifications _specifications;
+
+		public RuntimeMemberSpecifications(IRuntimeMemberSpecification text, IRuntimeMemberSpecifications specifications,
+		                                   IConverterSource source)
 		{
 			_source = source;
 			_text = text;
 			_specifications = specifications;
 		}
 
-		public IRuntimeMemberSpecification Get(MemberInfo parameter)
-			=> _specifications.Get(parameter) ?? From(MemberDescriptor.From(parameter).MemberType);
+		public IRuntimeMemberSpecification Get(MemberInfo parameter) => _specifications.Get(parameter) ?? From(parameter);
 
-		IRuntimeMemberSpecification From(TypeInfo memberType)
+		IRuntimeMemberSpecification From(MemberDescriptor descriptor)
 		{
-			var supported = _source.IsSatisfiedBy(memberType);
-			var result = supported ? Equals(memberType, Type) ? _text : Always : null;
+			var supported = _source.IsSatisfiedBy(descriptor.MemberType);
+			var result = supported ? Equals(descriptor.MemberType, Type) ? _text : Always : null;
 			return result;
 		}
 	}

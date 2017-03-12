@@ -21,74 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class MemberSerialization : CacheBase<MemberDescriptor, MemberProfile>, IMemberSerialization
+	sealed class MemberSerialization : TableSource<string, IMemberSerializer>, IMemberSerialization
 	{
-		readonly ISpecification<PropertyInfo> _property;
-		readonly ISpecification<FieldInfo> _field;
-		readonly IMemberEmitSpecifications _emit;
-		readonly IRuntimeMemberSpecifications _specifications;
-		readonly IMemberConverters _converters;
-		readonly IContents _content;
-		readonly IAliases _aliases;
-		readonly IMemberOrder _order;
+		readonly IRuntimeMemberList _serializers;
+		readonly ImmutableArray<IMemberSerializer> _all;
 
-		public MemberSerialization(
-			ISpecification<PropertyInfo> property, ISpecification<FieldInfo> field, IMemberEmitSpecifications emit,
-			IRuntimeMemberSpecifications specifications, IMemberConverters converters, IContents content, 
-			IAliases aliases, IMemberOrder order)
+		public MemberSerialization(IRuntimeMemberList serializers, IDictionary<string, IMemberSerializer> store,
+		                           ImmutableArray<IMemberSerializer> all) : base(store)
 		{
-			_property = property;
-			_field = field;
-			_emit = emit;
-			_specifications = specifications;
-			_converters = converters;
-			_content = content;
-			_aliases = aliases;
-			_order = order;
+			_serializers = serializers;
+			_all = all;
 		}
 
-		public bool IsSatisfiedBy(PropertyInfo parameter) => _property.IsSatisfiedBy(parameter);
-		public bool IsSatisfiedBy(FieldInfo parameter) => _field.IsSatisfiedBy(parameter);
+		public ImmutableArray<IMemberSerializer> Get(object parameter) => _serializers.Get(parameter);
 
-		protected override MemberProfile Create(MemberDescriptor parameter)
-		{
-			var metadata = parameter.Metadata;
-			var order = _order.Get(metadata);
-			var name = _aliases.Get(metadata) ?? metadata.Name;
 
-			var content = _content.Get(parameter.MemberType);
-
-			var serializer = Create(name, parameter, content);
-
-			var result = new MemberProfile(_emit.Get(parameter), name, parameter.Writable, order, metadata,
-			                               parameter.MemberType, content, serializer, serializer);
-			return result;
-		}
-
-		ISerializer Create(string name, MemberDescriptor member, ISerializer content)
-		{
-			var result = new Serializer(content, Wrap(name, content));
-
-			var converter = _converters.Get(member);
-			if (converter != null)
-			{
-				ISerializer property = new MemberProperty(converter, name);
-				var specification = _specifications.Get(member.Metadata);
-				return specification != null
-					? new RuntimeSerializer(specification, content, property, result)
-					: property;
-			}
-			
-			return result;
-		}
-
-		static IWriter Wrap(string name, IWriter content) => new Enclosure(new MemberElement(name), content);
+		public ImmutableArray<IMemberSerializer> Get() => _all;
 	}
 }

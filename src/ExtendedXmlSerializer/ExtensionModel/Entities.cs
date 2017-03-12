@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		readonly IEntityMembers _registered;
 		readonly IMemberConverters _converters;
-		readonly IMembers _members;
+		readonly IMemberSerializations _members;
 
-		public Entities(IEntityMembers registered, IMemberConverters converters, IMembers members)
+		public Entities(IEntityMembers registered, IMemberConverters converters, IMemberSerializations members)
 		{
 			_registered = registered;
 			_converters = converters;
@@ -47,14 +47,14 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			return result;
 		}
 
-		IMember Locate(TypeInfo parameter, MemberInfo memberInfo)
+		IMemberSerializer Locate(TypeInfo parameter, MemberInfo memberInfo)
 		{
-			var members = _members.Get(parameter);
+			var members = _members.Get(parameter).Get();
 			var length = members.Length;
 			for (var i = 0; i < length; i++)
 			{
 				var member = members[i];
-				if (Equals(member.Adapter.Metadata, memberInfo))
+				if (Equals(member.Profile.Metadata, memberInfo))
 				{
 					return member;
 				}

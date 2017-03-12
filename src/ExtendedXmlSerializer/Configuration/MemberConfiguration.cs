@@ -32,19 +32,19 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		public MemberConfiguration()
 			: this(
-				MetadataSpecification.Default, new Dictionary<MemberInfo, IConverter>(),
+				DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IConverter>(),
 				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
 		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters)
 			: this(
-				MetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
+				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
 		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters,
 		                           IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 			: this(
-				MetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
+				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
 
 		public MemberConfiguration(IMetadataSpecification specification, IDictionary<MemberInfo, IConverter> converters,
 		                           IDictionary<MemberInfo, IMemberEmitSpecification> emit,

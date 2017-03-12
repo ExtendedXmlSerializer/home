@@ -32,11 +32,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class AutoAttributesExtension : ISerializerExtension
 	{
 		public static AutoAttributesExtension Default { get; } = new AutoAttributesExtension();
-		AutoAttributesExtension() : this(128) {}
+		AutoAttributesExtension() {}
 
 		readonly IRuntimeMemberSpecification _text;
 
-		public AutoAttributesExtension(int maxTextLength)
+		public AutoAttributesExtension(int maxTextLength = 128)
 			: this(new RuntimeMemberSpecification(new TextSpecification(maxTextLength).Adapt())) {}
 
 		public AutoAttributesExtension(IRuntimeMemberSpecification text)
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			            .Decorate<IRuntimeMemberSpecifications>(Decorate);
 
 		IRuntimeMemberSpecifications Decorate(IServiceProvider provider, IRuntimeMemberSpecifications defaults)
-			=> new RuntimeMemberSpecifications(provider.Get<Converters>(), _text, defaults);
+			=> new RuntimeMemberSpecifications(_text, defaults, provider.Get<Converters>());
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -78,8 +78,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				_converters = converters;
 			}
 
-			public IConverter Get(MemberInfo parameter)
-				=> _members.Get(parameter) ?? _converters.Get(MemberDescriptor.From(parameter).MemberType);
+			public IConverter Get(MemberInfo parameter) => _members.Get(parameter) ?? From(parameter);
+
+			IConverter From(MemberDescriptor parameter) => _converters.Get(parameter.MemberType);
 		}
 	}
 }

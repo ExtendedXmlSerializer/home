@@ -22,19 +22,17 @@
 // SOFTWARE.
 
 using System.Collections;
-using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	sealed class MemberedCollectionItemReader : ICollectionItemReader
 	{
 		readonly ICollectionItemReader _item;
-		readonly IDictionary<string, IMember> _members;
+		readonly IMemberSerialization _members;
 
-		public MemberedCollectionItemReader(ICollectionItemReader item, IDictionary<string, IMember> members)
+		public MemberedCollectionItemReader(ICollectionItemReader item, IMemberSerialization members)
 		{
 			_item = item;
 			_members = members;
@@ -47,7 +45,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 				var member = _members.Get(reader.Name);
 				if (member != null)
 				{
-					member.Adapter.Assign(instance, member.Get(reader));
+					member.Access.Assign(instance, member.Get(reader));
 					return;
 				}
 			}

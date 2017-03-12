@@ -26,23 +26,26 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class RuntimeSerializer : DecoratedSpecification<object>, IRuntimeSerializer
+	class RuntimeSerializer : IRuntimeSerializer
 	{
-		readonly IWriter _content;
-		readonly IReader _reader;
+		readonly ISpecification<object> _specification;
+		readonly IMemberSerializer _property;
+		readonly IMemberSerializer _content;
 
-		public RuntimeSerializer(ISpecification<object> specification, IReader reader, IWriter property, IWriter content)
-			: base(specification)
+		public RuntimeSerializer(ISpecification<object> specification, IMemberSerializer property, IMemberSerializer content)
 		{
-			Property = property;
+			_specification = specification;
+			_property = property;
 			_content = content;
-			_reader = reader;
 		}
 
-		public IWriter Property { get; }
+		public IMemberSerializer Get(object parameter) => _specification.IsSatisfiedBy(parameter) ? _property : _content;
+
+		public object Get(IXmlReader parameter) => _content.Get(parameter);
 
 		public void Write(IXmlWriter writer, object instance) => _content.Write(writer, instance);
+		public IMember Profile => _content.Profile;
 
-		public object Get(IXmlReader parameter) => _reader.Get(parameter);
+		public IMemberAccess Access => _content.Access;
 	}
 }

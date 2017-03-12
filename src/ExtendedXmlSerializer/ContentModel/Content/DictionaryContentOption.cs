@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -37,10 +35,10 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
 		readonly IActivation _activation;
-		readonly IMembers _members;
+		readonly IMemberSerializations _members;
 		readonly IDictionaryEntries _entries;
 
-		public DictionaryContentOption(IActivation activation, IMembers members, IDictionaryEntries entries)
+		public DictionaryContentOption(IActivation activation, IMemberSerializations members, IDictionaryEntries entries)
 			: base(Specification)
 		{
 			_activation = activation;
@@ -53,12 +51,9 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var members = _members.Get(parameter);
 			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
-			var reader = new DictionaryContentsReader(activator, entry, members.ToDictionary(x => x.Adapter.Name));
+			var reader = new DictionaryContentsReader(activator, entry, members);
 
-			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
-			var list = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
-
-			var writer = new MemberedCollectionWriter(list, new DictionaryEntryWriter(entry));
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new DictionaryEntryWriter(entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

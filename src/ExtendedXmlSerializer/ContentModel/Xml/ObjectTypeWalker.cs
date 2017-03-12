@@ -32,14 +32,27 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class ObjectTypeWalker : InstanceMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
-		public ObjectTypeWalker(IMembers members, object root) : base(members, root) {}
+		readonly static VariableTypeMemberSpecifications Specifications = VariableTypeMemberSpecifications.Default;
+
+		readonly IVariableTypeMemberSpecifications _specifications;
+		readonly IMemberAccessors _accessors;
+
+		public ObjectTypeWalker(ITypeMembers members, IMemberAccessors accessors, object root)
+			: this(Specifications, accessors, members, root) {}
+
+		public ObjectTypeWalker(IVariableTypeMemberSpecifications specifications, IMemberAccessors accessors,
+		                        ITypeMembers members, object root) : base(members, root)
+		{
+			_specifications = specifications;
+			_accessors = accessors;
+		}
 
 		protected override IEnumerable<TypeInfo> Yield(IMember member, object instance)
 		{
-			var variable = member.Adapter as IVariableTypeMemberAdapter;
+			var variable = _specifications.Get(member);
 			if (variable != null)
 			{
-				var current = variable.Get(instance);
+				var current = _accessors.Get(member).Get(instance);
 				if (Schedule(current) && variable.IsSatisfiedBy(current.GetType()))
 				{
 					yield return Defaults.FrameworkType;

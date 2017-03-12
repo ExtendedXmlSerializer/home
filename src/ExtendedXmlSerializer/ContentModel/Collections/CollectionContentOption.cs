@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
@@ -31,10 +29,10 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	sealed class CollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IMembers _members;
+		readonly IMemberSerializations _members;
 		readonly IActivation _activation;
 
-		public CollectionContentOption(IActivation activation, IMembers members, ISerializers serializers)
+		public CollectionContentOption(IActivation activation, IMemberSerializations members, ISerializers serializers)
 			: base(serializers)
 		{
 			_members = members;
@@ -47,16 +45,12 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 			var activator = _activation.Get(classification);
 
 			var items = new CollectionItemReader(item);
-			var dictionary = members.ToDictionary(x => x.Adapter.Name);
-			var membered = new MemberedCollectionItemReader(items, dictionary);
+			var membered = new MemberedCollectionItemReader(items, members);
 
-			var attributes = new MemberAttributesReader(activator, dictionary);
+			var attributes = new MemberAttributesReader(activator, members);
 			var reader = new CollectionContentsReader(attributes, membered);
 
-			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
-			var member = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
-
-			var writer = new MemberedCollectionWriter(member, new EnumerableWriter(item));
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(item));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

@@ -23,15 +23,6 @@
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	/*sealed class CachedConverter : Converter<object>
-	{
-		public CachedConverter(IConverter converter) : this(converter, converter.Parse, converter.Format) {}
-
-		public CachedConverter(ISpecification<TypeInfo> specification, Func<string, object> deserialize,
-		                       Func<object, string> serialize)
-			: base(specification, new Cache<string, object>(deserialize).Get, new Cache<object, string>(serialize).Get) {}
-	}*/
-
 	public interface IOptimizationContainer
 	{
 		void Clear();

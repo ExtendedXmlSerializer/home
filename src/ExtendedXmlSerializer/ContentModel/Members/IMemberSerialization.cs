@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberSerialization : IMetadataSpecification, IParameterizedSource<MemberDescriptor, MemberProfile> {}
+	public interface IMemberSerialization : ISource<ImmutableArray<IMemberSerializer>>,
+	                                        IParameterizedSource<string, IMemberSerializer>,
+	                                        IParameterizedSource<object, ImmutableArray<IMemberSerializer>> {}
 }

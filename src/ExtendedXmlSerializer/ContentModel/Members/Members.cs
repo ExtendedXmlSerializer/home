@@ -21,61 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using JetBrains.Annotations;
-
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class Members : IMembers
+	class Members : IMembers
 	{
-		readonly IMemberSerialization _serialization;
-		readonly Func<MemberProfile, IMember> _select;
+		readonly IAliases _aliases;
+		readonly IMemberOrder _order;
 
-		[UsedImplicitly]
-		public Members(IMemberSerialization serialization, ISelector selector) : this(serialization, selector.Get) {}
-
-		public Members(IMemberSerialization serialization, Func<MemberProfile, IMember> select)
+		public Members(IAliases aliases, IMemberOrder order)
 		{
-			_serialization = serialization;
-			_select = select;
+			_aliases = aliases;
+			_order = order;
 		}
 
-		public ImmutableArray<IMember> Get(TypeInfo parameter) =>
-			Yield(parameter).OrderBy(x => x.Writer is IPropertySerializer ? 0 : 1)
-			                .ThenBy(x => x.Order)
-			                .Select(_select)
-			                .Where(x => x != null)
-			                .ToImmutableArray();
-
-		IEnumerable<MemberProfile> Yield(TypeInfo parameter)
+		public IMember Get(MemberDescriptor parameter)
 		{
-			var properties = parameter.GetProperties();
-			var length = properties.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var property = properties[i];
-				if (_serialization.IsSatisfiedBy(property))
-				{
-					yield return
-						_serialization.Get(new MemberDescriptor(parameter, property));
-				}
-			}
-
-			var fields = parameter.GetFields();
-			var l = fields.Length;
-			for (var i = 0; i < l; i++)
-			{
-				var field = fields[i];
-				if (_serialization.IsSatisfiedBy(field))
-				{
-					yield return
-						_serialization.Get(new MemberDescriptor(parameter, field));
-				}
-			}
+			var metadata = parameter.Metadata;
+			var order = _order.Get(metadata);
+			var name = _aliases.Get(metadata);
+			var result = new Member(name, order, metadata, parameter.MemberType, parameter.Writable);
+			return result;
 		}
 	}
 }

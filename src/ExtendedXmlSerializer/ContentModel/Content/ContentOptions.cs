@@ -38,6 +38,4 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			RuntimeContentOption runtime
 		) : base(array, dictionary, collection, membered, runtime) {}
 	}
-
-	/*public interface IContentOptions : IEnumerable<IContentOption> {}*/
 }

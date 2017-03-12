@@ -33,11 +33,6 @@ namespace ExtendedXmlSerialization.Core
 {
 	public static class Extensions
 	{
-		// public static IEnumerable<T> Sorted<T>(this IEnumerable<T> @this) => @this.OrderBy(x => x, SortComparer<T>.Default);
-
-		/*public static ReadOnlyCollection<T> AsReadOnly<T>(this IEnumerable<T> @this)
-			=> new ReadOnlyCollection<T>(@this.ToArray());*/
-
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(@this.Yield().Concat(others).Fixed());
 
@@ -45,10 +40,6 @@ namespace ExtendedXmlSerialization.Core
 			=> new AllSpecification<T>(@this.Yield().Concat(others).Fixed());
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
-
-		/*public static Func<TParameter, TResult> Alter<TParameter, TResult>(this IAlteration<TResult> @this,
-		                                                                   Func<TParameter, TResult> factory)
-			=> DelegateAlterations<TParameter, TResult>.Default.Get(@this).Get(factory);*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
@@ -111,9 +102,6 @@ namespace ExtendedXmlSerialization.Core
 
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).To<T>();
-
-		/*public static Func<T> Defer<T>(this IServiceProvider @this) where T : class
-			=> new Deferred<T>(@this.Get<T>).Get;*/
 
 		public static T GetValid<T>(this IServiceProvider @this)
 			=> @this is T ? (T) @this : @this.GetService(typeof(T)).AsValid<T>($"Could not located service '{typeof(T)}'");

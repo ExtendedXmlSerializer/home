@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -31,8 +30,9 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
-		public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
+		public DictionaryContentsReader(IReader reader, IReader entry, IMemberSerialization members)
 			: base(new CollectionContentsReader(new MemberAttributesReader(reader, members),
-			       new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists)) {}
+			                                    new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists)
+			) {}
 	}
 }
