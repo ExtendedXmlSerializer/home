@@ -25,9 +25,6 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	public static class Extensions
 	{
-		/*public static IContentOption ToContent(this IAlteration<IConverter> @this, IConverter converter)
-			=> new ConverterContentOption(@this, converter);*/
-
 		public static ISerializer ToSerializer(this IConverter converter)
 			=> new DelegatedSerializer(converter.Parse, converter.Format);
 	}

@@ -28,34 +28,43 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
-		public static MemberDescriptor From(MemberInfo member)
-			=> member is PropertyInfo ? new MemberDescriptor((PropertyInfo) member) : new MemberDescriptor((FieldInfo) member);
+		public static implicit operator MemberDescriptor(MemberInfo member) => MemberDescriptors.Default.Get(member);
 
 		readonly int _code;
 
-		public MemberDescriptor(PropertyInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+		public MemberDescriptor(PropertyInfo metadata)
+			: this(metadata, metadata.PropertyType.GetTypeInfo(), metadata.CanWrite) {}
 
-		public MemberDescriptor(TypeInfo reflectedType, PropertyInfo metadata)
-			: this(reflectedType, metadata, metadata.PropertyType.GetTypeInfo(), metadata.CanWrite) {}
+		public MemberDescriptor(PropertyInfo metadata, TypeInfo memberType)
+			: this(metadata, Validate(metadata, metadata.PropertyType.GetTypeInfo(), memberType), metadata.CanWrite) {}
 
-		public MemberDescriptor(FieldInfo metadata) : this(metadata.DeclaringType.GetTypeInfo(), metadata) {}
+		public MemberDescriptor(FieldInfo metadata)
+			: this(metadata, metadata.FieldType.GetTypeInfo(), !metadata.IsInitOnly) {}
 
-		public MemberDescriptor(TypeInfo reflectedType, FieldInfo metadata)
-			: this(reflectedType, metadata, metadata.FieldType.GetTypeInfo(), !metadata.IsInitOnly) {}
+		public MemberDescriptor(FieldInfo metadata, TypeInfo memberType)
+			: this(metadata, Validate(metadata, metadata.FieldType.GetTypeInfo(), memberType), !metadata.IsInitOnly) {}
 
-		public MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable = true)
-			: this(reflectedType, metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
+		MemberDescriptor(MemberInfo metadata, TypeInfo memberType, bool writable)
+			: this(metadata, memberType, writable, (metadata.GetHashCode() * 397) ^ memberType.GetHashCode()) {}
 
-		MemberDescriptor(TypeInfo reflectedType, MemberInfo metadata, TypeInfo memberType, bool writable, int code)
+		MemberDescriptor(MemberInfo metadata, TypeInfo memberType, bool writable, int code)
 		{
 			_code = code;
-			ReflectedType = reflectedType;
 			Metadata = metadata;
 			MemberType = memberType;
 			Writable = writable;
 		}
 
-		public TypeInfo ReflectedType { get; }
+		static TypeInfo Validate(MemberInfo member, TypeInfo defaultType, TypeInfo assigned)
+		{
+			if (!Equals(defaultType, assigned) && !defaultType.IsAssignableFrom(assigned))
+			{
+				throw new InvalidOperationException(
+					$"Cannot assign type '{assigned}' as a return type for '{member}'.  Ensure that the specified type can be assigned from '{defaultType}'");
+			}
+			return assigned;
+		}
+
 		public MemberInfo Metadata { get; }
 		public TypeInfo MemberType { get; }
 		public bool Writable { get; }

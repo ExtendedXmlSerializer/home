@@ -30,14 +30,16 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	sealed class RootReferences : StructureCacheBase<IXmlWriter, ImmutableArray<object>>, IRootReferences
 	{
-		readonly IMembers _members;
+		readonly ITypeMembers _members;
+		readonly IMemberAccessors _accessors;
 
-		public RootReferences(IMembers members)
+		public RootReferences(ITypeMembers members, IMemberAccessors accessors)
 		{
 			_members = members;
+			_accessors = accessors;
 		}
 
 		protected override ImmutableArray<object> Create(IXmlWriter parameter)
-			=> new ReferenceWalker(_members, parameter.Root).Get();
+			=> new ReferenceWalker(_members, _accessors, parameter.Root).Get();
 	}
 }

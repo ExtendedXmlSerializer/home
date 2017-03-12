@@ -30,11 +30,11 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	sealed class RecursionAwareContents : CacheBase<TypeInfo, ISerializer>, IContents
 	{
 		readonly IContents _contents;
-		readonly ISet<int> _types; // TODO: Originally made this an ISet<TypeInfo> but suffered from GC quirks in benchmarks.
+		readonly ISet<TypeInfo> _types;
 
-		public RecursionAwareContents(IContents contents) : this(contents, new HashSet<int>()) {}
+		public RecursionAwareContents(IContents contents) : this(contents, new HashSet<TypeInfo>()) {}
 
-		public RecursionAwareContents(IContents contents, ISet<int> types)
+		public RecursionAwareContents(IContents contents, ISet<TypeInfo> types)
 		{
 			_contents = contents;
 			_types = types;
@@ -42,11 +42,10 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 
 		protected override ISerializer Create(TypeInfo parameter)
 		{
-			var code = parameter.GetHashCode();
-			var result = _types.Add(code)
+			var result = _types.Add(parameter)
 				? _contents.Get(parameter)
 				: new DeferredSerializer(_contents.Build(parameter));
-			_types.Remove(code);
+			_types.Remove(parameter);
 			return result;
 		}
 	}

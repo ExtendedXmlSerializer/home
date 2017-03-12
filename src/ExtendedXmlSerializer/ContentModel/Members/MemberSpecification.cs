@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
+	sealed class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
 	{
 		readonly static AllowSpecification Specification = AllowSpecification.Default;
 

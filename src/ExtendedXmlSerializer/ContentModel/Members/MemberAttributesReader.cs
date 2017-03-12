@@ -21,17 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	sealed class MemberAttributesReader : DecoratedReader
 	{
-		readonly IDictionary<string, IMember> _members;
+		readonly IMemberSerialization _members;
 
-		public MemberAttributesReader(IReader activator, IDictionary<string, IMember> members) : base(activator)
+		public MemberAttributesReader(IReader activator, IMemberSerialization members) : base(activator)
 		{
 			_members = members;
 		}
@@ -45,7 +43,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 				if (parameter.IsMember())
 				{
 					var member = _members.Get(parameter.Name);
-					member?.Adapter.Assign(result, member.Get(parameter));
+					member?.Access.Assign(result, member.Get(parameter));
 				}
 			}
 			return result;

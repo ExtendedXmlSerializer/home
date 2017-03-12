@@ -21,35 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class Member : IMember
+	class Member : Identity, IMember
 	{
-		readonly ISpecification<object> _emit;
-		readonly IReader _reader;
-		readonly IWriter _writer;
-
-		public Member(ISpecification<object> emit, IMemberAdapter adapter, IReader reader, IWriter writer)
+		public Member(string name, int order, MemberInfo metadata, TypeInfo memberType, bool isWritable)
+			: base(name, string.Empty)
 		{
-			Adapter = adapter;
-			_emit = emit;
-			_reader = reader;
-			_writer = writer;
+			IsWritable = isWritable;
+			Order = order;
+			Metadata = metadata;
+			MemberType = memberType;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
-		{
-			var value = Adapter.Get(instance);
-			if (_emit.IsSatisfiedBy(value))
-			{
-				_writer.Write(writer, value);
-			}
-		}
+		public bool IsWritable { get; }
+		public int Order { get; }
 
-		public IMemberAdapter Adapter { get; }
-		public object Get(IXmlReader parameter) => _reader.Get(parameter);
+		public MemberInfo Metadata { get; }
+		public TypeInfo MemberType { get; }
 	}
 }

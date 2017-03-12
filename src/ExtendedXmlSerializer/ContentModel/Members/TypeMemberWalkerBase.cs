@@ -29,9 +29,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	abstract class TypeMemberWalkerBase<T> : ObjectWalkerBase<TypeInfo, IEnumerable<T>>
 	{
-		readonly IMembers _members;
+		readonly ITypeMembers _members;
 
-		protected TypeMemberWalkerBase(IMembers members, TypeInfo root) : base(root)
+		protected TypeMemberWalkerBase(ITypeMembers members, TypeInfo root) : base(root)
 		{
 			_members = members;
 		}

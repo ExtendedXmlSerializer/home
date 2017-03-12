@@ -40,46 +40,37 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
 		readonly IReader _activator;
-		readonly IMemberSerialization _serialization;
-		readonly IMemberOption _variable;
+		readonly IMembers _profiles;
+		readonly IMemberSerializers _serializers;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IActivation activation, IMemberSerialization serialization, IMemberOption variable)
-			: this(activation.Get<DictionaryEntry>(), serialization, variable, Element, Pairs) {}
+		public DictionaryEntries(IActivation activation, IMembers profiles, IMemberSerializers serializers)
+			: this(activation.Get<DictionaryEntry>(), profiles, serializers, Element, Pairs) {}
 
-		public DictionaryEntries(IReader activator, IMemberSerialization serialization, IMemberOption variable,
-		                         IWriter element,
+		public DictionaryEntries(IReader activator, IMembers profiles, IMemberSerializers serializers, IWriter element,
 		                         IDictionaryPairTypesLocator locator)
 		{
 			_activator = activator;
-			_serialization = serialization;
-			_variable = variable;
+			_profiles = profiles;
+			_serializers = serializers;
 			_element = element;
 			_locator = locator;
 		}
 
-		IMember Create(MemberInfo metadata, TypeInfo classification)
-		{
-			var profile = _serialization.Get(new MemberDescriptor(Type, metadata, classification));
-			var decorated = new MemberProfile(profile.Specification, profile.Identity, profile.AllowWrite,
-			                                  profile.Order, profile.Metadata, classification, profile.Content, profile.Reader,
-			                                  profile.Writer);
-			var result = _variable.Get(decorated);
-			return result;
-		}
+		IMemberSerializer Create(PropertyInfo metadata, TypeInfo classification)
+			=> _serializers.Get(_profiles.Get(new MemberDescriptor(metadata, classification)));
 
 		public ISerializer Get(TypeInfo parameter)
 		{
 			var pair = _locator.Get(parameter);
-			var members = ImmutableArray.Create(Create(Key, pair.KeyType), Create(Value, pair.ValueType));
-			var reader = new MemberContentsReader(_activator, members.ToDictionary(x => x.Adapter.Name));
+			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)}.ToImmutableArray();
+			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members),
+			                                            members.ToDictionary(x => x.Profile.Name, x => x), members);
+			var reader = new MemberContentsReader(_activator, serialization);
 
-			var runtime = members.OfType<IRuntimeMember>().ToImmutableArray();
-			var writer = runtime.Any() ? new RuntimeMemberListWriter(runtime, members) : (IWriter) new MemberListWriter(members);
-
-			var converter = new Serializer(reader, writer);
+			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result = new Container(_element, converter);
 			return result;
 		}

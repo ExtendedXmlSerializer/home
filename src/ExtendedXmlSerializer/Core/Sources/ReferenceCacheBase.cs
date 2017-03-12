@@ -28,12 +28,21 @@ namespace ExtendedXmlSerialization.Core.Sources
 	public abstract class ReferenceCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
 	                                                                                            where TValue : class
 	{
-		readonly ConditionalWeakTable<TKey, TValue> _cache = new ConditionalWeakTable<TKey, TValue>();
+		readonly ConditionalWeakTable<TKey, TValue> _cache;
 		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
 
-		protected ReferenceCacheBase()
+		protected ReferenceCacheBase() : this(new ConditionalWeakTable<TKey, TValue>()) {}
+
+		protected ReferenceCacheBase(ConditionalWeakTable<TKey, TValue> cache)
 		{
+			_cache = cache;
 			_callback = Create;
+		}
+
+		public void Add(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, value);
 		}
 
 		protected abstract TValue Create(TKey parameter);

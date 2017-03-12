@@ -21,19 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
-
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	abstract class FrameworkPropertyBase<T> : PropertyBase<T>
 	{
-		protected FrameworkPropertyBase(string name) : base(name, Defaults.Namespace) {}
-
-		protected sealed override string Value(IXmlReader parameter)
-		{
-			var result = base.Value(parameter);
-			parameter.Reset();
-			return result;
-		}
+		protected FrameworkPropertyBase(string name) : base(ResettingValueReader.Default, name, Defaults.Namespace) {}
 	}
 }

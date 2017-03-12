@@ -33,19 +33,19 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly static EntityProperty EntityProperty = EntityProperty.Default;
 
 		readonly IConverter _converter;
-		readonly IMember _member;
+		readonly IMemberSerializer _member;
 
-		public Entity(IConverter converter, IMember member)
+		public Entity(IConverter converter, IMemberSerializer member)
 		{
 			_converter = converter;
 			_member = member;
 		}
 
-		public string Get(object parameter) => _converter.Format(_member.Adapter.Get(parameter));
+		public string Get(object parameter) => _converter.Format(_member.Access.Get(parameter));
 
 		public object Get(IXmlReader parameter)
 		{
-			var contains = parameter.Contains(_member.Adapter);
+			var contains = parameter.Contains(_member.Profile);
 			if (contains)
 			{
 				var result = _member.Get(parameter);

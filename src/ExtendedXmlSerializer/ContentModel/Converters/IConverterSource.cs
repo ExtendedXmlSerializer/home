@@ -28,10 +28,4 @@ using ExtendedXmlSerialization.Core.Specifications;
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
 	public interface IConverterSource : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, IConverter> {}
-
-	/*class SupportedConverterSpecification : AnySpecification<TypeInfo>
-	{
-		public SupportedConverterSpecification(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
-			: base(converters.Concat<ISpecification<TypeInfo>>(sources).ToArray()) {}
-	}*/
 }

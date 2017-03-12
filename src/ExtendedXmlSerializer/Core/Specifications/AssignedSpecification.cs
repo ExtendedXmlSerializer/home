@@ -23,11 +23,11 @@
 
 namespace ExtendedXmlSerialization.Core.Specifications
 {
-	public class AssignedSpecification : ISpecification<object>
+	public class AssignedSpecification<T> : ISpecification<T>
 	{
-		public static AssignedSpecification Default { get; } = new AssignedSpecification();
+		public static AssignedSpecification<T> Default { get; } = new AssignedSpecification<T>();
 		AssignedSpecification() {}
 
-		public bool IsSatisfiedBy(object parameter) => !ReferenceEquals(null, parameter);
+		public bool IsSatisfiedBy(T parameter) => !ReferenceEquals(null, parameter);
 	}
 }

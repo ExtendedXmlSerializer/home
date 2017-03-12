@@ -32,14 +32,26 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<ImmutableArray<object>>
 	{
+		readonly static VariableTypeMemberSpecifications Specifications = VariableTypeMemberSpecifications.Default;
+
+		readonly IVariableTypeMemberSpecifications _specifications;
+		readonly IMemberAccessors _accessors;
 		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
 
-		public ReferenceWalker(IMembers members, object root) : base(members, root) {}
+		public ReferenceWalker(ITypeMembers members, IMemberAccessors accessors, object root)
+			: this(Specifications, members, accessors, root) {}
+
+		public ReferenceWalker(IVariableTypeMemberSpecifications specifications, ITypeMembers members,
+		                       IMemberAccessors accessors, object root) : base(members, root)
+		{
+			_specifications = specifications;
+			_accessors = accessors;
+		}
 
 		protected override IEnumerable<object> Yield(IMember member, object instance)
 		{
-			var variable = member.Adapter as IVariableTypeMemberAdapter;
-			var result = variable != null ? Yield(member.Adapter.Get(instance)) : Empty;
+			var variable = _specifications.Get(member);
+			var result = variable != null ? Yield(_accessors.Get(member).Get(instance)) : Empty;
 			return result;
 		}
 

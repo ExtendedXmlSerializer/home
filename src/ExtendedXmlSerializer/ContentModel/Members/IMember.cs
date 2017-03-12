@@ -21,10 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMember : ISerializer
+	public interface IMember : IIdentity
 	{
-		IMemberAdapter Adapter { get; }
+		MemberInfo Metadata { get; }
+
+		TypeInfo MemberType { get; }
+
+		bool IsWritable { get; }
+
+		int Order { get; }
 	}
 }

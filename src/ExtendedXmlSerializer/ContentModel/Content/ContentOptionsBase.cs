@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
-	abstract class ContentOptionsBase : Items<IContentOption> /*, IContentOptions*/
+	abstract class ContentOptionsBase : Items<IContentOption>
 	{
 		protected ContentOptionsBase(params IContentOption[] items) : base(items) {}
 	}

@@ -75,10 +75,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void SimpleEntity()
 		{
-			var descriptor = new MemberDescriptor(typeof(Subject).GetTypeInfo().GetProperty(nameof(Subject.Id)));
+			var typeInfo = typeof(Subject).GetTypeInfo();
+			var descriptor = new MemberDescriptor(typeInfo.GetProperty(nameof(Subject.Id)));
 			var entities = new Dictionary<TypeInfo, MemberInfo>
 			               {
-				               {descriptor.ReflectedType, descriptor.Metadata}
+				               {typeInfo, descriptor.Metadata}
 			               };
 
 			var converters = new Dictionary<MemberInfo, IConverter>
@@ -104,12 +105,13 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void ComplexInstance()
 		{
+			var typeInfo = typeof(TestClassReference).GetTypeInfo();
 			var descriptor =
-				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
 			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
 			                                                    {
-				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
 			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
@@ -143,12 +145,13 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void ComplexList()
 		{
+			var typeInfo = typeof(TestClassReference).GetTypeInfo();
 			var descriptor =
-				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
 			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
 			                                                    {
-				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
 			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
@@ -183,12 +186,13 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void Dictionary()
 		{
+			var typeInfo = typeof(TestClassReference).GetTypeInfo();
 			var descriptor =
-				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
 			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
 			                                                    {
-				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
 			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
@@ -222,12 +226,13 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void List()
 		{
+			var typeInfo = typeof(TestClassReference).GetTypeInfo();
 			var descriptor =
-				new MemberDescriptor(typeof(TestClassReference).GetTypeInfo().GetProperty(nameof(TestClassReference.Id)));
+				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
 			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
 			                                                    {
-				                                                    {descriptor.ReflectedType, descriptor.Metadata}
+				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
 			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>

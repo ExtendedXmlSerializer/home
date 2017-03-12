@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -34,12 +35,12 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		public static TypeInfo GetClassification(this IXmlReader @this)
 		{
 			var result = @this.Classification;
-			/*if (result == null)
+			if (result == null)
 			{
 				var name = IdentityFormatter.Default.Get(@this);
 				throw new InvalidOperationException(
 					$"An attempt was made to load a type with the fully qualified name of '{name}', but no type could be located with that name.");
-			}*/
+			}
 			return result;
 		}
 	}

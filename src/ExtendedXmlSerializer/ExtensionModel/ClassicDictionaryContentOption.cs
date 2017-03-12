@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Collections;
@@ -39,10 +37,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
 
 		readonly IActivation _activation;
-		readonly IMembers _members;
+		readonly IMemberSerializations _members;
 		readonly IDictionaryEntries _entries;
 
-		public ClassicDictionaryContentOption(IActivation activation, IMembers members, IDictionaryEntries entries)
+		public ClassicDictionaryContentOption(IActivation activation, IMemberSerializations members,
+		                                      IDictionaryEntries entries)
 			: base(Specification)
 		{
 			_activation = activation;
@@ -54,7 +53,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		{
 			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
-			var reader = new DictionaryContentsReader(activator, entry, _members.Get(parameter).ToDictionary(x => x.Adapter.Name));
+			var reader = new DictionaryContentsReader(activator, entry, _members.Get(parameter));
 			var result = new Serializer(reader, new DictionaryEntryWriter(entry));
 			return result;
 		}
@@ -63,9 +62,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		{
 			readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
-			public DictionaryContentsReader(IReader reader, IReader entry, IDictionary<string, IMember> members)
+			public DictionaryContentsReader(IReader reader, IReader entry, IMemberSerialization members)
 				: base(new CollectionContentsReader(new MemberAttributesReader(reader, members),
-				       new CollectionItemReader(entry), Lists)) {}
+				                                    new CollectionItemReader(entry), Lists)) {}
 		}
 	}
 }

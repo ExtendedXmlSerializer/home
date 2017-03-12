@@ -21,7 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Core.Sources;
+
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IRuntimeSerializer : ISerializer, IRuntimeWriter {}
+	public interface IRuntimeSerializer : IParameterizedSource<object, IMemberSerializer>, IMemberSerializer {}
 }
