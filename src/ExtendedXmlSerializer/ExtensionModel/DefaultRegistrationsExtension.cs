@@ -22,40 +22,28 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
+using IAliases = ExtendedXmlSerialization.ContentModel.IAliases;
 using RuntimeSerializer = ExtendedXmlSerialization.ContentModel.RuntimeSerializer;
+using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class DefaultRegistrationsExtension : ISerializerExtension
 	{
-		readonly ImmutableArray<object> _services;
-
-		public DefaultRegistrationsExtension(params object[] services) : this(services.ToImmutableArray()) {}
-
-		public DefaultRegistrationsExtension(ImmutableArray<object> services)
-		{
-			_services = services;
-		}
-
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var fallback = new ServiceProvider(_services);
-			var configuration = fallback.Get<MemberConfiguration>();
-
-			return _services.Aggregate(parameter, (registry, o) => registry.RegisterInstanceByConvention(o))
-			                .RegisterInstance<IElements>(ContentModel.Content.Elements.Default)
-			                .RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
+			return parameter.RegisterInstance<IElements>(ContentModel.Content.Elements.Default)
+			                .RegisterInstance<IAliases>(TypeAliases.Default)
 			                .RegisterInstance<IActivation>(Activation.Default)
-			                .RegisterFallback(fallback.IsSatisfiedBy, fallback.GetService)
+			                .Register<ITypeFormatter, TypeFormatter>()
 			                .Register<ISerializer, RuntimeSerializer>()
 			                .Register<IXmlFactory, XmlFactory>()
 			                .Register<IDictionaryEntries, DictionaryEntries>()
@@ -77,11 +65,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			                .Register<VariableTypeMemberContents>()
 			                .Register<DefaultMemberContents>()
 			                .Register<IMemberContents, MemberContents>()
-			                .RegisterInstance(configuration.EmitSpecifications)
-			                .RegisterInstance(configuration.Runtime)
-			                .Decorate<IMemberEmitSpecifications>(
-				                (provider, defaults) =>
-					                new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()))
 			                .Register<IMemberSerializers, MemberSerializers>()
 			                .Register<IMemberSerializations, MemberSerializations>()
 			                .Register<ContainsStaticReferenceSpecification>()

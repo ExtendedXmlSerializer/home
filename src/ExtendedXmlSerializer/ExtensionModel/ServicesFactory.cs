@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using LightInject;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ServicesFactory : ISource<IServices>
+	class ServicesFactory : IServicesFactory
 	{
 		public static ServicesFactory Default { get; } = new ServicesFactory();
 		ServicesFactory() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
@@ -40,6 +42,18 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_options = options;
 		}
 
-		public IServices Get() => new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
+		public IServices Get(IExtendedXmlConfiguration parameter)
+		{
+			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
+
+			var extensions = parameter.Fixed();
+			extensions.Alter(result.RegisterInstance(parameter));
+
+			foreach (var extension in extensions)
+			{
+				extension.Execute(result);
+			}
+			return result;
+		}
 	}
 }

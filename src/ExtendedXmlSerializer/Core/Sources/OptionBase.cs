@@ -34,8 +34,8 @@ namespace ExtendedXmlSerialization.Core.Sources
 			_specification = specification;
 		}
 
-		public abstract TResult Get(TParameter parameter);
-
 		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
+
+		public abstract TResult Get(TParameter parameter);
 	}
 }

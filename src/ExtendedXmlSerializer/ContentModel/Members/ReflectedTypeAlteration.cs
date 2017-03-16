@@ -41,7 +41,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public MemberInfo Get(MemberInfo parameter)
 		{
-			_types.Add(parameter, _reflectedType);
+			_types.Assign(parameter, _reflectedType);
 			return parameter;
 		}
 

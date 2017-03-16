@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ExtensionModel;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Configuration
 {
-	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, ITableSource<TKey, TValue>
+	class TypeNamesExtension : ISerializerExtension
 	{
-		readonly static EqualityComparer<TKey> EqualityComparer = EqualityComparer<TKey>.Default;
+		public static TypeNamesExtension Default { get; } = new TypeNamesExtension();
+		TypeNamesExtension() {}
 
-		readonly Func<TKey, TValue> _create;
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IAliases>(Register);
 
-		protected CacheBase() : this(EqualityComparer) {}
+		static IAliases Register(IServiceProvider provider, IAliases aliases)
+			=> new ConfiguredAliases(provider.Get<IExtendedXmlConfiguration>(), aliases);
 
-		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
-		{
-			_create = Create;
-		}
-
-		protected abstract TValue Create(TKey parameter);
-
-		public TValue Get(TKey key) => GetOrAdd(key, _create);
-
-		public void Assign(TKey key, TValue value) => this[key] = value;
+		public void Execute(IServices parameter) {}
 	}
 }

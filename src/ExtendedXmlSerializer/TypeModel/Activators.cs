@@ -41,6 +41,8 @@ namespace ExtendedXmlSerialization.TypeModel
 			_locator = locator;
 		}
 
+		public T New<T>() => (T) Get(typeof(T)).Invoke();
+
 		protected override Func<object> Create(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();

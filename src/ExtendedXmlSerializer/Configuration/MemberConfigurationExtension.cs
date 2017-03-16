@@ -25,34 +25,38 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ExtensionModel;
+using RuntimeMemberSpecifications = ExtendedXmlSerialization.ContentModel.Members.RuntimeMemberSpecifications;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public class MemberConfiguration : IMemberConfiguration
+	sealed class MemberConfigurationExtension : IMemberConfigurationExtension
 	{
-		public MemberConfiguration()
+		public MemberConfigurationExtension()
 			: this(
 				DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IConverter>(),
 				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
-		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters)
+		public MemberConfigurationExtension(IDictionary<MemberInfo, IConverter> converters)
 			: this(
 				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
-		public MemberConfiguration(IDictionary<MemberInfo, IConverter> converters,
-		                           IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+		public MemberConfigurationExtension(IDictionary<MemberInfo, IConverter> converters,
+		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 			: this(
 				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
 
-		public MemberConfiguration(IMetadataSpecification specification, IDictionary<MemberInfo, IConverter> converters,
-		                           IDictionary<MemberInfo, IMemberEmitSpecification> emit,
-		                           IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+		public MemberConfigurationExtension(IMetadataSpecification specification,
+		                                    IDictionary<MemberInfo, IConverter> converters,
+		                                    IDictionary<MemberInfo, IMemberEmitSpecification> emit,
+		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 			: this(specification, new MemberConverters(converters), new MappedMemberEmitSpecifications(emit),
 			       new RuntimeMemberSpecifications(runtime), MemberOrder.Default, MemberAliases.Default, Defaults.MemberPolicy) {}
 
-		public MemberConfiguration(
+		public MemberConfigurationExtension(
 			IMetadataSpecification specification,
 			IMemberConverters converters,
 			IMemberEmitSpecifications specifications,
@@ -74,5 +78,24 @@ namespace ExtendedXmlSerialization.Configuration
 		public IMemberOrder Order { get; }
 		public IAliases Aliases { get; }
 		public IMemberPolicy Policy { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			return parameter.Register<IMetadataSpecification, MetadataSpecification>()
+							.RegisterInstance(Policy.And<PropertyInfo>(Specification))
+			                .RegisterInstance(Policy.And<FieldInfo>(Specification))
+			                .RegisterInstance(Converters)
+			                .RegisterInstance(Runtime)
+						
+			                .RegisterInstance(Aliases)
+			                .RegisterInstance(Order)
+			                .RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
+							.RegisterInstance(EmitSpecifications)
+			                .Decorate<IMemberEmitSpecifications>(
+				                (provider, defaults) =>
+					                new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()));
+		}
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

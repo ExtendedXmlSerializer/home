@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Xunit;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Test.Configuration
+namespace ExtendedXmlSerialization.Configuration
 {
-	public class ExtendedXmlConfigurationTests
+	sealed class TypeConfigurations : ReferenceCache<TypeInfo, IExtendedXmlTypeConfiguration>
 	{
-		[Fact]
-		public void Verify()
-		{
-			
-		}
+		public static IParameterizedSource<IExtendedXmlConfiguration, TypeConfigurations> Defaults { get; }
+			= new ReferenceCache<IExtendedXmlConfiguration, TypeConfigurations>(_ => new TypeConfigurations());
+
+		TypeConfigurations() : base(x => new ExtendedXmlTypeConfiguration(x)) {}
+	}
+
+	sealed class TypeConfigurations<T> : ReferenceCache<IExtendedXmlConfiguration, ExtendedXmlTypeConfiguration<T>>
+	{
+		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
+		TypeConfigurations() : base(x => new ExtendedXmlTypeConfiguration<T>(x)) {}
 	}
 }

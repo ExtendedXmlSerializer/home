@@ -33,9 +33,10 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		readonly ITypes _generic;
 
 		public static GenericTypes Default { get; } = new GenericTypes();
+		GenericTypes() : this(TypeFormatter.Default) {}
 
-		GenericTypes() : this(
-			new Types(Specification, new AssemblyTypePartitions(Specification), TypeLoader.Default),
+		public GenericTypes(ITypeFormatter formatter) : this(
+			new Types(Specification, formatter, new AssemblyTypePartitions(Specification), TypeLoader.Default),
 			Types.Default) {}
 
 		readonly ITypes _types;

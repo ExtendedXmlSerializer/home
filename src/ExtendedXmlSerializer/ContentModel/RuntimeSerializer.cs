@@ -39,7 +39,10 @@ namespace ExtendedXmlSerialization.ContentModel
 		}
 
 		public void Write(IXmlWriter writer, object instance)
-			=> _contents.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
+		{
+			var serializer = _contents.Get(instance.GetType().GetTypeInfo());
+			serializer.Write(writer, instance);
+		}
 
 		public object Get(IXmlReader reader) => _contents.Get(reader.GetClassification()).Get(reader);
 	}

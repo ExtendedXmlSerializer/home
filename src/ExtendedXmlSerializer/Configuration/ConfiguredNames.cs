@@ -21,29 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Configuration
 {
-	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, ITableSource<TKey, TValue>
+	sealed class ConfiguredNames : TableSource<IExtendedXmlTypeConfiguration, string>, ITypeNames
 	{
-		readonly static EqualityComparer<TKey> EqualityComparer = EqualityComparer<TKey>.Default;
-
-		readonly Func<TKey, TValue> _create;
-
-		protected CacheBase() : this(EqualityComparer) {}
-
-		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
-		{
-			_create = Create;
-		}
-
-		protected abstract TValue Create(TKey parameter);
-
-		public TValue Get(TKey key) => GetOrAdd(key, _create);
-
-		public void Assign(TKey key, TValue value) => this[key] = value;
+		public static ConfiguredNames Default { get; } = new ConfiguredNames();
+		ConfiguredNames() {}
 	}
 }

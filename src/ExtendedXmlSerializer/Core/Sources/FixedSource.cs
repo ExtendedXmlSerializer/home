@@ -36,4 +36,16 @@ namespace ExtendedXmlSerialization.Core.Sources
 
 		public TResult Get() => _source.Get(_parameter);
 	}
+
+	public class FixedSource<T> : ISource<T>
+	{
+		readonly T _instance;
+
+		public FixedSource(T instance)
+		{
+			_instance = instance;
+		}
+
+		public T Get() => _instance;
+	}
 }

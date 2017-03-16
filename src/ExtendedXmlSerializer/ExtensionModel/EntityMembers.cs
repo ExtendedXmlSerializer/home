@@ -27,7 +27,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class EntityMembers : TableSource<TypeInfo, MemberInfo>, IEntityMembers
+	sealed class EntityMembers : TableSource<TypeInfo, MemberInfo>, IEntityMembers
 	{
 		public EntityMembers(IDictionary<TypeInfo, MemberInfo> store) : base(store) {}
 	}

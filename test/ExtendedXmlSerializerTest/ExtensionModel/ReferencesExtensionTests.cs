@@ -44,7 +44,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void SimpleIdentity()
 		{
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extended(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(new ReferencesExtension()).Create());
 			var instance = new Subject {Id = new Guid("{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"), PropertyName = "Hello World!"};
 			instance.Self = instance;
 			var actual = support.Assert(instance,
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void EnabledWithoutConfiguration()
 		{
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extended(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(new ReferencesExtension()).Create());
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -88,8 +88,8 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			                 };
 			var sut = new ReferencesExtension(new EntityMembers(entities));
 
-			var memberConfiguration = new MemberConfiguration(converters);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(memberConfiguration).Extended(sut).Create());
+			var memberConfiguration = new MemberConfigurationExtension(converters);
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(memberConfiguration)).Extend(sut).Create());
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -114,11 +114,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
-			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
 				                                      {descriptor.Metadata, IntegerConverter.Default}
 			                                      });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extended(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(members)).Extend(sut).Create());
 
 			var instance = new TestClassReference
 			               {
@@ -154,11 +154,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
-			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
 				                                      {descriptor.Metadata, IntegerConverter.Default}
 			                                      });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extended(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(members)).Extend(sut).Create());
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -195,11 +195,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
-			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
 				                                      {descriptor.Metadata, IntegerConverter.Default}
 			                                      });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extended(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(members)).Extend(sut).Create());
 
 			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -235,11 +235,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 				                                                    {typeInfo, descriptor.Metadata}
 			                                                    }));
 
-			var members = new MemberConfiguration(new Dictionary<MemberInfo, IConverter>
+			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
 				                                      {descriptor.Metadata, IntegerConverter.Default}
 			                                      });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(members).Extended(sut).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(members)).Extend(sut).Create());
 
 			var parent = new TestClassReference {Id = 1};
 			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};

@@ -21,105 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public class ExtendedXmlConfiguration : IExtendedXmlConfiguration, IInternalExtendedXmlConfiguration
+	public class ExtendedXmlConfiguration : KeyedByTypeCollection<ISerializerExtension>, IExtendedXmlConfiguration
 	{
-		readonly IMemberConfiguration _memberConfiguration;
+		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
 
-		readonly KeyedByTypeCollection<ISerializerExtension> _extensions = new KeyedByTypeCollection<ISerializerExtension>();
+		readonly IServicesFactory _source;
 
-		public ExtendedXmlConfiguration() : this(new MemberConfiguration()) {}
+		public ExtendedXmlConfiguration() : this(DefaultExtensions.Default.ToArray()) {}
 
-		public ExtendedXmlConfiguration(IMemberConfiguration memberConfiguration)
+		public ExtendedXmlConfiguration(params ISerializerExtension[] extensions) : this(ServicesFactory, extensions) {}
+
+		public ExtendedXmlConfiguration(IServicesFactory source, params ISerializerExtension[] extensions) : base(extensions)
 		{
-			_memberConfiguration = memberConfiguration;
-		}
-
-		public bool AutoProperties { get; set; }
-		public bool Namespaces { get; set; }
-
-		public XmlReaderSettings ReaderSettings { get; set; } = new XmlReaderSettings
-		                                                        {
-			                                                        IgnoreWhitespace = true,
-			                                                        IgnoreComments = true,
-			                                                        IgnoreProcessingInstructions = true
-		                                                        };
-
-		public XmlWriterSettings WriterSettings { get; set; } = new XmlWriterSettings();
-		public IEncryption EncryptionAlgorithm { get; set; }
-
-		IExtendedXmlTypeConfiguration IInternalExtendedXmlConfiguration.GetTypeConfiguration(Type type)
-		{
-			return _cache.ContainsKey(type) ? _cache[type] : null;
-		}
-
-		readonly Dictionary<Type, IExtendedXmlTypeConfiguration> _cache =
-			new Dictionary<Type, IExtendedXmlTypeConfiguration>();
-
-		public IExtendedXmlTypeConfiguration<T> ConfigureType<T>()
-		{
-			var configType = new ExtendedXmlTypeConfiguration<T>();
-
-			_cache.Add(typeof(T), configType);
-			return configType;
-		}
-
-		/*public IExtendedXmlConfiguration UseAutoProperties()
-		{
-			AutoProperties = true;
-			return this;
-		}
-
-		public IExtendedXmlConfiguration UseNamespaces()
-		{
-			Namespaces = true;
-			return this;
-		}
-
-		public IExtendedXmlConfiguration UseEncryptionAlgorithm(IEncryption propertyEncryption)
-		{
-			EncryptionAlgorithm = propertyEncryption;
-			return this;
-		}*/
-
-		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings)
-		{
-			ReaderSettings = readerSettings;
-			return this;
-		}
-
-		public IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings)
-		{
-			WriterSettings = writerSettings;
-			return this;
-		}
-
-		public IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
-		{
-			ReaderSettings = readerSettings;
-			WriterSettings = writerSettings;
-			return this;
+			_source = source;
 		}
 
 		public IExtendedXmlSerializer Create()
 		{
-			var instances = new Instances(_memberConfiguration, ReaderSettings, WriterSettings).ToArray();
-
-			using (var services = new ConfiguredServices(instances).Get(_extensions))
+			using (var services = _source.Get(this))
 			{
 				var result = services.Get<IExtendedXmlSerializer>();
 				return result;
 			}
 		}
 
-		public void Extend(ISerializerExtension extension) => _extensions.Add(extension);
+		T IExtendedXmlConfiguration.Find<T>() => Find<T>();
 	}
 }

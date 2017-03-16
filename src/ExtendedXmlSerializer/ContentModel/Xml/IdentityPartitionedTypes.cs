@@ -35,11 +35,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class IdentityPartitionedTypes : ITypes
 	{
-		readonly static TypeFormatter TypeFormatter = TypeFormatter.Default;
-
 		readonly Partition _partition;
-
-		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification) : this(specification, TypeFormatter) {}
 
 		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 			: this(WellKnownNamespaces.Default

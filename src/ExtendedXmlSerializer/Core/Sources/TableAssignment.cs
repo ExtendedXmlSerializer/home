@@ -21,29 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, ITableSource<TKey, TValue>
+	class TableAssignment<TKey, TValue> : ICommand<TValue>
 	{
-		readonly static EqualityComparer<TKey> EqualityComparer = EqualityComparer<TKey>.Default;
+		readonly ITableSource<TKey, TValue> _source;
+		readonly TKey _key;
 
-		readonly Func<TKey, TValue> _create;
-
-		protected CacheBase() : this(EqualityComparer) {}
-
-		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
+		public TableAssignment(TKey key, ITableSource<TKey, TValue> source)
 		{
-			_create = Create;
+			_key = key;
+			_source = source;
 		}
 
-		protected abstract TValue Create(TKey parameter);
-
-		public TValue Get(TKey key) => GetOrAdd(key, _create);
-
-		public void Assign(TKey key, TValue value) => this[key] = value;
+		public void Execute(TValue parameter) => _source.Assign(_key, parameter);
 	}
 }

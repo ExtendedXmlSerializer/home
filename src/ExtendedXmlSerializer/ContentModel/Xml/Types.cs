@@ -39,14 +39,16 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		                                                                          .ToDictionary(Identities.Default.Get);
 
 		public static Types Default { get; } = new Types();
-		Types() : this(HasAliasSpecification.Default, TypeLoader.Default, AssemblyTypePartitions.Default) {}
+
+		Types()
+			: this(HasAliasSpecification.Default, TypeFormatter.Default, TypeLoader.Default, AssemblyTypePartitions.Default) {}
 
 		readonly IDictionary<IIdentity, TypeInfo> _aliased;
 
 		readonly ITypes _known, _partitions;
 
-		public Types(ISpecification<TypeInfo> specification, params ITypePartitions[] partitions)
-			: this(Aliased, new IdentityPartitionedTypes(specification), new PartitionedTypes(partitions)) {}
+		public Types(ISpecification<TypeInfo> specification, ITypeFormatter formatter, params ITypePartitions[] partitions)
+			: this(Aliased, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
 
 		public Types(IDictionary<IIdentity, TypeInfo> aliased, ITypes known, ITypes partitions)
 		{

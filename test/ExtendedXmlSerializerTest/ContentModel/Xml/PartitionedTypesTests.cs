@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var type = PartitionedTypes.Default.Get(new Identity(TypeFormatter.Default.Get(expected), @namespace));
+			var type = PartitionedTypes.Default.Get(new Identity(new TypeFormatter(TypeAliases.Default).Get(expected), @namespace));
 			Assert.Equal(expected, type);
 		}
 
