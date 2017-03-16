@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
 {
-	class Prefixes : TableSource<string, string>, IPrefixes
+	sealed class Prefixes : TableSource<string, string>, IPrefixes
 	{
 		public static Prefixes Default { get; } = new Prefixes();
 

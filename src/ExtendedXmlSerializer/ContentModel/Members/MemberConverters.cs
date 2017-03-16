@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberConverters : TableSource<MemberInfo, IConverter>, IMemberConverters
+	sealed class MemberConverters : TableSource<MemberInfo, IConverter>, IMemberConverters
 	{
 		public MemberConverters(IDictionary<MemberInfo, IConverter> store) : base(store) {}
 	}

@@ -22,14 +22,20 @@
 // SOFTWARE.
 
 using System;
-using System.Linq.Expressions;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	class ExtendedXmlPropertyConfiguration<T, TProperty> :
-		IExtendedXmlPropertyConfiguration<T, TProperty>, IExtendedXmlPropertyConfiguration
+	class ExtendedXmlMemberConfiguration : IExtendedXmlMemberConfiguration
 	{
-		public ExtendedXmlTypeConfiguration<T> TypeConfiguration { get; set; }
+		readonly MemberInfo _memberInfo;
+
+		public ExtendedXmlMemberConfiguration(MemberInfo memberInfo)
+		{
+			_memberInfo = memberInfo;
+		}
+
+		/*public ExtendedXmlTypeConfiguration<T> TypeConfiguration { get; set; }
 		public Expression<Func<T, TProperty>> PropertyExpression { get; set; }
 
 		public bool IsObjectReference { get; set; }
@@ -41,7 +47,7 @@ namespace ExtendedXmlSerialization.Configuration
 		public IExtendedXmlPropertyConfiguration<T, TOtherProperty> Property<TOtherProperty>(
 			Expression<Func<T, TOtherProperty>> property)
 		{
-			return TypeConfiguration.Property(property);
+			return TypeConfiguration.Member(property);
 		}
 
 		public IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences()
@@ -74,6 +80,16 @@ namespace ExtendedXmlSerialization.Configuration
 		{
 			ChangedOrder = order;
 			return this;
+		}*/
+
+		public IExtendedXmlMemberConfiguration Name(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IExtendedXmlMemberConfiguration Order(int order)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

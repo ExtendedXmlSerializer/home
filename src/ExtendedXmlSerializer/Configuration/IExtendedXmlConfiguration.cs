@@ -21,20 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using System;
+using System.Collections.Generic;
 using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlConfiguration
+	public interface IExtendedXmlConfiguration : ICollection<ISerializerExtension>
 	{
-		IExtendedXmlTypeConfiguration<T> ConfigureType<T>();
+		T Find<T>() where T : ISerializerExtension;
 
-		void Extend(ISerializerExtension extension);
+		//T Remove<T>() where T : ISerializerExtension;
+
+		bool Remove(Type type);
 
 		IExtendedXmlSerializer Create();
-
-		IExtendedXmlConfiguration WithSettings(XmlReaderSettings readerSettings);
-		IExtendedXmlConfiguration WithSettings(XmlWriterSettings writerSettings);
 	}
 }

@@ -25,9 +25,11 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Core.Sources
 {
-	public class TableSource<TKey, TValue> : IParameterizedSource<TKey, TValue>
+	public class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
 	{
 		readonly IDictionary<TKey, TValue> _store;
+
+		public TableSource() : this(new Dictionary<TKey, TValue>()) {}
 
 		public TableSource(IDictionary<TKey, TValue> store)
 		{
@@ -39,5 +41,7 @@ namespace ExtendedXmlSerialization.Core.Sources
 			TValue result;
 			return _store.TryGetValue(parameter, out result) ? result : default(TValue);
 		}
+
+		public void Assign(TKey key, TValue value) => _store[key] = value;
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerialization.Configuration
 {
-	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, ITableSource<TKey, TValue>
+	public interface IExtendedXmlMemberConfiguration
 	{
-		readonly static EqualityComparer<TKey> EqualityComparer = EqualityComparer<TKey>.Default;
+		/*bool IsObjectReference { get; set; }
+		bool IsAttribute { get; set; }
+		bool IsEncrypt { get; set; }
+		string ChangedName { get; set; }
+		int ChangedOrder { get; set; }
 
-		readonly Func<TKey, TValue> _create;
+IExtendedXmlPropertyConfiguration<T, TOtherProperty> Property<TOtherProperty>(
+			Expression<Func<T, TOtherProperty>> property);
 
-		protected CacheBase() : this(EqualityComparer) {}
+		IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences();
+		IExtendedXmlPropertyConfiguration<T, TProperty> AsAttribute();
+		IExtendedXmlPropertyConfiguration<T, TProperty> Encrypt();
+*/
 
-		protected CacheBase(IEqualityComparer<TKey> comparer) : base(comparer)
-		{
-			_create = Create;
-		}
-
-		protected abstract TValue Create(TKey parameter);
-
-		public TValue Get(TKey key) => GetOrAdd(key, _create);
-
-		public void Assign(TKey key, TValue value) => this[key] = value;
+		IExtendedXmlMemberConfiguration Name(string name);
+		IExtendedXmlMemberConfiguration Order(int order);
 	}
 }

@@ -27,11 +27,11 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MappedMemberEmitSpecifications : TableSource<MemberInfo, IMemberEmitSpecification>, IMemberEmitSpecifications
+	sealed class MappedMemberEmitSpecifications : TableSource<MemberInfo, IMemberEmitSpecification>,
+	                                              IMemberEmitSpecifications
 	{
 		public MappedMemberEmitSpecifications(IDictionary<MemberInfo, IMemberEmitSpecification> store) : base(store) {}
 
-		public IMemberEmitSpecification Get(IMember parameter)
-			=> base.Get(parameter.Metadata) ?? base.Get(parameter.MemberType);
+		public IMemberEmitSpecification Get(IMember parameter) => Get(parameter.Metadata) ?? Get(parameter.MemberType);
 	}
 }

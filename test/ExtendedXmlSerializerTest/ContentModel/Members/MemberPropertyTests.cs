@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Message)), StringConverter.Default},
 				                 {typeof(SimpleSubject).GetRuntimeProperty(nameof(SimpleSubject.Number)), IntegerConverter.Default}
 			                 };
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 
 			var serializer = configuration.Create();
 
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 
 			var serializer = configuration.Create();
 
@@ -116,7 +116,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 
 			var serializer = configuration.Create();
 
@@ -153,7 +153,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 			var serializer = configuration.Create();
 
 			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
@@ -189,7 +189,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 					                 IntegerConverter.Default
 				                 }
 			                 };
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 			var serializer = configuration.Create();
 
 			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
@@ -237,7 +237,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                 }
 			                 };
 
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 
 			var serializer = configuration.Create();
 
@@ -303,7 +303,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 				                 }
 			                 };
 
-			var configuration = new ExtendedXmlConfiguration(new MemberConfiguration(converters));
+			var configuration = new ExtendedXmlConfiguration(DefaultExtensions.Default.With(new MemberConfigurationExtension(converters)));
 			var serializer = configuration.Create();
 
 			var expected = new GenericDictionaryWithProperties<int, string>

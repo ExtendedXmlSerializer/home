@@ -27,7 +27,8 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class RuntimeMemberSpecifications : TableSource<MemberInfo, IRuntimeMemberSpecification>, IRuntimeMemberSpecifications
+	sealed class RuntimeMemberSpecifications : TableSource<MemberInfo, IRuntimeMemberSpecification>,
+	                                           IRuntimeMemberSpecifications
 	{
 		public RuntimeMemberSpecifications(IDictionary<MemberInfo, IRuntimeMemberSpecification> store) : base(store) {}
 	}

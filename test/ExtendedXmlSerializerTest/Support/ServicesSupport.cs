@@ -33,17 +33,12 @@ namespace ExtendedXmlSerialization.Test.Support
 {
 	class ServicesSupport : IServices
 	{
-		readonly static ISerializerExtension[] Empty = {};
-
 		readonly IServices _services;
 
-		public ServicesSupport() : this(Empty) {}
+		public ServicesSupport() : this(DefaultExtensions.Default.ToArray()) {}
 
 		public ServicesSupport(params ISerializerExtension[] extensions)
-			: this(extensions, new Instances(new MemberConfiguration()).ToArray()) {}
-
-		public ServicesSupport(IEnumerable<ISerializerExtension> extensions, params object[] services)
-			: this(new ConfiguredServices(services).Get(extensions)) {}
+			: this(ServicesFactory.Default.Get(new ExtendedXmlConfiguration(extensions))) {}
 
 		public ServicesSupport(IServices services)
 		{

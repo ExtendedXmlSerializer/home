@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			const string message = "Hello World!  This is a value set in a property with a variable type.", 
 				expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2""><Interface exs:type=""OptimizedNamespaceExtensionTests-Implementation""><PropertyName>Hello World!  This is a value set in a property with a variable type.</PropertyName></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
 			var instance = new ClassWithDifferingPropertyType { Interface = new Implementation { PropertyName = message } };
-			var serializer = new ExtendedXmlConfiguration().Extended(OptimizedNamespaceExtension.Default).Create();
+			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Core"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
 #endif
 			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
-			var serializer = new ExtendedXmlConfiguration().Extended(OptimizedNamespaceExtension.Default).Create();
+			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}
@@ -74,7 +74,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 					                                      }
 				                           }
 			               };
-			var serializer = new ExtendedXmlConfiguration().Extended(OptimizedNamespaceExtension.Default).Create();
+			var serializer = new ExtendedXmlConfiguration().Extend(OptimizedNamespaceExtension.Default).Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 			

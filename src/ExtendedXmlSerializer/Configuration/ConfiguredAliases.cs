@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,18 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	interface IInternalExtendedXmlConfiguration
+	sealed class ConfiguredAliases : IAliases
 	{
-		bool AutoProperties { get; set; }
-		bool Namespaces { get; set; }
-		XmlReaderSettings ReaderSettings { get; set; }
-		XmlWriterSettings WriterSettings { get; set; }
-		
-		IExtendedXmlTypeConfiguration GetTypeConfiguration(Type type);
+		readonly ITypeConfiguration<string> _names;
+		readonly IExtendedXmlConfiguration _configuration;
+		readonly IAliases _aliases;
+
+		public ConfiguredAliases(IExtendedXmlConfiguration configuration, IAliases aliases)
+			: this(ConfiguredNames.Default, configuration, aliases) {}
+
+		public ConfiguredAliases(ITypeConfiguration<string> names, IExtendedXmlConfiguration configuration, IAliases aliases)
+		{
+			_names = names;
+			_configuration = configuration;
+			_aliases = aliases;
+		}
+
+		public string Get(TypeInfo parameter) 
+			=> _names.Get(_configuration.GetTypeConfiguration(parameter)) ?? _aliases.Get(parameter);
 	}
 }

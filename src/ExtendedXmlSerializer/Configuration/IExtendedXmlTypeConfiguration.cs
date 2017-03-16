@@ -21,18 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq.Expressions;
-using System.Xml;
-using System.Xml.Linq;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlTypeConfiguration<T>
+	public interface IExtendedXmlTypeConfiguration : ISource<TypeInfo>
 	{
-		IExtendedXmlPropertyConfiguration<T, TProperty> Property<TProperty>(Expression<Func<T, TProperty>> property);
+		IExtendedXmlMemberConfiguration Member(string name);
 
-		IExtendedXmlTypeConfiguration<T> CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize);
+		/*int Version { get; }
+		string Name { get; }*/
+		/*void Map(Type targetType, XElement currentNode);
+		object ReadObject(XElement element);
+		void WriteObject(XmlWriter writer, object obj);
+		
+		bool IsCustomSerializer { get; set; }
+		bool IsObjectReference { get; set; }
+		Func<object, string> GetObjectId { get; set; }
+
+		// IMemberConfigurator<T, TMember> Member<TMember>(Expression<Func<T, TMember>> member);
+		/*IExtendedXmlTypeConfiguration<T> CustomSerializer(Action<XmlWriter, T> serializer, Func<XElement, T> deserialize);
 		IExtendedXmlTypeConfiguration<T> CustomSerializer(IExtendedXmlCustomSerializer<T> serializer);
 
 		IExtendedXmlTypeConfiguration<T> AddMigration(Action<XElement> migration);
@@ -40,19 +49,6 @@ namespace ExtendedXmlSerialization.Configuration
 
 		IExtendedXmlTypeConfiguration<T> EnableReferences();
 		IExtendedXmlTypeConfiguration<T> Name(string name);
-	}
-
-	interface IExtendedXmlTypeConfiguration
-	{
-		IExtendedXmlPropertyConfiguration GetPropertyConfiguration(string name);
-		int Version { get; }
-		string Name { get; }
-		void Map(Type targetType, XElement currentNode);
-		object ReadObject(XElement element);
-		void WriteObject(XmlWriter writer, object obj);
-
-		bool IsCustomSerializer { get; set; }
-		bool IsObjectReference { get; set; }
-		Func<object, string> GetObjectId { get; set; }
+		*/
 	}
 }
