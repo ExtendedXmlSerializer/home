@@ -45,10 +45,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureType()
 		{
-			var config = Configure(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>();
-			});
+			var config = Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>(); });
 
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType);
@@ -60,15 +57,21 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureNameForType()
 		{
-			var sut = Configure(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Name(Testclass);
-			});
-			Assert.Equal(ConfiguredNames.Default.Get(sut.Type<TestClassPrimitiveTypes>()), Testclass);
-			Assert.Null(ConfiguredNames.Default.Get(sut.Type<TestClassPrimitiveTypesNullable>()));
+			var configuration = new ExtendedXmlConfiguration();
+			var sut = configuration.Type<SimpleTestSubject>().Name(Testclass);
 
-			var temp = new SerializationSupport(sut.Create());
-			temp.WriteLine(TestClassPrimitiveTypes.Create());
+			Assert.Equal(sut.Name.Get(), Testclass);
+			Assert.Null(configuration.Type<TestClassPrimitiveTypesNullable>().Name.Get());
+
+			var support = new SerializationSupport(configuration);
+			var expected = new SimpleTestSubject { BasicProperty = "Hello World!" };
+			var actual = support.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><UpdatedTestClassName xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><BasicProperty>Hello World!</BasicProperty></UpdatedTestClassName>");
+			Assert.Equal(expected.BasicProperty, actual.BasicProperty);
+		}
+
+		class SimpleTestSubject
+		{
+			public string BasicProperty { get; set; }
 		}
 
 		/*[Fact]

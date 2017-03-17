@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Configuration
 {
-	class HasAliasSpecification : ISpecification<TypeInfo>
+	class DefaultNames : ReadOnlyDictionary<TypeInfo, string>
 	{
-		public static HasAliasSpecification Default { get; } = new HasAliasSpecification();
-		HasAliasSpecification() {}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsDefined(typeof(XmlRootAttribute));
+		public static DefaultNames Default { get; } = new DefaultNames();
+		DefaultNames() : base(WellKnownAliases.Default.ToDictionary(x => x.Key.GetTypeInfo(), x => x.Value)) {}
 	}
 }

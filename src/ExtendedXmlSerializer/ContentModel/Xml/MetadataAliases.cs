@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,29 +22,15 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	sealed class GenericTypes : IGenericTypes
+	sealed class MetadataAliases : IAliases
 	{
-		readonly static GenericActivatedTypeSpecification Specification = GenericActivatedTypeSpecification.Default;
+		public static MetadataAliases Default { get; } = new MetadataAliases();
+		MetadataAliases() {}
 
-		readonly ITypes _generic;
-
-		readonly ITypes _types;
-
-		public GenericTypes(ITypes types, ITypeFormatter formatter, ITypeIdentities identities) : this(
-			new Types(Specification, identities, formatter, new AssemblyTypePartitions(Specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		public string Get(TypeInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

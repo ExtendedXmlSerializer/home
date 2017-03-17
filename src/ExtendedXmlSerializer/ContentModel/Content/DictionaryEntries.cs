@@ -33,10 +33,12 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	sealed class DictionaryEntries : IDictionaryEntries
 	{
-		public static TypeInfo Type { get; } = typeof(DictionaryEntry).GetTypeInfo();
-		readonly static PropertyInfo Key = Type.GetProperty(nameof(DictionaryEntry.Key));
-		readonly static PropertyInfo Value = Type.GetProperty(nameof(DictionaryEntry.Value));
-		readonly static IWriter Element = ElementOption.Default.Get(Type);
+		readonly static TypeInfo Type = typeof(DictionaryEntry).GetTypeInfo();
+
+		readonly static PropertyInfo
+			Key = Type.GetProperty(nameof(DictionaryEntry.Key)),
+			Value = Type.GetProperty(nameof(DictionaryEntry.Value));
+
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
 		readonly IReader _activator;
@@ -46,8 +48,9 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IActivation activation, IMembers profiles, IMemberSerializers serializers)
-			: this(activation.Get<DictionaryEntry>(), profiles, serializers, Element, Pairs) {}
+		public DictionaryEntries(Xml.IIdentities identities, IActivation activation, IMembers profiles,
+		                         IMemberSerializers serializers)
+			: this(activation.Get<DictionaryEntry>(), profiles, serializers, new ElementOption(identities).Get(Type), Pairs) {}
 
 		public DictionaryEntries(IReader activator, IMembers profiles, IMemberSerializers serializers, IWriter element,
 		                         IDictionaryPairTypesLocator locator)

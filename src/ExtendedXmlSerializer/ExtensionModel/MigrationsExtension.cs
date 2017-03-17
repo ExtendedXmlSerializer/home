@@ -45,17 +45,32 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
-		IContents Register(IServiceProvider _, IContents contents) => new Contents(this, contents);
+		IContents Register(IServiceProvider services, IContents contents)
+			=>
+				new Contents(services.Get<IGenericTypes>(), services.Get<ITypes>(), services.Get<ITypeProperty>(),
+				             services.Get<IItemTypeProperty>(), services.Get<IArgumentsProperty>(), this, contents);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		sealed class Contents : IContents
 		{
+			readonly IGenericTypes _genericTypes;
+			readonly ITypes _types;
+			readonly ITypeProperty _type;
+			readonly IItemTypeProperty _item;
+			readonly IArgumentsProperty _arguments;
 			readonly IParameterizedSource<TypeInfo, IExtendedXmlTypeMigrator> _migrators;
 			readonly IContents _contents;
 
-			public Contents(IParameterizedSource<TypeInfo, IExtendedXmlTypeMigrator> migrators, IContents contents)
+			public Contents(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+			                IArgumentsProperty arguments, IParameterizedSource<TypeInfo, IExtendedXmlTypeMigrator> migrators,
+			                IContents contents)
 			{
+				_genericTypes = genericTypes;
+				_types = types;
+				_type = type;
+				_item = item;
+				_arguments = arguments;
 				_migrators = migrators;
 				_contents = contents;
 			}
@@ -65,7 +80,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				var migrator = _migrators.Get(parameter);
 				var content = _contents.Get(parameter);
 				var result = migrator != null
-					? new Serializer(new Migrator(migrator.GetAllMigrations().ToImmutableArray()), content)
+					? new Serializer(
+						new Migrator(_genericTypes, _types, _type, _item, _arguments, migrator.GetAllMigrations().ToImmutableArray()),
+						content)
 					: content;
 				return result;
 			}
@@ -76,13 +93,27 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			{
 				readonly static MigrationVersionProperty Property = MigrationVersionProperty.Default;
 
+				readonly IGenericTypes _genericTypes;
+				readonly ITypes _types;
+				readonly ITypeProperty _type;
+				readonly IItemTypeProperty _item;
+				readonly IArgumentsProperty _arguments;
 				readonly ImmutableArray<Action<XElement>> _migrations;
 				readonly IMigrationVersionProperty _property;
 
-				public Migrator(ImmutableArray<Action<XElement>> migrations) : this(Property, migrations) {}
+				public Migrator(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+				                IArgumentsProperty arguments, ImmutableArray<Action<XElement>> migrations)
+					: this(genericTypes, types, type, item, arguments, Property, migrations) {}
 
-				public Migrator(IMigrationVersionProperty property, ImmutableArray<Action<XElement>> migrations)
+				public Migrator(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+				                IArgumentsProperty arguments, IMigrationVersionProperty property,
+				                ImmutableArray<Action<XElement>> migrations)
 				{
+					_genericTypes = genericTypes;
+					_types = types;
+					_type = type;
+					_item = item;
+					_arguments = arguments;
 					_migrations = migrations;
 					_property = property;
 				}
@@ -96,7 +127,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 					if (version > length)
 					{
-						throw new XmlException($"Unknown varsion number {version.ToString()} for type {parameter.Classification}.");
+						throw new XmlException($"Unknown varsion number {version} for type {parameter.Classification}.");
 					}
 					if (_migrations == null)
 					{
@@ -110,10 +141,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 						var migration = _migrations.ElementAtOrDefault(index);
 						if (migration == null)
 							throw new XmlException(
-								$"Migrations for type {fullName} contains invalid migration at index {i.ToString()}.");
+								$"Migrations for type {fullName} contains invalid migration at index {i}.");
 						_migrations[index].Invoke(element);
 					}
-					var result = new XmlReader(element.CreateReader());
+					var result = new XmlReader(_genericTypes, _types, _type, _item, _arguments, element.CreateReader());
 					return result;
 				}
 

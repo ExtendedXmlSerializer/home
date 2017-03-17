@@ -21,36 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class VariableTypeMemberContents : IMemberContents
+	sealed class TypeFormatters : ReferenceCacheBase<IXmlWriter, ITypeFormatter>, ITypeFormatters
 	{
-		readonly IVariableTypeMemberSpecifications _specifications;
-		readonly ITypeProperty _type;
-		readonly ISerializer _runtime;
-		readonly IContents _contents;
+		readonly Xml.IIdentities _identities;
 
-		public VariableTypeMemberContents(ISerializer runtime, ITypeProperty type, IContents contents)
-			: this(VariableTypeMemberSpecifications.Default, type, runtime, contents) {}
-
-		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, ITypeProperty type,
-		                                  ISerializer runtime, IContents contents)
+		public TypeFormatters(Xml.IIdentities identities)
 		{
-			_specifications = specifications;
-			_type = type;
-			_runtime = runtime;
-			_contents = contents;
+			_identities = identities;
 		}
 
-		public ISerializer Get(IMember parameter)
-		{
-			var contents = _contents.Get(parameter.MemberType);
-			var specification = _specifications.Get(parameter);
-			var result = new Serializer(contents, new VariableTypedMemberWriter(specification, _runtime, contents, _type));
-			return result;
-		}
+		protected override ITypeFormatter Create(IXmlWriter parameter) => new TypeFormatter(_identities, parameter);
 	}
 }

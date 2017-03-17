@@ -51,11 +51,7 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 		}
 
 		public sealed override ISerializer Get(TypeInfo parameter)
-		{
-			var itemType = _locator.Get(parameter);
-			var result = Create(_serializers.Get(itemType), parameter);
-			return result;
-		}
+			=> Create(_serializers.Get(_locator.Get(parameter)), parameter);
 
 		protected abstract ISerializer Create(ISerializer item, TypeInfo classification);
 	}

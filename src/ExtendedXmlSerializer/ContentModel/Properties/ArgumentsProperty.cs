@@ -36,8 +36,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	sealed class ArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, IArgumentsProperty
 	{
-		public static ArgumentsProperty Default { get; } = new ArgumentsProperty();
-		ArgumentsProperty() : this(NamesList.Default, TypeParser.Defaults, TypeFormatter.Defaults) {}
+		public ArgumentsProperty(ITypeParsers parsers, ITypeFormatters formatters)
+			: this(NamesList.Default, parsers, formatters) {}
 
 		readonly Parser<IEnumerable<ParsedName>> _names;
 		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;

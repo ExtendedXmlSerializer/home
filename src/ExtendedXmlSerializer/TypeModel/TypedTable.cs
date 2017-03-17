@@ -26,5 +26,5 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T> {}
+	public class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T> {}
 }

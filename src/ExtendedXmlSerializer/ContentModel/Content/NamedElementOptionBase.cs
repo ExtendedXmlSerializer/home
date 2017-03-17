@@ -29,15 +29,13 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 	abstract class NamedElementOptionBase : ElementOptionBase
 	{
 		readonly static AlwaysSpecification<TypeInfo> Always = AlwaysSpecification<TypeInfo>.Default;
-		readonly static Xml.Identities Identities = Xml.Identities.Default;
 
 		readonly Xml.IIdentities _identities;
-		
-		protected NamedElementOptionBase() : this(Always) {}
 
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification) : this(specification, Identities) {}
+		protected NamedElementOptionBase(Xml.IIdentities identities) : this(Always, identities) {}
 
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, Xml.IIdentities identities) : base(specification)
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, Xml.IIdentities identities)
+			: base(specification)
 		{
 			_identities = identities;
 		}

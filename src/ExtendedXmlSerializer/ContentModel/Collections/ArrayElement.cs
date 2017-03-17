@@ -31,15 +31,11 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	class ArrayElement : ElementBase
 	{
-		readonly static IIdentity Identity = Xml.Identities.Default.Get(typeof(Array).GetTypeInfo());
-		readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
-
 		readonly ITypeProperty _property;
 		readonly TypeInfo _element;
 
-		public ArrayElement(TypeInfo element) : this(ItemTypeProperty, element) {}
-
-		public ArrayElement(ITypeProperty property, TypeInfo element) : base(Identity)
+		public ArrayElement(Xml.IIdentities identities, IItemTypeProperty property, TypeInfo element)
+			: base(identities.Get(typeof(Array).GetTypeInfo()))
 		{
 			_property = property;
 			_element = element;

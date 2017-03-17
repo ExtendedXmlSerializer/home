@@ -30,13 +30,13 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	sealed class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
 	{
-		public static Identities Default { get; } = new Identities();
-		Identities() : this(ContentModel.Identities.Default, TypeAliases.Default, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
-
 		readonly ContentModel.IIdentities _source;
 		readonly IAliases _alias;
 		readonly ITypeFormatter _formatter;
 		readonly IIdentifiers _identifiers;
+
+		public Identities(IAliases aliases)
+			: this(ContentModel.Identities.Default, aliases, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
 
 		public Identities(ContentModel.IIdentities source, IAliases alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{

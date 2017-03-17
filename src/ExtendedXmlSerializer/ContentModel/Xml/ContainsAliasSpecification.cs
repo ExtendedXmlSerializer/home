@@ -22,27 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	sealed class ConfiguredAliases : IAliases
+	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
 	{
-		readonly ITypeConfiguration<string> _names;
-		readonly IExtendedXmlConfiguration _configuration;
-		readonly IAliases _aliases;
-
-		public ConfiguredAliases(IExtendedXmlConfiguration configuration, IAliases aliases)
-			: this(ConfiguredNames.Default, configuration, aliases) {}
-
-		public ConfiguredAliases(ITypeConfiguration<string> names, IExtendedXmlConfiguration configuration, IAliases aliases)
-		{
-			_names = names;
-			_configuration = configuration;
-			_aliases = aliases;
-		}
-
-		public string Get(TypeInfo parameter) 
-			=> _names.Get(_configuration.GetTypeConfiguration(parameter)) ?? _aliases.Get(parameter);
+		public ContainsAliasSpecification(IAliases aliases) : base(aliases.Get) {}
 	}
 }

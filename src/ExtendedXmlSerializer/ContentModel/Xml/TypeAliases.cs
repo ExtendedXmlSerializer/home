@@ -22,20 +22,12 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	class TypeAliases : AliasesBase<TypeInfo>, IAliases
+	sealed class TypeAliases : AliasesBase<TypeInfo>, IAliases
 	{
-		public static TypeAliases Default { get; } = new TypeAliases();
-		TypeAliases() : this(WellKnownAliases.Default.ToDictionary(x => x.Key.GetTypeInfo(), x => x.Value)) {}
-
 		public TypeAliases(IDictionary<TypeInfo, string> names) : base(names) {}
-
-		public sealed override string Get(TypeInfo parameter)
-			=> base.Get(parameter) ?? parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }

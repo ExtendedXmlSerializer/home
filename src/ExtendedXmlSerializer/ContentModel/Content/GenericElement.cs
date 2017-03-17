@@ -30,12 +30,8 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class GenericElement : ElementBase
 	{
-		readonly static ArgumentsProperty Property = ArgumentsProperty.Default;
-
 		readonly IArgumentsProperty _property;
 		readonly ImmutableArray<Type> _arguments;
-
-		public GenericElement(IIdentity identity, ImmutableArray<Type> arguments) : this(Property, identity, arguments) {}
 
 		public GenericElement(IArgumentsProperty property, IIdentity identity, ImmutableArray<Type> arguments)
 			: base(identity)

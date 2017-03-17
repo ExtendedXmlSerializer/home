@@ -21,36 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
-
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	sealed class VariableTypeMemberContents : IMemberContents
+	public sealed class LinkedDecoratedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
+		where TResult : class
 	{
-		readonly IVariableTypeMemberSpecifications _specifications;
-		readonly ITypeProperty _type;
-		readonly ISerializer _runtime;
-		readonly IContents _contents;
+		readonly IParameterizedSource<TParameter, TResult> _next;
 
-		public VariableTypeMemberContents(ISerializer runtime, ITypeProperty type, IContents contents)
-			: this(VariableTypeMemberSpecifications.Default, type, runtime, contents) {}
-
-		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, ITypeProperty type,
-		                                  ISerializer runtime, IContents contents)
+		public LinkedDecoratedSource(IParameterizedSource<TParameter, TResult> source,
+		                             IParameterizedSource<TParameter, TResult> next) : base(source)
 		{
-			_specifications = specifications;
-			_type = type;
-			_runtime = runtime;
-			_contents = contents;
+			_next = next;
 		}
 
-		public ISerializer Get(IMember parameter)
-		{
-			var contents = _contents.Get(parameter.MemberType);
-			var specification = _specifications.Get(parameter);
-			var result = new Serializer(contents, new VariableTypedMemberWriter(specification, _runtime, contents, _type));
-			return result;
-		}
+		public override TResult Get(TParameter parameter) => base.Get(parameter) ?? _next.Get(parameter);
 	}
 }

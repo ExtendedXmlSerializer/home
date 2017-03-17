@@ -29,18 +29,23 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
 	public static class Extensions
 	{
-		/*readonly static TypeEqualityComparer<ISerializerExtension> TypeEqualityComparer =
-			TypeEqualityComparer<ISerializerExtension>.Instance;*/
 		public static ExtendedXmlTypeConfiguration<T> ConfigureType<T>(this IExtendedXmlConfiguration @this)
 			=> @this.Type<T>();
 
 		public static ExtendedXmlTypeConfiguration<T> Type<T>(this IExtendedXmlConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
+
+		public static ExtendedXmlTypeConfiguration<T> Name<T>(this ExtendedXmlTypeConfiguration<T> @this, string name)
+		{
+			@this.Name.Assign(name);
+			return @this;
+		}
 
 		public static IExtendedXmlTypeConfiguration GetTypeConfiguration(this IExtendedXmlConfiguration @this, Type type)
 			=> @this.GetTypeConfiguration(type.GetTypeInfo());
@@ -48,11 +53,25 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IExtendedXmlTypeConfiguration GetTypeConfiguration(this IExtendedXmlConfiguration @this, TypeInfo type)
 			=> TypeConfigurations.Defaults.Get(@this).Get(type);
 
-		public static T Name<T>(this T @this, string name) where T : IExtendedXmlTypeConfiguration
+		public static T With<T>(this IExtendedXmlConfiguration @this) where T : class, ISerializerExtension
+			=> @this.Find<T>() ??  @this.Add<T>();
+
+		public static T Add<T>(this IExtendedXmlConfiguration @this) where T : ISerializerExtension => Add(@this, Activators.Default.New<T>);
+
+		public static T Add<T>(this IExtendedXmlConfiguration @this, Func<T> create) where T : ISerializerExtension
 		{
-			ConfiguredNames.Default.Assign(@this, name);
+			var result = create();
+			@this.Add(result);
+			return result;
+		}
+
+		/*public static ExtendedXmlTypeConfiguration<T> Name<T>(this ExtendedXmlTypeConfiguration<T> @this, string name)
+		{
+			ConfiguredNames.Default.Assign(@this.Get(), name);
 			return @this;
 		}
+
+		public static string Name<T>(this ExtendedXmlTypeConfiguration<T> @this) => ConfiguredNames.Default.Get(@this.Get());*/
 
 		public static ExtendedXmlTypeConfiguration<T> CustomSerializer<T>(
 			this ExtendedXmlTypeConfiguration<T> @this,
@@ -109,7 +128,8 @@ namespace ExtendedXmlSerialization.Configuration
 		                                               params ISerializerExtension[] extensions)
 			=> new ExtendedXmlConfiguration(@this.With(extensions));
 
-		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this, params ISerializerExtension[] extensions)
+		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
+		                                          params ISerializerExtension[] extensions)
 			=> @this.TypeZip(extensions).ToArray();
 
 		public static IExtendedXmlConfiguration UseEncryptionAlgorithm(this IExtendedXmlConfiguration @this,

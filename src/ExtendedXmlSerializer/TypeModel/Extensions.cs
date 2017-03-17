@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,29 +22,22 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class GenericTypes : IGenericTypes
+	public static class Extensions
 	{
-		readonly static GenericActivatedTypeSpecification Specification = GenericActivatedTypeSpecification.Default;
-
-		readonly ITypes _generic;
-
-		readonly ITypes _types;
-
-		public GenericTypes(ITypes types, ITypeFormatter formatter, ITypeIdentities identities) : this(
-			new Types(Specification, identities, formatter, new AssemblyTypePartitions(Specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
+		public static ITypedTable<T> Assign<T>(this ITypedTable<T> @this, T name)
 		{
-			_generic = generic;
-			_types = types;
+			@this.Assign(Support<T>.Key, name);
+			return @this;
 		}
 
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		public static T Get<T>(this ITypedTable<T> @this) => @this.Get(Support<T>.Key);
+	}
+
+	static class Support<T>
+	{
+		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
 	}
 }

@@ -21,36 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class VariableTypeMemberContents : IMemberContents
-	{
-		readonly IVariableTypeMemberSpecifications _specifications;
-		readonly ITypeProperty _type;
-		readonly ISerializer _runtime;
-		readonly IContents _contents;
-
-		public VariableTypeMemberContents(ISerializer runtime, ITypeProperty type, IContents contents)
-			: this(VariableTypeMemberSpecifications.Default, type, runtime, contents) {}
-
-		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, ITypeProperty type,
-		                                  ISerializer runtime, IContents contents)
-		{
-			_specifications = specifications;
-			_type = type;
-			_runtime = runtime;
-			_contents = contents;
-		}
-
-		public ISerializer Get(IMember parameter)
-		{
-			var contents = _contents.Get(parameter.MemberType);
-			var specification = _specifications.Get(parameter);
-			var result = new Serializer(contents, new VariableTypedMemberWriter(specification, _runtime, contents, _type));
-			return result;
-		}
-	}
+	public interface ITypeFormatters : IParameterizedSource<IXmlWriter, ITypeFormatter> {}
 }

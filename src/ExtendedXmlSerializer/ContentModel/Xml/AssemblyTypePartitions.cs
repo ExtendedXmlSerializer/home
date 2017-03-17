@@ -31,33 +31,37 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	sealed class AssemblyTypePartitions : CacheBase<Assembly, Partition>, ITypePartitions
+	sealed class AssemblyTypePartitions : CacheBase<Assembly, Partition>, IAssemblyTypePartitions
 	{
-		readonly static Func<TypeInfo, string> Formatter = TypeFormatter.Default.Get;
 		readonly static IApplicationTypes ApplicationTypes = TypeModel.ApplicationTypes.All;
-
-		public static AssemblyTypePartitions Default { get; } = new AssemblyTypePartitions();
-		AssemblyTypePartitions() : this(HasAliasSpecification.Default) {}
 
 		readonly IApplicationTypes _types;
 		readonly Func<TypeInfo, bool> _specification;
+		readonly Func<TypeInfo, string> _formatter;
 		readonly Func<TypeInfo, string> _key;
+		readonly Func<IGrouping<string, TypeInfo>, Func<string, TypeInfo>> _format;
 
-		public AssemblyTypePartitions(ISpecification<TypeInfo> specification)
-			: this(ApplicationTypes, specification.IsSatisfiedBy, x => x.Namespace) {}
+		public AssemblyTypePartitions(IContainsAliasSpecification specification, ITypeFormatter formatter)
+			: this(specification, formatter.Get) {}
 
-		public AssemblyTypePartitions(IApplicationTypes types, Func<TypeInfo, bool> specification, Func<TypeInfo, string> key)
+		public AssemblyTypePartitions(ISpecification<TypeInfo> specification, Func<TypeInfo, string> formatter)
+			: this(specification.IsSatisfiedBy, formatter, ApplicationTypes, x => x.Namespace) {}
+
+		public AssemblyTypePartitions(Func<TypeInfo, bool> specification, Func<TypeInfo, string> formatter,
+		                              IApplicationTypes types, Func<TypeInfo, string> key)
 		{
 			_types = types;
 			_specification = specification;
+			_formatter = formatter;
 			_key = key;
+			_format = Format;
 		}
 
 		protected override Partition Create(Assembly parameter) =>
 			_types.Get(parameter)
 			      .Where(_specification)
 			      .ToLookup(_key)
-			      .ToDictionary(x => x.Key, x => new Func<string, TypeInfo>(x.ToDictionary(Formatter).Get))
+			      .ToDictionary(x => x.Key, _format)
 			      .Get;
 
 		public TypeInfo Get(TypePartition parameter)
@@ -67,5 +71,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			var result = ns?.Invoke(parameter.Name);
 			return result;
 		}
+
+		Func<string, TypeInfo> Format(IGrouping<string, TypeInfo> grouping) => grouping.ToDictionary(_formatter).Get;
 	}
 }

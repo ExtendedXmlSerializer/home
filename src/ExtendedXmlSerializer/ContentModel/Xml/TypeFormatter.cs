@@ -28,9 +28,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class TypeFormatter : ITypeFormatter
 	{
-		public static TypeFormatter Default { get; } = new TypeFormatter();
-		TypeFormatter() : this(TypeAliases.Default) {}
-
 		readonly IAliases _alias;
 		readonly ITypeFormatter _formatter;
 
