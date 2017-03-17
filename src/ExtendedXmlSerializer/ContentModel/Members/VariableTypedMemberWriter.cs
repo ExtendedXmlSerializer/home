@@ -31,14 +31,9 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	sealed class VariableTypedMemberWriter : DecoratedWriter
 	{
-		readonly static ITypeProperty Property = TypeProperty.Default;
-
 		readonly ISpecification<Type> _type;
 		readonly ISerializer _runtime;
 		readonly ITypeProperty _property;
-
-		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
-			: this(type, runtime, body, Property) {}
 
 		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
 			: base(body)

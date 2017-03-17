@@ -32,10 +32,8 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 	{
 		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;
 		readonly IParameterizedSource<IXmlWriter, ITypeFormatter> _formatters;
-		protected TypePropertyBase(string displayName) : this(displayName, TypeParser.Defaults, TypeFormatter.Defaults) {}
 
-		protected TypePropertyBase(string displayName, IParameterizedSource<IXmlReader, ITypeParser> parsers,
-		                           IParameterizedSource<IXmlWriter, ITypeFormatter> formatters) : base(displayName)
+		protected TypePropertyBase(ITypeParsers parsers, ITypeFormatters formatters, string displayName) : base(displayName)
 		{
 			_parsers = parsers;
 			_formatters = formatters;

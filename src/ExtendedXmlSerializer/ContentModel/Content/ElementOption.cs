@@ -27,8 +27,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class ElementOption : NamedElementOptionBase
 	{
-		public static ElementOption Default { get; } = new ElementOption();
-		ElementOption() {}
+		public ElementOption(Xml.IIdentities identities) : base(identities) {}
 
 		public sealed override IWriter Create(IIdentity identity, TypeInfo classification) => new Element(identity);
 	}

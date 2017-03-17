@@ -21,10 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
@@ -33,24 +30,19 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	sealed class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
-		readonly static Dictionary<IIdentity, TypeInfo> Aliased = WellKnownAliases.Default
-		                                                                          .Select(x => x.Key)
-		                                                                          .YieldMetadata()
-		                                                                          .ToDictionary(Identities.Default.Get);
-
-		public static Types Default { get; } = new Types();
-
-		Types()
-			: this(HasAliasSpecification.Default, TypeFormatter.Default, TypeLoader.Default, AssemblyTypePartitions.Default) {}
-
-		readonly IDictionary<IIdentity, TypeInfo> _aliased;
+		readonly ITypeIdentities _aliased;
 
 		readonly ITypes _known, _partitions;
 
-		public Types(ISpecification<TypeInfo> specification, ITypeFormatter formatter, params ITypePartitions[] partitions)
-			: this(Aliased, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
+		public Types(IContainsAliasSpecification specification, IAssemblyTypePartitions partitions, ITypeIdentities identities,
+		             ITypeFormatter formatter)
+			: this(specification, identities, formatter, TypeLoader.Default, partitions) {}
 
-		public Types(IDictionary<IIdentity, TypeInfo> aliased, ITypes known, ITypes partitions)
+		internal Types(ISpecification<TypeInfo> specification, ITypeIdentities identities, ITypeFormatter formatter,
+		               params ITypePartitions[] partitions)
+			: this(identities, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
+
+		Types(ITypeIdentities aliased, ITypes known, ITypes partitions)
 		{
 			_aliased = aliased;
 			_known = known;

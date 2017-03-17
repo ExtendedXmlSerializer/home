@@ -33,18 +33,15 @@ namespace ExtendedXmlSerialization.ContentModel.Properties
 {
 	sealed class TypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
 	{
-		readonly static Xml.Identities Identities = Xml.Identities.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
-		public static IParameterizedSource<IXmlWriter, ITypeFormatter> Defaults { get; } =
-			new ReferenceCache<IXmlWriter, ITypeFormatter>(x => new TypeFormatter(x));
 
 		readonly IXmlWriter _writer;
 		readonly Xml.IIdentities _identities;
 		readonly INameConverter _converter;
 
-		TypeFormatter(IXmlWriter writer) : this(writer, Identities, Converter) {}
+		public TypeFormatter(Xml.IIdentities identities, IXmlWriter writer) : this(identities, writer, Converter) {}
 
-		public TypeFormatter(IXmlWriter writer, Xml.IIdentities identities, INameConverter converter)
+		public TypeFormatter(Xml.IIdentities identities, IXmlWriter writer, INameConverter converter)
 		{
 			_writer = writer;
 			_identities = identities;

@@ -23,19 +23,19 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	sealed class Elements : Selector<TypeInfo, IWriter>, IElements
 	{
-		public static Elements Default { get; } = new Elements();
+		public Elements(Xml.IIdentities identities, IItemTypeProperty item, IArgumentsProperty arguments) : base(
+			new ArrayElementOption(identities, item),
+			new GenericElementOption(identities, arguments),
+			new VariableTypeElementOption(identities),
+			new ElementOption(identities)) {}
 
-		Elements() : this(ArrayElementOption.Default,
-		                  GenericElementOption.Default,
-		                  VariableTypeElementOption.Default,
-		                  ElementOption.Default) {}
-
-		public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
+		// public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}
 }

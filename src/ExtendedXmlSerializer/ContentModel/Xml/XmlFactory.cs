@@ -23,16 +23,28 @@
 
 using System.IO;
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Properties;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class XmlFactory : IXmlFactory
 	{
+		readonly IGenericTypes _genericTypes;
+		readonly ITypes _types;
+		readonly ITypeProperty _type;
+		readonly IItemTypeProperty _item;
+		readonly IArgumentsProperty _arguments;
 		readonly XmlReaderSettings _readerSettings;
 		readonly XmlWriterSettings _writerSettings;
 
-		public XmlFactory(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
+		public XmlFactory(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+		                  IArgumentsProperty arguments, XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
 		{
+			_genericTypes = genericTypes;
+			_types = types;
+			_type = type;
+			_item = item;
+			_arguments = arguments;
 			_readerSettings = readerSettings;
 			_writerSettings = writerSettings;
 		}
@@ -41,6 +53,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			=> new XmlWriter(System.Xml.XmlWriter.Create(stream, _writerSettings), instance);
 
 		public IXmlReader Create(Stream stream) =>
-			new XmlReader(System.Xml.XmlReader.Create(stream, _readerSettings));
+			new XmlReader(_genericTypes, _types, _type, _item, _arguments, System.Xml.XmlReader.Create(stream, _readerSettings));
 	}
 }

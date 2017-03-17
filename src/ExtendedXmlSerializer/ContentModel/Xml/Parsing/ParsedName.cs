@@ -26,7 +26,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
 {
-	struct ParsedName : IIdentity
+	public struct ParsedName : IIdentity
 	{
 		readonly Func<ImmutableArray<ParsedName>> _arguments;
 

@@ -29,6 +29,10 @@ namespace ExtendedXmlSerialization.Core.Sources
 {
 	public static class Extensions
 	{
+		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)
+			where TResult : class => new LinkedDecoratedSource<TParameter, TResult>(@this, next);
+
 		public static T Alter<T>(this IEnumerable<IAlteration<T>> @this, T seed)
 			=> @this.Aggregate(seed, (current, alteration) => alteration.Get(current));
 

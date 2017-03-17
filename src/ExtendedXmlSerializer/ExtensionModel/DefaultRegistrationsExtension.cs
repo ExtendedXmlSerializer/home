@@ -29,10 +29,7 @@ using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
-using IAliases = ExtendedXmlSerialization.ContentModel.IAliases;
 using RuntimeSerializer = ExtendedXmlSerialization.ContentModel.RuntimeSerializer;
-using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -40,10 +37,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			return parameter.RegisterInstance<IElements>(ContentModel.Content.Elements.Default)
-			                .RegisterInstance<IAliases>(TypeAliases.Default)
-			                .RegisterInstance<IActivation>(Activation.Default)
-			                .Register<ITypeFormatter, TypeFormatter>()
+			return parameter.RegisterInstance<IActivation>(Activation.Default)
 			                .Register<ISerializer, RuntimeSerializer>()
 			                .Register<IXmlFactory, XmlFactory>()
 			                .Register<IDictionaryEntries, DictionaryEntries>()

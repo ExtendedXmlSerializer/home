@@ -36,13 +36,14 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(System.Xml.XmlReader reader)
+		public XmlReader(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+		                 IArgumentsProperty arguments, System.Xml.XmlReader reader)
 		{
 			switch (reader.MoveToContent())
 			{
 				case XmlNodeType.Element:
 					_reader = reader;
-					_classification = new ClassificationSource(this, _reader);
+					_classification = new ClassificationSource(genericTypes, types, type, item, arguments, this, _reader);
 					break;
 				default:
 					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{reader}.'");
@@ -132,12 +133,7 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 
 		struct ClassificationSource : ISource<TypeInfo>
 		{
-			readonly static TypeProperty TypeProperty = TypeProperty.Default;
-			readonly static ItemTypeProperty ItemTypeProperty = ItemTypeProperty.Default;
-			readonly static ArgumentsProperty ArgumentsProperty = ArgumentsProperty.Default;
 			readonly static ContentModel.Identities Identities = ContentModel.Identities.Default;
-			readonly static GenericTypes GenericTypes = GenericTypes.Default;
-			readonly static Types Default = Types.Default;
 
 			TypeInfo _classification;
 
@@ -146,11 +142,11 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 			readonly ITypeProperty _type, _item;
 			readonly IArgumentsProperty _arguments;
 			readonly ContentModel.IIdentities _identities;
-			readonly ITypes _generic;
-			readonly ITypes _types;
+			readonly ITypes _generic, _types;
 
-			public ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader)
-				: this(owner, reader, TypeProperty, ItemTypeProperty, ArgumentsProperty, Identities, GenericTypes, Default) {}
+			public ClassificationSource(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
+			                            IArgumentsProperty arguments, IXmlReader owner, System.Xml.XmlReader reader)
+				: this(owner, reader, type, item, arguments, Identities, genericTypes, types) {}
 
 			ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
 			                     IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,

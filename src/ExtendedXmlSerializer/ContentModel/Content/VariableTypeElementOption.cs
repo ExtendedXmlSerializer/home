@@ -28,13 +28,11 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	class VariableTypeElementOption : NamedElementOptionBase
 	{
-		readonly Xml.IIdentities _identities;
 		readonly static ISpecification<TypeInfo> Specification = Core.Specifications.VariableTypeSpecification.Default;
 
-		public static VariableTypeElementOption Default { get; } = new VariableTypeElementOption();
-		VariableTypeElementOption() : this(Xml.Identities.Default) {}
+		readonly Xml.IIdentities _identities;
 
-		VariableTypeElementOption(Xml.IIdentities identities) : base(Specification)
+		public VariableTypeElementOption(Xml.IIdentities identities) : base(Specification, identities)
 		{
 			_identities = identities;
 		}

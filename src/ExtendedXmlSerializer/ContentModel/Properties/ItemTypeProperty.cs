@@ -26,10 +26,9 @@ using ExtendedXmlSerialization.ContentModel.Xml;
 
 namespace ExtendedXmlSerialization.ContentModel.Properties
 {
-	sealed class ItemTypeProperty : TypePropertyBase
+	sealed class ItemTypeProperty : TypePropertyBase, IItemTypeProperty
 	{
-		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
-		ItemTypeProperty() : base("item") {}
+		public ItemTypeProperty(ITypeParsers parsers, ITypeFormatters formatters) : base(parsers, formatters, "item") {}
 
 		public override TypeInfo Get(IXmlReader parameter) => base.Get(parameter)?.MakeArrayType().GetTypeInfo();
 	}

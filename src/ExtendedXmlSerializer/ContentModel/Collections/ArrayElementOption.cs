@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
@@ -31,16 +32,25 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
-		public static ArrayElementOption Default { get; } = new ArrayElementOption();
-		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}
+		/*public static ArrayElementOption Default { get; } = new ArrayElementOption();
+		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}*/
 
+		readonly Xml.IIdentities _identities;
+		readonly IItemTypeProperty _property;
 		readonly ICollectionItemTypeLocator _locator;
-		
-		public ArrayElementOption(ICollectionItemTypeLocator locator) : base(Specification)
+
+		public ArrayElementOption(Xml.IIdentities identities, IItemTypeProperty property)
+			: this(identities, property, CollectionItemTypeLocator.Default) {}
+
+		public ArrayElementOption(Xml.IIdentities identities, IItemTypeProperty property, ICollectionItemTypeLocator locator)
+			: base(Specification)
 		{
+			_identities = identities;
+			_property = property;
 			_locator = locator;
 		}
 
-		public sealed override IWriter Get(TypeInfo parameter) => new ArrayElement(_locator.Get(parameter));
+		public sealed override IWriter Get(TypeInfo parameter)
+			=> new ArrayElement(_identities, _property, _locator.Get(parameter));
 	}
 }
