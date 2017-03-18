@@ -22,14 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlTypeConfiguration : ISource<TypeInfo>
+	public interface IExtendedXmlTypeConfiguration : IConfigurationItem<TypeInfo>
 	{
-		IProperty<string> Name { get; }
-
 		IExtendedXmlMemberConfiguration Member(MemberInfo member);
 	}
 }

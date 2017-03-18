@@ -21,17 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberOrder : IMemberOrder
+	sealed class MemberOrder : StructureCacheBase<MemberInfo, int>, IMemberOrder
 	{
-		public static MemberOrder Default { get; } = new MemberOrder();
-		MemberOrder() {}
+		readonly static DefaultMemberOrder Source = DefaultMemberOrder.Default;
 
-		public int Get(MemberInfo parameter)
-			=> parameter.GetCustomAttribute<XmlElementAttribute>(false)?.Order ?? parameter.MetadataToken;
+		readonly IDictionary<MemberInfo, int> _store;
+		readonly IParameterizedSource<MemberInfo, int> _source;
+
+		public MemberOrder(IDictionary<MemberInfo, int> store) : this(store, Source) {}
+
+		public MemberOrder(IDictionary<MemberInfo, int> store, IParameterizedSource<MemberInfo, int> source)
+		{
+			_store = store;
+			_source = source;
+		}
+
+		protected override int Create(MemberInfo parameter) => _store.GetStructure(parameter) ?? _source.Get(parameter);
 	}
 }

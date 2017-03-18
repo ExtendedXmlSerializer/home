@@ -33,18 +33,26 @@ namespace ExtendedXmlSerialization.Configuration
 	class ExtendedXmlTypeConfiguration : ReferenceCacheBase<MemberInfo, IExtendedXmlMemberConfiguration>,
 	                                     IExtendedXmlTypeConfiguration
 	{
+		readonly IExtendedXmlConfiguration _configuration;
 		readonly TypeInfo _type;
 
-		public ExtendedXmlTypeConfiguration(IProperty<string> name, TypeInfo type)
+		public ExtendedXmlTypeConfiguration(IExtendedXmlConfiguration configuration, IProperty<string> name, TypeInfo type)
 		{
 			Name = name;
+			_configuration = configuration;
 			_type = type;
 		}
 
 		public IProperty<string> Name { get; }
 
 		protected override IExtendedXmlMemberConfiguration Create(MemberInfo parameter)
-			=> new ExtendedXmlMemberConfiguration(this, parameter);
+		{
+			var extension = _configuration.With<MemberConfigurationExtension>();
+			return new ExtendedXmlMemberConfiguration(this, parameter,
+			                                          new MemberProperty<string>(extension.Names, parameter),
+			                                          new MemberProperty<int>(extension.Order, parameter)
+			);
+		}
 
 		public IExtendedXmlMemberConfiguration Member(MemberInfo member) => Get(member);
 

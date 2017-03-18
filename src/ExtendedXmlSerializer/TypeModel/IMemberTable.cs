@@ -22,11 +22,8 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface IAliases : IAliases<TypeInfo> {}
-
-	public interface IAliases<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
+	public interface IMemberTable<T> : IMetadataTable<MemberInfo, T> {}
 }

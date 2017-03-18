@@ -31,14 +31,14 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 	sealed class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
 	{
 		readonly ContentModel.IIdentities _source;
-		readonly IAliases _alias;
+		readonly INames _alias;
 		readonly ITypeFormatter _formatter;
 		readonly IIdentifiers _identifiers;
 
-		public Identities(IAliases aliases)
-			: this(ContentModel.Identities.Default, aliases, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
+		public Identities(INames names)
+			: this(ContentModel.Identities.Default, names, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
 
-		public Identities(ContentModel.IIdentities source, IAliases alias, ITypeFormatter formatter, IIdentifiers identifiers)
+		public Identities(ContentModel.IIdentities source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{
 			_source = source;
 			_alias = alias;

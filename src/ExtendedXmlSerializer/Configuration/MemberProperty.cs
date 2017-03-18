@@ -21,13 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
+	class MemberProperty<T> : MemberPropertyBase<MemberInfo, T>
 	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
+		public MemberProperty(IDictionary<MemberInfo, T> store, MemberInfo type) : this(new MemberTable<T>(store), type) {}
+		public MemberProperty(IMetadataTable<MemberInfo, T> table, MemberInfo type) : base(table, type) {}
 	}
 }

@@ -22,12 +22,22 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
+	abstract class MemberPropertyBase<TMember, T> : FixedSource<TMember, T>, IProperty<T> where TMember : MemberInfo
 	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
+		readonly IMetadataTable<TMember, T> _table;
+		readonly TMember _member;
+
+		protected MemberPropertyBase(IMetadataTable<TMember, T> table, TMember member) : base(table, member)
+		{
+			_table = table;
+			_member = member;
+		}
+
+		public void Assign(T value) => _table.Assign(_member, value);
 	}
 }

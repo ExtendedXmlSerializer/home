@@ -21,23 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel
 {
-	class Property<T> : FixedSource<TypeInfo, T>, IProperty<T>
+	public abstract class MemberNamesBase<T> : TableSource<T, string>, IMemberNames<T> where T : MemberInfo
 	{
-		readonly ITypedTable<T> _table;
-		readonly TypeInfo _type;
-
-		public Property(ITypedTable<T> table, TypeInfo type) : base(table, type)
-		{
-			_table = table;
-			_type = type;
-		}
-
-		public void Assign(T value) => _table.Assign(_type, value);
+		protected MemberNamesBase(IDictionary<T, string> store) : base(store) {}
 	}
 }

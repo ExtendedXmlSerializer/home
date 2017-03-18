@@ -26,12 +26,14 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerialization.TypeModel;
 using RuntimeMemberSpecifications = ExtendedXmlSerialization.ContentModel.Members.RuntimeMemberSpecifications;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class MemberConfigurationExtension : IMemberConfigurationExtension
+	sealed class MemberConfigurationExtension : ISerializerExtension
 	{
 		public MemberConfigurationExtension()
 			: this(
@@ -54,43 +56,46 @@ namespace ExtendedXmlSerialization.Configuration
 		                                    IDictionary<MemberInfo, IMemberEmitSpecification> emit,
 		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
 			: this(specification, new MemberConverters(converters), new MappedMemberEmitSpecifications(emit),
-			       new RuntimeMemberSpecifications(runtime), MemberOrder.Default, MemberAliases.Default, Defaults.MemberPolicy) {}
+			       new RuntimeMemberSpecifications(runtime), new Dictionary<MemberInfo, string>(),
+			       new Dictionary<MemberInfo, int>(), Defaults.MemberPolicy) {}
 
 		public MemberConfigurationExtension(
 			IMetadataSpecification specification,
 			IMemberConverters converters,
 			IMemberEmitSpecifications specifications,
-			IRuntimeMemberSpecifications runtime, IMemberOrder order, IAliases aliases, IMemberPolicy policy)
+			IRuntimeMemberSpecifications runtime, IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order,
+			IMemberPolicy policy)
 		{
 			Specification = specification;
 			Converters = converters;
 			EmitSpecifications = specifications;
 			Runtime = runtime;
 			Order = order;
-			Aliases = aliases;
+			Names = names;
 			Policy = policy;
 		}
+
+		public IDictionary<MemberInfo, string> Names { get; }
+		public IDictionary<MemberInfo, int> Order { get; }
 
 		public IMetadataSpecification Specification { get; }
 		public IMemberConverters Converters { get; }
 		public IMemberEmitSpecifications EmitSpecifications { get; }
 		public IRuntimeMemberSpecifications Runtime { get; }
-		public IMemberOrder Order { get; }
-		public IAliases Aliases { get; }
+
 		public IMemberPolicy Policy { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
 			return parameter.Register<IMetadataSpecification, MetadataSpecification>()
-							.RegisterInstance(Policy.And<PropertyInfo>(Specification))
+			                .RegisterInstance(Policy.And<PropertyInfo>(Specification))
 			                .RegisterInstance(Policy.And<FieldInfo>(Specification))
 			                .RegisterInstance(Converters)
 			                .RegisterInstance(Runtime)
-						
-			                .RegisterInstance(Aliases)
-			                .RegisterInstance(Order)
+			                .RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
+			                .RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default))
 			                .RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
-							.RegisterInstance(EmitSpecifications)
+			                .RegisterInstance(EmitSpecifications)
 			                .Decorate<IMemberEmitSpecifications>(
 				                (provider, defaults) =>
 					                new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()));

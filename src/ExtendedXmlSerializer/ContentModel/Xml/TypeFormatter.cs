@@ -28,18 +28,18 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 {
 	class TypeFormatter : ITypeFormatter
 	{
-		readonly IAliases _alias;
+		readonly INames _names;
 		readonly ITypeFormatter _formatter;
 
-		public TypeFormatter(IAliases alias) : this(alias, ContentModel.TypeFormatter.Default) {}
+		public TypeFormatter(INames names) : this(names, ContentModel.TypeFormatter.Default) {}
 
 
-		public TypeFormatter(IAliases alias, ITypeFormatter formatter)
+		public TypeFormatter(INames names, ITypeFormatter formatter)
 		{
-			_alias = alias;
+			_names = names;
 			_formatter = formatter;
 		}
 
-		public string Get(TypeInfo parameter) => _alias.Get(parameter) ?? _formatter.Get(parameter);
+		public string Get(TypeInfo parameter) => _names.Get(parameter) ?? _formatter.Get(parameter);
 	}
 }

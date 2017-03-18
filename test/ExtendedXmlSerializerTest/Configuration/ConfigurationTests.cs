@@ -28,6 +28,7 @@ using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using ExtendedXmlSerialization.Test.TestObject;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerialization.Test.Configuration
@@ -35,7 +36,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 	[SuppressMessage("ReSharper", "TestFileNameWarning")]
 	public class ConfigurationTests
 	{
-		const string Testclass = "UpdatedTestClassName";
+		const string Testclass = "UpdatedTestClassName", MemberName = "UpdatedMemberName";
 
 		static IExtendedXmlConfiguration Configure(Action<IExtendedXmlConfiguration> configure)
 		{
@@ -66,8 +67,9 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			Assert.Null(configuration.Type<TestClassPrimitiveTypesNullable>().Name());
 
 			var support = new SerializationSupport(configuration);
-			var expected = new SimpleTestSubject { BasicProperty = "Hello World!" };
-			var actual = support.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><UpdatedTestClassName xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><BasicProperty>Hello World!</BasicProperty></UpdatedTestClassName>");
+			var expected = new SimpleTestSubject {BasicProperty = "Hello World!"};
+			var actual = support.Assert(expected,
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><UpdatedTestClassName xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><BasicProperty>Hello World!</BasicProperty></UpdatedTestClassName>");
 			Assert.Equal(expected.BasicProperty, actual.BasicProperty);
 		}
 
@@ -98,9 +100,9 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			var config = Configure(cfg =>
 			                       {
 				                       var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
-									   Assert.Null(cfg.With<CustomXmlExtension>().Get(t.Get()));
-									   t.CustomSerializer((writer, types) => { }, element => null);
-								   });
+				                       Assert.Null(cfg.With<CustomXmlExtension>().Get(t.Get()));
+				                       t.CustomSerializer((writer, types) => { }, element => null);
+			                       });
 			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(config.With<CustomXmlExtension>().Get(type.Get()));
 		}
@@ -108,10 +110,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureProperty()
 		{
-			var config = Configure(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p => p.PropChar);
-			});
+			var config = Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p => p.PropChar); });
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType.Member("PropChar"));
 			Assert.Null(configType.Member("TheNewPropertyThatDoesNotExist"));
@@ -120,10 +119,8 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigurePropertyAsId()
 		{
-			var configuration = Configure(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences(p => p.PropChar);
-			});
+			var configuration =
+				Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences(p => p.PropChar); });
 			var configType = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			var property = configType.Member("PropChar");
 			Assert.NotNull(property);
@@ -133,36 +130,50 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			Assert.Same(property.Get(), extension.Get(configType.Get()));
 		}
 
-		class SimpleTestSubject
-		{
-			public string BasicProperty { get; set; }
-		}
-
-		/*
 		[Fact]
 		public void ConfigureNameForProperty()
 		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p=>p.PropChar).Name("Char");
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			var property = configType.Member("PropChar");
-			Assert.Equal(property.ChangedName, "Char");
+			var configuration =
+				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Name(MemberName); });
+
+			var member =
+				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
+			Assert.Equal(member.Name(), MemberName);
+
+			var support = new SerializationSupport(configuration);
+			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};
+			support.Assert(instance,
+			               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><UpdatedMemberName>Hello World!  Testing Member.</UpdatedMemberName></ConfigurationTests-SimpleTestSubject>");
 		}
 
 		[Fact]
 		public void ConfigureOrderForProperty()
 		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p=>p.PropChar).Order(3);
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			var property = configType.Member("PropChar");
-			Assert.Equal(property.ChangedOrder, 3);
+			var order = 0;
+			var configuration = Configure(cfg =>
+				                       cfg.ConfigureType<SimpleOrderedTestSubject>().Member(p => p.Property2).Order(order));
+			var member = configuration.GetTypeConfiguration(typeof(SimpleOrderedTestSubject)).Member(nameof(SimpleOrderedTestSubject.Property2));
+			Assert.Equal(member.Order(), order);
+
+			var instance = new SimpleOrderedTestSubject { Property2 = "World!", Property1 = "Hello" };
+
+			new SerializationSupport().Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property1>Hello</Property1><Property2>World!</Property2></ConfigurationTests-SimpleOrderedTestSubject>");
+
+			new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property2>World!</Property2><Property1>Hello</Property1></ConfigurationTests-SimpleOrderedTestSubject>");
 		}
 
+		class SimpleTestSubject
+		{
+			public string BasicProperty { get; set; }
+		}
+
+		class SimpleOrderedTestSubject
+		{
+			public string Property1 { [UsedImplicitly] get; set; }
+			public string Property2 { get; set; }
+		}
+
+		/*
 		[Fact]
 		public void ConfigurePropertyAsAttribute()
 		{

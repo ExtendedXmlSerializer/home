@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
+	public interface IConfigurationItem<out T> : ISource<T> where T : MemberInfo
 	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
+		IProperty<string> Name { get; }
 	}
 }
