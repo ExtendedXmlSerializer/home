@@ -86,7 +86,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			                 {
 				                 {descriptor.Metadata, GuidConverter.Default}
 			                 };
-			var sut = new ReferencesExtension(new EntityMembers(entities));
+			var sut = new ReferencesExtension(entities);
 
 			var memberConfiguration = new MemberConfigurationExtension(converters);
 			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(memberConfiguration)).Extend(sut).Create());
@@ -109,10 +109,10 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var descriptor =
 				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
-			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
-			                                                    {
-				                                                    {typeInfo, descriptor.Metadata}
-			                                                    }));
+			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
+																{
+																	{typeInfo, descriptor.Metadata}
+																});
 
 			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
@@ -149,10 +149,10 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var descriptor =
 				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
-			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
-			                                                    {
-				                                                    {typeInfo, descriptor.Metadata}
-			                                                    }));
+			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
+																{
+																	{typeInfo, descriptor.Metadata}
+																});
 
 			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
@@ -190,10 +190,10 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var descriptor =
 				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
-			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
-			                                                    {
-				                                                    {typeInfo, descriptor.Metadata}
-			                                                    }));
+			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
+																{
+																	{typeInfo, descriptor.Metadata}
+																});
 
 			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {
@@ -230,10 +230,10 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var descriptor =
 				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
 
-			var sut = new ReferencesExtension(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>
-			                                                    {
-				                                                    {typeInfo, descriptor.Metadata}
-			                                                    }));
+			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
+																{
+																	{typeInfo, descriptor.Metadata}
+																});
 
 			var members = new MemberConfigurationExtension(new Dictionary<MemberInfo, IConverter>
 			                                      {

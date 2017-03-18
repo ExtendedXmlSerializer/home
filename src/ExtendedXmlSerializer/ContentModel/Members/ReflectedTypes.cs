@@ -30,5 +30,13 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	{
 		public static ReflectedTypes Default { get; } = new ReflectedTypes();
 		ReflectedTypes() : base(x => x.DeclaringType.GetTypeInfo()) {}
+
+		public override void Assign(MemberInfo key, TypeInfo value)
+		{
+			lock (key)
+			{
+				base.Assign(key, value);
+			}
+		}
 	}
 }

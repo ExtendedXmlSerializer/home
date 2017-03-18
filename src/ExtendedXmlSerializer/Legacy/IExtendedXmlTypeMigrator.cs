@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Legacy
 {
-	sealed class EntityMembers : TableSource<TypeInfo, MemberInfo>, IEntityMembers
-	{
-		public EntityMembers(IDictionary<TypeInfo, MemberInfo> store) : base(store) {}
-	}
+	public interface IExtendedXmlTypeMigrator {}
 }

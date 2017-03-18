@@ -35,6 +35,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	sealed class CustomXmlExtension : TableSource<TypeInfo, IExtendedXmlCustomSerializer>, ISerializerExtension
 	{
+		public CustomXmlExtension() : this(new Dictionary<TypeInfo, IExtendedXmlCustomSerializer>()) {}
+
 		public CustomXmlExtension(IDictionary<TypeInfo, IExtendedXmlCustomSerializer> store) : base(store) {}
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);

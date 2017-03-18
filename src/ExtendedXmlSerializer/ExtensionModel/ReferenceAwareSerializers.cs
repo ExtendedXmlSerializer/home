@@ -37,7 +37,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly ISerializers _serializers;
 
 		public ReferenceAwareSerializers(IStaticReferenceSpecification specification, IRootReferences references,
-		                                     ISerializers serializers)
+		                                 ISerializers serializers)
 		{
 			_specification = specification;
 			_references = references;

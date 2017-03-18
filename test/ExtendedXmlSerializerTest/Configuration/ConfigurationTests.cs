@@ -23,7 +23,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -45,7 +47,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureType()
 		{
-			var config = Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>(); });
+			var config = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>());
 
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType);
@@ -60,8 +62,8 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			var configuration = new ExtendedXmlConfiguration();
 			var sut = configuration.Type<SimpleTestSubject>().Name(Testclass);
 
-			Assert.Equal(sut.Name.Get(), Testclass);
-			Assert.Null(configuration.Type<TestClassPrimitiveTypesNullable>().Name.Get());
+			Assert.Equal(sut.Name(), Testclass);
+			Assert.Null(configuration.Type<TestClassPrimitiveTypesNullable>().Name());
 
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleTestSubject { BasicProperty = "Hello World!" };
@@ -69,58 +71,74 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			Assert.Equal(expected.BasicProperty, actual.BasicProperty);
 		}
 
-		class SimpleTestSubject
-		{
-			public string BasicProperty { get; set; }
-		}
-
-		/*[Fact]
+		[Fact]
 		public void ConfigureEntityType()
 		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.Add(new ReferencesExtension());
-				cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences();
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.True(configType.IsObjectReference);
-			Assert.Null(configType.GetObjectId);
+			var configuration = new ExtendedXmlConfiguration();
+
+			Assert.Null(configuration.Find<ReferencesExtension>());
+
+			var configType = configuration.EnableReferences().GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
+			var extension = configuration.Find<ReferencesExtension>();
+			Assert.NotNull(extension);
+			Assert.Null(extension.Get(configType.Get()));
 		}
 
 		[Fact]
 		public void ConfigureMigrationForType()
 		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().AddMigration((xml) => { });
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.Equal(configType.Version, 1);
+			var configuration = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>().AddMigration(xml => { }));
+			var type = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
+			Assert.Equal(configuration.With<MigrationsExtension>().Get(type.Get()).Count(), 1);
 		}
 
 		[Fact]
 		public void ConfigureCustomSerializerForType()
 		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().CustomSerializer((writer, types) => { }, element => null);
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.True(configType.IsCustomSerializer);
+			var config = Configure(cfg =>
+			                       {
+				                       var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
+									   Assert.Null(cfg.With<CustomXmlExtension>().Get(t.Get()));
+									   t.CustomSerializer((writer, types) => { }, element => null);
+								   });
+			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
+			Assert.NotNull(config.With<CustomXmlExtension>().Get(type.Get()));
 		}
 
 		[Fact]
 		public void ConfigureProperty()
 		{
-			var config = GetConfiguration(cfg =>
+			var config = Configure(cfg =>
 			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p=>p.PropChar);
+				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p => p.PropChar);
 			});
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType.Member("PropChar"));
 			Assert.Null(configType.Member("TheNewPropertyThatDoesNotExist"));
 		}
 
+		[Fact]
+		public void ConfigurePropertyAsId()
+		{
+			var configuration = Configure(cfg =>
+			{
+				cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences(p => p.PropChar);
+			});
+			var configType = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
+			var property = configType.Member("PropChar");
+			Assert.NotNull(property);
+
+			var extension = configuration.Find<ReferencesExtension>();
+			Assert.NotNull(extension);
+			Assert.Same(property.Get(), extension.Get(configType.Get()));
+		}
+
+		class SimpleTestSubject
+		{
+			public string BasicProperty { get; set; }
+		}
+
+		/*
 		[Fact]
 		public void ConfigureNameForProperty()
 		{
@@ -158,23 +176,9 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		}
 
 		[Fact]
-		public void ConfigurePropertyAsId()
-		{
-			var config = GetConfiguration(cfg =>
-			{
-				cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p=>p.PropChar).EnableReferences();
-			});
-			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			var property = configType.Member("PropChar");
-			Assert.True(property.IsObjectReference);
-			Assert.True(configType.IsObjectReference);
-			Assert.NotNull(configType.GetObjectId);
-		}*/
-
-		[Fact]
 		public void ConfigureEncrypt()
 		{
-			/*var config = GetConfiguration(cfg =>
+			var config = GetConfiguration(cfg =>
 			{
 				cfg.ConfigureType<TestClassWithEncryptedData>()
 					.Property(p => p.Password).Encrypt()
@@ -188,7 +192,8 @@ namespace ExtendedXmlSerialization.Test.Configuration
 
 			var salaryProperty = configType.GetPropertyConfiguration("Salary");
 			Assert.NotNull(salaryProperty);
-			Assert.True(salaryProperty.IsEncrypt);*/
+			Assert.True(salaryProperty.IsEncrypt);
 		}
+		*/
 	}
 }
