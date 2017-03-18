@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class MetadataAliases : IAliases
+	public class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
 	{
-		public static MetadataAliases Default { get; } = new MetadataAliases();
-		MetadataAliases() {}
+		public MemberTable() {}
 
-		public string Get(TypeInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
+		public MemberTable(IDictionary<MemberInfo, T> store) : base(store) {}
 	}
 }

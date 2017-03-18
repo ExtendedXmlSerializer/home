@@ -37,8 +37,7 @@ namespace ExtendedXmlSerialization.Configuration
 	public static class Extensions
 	{
 		public static IExtendedXmlConfiguration Apply<T>(this IExtendedXmlConfiguration @this)
-			where T : class, ISerializerExtension
-			=> Apply(@this, Support<T>.New);
+			where T : class, ISerializerExtension => Apply(@this, Support<T>.New);
 
 		public static IExtendedXmlConfiguration Apply<T>(this IExtendedXmlConfiguration @this, Func<T> create)
 			where T : class, ISerializerExtension
@@ -72,9 +71,19 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ExtendedXmlTypeConfiguration<T> Type<T>(this IExtendedXmlConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
 
-		public static ExtendedXmlTypeConfiguration<T> Name<T>(this ExtendedXmlTypeConfiguration<T> @this, string name)
+		public static string Name<T>(this IConfigurationItem<T> @this) where T : MemberInfo => @this.Name.Get();
+
+		public static IConfigurationItem<T> Name<T>(this IConfigurationItem<T> @this, string name) where T : MemberInfo
 		{
 			@this.Name.Assign(name);
+			return @this;
+		}
+
+		public static int Order(this IExtendedXmlMemberConfiguration @this) => @this.Order.Get();
+
+		public static IExtendedXmlMemberConfiguration Order(this IExtendedXmlMemberConfiguration @this, int order)
+		{
+			@this.Order.Assign(order);
 			return @this;
 		}
 
@@ -83,8 +92,6 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public static IExtendedXmlTypeConfiguration GetTypeConfiguration(this IExtendedXmlConfiguration @this, TypeInfo type)
 			=> TypeConfigurations.Defaults.Get(@this).Get(type);
-
-		public static string Name<T>(this ExtendedXmlTypeConfiguration<T> @this) => @this.Name.Get();
 
 		public static IExtendedXmlMemberConfiguration Member(this IExtendedXmlTypeConfiguration @this, string name)
 		{

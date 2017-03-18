@@ -21,9 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IAliases : IAliases<MemberInfo> {}
+	class TypeProperty<T> : MemberPropertyBase<TypeInfo, T>
+	{
+		public TypeProperty(IDictionary<TypeInfo, T> store, TypeInfo type) : this(new TypedTable<T>(store), type) {}
+		public TypeProperty(ITypedTable<T> table, TypeInfo type) : base(table, type) {}
+	}
 }

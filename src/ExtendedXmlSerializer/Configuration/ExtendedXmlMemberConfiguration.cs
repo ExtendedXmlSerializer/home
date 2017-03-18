@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerialization.Configuration
@@ -30,70 +29,19 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		readonly MemberInfo _memberInfo;
 
-		public ExtendedXmlMemberConfiguration(IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo)
+		public ExtendedXmlMemberConfiguration(IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo,
+		                                      IProperty<string> name, IProperty<int> order)
 		{
 			Owner = owner;
+			Name = name;
+			Order = order;
 			_memberInfo = memberInfo;
 		}
 
 		public IExtendedXmlTypeConfiguration Owner { get; }
 
-		/*public ExtendedXmlTypeConfiguration<T> TypeConfiguration { get; set; }
-		public Expression<Func<T, TProperty>> PropertyExpression { get; set; }
-
-		public bool IsObjectReference { get; set; }
-		public bool IsAttribute { get; set; }
-		public bool IsEncrypt { get; set; }
-		public string ChangedName { get; set; }
-		public int ChangedOrder { get; set; }
-
-		public IExtendedXmlPropertyConfiguration<T, TOtherProperty> Property<TOtherProperty>(
-			Expression<Func<T, TOtherProperty>> property)
-		{
-			return TypeConfiguration.Member(property);
-		}
-
-		public IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences()
-		{
-			IsObjectReference = true;
-			TypeConfiguration.IsObjectReference = true;
-			TypeConfiguration.GetObjectId = p => PropertyExpression.Compile()((T) p).ToString();
-			return this;
-		}
-
-		public IExtendedXmlPropertyConfiguration<T, TProperty> AsAttribute()
-		{
-			IsAttribute = true;
-			return this;
-		}
-
-		public IExtendedXmlPropertyConfiguration<T, TProperty> Encrypt()
-		{
-			IsEncrypt = true;
-			return this;
-		}
-
-		public IExtendedXmlPropertyConfiguration<T, TProperty> Name(string name)
-		{
-			ChangedName = name;
-			return this;
-		}
-
-		public IExtendedXmlPropertyConfiguration<T, TProperty> Order(int order)
-		{
-			ChangedOrder = order;
-			return this;
-		}*/
-
-		public IExtendedXmlMemberConfiguration Name(string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		public IExtendedXmlMemberConfiguration Order(int order)
-		{
-			throw new NotImplementedException();
-		}
+		public IProperty<string> Name { get; }
+		public IProperty<int> Order { get; }
 
 		public MemberInfo Get() => _memberInfo;
 	}

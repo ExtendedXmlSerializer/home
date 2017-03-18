@@ -25,12 +25,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class Members : IMembers
 	{
-		readonly IAliases _aliases;
+		readonly INames _names;
 		readonly IMemberOrder _order;
 
-		public Members(IAliases aliases, IMemberOrder order)
+		public Members(INames names, IMemberOrder order)
 		{
-			_aliases = aliases;
+			_names = names;
 			_order = order;
 		}
 
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		{
 			var metadata = parameter.Metadata;
 			var order = _order.Get(metadata);
-			var name = _aliases.Get(metadata);
+			var name = _names.Get(metadata) ?? metadata.Name;
 			var result = new Member(name, order, metadata, parameter.MemberType, parameter.Writable);
 			return result;
 		}

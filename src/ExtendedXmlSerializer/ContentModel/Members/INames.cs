@@ -22,12 +22,8 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
-	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
-	}
+	public interface INames : IMemberNames<MemberInfo> {}
 }

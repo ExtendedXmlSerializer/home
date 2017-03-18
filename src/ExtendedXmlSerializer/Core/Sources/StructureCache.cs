@@ -21,13 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using System;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
+	public class StructureCache<TKey, TValue> : StructureCacheBase<TKey, TValue> where TKey : class where TValue : struct
 	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
+		readonly Func<TKey, TValue> _factory;
+
+		public StructureCache(Func<TKey, TValue> factory)
+		{
+			_factory = factory;
+		}
+
+		protected sealed override TValue Create(TKey parameter) => _factory(parameter);
 	}
 }

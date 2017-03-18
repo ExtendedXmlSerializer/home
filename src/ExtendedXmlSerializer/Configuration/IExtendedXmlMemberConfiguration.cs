@@ -22,27 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlMemberConfiguration : ISource<MemberInfo>
+	public interface IExtendedXmlMemberConfiguration : IConfigurationItem<MemberInfo>
 	{
-		/*bool IsObjectReference { get; set; }
-		bool IsAttribute { get; set; }
-		bool IsEncrypt { get; set; }
-		string ChangedName { get; set; }
-		int ChangedOrder { get; set; }
-
-IExtendedXmlPropertyConfiguration<T, TOtherProperty> Property<TOtherProperty>(
-			Expression<Func<T, TOtherProperty>> property);
-
-		IExtendedXmlPropertyConfiguration<T, TProperty> EnableReferences();
-		IExtendedXmlPropertyConfiguration<T, TProperty> AsAttribute();
-		IExtendedXmlPropertyConfiguration<T, TProperty> Encrypt();
-*/
-
-		IExtendedXmlMemberConfiguration Name(string name);
-		IExtendedXmlMemberConfiguration Order(int order);
+		IProperty<int> Order { get; }
 	}
 }

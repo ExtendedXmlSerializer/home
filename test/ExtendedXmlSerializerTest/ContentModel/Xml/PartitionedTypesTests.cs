@@ -26,6 +26,7 @@ using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerialization.TypeModel;
 using Xunit;
 using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Xml
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var aliases = new TypeAliases(DefaultNames.Default);
+			var aliases = new Names(new TypedTable<string>(DefaultNames.Default));
 			var formatter = new TypeFormatter(aliases);
 			var partitions = new AssemblyTypePartitions(new ContainsAliasSpecification(aliases),  formatter);
 			var type = new PartitionedTypes(TypeLoader.Default, partitions).Get(new Identity(formatter.Get(expected), @namespace));

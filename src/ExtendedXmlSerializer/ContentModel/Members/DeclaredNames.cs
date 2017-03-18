@@ -21,25 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberAliases : AliasesBase<MemberInfo>, IAliases
+	class DeclaredNames : INames
 	{
-		public static MemberAliases Default { get; } = new MemberAliases();
-		MemberAliases() : this(new Dictionary<MemberInfo, string>()) {}
+		public static DeclaredNames Default { get; } = new DeclaredNames();
+		DeclaredNames() {}
 
-		public MemberAliases(IDictionary<MemberInfo, string> store) : base(store) {}
-
-		public sealed override string Get(MemberInfo parameter)
-		{
-			return base.Get(parameter) ??
-			       parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			       parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty() ?? parameter.Name;
-		}
+		public string Get(MemberInfo parameter)
+			=> parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
+			   parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
 	}
 }

@@ -36,4 +36,19 @@ namespace ExtendedXmlSerialization.Core.Sources
 
 		public override TResult Get(TParameter parameter) => base.Get(parameter) ?? _next.Get(parameter);
 	}
+
+/*
+	public sealed class LinkedStructureDecoratedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult> where TResult : struct
+	{
+		readonly IParameterizedSource<TParameter, TResult> _next;
+
+		public LinkedStructureDecoratedSource(IParameterizedSource<TParameter, TResult> source,
+									 IParameterizedSource<TParameter, TResult> next) : base(source)
+		{
+			_next = next;
+		}
+
+		public override TResult Get(TParameter parameter) => this.GetStructure(parameter) ?? _next.Get(parameter);
+	}
+*/
 }

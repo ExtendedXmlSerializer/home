@@ -21,19 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ExtensionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberConfigurationExtension : ISerializerExtension
+	class MappedNames : MemberNamesBase<MemberInfo>, IMappedNames
 	{
-		IMetadataSpecification Specification { get; }
-		IMemberConverters Converters { get; }
-		IMemberEmitSpecifications EmitSpecifications { get; }
-		IRuntimeMemberSpecifications Runtime { get; }
-		IMemberOrder Order { get; }
-		IAliases Aliases { get; }
-		IMemberPolicy Policy { get; }
+		public MappedNames() : this(new Dictionary<MemberInfo, string>()) {}
+		public MappedNames(IDictionary<MemberInfo, string> store) : base(store) {}
 	}
 }

@@ -22,12 +22,17 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class ContainsAliasSpecification : DelegatedAssignedSpecification<TypeInfo, string>, IContainsAliasSpecification
+	class DefaultMemberOrder : IParameterizedSource<MemberInfo, int>
 	{
-		public ContainsAliasSpecification(INames names) : base(names.Get) {}
+		public static DefaultMemberOrder Default { get; } = new DefaultMemberOrder();
+		DefaultMemberOrder() {}
+
+		public int Get(MemberInfo parameter)
+			=> parameter.GetCustomAttribute<XmlElementAttribute>(false)?.Order ?? parameter.MetadataToken;
 	}
 }

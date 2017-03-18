@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Xml.Serialization;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerialization.ContentModel.Xml
 {
-	public abstract class AliasesBase<T> : TableSource<T, string>, IAliases<T> where T : MemberInfo
+	sealed class DeclaredNames : INames
 	{
-		protected AliasesBase(IDictionary<T, string> store) : base(store) {}
+		public static DeclaredNames Default { get; } = new DeclaredNames();
+		DeclaredNames() {}
+
+		public string Get(TypeInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()?.ElementName;
 	}
 }
