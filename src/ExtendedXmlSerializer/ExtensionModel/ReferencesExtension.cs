@@ -27,24 +27,23 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ReferencesExtension : ISerializerExtension
+	class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension
 	{
-		readonly IEntityMembers _members;
 		readonly Func<System.IServiceProvider, IActivation, IActivation> _decorate;
 
-		public ReferencesExtension() : this(new EntityMembers(new Dictionary<TypeInfo, MemberInfo>())) {}
+		public ReferencesExtension() : this(new Dictionary<TypeInfo, MemberInfo>()) {}
 
-		public ReferencesExtension(IEntityMembers members)
+		public ReferencesExtension(IDictionary<TypeInfo, MemberInfo> store) : base(store)
 		{
-			_members = members;
 			_decorate = Decorate;
 		}
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance(_members)
+			parameter.RegisterInstance<IEntityMembers>(this)
 			         .Register<IStoredEncounters, StoredEncounters>()
 			         .Register<IEntities, Entities>()
 			         .Decorate(_decorate)

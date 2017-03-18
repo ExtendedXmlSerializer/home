@@ -21,10 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T> {}
+	public class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T>
+	{
+		public TypedTable() {}
+		public TypedTable(IDictionary<TypeInfo, T> store) : base(store) {}
+	}
 }

@@ -25,9 +25,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Legacy;
 using ExtendedXmlSerialization.Test.TestObject;
+using IExtendedXmlTypeMigrator = ExtendedXmlSerialization.Legacy.IExtendedXmlTypeMigrator;
+
 #pragma warning disable 618
 
 namespace ExtendedXmlSerialization.Test.Legacy.TestObjectConfigs

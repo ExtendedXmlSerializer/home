@@ -28,20 +28,22 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 using XmlReader = ExtendedXmlSerialization.ContentModel.Xml.XmlReader;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class MigrationsExtension : TableSource<TypeInfo, IExtendedXmlTypeMigrator>, ISerializerExtension
+	sealed class MigrationsExtension : TypedTable<IEnumerable<Action<XElement>>>, ISerializerExtension
 	{
-		public MigrationsExtension(IDictionary<TypeInfo, IExtendedXmlTypeMigrator> store) : base(store) {}
+		public MigrationsExtension() : this(new Dictionary<TypeInfo, IEnumerable<Action<XElement>>>()) {}
+
+		public MigrationsExtension(IDictionary<TypeInfo, IEnumerable<Action<XElement>>> store) : base(store) {}
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
@@ -52,6 +54,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
+		public void Add(TypeInfo key, params Action<XElement>[] items)
+		{
+			var current = Get(key)?.ToArray() ?? Enumerable.Empty<Action<XElement>>();
+			Assign(key, current.Appending(items).Fixed());
+		}
+
 		sealed class Contents : IContents
 		{
 			readonly IGenericTypes _genericTypes;
@@ -59,11 +67,11 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			readonly ITypeProperty _type;
 			readonly IItemTypeProperty _item;
 			readonly IArgumentsProperty _arguments;
-			readonly IParameterizedSource<TypeInfo, IExtendedXmlTypeMigrator> _migrators;
+			readonly ITypedTable<IEnumerable<Action<XElement>>> _migrations;
 			readonly IContents _contents;
 
 			public Contents(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-			                IArgumentsProperty arguments, IParameterizedSource<TypeInfo, IExtendedXmlTypeMigrator> migrators,
+			                IArgumentsProperty arguments, ITypedTable<IEnumerable<Action<XElement>>> migrations,
 			                IContents contents)
 			{
 				_genericTypes = genericTypes;
@@ -71,17 +79,17 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				_type = type;
 				_item = item;
 				_arguments = arguments;
-				_migrators = migrators;
+				_migrations = migrations;
 				_contents = contents;
 			}
 
 			public ISerializer Get(TypeInfo parameter)
 			{
-				var migrator = _migrators.Get(parameter);
+				var migrations = _migrations.Get(parameter);
 				var content = _contents.Get(parameter);
-				var result = migrator != null
+				var result = migrations != null
 					? new Serializer(
-						new Migrator(_genericTypes, _types, _type, _item, _arguments, migrator.GetAllMigrations().ToImmutableArray()),
+						new Migrator(_genericTypes, _types, _type, _item, _arguments, migrations.ToImmutableArray()),
 						content)
 					: content;
 				return result;

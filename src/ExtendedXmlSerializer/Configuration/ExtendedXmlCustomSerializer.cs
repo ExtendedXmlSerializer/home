@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,13 +22,25 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlTypeMigrator
+	class ExtendedXmlCustomSerializer<T> : IExtendedXmlCustomSerializer<T>
 	{
-		IEnumerable<Action<XElement>> GetAllMigrations();
+		readonly Func<XElement, T> _deserialize;
+		readonly Action<XmlWriter, T> _serializer;
+
+		public ExtendedXmlCustomSerializer(Func<XElement, T> deserialize,
+		                                   Action<XmlWriter, T> serializer)
+		{
+			_deserialize = deserialize;
+			_serializer = serializer;
+		}
+
+		public T Deserialize(XElement xElement) => _deserialize(xElement);
+
+		public void Serializer(XmlWriter xmlWriter, T obj) => _serializer(xmlWriter, obj);
 	}
 }

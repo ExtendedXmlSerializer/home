@@ -26,13 +26,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class Migrations : Collection<ICommand<XElement>>, IExtendedXmlTypeMigrator
+	class Migrations : Collection<ICommand<XElement>>, IEnumerable<Action<XElement>>
 	{
-		public IEnumerable<Action<XElement>> GetAllMigrations() => this.Select(x => new Action<XElement>(x.Execute));
+		public new IEnumerator<Action<XElement>> GetEnumerator()
+			=> this.Select<ICommand<XElement>, Action<XElement>>(x => x.Execute).GetEnumerator();
 	}
 }

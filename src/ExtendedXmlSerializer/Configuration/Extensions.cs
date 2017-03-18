@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -35,6 +36,36 @@ namespace ExtendedXmlSerialization.Configuration
 {
 	public static class Extensions
 	{
+		public static IExtendedXmlConfiguration Apply<T>(this IExtendedXmlConfiguration @this)
+			where T : class, ISerializerExtension
+			=> Apply(@this, Support<T>.New);
+
+		public static IExtendedXmlConfiguration Apply<T>(this IExtendedXmlConfiguration @this, Func<T> create)
+			where T : class, ISerializerExtension
+		{
+			if (@this.Find<T>() == null)
+			{
+				@this.Add(create);
+			}
+			return @this;
+		}
+
+		public static T With<T>(this IExtendedXmlConfiguration @this) where T : class, ISerializerExtension
+			=> @this.Find<T>() ?? @this.Add<T>();
+
+		public static T Add<T>(this IExtendedXmlConfiguration @this) where T : ISerializerExtension
+			=> Add(@this, Support<T>.New);
+
+		public static T Add<T>(this IExtendedXmlConfiguration @this, Func<T> create) where T : ISerializerExtension
+		{
+			var result = create();
+			@this.Add(result);
+			return result;
+		}
+
+		public static IExtendedXmlConfiguration EnableReferences(this IExtendedXmlConfiguration @this)
+			=> @this.Apply<ReferencesExtension>();
+
 		public static ExtendedXmlTypeConfiguration<T> ConfigureType<T>(this IExtendedXmlConfiguration @this)
 			=> @this.Type<T>();
 
@@ -53,61 +84,43 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IExtendedXmlTypeConfiguration GetTypeConfiguration(this IExtendedXmlConfiguration @this, TypeInfo type)
 			=> TypeConfigurations.Defaults.Get(@this).Get(type);
 
-		public static T With<T>(this IExtendedXmlConfiguration @this) where T : class, ISerializerExtension
-			=> @this.Find<T>() ??  @this.Add<T>();
+		public static string Name<T>(this ExtendedXmlTypeConfiguration<T> @this) => @this.Name.Get();
 
-		public static T Add<T>(this IExtendedXmlConfiguration @this) where T : ISerializerExtension => Add(@this, Activators.Default.New<T>);
-
-		public static T Add<T>(this IExtendedXmlConfiguration @this, Func<T> create) where T : ISerializerExtension
+		public static IExtendedXmlMemberConfiguration Member(this IExtendedXmlTypeConfiguration @this, string name)
 		{
-			var result = create();
-			@this.Add(result);
+			var member = @this.Get().GetMember(name).SingleOrDefault();
+			var result = member != null ? @this.Member(member) : null;
 			return result;
 		}
-
-		/*public static ExtendedXmlTypeConfiguration<T> Name<T>(this ExtendedXmlTypeConfiguration<T> @this, string name)
-		{
-			ConfiguredNames.Default.Assign(@this.Get(), name);
-			return @this;
-		}
-
-		public static string Name<T>(this ExtendedXmlTypeConfiguration<T> @this) => ConfiguredNames.Default.Get(@this.Get());*/
 
 		public static ExtendedXmlTypeConfiguration<T> CustomSerializer<T>(
 			this ExtendedXmlTypeConfiguration<T> @this,
 			Action<XmlWriter, T> serializer,
 			Func<XElement, T> deserialize)
-		{
-			/*IsCustomSerializer = true;
-			_serializer = serializer;
-			_deserialize = deserialize;*/
-			return @this;
-		}
+			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
 		public static ExtendedXmlTypeConfiguration<T> CustomSerializer<T>(this ExtendedXmlTypeConfiguration<T> @this,
 		                                                                  IExtendedXmlCustomSerializer<T> serializer)
-			=> @this.CustomSerializer(serializer.Serializer, serializer.Deserialize);
+		{
+			@this.Configuration.With<CustomXmlExtension>().Assign(@this.Get(), new Adapter<T>(serializer));
+			return @this;
+		}
 
 		public static ExtendedXmlTypeConfiguration<T> AddMigration<T>(this ExtendedXmlTypeConfiguration<T> @this,
 		                                                              Action<XElement> migration)
-		{
-			// _migrations.Add(Version++, migration);
-			return @this;
-		}
+			=> @this.AddMigration(migration.Yield());
 
 		public static ExtendedXmlTypeConfiguration<T> AddMigration<T>(this ExtendedXmlTypeConfiguration<T> @this,
-		                                                              IExtendedXmlTypeMigrator migrator)
+		                                                              IEnumerable<Action<XElement>> migrations)
 		{
-			/*foreach (var allMigration in migrator.GetAllMigrations())
-			{
-				_migrations.Add(Version++, allMigration);
-			}*/
+			@this.Configuration.With<MigrationsExtension>().Add(@this.Get(), migrations.Fixed());
 			return @this;
 		}
 
-		public static ExtendedXmlTypeConfiguration<T> EnableReferences<T>(this ExtendedXmlTypeConfiguration<T> @this)
+		public static ExtendedXmlTypeConfiguration<T> EnableReferences<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
+		                                                                           Expression<Func<T, TMember>> member)
 		{
-			// IsObjectReference = true;
+			@this.Configuration.With<ReferencesExtension>().Assign(@this.Get(), member.GetMemberInfo());
 			return @this;
 		}
 

@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlMemberConfiguration
+	public interface IExtendedXmlMemberConfiguration : ISource<MemberInfo>
 	{
 		/*bool IsObjectReference { get; set; }
 		bool IsAttribute { get; set; }

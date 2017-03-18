@@ -30,10 +30,13 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		readonly MemberInfo _memberInfo;
 
-		public ExtendedXmlMemberConfiguration(MemberInfo memberInfo)
+		public ExtendedXmlMemberConfiguration(IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo)
 		{
+			Owner = owner;
 			_memberInfo = memberInfo;
 		}
+
+		public IExtendedXmlTypeConfiguration Owner { get; }
 
 		/*public ExtendedXmlTypeConfiguration<T> TypeConfiguration { get; set; }
 		public Expression<Func<T, TProperty>> PropertyExpression { get; set; }
@@ -91,5 +94,7 @@ namespace ExtendedXmlSerialization.Configuration
 		{
 			throw new NotImplementedException();
 		}
+
+		public MemberInfo Get() => _memberInfo;
 	}
 }

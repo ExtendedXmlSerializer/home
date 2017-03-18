@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.TypeModel
 {
-	public interface IEntityMembers : ITypedTable<MemberInfo> {}
+	static class Support<T>
+	{
+		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
+
+		public static Func<T> New { get; } = Activators.Default.New<T>;
+	}
 }

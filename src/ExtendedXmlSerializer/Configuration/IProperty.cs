@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.Configuration
 {
-	public static class Extensions
+	public interface IProperty<T> : ISource<T>
 	{
-		public static ITypedTable<T> Assign<T>(this ITypedTable<T> @this, T name)
-		{
-			@this.Assign(Support<T>.Key, name);
-			return @this;
-		}
-
-		public static T Get<T>(this ITypedTable<T> @this) => @this.Get(Support<T>.Key);
-	}
-
-	static class Support<T>
-	{
-		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
+		void Assign(T value);
 	}
 }

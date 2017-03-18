@@ -22,9 +22,22 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IEntityMembers : ITypedTable<MemberInfo> {}
+	class Property<T> : FixedSource<TypeInfo, T>, IProperty<T>
+	{
+		readonly ITypedTable<T> _table;
+		readonly TypeInfo _type;
+
+		public Property(ITypedTable<T> table, TypeInfo type) : base(table, type)
+		{
+			_table = table;
+			_type = type;
+		}
+
+		public void Assign(T value) => _table.Assign(_type, value);
+	}
 }
