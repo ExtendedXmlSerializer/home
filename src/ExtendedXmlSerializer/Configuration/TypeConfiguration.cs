@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.ExtensionModel;
@@ -29,8 +31,9 @@ using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	class TypeConfiguration : ReferenceCacheBase<MemberInfo, IMemberConfiguration>, ITypeConfiguration
+	sealed class TypeConfiguration : ReferenceCacheBase<MemberInfo, IMemberConfiguration>, ITypeConfiguration
 	{
+		readonly ISet<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();
 		readonly TypeInfo _type;
 
 		public TypeConfiguration(IConfiguration configuration, IProperty<string> name, TypeInfo type)
@@ -46,18 +49,23 @@ namespace ExtendedXmlSerialization.Configuration
 		protected override IMemberConfiguration Create(MemberInfo parameter)
 		{
 			var extension = Configuration.With<MemberPropertiesExtension>();
-			return new MemberConfiguration(Configuration, this, parameter,
-			                               new MemberProperty<string>(extension.Names, parameter),
-			                               new MemberProperty<int>(extension.Order, parameter)
+			var result = new MemberConfiguration(Configuration, this, parameter,
+			                                     new MemberProperty<string>(extension.Names, parameter),
+			                                     new MemberProperty<int>(extension.Order, parameter)
 			);
+			_members.Add(result);
+			return result;
 		}
 
 		public IMemberConfiguration Member(MemberInfo member) => Get(member);
 
 		public TypeInfo Get() => _type;
+
+		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _members).GetEnumerator();
 	}
 
-	public class TypeConfiguration<T> : ITypeConfiguration
+	public sealed class TypeConfiguration<T> : ITypeConfiguration
 	{
 		readonly static TypeInfo Key = Support<T>.Key;
 
@@ -85,5 +93,8 @@ namespace ExtendedXmlSerialization.Configuration
 		public IProperty<string> Name => _type.Name;
 
 		public IMemberConfiguration Member(MemberInfo member) => _type.Member(member);
+
+		public IEnumerator<IMemberConfiguration> GetEnumerator() => _type.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _type).GetEnumerator();
 	}
 }

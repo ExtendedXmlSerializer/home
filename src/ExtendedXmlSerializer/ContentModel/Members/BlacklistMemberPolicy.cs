@@ -23,26 +23,20 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class BlacklistMemberPolicy : IMemberPolicy
+	sealed class BlacklistMemberPolicy : InverseSpecification<MemberInfo>, IMemberPolicy
 	{
 		readonly static MemberComparer Comparer = MemberComparer.Default;
-
-		readonly ICollection<MemberInfo> _avoid;
 
 		public BlacklistMemberPolicy(params MemberInfo[] avoid) : this(Comparer, avoid) {}
 
 		public BlacklistMemberPolicy(IMemberComparer comparer, params MemberInfo[] avoid)
 			: this(new HashSet<MemberInfo>(avoid, comparer)) {}
 
-		public BlacklistMemberPolicy(ICollection<MemberInfo> avoid)
-		{
-			_avoid = avoid;
-		}
-
-		public bool IsSatisfiedBy(MemberInfo parameter) => !_avoid.Contains(parameter);
+		public BlacklistMemberPolicy(ICollection<MemberInfo> avoid) : base(new ContainsSpecification<MemberInfo>(avoid)) {}
 	}
 }

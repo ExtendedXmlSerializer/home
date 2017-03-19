@@ -21,12 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, MemberConfiguration<T, TMember>>
+	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, MemberConfiguration<T, TMember>>,
+	                                   IEnumerable<IMemberConfiguration>
 	{
 		public static IParameterizedSource<IConfiguration, Members<T, TMember>> Defaults { get; } =
 			new ReferenceCache<IConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
@@ -34,6 +37,7 @@ namespace ExtendedXmlSerialization.Configuration
 		Members(IConfiguration configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
 
 		readonly TypeConfiguration<T> _type;
+		readonly ICollection<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();
 
 		public Members(TypeConfiguration<T> type)
 		{
@@ -41,6 +45,13 @@ namespace ExtendedXmlSerialization.Configuration
 		}
 
 		protected override MemberConfiguration<T, TMember> Create(MemberInfo parameter)
-			=> new MemberConfiguration<T, TMember>(_type.Member(parameter), _type);
+		{
+			var result = new MemberConfiguration<T, TMember>(_type.Member(parameter), _type);
+			_members.Add(result);
+			return result;
+		}
+
+		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }
