@@ -35,29 +35,20 @@ namespace ExtendedXmlSerialization.Configuration
 	sealed class MemberConfigurationExtension : ISerializerExtension
 	{
 		public MemberConfigurationExtension()
-			: this(
-				DefaultMetadataSpecification.Default,
-				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
-
-		public MemberConfigurationExtension(IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
-
-		public MemberConfigurationExtension(IMetadataSpecification specification,
-		                                    IDictionary<MemberInfo, IMemberEmitSpecification> emit,
-		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(specification, new MappedMemberEmitSpecifications(emit),
-			       new RuntimeMemberSpecifications(runtime), new Dictionary<MemberInfo, string>(),
+			: this(DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
+			       new Dictionary<MemberInfo, IRuntimeMemberSpecification>(), new Dictionary<MemberInfo, string>(),
 			       new Dictionary<MemberInfo, int>(), Defaults.MemberPolicy) {}
 
 		public MemberConfigurationExtension(
 			IMetadataSpecification specification,
-			IMemberEmitSpecifications specifications,
-			IRuntimeMemberSpecifications runtime, IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order,
+			IDictionary<MemberInfo, IMemberEmitSpecification> emit,
+			IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime,
+			IDictionary<MemberInfo, string> names,
+			IDictionary<MemberInfo, int> order,
 			IMemberPolicy policy)
 		{
 			Specification = specification;
-			EmitSpecifications = specifications;
+			EmitSpecifications = emit;
 			Runtime = runtime;
 			Order = order;
 			Names = names;
@@ -70,8 +61,8 @@ namespace ExtendedXmlSerialization.Configuration
 		public IMetadataSpecification Specification { get; }
 		public IMemberPolicy Policy { get; }
 
-		public IMemberEmitSpecifications EmitSpecifications { get; }
-		public IRuntimeMemberSpecifications Runtime { get; }
+		public IDictionary<MemberInfo, IMemberEmitSpecification> EmitSpecifications { get; }
+		public IDictionary<MemberInfo, IRuntimeMemberSpecification> Runtime { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
@@ -81,9 +72,9 @@ namespace ExtendedXmlSerialization.Configuration
 				.RegisterInstance(Policy.And<PropertyInfo>(Specification))
 				.RegisterInstance(Policy.And<FieldInfo>(Specification))
 				.Register<IMetadataSpecification, MetadataSpecification>()
-				.RegisterInstance(Runtime)
+				.RegisterInstance<IRuntimeMemberSpecifications>(new RuntimeMemberSpecifications(Runtime))
 				.RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
-				.RegisterInstance(EmitSpecifications)
+				.RegisterInstance<IMemberEmitSpecifications>(new MappedMemberEmitSpecifications(EmitSpecifications))
 				.Decorate<IMemberEmitSpecifications>(
 					(provider, defaults) =>
 						new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()));

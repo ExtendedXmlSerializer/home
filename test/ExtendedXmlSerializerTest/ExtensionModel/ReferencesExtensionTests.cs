@@ -23,11 +23,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
@@ -75,21 +72,8 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void SimpleEntity()
 		{
-			var typeInfo = typeof(Subject).GetTypeInfo();
-			var descriptor = new MemberDescriptor(typeInfo.GetProperty(nameof(Subject.Id)));
-			var entities = new Dictionary<TypeInfo, MemberInfo>
-			               {
-				               {typeInfo, descriptor.Metadata}
-			               };
-
-			var converters = new Collection<MemberInfo>
-			                 {
-								 descriptor.Metadata
-							 };
-			var sut = new ReferencesExtension(entities);
-
-			var memberConfiguration = new AttributesExtension(converters);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(memberConfiguration)).Extend(sut).Create());
+			var configuration = new ExtendedXmlConfiguration().Type<Subject>().Member(x => x.Id).Identity().Configuration;
+			var support = new SerializationSupport(configuration);
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -105,17 +89,9 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void ComplexInstance()
 		{
-			var typeInfo = typeof(TestClassReference).GetTypeInfo();
-			var descriptor =
-				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
-
-			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
-																{
-																	{typeInfo, descriptor.Metadata}
-																});
-
-			var attributes = new AttributesExtension(new Collection<MemberInfo> {descriptor.Metadata});
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(attributes)).Extend(sut).Create());
+			var support =
+				new SerializationSupport(
+					new ExtendedXmlConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var instance = new TestClassReference
 			               {
@@ -142,17 +118,9 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void ComplexList()
 		{
-			var typeInfo = typeof(TestClassReference).GetTypeInfo();
-			var descriptor =
-				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
-
-			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
-																{
-																	{typeInfo, descriptor.Metadata}
-																});
-
-			var attributes = new AttributesExtension(new Collection<MemberInfo> { descriptor.Metadata });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(attributes)).Extend(sut).Create());
+			var support =
+				new SerializationSupport(
+					new ExtendedXmlConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -180,17 +148,9 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void Dictionary()
 		{
-			var typeInfo = typeof(TestClassReference).GetTypeInfo();
-			var descriptor =
-				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
-
-			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
-																{
-																	{typeInfo, descriptor.Metadata}
-																});
-
-			var attributes = new AttributesExtension(new Collection<MemberInfo> { descriptor.Metadata });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(attributes)).Extend(sut).Create());
+			var support =
+				new SerializationSupport(
+					new ExtendedXmlConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -217,17 +177,9 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void List()
 		{
-			var typeInfo = typeof(TestClassReference).GetTypeInfo();
-			var descriptor =
-				new MemberDescriptor(typeInfo.GetProperty(nameof(TestClassReference.Id)));
-
-			var sut = new ReferencesExtension(new Dictionary<TypeInfo, MemberInfo>
-																{
-																	{typeInfo, descriptor.Metadata}
-																});
-
-			var attributes = new AttributesExtension(new Collection<MemberInfo> { descriptor.Metadata });
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(attributes)).Extend(sut).Create());
+			var support =
+				new SerializationSupport(
+					new ExtendedXmlConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var parent = new TestClassReference {Id = 1};
 			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};
@@ -250,22 +202,19 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 
 		[Fact]
 		public void VerifyThrow()
-		{
-			Assert.Throws<CircularReferencesDetectedException>(() =>
-			                                                   {
-				                                                   var support =
-					                                                   new SerializationSupport(new ExtendedXmlConfiguration().Create());
-				                                                   var instance = new Subject
-				                                                                  {
-					                                                                  Id =
-						                                                                  new Guid(
-							                                                                  "{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"),
-					                                                                  PropertyName = "Hello World!"
-				                                                                  };
-				                                                   instance.Self = instance;
-				                                                   support.Serialize(instance);
-			                                                   });
-		}
+			=> Assert.Throws<CircularReferencesDetectedException>(() =>
+			                                                      {
+				                                                      var support = new SerializationSupport();
+				                                                      var instance = new Subject
+				                                                                     {
+					                                                                     Id =
+						                                                                     new Guid(
+							                                                                     "{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"),
+					                                                                     PropertyName = "Hello World!"
+				                                                                     };
+				                                                      instance.Self = instance;
+				                                                      support.Serialize(instance);
+			                                                      });
 
 		class Subject
 		{

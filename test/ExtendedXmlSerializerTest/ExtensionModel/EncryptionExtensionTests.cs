@@ -38,17 +38,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		public void SimpleString()
 		{
 			const string message = "Hello World!  This is my encrypted message!";
-
-			var typeInfo = typeof(SimpleSubject).GetTypeInfo();
-
-			var converters = new Collection<MemberInfo>
-			                 {
-								 typeInfo.GetProperty(nameof(SimpleSubject.Message))
-							 };
-			var sut = new EncryptionExtension(converters);
-
-			var extensions = DefaultExtensions.Default.With(sut, EmitBehaviorExtension.Default);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(extensions).Create());
+			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(EmitBehaviorExtension.Default)
+				.Type<SimpleSubject>()
+				.Member(x => x.Message).Encrypt()
+				.Configuration
+				.Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"" />");

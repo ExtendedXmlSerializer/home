@@ -110,7 +110,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureProperty()
 		{
-			var config = Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p => p.PropChar); });
+			var config = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>().Member(p => p.PropChar));
 			var configType = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(configType.Member("PropChar"));
 			Assert.Null(configType.Member("TheNewPropertyThatDoesNotExist"));
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		public void ConfigurePropertyAsId()
 		{
 			var configuration =
-				Configure(cfg => { cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences(p => p.PropChar); });
+				Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>().EnableReferences(p => p.PropChar));
 			var configType = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			var property = configType.Member("PropChar");
 			Assert.NotNull(property);
@@ -134,7 +134,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		public void ConfigureNameForProperty()
 		{
 			var configuration =
-				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Name(MemberName); });
+				Configure(cfg => cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Name(MemberName));
 
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
