@@ -30,12 +30,12 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 	public class MemberPropertyTests
 	{
 		const string HelloWorld = "Hello World!";
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedConfiguration().Create();
 
 		[Fact]
 		public void BasicAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
 				.Configuration
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void ListAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<ListWithProperties>()
 				.Member(x => x.Message, x => x.Attribute())
 				.Configuration
@@ -95,7 +95,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void GenericListAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<ListWithProperties<string>>()
 				.Member(x => x.Message, x => x.Attribute())
 				.Member(x => x.Number, x => x.Attribute())
@@ -128,7 +128,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void HashSetAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<HashSetWithProperties>()
 				.Member(x => x.Number, x => x.Attribute())
 				.Configuration
@@ -160,7 +160,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void GenericHashSetAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
 				.Configuration
@@ -203,7 +203,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void DictionaryAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
 				.Configuration
@@ -257,7 +257,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 		[Fact]
 		public void GenericDictionaryAttributes()
 		{
-			var serializer = new ExtendedXmlConfiguration()
+			var serializer = new ExtendedConfiguration()
 				.Type<GenericDictionaryWithProperties<int, string>>()
 				.Member(x => x.Message, x => x.Attribute())
 				.Member(x => x.Number, x => x.Attribute())

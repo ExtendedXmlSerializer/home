@@ -31,9 +31,9 @@ namespace ExtendedXmlSerialization.Test.Support
 	{
 		readonly IExtendedXmlSerializer _serializer;
 
-		public SerializationSupport() : this(new ExtendedXmlConfiguration()) {}
+		public SerializationSupport() : this(new ExtendedConfiguration()) {}
 
-		public SerializationSupport(IExtendedXmlConfiguration configuration) : this(configuration.Create()) {}
+		public SerializationSupport(IConfiguration configuration) : this(configuration.Create()) {}
 
 		public SerializationSupport(IExtendedXmlSerializer serializer)
 		{

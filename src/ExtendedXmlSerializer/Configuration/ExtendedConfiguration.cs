@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.ExtensionModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.Configuration
 {
-	class MappedNames : MemberNamesBase<MemberInfo>, IMappedNames
+	public class ExtendedConfiguration : KeyedByTypeCollection<ISerializerExtension>, IConfiguration
 	{
-		public MappedNames() : this(new Dictionary<MemberInfo, string>()) {}
-		public MappedNames(IDictionary<MemberInfo, string> store) : base(store) {}
+		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+
+		readonly IServicesFactory _source;
+
+		public ExtendedConfiguration() : this(DefaultExtensions.Default.ToArray()) {}
+
+		public ExtendedConfiguration(params ISerializerExtension[] extensions) : this(ServicesFactory, extensions) {}
+
+		public ExtendedConfiguration(IServicesFactory source, params ISerializerExtension[] extensions) : base(extensions)
+		{
+			_source = source;
+		}
+
+		public IExtendedXmlSerializer Create()
+		{
+			using (var services = _source.Get(this))
+			{
+				var result = services.Get<IExtendedXmlSerializer>();
+				return result;
+			}
+		}
+
+		T IConfiguration.Find<T>() => Find<T>();
 	}
 }

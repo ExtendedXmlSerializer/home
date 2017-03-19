@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,13 +22,10 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
@@ -41,14 +38,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void Verify()
 		{
-			var typeInfo = typeof(TestClassWithSerializer).GetTypeInfo();
-
-			var custom = new Dictionary<TypeInfo, IExtendedXmlCustomSerializer>
-			             {
-				             {typeInfo, new Adapter<TestClassWithSerializer>(new CustomSerializer())}
-			             };
-			var sut = new CustomXmlExtension(custom);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(sut).Create());
+			var serializer = new ExtendedConfiguration().Type<TestClassWithSerializer>()
+			                                            .CustomSerializer(new CustomSerializer())
+			                                            .Configuration
+			                                            .Create();
+			var support = new SerializationSupport(serializer);
 			var expected = new TestClassWithSerializer("String", 17);
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithSerializer xmlns=""clr-namespace:ExtendedXmlSerialization.Test.TestObject;assembly=ExtendedXmlSerializerTest""><String>String</String><Int>17</Int></TestClassWithSerializer>"

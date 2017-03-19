@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface ITypeConfiguration<T> : ITableSource<IExtendedXmlTypeConfiguration, T> {}
+	public interface ITypeConfiguration : IConfigurationItem<TypeInfo>
+	{
+		IMemberConfiguration Member(MemberInfo member);
+	}
 }

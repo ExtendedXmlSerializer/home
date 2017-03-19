@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 			new SerializationSupport().Assert(instance,
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><SomeValue>This is a Default Value!</SomeValue></InstanceDefaultsMemberSpecificationsTests-SubjectWithDefaultValue>");
 
-			var configuration = new ExtendedXmlConfiguration().Extend(EmitBehaviorExtension.Default);
+			var configuration = new ExtendedConfiguration().Extend(EmitBehaviorExtension.Default);
 
 			var support = new SerializationSupport(configuration);
 			support.Assert(instance,

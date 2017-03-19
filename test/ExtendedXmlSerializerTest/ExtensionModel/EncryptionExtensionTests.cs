@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		public void SimpleString()
 		{
 			const string message = "Hello World!  This is my encrypted message!";
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(EmitBehaviorExtension.Default)
+			var support = new SerializationSupport(new ExtendedConfiguration().Extend(EmitBehaviorExtension.Default)
 				.Type<SimpleSubject>()
 				.Member(x => x.Message).Encrypt()
 				.Configuration
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 
 			var sut = new EncryptionExtension(converters);
 
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(sut).Create());
+			var support = new SerializationSupport(new ExtendedConfiguration().Extend(sut).Create());
 			var expected = new SimpleSubject {Identifier = identifier, Message = message};
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");

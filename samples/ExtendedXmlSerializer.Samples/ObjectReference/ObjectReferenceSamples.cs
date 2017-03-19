@@ -33,10 +33,10 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 		{
 			Program.PrintHeader("Serialization reference object");
 
-			var serializer = new ExtendedXmlConfiguration().Create(
-				cfg => cfg.ConfigureType<Person>().EnableReferences(p => p.Id).Configuration
-			);
-
+			var serializer = new ExtendedConfiguration().ConfigureType<Person>()
+			                                            .EnableReferences(p => p.Id)
+			                                            .Configuration
+			                                            .Create();
 			Run(serializer);
 		}
 

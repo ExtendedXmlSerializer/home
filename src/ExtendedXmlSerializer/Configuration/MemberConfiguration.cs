@@ -26,37 +26,37 @@ using System.Reflection;
 namespace ExtendedXmlSerialization.Configuration
 {
 	// ReSharper disable once UnusedTypeParameter
-	public class ExtendedXmlMemberConfiguration<T, TMember> : IExtendedXmlMemberConfiguration
+	public class MemberConfiguration<T, TMember> : IMemberConfiguration
 	{
-		readonly IExtendedXmlMemberConfiguration _configuration;
+		readonly IMemberConfiguration _configuration;
 
-		public ExtendedXmlMemberConfiguration(IExtendedXmlMemberConfiguration configuration,
-		                                      ExtendedXmlTypeConfiguration<T> owner)
+		public MemberConfiguration(IMemberConfiguration configuration,
+		                                      TypeConfiguration<T> owner)
 		{
 			Owner = owner;
 			_configuration = configuration;
 		}
 
-		public ExtendedXmlTypeConfiguration<T> Owner { get; }
+		public TypeConfiguration<T> Owner { get; }
 
 		public MemberInfo Get() => _configuration.Get();
 
-		public IExtendedXmlConfiguration Configuration => _configuration.Configuration;
+		public IConfiguration Configuration => _configuration.Configuration;
 
 		public IProperty<string> Name => _configuration.Name;
 
-		IExtendedXmlTypeConfiguration IExtendedXmlMemberConfiguration.Owner => Owner;
+		ITypeConfiguration IMemberConfiguration.Owner => Owner;
 
 		public IProperty<int> Order => _configuration.Order;
 	}
 
-	public class ExtendedXmlMemberConfiguration : IExtendedXmlMemberConfiguration
+	public class MemberConfiguration : IMemberConfiguration
 	{
 		readonly MemberInfo _memberInfo;
 
-		public ExtendedXmlMemberConfiguration(
-			IExtendedXmlConfiguration configuration,
-			IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo,
+		public MemberConfiguration(
+			IConfiguration configuration,
+			ITypeConfiguration owner, MemberInfo memberInfo,
 			IProperty<string> name, IProperty<int> order)
 		{
 			Configuration = configuration;
@@ -66,8 +66,8 @@ namespace ExtendedXmlSerialization.Configuration
 			_memberInfo = memberInfo;
 		}
 
-		public IExtendedXmlConfiguration Configuration { get; }
-		public IExtendedXmlTypeConfiguration Owner { get; }
+		public IConfiguration Configuration { get; }
+		public ITypeConfiguration Owner { get; }
 
 		public IProperty<string> Name { get; }
 		public IProperty<int> Order { get; }
