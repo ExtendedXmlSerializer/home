@@ -21,26 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
-
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
-	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
-
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
-		{
-			yield return new DefaultRegistrationsExtension();
-			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
-			yield return new MemberConfigurationExtension();
-			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
-		}
-	}
+	public interface IConverters : IConverterSource {}
 }

@@ -31,27 +31,29 @@ namespace ExtendedXmlSerialization.ExtensionModel
 {
 	class ConverterExtension : ISerializerExtension
 	{
-		readonly static IEnumerable<EnumerationConverters> Converters = EnumerationConverters.Default.Yield();
+		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
 
 		public static ConverterExtension Default { get; } = new ConverterExtension();
 		ConverterExtension() : this(WellKnownConverters.Default) {}
 
-		readonly IEnumerable<IConverter> _converters;
 		readonly IEnumerable<IConverterSource> _sources;
 
-		public ConverterExtension(IEnumerable<IConverter> converters) : this(converters, Converters) {}
+		public ConverterExtension(IEnumerable<IConverter> converters) : this(converters.ToList(), Sources) {}
 
-		public ConverterExtension(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
+		public ConverterExtension(ICollection<IConverter> converters, IEnumerable<IConverterSource> sources)
 		{
-			_converters = converters;
+			Converters = converters;
 			_sources = sources;
 		}
+
+		public ICollection<IConverter> Converters { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
 			return parameter
-				.RegisterInstance(_converters)
+				.RegisterInstance<IEnumerable<IConverter>>(Converters)
 				.RegisterInstance(_sources)
+				.Register<IConverters, Converters>()
 				.Register<ConverterContentOptions>()
 				.Decorate<IEnumerable<IContentOption>>(
 					(provider, options) => provider.Get<ConverterContentOptions>().Concat(options));

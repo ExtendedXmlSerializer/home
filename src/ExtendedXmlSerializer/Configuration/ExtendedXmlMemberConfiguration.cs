@@ -25,19 +25,47 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	class ExtendedXmlMemberConfiguration : IExtendedXmlMemberConfiguration
+	public class ExtendedXmlMemberConfiguration<T> : IExtendedXmlMemberConfiguration
+	{
+		readonly IExtendedXmlMemberConfiguration _configuration;
+
+		public ExtendedXmlMemberConfiguration(IExtendedXmlMemberConfiguration configuration,
+		                                      ExtendedXmlTypeConfiguration<T> owner)
+		{
+			Owner = owner;
+			_configuration = configuration;
+		}
+
+		public ExtendedXmlTypeConfiguration<T> Owner { get; }
+
+		public MemberInfo Get() => _configuration.Get();
+
+		public IExtendedXmlConfiguration Configuration => _configuration.Configuration;
+
+		public IProperty<string> Name => _configuration.Name;
+
+		IExtendedXmlTypeConfiguration IExtendedXmlMemberConfiguration.Owner => Owner;
+
+		public IProperty<int> Order => _configuration.Order;
+	}
+
+	public class ExtendedXmlMemberConfiguration : IExtendedXmlMemberConfiguration
 	{
 		readonly MemberInfo _memberInfo;
 
-		public ExtendedXmlMemberConfiguration(IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo,
-		                                      IProperty<string> name, IProperty<int> order)
+		public ExtendedXmlMemberConfiguration(
+			IExtendedXmlConfiguration configuration,
+			IExtendedXmlTypeConfiguration owner, MemberInfo memberInfo,
+			IProperty<string> name, IProperty<int> order)
 		{
+			Configuration = configuration;
 			Owner = owner;
 			Name = name;
 			Order = order;
 			_memberInfo = memberInfo;
 		}
 
+		public IExtendedXmlConfiguration Configuration { get; }
 		public IExtendedXmlTypeConfiguration Owner { get; }
 
 		public IProperty<string> Name { get; }

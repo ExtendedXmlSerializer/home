@@ -21,20 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class ApplicationTypeSpecification : ISpecification<TypeInfo>
+	class ApplicationTypeSpecification : InverseSpecification<TypeInfo>
 	{
-		readonly static Type AttributeType = typeof(CompilerGeneratedAttribute);
-
 		public static ApplicationTypeSpecification Default { get; } = new ApplicationTypeSpecification();
-		ApplicationTypeSpecification() {}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => !parameter.IsDefined(AttributeType);
+		ApplicationTypeSpecification() : base(IsDefinedSpecification<CompilerGeneratedAttribute>.Default) {}
 	}
 }

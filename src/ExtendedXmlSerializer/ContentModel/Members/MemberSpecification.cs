@@ -24,6 +24,7 @@
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
@@ -33,12 +34,10 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public MemberSpecification(ISpecification<T> specification) : base(specification, Specification) {}
 
-		sealed class AllowSpecification : ISpecification<MemberInfo>
+		sealed class AllowSpecification : InverseSpecification<MemberInfo>
 		{
 			public static AllowSpecification Default { get; } = new AllowSpecification();
-			AllowSpecification() {}
-
-			public bool IsSatisfiedBy(MemberInfo parameter) => !parameter.IsDefined(typeof(XmlIgnoreAttribute), false);
+			AllowSpecification() : base(new IsDefinedSpecification<XmlIgnoreAttribute>(false)) {}
 		}
 	}
 }

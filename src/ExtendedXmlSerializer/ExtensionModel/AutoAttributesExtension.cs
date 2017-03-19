@@ -29,7 +29,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class AutoAttributesExtension : ISerializerExtension
+	sealed class AutoAttributesExtension : ISerializerExtension
 	{
 		public static AutoAttributesExtension Default { get; } = new AutoAttributesExtension();
 		AutoAttributesExtension() {}
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		class TextSpecification : ISpecification<string>
+		sealed class TextSpecification : ISpecification<string>
 		{
 			readonly int _maxTextLength;
 
@@ -67,12 +67,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			public bool IsSatisfiedBy(string parameter) => parameter.Length < _maxTextLength;
 		}
 
-		class MemberConverters : IMemberConverters
+		sealed class MemberConverters : IMemberConverters
 		{
 			readonly IMemberConverters _members;
-			readonly IConverterSource _converters;
+			readonly IConverters _converters;
 
-			public MemberConverters(IMemberConverters members, IConverterSource converters)
+			public MemberConverters(IMemberConverters members, IConverters converters)
 			{
 				_members = members;
 				_converters = converters;

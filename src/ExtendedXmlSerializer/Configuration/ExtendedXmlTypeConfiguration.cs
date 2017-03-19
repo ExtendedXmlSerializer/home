@@ -22,9 +22,7 @@
 // SOFTWARE.
 
 using System;
-using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -33,22 +31,22 @@ namespace ExtendedXmlSerialization.Configuration
 	class ExtendedXmlTypeConfiguration : ReferenceCacheBase<MemberInfo, IExtendedXmlMemberConfiguration>,
 	                                     IExtendedXmlTypeConfiguration
 	{
-		readonly IExtendedXmlConfiguration _configuration;
 		readonly TypeInfo _type;
 
 		public ExtendedXmlTypeConfiguration(IExtendedXmlConfiguration configuration, IProperty<string> name, TypeInfo type)
 		{
+			Configuration = configuration;
 			Name = name;
-			_configuration = configuration;
 			_type = type;
 		}
 
+		public IExtendedXmlConfiguration Configuration { get; }
 		public IProperty<string> Name { get; }
 
 		protected override IExtendedXmlMemberConfiguration Create(MemberInfo parameter)
 		{
-			var extension = _configuration.With<MemberConfigurationExtension>();
-			return new ExtendedXmlMemberConfiguration(this, parameter,
+			var extension = Configuration.With<MemberConfigurationExtension>();
+			return new ExtendedXmlMemberConfiguration(Configuration, this, parameter,
 			                                          new MemberProperty<string>(extension.Names, parameter),
 			                                          new MemberProperty<int>(extension.Order, parameter)
 			);
@@ -86,9 +84,6 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public IProperty<string> Name => _type.Name;
 
-		IExtendedXmlMemberConfiguration IExtendedXmlTypeConfiguration.Member(MemberInfo member) => _type.Member(member);
-
-		public IExtendedXmlMemberConfiguration Member<TMember>(Expression<Func<T, TMember>> member)
-			=> _type.Member(member.GetMemberInfo());
+		public IExtendedXmlMemberConfiguration Member(MemberInfo member) => _type.Member(member);
 	}
 }

@@ -31,10 +31,10 @@ namespace ExtendedXmlSerialization
 {
 	public static class Extensions
 	{
-		public static IExtendedXmlSerializer Create<T>(this T @this, Action<T> configure) where T : IExtendedXmlConfiguration
+		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IExtendedXmlConfiguration> configure)
+			where T : IExtendedXmlConfiguration
 		{
-			configure(@this);
-			var result = @this.Create();
+			var result = configure(@this).Create();
 			return result;
 		}
 
@@ -50,9 +50,12 @@ namespace ExtendedXmlSerialization
 		}
 
 		public static object Deserialize(this IExtendedXmlSerializer @this, string xml) => @this.Deserialize<object>(xml);
-		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml) => @this.Deserialize<T>(Encoding.UTF8.GetBytes(xml));
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string xml)
+			=> @this.Deserialize<T>(Encoding.UTF8.GetBytes(xml));
 
 		public static object Deserialize(this IExtendedXmlSerializer @this, byte[] xml) => @this.Deserialize<object>(xml);
+
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, byte[] xml)
 		{
 			using (var stream = new MemoryStream(xml))

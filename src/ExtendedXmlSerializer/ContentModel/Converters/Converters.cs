@@ -28,7 +28,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class Converters : CacheBase<TypeInfo, IConverter>, IConverterSource
+	class Converters : CacheBase<TypeInfo, IConverter>, IConverters
 	{
 		readonly ImmutableArray<IConverter> _converters;
 		readonly ImmutableArray<IConverterSource> _sources;
@@ -38,6 +38,8 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 			_converters = converters.ToImmutableArray();
 			_sources = sources.ToImmutableArray();
 		}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => Get(parameter) != null;
 
 		protected override IConverter Create(TypeInfo parameter)
 		{
@@ -58,7 +60,5 @@ namespace ExtendedXmlSerialization.ContentModel.Converters
 			}
 			return null;
 		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => Get(parameter) != null;
 	}
 }

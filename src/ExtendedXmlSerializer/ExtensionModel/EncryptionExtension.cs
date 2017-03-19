@@ -21,27 +21,70 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class EncryptionExtension : ISerializerExtension, IAlteration<IConverter>
+	sealed class EncryptionExtension : ISerializerExtension, IAlteration<IConverter>
 	{
+		readonly static Encryption Encryption = Encryption.Default;
+
 		readonly IEncryption _encryption;
 
-		public EncryptionExtension() : this(Encryption.Default) {}
+		public EncryptionExtension() : this(Encryption) {}
 
-		public EncryptionExtension(IEncryption encryption)
+		public EncryptionExtension(IEncryption encryption) : this(encryption, new HashSet<MemberInfo>()) {}
+
+		public EncryptionExtension(ICollection<MemberInfo> registered) : this(Encryption, registered) {}
+
+		public EncryptionExtension(IEncryption encryption, ICollection<MemberInfo> registered)
 		{
 			_encryption = encryption;
+			Registered = registered;
 		}
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter;
+		public ICollection<MemberInfo> Registered { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter.Decorate<IMemberConverterSpecification>(Register)
+			         .Decorate<IMemberConverters>(Register);
+
+		IMemberConverterSpecification Register(IServiceProvider services, IMemberConverterSpecification specification)
+			=> new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered), specification);
+
+		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
+			=> new Converters(this, Registered, converters);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		public IConverter Get(IConverter parameter) => new EncryptedConverter(_encryption, parameter);
+
+		sealed class Converters : IMemberConverters
+		{
+			readonly IAlteration<IConverter> _alteration;
+			readonly ICollection<MemberInfo> _registered;
+			readonly IMemberConverters _converters;
+
+			public Converters(IAlteration<IConverter> alteration, ICollection<MemberInfo> registered,
+			                  IMemberConverters converters)
+			{
+				_alteration = alteration;
+				_registered = registered;
+				_converters = converters;
+			}
+
+			public IConverter Get(MemberInfo parameter)
+			{
+				var converter = _converters.Get(parameter);
+				var result = _registered.Contains(parameter) ? _alteration.Get(converter) : converter;
+				return result;
+			}
+		}
 	}
 }
