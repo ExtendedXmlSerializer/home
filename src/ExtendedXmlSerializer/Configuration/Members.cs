@@ -26,7 +26,7 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, ExtendedXmlMemberConfiguration<T>>
+	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, ExtendedXmlMemberConfiguration<T, TMember>>
 	{
 		public static IParameterizedSource<IExtendedXmlConfiguration, Members<T, TMember>> Defaults { get; } =
 			new ReferenceCache<IExtendedXmlConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerialization.Configuration
 			_type = type;
 		}
 
-		protected override ExtendedXmlMemberConfiguration<T> Create(MemberInfo parameter)
-			=> new ExtendedXmlMemberConfiguration<T>(_type.Member(parameter), _type);
+		protected override ExtendedXmlMemberConfiguration<T, TMember> Create(MemberInfo parameter)
+			=> new ExtendedXmlMemberConfiguration<T, TMember>(_type.Member(parameter), _type);
 	}
 }

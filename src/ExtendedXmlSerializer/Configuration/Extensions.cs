@@ -28,7 +28,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -71,13 +73,14 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ExtendedXmlTypeConfiguration<T> Type<T>(this IExtendedXmlConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
 
-		public static ExtendedXmlMemberConfiguration<T> Member<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
-		                                                                   Expression<Func<T, TMember>> member)
+		public static ExtendedXmlMemberConfiguration<T, TMember> Member<T, TMember>(
+			this ExtendedXmlTypeConfiguration<T> @this,
+			Expression<Func<T, TMember>> member)
 			=> Members<T, TMember>.Defaults.Get(@this.Configuration).Get(member.GetMemberInfo());
 
 		public static ExtendedXmlTypeConfiguration<T> Member<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
 		                                                                 Expression<Func<T, TMember>> member,
-		                                                                 Action<ExtendedXmlMemberConfiguration<T>>
+		                                                                 Action<ExtendedXmlMemberConfiguration<T, TMember>>
 			                                                                 configure)
 		{
 			configure(@this.Member(member));
@@ -103,6 +106,14 @@ namespace ExtendedXmlSerialization.Configuration
 			return @this;
 		}
 
+		public static IExtendedXmlMemberConfiguration Attribute<T, TMember>(
+			this ExtendedXmlMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
+		{
+			@this.Configuration.With<MemberConfigurationExtension>().Runtime[@this.Get()] =
+				new RuntimeMemberSpecification(new DelegatedSpecification<TMember>(when).Adapt());
+			return @this.Attribute();
+		}
+
 		public static IExtendedXmlMemberConfiguration Attribute(this IExtendedXmlMemberConfiguration @this)
 		{
 			@this.Configuration.With<AttributesExtension>().Registered.Add(@this.Get());
@@ -118,6 +129,13 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IExtendedXmlMemberConfiguration Encrypt(this IExtendedXmlMemberConfiguration @this)
 		{
 			@this.Configuration.With<EncryptionExtension>().Registered.Add(@this.Get());
+			return @this;
+		}
+
+		public static IExtendedXmlMemberConfiguration Identity(this IExtendedXmlMemberConfiguration @this)
+		{
+			@this.Attribute();
+			@this.Configuration.With<ReferencesExtension>().Assign(@this.Owner.Get(), @this.Get());
 			return @this;
 		}
 
@@ -161,7 +179,7 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ExtendedXmlTypeConfiguration<T> EnableReferences<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
 		                                                                           Expression<Func<T, TMember>> member)
 		{
-			@this.Configuration.With<ReferencesExtension>().Assign(@this.Get(), member.GetMemberInfo());
+			@this.Member(member).Identity();
 			return @this;
 		}
 
