@@ -21,30 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerialization.Configuration;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Serialization;
 using ExtendedXmlSerialization.Test.Support;
-using JetBrains.Annotations;
 using Xunit;
 
-namespace ExtendedXmlSerialization.Test.ExtensionModel
+namespace ExtendedXmlSerialization.Test.ContentModel.Collections
 {
-	public class XmlSerializationExtensionTests
+	public class CollectionContentOptionTests
 	{
 		[Fact]
-		public void Write()
+		public void Field()
 		{
-			var serializer = new ExtendedConfiguration().WithSettings(new XmlWriterSettings {Indent =  true});
-			var support = new SerializationSupport(serializer);
-			support.Assert(new Subject {PropertyName = "Hello World!" }, @"<?xml version=""1.0"" encoding=""utf-8""?>
-<XmlSerializationExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest"">
-  <PropertyName>Hello World!</PropertyName>
-</XmlSerializationExtensionTests-Subject>");
+			var support = new SerializationSupport();
+			var expected = new Subject("Hello", "World!");
+			var actual = support.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><CollectionContentOptionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Collections;assembly=ExtendedXmlSerializerTest""><_children><Capacity>4</Capacity><string xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">Hello</string><string xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">World!</string></_children></CollectionContentOptionTests-Subject>");
+			Assert.Equal(expected.ToArray(), actual.ToArray());
 		}
 
-		class Subject
+		class Subject : IEnumerable<string>
 		{
-			public string PropertyName { [UsedImplicitly] get; set; }
+			[XmlElement] readonly List<string> _children = new List<string>();
+
+			public Subject(params string[] items)
+			{
+				_children.AddRange(items);
+			}
+
+			IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+			public IEnumerator<string> GetEnumerator() => _children.GetEnumerator();
 		}
 	}
 }

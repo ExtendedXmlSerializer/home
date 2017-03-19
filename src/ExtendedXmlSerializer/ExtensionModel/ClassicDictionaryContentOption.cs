@@ -54,7 +54,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			var activator = _activation.Get(parameter);
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, _members.Get(parameter));
-			var result = new Serializer(reader, new DictionaryEntryWriter(entry));
+			var result = new Serializer(reader, new EnumerableWriter(entry));
 			return result;
 		}
 

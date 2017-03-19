@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Xml;
@@ -40,7 +41,13 @@ namespace ExtendedXmlSerialization.ContentModel
 
 		public void Write(IXmlWriter writer, object instance)
 		{
-			var serializer = _contents.Get(instance.GetType().GetTypeInfo());
+			var typeInfo = instance.GetType().GetTypeInfo();
+			var serializer = _contents.Get(typeInfo);
+			if (serializer is RuntimeSerializer)
+			{
+				throw new InvalidOperationException(
+					$"The serializer for type '{typeInfo}' could not be found.  Please ensure that the type is a valid type can be activated.");
+			}
 			serializer.Write(writer, instance);
 		}
 

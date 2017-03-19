@@ -42,9 +42,8 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 		}
 
 		protected override IVariableTypeSpecification Create(IMember parameter)
-			=>
-				_specification.IsSatisfiedBy(parameter)
-					? new Content.VariableTypeSpecification(parameter.MemberType.AsType())
-					: null;
+			=> _specification.IsSatisfiedBy(parameter)
+				? new Content.VariableTypeSpecification(parameter.MemberType.AsType())
+				: null;
 	}
 }

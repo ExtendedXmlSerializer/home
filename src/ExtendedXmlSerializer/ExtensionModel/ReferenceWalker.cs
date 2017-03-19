@@ -33,10 +33,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	class ReferenceWalker : InstanceMemberWalkerBase<object>, ISource<ImmutableArray<object>>
 	{
 		readonly static VariableTypeMemberSpecifications Specifications = VariableTypeMemberSpecifications.Default;
+		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
 
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IMemberAccessors _accessors;
-		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
 
 		public ReferenceWalker(ITypeMembers members, IMemberAccessors accessors, object root)
 			: this(Specifications, members, accessors, root) {}

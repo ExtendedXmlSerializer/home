@@ -21,39 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	public abstract class InstanceMemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{
 		readonly ITypeMembers _members;
+		readonly IEnumerators _enumerators;
 
-		protected InstanceMemberWalkerBase(ITypeMembers members, object root) : base(root)
+		protected InstanceMemberWalkerBase(ITypeMembers members, object root) : this(members, Enumerators.Default, root) {}
+
+		protected InstanceMemberWalkerBase(ITypeMembers members, IEnumerators enumerators, object root) : base(root)
 		{
 			_members = members;
+			_enumerators = enumerators;
 		}
 
 		protected override IEnumerable<T> Select(object input)
 		{
 			var parameter = input.GetType().GetTypeInfo();
-
-			foreach (var item in Members(input, parameter))
-			{
-				yield return item;
-			}
-
-			var iterator = (input as IDictionary)?.GetEnumerator() ?? (input as IEnumerable)?.GetEnumerator();
-			while (iterator?.MoveNext() ?? false)
-			{
-				foreach (var item in Yield(iterator.Current))
-				{
-					yield return item;
-				}
-			}
+			var result = Members(input, parameter).Concat(_enumerators.Get(input).Select(Yield).SelectMany(x => x));
+			return result;
 		}
 
 		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)
