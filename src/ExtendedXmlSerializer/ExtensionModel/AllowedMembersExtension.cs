@@ -21,31 +21,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	sealed class AllowedMembersExtension : ISerializerExtension
 	{
-		public AllowedMembersExtension()
-			: this(DefaultMetadataSpecification.Default, Configuration.Defaults.MemberPolicy) {}
+		readonly static Collection<MemberInfo> DefaultBlacklist =
+			new Collection<MemberInfo>
+			{
+				typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Keys)),
+				typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Values))
+			};
 
-		public AllowedMembersExtension(IMetadataSpecification specification, IMemberPolicy policy)
+		public AllowedMembersExtension()
+			: this(DefaultMetadataSpecification.Default, new HashSet<MemberInfo>(DefaultBlacklist), new HashSet<MemberInfo>()) {}
+
+		public AllowedMembersExtension(IMetadataSpecification specification, ICollection<MemberInfo> blacklist,
+		                               ICollection<MemberInfo> whitelist)
 		{
 			Specification = specification;
-			Policy = policy;
+			Blacklist = blacklist;
+			Whitelist = whitelist;
 		}
 
-		public IMetadataSpecification Specification { get; }
-		public IMemberPolicy Policy { get; }
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter
-				.RegisterInstance(Policy.And<PropertyInfo>(Specification))
-				.RegisterInstance(Policy.And<FieldInfo>(Specification))
+		public IMetadataSpecification Specification { get; }
+		public ICollection<MemberInfo> Blacklist { get; }
+		public ICollection<MemberInfo> Whitelist { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			var policy = Whitelist.Any()
+				? (ISpecification<MemberInfo>) new WhitelistMemberPolicy(Whitelist.ToArray())
+				: new BlacklistMemberPolicy(Blacklist.ToArray());
+
+			return parameter
+				.RegisterInstance(policy.And<PropertyInfo>(Specification))
+				.RegisterInstance(policy.And<FieldInfo>(Specification))
 				.Register<IMetadataSpecification, MetadataSpecification>();
+		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -77,8 +77,7 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IConfiguration EnableReferences(this IConfiguration @this)
 			=> @this.Apply<ReferencesExtension>();
 
-		public static TypeConfiguration<T> ConfigureType<T>(this IConfiguration @this)
-			=> @this.Type<T>();
+		public static TypeConfiguration<T> ConfigureType<T>(this IConfiguration @this) => @this.Type<T>();
 
 		public static TypeConfiguration<T> Type<T>(this IConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
@@ -142,6 +141,18 @@ namespace ExtendedXmlSerialization.Configuration
 			return @this;
 		}
 
+		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
+		{
+			@this.Configuration.With<AllowedMembersExtension>().Blacklist.Add(@this.Get());
+			return @this;
+		}
+
+		public static IMemberConfiguration Include(this IMemberConfiguration @this)
+		{
+			@this.Configuration.With<AllowedMembersExtension>().Whitelist.Add(@this.Get());
+			return @this;
+		}
+
 		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
 		{
 			@this.Attribute();
@@ -162,10 +173,27 @@ namespace ExtendedXmlSerialization.Configuration
 			return result;
 		}
 
-		public static TypeConfiguration<T> CustomSerializer<T>(
-			this TypeConfiguration<T> @this,
-			Action<XmlWriter, T> serializer,
-			Func<XElement, T> deserialize)
+		public static IConfiguration OnlyConfiguredProperties(this IConfiguration @this)
+		{
+			foreach (var type in TypeConfigurations.Defaults.Get(@this))
+			{
+				type.OnlyConfiguredProperties();
+			}
+			return @this;
+		}
+
+		public static ITypeConfiguration OnlyConfiguredProperties(this ITypeConfiguration @this)
+		{
+			foreach (var member in @this)
+			{
+				member.Include();
+			}
+			return @this;
+		}
+
+		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
+		                                                       Action<XmlWriter, T> serializer,
+		                                                       Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
 		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
@@ -212,7 +240,12 @@ namespace ExtendedXmlSerialization.Configuration
 
 		public static IConfiguration Extend(this IConfiguration @this,
 		                                    params ISerializerExtension[] extensions)
-			=> new ExtendedConfiguration(@this.With(extensions));
+		{
+			var items = @this.With(extensions).ToList();
+			@this.Clear();
+			items.ForEach(@this.Add);
+			return @this;
+		}
 
 		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
 		                                          params ISerializerExtension[] extensions)

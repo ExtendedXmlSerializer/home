@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using ExtendedXmlSerialization.ExtensionModel;
 
@@ -30,10 +29,6 @@ namespace ExtendedXmlSerialization.Configuration
 	public interface IConfiguration : ICollection<ISerializerExtension>
 	{
 		T Find<T>() where T : ISerializerExtension;
-
-		//T Remove<T>() where T : ISerializerExtension;
-
-		bool Remove(Type type);
 
 		IExtendedXmlSerializer Create();
 	}

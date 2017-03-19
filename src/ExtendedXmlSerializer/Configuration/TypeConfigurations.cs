@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
@@ -28,11 +29,12 @@ using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>
+	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>, IEnumerable<ITypeConfiguration>
 	{
 		public static IParameterizedSource<IConfiguration, TypeConfigurations> Defaults { get; }
 			= new ReferenceCache<IConfiguration, TypeConfigurations>(x => new TypeConfigurations(x));
 
+		readonly ICollection<ITypeConfiguration> _types = new HashSet<ITypeConfiguration>();
 		readonly IConfiguration _configuration;
 		readonly IDictionary<TypeInfo, string> _names;
 
@@ -46,7 +48,14 @@ namespace ExtendedXmlSerialization.Configuration
 		}
 
 		protected override ITypeConfiguration Create(TypeInfo parameter)
-			=> new TypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
+		{
+			var result = new TypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
+			_types.Add(result);
+			return result;
+		}
+
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
 	sealed class TypeConfigurations<T> : ReferenceCache<IConfiguration, TypeConfiguration<T>>

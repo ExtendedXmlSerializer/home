@@ -21,18 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	static class Defaults
+	sealed class WhitelistMemberPolicy : ContainsSpecification<MemberInfo>, IMemberPolicy
 	{
-		public static IMemberPolicy MemberPolicy { get; } = new BlacklistMemberPolicy(
-			typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Keys)),
-			typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Values))
-		);
+		readonly static MemberComparer Comparer = MemberComparer.Default;
+
+		public WhitelistMemberPolicy(params MemberInfo[] avoid) : this(Comparer, avoid) {}
+
+		public WhitelistMemberPolicy(IMemberComparer comparer, params MemberInfo[] avoid)
+			: this(new HashSet<MemberInfo>(avoid, comparer)) {}
+
+		public WhitelistMemberPolicy(ICollection<MemberInfo> avoid) : base(avoid) {}
 	}
 }
