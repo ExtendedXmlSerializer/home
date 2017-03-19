@@ -28,7 +28,7 @@ namespace ExtendedXmlSerialization.Configuration
 {
 	public interface IConfigurationItem<out T> : ISource<T> where T : MemberInfo
 	{
-		IExtendedXmlConfiguration Configuration { get; }
+		IConfiguration Configuration { get; }
 
 		IProperty<string> Name { get; }
 	}

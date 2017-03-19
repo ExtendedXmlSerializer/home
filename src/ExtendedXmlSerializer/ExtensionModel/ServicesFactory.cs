@@ -42,7 +42,7 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			_options = options;
 		}
 
-		public IServices Get(IExtendedXmlConfiguration parameter)
+		public IServices Get(IConfiguration parameter)
 		{
 			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
 

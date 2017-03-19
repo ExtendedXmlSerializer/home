@@ -26,21 +26,21 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, ExtendedXmlMemberConfiguration<T, TMember>>
+	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, MemberConfiguration<T, TMember>>
 	{
-		public static IParameterizedSource<IExtendedXmlConfiguration, Members<T, TMember>> Defaults { get; } =
-			new ReferenceCache<IExtendedXmlConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
+		public static IParameterizedSource<IConfiguration, Members<T, TMember>> Defaults { get; } =
+			new ReferenceCache<IConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
 
-		Members(IExtendedXmlConfiguration configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
+		Members(IConfiguration configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
 
-		readonly ExtendedXmlTypeConfiguration<T> _type;
+		readonly TypeConfiguration<T> _type;
 
-		public Members(ExtendedXmlTypeConfiguration<T> type)
+		public Members(TypeConfiguration<T> type)
 		{
 			_type = type;
 		}
 
-		protected override ExtendedXmlMemberConfiguration<T, TMember> Create(MemberInfo parameter)
-			=> new ExtendedXmlMemberConfiguration<T, TMember>(_type.Member(parameter), _type);
+		protected override MemberConfiguration<T, TMember> Create(MemberInfo parameter)
+			=> new MemberConfiguration<T, TMember>(_type.Member(parameter), _type);
 	}
 }

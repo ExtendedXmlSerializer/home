@@ -27,33 +27,33 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, IExtendedXmlTypeConfiguration>
+	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>
 	{
-		public static IParameterizedSource<IExtendedXmlConfiguration, TypeConfigurations> Defaults { get; }
-			= new ReferenceCache<IExtendedXmlConfiguration, TypeConfigurations>(x => new TypeConfigurations(x));
+		public static IParameterizedSource<IConfiguration, TypeConfigurations> Defaults { get; }
+			= new ReferenceCache<IConfiguration, TypeConfigurations>(x => new TypeConfigurations(x));
 
-		readonly IExtendedXmlConfiguration _configuration;
+		readonly IConfiguration _configuration;
 		readonly IDictionary<TypeInfo, string> _names;
 
-		TypeConfigurations(IExtendedXmlConfiguration configuration)
+		TypeConfigurations(IConfiguration configuration)
 			: this(configuration, configuration.With<TypeNamesExtension>().Names) {}
 
-		TypeConfigurations(IExtendedXmlConfiguration configuration, IDictionary<TypeInfo, string> names)
+		TypeConfigurations(IConfiguration configuration, IDictionary<TypeInfo, string> names)
 		{
 			_configuration = configuration;
 			_names = names;
 		}
 
-		protected override IExtendedXmlTypeConfiguration Create(TypeInfo parameter)
-			=> new ExtendedXmlTypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
+		protected override ITypeConfiguration Create(TypeInfo parameter)
+			=> new TypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
 	}
 
-	sealed class TypeConfigurations<T> : ReferenceCache<IExtendedXmlConfiguration, ExtendedXmlTypeConfiguration<T>>
+	sealed class TypeConfigurations<T> : ReferenceCache<IConfiguration, TypeConfiguration<T>>
 	{
 		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
-		TypeConfigurations() : base(x => new ExtendedXmlTypeConfiguration<T>(x)) {}
+		TypeConfigurations() : base(x => new TypeConfiguration<T>(x)) {}
 
-		public ExtendedXmlTypeConfiguration<T> For(IExtendedXmlTypeConfiguration type)
-			=> type as ExtendedXmlTypeConfiguration<T> ?? Get(type.Configuration);
+		public TypeConfiguration<T> For(ITypeConfiguration type)
+			=> type as TypeConfiguration<T> ?? Get(type.Configuration);
 	}
 }

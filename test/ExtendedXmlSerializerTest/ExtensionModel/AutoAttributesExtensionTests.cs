@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void VerifyAutoAttributes()
 		{
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().UseAutoProperties().Create());
+			var support = new SerializationSupport(new ExtendedConfiguration().UseAutoProperties().Create());
 			var instance = TestClassPrimitiveTypes.Create();
 			var data = support.Serialize(instance);
 			Assert.Equal(
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void VerifyAutoAttributesWithLongContent()
 		{
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().UseAutoProperties().Create());
+			var support = new SerializationSupport(new ExtendedConfiguration().UseAutoProperties().Create());
 			var instance = TestClassPrimitiveTypes.Create();
 			instance.PropString =
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed urna sapien, pulvinar et consequat sit amet, fermentum in volutpat. This sentence should break the property out into content.";

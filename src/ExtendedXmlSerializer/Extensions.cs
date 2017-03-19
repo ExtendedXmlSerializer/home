@@ -31,8 +31,8 @@ namespace ExtendedXmlSerialization
 {
 	public static class Extensions
 	{
-		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IExtendedXmlConfiguration> configure)
-			where T : IExtendedXmlConfiguration
+		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfiguration> configure)
+			where T : IConfiguration
 		{
 			var result = configure(@this).Create();
 			return result;

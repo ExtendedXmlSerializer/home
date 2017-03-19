@@ -37,15 +37,11 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		[Fact]
 		public void Verify()
 		{
-			var migrations = new Dictionary<TypeInfo, IEnumerable<Action<XElement>>>
-			                 {
-				                 {
-					                 typeof(Subject).GetTypeInfo(),
-					                 new Migrations {new PropertyMigration("OldPropertyName", nameof(Subject.PropertyName))}
-				                 }
-			                 };
+			var configuration = new ExtendedConfiguration().Type<Subject>()
+				.AddMigration(new PropertyMigration("OldPropertyName", nameof(Subject.PropertyName)))
+				.Configuration;
 			var support =
-				new SerializationSupport(new ExtendedXmlConfiguration().Extend(new MigrationsExtension(migrations)).Create());
+				new SerializationSupport(configuration.Create());
 			var instance = new Subject {PropertyName = "Hello World!"};
 			support.Assert(instance,
 			               @"<?xml version=""1.0"" encoding=""utf-8""?><MigrationsExtensionTests-Subject xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:version=""1"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><PropertyName>Hello World!</PropertyName></MigrationsExtensionTests-Subject>");

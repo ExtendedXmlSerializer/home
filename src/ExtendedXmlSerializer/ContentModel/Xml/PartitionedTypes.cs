@@ -33,9 +33,6 @@ namespace ExtendedXmlSerialization.ContentModel.Xml
 		readonly static AssemblyPathParser AssemblyPathParser = AssemblyPathParser.Default;
 		readonly static AssemblyLoader AssemblyLoader = AssemblyLoader.Default;
 
-		/*public static PartitionedTypes Default { get; } = new PartitionedTypes();
-		PartitionedTypes() : this(TypeLoader.Default, AssemblyTypePartitions.Default) {}*/
-
 		public PartitionedTypes(params ITypePartitions[] partitions)
 			: this(AssemblyPathParser, AssemblyLoader, new TypePartitions(partitions)) {}
 

@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.Support
 		public ServicesSupport() : this(DefaultExtensions.Default.ToArray()) {}
 
 		public ServicesSupport(params ISerializerExtension[] extensions)
-			: this(ServicesFactory.Default.Get(new ExtendedXmlConfiguration(extensions))) {}
+			: this(ServicesFactory.Default.Get(new ExtendedConfiguration(extensions))) {}
 
 		public ServicesSupport(IServices services)
 		{

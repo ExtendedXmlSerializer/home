@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using ExtendedXmlSerialization.ExtensionModel;
+
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface ITypeNames : ITypeConfiguration<string> {}
+	public interface IConfiguration : ICollection<ISerializerExtension>
+	{
+		T Find<T>() where T : ISerializerExtension;
+
+		//T Remove<T>() where T : ISerializerExtension;
+
+		bool Remove(Type type);
+
+		IExtendedXmlSerializer Create();
+	}
 }

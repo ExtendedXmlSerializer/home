@@ -25,9 +25,9 @@ using System.Reflection;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IExtendedXmlMemberConfiguration : IConfigurationItem<MemberInfo>
+	public interface IMemberConfiguration : IConfigurationItem<MemberInfo>
 	{
-		IExtendedXmlTypeConfiguration Owner { get; }
+		ITypeConfiguration Owner { get; }
 
 		IProperty<int> Order { get; }
 	}

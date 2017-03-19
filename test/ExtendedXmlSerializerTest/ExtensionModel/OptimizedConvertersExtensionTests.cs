@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			var container = new OptimizedConverterAlteration();
 			var alteration = new Alteration(container);
 			var sut = new OptimizedConvertersExtension(alteration, container);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(sut).Create());
+			var support = new SerializationSupport(new ExtendedConfiguration().Extend(sut).Create());
 
 			const float number = 4.5678f;
 			var actual = support.Assert(number, @"<?xml version=""1.0"" encoding=""utf-8""?><float xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">4.5678</float>");

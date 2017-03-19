@@ -24,7 +24,6 @@
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.Test.TestObject;
 using Xunit;
 
@@ -33,7 +32,7 @@ namespace ExtendedXmlSerialization.Test
 	public class ExtendedXmlSerializerTests
 	{
 		const string HelloWorld = "Hello World!";
-		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = new ExtendedXmlSerialization.Configuration.ExtendedConfiguration().Create();
 
 		[Fact]
 		public void Primitive()

@@ -32,9 +32,6 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
-		/*public static ArrayElementOption Default { get; } = new ArrayElementOption();
-		ArrayElementOption() : this(CollectionItemTypeLocator.Default) {}*/
-
 		readonly Xml.IIdentities _identities;
 		readonly IItemTypeProperty _property;
 		readonly ICollectionItemTypeLocator _locator;

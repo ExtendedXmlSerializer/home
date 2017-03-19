@@ -34,13 +34,13 @@ using Xunit;
 namespace ExtendedXmlSerialization.Test.Configuration
 {
 	[SuppressMessage("ReSharper", "TestFileNameWarning")]
-	public class ConfigurationTests
+	public class ExtendedConfigurationTests
 	{
 		const string Testclass = "UpdatedTestClassName", MemberName = "UpdatedMemberName";
 
-		static IExtendedXmlConfiguration Configure(Action<IExtendedXmlConfiguration> configure)
+		static IConfiguration Configure(Action<IConfiguration> configure)
 		{
-			var result = new ExtendedXmlConfiguration();
+			var result = new ExtendedConfiguration();
 			configure(result);
 			return result;
 		}
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureNameForType()
 		{
-			var configuration = new ExtendedXmlConfiguration();
+			var configuration = new ExtendedConfiguration();
 			var sut = configuration.Type<SimpleTestSubject>().Name(Testclass);
 
 			Assert.Equal(sut.Name(), Testclass);
@@ -76,7 +76,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 		[Fact]
 		public void ConfigureEntityType()
 		{
-			var configuration = new ExtendedXmlConfiguration();
+			var configuration = new ExtendedConfiguration();
 
 			Assert.Null(configuration.Find<ReferencesExtension>());
 
@@ -143,7 +143,7 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};
 			support.Assert(instance,
-			               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><UpdatedMemberName>Hello World!  Testing Member.</UpdatedMemberName></ConfigurationTests-SimpleTestSubject>");
+			               @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedConfigurationTests-SimpleTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><UpdatedMemberName>Hello World!  Testing Member.</UpdatedMemberName></ExtendedConfigurationTests-SimpleTestSubject>");
 		}
 
 		[Fact]
@@ -160,10 +160,10 @@ namespace ExtendedXmlSerialization.Test.Configuration
 			var instance = new SimpleOrderedTestSubject {Property2 = "World!", Property1 = "Hello"};
 
 			new SerializationSupport().Assert(instance,
-			                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property1>Hello</Property1><Property2>World!</Property2></ConfigurationTests-SimpleOrderedTestSubject>");
+			                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property1>Hello</Property1><Property2>World!</Property2></ExtendedConfigurationTests-SimpleOrderedTestSubject>");
 
 			new SerializationSupport(configuration).Assert(instance,
-			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property2>World!</Property2><Property1>Hello</Property1></ConfigurationTests-SimpleOrderedTestSubject>");
+			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedConfigurationTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest""><Property2>World!</Property2><Property1>Hello</Property1></ExtendedConfigurationTests-SimpleOrderedTestSubject>");
 		}
 
 		[Fact]
@@ -178,13 +178,13 @@ namespace ExtendedXmlSerialization.Test.Configuration
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,
-			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationTests-SimpleTestSubject BasicProperty=""Hello World as Attribute!"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest"" />");
+			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedConfigurationTests-SimpleTestSubject BasicProperty=""Hello World as Attribute!"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.Configuration;assembly=ExtendedXmlSerializerTest"" />");
 		}
 
 		[Fact]
 		public void ConfigureEncrypt()
 		{
-			var before = new ExtendedXmlConfiguration();
+			var before = new ExtendedConfiguration();
 			Assert.Null(before.Find<EncryptionExtension>());
 			var configuration = before
 				.UseEncryptionAlgorithm()
