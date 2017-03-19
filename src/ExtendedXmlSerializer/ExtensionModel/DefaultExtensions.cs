@@ -22,23 +22,26 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicExtension : ISerializerExtension
+	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
 	{
-		public static ClassicExtension Default { get; } = new ClassicExtension();
-		ClassicExtension() {}
+		public static DefaultExtensions Default { get; } = new DefaultExtensions();
+		DefaultExtensions() {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=>
-				parameter.Register<IEnumerable<IContentOption>, ClassicContentOptions>()
-				         .Register<ClassicDictionaryContentOption>()
-				         .Register<ClassicCollectionContentOption>()
-				         .RegisterInstance(ClassicAllowedMemberValues.Default);
-
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		{
+			yield return new DefaultRegistrationsExtension();
+			yield return new TypeNamesExtension();
+			yield return ConverterExtension.Default;
+			yield return SerializationExtension.Default;
+			yield return new MemberPropertiesExtension();
+			yield return new AllowedMembersExtension();
+			yield return new AllowedMemberValuesExtension();
+			yield return new AttributesExtension();
+			yield return XmlSerializationExtension.Default;
+		}
 	}
 }

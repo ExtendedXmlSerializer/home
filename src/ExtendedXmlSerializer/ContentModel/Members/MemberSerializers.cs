@@ -29,11 +29,11 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 	sealed class MemberSerializers : IMemberSerializers
 	{
 		readonly IMemberAccessors _accessors;
-		readonly IRuntimeMemberSpecifications _runtime;
+		readonly IAttributeSpecifications _runtime;
 		readonly IMemberConverters _converters;
 		readonly IMemberContents _content;
 
-		public MemberSerializers(IMemberAccessors accessors, IRuntimeMemberSpecifications runtime,
+		public MemberSerializers(IMemberAccessors accessors, IAttributeSpecifications runtime,
 		                         IMemberConverters converters, IMemberContents content)
 		{
 			_accessors = accessors;

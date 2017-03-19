@@ -21,19 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
+
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class MemberEmitSpecifications : IMemberEmitSpecifications
-	{
-		readonly IMemberEmitSpecifications _specifications;
-		readonly IMemberEmitSpecification _instance;
-
-		public MemberEmitSpecifications(IMemberEmitSpecifications specifications, IMemberEmitSpecification instance)
-		{
-			_specifications = specifications;
-			_instance = instance;
-		}
-
-		public IMemberEmitSpecification Get(IMember parameter) => _specifications.Get(parameter) ?? _instance;
-	}
+	public interface IAttributeSpecifications : IParameterizedSource<MemberInfo, IAttributeSpecification> {}
 }

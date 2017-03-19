@@ -21,9 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberEmitSpecification : ISpecification<object> {}
+	class AllowedAssignedInstanceValues : IAllowedMemberValues
+	{
+		readonly ISpecification<TypeInfo> _specification;
+		readonly ITypeMemberDefaults _defaults;
+
+		public static AllowedAssignedInstanceValues Default { get; } = new AllowedAssignedInstanceValues();
+
+		AllowedAssignedInstanceValues()
+			: this(IsActivatedTypeSpecification.Default, TypeMemberDefaults.Default) {}
+
+		public AllowedAssignedInstanceValues(ISpecification<TypeInfo> specification, ITypeMemberDefaults defaults)
+		{
+			_specification = specification;
+			_defaults = defaults;
+		}
+
+		public IAllowedValueSpecification Get(MemberInfo parameter)
+		{
+			var type = parameter.GetReflectedType();
+			var result = _specification.IsSatisfiedBy(type) ? FromDefault(type, parameter) : null;
+			return result;
+		}
+
+		IAllowedValueSpecification FromDefault(TypeInfo reflectedType, MemberInfo parameter)
+		{
+			var defaultValue = _defaults.Get(reflectedType).Invoke(parameter);
+			var inverse = new EqualitySpecification<object>(defaultValue).Inverse();
+			var result = new AllowedValueSpecification(inverse);
+			return result;
+		}
+	}
 }

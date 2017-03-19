@@ -21,37 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ExtensionModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Configuration
 {
-	class RuntimeMemberSpecifications : IRuntimeMemberSpecifications
+	class AddAlteration : IAlteration<AllowedMemberValuesExtension>
 	{
-		readonly static TypeInfo Type = typeof(string).GetTypeInfo();
-		readonly static RuntimeMemberSpecification Always = new RuntimeMemberSpecification(AlwaysSpecification<object>.Default);
+		readonly IAllowedMemberValues _add;
 
-		readonly IConverters _source;
-		readonly IRuntimeMemberSpecification _text;
-		readonly IRuntimeMemberSpecifications _specifications;
-
-		public RuntimeMemberSpecifications(IRuntimeMemberSpecification text, IRuntimeMemberSpecifications specifications,
-		                                   IConverters source)
+		public AddAlteration(IAllowedMemberValues add)
 		{
-			_source = source;
-			_text = text;
-			_specifications = specifications;
+			_add = add;
 		}
 
-		public IRuntimeMemberSpecification Get(MemberInfo parameter) => _specifications.Get(parameter) ?? From(parameter);
-
-		IRuntimeMemberSpecification From(MemberDescriptor descriptor)
+		public AllowedMemberValuesExtension Get(AllowedMemberValuesExtension parameter)
 		{
-			var supported = _source.IsSatisfiedBy(descriptor.MemberType);
-			var result = supported ? Equals(descriptor.MemberType, Type) ? _text : Always : null;
-			return result;
+			parameter.Add(_add);
+			return parameter;
 		}
 	}
 }

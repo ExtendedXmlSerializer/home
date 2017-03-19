@@ -33,15 +33,15 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	sealed class ReadOnlyCollectionAccessors : OptionBase<IMember, IMemberAccess>
 	{
-		readonly IMemberEmitSpecifications _emit;
+		readonly IAllowedMemberValues _emit;
 		readonly IGetterFactory _getter;
 		readonly IAddDelegates _add;
 
 		[UsedImplicitly]
-		public ReadOnlyCollectionAccessors(IMemberEmitSpecifications emit)
+		public ReadOnlyCollectionAccessors(IAllowedMemberValues emit)
 			: this(emit, GetterFactory.Default, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionAccessors(IMemberEmitSpecifications emit, IGetterFactory getter, IAddDelegates add)
+		public ReadOnlyCollectionAccessors(IAllowedMemberValues emit, IGetterFactory getter, IAddDelegates add)
 			: base(
 				new MemberTypeSpecification(
 					IsCollectionTypeSpecification.Default.And(
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 
 		public override IMemberAccess Get(IMember parameter)
 			=>
-				new ReadOnlyCollectionMemberAccess(new MemberAccess(_emit.Get(parameter), _getter.Get(parameter.Metadata),
+				new ReadOnlyCollectionMemberAccess(new MemberAccess(_emit.Get(parameter.Metadata), _getter.Get(parameter.Metadata),
 				                                                    _add.Get(parameter.MemberType)));
 	}
 }

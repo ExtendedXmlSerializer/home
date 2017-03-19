@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		public void SimpleString()
 		{
 			const string message = "Hello World!  This is my encrypted message!";
-			var support = new SerializationSupport(new ExtendedConfiguration().Extend(EmitBehaviorExtension.Default)
+			var support = new SerializationSupport(new ExtendedConfiguration().Emit(EmitBehaviors.Assigned)
 				.Type<SimpleSubject>()
 				.Member(x => x.Message).Encrypt()
 				.Configuration

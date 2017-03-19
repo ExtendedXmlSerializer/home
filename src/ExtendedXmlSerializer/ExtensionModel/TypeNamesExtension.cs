@@ -23,19 +23,18 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Properties;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.TypeModel;
-using Elements = ExtendedXmlSerialization.ContentModel.Content.Elements;
 using Identities = ExtendedXmlSerialization.ContentModel.Xml.Identities;
 using IIdentities = ExtendedXmlSerialization.ContentModel.Xml.IIdentities;
 using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ExtensionModel
 {
 	public sealed class TypeNamesExtension : ISerializerExtension
 	{
@@ -59,7 +58,7 @@ namespace ExtendedXmlSerialization.Configuration
 				.Register<ITypeFormatters, TypeFormatters>()
 				.Register<ITypeParsers, TypeParsers>()
 				.Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
-				.Register<IElements, Elements>()
+				.Register<IElements, ContentModel.Content.Elements>()
 				.Register<ITypeFormatter, TypeFormatter>()
 				.Register<ITypeFormatters, TypeFormatters>()
 				.Register<ITypeParsers, TypeParsers>()

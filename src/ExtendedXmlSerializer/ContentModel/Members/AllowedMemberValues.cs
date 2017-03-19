@@ -21,9 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Specifications;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IRuntimeMemberSpecification : ISpecification<object> {}
+	sealed class AllowedMemberValues : DecoratedSource<MemberInfo, IAllowedValueSpecification>, IAllowedMemberValues
+	{
+		public AllowedMemberValues(IParameterizedSource<MemberInfo, IAllowedValueSpecification> source) : base(source) {}
+	}
 }

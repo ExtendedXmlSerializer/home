@@ -21,24 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
-
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerialization.Core.Sources
 {
-	class ClassicExtension : ISerializerExtension
+	public class FixedInstanceSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
-		public static ClassicExtension Default { get; } = new ClassicExtension();
-		ClassicExtension() {}
+		readonly TResult _instance;
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=>
-				parameter.Register<IEnumerable<IContentOption>, ClassicContentOptions>()
-				         .Register<ClassicDictionaryContentOption>()
-				         .Register<ClassicCollectionContentOption>()
-				         .RegisterInstance(ClassicAllowedMemberValues.Default);
+		public FixedInstanceSource(TResult instance)
+		{
+			_instance = instance;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public TResult Get(TParameter parameter) => _instance;
 	}
 }

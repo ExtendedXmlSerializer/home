@@ -51,6 +51,16 @@ namespace ExtendedXmlSerialization.Configuration
 			return @this;
 		}
 
+		public static IConfiguration Emit(this IConfiguration @this, IEmitBehavior behavior) => behavior.Get(@this);
+
+		public static IConfiguration With<T>(this IConfiguration @this, Action<T> configure)
+			where T : class, ISerializerExtension
+		{
+			var extension = @this.With<T>();
+			configure(extension);
+			return @this;
+		}
+
 		public static T With<T>(this IConfiguration @this) where T : class, ISerializerExtension
 			=> @this.Find<T>() ?? @this.Add<T>();
 
@@ -109,8 +119,8 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IMemberConfiguration Attribute<T, TMember>(
 			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Configuration.With<MemberConfigurationExtension>().Runtime[@this.Get()] =
-				new RuntimeMemberSpecification(new DelegatedSpecification<TMember>(when).Adapt());
+			@this.Configuration.With<AttributesExtension>().Specifications[@this.Get()] =
+				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
@@ -166,7 +176,7 @@ namespace ExtendedXmlSerialization.Configuration
 		}
 
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
-														   ICommand<XElement> migration)
+		                                                   ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,

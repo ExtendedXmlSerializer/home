@@ -22,22 +22,39 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicExtension : ISerializerExtension
+	sealed class AttributesExtension : ISerializerExtension
 	{
-		public static ClassicExtension Default { get; } = new ClassicExtension();
-		ClassicExtension() {}
+		public AttributesExtension() : this(new Dictionary<MemberInfo, IAttributeSpecification>(), new HashSet<MemberInfo>()) {}
+
+		public AttributesExtension(IDictionary<MemberInfo, IAttributeSpecification> specifications,
+		                           ICollection<MemberInfo> registered)
+		{
+			Specifications = specifications;
+			Registered = registered;
+		}
+
+		public IDictionary<MemberInfo, IAttributeSpecification> Specifications { get; }
+
+		public ICollection<MemberInfo> Registered { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=>
-				parameter.Register<IEnumerable<IContentOption>, ClassicContentOptions>()
-				         .Register<ClassicDictionaryContentOption>()
-				         .Register<ClassicCollectionContentOption>()
-				         .RegisterInstance(ClassicAllowedMemberValues.Default);
+		{
+			var specification = new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered),
+			                                                     IsDefinedSpecification<XmlAttributeAttribute>.Default);
+			return parameter
+				.RegisterInstance<IAttributeSpecifications>(new ContentModel.Members.AttributeSpecifications(Specifications))
+				.RegisterInstance<IMemberConverterSpecification>(specification)
+				.Register<IMemberConverters, MemberConverters>();
+		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -27,7 +27,7 @@ using Xunit;
 
 namespace ExtendedXmlSerialization.Test.ContentModel.Members
 {
-	public class RuntimeMemberSpecificationTests
+	public class AttributeSpecificationTests
 	{
 		[Fact]
 		public void Verify()
@@ -43,13 +43,13 @@ namespace ExtendedXmlSerialization.Test.ContentModel.Members
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleSubject {Message = "Hello World!", Number = 6776};
 			var content = support.Assert(expected,
-			                             @"<?xml version=""1.0"" encoding=""utf-8""?><RuntimeMemberSpecificationTests-SimpleSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><Message>Hello World!</Message><Number>6776</Number></RuntimeMemberSpecificationTests-SimpleSubject>");
+			                             @"<?xml version=""1.0"" encoding=""utf-8""?><AttributeSpecificationTests-SimpleSubject xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><Message>Hello World!</Message><Number>6776</Number></AttributeSpecificationTests-SimpleSubject>");
 			Assert.Equal(expected.Message, content.Message);
 			Assert.Equal(expected.Number, content.Number);
 
 			expected.Message = target;
 			var attributes = support.Assert(expected,
-			                                @"<?xml version=""1.0"" encoding=""utf-8""?><RuntimeMemberSpecificationTests-SimpleSubject Message=""I am Attribute, Hear me roar! #rawr!"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><Number>6776</Number></RuntimeMemberSpecificationTests-SimpleSubject>");
+			                                @"<?xml version=""1.0"" encoding=""utf-8""?><AttributeSpecificationTests-SimpleSubject Message=""I am Attribute, Hear me roar! #rawr!"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ContentModel.Members;assembly=ExtendedXmlSerializerTest""><Number>6776</Number></AttributeSpecificationTests-SimpleSubject>");
 			Assert.Equal(expected.Message, attributes.Message);
 			Assert.Equal(expected.Number, attributes.Number);
 		}

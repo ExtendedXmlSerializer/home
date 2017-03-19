@@ -21,17 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class MappedMemberEmitSpecifications : TableSource<MemberInfo, IMemberEmitSpecification>,
-	                                              IMemberEmitSpecifications
+	sealed class AllowAssignedValues : AllowedValueSpecification
 	{
-		public MappedMemberEmitSpecifications(IDictionary<MemberInfo, IMemberEmitSpecification> store) : base(store) {}
-
-		public IMemberEmitSpecification Get(IMember parameter) => Get(parameter.Metadata) ?? Get(parameter.MemberType);
+		public static AllowAssignedValues Default { get; } = new AllowAssignedValues();
+		AllowAssignedValues() : base(AssignedSpecification<object>.Default) {}
 	}
 }
