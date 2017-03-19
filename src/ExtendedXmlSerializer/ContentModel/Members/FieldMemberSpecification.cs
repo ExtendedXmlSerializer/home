@@ -22,16 +22,30 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	class FieldMemberSpecification : ISpecification<FieldInfo>
 	{
 		public static FieldMemberSpecification Default { get; } = new FieldMemberSpecification();
-		FieldMemberSpecification() {}
+
+		readonly ISpecification<MemberInfo> _defined;
+
+		FieldMemberSpecification()
+			: this(IsDefinedSpecification<XmlElementAttribute>.Default.Or(IsDefinedSpecification<XmlAttributeAttribute>.Default)) {}
+
+		FieldMemberSpecification(ISpecification<MemberInfo> defined)
+		{
+			_defined = defined;
+		}
 
 		public bool IsSatisfiedBy(FieldInfo parameter)
-			=> !parameter.IsStatic && (!parameter.IsInitOnly || !parameter.IsLiteral);
+			=>
+				!parameter.IsStatic && (!parameter.IsInitOnly || !parameter.IsLiteral) &&
+				(parameter.IsPublic || _defined.IsSatisfiedBy(parameter));
 	}
 }

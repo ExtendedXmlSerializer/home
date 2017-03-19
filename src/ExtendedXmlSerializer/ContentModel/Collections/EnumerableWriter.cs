@@ -21,34 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Collections
 {
-	class EnumerableWriter<T> : WriterBase<T> where T : IEnumerable
+	sealed class EnumerableWriter : IWriter
 	{
+		readonly static Enumerators Enumerators = Enumerators.Default;
+
+		readonly IEnumerators _enumerators;
 		readonly IWriter _item;
 
-		public EnumerableWriter(IWriter item)
+		public EnumerableWriter(IWriter item) : this(Enumerators, item) {}
+
+		public EnumerableWriter(IEnumerators enumerators, IWriter item)
 		{
+			_enumerators = enumerators;
 			_item = item;
 		}
 
-		protected virtual IEnumerator Get(T instance) => instance.GetEnumerator();
-
-		public sealed override void Write(IXmlWriter writer, T instance)
+		public void Write(IXmlWriter writer, object instance)
 		{
-			var enumerator = Get(instance);
-			while (enumerator.MoveNext())
+			foreach (var o in _enumerators.Get(instance))
 			{
-				_item.Write(writer, enumerator.Current);
+				_item.Write(writer, o);
 			}
 		}
-	}
-
-	class EnumerableWriter : EnumerableWriter<IEnumerable>
-	{
-		public EnumerableWriter(IWriter item) : base(item) {}
 	}
 }

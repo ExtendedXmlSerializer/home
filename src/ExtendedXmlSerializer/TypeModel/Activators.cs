@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -35,6 +36,7 @@ namespace ExtendedXmlSerialization.TypeModel
 		Activators() : this(ConstructorLocator.Default) {}
 
 		readonly IConstructorLocator _locator;
+		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
 
 		public Activators(IConstructorLocator locator)
 		{
@@ -58,9 +60,22 @@ namespace ExtendedXmlSerialization.TypeModel
 			var constructor = _locator.Get(typeInfo);
 			var parameters = constructor.GetParameters();
 			var result = parameters.Length > 0
-				? Expression.New(constructor, parameters.Select(x => Expression.Default(x.ParameterType)))
+				? Expression.New(constructor, parameters.Select(Selector))
 				: Expression.New(parameter);
 			return result;
+		}
+
+		class DefaultParameters : IParameterizedSource<ParameterInfo, Expression>
+		{
+			readonly static IEnumerable<Expression> Initializers = Enumerable.Empty<Expression>();
+
+			public static DefaultParameters Instance { get; } = new DefaultParameters();
+			DefaultParameters() {}
+
+			public Expression Get(ParameterInfo parameter)
+				=> parameter.IsDefined(typeof(ParamArrayAttribute))
+					? (Expression) Expression.NewArrayInit(parameter.ParameterType.GetElementType(), Initializers)
+					: Expression.Default(parameter.ParameterType);
 		}
 	}
 }

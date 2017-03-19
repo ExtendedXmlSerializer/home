@@ -53,7 +53,7 @@ namespace ExtendedXmlSerialization.ContentModel.Content
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members);
 
-			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new DictionaryEntryWriter(entry));
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

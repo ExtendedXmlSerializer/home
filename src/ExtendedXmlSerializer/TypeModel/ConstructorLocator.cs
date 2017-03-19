@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class ConstructorLocator : ReferenceCacheBase<TypeInfo, ConstructorInfo>, IConstructorLocator
+	public sealed class ConstructorLocator : ReferenceCacheBase<TypeInfo, ConstructorInfo>, IConstructorLocator
 	{
 		public static ConstructorLocator Default { get; } = new ConstructorLocator();
 		ConstructorLocator() {}
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerialization.TypeModel
 				var constructor = constructors[i];
 				var parameters = constructor.GetParameters();
 				var l = parameters.Length;
-				if (l == 0 || parameters.All(x => x.IsOptional))
+				if (l == 0 || parameters.All(x => x.IsOptional || x.IsDefined(typeof(ParamArrayAttribute))))
 				{
 					return constructor;
 				}
