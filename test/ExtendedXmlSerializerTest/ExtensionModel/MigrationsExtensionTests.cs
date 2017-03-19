@@ -21,10 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Xml.Linq;
 using ExtendedXmlSerialization.Configuration;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
