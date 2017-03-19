@@ -22,25 +22,36 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using System.Reflection;
+using System.Xml.Serialization;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	sealed class AttributesExtension : ISerializerExtension
 	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
+		public AttributesExtension() : this(new HashSet<MemberInfo>()) {}
 
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		public AttributesExtension(ICollection<MemberInfo> registered)
 		{
-			yield return new DefaultRegistrationsExtension();
-			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
-			yield return new MemberConfigurationExtension();
-			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
+			Registered = registered;
 		}
+
+		public ICollection<MemberInfo> Registered { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter)
+		{
+			var specification = new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered),
+			                                                     IsDefinedSpecification<XmlAttributeAttribute>.Default);
+			return parameter
+				.RegisterInstance<IMemberConverterSpecification>(specification)
+				.Register<IMemberConverters, MemberConverters>();
+		}
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

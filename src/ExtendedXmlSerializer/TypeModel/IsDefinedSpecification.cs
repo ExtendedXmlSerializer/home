@@ -21,26 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
+using System;
+using System.Reflection;
+using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	sealed class IsDefinedSpecification<T> : ISpecification<MemberInfo>
 	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
+		readonly static Type Type = Support<T>.Key.AsType();
 
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		public static IsDefinedSpecification<T> Default { get; } = new IsDefinedSpecification<T>();
+		IsDefinedSpecification() : this(true) {}
+
+		readonly bool _inherit;
+
+		public IsDefinedSpecification(bool inherit)
 		{
-			yield return new DefaultRegistrationsExtension();
-			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
-			yield return new MemberConfigurationExtension();
-			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
+			_inherit = inherit;
 		}
+
+		public bool IsSatisfiedBy(MemberInfo parameter) => parameter.IsDefined(Type, _inherit);
 	}
 }

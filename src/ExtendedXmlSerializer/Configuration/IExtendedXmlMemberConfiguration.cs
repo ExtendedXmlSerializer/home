@@ -27,6 +27,8 @@ namespace ExtendedXmlSerialization.Configuration
 {
 	public interface IExtendedXmlMemberConfiguration : IConfigurationItem<MemberInfo>
 	{
+		IExtendedXmlTypeConfiguration Owner { get; }
+
 		IProperty<int> Order { get; }
 	}
 }

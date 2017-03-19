@@ -21,26 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, ExtendedXmlMemberConfiguration<T>>
 	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
+		public static IParameterizedSource<IExtendedXmlConfiguration, Members<T, TMember>> Defaults { get; } =
+			new ReferenceCache<IExtendedXmlConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
 
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		Members(IExtendedXmlConfiguration configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
+
+		readonly ExtendedXmlTypeConfiguration<T> _type;
+
+		public Members(ExtendedXmlTypeConfiguration<T> type)
 		{
-			yield return new DefaultRegistrationsExtension();
-			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
-			yield return new MemberConfigurationExtension();
-			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
+			_type = type;
 		}
+
+		protected override ExtendedXmlMemberConfiguration<T> Create(MemberInfo parameter)
+			=> new ExtendedXmlMemberConfiguration<T>(_type.Member(parameter), _type);
 	}
 }

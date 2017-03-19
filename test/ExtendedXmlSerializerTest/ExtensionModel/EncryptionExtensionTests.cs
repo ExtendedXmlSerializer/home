@@ -22,10 +22,9 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ExtensionModel;
 using ExtendedXmlSerialization.Test.Support;
 using JetBrains.Annotations;
@@ -40,16 +39,15 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 		{
 			const string message = "Hello World!  This is my encrypted message!";
 
-			var sut = new EncryptionExtension();
 			var typeInfo = typeof(SimpleSubject).GetTypeInfo();
 
-			var converters = new Dictionary<MemberInfo, IConverter>
+			var converters = new Collection<MemberInfo>
 			                 {
-				                 {typeInfo.GetProperty(nameof(SimpleSubject.Message)), sut.Get(StringConverter.Default)}
-			                 };
+								 typeInfo.GetProperty(nameof(SimpleSubject.Message))
+							 };
+			var sut = new EncryptionExtension(converters);
 
-			var memberConfiguration = new MemberConfigurationExtension(converters);
-			var extensions = DefaultExtensions.Default.With(memberConfiguration, EmitBehaviorExtension.Default);
+			var extensions = DefaultExtensions.Default.With(sut, EmitBehaviorExtension.Default);
 			var support = new SerializationSupport(new ExtendedXmlConfiguration(extensions).Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
@@ -63,16 +61,16 @@ namespace ExtendedXmlSerialization.Test.ExtensionModel
 			const string message = "Hello World!  This is my unencrypted message!";
 			var identifier = new Guid("B496F7F5-58F8-41BF-AF18-117B8F3743BF");
 
-			var sut = new EncryptionExtension();
 			var typeInfo = typeof(SimpleSubject).GetTypeInfo();
 
-			var converters = new Dictionary<MemberInfo, IConverter>
+			var converters = new Collection<MemberInfo>
 			                 {
-				                 {typeInfo.GetProperty(nameof(SimpleSubject.Identifier)), sut.Get(GuidConverter.Default)}
-			                 };
+								 typeInfo.GetProperty(nameof(SimpleSubject.Identifier))
+							 };
 
-			var memberConfiguration = new MemberConfigurationExtension(converters);
-			var support = new SerializationSupport(new ExtendedXmlConfiguration(DefaultExtensions.Default.With(memberConfiguration)).Extend(sut).Create());
+			var sut = new EncryptionExtension(converters);
+
+			var support = new SerializationSupport(new ExtendedXmlConfiguration().Extend(sut).Create());
 			var expected = new SimpleSubject {Identifier = identifier, Message = message};
 			var actual = support.Assert(expected,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerialization.Test.ExtensionModel;assembly=ExtendedXmlSerializerTest""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");

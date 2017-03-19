@@ -23,7 +23,6 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Sources;
@@ -37,37 +36,27 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		public MemberConfigurationExtension()
 			: this(
-				DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IConverter>(),
+				DefaultMetadataSpecification.Default,
 				new Dictionary<MemberInfo, IMemberEmitSpecification>(),
 				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
 
-		public MemberConfigurationExtension(IDictionary<MemberInfo, IConverter> converters)
-			: this(
-				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(),
-				new Dictionary<MemberInfo, IRuntimeMemberSpecification>()) {}
-
-		public MemberConfigurationExtension(IDictionary<MemberInfo, IConverter> converters,
-		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(
-				DefaultMetadataSpecification.Default, converters, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
+		public MemberConfigurationExtension(IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
+			: this(DefaultMetadataSpecification.Default, new Dictionary<MemberInfo, IMemberEmitSpecification>(), runtime) {}
 
 		public MemberConfigurationExtension(IMetadataSpecification specification,
-		                                    IDictionary<MemberInfo, IConverter> converters,
 		                                    IDictionary<MemberInfo, IMemberEmitSpecification> emit,
 		                                    IDictionary<MemberInfo, IRuntimeMemberSpecification> runtime)
-			: this(specification, new MemberConverters(converters), new MappedMemberEmitSpecifications(emit),
+			: this(specification, new MappedMemberEmitSpecifications(emit),
 			       new RuntimeMemberSpecifications(runtime), new Dictionary<MemberInfo, string>(),
 			       new Dictionary<MemberInfo, int>(), Defaults.MemberPolicy) {}
 
 		public MemberConfigurationExtension(
 			IMetadataSpecification specification,
-			IMemberConverters converters,
 			IMemberEmitSpecifications specifications,
 			IRuntimeMemberSpecifications runtime, IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order,
 			IMemberPolicy policy)
 		{
 			Specification = specification;
-			Converters = converters;
 			EmitSpecifications = specifications;
 			Runtime = runtime;
 			Order = order;
@@ -79,26 +68,25 @@ namespace ExtendedXmlSerialization.Configuration
 		public IDictionary<MemberInfo, int> Order { get; }
 
 		public IMetadataSpecification Specification { get; }
-		public IMemberConverters Converters { get; }
+		public IMemberPolicy Policy { get; }
+
 		public IMemberEmitSpecifications EmitSpecifications { get; }
 		public IRuntimeMemberSpecifications Runtime { get; }
 
-		public IMemberPolicy Policy { get; }
-
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			return parameter.Register<IMetadataSpecification, MetadataSpecification>()
-			                .RegisterInstance(Policy.And<PropertyInfo>(Specification))
-			                .RegisterInstance(Policy.And<FieldInfo>(Specification))
-			                .RegisterInstance(Converters)
-			                .RegisterInstance(Runtime)
-			                .RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
-			                .RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default))
-			                .RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
-			                .RegisterInstance(EmitSpecifications)
-			                .Decorate<IMemberEmitSpecifications>(
-				                (provider, defaults) =>
-					                new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()));
+			return parameter
+				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
+				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default))
+				.RegisterInstance(Policy.And<PropertyInfo>(Specification))
+				.RegisterInstance(Policy.And<FieldInfo>(Specification))
+				.Register<IMetadataSpecification, MetadataSpecification>()
+				.RegisterInstance(Runtime)
+				.RegisterInstance<IMemberEmitSpecification>(AssignedEmitMemberSpecification.Default)
+				.RegisterInstance(EmitSpecifications)
+				.Decorate<IMemberEmitSpecifications>(
+					(provider, defaults) =>
+						new MemberEmitSpecifications(defaults, provider.Get<IMemberEmitSpecification>()));
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

@@ -71,6 +71,22 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ExtendedXmlTypeConfiguration<T> Type<T>(this IExtendedXmlConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
 
+		public static ExtendedXmlMemberConfiguration<T> Member<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
+		                                                                   Expression<Func<T, TMember>> member)
+			=> Members<T, TMember>.Defaults.Get(@this.Configuration).Get(member.GetMemberInfo());
+
+		public static ExtendedXmlTypeConfiguration<T> Member<T, TMember>(this ExtendedXmlTypeConfiguration<T> @this,
+		                                                                 Expression<Func<T, TMember>> member,
+		                                                                 Action<ExtendedXmlMemberConfiguration<T>>
+			                                                                 configure)
+		{
+			configure(@this.Member(member));
+			return @this;
+		}
+
+		public static ExtendedXmlTypeConfiguration<T> Owner<T>(this IExtendedXmlMemberConfiguration @this)
+			=> TypeConfigurations<T>.Default.For(@this.Owner);
+
 		public static string Name<T>(this IConfigurationItem<T> @this) where T : MemberInfo => @this.Name.Get();
 
 		public static IConfigurationItem<T> Name<T>(this IConfigurationItem<T> @this, string name) where T : MemberInfo
@@ -84,6 +100,24 @@ namespace ExtendedXmlSerialization.Configuration
 		public static IExtendedXmlMemberConfiguration Order(this IExtendedXmlMemberConfiguration @this, int order)
 		{
 			@this.Order.Assign(order);
+			return @this;
+		}
+
+		public static IExtendedXmlMemberConfiguration Attribute(this IExtendedXmlMemberConfiguration @this)
+		{
+			@this.Configuration.With<AttributesExtension>().Registered.Add(@this.Get());
+			return @this;
+		}
+
+		public static IExtendedXmlMemberConfiguration Content(this IExtendedXmlMemberConfiguration @this)
+		{
+			@this.Configuration.With<AttributesExtension>().Registered.Remove(@this.Get());
+			return @this;
+		}
+
+		public static IExtendedXmlMemberConfiguration Encrypt(this IExtendedXmlMemberConfiguration @this)
+		{
+			@this.Configuration.With<EncryptionExtension>().Registered.Add(@this.Get());
 			return @this;
 		}
 
@@ -151,6 +185,9 @@ namespace ExtendedXmlSerialization.Configuration
 		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
 		                                          params ISerializerExtension[] extensions)
 			=> @this.TypeZip(extensions).ToArray();
+
+		public static IExtendedXmlConfiguration UseEncryptionAlgorithm(this IExtendedXmlConfiguration @this)
+			=> UseEncryptionAlgorithm(@this, Encryption.Default);
 
 		public static IExtendedXmlConfiguration UseEncryptionAlgorithm(this IExtendedXmlConfiguration @this,
 		                                                               IEncryption encryption)

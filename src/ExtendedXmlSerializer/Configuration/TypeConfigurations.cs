@@ -52,5 +52,8 @@ namespace ExtendedXmlSerialization.Configuration
 	{
 		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
 		TypeConfigurations() : base(x => new ExtendedXmlTypeConfiguration<T>(x)) {}
+
+		public ExtendedXmlTypeConfiguration<T> For(IExtendedXmlTypeConfiguration type)
+			=> type as ExtendedXmlTypeConfiguration<T> ?? Get(type.Configuration);
 	}
 }

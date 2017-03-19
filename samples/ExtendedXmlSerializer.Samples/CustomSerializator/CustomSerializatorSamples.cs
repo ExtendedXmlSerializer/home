@@ -33,7 +33,7 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 			Program.PrintHeader("Custom serialization");
 
 			var serializer = new ExtendedXmlConfiguration().Create(
-				cfg => cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer())
+				cfg => cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer()).Configuration
 			);
 
 			Run(serializer);

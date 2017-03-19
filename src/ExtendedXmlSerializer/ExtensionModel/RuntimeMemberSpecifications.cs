@@ -33,12 +33,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		readonly static TypeInfo Type = typeof(string).GetTypeInfo();
 		readonly static RuntimeMemberSpecification Always = new RuntimeMemberSpecification(AlwaysSpecification<object>.Default);
 
-		readonly IConverterSource _source;
+		readonly IConverters _source;
 		readonly IRuntimeMemberSpecification _text;
 		readonly IRuntimeMemberSpecifications _specifications;
 
 		public RuntimeMemberSpecifications(IRuntimeMemberSpecification text, IRuntimeMemberSpecifications specifications,
-		                                   IConverterSource source)
+		                                   IConverters source)
 		{
 			_source = source;
 			_text = text;
