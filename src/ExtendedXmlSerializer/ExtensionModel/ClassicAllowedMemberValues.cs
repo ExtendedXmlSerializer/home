@@ -21,13 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class AssignedEmitMemberSpecification : MemberEmitSpecification
+	class ClassicAllowedMemberValues : IAllowedMemberValues
 	{
-		public static AssignedEmitMemberSpecification Default { get; } = new AssignedEmitMemberSpecification();
-		AssignedEmitMemberSpecification() : base(AssignedSpecification<object>.Default) {}
+		readonly static IAllowedValueSpecification
+			Always = AlwaysEmitMemberSpecification.Default,
+			Assigned = AllowAssignedValues.Default;
+
+		public static ClassicAllowedMemberValues Default { get; } = new ClassicAllowedMemberValues();
+		ClassicAllowedMemberValues() : this(IsValueTypeSpecification.Default) {}
+
+		readonly ISpecification<TypeInfo> _valueType;
+
+		public ClassicAllowedMemberValues(ISpecification<TypeInfo> valueType)
+		{
+			_valueType = valueType;
+		}
+
+		public IAllowedValueSpecification Get(MemberInfo parameter) => From(parameter);
+
+		IAllowedValueSpecification From(MemberDescriptor parameter)
+			=> _valueType.IsSatisfiedBy(parameter.MemberType) ? Always : Assigned;
 	}
 }

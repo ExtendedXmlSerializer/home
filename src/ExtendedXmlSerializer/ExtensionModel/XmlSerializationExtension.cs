@@ -23,9 +23,8 @@
 
 using System.Xml;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ExtensionModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ExtensionModel
 {
 	sealed class XmlSerializationExtension : ISerializerExtension
 	{

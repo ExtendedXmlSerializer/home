@@ -25,7 +25,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	class AlwaysEmitMemberSpecification : MemberEmitSpecification
+	class AlwaysEmitMemberSpecification : AllowedValueSpecification
 	{
 		public static AlwaysEmitMemberSpecification Default { get; } = new AlwaysEmitMemberSpecification();
 		AlwaysEmitMemberSpecification() : base(AlwaysSpecification<object>.Default) {}

@@ -21,10 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.ContentModel.Members;
+using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ExtensionModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.Configuration
 {
-	public interface IRuntimeMemberSpecifications : IParameterizedSource<MemberInfo, IRuntimeMemberSpecification> {}
+	public static class EmitBehaviors
+	{
+		public static IEmitBehavior Always { get; } =
+			new EmitBehavior(new AllowedSpecificationAlteration(AlwaysSpecification<object>.Default));
+
+		public static IEmitBehavior NotDefault { get; } =
+			new EmitBehavior(new AllowedSpecificationAlteration(AllowAssignedValues.Default));
+
+		public static IEmitBehavior Classic { get; } = new EmitBehavior(new AddAlteration(ClassicAllowedMemberValues.Default))
+			;
+
+		public static IEmitBehavior Assigned { get; } =
+			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));
+	}
 }

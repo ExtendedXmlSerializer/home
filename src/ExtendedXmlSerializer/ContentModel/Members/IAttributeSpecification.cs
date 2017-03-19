@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	public interface IMemberEmitSpecifications : IParameterizedSource<IMember, IMemberEmitSpecification> {}
+	public interface IAttributeSpecification : ISpecification<object> {}
 }

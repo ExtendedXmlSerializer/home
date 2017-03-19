@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,24 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class EmitBehaviorExtension : ISerializerExtension
+	sealed class AllowedMembersExtension : ISerializerExtension
 	{
-		public static EmitBehaviorExtension Default { get; } = new EmitBehaviorExtension();
-		EmitBehaviorExtension() : this(InstanceDefaultsMemberSpecifications.Default) {}
+		public AllowedMembersExtension()
+			: this(DefaultMetadataSpecification.Default, Configuration.Defaults.MemberPolicy) {}
 
-		readonly IMemberEmitSpecifications _specifications;
-
-		public EmitBehaviorExtension(IMemberEmitSpecifications specifications)
+		public AllowedMembersExtension(IMetadataSpecification specification, IMemberPolicy policy)
 		{
-			_specifications = specifications;
+			Specification = specification;
+			Policy = policy;
 		}
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter.RegisterInstance(_specifications);
+		public IMetadataSpecification Specification { get; }
+		public IMemberPolicy Policy { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter
+				.RegisterInstance(Policy.And<PropertyInfo>(Specification))
+				.RegisterInstance(Policy.And<FieldInfo>(Specification))
+				.Register<IMetadataSpecification, MetadataSpecification>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -21,15 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class RuntimeMemberSpecifications : TableSource<MemberInfo, IRuntimeMemberSpecification>,
-	                                           IRuntimeMemberSpecifications
+	class AttributeSpecification : DecoratedSpecification<object>, IAttributeSpecification
 	{
-		public RuntimeMemberSpecifications(IDictionary<MemberInfo, IRuntimeMemberSpecification> store) : base(store) {}
+		public AttributeSpecification(ISpecification<object> specification) : base(specification) {}
 	}
 }

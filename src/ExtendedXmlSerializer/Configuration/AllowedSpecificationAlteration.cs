@@ -21,26 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.ExtensionModel;
 
 namespace ExtendedXmlSerialization.Configuration
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	class AllowedSpecificationAlteration : IAlteration<AllowedMemberValuesExtension>
 	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
+		readonly IAllowedValueSpecification _specification;
 
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		public AllowedSpecificationAlteration(ISpecification<object> specification)
+			: this(new AllowedValueSpecification(specification)) {}
+
+		public AllowedSpecificationAlteration(IAllowedValueSpecification specification)
 		{
-			yield return new DefaultRegistrationsExtension();
-			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
-			yield return new MemberConfigurationExtension();
-			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
+			_specification = specification;
+		}
+
+		public AllowedMemberValuesExtension Get(AllowedMemberValuesExtension parameter)
+		{
+			return new AllowedMemberValuesExtension(_specification, parameter.Specifications, parameter.ToArray());
 		}
 	}
 }

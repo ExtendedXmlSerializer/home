@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,22 +22,31 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class ClassicExtension : ISerializerExtension
+	sealed class MemberPropertiesExtension : ISerializerExtension
 	{
-		public static ClassicExtension Default { get; } = new ClassicExtension();
-		ClassicExtension() {}
+		public MemberPropertiesExtension() : this(new Dictionary<MemberInfo, string>(), new Dictionary<MemberInfo, int>()) {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=>
-				parameter.Register<IEnumerable<IContentOption>, ClassicContentOptions>()
-				         .Register<ClassicDictionaryContentOption>()
-				         .Register<ClassicCollectionContentOption>()
-				         .RegisterInstance(ClassicAllowedMemberValues.Default);
+		public MemberPropertiesExtension(IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order)
+		{
+			Order = order;
+			Names = names;
+		}
+
+		public IDictionary<MemberInfo, string> Names { get; }
+		public IDictionary<MemberInfo, int> Order { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter
+				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
+				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

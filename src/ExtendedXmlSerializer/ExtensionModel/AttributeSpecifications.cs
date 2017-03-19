@@ -21,12 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class RuntimeMemberSpecification : DecoratedSpecification<object>, IRuntimeMemberSpecification
+	class AttributeSpecifications : IAttributeSpecifications
 	{
-		public RuntimeMemberSpecification(ISpecification<object> specification) : base(specification) {}
+		readonly static TypeInfo Type = typeof(string).GetTypeInfo();
+		readonly static AttributeSpecification Always = new AttributeSpecification(AlwaysSpecification<object>.Default);
+
+		readonly IConverters _source;
+		readonly IAttributeSpecification _text;
+		readonly IAttributeSpecifications _specifications;
+
+		public AttributeSpecifications(IAttributeSpecification text, IAttributeSpecifications specifications,
+		                               IConverters source)
+		{
+			_source = source;
+			_text = text;
+			_specifications = specifications;
+		}
+
+		public IAttributeSpecification Get(MemberInfo parameter) => _specifications.Get(parameter) ?? From(parameter);
+
+		IAttributeSpecification From(MemberDescriptor descriptor)
+		{
+			var supported = _source.IsSatisfiedBy(descriptor.MemberType);
+			var result = supported ? Equals(descriptor.MemberType, Type) ? _text : Always : null;
+			return result;
+		}
 	}
 }

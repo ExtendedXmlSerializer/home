@@ -23,35 +23,18 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml.Serialization;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ExtensionModel;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Core.Sources;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerialization.ContentModel.Members
 {
-	sealed class AttributesExtension : ISerializerExtension
+	sealed class MappedAllowedMemberValues : TableSource<MemberInfo, IAllowedValueSpecification>,
+	                                         IAllowedMemberValues
 	{
-		public AttributesExtension() : this(new HashSet<MemberInfo>()) {}
+		public MappedAllowedMemberValues(IDictionary<MemberInfo, IAllowedValueSpecification> store) : base(store) {}
 
-		public AttributesExtension(ICollection<MemberInfo> registered)
-		{
-			Registered = registered;
-		}
+		public override IAllowedValueSpecification Get(MemberInfo parameter) => From(parameter);
 
-		public ICollection<MemberInfo> Registered { get; }
-
-		public IServiceRepository Get(IServiceRepository parameter)
-		{
-			var specification = new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered),
-			                                                     IsDefinedSpecification<XmlAttributeAttribute>.Default);
-			return parameter
-				.RegisterInstance<IMemberConverterSpecification>(specification)
-				.Register<IMemberConverters, MemberConverters>();
-		}
-
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		IAllowedValueSpecification From(MemberDescriptor parameter)
+			=> base.Get(parameter.Metadata) ?? base.Get(parameter.MemberType);
 	}
 }
