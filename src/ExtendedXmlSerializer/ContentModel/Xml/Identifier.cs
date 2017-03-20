@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	class Identifier : FixedParser<string>
 	{

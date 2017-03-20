@@ -23,13 +23,13 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
 #if CORE
 
 #endif
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public interface IAssemblyProvider : ISource<IEnumerable<Assembly>> {}
 }

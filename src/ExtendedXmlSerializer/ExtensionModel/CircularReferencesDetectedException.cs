@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerializer.ContentModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class CircularReferencesDetectedException : Exception
 	{

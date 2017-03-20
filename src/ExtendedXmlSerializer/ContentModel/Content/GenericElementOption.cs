@@ -23,10 +23,10 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class GenericElementOption : NamedElementOptionBase
 	{

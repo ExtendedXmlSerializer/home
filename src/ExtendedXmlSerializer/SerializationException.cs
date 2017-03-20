@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerializer
 {
 	public class SerializationException : Exception
 	{

@@ -25,7 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	// ATTRIBUTION: Based on https://github.com/seesharper/LightInject/blob/master/src/LightInject/LightInject.cs#L88
 	// Basically using this as a decorated contract for now.

@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public class ContainsSpecification<T> : DelegatedSpecification<T>
 	{

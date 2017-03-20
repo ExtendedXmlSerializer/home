@@ -23,7 +23,7 @@
 
 using System.IO;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	public interface IXmlFactory
 	{

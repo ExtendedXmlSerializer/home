@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	public sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
 	{
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
 		DefaultExtensions() {}

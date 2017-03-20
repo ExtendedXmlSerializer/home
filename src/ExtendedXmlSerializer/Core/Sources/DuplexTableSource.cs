@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class DuplexTableSource<TKey, TValue> : TableSource<TKey, TValue>, IParameterizedSource<TValue, TKey>
 	{

@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ClassicExtension : ISerializerExtension
 	{

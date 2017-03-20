@@ -25,11 +25,11 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DictionaryEntries : IDictionaryEntries
 	{

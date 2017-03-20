@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class RootReferences : StructureCacheBase<IXmlWriter, ImmutableArray<object>>, IRootReferences
 	{

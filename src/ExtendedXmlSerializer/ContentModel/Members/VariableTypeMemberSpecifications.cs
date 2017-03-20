@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
-using VariableTypeSpecification = ExtendedXmlSerialization.Core.Specifications.VariableTypeSpecification;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using VariableTypeSpecification = ExtendedXmlSerializer.Core.Specifications.VariableTypeSpecification;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class VariableTypeMemberSpecifications : ReferenceCacheBase<IMember, IVariableTypeSpecification>,
 	                                                IVariableTypeMemberSpecifications

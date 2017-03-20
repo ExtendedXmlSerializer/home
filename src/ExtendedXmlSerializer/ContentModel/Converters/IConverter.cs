@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	public interface IConverter : IConverter<object> {}
 

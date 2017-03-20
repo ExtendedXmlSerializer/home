@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class StructureCache<TKey, TValue> : StructureCacheBase<TKey, TValue> where TKey : class where TValue : struct
 	{

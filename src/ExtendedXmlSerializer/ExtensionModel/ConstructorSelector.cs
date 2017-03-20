@@ -26,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using LightInject;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ConstructorSelector : IConstructorSelector
 	{

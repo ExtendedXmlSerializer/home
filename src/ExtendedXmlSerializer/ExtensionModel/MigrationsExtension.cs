@@ -28,17 +28,17 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
-using XmlReader = ExtendedXmlSerialization.ContentModel.Xml.XmlReader;
+using XmlReader = ExtendedXmlSerializer.ContentModel.Xml.XmlReader;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class MigrationsExtension : TypedTable<IEnumerable<Action<XElement>>>, ISerializerExtension
 	{

@@ -23,11 +23,11 @@
 
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
 	{

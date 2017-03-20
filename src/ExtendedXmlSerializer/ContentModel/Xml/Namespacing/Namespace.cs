@@ -1,4 +1,4 @@
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
 	public struct Namespace : IIdentity
 	{

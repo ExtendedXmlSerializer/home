@@ -23,10 +23,10 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class VariableTypeElement : ElementBase
 	{

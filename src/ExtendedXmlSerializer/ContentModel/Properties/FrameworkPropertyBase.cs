@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	abstract class FrameworkPropertyBase<T> : PropertyBase<T>
 	{

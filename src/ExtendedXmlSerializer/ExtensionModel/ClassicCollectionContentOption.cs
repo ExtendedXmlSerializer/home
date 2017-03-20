@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Collections;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
 	{

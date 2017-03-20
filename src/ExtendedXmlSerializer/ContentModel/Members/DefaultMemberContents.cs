@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class DefaultMemberContents : IMemberContents
 	{

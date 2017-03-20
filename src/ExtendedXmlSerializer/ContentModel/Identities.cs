@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class Identities : Cache<string, Func<string, IIdentity>>, IIdentities
 	{

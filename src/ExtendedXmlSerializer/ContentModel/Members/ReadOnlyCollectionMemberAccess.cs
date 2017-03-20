@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class ReadOnlyCollectionMemberAccess : DecoratedSpecification<object>, IMemberAccess
 	{

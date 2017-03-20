@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	public interface IContentOption : IOption<TypeInfo, ISerializer> {}
 }

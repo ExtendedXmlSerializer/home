@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public interface IConfigurationItem<out T> : ISource<T> where T : MemberInfo
 	{

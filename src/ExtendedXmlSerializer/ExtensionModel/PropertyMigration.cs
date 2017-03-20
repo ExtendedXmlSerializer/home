@@ -23,9 +23,9 @@
 
 using System.Linq;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class PropertyMigration : ICommand<XElement>
 	{

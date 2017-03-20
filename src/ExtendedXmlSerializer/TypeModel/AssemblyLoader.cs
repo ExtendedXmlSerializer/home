@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class AssemblyLoader : IAssemblyLoader
 	{

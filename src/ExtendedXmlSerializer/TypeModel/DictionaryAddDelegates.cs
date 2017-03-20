@@ -25,7 +25,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	class DictionaryAddDelegates : IAddDelegates
 	{

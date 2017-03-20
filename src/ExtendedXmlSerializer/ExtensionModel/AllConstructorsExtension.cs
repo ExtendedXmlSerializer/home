@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public sealed class AllConstructorsExtension : ISerializerExtension
 	{

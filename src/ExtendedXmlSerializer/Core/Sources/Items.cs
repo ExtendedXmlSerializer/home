@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class Items<T> : ItemsBase<T>
 	{

@@ -23,9 +23,9 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	abstract class TypeMemberWalkerBase<T> : ObjectWalkerBase<TypeInfo, IEnumerable<T>>
 	{

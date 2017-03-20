@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	[UsedImplicitly]
 	sealed class Contents : ReferenceCache<TypeInfo, ISerializer>, IContents

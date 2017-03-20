@@ -28,13 +28,13 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.ExtensionModel;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public static class Extensions
 	{

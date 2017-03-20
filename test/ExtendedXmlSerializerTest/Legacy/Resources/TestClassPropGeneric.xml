@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassPropGeneric type="ExtendedXmlSerialization.Test.TestObject.TestClassPropGeneric">
-  <PropGenric type="ExtendedXmlSerialization.Test.TestObject.TestClassGenericThree`3[[System.String, [CORELIB]],[System.Int32, [CORELIB]],[System.Decimal, [CORELIB]]]">
-    <GenericProp>StringValue</GenericProp>
-    <GenericProp2>1</GenericProp2>
-    <GenericProp3>4.4</GenericProp3>
-    <Normal>normal</Normal>
-  </PropGenric>
-</TestClassPropGeneric>

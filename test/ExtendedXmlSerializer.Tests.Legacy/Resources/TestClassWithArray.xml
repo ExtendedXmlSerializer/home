@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassWithArray type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassWithArray">
+  <ArrayOfInt>
+    <int>1</int>
+    <int>2</int>
+    <int>3</int>
+  </ArrayOfInt>
+</TestClassWithArray>

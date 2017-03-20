@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	public interface ITypeParsers : IParameterizedSource<IXmlReader, ITypeParser> {}
 }

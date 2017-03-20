@@ -27,7 +27,7 @@ using System.Collections.ObjectModel;
 
 #pragma warning disable 1584,1711,1572,1581,1580
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	// ATTRIBUTION: https://msdn.microsoft.com/en-us/library/ms404549%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396
 	/// <summary>Provides a collection whose items are types that serve as keys.</summary>

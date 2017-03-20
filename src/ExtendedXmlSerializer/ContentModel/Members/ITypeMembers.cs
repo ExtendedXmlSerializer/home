@@ -23,9 +23,9 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface ITypeMembers : IParameterizedSource<TypeInfo, ImmutableArray<IMember>> {}
 }

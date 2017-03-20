@@ -23,7 +23,7 @@
 
 using System.IO;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerializer
 {
 	public interface IExtendedXmlSerializer
 	{

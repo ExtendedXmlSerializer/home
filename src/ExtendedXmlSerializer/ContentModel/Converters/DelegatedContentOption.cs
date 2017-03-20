@@ -23,10 +23,10 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	sealed class DelegatedContentOption : ContentOptionBase
 	{

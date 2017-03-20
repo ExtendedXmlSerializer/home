@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	[UsedImplicitly]
 	class ConvertersAlteration : IAlteration<IConverterSource>

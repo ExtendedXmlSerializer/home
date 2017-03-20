@@ -24,9 +24,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	class DefaultNames : ReadOnlyDictionary<TypeInfo, string>
 	{

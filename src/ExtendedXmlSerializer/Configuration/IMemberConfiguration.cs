@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public interface IMemberConfiguration : IConfigurationItem<MemberInfo>
 	{

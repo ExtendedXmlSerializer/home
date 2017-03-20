@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ReferenceIdentifiers : IParameterizedSource<object, Identifier>
 	{

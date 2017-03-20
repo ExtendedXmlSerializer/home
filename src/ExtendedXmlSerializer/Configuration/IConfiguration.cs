@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public interface IConfiguration : ICollection<ISerializerExtension>
 	{

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassWithEncryptedData type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassWithEncryptedData">
+  <Name>Name</Name>
+  <Password>Q3hsMjk4M0hk</Password>
+  <Salary>MTAwMDAw</Salary>
+</TestClassWithEncryptedData>

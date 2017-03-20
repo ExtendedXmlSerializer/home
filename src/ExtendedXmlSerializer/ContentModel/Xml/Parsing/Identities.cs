@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
 	class Identities : FixedParser<Key>
 	{

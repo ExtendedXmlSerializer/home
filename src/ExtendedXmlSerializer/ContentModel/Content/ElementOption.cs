@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class ElementOption : NamedElementOptionBase
 	{

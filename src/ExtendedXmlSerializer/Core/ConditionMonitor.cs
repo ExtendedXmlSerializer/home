@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	public sealed class ConditionMonitor
 	{

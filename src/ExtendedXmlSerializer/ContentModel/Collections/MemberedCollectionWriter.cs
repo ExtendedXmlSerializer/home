@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	class MemberedCollectionWriter : DecoratedWriter
 	{

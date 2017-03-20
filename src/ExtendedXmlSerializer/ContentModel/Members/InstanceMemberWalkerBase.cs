@@ -24,10 +24,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public abstract class InstanceMemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{

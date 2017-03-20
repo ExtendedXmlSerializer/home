@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassGenericOfString type="ExtendedXmlSerialization.Test.TestObject.TestClassGeneric`1[[System.String, [CORELIB]]]">
-  <GenericProp>StringValue</GenericProp>
-  <Normal>normal</Normal>
-</TestClassGenericOfString>

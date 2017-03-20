@@ -23,9 +23,9 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class DefaultMemberOrder : IParameterizedSource<MemberInfo, int>
 	{

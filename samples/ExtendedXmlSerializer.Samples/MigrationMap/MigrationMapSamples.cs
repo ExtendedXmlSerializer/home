@@ -22,7 +22,8 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {

@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public interface ITypeConfiguration : IConfigurationItem<TypeInfo>, IEnumerable<IMemberConfiguration>
 	{

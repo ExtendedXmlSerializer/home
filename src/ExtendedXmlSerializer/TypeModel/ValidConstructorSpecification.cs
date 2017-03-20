@@ -25,7 +25,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public sealed class ValidConstructorSpecification : IValidConstructorSpecification
 	{

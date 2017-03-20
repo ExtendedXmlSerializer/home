@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class Names : Cache<TypeInfo, string>, INames
 	{

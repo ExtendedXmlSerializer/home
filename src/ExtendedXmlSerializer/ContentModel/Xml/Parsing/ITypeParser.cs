@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
 	public interface ITypeParser : IParser<TypeInfo> {}
 }

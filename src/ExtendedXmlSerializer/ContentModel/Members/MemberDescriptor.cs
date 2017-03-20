@@ -25,7 +25,7 @@ using System;
 using System.Reflection;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{

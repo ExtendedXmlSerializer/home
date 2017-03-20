@@ -23,10 +23,10 @@
 
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class Adapter<T> : IExtendedXmlCustomSerializer
 	{

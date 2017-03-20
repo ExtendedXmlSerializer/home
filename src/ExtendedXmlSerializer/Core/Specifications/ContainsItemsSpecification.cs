@@ -23,7 +23,7 @@
 
 using System.Collections;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public class ContainsItemsSpecification : SpecificationAdapterBase<ICollection>
 	{

@@ -23,7 +23,7 @@
 
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class FixedRuntimeMemberList : IRuntimeMemberList
 	{

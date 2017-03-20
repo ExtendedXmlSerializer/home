@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberedContentOption : ContentOptionBase
 	{

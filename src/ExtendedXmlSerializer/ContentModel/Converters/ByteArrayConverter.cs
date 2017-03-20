@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class ByteArrayConverter : Converter<byte[]>
 	{

@@ -23,10 +23,10 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
 	{

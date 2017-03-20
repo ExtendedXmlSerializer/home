@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public delegate Func<string, TypeInfo> Partition(string parameter);
 }

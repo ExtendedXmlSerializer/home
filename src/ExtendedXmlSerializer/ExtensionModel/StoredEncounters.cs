@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
 	{

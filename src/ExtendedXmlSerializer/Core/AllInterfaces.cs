@@ -26,9 +26,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	public sealed class AllInterfaces : StructureCacheBase<TypeInfo, ImmutableArray<TypeInfo>>, IAllInterfaces
 	{

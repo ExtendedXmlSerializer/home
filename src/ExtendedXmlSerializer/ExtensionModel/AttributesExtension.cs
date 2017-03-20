@@ -24,12 +24,12 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class AttributesExtension : ISerializerExtension
 	{

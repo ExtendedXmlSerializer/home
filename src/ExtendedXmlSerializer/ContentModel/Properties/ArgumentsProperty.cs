@@ -26,14 +26,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class ArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, IArgumentsProperty
 	{

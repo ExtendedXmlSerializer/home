@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
 	{

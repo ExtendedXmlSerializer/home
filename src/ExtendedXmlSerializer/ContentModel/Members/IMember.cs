@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface IMember : IIdentity
 	{

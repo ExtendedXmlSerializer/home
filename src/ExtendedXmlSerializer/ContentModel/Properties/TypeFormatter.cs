@@ -24,12 +24,12 @@
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class TypeFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
 	{

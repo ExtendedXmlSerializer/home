@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassWithMap type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassWithMap" ver="99">
+  <ZmianaWartosci>Stara</ZmianaWartosci>
+  <NowyWezel>test</NowyWezel>
+  <PropClass type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassMapFromPrimitive">
+    <Wezel1>WartoscWezlas</Wezel1>
+    <Wartosc>12</Wartosc>
+  </PropClass>
+</TestClassWithMap>

@@ -26,7 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	class WellKnownAliases : ReadOnlyDictionary<Type, string>
 	{

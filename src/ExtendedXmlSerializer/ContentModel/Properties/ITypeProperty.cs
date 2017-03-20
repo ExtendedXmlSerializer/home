@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	public interface ITypeProperty : IProperty<TypeInfo> {}
 }

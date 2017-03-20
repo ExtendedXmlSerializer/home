@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	public interface IContainsAliasSpecification : ISpecification<TypeInfo> {}
 }

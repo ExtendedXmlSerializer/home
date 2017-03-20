@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public interface IServiceProvider : System.IServiceProvider
 	{

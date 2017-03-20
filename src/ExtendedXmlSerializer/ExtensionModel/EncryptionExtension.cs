@@ -23,14 +23,14 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class EncryptionExtension : ISerializerExtension, IAlteration<IConverter>
 	{

@@ -23,9 +23,9 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public interface IGetterFactory : IParameterizedSource<MemberInfo, Func<object, object>> {}
 }

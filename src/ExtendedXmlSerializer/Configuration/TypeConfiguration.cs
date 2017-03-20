@@ -25,11 +25,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.ExtensionModel;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class TypeConfiguration : ReferenceCacheBase<MemberInfo, IMemberConfiguration>, ITypeConfiguration
 	{

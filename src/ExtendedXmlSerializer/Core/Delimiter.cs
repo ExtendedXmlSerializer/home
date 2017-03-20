@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	public struct Delimiter
 	{

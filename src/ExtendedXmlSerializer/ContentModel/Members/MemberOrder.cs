@@ -23,11 +23,11 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberOrder : StructureCacheBase<MemberInfo, int>, IMemberOrder
 	{

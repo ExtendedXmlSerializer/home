@@ -23,9 +23,9 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberSerialization : TableSource<string, IMemberSerializer>, IMemberSerialization
 	{

@@ -23,11 +23,11 @@
 
 using System.IO;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerializer
 {
 	/// <summary>
 	/// Extended Xml Serializer

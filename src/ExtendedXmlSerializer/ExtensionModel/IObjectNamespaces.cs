@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public interface IObjectNamespaces : IParameterizedSource<object, ImmutableArray<Namespace>> {}
 }

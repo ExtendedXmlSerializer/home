@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	static class Defaults
 	{

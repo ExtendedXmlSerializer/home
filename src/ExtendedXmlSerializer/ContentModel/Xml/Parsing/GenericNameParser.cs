@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
 	class GenericNameParser : FixedParser<string>
 	{

@@ -23,9 +23,9 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class DeclaredNames : INames
 	{

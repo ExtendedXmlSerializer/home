@@ -25,9 +25,9 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	public class ServiceProvider : ISpecification<Type>, IServiceProvider
 	{

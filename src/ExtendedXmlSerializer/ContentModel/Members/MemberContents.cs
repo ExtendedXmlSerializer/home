@@ -22,11 +22,11 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class MemberContents : Selector<IMember, ISerializer>, IMemberContents
 	{

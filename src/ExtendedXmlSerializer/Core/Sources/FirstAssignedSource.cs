@@ -23,7 +23,7 @@
 
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{

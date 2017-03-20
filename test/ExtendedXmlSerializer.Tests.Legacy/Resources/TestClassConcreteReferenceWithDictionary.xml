@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassConcreteReferenceWithDictionary type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassConcreteReferenceWithDictionary">
+  <Parent type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassConcreteReference" id="1">
+    <Id>1</Id>
+  </Parent>
+  <All>
+    <Item>
+      <Key>3</Key>
+      <Value type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassConcreteReference" id="3">
+        <Id>3</Id>
+        <ObjectA ref="1" />
+        <ReferenceToObjectA ref="1" />
+      </Value>
+    </Item>
+    <Item>
+      <Key>4</Key>
+      <Value type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassConcreteReference" id="4">
+        <Id>4</Id>
+        <ObjectA type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassConcreteReference" id="2">
+          <Id>2</Id>
+          <ObjectA ref="1" />
+          <ReferenceToObjectA ref="1" />
+        </ObjectA>
+        <ReferenceToObjectA ref="2" />
+      </Value>
+    </Item>
+    <Item>
+      <Key>2</Key>
+      <Value ref="2" />
+    </Item>
+    <Item>
+      <Key>1</Key>
+      <Value ref="1" />
+    </Item>
+  </All>
+</TestClassConcreteReferenceWithDictionary>

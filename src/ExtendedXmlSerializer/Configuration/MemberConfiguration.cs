@@ -23,7 +23,7 @@
 
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	// ReSharper disable once UnusedTypeParameter
 	public class MemberConfiguration<T, TMember> : IMemberConfiguration

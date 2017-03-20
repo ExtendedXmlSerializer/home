@@ -24,9 +24,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class TypeMemberSource : ITypeMemberSource
 	{

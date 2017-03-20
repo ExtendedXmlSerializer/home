@@ -25,13 +25,13 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ObjectNamespaces : IObjectNamespaces
 	{

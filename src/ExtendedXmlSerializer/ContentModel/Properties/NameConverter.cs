@@ -23,11 +23,11 @@
 
 using System;
 using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.ContentModel.Xml.Parsing;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	class NameConverter : ConverterBase<ParsedName>, INameConverter
 	{

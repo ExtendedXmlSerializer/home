@@ -24,9 +24,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class DictionaryPairTypesLocator : IDictionaryPairTypesLocator
 	{

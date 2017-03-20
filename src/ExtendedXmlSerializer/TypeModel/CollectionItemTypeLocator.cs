@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class CollectionItemTypeLocator : ICollectionItemTypeLocator
 	{

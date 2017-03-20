@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	static class Support<T>
 	{

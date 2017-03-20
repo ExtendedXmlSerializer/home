@@ -26,7 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	/// <summary>
 	/// Attribution: http://stackoverflow.com/a/17853085/3602057

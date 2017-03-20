@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public interface IServices : IServiceRepository, IServiceProvider, IDisposable {}
 }

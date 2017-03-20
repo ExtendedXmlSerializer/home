@@ -23,10 +23,10 @@
 
 using System.Reflection;
 using System.Runtime.Serialization.Formatters;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
 	class NamespaceFormatter : ITypeFormatter
 	{

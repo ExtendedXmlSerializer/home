@@ -23,9 +23,9 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public interface IApplicationTypes : IParameterizedSource<Assembly, ImmutableArray<TypeInfo>> {}
 }

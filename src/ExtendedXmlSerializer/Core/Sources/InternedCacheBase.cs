@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public abstract class InternedCacheBase<T> : ReferenceCache<string, T> where T : class
 	{

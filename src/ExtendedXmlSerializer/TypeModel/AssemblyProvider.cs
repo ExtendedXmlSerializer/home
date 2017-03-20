@@ -23,6 +23,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+
 #if CORE
 using Microsoft.DotNet.PlatformAbstractions;
 using System.Linq;
@@ -30,7 +31,7 @@ using Microsoft.Extensions.DependencyModel;
 
 #endif
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class AssemblyProvider : IAssemblyProvider
 	{

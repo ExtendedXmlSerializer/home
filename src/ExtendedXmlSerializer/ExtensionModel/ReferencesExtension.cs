@@ -24,12 +24,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension
 	{

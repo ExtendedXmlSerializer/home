@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
 		where TParameter : class where TResult : class

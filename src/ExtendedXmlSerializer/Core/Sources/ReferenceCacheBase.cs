@@ -23,7 +23,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public abstract class ReferenceCacheBase<TKey, TValue> : ITableSource<TKey, TValue> where TKey : class
 	                                                                                    where TValue : class

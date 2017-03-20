@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
 	public struct ParsedName : IIdentity
 	{

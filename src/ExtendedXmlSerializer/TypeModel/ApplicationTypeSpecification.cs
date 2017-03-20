@@ -23,9 +23,9 @@
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	class ApplicationTypeSpecification : InverseSpecification<TypeInfo>
 	{

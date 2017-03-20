@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class OptimizedConvertersExtension : AlteredConverterExtension, IOptimizationContainer
+	public class OptimizedConvertersExtension : AlteredConverterExtension, IOptimizationContainer
 	{
 		readonly IOptimizationContainer _container;
 
