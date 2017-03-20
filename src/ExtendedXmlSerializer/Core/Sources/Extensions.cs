@@ -24,11 +24,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	public static class Extensions
 	{
+		public static T Get<T>(this IParameterizedSource<TypeInfo, T> @this, Type parameter)
+			=> @this.Get(parameter.GetTypeInfo());
+
+		public static T Get<T>(this IParameterizedSource<Type, T> @this, TypeInfo parameter)
+			=> @this.Get(parameter.AsType());
+
 		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)
 			where TResult : class => new LinkedDecoratedSource<TParameter, TResult>(@this, next);

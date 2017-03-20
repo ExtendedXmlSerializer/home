@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	class Converters : CacheBase<TypeInfo, IConverter>, IConverters
+	sealed class Converters : CacheBase<TypeInfo, IConverter>, IConverters
 	{
 		readonly ImmutableArray<IConverter> _converters;
 		readonly ImmutableArray<IConverterSource> _sources;

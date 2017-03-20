@@ -21,24 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Converters;
-using ExtendedXmlSerializer.ContentModel.Members;
-using JetBrains.Annotations;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.TypeModel
 {
-	sealed class ContentOptions : ContentOptionsBase
+	public class VariableTypeSpecification : InverseSpecification<TypeInfo>
 	{
-		[UsedImplicitly]
-		public ContentOptions(
-			ConverterContentOption converters,
-			NullableContentOption nullable,
-			ArrayContentOption array,
-			DictionaryContentOption dictionary,
-			CollectionContentOption collection,
-			MemberedContentOption membered,
-			RuntimeContentOption runtime
-		) : base(converters, nullable, array, dictionary, collection, membered, runtime) {}
+		public static VariableTypeSpecification Default { get; } = new VariableTypeSpecification();
+		VariableTypeSpecification() : base(FixedTypeSpecification.Default) {}
 	}
 }

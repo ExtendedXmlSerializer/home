@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 	public sealed class AlteredSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
 	{
 		readonly IAlteration<TResult> _alteration;
-		
+
 		public AlteredSource(IAlteration<TResult> alteration, IParameterizedSource<TParameter, TResult> source) : base(source)
 		{
 			_alteration = alteration;

@@ -23,7 +23,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.Core;
 
@@ -53,9 +52,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			return parameter.RegisterInstance<IEnumerable<IConverter>>(Converters)
 			                .RegisterInstance(_sources)
 			                .Register<IConverters, Converters>()
-			                .Register<ConverterContentOptions>()
-			                .Decorate<IEnumerable<IContentOption>>(
-				                (provider, options) => provider.Get<ConverterContentOptions>().Concat(options));
+			                .Register<ISerializers, Serializers>()
+			                .Register<ConverterContentOption>()
+				;
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

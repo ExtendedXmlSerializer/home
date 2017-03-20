@@ -23,32 +23,30 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
+using JetBrains.Annotations;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
+	sealed class NullableContentOption : DelegatedContentOption
 	{
-		readonly static GenericDefinitionCandidates Candidates = GenericDefinitionCandidates.Default;
+		readonly static Func<TypeInfo, bool> Specification = IsNullableTypeSpecification.Default.IsSatisfiedBy;
 
-		readonly IGenericDefinitionCandidates _candidates;
-		readonly Type _genericDefinition;
+		[UsedImplicitly]
+		public NullableContentOption(ConverterContentOption converters) : this(Specification, converters) {}
 
-		public IsAssignableGenericSpecification(Type genericType) : this(Candidates, genericType) {}
+		public NullableContentOption(Func<TypeInfo, bool> specification, ConverterContentOption converters)
+			: base(specification, new CoercedSource<TypeInfo, ISerializer>(Alteration.Default, converters).Get) {}
 
-        public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
+		sealed class Alteration : IAlteration<TypeInfo>
 		{
-			_candidates = candidates;
-			_genericDefinition = genericDefinition;
-		}
+			public static Alteration Default { get; } = new Alteration();
+			Alteration() {}
 
-		public bool IsSatisfiedBy(TypeInfo parameter)
-			=> _candidates.Get(parameter).Contains(_genericDefinition) || Base(parameter);
-
-		bool Base(TypeInfo parameter)
-		{
-			var baseType = parameter.BaseType?.GetTypeInfo();
-			var result = baseType != null && IsSatisfiedBy(baseType);
-			return result;
+			public TypeInfo Get(TypeInfo parameter) => parameter.AccountForNullable();
 		}
 	}
 }

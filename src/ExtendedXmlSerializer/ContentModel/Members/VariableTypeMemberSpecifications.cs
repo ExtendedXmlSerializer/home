@@ -24,7 +24,7 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using VariableTypeSpecification = ExtendedXmlSerializer.Core.Specifications.VariableTypeSpecification;
+using VariableTypeSpecification = ExtendedXmlSerializer.TypeModel.VariableTypeSpecification;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {

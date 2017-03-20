@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	public class IsGenericTypeSpecification : ISpecification<TypeInfo>
+	sealed class ConverterContentOption : DelegatedContentOption
 	{
-		public static IsGenericTypeSpecification Default { get; } = new IsGenericTypeSpecification();
-		IsGenericTypeSpecification() {}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsGenericType;
+		public ConverterContentOption(IConverters converters, ISerializers serializers) : base(converters, serializers.Get) {}
 	}
 }

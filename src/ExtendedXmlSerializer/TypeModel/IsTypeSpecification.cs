@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.TypeModel
 {
-	public abstract class MemberNamesBase<T> : TableSource<T, string>, IMemberNames<T> where T : MemberInfo
+	public class IsTypeSpecification<T> : ISpecification<object>
 	{
-		protected MemberNamesBase(IDictionary<T, string> store) : base(store) {}
+		public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
+		IsTypeSpecification() {}
+
+		public bool IsSatisfiedBy(object parameter) => parameter is T;
 	}
 }

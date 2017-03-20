@@ -21,24 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Converters;
-using ExtendedXmlSerializer.ContentModel.Members;
-using JetBrains.Annotations;
+using System;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.TypeModel
 {
-	sealed class ContentOptions : ContentOptionsBase
+	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{
-		[UsedImplicitly]
-		public ContentOptions(
-			ConverterContentOption converters,
-			NullableContentOption nullable,
-			ArrayContentOption array,
-			DictionaryContentOption dictionary,
-			CollectionContentOption collection,
-			MemberedContentOption membered,
-			RuntimeContentOption runtime
-		) : base(converters, nullable, array, dictionary, collection, membered, runtime) {}
+		readonly static GenericDefinitionCandidates Candidates = GenericDefinitionCandidates.Default;
+
+		readonly IGenericDefinitionCandidates _candidates;
+		readonly Type _genericDefinition;
+
+		public IsAssignableGenericSpecification(Type genericType) : this(Candidates, genericType) {}
+
+		public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
+		{
+			_candidates = candidates;
+			_genericDefinition = genericDefinition;
+		}
+
+		public bool IsSatisfiedBy(TypeInfo parameter)
+			=> _candidates.Get(parameter).Contains(_genericDefinition) || Base(parameter);
+
+		bool Base(TypeInfo parameter)
+		{
+			var baseType = parameter.BaseType?.GetTypeInfo();
+			var result = baseType != null && IsSatisfiedBy(baseType);
+			return result;
+		}
 	}
 }

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class VariableTypeElementOption : NamedElementOptionBase
 	{
-		readonly static ISpecification<TypeInfo> Specification = Core.Specifications.VariableTypeSpecification.Default;
+		readonly static ISpecification<TypeInfo> Specification = TypeModel.VariableTypeSpecification.Default;
 
 		readonly Xml.IIdentities _identities;
 

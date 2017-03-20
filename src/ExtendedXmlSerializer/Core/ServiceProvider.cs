@@ -26,6 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.Core
 {

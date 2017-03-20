@@ -21,24 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Converters;
-using ExtendedXmlSerializer.ContentModel.Members;
-using JetBrains.Annotations;
+using System;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.TypeModel
 {
-	sealed class ContentOptions : ContentOptionsBase
+	public static class Extensions
 	{
-		[UsedImplicitly]
-		public ContentOptions(
-			ConverterContentOption converters,
-			NullableContentOption nullable,
-			ArrayContentOption array,
-			DictionaryContentOption dictionary,
-			CollectionContentOption collection,
-			MemberedContentOption membered,
-			RuntimeContentOption runtime
-		) : base(converters, nullable, array, dictionary, collection, membered, runtime) {}
+		public static bool IsSatisfiedBy(this ISpecification<TypeInfo> @this, Type parameter)
+			=> @this.IsSatisfiedBy(parameter.GetTypeInfo());
+
+		public static bool IsSatisfiedBy(this ISpecification<Type> @this, TypeInfo parameter)
+			=> @this.IsSatisfiedBy(parameter.AsType());
 	}
 }

@@ -25,6 +25,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using Xunit;
 
@@ -144,6 +145,27 @@ namespace ExtendedXmlSerializer.Tests
 			var actual = _serializer.Deserialize<ClassWithDifferingPropertyType>(data);
 			var implementation = Assert.IsType<Implementation>(actual.Interface);
 			Assert.Equal(message, implementation.PropertyName);
+		}
+
+		[Fact]
+		public void Nullable()
+		{
+			var expected = new NullableSubject { Number =  6776 };
+			var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-NullableSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number></ExtendedXmlSerializerTests-NullableSubject>");
+			Assert.Equal(expected.Number, actual.Number);
+		}
+
+
+		[Fact]
+		public void NullNullable()
+		{
+			var expected = new NullableSubject { Number = null };
+			var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-NullableSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests;assembly=ExtendedXmlSerializer.Tests"" />");
+			Assert.Equal(expected.Number, actual.Number);
+		}
+		class NullableSubject
+		{
+			public int? Number { get; set; }
 		}
 
 		class SimpleNestedClass

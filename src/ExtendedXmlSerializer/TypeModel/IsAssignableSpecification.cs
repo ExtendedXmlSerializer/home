@@ -21,13 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.TypeModel
 {
-	public class VariableTypeSpecification : InverseSpecification<TypeInfo>
+	public class IsAssignableSpecification<T> : DelegatedSpecification<TypeInfo>
 	{
-		public static VariableTypeSpecification Default { get; } = new VariableTypeSpecification();
-		VariableTypeSpecification() : base(FixedTypeSpecification.Default) {}
+		public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
+		IsAssignableSpecification() : base(IsAssignableSpecification.Delegates.Get(typeof(T).GetTypeInfo())) {}
+	}
+
+	public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
+	{
+		public static IParameterizedSource<TypeInfo, ISpecification<TypeInfo>> Defaults { get; } =
+			new ReferenceCache<TypeInfo, ISpecification<TypeInfo>>(x => new IsAssignableSpecification(x));
+
+		public static IParameterizedSource<TypeInfo, Func<TypeInfo, bool>> Delegates { get; } =
+			new ReferenceCache<TypeInfo, Func<TypeInfo, bool>>(x => Defaults.Get(x).IsSatisfiedBy);
+
+		IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
 	}
 }

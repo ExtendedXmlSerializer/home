@@ -22,8 +22,11 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface INames : IMemberNames<TypeInfo> {}
+	public interface INames : INames<TypeInfo> {}
+
+	public interface INames<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
 }
