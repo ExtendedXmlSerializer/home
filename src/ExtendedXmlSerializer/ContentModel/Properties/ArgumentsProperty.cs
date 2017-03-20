@@ -29,9 +29,9 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
-using Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
