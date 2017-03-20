@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	public interface IGenericDefinitionCandidates : IParameterizedSource<TypeInfo, ImmutableArray<Type>> {}
+	public interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
 }

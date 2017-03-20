@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	public static class Extensions
+	sealed class Serializers : ReferenceCacheBase<TypeInfo, ISerializer>, ISerializers
 	{
-		public static ISerializer ToSerializer(this IConverter converter)
-			=> new DelegatedSerializer(converter.Parse, converter.Format);
+		readonly IConverters _converters;
+
+		public Serializers(IConverters converters)
+		{
+			_converters = converters;
+		}
+
+		protected override ISerializer Create(TypeInfo parameter)
+		{
+			var converter = _converters.Get(parameter);
+			var result = new DelegatedSerializer(converter.Parse, converter.Format);
+			return result;
+		}
 	}
 }

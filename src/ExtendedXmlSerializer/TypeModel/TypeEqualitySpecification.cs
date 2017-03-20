@@ -21,26 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.TypeModel
 {
-	public class IsAssignableSpecification<T> : DelegatedSpecification<TypeInfo>
+	public class TypeEqualitySpecification<T> : TypeEqualitySpecification
 	{
-		public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
-		IsAssignableSpecification() : base(IsAssignableSpecification.Delegates.Get(typeof(T).GetTypeInfo())) {}
+		public static TypeEqualitySpecification<T> Default { get; } = new TypeEqualitySpecification<T>();
+		TypeEqualitySpecification() : base(typeof(T).GetTypeInfo()) {}
 	}
 
-	public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
+	public class TypeEqualitySpecification : DelegatedSpecification<TypeInfo>
 	{
-		public static IParameterizedSource<TypeInfo, ISpecification<TypeInfo>> Defaults { get; } =
-			new ReferenceCache<TypeInfo, ISpecification<TypeInfo>>(x => new IsAssignableSpecification(x));
-
-		public static IParameterizedSource<TypeInfo, Func<TypeInfo, bool>> Delegates { get; } =
-			new ReferenceCache<TypeInfo, Func<TypeInfo, bool>>(x => Defaults.Get(x).IsSatisfiedBy);
-
-		IsAssignableSpecification(TypeInfo type) : base(type.IsAssignableFrom) {}
+		public TypeEqualitySpecification(TypeInfo type) : base(type.Equals) {}
 	}
 }

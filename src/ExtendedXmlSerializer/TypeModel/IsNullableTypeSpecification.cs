@@ -21,18 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.TypeModel
 {
-	public class TypeEqualitySpecification<T> : TypeEqualitySpecification
+	public sealed class IsNullableTypeSpecification : DelegatedAssignedSpecification<Type, Type>
 	{
-		public static TypeEqualitySpecification<T> Default { get; } = new TypeEqualitySpecification<T>();
-		TypeEqualitySpecification() : base(typeof(T).GetTypeInfo()) {}
-	}
-
-	public class TypeEqualitySpecification : DelegatedSpecification<TypeInfo>
-	{
-		public TypeEqualitySpecification(TypeInfo type) : base(type.Equals) {}
+		public static IsNullableTypeSpecification Default { get; } = new IsNullableTypeSpecification();
+		IsNullableTypeSpecification() : base(Nullable.GetUnderlyingType) {}
 	}
 }

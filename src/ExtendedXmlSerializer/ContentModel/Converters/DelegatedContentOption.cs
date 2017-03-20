@@ -24,20 +24,17 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	sealed class DelegatedContentOption : ContentOptionBase
+	class DelegatedContentOption : DelegatedOption<TypeInfo, ISerializer>, IContentOption
 	{
-		readonly Func<TypeInfo, IConverter> _converter;
+		public DelegatedContentOption(Func<TypeInfo, bool> specification, Func<TypeInfo, ISerializer> source)
+			: base(specification, source) {}
 
-		public DelegatedContentOption(ISpecification<TypeInfo> specification, Func<TypeInfo, IConverter> converter)
-			: base(specification)
-		{
-			_converter = converter;
-		}
-
-		public override ISerializer Get(TypeInfo parameter) => _converter(parameter).ToSerializer();
+		public DelegatedContentOption(ISpecification<TypeInfo> specification, Func<TypeInfo, ISerializer> source)
+			: base(specification, source) {}
 	}
 }

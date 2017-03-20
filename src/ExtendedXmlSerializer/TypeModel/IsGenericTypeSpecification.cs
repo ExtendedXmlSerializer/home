@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core.Specifications
-{
-	public class IsTypeSpecification<T> : ISpecification<object>
-	{
-		public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
-		IsTypeSpecification() {}
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-		public bool IsSatisfiedBy(object parameter) => parameter is T;
+namespace ExtendedXmlSerializer.TypeModel
+{
+	public class IsGenericTypeSpecification : ISpecification<TypeInfo>
+	{
+		public static IsGenericTypeSpecification Default { get; } = new IsGenericTypeSpecification();
+		IsGenericTypeSpecification() {}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.IsGenericType;
 	}
 }

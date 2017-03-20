@@ -36,14 +36,16 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		ContentModelExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.Register<IDictionaryEntries, DictionaryEntries>()
-			         .Register<ArrayContentOption>()
-			         .Register<DictionaryContentOption>()
-			         .Register<CollectionContentOption>()
-			         .Register<MemberedContentOption>()
-			         .Register<RuntimeContentOption>()
-			         .Register<IEnumerable<IContentOption>, ContentOptions>()
-			         .Register(provider => provider.GetAllInstances<IContentOption>().ToArray());
+			parameter
+				.Register<IDictionaryEntries, DictionaryEntries>()
+				.Register<NullableContentOption>()
+				.Register<ArrayContentOption>()
+				.Register<DictionaryContentOption>()
+				.Register<CollectionContentOption>()
+				.Register<MemberedContentOption>()
+				.Register<RuntimeContentOption>()
+				.Register<IEnumerable<IContentOption>, ContentOptions>()
+				.Register(provider => provider.GetAllInstances<IContentOption>().ToArray());
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -21,33 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Content;
-
-namespace ExtendedXmlSerializer.ContentModel.Converters
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	class ConverterContentOptions : IEnumerable<IContentOption>
+	public sealed class CoercedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
 	{
-		readonly IEnumerable<IConverter> _converters;
-		readonly IEnumerable<IConverterSource> _sources;
+		readonly IAlteration<TParameter> _alteration;
 
-		public ConverterContentOptions(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
+		public CoercedSource(IAlteration<TParameter> alteration, IParameterizedSource<TParameter, TResult> source)
+			: base(source)
 		{
-			_converters = converters;
-			_sources = sources;
+			_alteration = alteration;
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		public IEnumerator<IContentOption> GetEnumerator()
-		{
-			return
-				_converters.Select(x => new FixedContentOption(x, x.ToSerializer()))
-				           .Concat(_sources.Select<IConverterSource, IContentOption>(
-					                   x => new DelegatedContentOption(x, x.Get)))
-				           .GetEnumerator();
-		}
+		public override TResult Get(TParameter parameter) => base.Get(_alteration.Get(parameter));
 	}
 }
