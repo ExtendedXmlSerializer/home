@@ -21,37 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
-using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.TypeModel
 {
-	sealed class GenericTypes : IGenericTypes
+	public sealed class Constructors : IConstructors
 	{
-		readonly ITypes _generic;
+		public static Constructors Default { get; } = new Constructors();
+		Constructors() {}
 
-		readonly ITypes _types;
-
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(specification.And(IsGenericTypeSpecification.Default), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		public IEnumerable<ConstructorInfo> Get(TypeInfo parameter) => parameter.GetConstructors();
 	}
 }

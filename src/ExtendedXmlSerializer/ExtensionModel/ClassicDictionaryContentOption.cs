@@ -26,23 +26,20 @@ using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
 	sealed class ClassicDictionaryContentOption : ContentOptionBase
 	{
-		readonly static AllSpecification<TypeInfo> Specification =
-			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
-
 		readonly IActivation _activation;
 		readonly IMemberSerializations _members;
 		readonly IDictionaryEntries _entries;
 
-		public ClassicDictionaryContentOption(IActivation activation, IMemberSerializations members,
-		                                      IDictionaryEntries entries)
-			: base(Specification)
+		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IActivation activation,
+		                                      IMemberSerializations members, IDictionaryEntries entries)
+			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
 			_activation = activation;
 			_members = members;

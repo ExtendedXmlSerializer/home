@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
-using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class GenericTypes : IGenericTypes
+	sealed class AllConstructors : IConstructors
 	{
-		readonly ITypes _generic;
+		readonly IConstructors _constructors;
 
-		readonly ITypes _types;
-
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(specification.And(IsGenericTypeSpecification.Default), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
+		public AllConstructors(IConstructors constructors)
 		{
-			_generic = generic;
-			_types = types;
+			_constructors = constructors;
 		}
 
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		public IEnumerable<ConstructorInfo> Get(TypeInfo parameter)
+			=> parameter.DeclaredConstructors.Union(_constructors.Get(parameter));
 	}
 }

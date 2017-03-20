@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,33 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.ContentModel;
+using System.Collections.Generic;
+using System.Linq;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Converters;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class SerializationExtension : ISerializerExtension
+	public sealed class RegisteredConvertersExtension : ISerializerExtension
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
-		SerializationExtension() {}
+		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
+
+		public static RegisteredConvertersExtension Default { get; } = new RegisteredConvertersExtension();
+		RegisteredConvertersExtension() : this(WellKnownConverters.Default) {}
+
+		readonly IEnumerable<IConverterSource> _sources;
+
+		public RegisteredConvertersExtension(IEnumerable<IConverter> converters) : this(converters.ToList(), Sources) {}
+
+		public RegisteredConvertersExtension(ICollection<IConverter> converters, IEnumerable<IConverterSource> sources)
+		{
+			Converters = converters;
+			_sources = sources;
+		}
+
+		public ICollection<IConverter> Converters { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var result = parameter
-				.Register<ISerializer, RuntimeSerializer>()
-				.Register<ISerializers, Serializers>()
-				.Decorate<ISerializers>((factory, serializers) => new ReferenceAwareSerializers(
-					                        factory.Get<IStaticReferenceSpecification>(),
-					                        factory.Get<IRootReferences>(),
-					                        serializers
-				                        )
-				)
-				.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
-				.Register<IContents, Contents>()
-				.Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents))
-				.Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
-			return result;
+			return parameter
+				.RegisterInstance<IEnumerable<IConverter>>(Converters)
+				.RegisterInstance(_sources)
+				.Register<IConverters, Converters>()
+				.Register<ConverterContentOptions>()
+				.Decorate<IEnumerable<IContentOption>>(
+					(provider, options) => provider.Get<ConverterContentOptions>().Concat(options));
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

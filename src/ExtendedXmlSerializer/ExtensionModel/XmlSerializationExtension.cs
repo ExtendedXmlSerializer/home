@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Xml;
+using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
 
 namespace ExtendedXmlSerialization.ExtensionModel
@@ -54,7 +55,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance(_readerSettings).RegisterInstance(_writerSettings);
+			=> parameter.Register<IXmlFactory, XmlFactory>()
+			            .RegisterInstance(_readerSettings)
+			            .RegisterInstance(_writerSettings);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
