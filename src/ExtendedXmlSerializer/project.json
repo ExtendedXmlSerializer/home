@@ -1,27 +1,27 @@
 {
-  "buildOptions": {
-  },
-  "title": "ExtendedXmlSerializer",
-  "version": "1.5.0",
-  "packOptions": {
-    "owners": [ "Wojciech Nagórski" ],
-    "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
-    "projectUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer",
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/wojtpl2/ExtendedXmlSerializer"
+    "buildOptions": {
     },
-    "tags": [
-      "xmlserializer",
-      "xmlserialization",
-      "serialization",
-      "ExtendedXmlSerializer"
-    ]
-  },
-  "description": "Extended Xml Serializer for .NET",
-  "authors": [
-    "Wojciech Nagórski"
-  ],
+    "title": "ExtendedXmlSerializer",
+    "version": "2.0.0",
+    "packOptions": {
+        "owners": [ "Wojciech Nagórski" ],
+        "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
+        "projectUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer",
+        "repository": {
+            "type": "git",
+            "url": "https://github.com/wojtpl2/ExtendedXmlSerializer"
+        },
+        "tags": [
+            "xmlserializer",
+            "xmlserialization",
+            "serialization",
+            "ExtendedXmlSerializer"
+        ]
+    },
+    "description": "Extended Xml Serializer for .NET",
+    "authors": [
+        "Wojciech Nagórski"
+    ],
     "frameworks": {
         "net451": {
             "buildOptions": {
