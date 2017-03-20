@@ -21,37 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
-using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class GenericTypes : IGenericTypes
+	sealed class MemberModelExtension : ISerializerExtension
 	{
-		readonly ITypes _generic;
+		public static MemberModelExtension Default { get; } = new MemberModelExtension();
+		MemberModelExtension() {}
 
-		readonly ITypes _types;
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter.Register<IMetadataSpecification, MetadataSpecification>()
+			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
+			         .Register<ITypeMemberSource, TypeMemberSource>()
+			         .Register<ITypeMembers, TypeMembers>()
+			         .Register<IMembers, Members>()
+			         .Register<IMemberAccessors, MemberAccessors>()
+			         .Register<WritableMemberAccessors>()
+			         .Register<ReadOnlyCollectionAccessors>()
+			         .Register<VariableTypeMemberContents>()
+			         .Register<DefaultMemberContents>()
+			         .Register<IMemberContents, MemberContents>()
+			         .Register<IMemberSerializers, MemberSerializers>()
+			         .Register<IMemberSerializations, MemberSerializations>();
 
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(specification.And(IsGenericTypeSpecification.Default), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.Core.Specifications;
 using ExtendedXmlSerialization.TypeModel;
 
@@ -30,15 +31,13 @@ namespace ExtendedXmlSerialization.ContentModel.Collections
 {
 	abstract class CollectionContentOptionBase : ContentOptionBase
 	{
-		readonly static AllSpecification<TypeInfo> Specification =
-			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsCollectionTypeSpecification.Default);
-
 		readonly static CollectionItemTypeLocator Locator = CollectionItemTypeLocator.Default;
 
 		readonly ISerializers _serializers;
 		readonly ICollectionItemTypeLocator _locator;
 
-		protected CollectionContentOptionBase(ISerializers serializers) : this(Specification, serializers) {}
+		protected CollectionContentOptionBase(IActivatingTypeSpecification specification, ISerializers serializers)
+			: this(specification.And(IsCollectionTypeSpecification.Default), serializers) {}
 
 		protected CollectionContentOptionBase(ISpecification<TypeInfo> specification, ISerializers serializers)
 			: this(specification, serializers, Locator) {}

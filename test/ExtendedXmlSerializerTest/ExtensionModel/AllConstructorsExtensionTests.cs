@@ -1,18 +1,18 @@
-// MIT License
-// 
-// Copyright (c) 2016 Wojciech Nag�rski
+﻿// MIT License
+//
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,37 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerialization.Configuration;
+using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerialization.Test.Support;
 using JetBrains.Annotations;
+using Xunit;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.Test.ExtensionModel
 {
-	sealed class GenericTypes : IGenericTypes
+	public class AllConstructorsExtensionTests
 	{
-		readonly ITypes _generic;
-
-		readonly ITypes _types;
-
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(specification.And(IsGenericTypeSpecification.Default), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
+		[Fact]
+		public void PrivateConstructor()
 		{
-			_generic = generic;
-			_types = types;
+			var configuration = new ExtendedConfiguration().Extend(AllConstructorsExtension.Default);
+			var support = new SerializationSupport(configuration);
+			var instance = Subject.Create("Hello World from Private Constructor (hopefully)!");
+			var actual = support.Cycle(instance);
+			Assert.Equal(instance.PropertyName, actual.PropertyName);
 		}
 
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		class Subject
+		{
+			public static Subject Create(string message) => new Subject { PropertyName = message };
+
+			Subject() {}
+
+			public string PropertyName { get; [UsedImplicitly] set; }
+		}
 	}
 }

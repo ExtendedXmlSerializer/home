@@ -21,14 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.ContentModel;
+using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerialization.TypeModel;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	class GenericActivatedTypeSpecification : AllSpecification<TypeInfo>
+	sealed class TypeModelExtension : ISerializerExtension
 	{
-		public static GenericActivatedTypeSpecification Default { get; } = new GenericActivatedTypeSpecification();
-		GenericActivatedTypeSpecification() : base(IsGenericTypeSpecification.Default, IsActivatedTypeSpecification.Default) {}
+		public static TypeModelExtension Default { get; } = new TypeModelExtension();
+		TypeModelExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter
+				.Register<IActivation, Activation>()
+				.Register<IActivators, Activators>()
+				.Register<IActivatingTypeSpecification, IsActivatedTypeSpecification>()
+				.Register<IConstructorLocator, ConstructorLocator>()
+				.RegisterInstance<IConstructors>(Constructors.Default)
+				.RegisterInstance<IFields>(Fields.Default)
+				.RegisterInstance<IProperties>(Properties.Default)
+				.RegisterInstance<IValidConstructorSpecification>(ValidConstructorSpecification.Default);
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

@@ -36,7 +36,7 @@ using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	public sealed class TypeNamesExtension : ISerializerExtension
+	sealed class TypeNamesExtension : ISerializerExtension
 	{
 		readonly static IDictionary<TypeInfo, string> Defaults = DefaultNames.Default;
 

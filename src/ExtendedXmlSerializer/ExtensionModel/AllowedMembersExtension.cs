@@ -32,7 +32,7 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class AllowedMembersExtension : ISerializerExtension
+	public sealed class AllowedMembersExtension : ISerializerExtension
 	{
 		readonly static Collection<MemberInfo> DefaultBlacklist =
 			new Collection<MemberInfo>
@@ -41,8 +41,10 @@ namespace ExtendedXmlSerialization.ExtensionModel
 				typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Values))
 			};
 
-		public AllowedMembersExtension()
-			: this(DefaultMetadataSpecification.Default, new HashSet<MemberInfo>(DefaultBlacklist), new HashSet<MemberInfo>()) {}
+		public AllowedMembersExtension() : this(DefaultMetadataSpecification.Default) {}
+
+		public AllowedMembersExtension(IMetadataSpecification specification)
+			: this(specification, new HashSet<MemberInfo>(DefaultBlacklist), new HashSet<MemberInfo>()) {}
 
 		public AllowedMembersExtension(IMetadataSpecification specification, ICollection<MemberInfo> blacklist,
 		                               ICollection<MemberInfo> whitelist)
@@ -51,7 +53,6 @@ namespace ExtendedXmlSerialization.ExtensionModel
 			Blacklist = blacklist;
 			Whitelist = whitelist;
 		}
-
 
 		public IMetadataSpecification Specification { get; }
 		public ICollection<MemberInfo> Blacklist { get; }

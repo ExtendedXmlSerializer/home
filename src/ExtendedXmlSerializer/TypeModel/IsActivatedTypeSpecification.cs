@@ -27,9 +27,10 @@ using ExtendedXmlSerialization.Core.Specifications;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	public class IsActivatedTypeSpecification : DelegatedSpecification<TypeInfo>
+	public class IsActivatedTypeSpecification : DelegatedSpecification<TypeInfo>, IActivatingTypeSpecification
 	{
 		readonly static TypeInfo GeneralObject = typeof(object).GetTypeInfo();
+
 		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
 		IsActivatedTypeSpecification() : this(ConstructorLocator.Default) {}
 

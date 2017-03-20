@@ -21,37 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerialization.ContentModel.Collections;
+using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.ContentModel.Members;
 using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Specifications;
-using ExtendedXmlSerialization.TypeModel;
-using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerialization.ExtensionModel
 {
-	sealed class GenericTypes : IGenericTypes
+	sealed class ContentModelExtension : ISerializerExtension
 	{
-		readonly ITypes _generic;
+		public static ContentModelExtension Default { get; } = new ContentModelExtension();
+		ContentModelExtension() {}
 
-		readonly ITypes _types;
+		public IServiceRepository Get(IServiceRepository parameter) =>
+			parameter.Register<IDictionaryEntries, DictionaryEntries>()
+			         .Register<ArrayContentOption>()
+			         .Register<DictionaryContentOption>()
+			         .Register<CollectionContentOption>()
+			         .Register<MemberedContentOption>()
+			         .Register<RuntimeContentOption>()
+			         .Register<IEnumerable<IContentOption>, ContentOptions>()
+			         .Register(provider => provider.GetAllInstances<IContentOption>().ToArray());
 
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(specification.And(IsGenericTypeSpecification.Default), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

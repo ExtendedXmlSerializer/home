@@ -24,22 +24,20 @@
 using System.Reflection;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Members;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerialization.Core;
 using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ContentModel.Content
 {
 	sealed class DictionaryContentOption : ContentOptionBase
 	{
-		readonly static AllSpecification<TypeInfo> Specification =
-			new AllSpecification<TypeInfo>(IsActivatedTypeSpecification.Default, IsDictionaryTypeSpecification.Default);
-
 		readonly IActivation _activation;
 		readonly IMemberSerializations _members;
 		readonly IDictionaryEntries _entries;
 
-		public DictionaryContentOption(IActivation activation, IMemberSerializations members, IDictionaryEntries entries)
-			: base(Specification)
+		public DictionaryContentOption(IActivatingTypeSpecification specification, IActivation activation,
+		                               IMemberSerializations members, IDictionaryEntries entries)
+			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
 			_activation = activation;
 			_members = members;

@@ -25,6 +25,7 @@ using System.Reflection;
 using ExtendedXmlSerialization.ContentModel;
 using ExtendedXmlSerialization.ContentModel.Collections;
 using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerialization.TypeModel;
 
 namespace ExtendedXmlSerialization.ExtensionModel
 {
@@ -32,8 +33,9 @@ namespace ExtendedXmlSerialization.ExtensionModel
 	{
 		readonly IActivation _activation;
 
-		public ClassicCollectionContentOption(IActivation activation, ISerializers serializers)
-			: base(serializers)
+		public ClassicCollectionContentOption(IsActivatedTypeSpecification specification, IActivation activation,
+		                                      ISerializers serializers)
+			: base(specification, serializers)
 		{
 			_activation = activation;
 		}

@@ -29,13 +29,12 @@ namespace ExtendedXmlSerialization.ContentModel.Members
 {
 	sealed class MemberedContentOption : ContentOptionBase
 	{
-		readonly static IsActivatedTypeSpecification Specification = IsActivatedTypeSpecification.Default;
-
 		readonly IActivation _activation;
 		readonly IMemberSerializations _members;
 
-		public MemberedContentOption(IActivation activation, IMemberSerializations members)
-			: base(Specification)
+		public MemberedContentOption(IActivatingTypeSpecification specification, IActivation activation,
+		                             IMemberSerializations members)
+			: base(specification)
 		{
 			_activation = activation;
 			_members = members;

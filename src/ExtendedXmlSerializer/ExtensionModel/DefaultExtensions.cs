@@ -33,15 +33,18 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public override IEnumerator<ISerializerExtension> GetEnumerator()
 		{
-			yield return new DefaultRegistrationsExtension();
+			yield return DefaultReferencesExtension.Default;
+			yield return ContentModelExtension.Default;
+			yield return TypeModelExtension.Default;
+			yield return XmlSerializationExtension.Default;
+			yield return RegisteredConvertersExtension.Default;
+			yield return MemberModelExtension.Default;
 			yield return new TypeNamesExtension();
-			yield return ConverterExtension.Default;
-			yield return SerializationExtension.Default;
 			yield return new MemberPropertiesExtension();
 			yield return new AllowedMembersExtension();
 			yield return new AllowedMemberValuesExtension();
 			yield return new AttributesExtension();
-			yield return XmlSerializationExtension.Default;
+			yield return SerializationExtension.Default;
 		}
 	}
 }

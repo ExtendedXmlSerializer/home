@@ -30,13 +30,14 @@ using ExtendedXmlSerialization.Core.Sources;
 
 namespace ExtendedXmlSerialization.TypeModel
 {
-	class Activators : ReferenceCacheBase<Type, Func<object>>, IActivators
+	sealed class Activators : ReferenceCacheBase<Type, Func<object>>, IActivators
 	{
+		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
+
 		public static Activators Default { get; } = new Activators();
 		Activators() : this(ConstructorLocator.Default) {}
 
 		readonly IConstructorLocator _locator;
-		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
 
 		public Activators(IConstructorLocator locator)
 		{
