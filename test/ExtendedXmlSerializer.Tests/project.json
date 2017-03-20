@@ -10,6 +10,7 @@
         "ExtendedXmlSerializer": {
             "target": "project"
         },
+        "FluentAssertions": "4.19.2",
         "JetBrains.Annotations": "10.2.1",
         "System.Data.Common": "4.3.0",
         "System.Numerics.Vectors": "4.3.0",
