@@ -23,8 +23,8 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.TypeModel;
-using Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {

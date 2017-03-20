@@ -27,7 +27,7 @@ using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
-using Sprache;
+using ExtendedXmlSerializer.Core.Sprache;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing

@@ -23,7 +23,7 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using Sprache;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {

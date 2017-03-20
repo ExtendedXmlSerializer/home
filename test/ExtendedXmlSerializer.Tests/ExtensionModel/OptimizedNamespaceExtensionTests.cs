@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
-using LightInject;
+using ExtendedXmlSerializer.Core.LightInject;
 using Microsoft.DotNet.ProjectModel;
 using Xunit;
 
