@@ -23,9 +23,9 @@
 
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerialization.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	static class Defaults
 	{

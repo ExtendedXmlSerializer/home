@@ -26,7 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	class GenericDefinitionCandidates : IGenericDefinitionCandidates
 	{

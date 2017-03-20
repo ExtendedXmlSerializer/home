@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassWithMap type="ExtendedXmlSerialization.Test.TestObject.TestClassWithMap" ver="1">
-  <ZmianaWartosci>Stara</ZmianaWartosci>
-  <NowyWezel>test</NowyWezel>
-  <MapToClass>WartoscInna</MapToClass>
-</TestClassWithMap>

@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class ArrayReader : DecoratedReader
 	{

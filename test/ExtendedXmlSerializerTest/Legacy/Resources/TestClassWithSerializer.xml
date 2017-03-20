@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TestClassWithSerializer type="ExtendedXmlSerialization.Test.TestObject.TestClassWithSerializer">
-  <String>String</String>
-  <Int>17</Int>
-</TestClassWithSerializer>

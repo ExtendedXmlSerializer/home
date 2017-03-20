@@ -23,7 +23,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public abstract class StructureCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
 	                                                                                            where TValue : struct

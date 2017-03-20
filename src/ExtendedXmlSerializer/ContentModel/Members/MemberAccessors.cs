@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberAccessors : DelegatedSource<IMember, IMemberAccess>, IMemberAccessors
 	{

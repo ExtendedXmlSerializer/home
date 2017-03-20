@@ -24,7 +24,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	/// <summary>
 	/// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx

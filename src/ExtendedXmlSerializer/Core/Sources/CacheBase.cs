@@ -25,7 +25,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public abstract class CacheBase<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, ITableSource<TKey, TValue>
 	{

@@ -25,7 +25,7 @@ using System;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	class ExtendedXmlCustomSerializer<T> : IExtendedXmlCustomSerializer<T>
 	{

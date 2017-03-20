@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using Sprache;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
 	class NamesList : FixedParser<IEnumerable<ParsedName>>
 	{

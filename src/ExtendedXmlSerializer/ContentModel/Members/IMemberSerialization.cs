@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface IMemberSerialization : ISource<ImmutableArray<IMemberSerializer>>,
 	                                        IParameterizedSource<string, IMemberSerializer>,

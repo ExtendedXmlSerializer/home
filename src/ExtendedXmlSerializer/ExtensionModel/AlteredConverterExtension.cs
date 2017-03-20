@@ -23,13 +23,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Converters;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class AlteredConverterExtension : ISerializerExtension
+	public class AlteredConverterExtension : ISerializerExtension
 	{
 		readonly IAlteration<IConverter> _converters;
 

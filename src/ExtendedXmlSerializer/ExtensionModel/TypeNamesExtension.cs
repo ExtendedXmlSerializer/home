@@ -23,18 +23,18 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.ContentModel;
-using ExtendedXmlSerialization.ContentModel.Content;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.ContentModel.Xml;
-using ExtendedXmlSerialization.Core.Sources;
-using ExtendedXmlSerialization.TypeModel;
-using Identities = ExtendedXmlSerialization.ContentModel.Xml.Identities;
-using IIdentities = ExtendedXmlSerialization.ContentModel.Xml.IIdentities;
-using TypeFormatter = ExtendedXmlSerialization.ContentModel.Xml.TypeFormatter;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
+using Identities = ExtendedXmlSerializer.ContentModel.Xml.Identities;
+using IIdentities = ExtendedXmlSerializer.ContentModel.Xml.IIdentities;
+using TypeFormatter = ExtendedXmlSerializer.ContentModel.Xml.TypeFormatter;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class TypeNamesExtension : ISerializerExtension
 	{

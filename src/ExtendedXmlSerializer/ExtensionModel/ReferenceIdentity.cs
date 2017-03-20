@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{

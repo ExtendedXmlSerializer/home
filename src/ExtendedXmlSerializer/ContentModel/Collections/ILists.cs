@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	public interface ILists : IParameterizedSource<object, IList> {}
 }

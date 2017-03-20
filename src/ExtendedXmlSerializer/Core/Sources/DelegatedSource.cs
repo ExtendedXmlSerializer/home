@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class DelegatedSource<T> : ISource<T>
 	{

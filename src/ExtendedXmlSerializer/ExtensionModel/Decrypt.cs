@@ -25,7 +25,7 @@ using System;
 using System.Text;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
 	class Decrypt : IDecrypt
 	{

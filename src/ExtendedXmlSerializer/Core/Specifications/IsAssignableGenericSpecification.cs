@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{

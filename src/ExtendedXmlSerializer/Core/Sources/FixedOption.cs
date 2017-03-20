@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Core.Specifications;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
 	{

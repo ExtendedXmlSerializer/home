@@ -24,7 +24,7 @@
 using System;
 using System.Collections;
 
-namespace ExtendedXmlSerialization.Core
+namespace ExtendedXmlSerializer.Core
 {
 	sealed class ListAdapter : IList
 	{

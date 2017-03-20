@@ -24,9 +24,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerialization.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class ConverterContentOptions : IEnumerable<IContentOption>
 	{

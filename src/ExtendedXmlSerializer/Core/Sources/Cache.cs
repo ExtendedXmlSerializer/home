@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class Cache<TKey, TValue> : CacheBase<TKey, TValue>
 	{

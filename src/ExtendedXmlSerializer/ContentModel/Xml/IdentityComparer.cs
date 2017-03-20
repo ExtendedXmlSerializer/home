@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	public class IdentityComparer : IdentityComparer<IIdentity>
 	{

@@ -25,10 +25,10 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerialization.ContentModel.Properties;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	class XmlReader : IXmlReader
 	{

@@ -24,7 +24,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	public interface IArgumentsProperty : IProperty<ImmutableArray<Type>> {}
 }

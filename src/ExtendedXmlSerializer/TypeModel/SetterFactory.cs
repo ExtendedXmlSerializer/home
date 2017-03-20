@@ -25,7 +25,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	class SetterFactory : ISetterFactory
 	{

@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
 	sealed class WellKnownNamespaces : Dictionary<Assembly, Namespace>
 	{

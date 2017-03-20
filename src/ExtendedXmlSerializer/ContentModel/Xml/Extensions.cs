@@ -25,7 +25,7 @@ using System;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	static class Extensions
 	{

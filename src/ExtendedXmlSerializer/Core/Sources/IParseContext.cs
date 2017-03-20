@@ -23,7 +23,7 @@
 
 using Sprache;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public interface IParseContext<out T> : IParser<T>, IParameterizedSource<IInput, IResult<T>>, ISource<Parser<T>> {}
 }

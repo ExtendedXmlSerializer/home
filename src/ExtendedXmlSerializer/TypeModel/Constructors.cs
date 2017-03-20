@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public sealed class Constructors : IConstructors
 	{

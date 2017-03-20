@@ -23,9 +23,9 @@
 
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class OptimizedConverterAlteration : IAlteration<IConverter>, IOptimizationContainer
 	{

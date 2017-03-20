@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestClassPrimitiveTypesNullable type="ExtendedXmlSerializer.Tests.Legacy.TestObject.TestClassPrimitiveTypesNullable">
+  <PropString>Str</PropString>
+  <PropInt>1</PropInt>
+  <PropuInt>2</PropuInt>
+  <PropDecimal>3.3</PropDecimal>
+  <PropFloat>7.4</PropFloat>
+  <PropDouble>3.4</PropDouble>
+  <PropEnum>EnumValue1</PropEnum>
+  <PropLong>234234142</PropLong>
+  <PropUlong>2345352534</PropUlong>
+  <PropShort>23</PropShort>
+  <PropUshort>2344</PropUshort>
+  <PropDateTime>2014-01-23T00:00:00</PropDateTime>
+  <PropByte>23</PropByte>
+  <PropSbyte>33</PropSbyte>
+  <PropChar>103</PropChar>
+</TestClassPrimitiveTypesNullable>

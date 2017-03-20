@@ -23,7 +23,7 @@
 
 using System;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public class DelegatedSpecification<T> : ISpecification<T>
 	{

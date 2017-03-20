@@ -25,10 +25,10 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class TypeMembers : CacheBase<TypeInfo, ImmutableArray<IMember>>, ITypeMembers
 	{

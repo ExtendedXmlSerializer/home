@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerializer;
+using ExtendedXmlSerializer.Configuration;
 
 namespace ExtendedXmlSerialization.Samples.Simple
 {
@@ -29,7 +31,7 @@ namespace ExtendedXmlSerialization.Samples.Simple
 	{
 		public static void Run()
 		{
-			var serializer = new Configuration.ExtendedConfiguration().Create();
+			var serializer = new ExtendedConfiguration().Create();
 			Program.PrintHeader("Serialization");
 			var obj = new TestClass();
 			var xml = serializer.Serialize(obj);

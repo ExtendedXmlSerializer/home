@@ -23,9 +23,9 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	public interface IXmlReader : IIdentity, IXmlAttributes, IXmlContent, IPrefixAware, ISource<System.Xml.XmlReader>,
 	                              IDisposable

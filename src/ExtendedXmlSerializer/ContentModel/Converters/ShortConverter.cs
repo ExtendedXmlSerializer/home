@@ -23,7 +23,7 @@
 
 using System.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class ShortConverter : Converter<short>
 	{

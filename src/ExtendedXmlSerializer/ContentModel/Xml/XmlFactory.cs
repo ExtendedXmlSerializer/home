@@ -23,9 +23,9 @@
 
 using System.IO;
 using System.Xml;
-using ExtendedXmlSerialization.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Properties;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	class XmlFactory : IXmlFactory
 	{

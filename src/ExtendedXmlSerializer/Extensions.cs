@@ -24,10 +24,10 @@
 using System;
 using System.IO;
 using System.Text;
-using ExtendedXmlSerialization.Configuration;
-using ExtendedXmlSerialization.Core;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerialization
+namespace ExtendedXmlSerializer
 {
 	public static class Extensions
 	{

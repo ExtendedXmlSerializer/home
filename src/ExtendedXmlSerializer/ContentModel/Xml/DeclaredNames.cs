@@ -24,7 +24,7 @@
 using System.Reflection;
 using System.Xml.Serialization;
 
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class DeclaredNames : INames
 	{

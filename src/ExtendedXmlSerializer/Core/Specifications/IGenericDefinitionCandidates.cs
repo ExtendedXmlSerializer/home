@@ -24,9 +24,9 @@
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public interface IGenericDefinitionCandidates : IParameterizedSource<TypeInfo, ImmutableArray<Type>> {}
 }

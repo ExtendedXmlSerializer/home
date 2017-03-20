@@ -24,9 +24,9 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	class AddDelegates : ReferenceCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
 	{

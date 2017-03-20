@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Xml;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel
+namespace ExtendedXmlSerializer.ContentModel
 {
 	class IdentityFormatter : IdentityFormatter<IIdentity>
 	{

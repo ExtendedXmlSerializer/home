@@ -23,9 +23,9 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerialization.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Converters;
 
-namespace ExtendedXmlSerialization.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberConverters : IMemberConverters
 	{

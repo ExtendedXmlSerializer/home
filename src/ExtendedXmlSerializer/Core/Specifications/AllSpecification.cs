@@ -23,7 +23,7 @@
 
 using System.Collections.Immutable;
 
-namespace ExtendedXmlSerialization.Core.Specifications
+namespace ExtendedXmlSerializer.Core.Specifications
 {
 	public class AllSpecification<T> : ISpecification<T>
 	{

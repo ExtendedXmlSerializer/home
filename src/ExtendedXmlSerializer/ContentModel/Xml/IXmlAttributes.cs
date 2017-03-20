@@ -1,4 +1,4 @@
-namespace ExtendedXmlSerialization.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	public interface IXmlAttributes
 	{

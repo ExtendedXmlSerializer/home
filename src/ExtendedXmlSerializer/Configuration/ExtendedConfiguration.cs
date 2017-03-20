@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Linq;
-using ExtendedXmlSerialization.Core;
-using ExtendedXmlSerialization.ExtensionModel;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	public class ExtendedConfiguration : KeyedByTypeCollection<ISerializerExtension>, IConfiguration
 	{

@@ -23,7 +23,7 @@
 
 using Sprache;
 
-namespace ExtendedXmlSerialization.Core.Sources
+namespace ExtendedXmlSerializer.Core.Sources
 {
 	public class FixedParser<T> : ParserBase<T>
 	{

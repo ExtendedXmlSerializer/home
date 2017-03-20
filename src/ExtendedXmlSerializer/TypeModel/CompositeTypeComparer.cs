@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 
-namespace ExtendedXmlSerialization.TypeModel
+namespace ExtendedXmlSerializer.TypeModel
 {
 	public class CompositeTypeComparer : ITypeComparer
 	{

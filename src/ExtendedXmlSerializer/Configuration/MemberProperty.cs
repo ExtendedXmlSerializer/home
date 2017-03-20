@@ -23,9 +23,9 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerialization.TypeModel;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerialization.Configuration
+namespace ExtendedXmlSerializer.Configuration
 {
 	class MemberProperty<T> : MemberPropertyBase<MemberInfo, T>
 	{

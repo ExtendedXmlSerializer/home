@@ -24,9 +24,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class Converters : CacheBase<TypeInfo, IConverter>, IConverters
 	{

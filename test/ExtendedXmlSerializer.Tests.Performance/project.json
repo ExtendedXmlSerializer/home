@@ -1,0 +1,52 @@
+{
+  "version": "1.5.0",
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "allowUnsafe": true
+  },
+  "configurations": {
+    "Debug": {
+      "buildOptions": {
+        "define": [ "DEBUG", "TRACE" ]
+      }
+    },
+    "Release": {
+      "buildOptions": {
+        "define": [ "RELEASE", "TRACE" ],
+        "optimize": true
+      }
+    }
+  },
+    "dependencies": {
+        "ExtendedXmlSerializer": "1.5.0",
+        "ExtendedXmlSerializer.Legacy": "1.5.0",
+        "NETStandard.Library": "1.6.1"
+    },
+
+  "frameworks": {
+    "net451": {
+      "buildOptions": {
+        "define": [ "CLASSIC" ]
+      },
+      "frameworkAssemblies": {
+
+      },
+        "dependencies": {
+            "BenchmarkDotNet": "0.10.3",
+            "BenchmarkDotNet.Diagnostics.Windows": "0.10.3"
+        }
+    },
+    "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "CORE" ]
+      },
+        "dependencies": {
+            "BenchmarkDotNet": "0.9.9",
+            "Microsoft.NETCore.App": {
+                "type": "platform",
+                "version": "1.0.1"
+            }
+        }
+    }
+  }
+}

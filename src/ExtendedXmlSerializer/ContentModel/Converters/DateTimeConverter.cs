@@ -24,7 +24,7 @@
 using System;
 using System.Xml;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerializer.ContentModel.Converters
 {
 	class DateTimeConverter : Converter<DateTime>
 	{
