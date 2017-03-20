@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Text;
 using System.Xml;
 using ExtendedXmlSerialization.ContentModel.Xml;
 using ExtendedXmlSerialization.Core;
@@ -55,7 +56,8 @@ namespace ExtendedXmlSerialization.ExtensionModel
 		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<IXmlFactory, XmlFactory>()
+			=> parameter.RegisterInstance(Encoding.UTF8)
+			            .Register<IXmlFactory, XmlFactory>()
 			            .RegisterInstance(_readerSettings)
 			            .RegisterInstance(_writerSettings);
 

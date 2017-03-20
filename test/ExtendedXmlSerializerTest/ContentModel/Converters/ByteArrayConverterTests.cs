@@ -1,18 +1,18 @@
-// MIT License
-// 
-// Copyright (c) 2016 Wojciech Nag�rski
+﻿// MIT License
+//
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,34 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using ExtendedXmlSerialization.Test.Support;
+using Xunit;
 
-namespace ExtendedXmlSerialization.ContentModel.Converters
+namespace ExtendedXmlSerialization.Test.ContentModel.Converters
 {
-	class WellKnownConverters : Items<IConverter>
+	public class ByteArrayConverterTests
 	{
-		public static WellKnownConverters Default { get; } = new WellKnownConverters();
+		[Fact]
+		public void Verify()
+		{
+			var instance = new byte[] {1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1};
 
-		WellKnownConverters() : base(
-			BooleanConverter.Default,
-			CharacterConverter.Default,
-			ByteConverter.Default,
-			ByteArrayConverter.Default,
-			UnsignedByteConverter.Default,
-			ShortConverter.Default,
-			UnsignedShortConverter.Default,
-			IntegerConverter.Default,
-			UnsignedIntegerConverter.Default,
-			LongConverter.Default,
-			UnsignedLongConverter.Default,
-			FloatConverter.Default,
-			DoubleConverter.Default,
-			DecimalConverter.Default,
-			DateTimeConverter.Default,
-			DateTimeOffsetConverter.Default,
-			StringConverter.Default,
-			GuidConverter.Default,
-			TimeSpanConverter.Default
-		) {}
+			var support = new SerializationSupport();
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:item=""unsignedByte"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">AQIDBAUGBwcGBQQDAgE=</Array>");
+			Assert.Equal(instance, actual);
+		}
+
+		[Fact]
+		public void VerifyProperty()
+		{
+			var instance = new Subject { Bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1 } };
+
+			var support = new SerializationSupport();
+			var actual = support.Cycle(instance);
+			Assert.Equal(instance.Bytes, actual.Bytes);
+		}
+
+		class Subject
+		{
+			public byte[] Bytes { get; set; }
+		}
 	}
 }
