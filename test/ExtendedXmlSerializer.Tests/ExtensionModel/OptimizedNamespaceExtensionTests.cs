@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core.LightInject;
+using JetBrains.Annotations;
 using Microsoft.DotNet.ProjectModel;
 using Xunit;
 
@@ -62,14 +62,19 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		[Fact]
 		public void OptimizedDictionary()
 		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:ns1=""clr-namespace:LightInject;assembly=LightInject"" xmlns:ns2=""clr-namespace:Microsoft.DotNet.ProjectModel;assembly=Microsoft.DotNet.ProjectModel""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:AnalyzerOptions"" /><Value exs:type=""ns1:DecoratorRegistration""><Index>0</Index></Value></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#if CORE
+			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:ns1=""clr-namespace:JetBrains.Annotations;assembly=JetBrains.Annotations.NetStandard"" xmlns:ns2=""clr-namespace:Microsoft.DotNet.ProjectModel;assembly=Microsoft.DotNet.ProjectModel""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:AnalyzerOptions"" /><Value exs:type=""ns1:UsedImplicitlyAttribute"" /></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#else
+			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" xmlns:ns1=""clr-namespace:JetBrains.Annotations;assembly=JetBrains.Annotations"" xmlns:ns2=""clr-namespace:Microsoft.DotNet.ProjectModel;assembly=Microsoft.DotNet.ProjectModel""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:AnalyzerOptions"" /><Value exs:type=""ns1:UsedImplicitlyAttribute"" /></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#endif
+
 			var instance = new ClassWithDifferingPropertyType
 			               {
 				               Interface = new GeneralImplementation
 				                           {
 					                           Instance = new Dictionary<object, object>
 					                                      {
-						                                      {new AnalyzerOptions(), new DecoratorRegistration()}
+						                                      {new AnalyzerOptions(), new UsedImplicitlyAttribute()}
 					                                      }
 				                           }
 			               };
