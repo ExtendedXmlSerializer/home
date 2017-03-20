@@ -50,13 +50,12 @@ namespace ExtendedXmlSerialization.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			return parameter
-				.RegisterInstance<IEnumerable<IConverter>>(Converters)
-				.RegisterInstance(_sources)
-				.Register<IConverters, Converters>()
-				.Register<ConverterContentOptions>()
-				.Decorate<IEnumerable<IContentOption>>(
-					(provider, options) => provider.Get<ConverterContentOptions>().Concat(options));
+			return parameter.RegisterInstance<IEnumerable<IConverter>>(Converters)
+			                .RegisterInstance(_sources)
+			                .Register<IConverters, Converters>()
+			                .Register<ConverterContentOptions>()
+			                .Decorate<IEnumerable<IContentOption>>(
+				                (provider, options) => provider.Get<ConverterContentOptions>().Concat(options));
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

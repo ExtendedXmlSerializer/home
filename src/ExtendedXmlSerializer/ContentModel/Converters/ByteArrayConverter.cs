@@ -21,34 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerialization.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerialization.ContentModel.Converters
 {
-	class WellKnownConverters : Items<IConverter>
+	class ByteArrayConverter : Converter<byte[]>
 	{
-		public static WellKnownConverters Default { get; } = new WellKnownConverters();
-
-		WellKnownConverters() : base(
-			BooleanConverter.Default,
-			CharacterConverter.Default,
-			ByteConverter.Default,
-			ByteArrayConverter.Default,
-			UnsignedByteConverter.Default,
-			ShortConverter.Default,
-			UnsignedShortConverter.Default,
-			IntegerConverter.Default,
-			UnsignedIntegerConverter.Default,
-			LongConverter.Default,
-			UnsignedLongConverter.Default,
-			FloatConverter.Default,
-			DoubleConverter.Default,
-			DecimalConverter.Default,
-			DateTimeConverter.Default,
-			DateTimeOffsetConverter.Default,
-			StringConverter.Default,
-			GuidConverter.Default,
-			TimeSpanConverter.Default
-		) {}
+		public static ByteArrayConverter Default { get; } = new ByteArrayConverter();
+		ByteArrayConverter() : base(Convert.FromBase64String, Convert.ToBase64String) {}
 	}
 }
