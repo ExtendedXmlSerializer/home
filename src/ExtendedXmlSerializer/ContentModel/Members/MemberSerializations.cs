@@ -31,7 +31,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberSerializations : ReferenceCacheBase<TypeInfo, IMemberSerialization>, IMemberSerializations
+	sealed class MemberSerializations : CacheBase<TypeInfo, IMemberSerialization>, IMemberSerializations
 	{
 		readonly static Func<IMemberSerializer, bool> Property =
 			IsTypeSpecification<PropertyMemberSerializer>.Default.IsSatisfiedBy;

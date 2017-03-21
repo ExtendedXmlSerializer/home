@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -33,6 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly ITypeMembers _members;
 		readonly IEnumerators _enumerators;
+		readonly Func<object, IEnumerable<T>> _selector;
 
 		protected InstanceMemberWalkerBase(ITypeMembers members, object root) : this(members, Enumerators.Default, root) {}
 
@@ -40,13 +42,23 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			_members = members;
 			_enumerators = enumerators;
+			_selector = Yield;
 		}
 
 		protected override IEnumerable<T> Select(object input)
 		{
 			var parameter = input.GetType().GetTypeInfo();
-			var result = Members(input, parameter).Concat(_enumerators.Get(input).Select(Yield).SelectMany(x => x));
+			var result = Members(input, parameter).Concat(Enumerate(input).Select(_selector).SelectMany(x => x));
 			return result;
+		}
+
+		IEnumerable<object> Enumerate(object parameter)
+		{
+			var iterator = _enumerators.Get(parameter);
+			while (iterator?.MoveNext() ?? false)
+			{
+				yield return iterator.Current;
+			}
 		}
 
 		protected virtual IEnumerable<T> Members(object input, TypeInfo parameter)

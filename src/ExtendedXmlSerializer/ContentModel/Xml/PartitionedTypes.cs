@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class PartitionedTypes : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
+	sealed class PartitionedTypes : CacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		readonly static AssemblyPathParser AssemblyPathParser = AssemblyPathParser.Default;
 		readonly static AssemblyLoader AssemblyLoader = AssemblyLoader.Default;
@@ -41,6 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly ITypePartitions _partitions;
 
 		public PartitionedTypes(IParseContext<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions)
+			: base(IdentityComparer.Default)
 		{
 			_parser = parser;
 			_loader = loader;

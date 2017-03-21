@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	public interface IEnumerators : IParameterizedSource<object, IEnumerable<object>> {}
+	public interface IEnumerators : IParameterizedSource<object, IEnumerator> {}
 }

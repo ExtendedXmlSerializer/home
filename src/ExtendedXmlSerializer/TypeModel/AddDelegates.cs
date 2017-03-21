@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	class AddDelegates : ReferenceCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
+	sealed class AddDelegates : ReferenceCacheBase<TypeInfo, Action<object, object>>, IAddDelegates
 	{
 		public static AddDelegates Default { get; } = new AddDelegates();
 		AddDelegates() : this(CollectionItemTypeLocator.Default, AddMethodLocator.Default) {}

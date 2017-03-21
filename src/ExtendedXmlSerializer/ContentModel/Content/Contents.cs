@@ -28,7 +28,7 @@ using JetBrains.Annotations;
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	[UsedImplicitly]
-	sealed class Contents : ReferenceCache<TypeInfo, ISerializer>, IContents
+	sealed class Contents : Cache<TypeInfo, ISerializer>, IContents
 	{
 		public Contents(params IContentOption[] options) : base(new Selector<TypeInfo, ISerializer>(options).Get) {}
 	}

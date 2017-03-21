@@ -29,7 +29,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class Identities : ReferenceCacheBase<TypeInfo, IIdentity>, IIdentities
+	sealed class Identities : CacheBase<TypeInfo, IIdentity>, IIdentities
 	{
 		readonly ContentModel.IIdentities _source;
 		readonly INames _alias;
