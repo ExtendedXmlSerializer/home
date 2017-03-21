@@ -52,17 +52,25 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
-exec { & dotnet restore }
+exec { & dotnet restore .\src\ExtendedXmlSerializer }
+exec { & dotnet restore .\src\ExtendedXmlSerializer.Legacy }
+exec { & dotnet restore .\test\ExtendedXmlSerializer.Tests }
+exec { & dotnet restore .\test\ExtendedXmlSerializer.Tests.Legacy }
 
 Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
-Invoke-MSBuild -configuration Release 
+Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.xproj -configuration Release 
+Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.xproj -configuration Release 
+Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.xproj -configuration Release 
+Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.xproj -configuration Release 
 
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-exec { & dotnet test .\test\ExtendedXmlSerializerTest -c Release }
+exec { & dotnet test .\test\ExtendedXmlSerializer.Tests -c Release }
+exec { & dotnet test .\test\ExtendedXmlSerializer.Tests.Legacy -c Release }
 
 exec { & dotnet pack .\src\ExtendedXmlSerializer -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ExtendedXmlSerializer.Autofac -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ExtendedXmlSerializer.AspCore -c Release -o .\artifacts --version-suffix=$revision}
-exec { & dotnet pack .\src\ExtendedXmlSerializer.WebApi -c Release -o .\artifacts --version-suffix=$revision}
+exec { & dotnet pack .\src\ExtendedXmlSerializer.Legacy -c Release -o .\artifacts --version-suffix=$revision }  
+# exec { & dotnet pack .\src\ExtendedXmlSerializer.Autofac -c Release -o .\artifacts --version-suffix=$revision }  
+# exec { & dotnet pack .\src\ExtendedXmlSerializer.AspCore -c Release -o .\artifacts --version-suffix=$revision}
+# exec { & dotnet pack .\src\ExtendedXmlSerializer.WebApi -c Release -o .\artifacts --version-suffix=$revision}

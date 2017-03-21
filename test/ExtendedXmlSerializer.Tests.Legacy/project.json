@@ -1,40 +1,40 @@
 {
-    "title": "ExtendedXmlSerializer.Tests.Legacy",
+  "title": "ExtendedXmlSerializer.Tests.Legacy",
   "testRunner": "xunit",
-  "version": "1.5.0",
-    "buildOptions": {
-        "embed": [ "Resources/*.xml" ]
-    },
-    "dependencies": {
-        "dotnet-test-xunit": "2.2.0-preview2-build1029",
-        "ExtendedXmlSerializer.Legacy": "1.5.0",
-        "JetBrains.Annotations": "10.2.1",
-        "System.Data.Common": "4.3.0",
-        "System.Numerics.Vectors": "4.3.0",
-        "xunit": "2.2.0-beta4-build3444"
-    },
+  "version": "2.0.0-alpha",
+  "buildOptions": {
+    "embed": [ "Resources/*.xml" ]
+  },
+  "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "ExtendedXmlSerializer.Legacy": "1.5.0",
+    "JetBrains.Annotations": "10.2.1",
+    "System.Data.Common": "4.3.0",
+    "System.Numerics.Vectors": "4.3.0",
+    "xunit": "2.2.0-beta4-build3444"
+  },
   "frameworks": {
     "netcoreapp1.0": {
-        "buildOptions": {
-            "define": [ "CORE" ]
-        },
-        "dependencies": {
-            "Microsoft.DotNet.InternalAbstractions": "1.0.0",
-            "NETStandard.Library": "1.6.1",
-            "Microsoft.NETCore.App": {
-                "type": "platform",
-                "version": "1.0.1"
-            }
+      "buildOptions": {
+        "define": [ "CORE" ]
+      },
+      "dependencies": {
+        "Microsoft.DotNet.InternalAbstractions": "1.0.0",
+        "NETStandard.Library": "1.6.1",
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
         }
+      }
     },
     "net451": {
-        "buildOptions": {
-            "define": [ "CLASSIC" ]
-        },
-        "frameworkAssemblies": {
-        },
-        "dependencies": {
-        }
+      "buildOptions": {
+        "define": [ "CLASSIC" ]
+      },
+      "frameworkAssemblies": {
+      },
+      "dependencies": {
+      }
     }
   }
 }

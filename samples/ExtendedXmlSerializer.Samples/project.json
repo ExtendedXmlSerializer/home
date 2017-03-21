@@ -1,25 +1,25 @@
 {
-    "version": "2.0.0",
-    "buildOptions": {
-        "emitEntryPoint": true
-    },
+  "version": "2.0.0-alpha",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
 
-    "dependencies": {
-        "ExtendedXmlSerializer": {
-            "target": "project"
-        },
-        "NETStandard.Library": "1.6.1"
+  "dependencies": {
+    "ExtendedXmlSerializer": {
+      "target": "project"
     },
+    "NETStandard.Library": "1.6.1"
+  },
 
-    "frameworks": {
-        "net451": {},
-        "netcoreapp1.0": {
-            "dependencies": {
-                "Microsoft.NETCore.App": {
-                    "type": "platform",
-                    "version": "1.0.1"
-                }
-            }
+  "frameworks": {
+    "net451": {},
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
         }
+      }
     }
+  }
 }

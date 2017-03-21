@@ -1,43 +1,43 @@
 {
-    "title": "ExtendedXmlSerializer.Tests",
-    "testRunner": "xunit",
-    "version": "2.0.0",
-    "buildOptions": {
+  "title": "ExtendedXmlSerializer.Tests",
+  "testRunner": "xunit",
+  "version": "2.0.0-alpha",
+  "buildOptions": {
 
+  },
+  "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "ExtendedXmlSerializer": {
+      "target": "project"
     },
-    "dependencies": {
-        "dotnet-test-xunit": "2.2.0-preview2-build1029",
-        "ExtendedXmlSerializer": {
-            "target": "project"
-        },
-        "FluentAssertions": "4.19.2",
-        "JetBrains.Annotations": "10.2.1",
-        "System.Data.Common": "4.3.0",
-        "System.Numerics.Vectors": "4.3.0",
-        "xunit": "2.2.0-beta4-build3444"
-    },
-    "frameworks": {
-        "netcoreapp1.0": {
-            "buildOptions": {
-                "define": [ "CORE" ]
-            },
-            "dependencies": {
-                "Microsoft.DotNet.InternalAbstractions": "1.0.0",
-                "NETStandard.Library": "1.6.1",
-                "Microsoft.NETCore.App": {
-                    "type": "platform",
-                    "version": "1.0.1"
-                }
-            }
-        },
-        "net451": {
-            "buildOptions": {
-                "define": [ "CLASSIC" ]
-            },
-            "frameworkAssemblies": {
-            },
-            "dependencies": {
-            }
+    "FluentAssertions": "4.19.2",
+    "JetBrains.Annotations": "10.2.1",
+    "System.Data.Common": "4.3.0",
+    "System.Numerics.Vectors": "4.3.0",
+    "xunit": "2.2.0-beta4-build3444"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "CORE" ]
+      },
+      "dependencies": {
+        "Microsoft.DotNet.InternalAbstractions": "1.0.0",
+        "NETStandard.Library": "1.6.1",
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
         }
+      }
+    },
+    "net451": {
+      "buildOptions": {
+        "define": [ "CLASSIC" ]
+      },
+      "frameworkAssemblies": {
+      },
+      "dependencies": {
+      }
     }
+  }
 }
