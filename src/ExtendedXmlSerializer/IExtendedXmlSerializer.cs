@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
+using System.Xml;
 
 namespace ExtendedXmlSerializer
 {
 	public interface IExtendedXmlSerializer
 	{
-		void Serialize(Stream stream, object instance);
+		void Serialize(XmlWriter writer, object instance);
 
-		object Deserialize(Stream stream);
+		object Deserialize(XmlReader reader);
 	}
 }

@@ -23,13 +23,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	public static class Extensions
 	{
+		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
+			=> @this.Get(new MemoryStream(Encoding.UTF8.GetBytes(parameter)));
+
 		public static T Get<T>(this IParameterizedSource<TypeInfo, T> @this, Type parameter)
 			=> @this.Get(parameter.GetTypeInfo());
 

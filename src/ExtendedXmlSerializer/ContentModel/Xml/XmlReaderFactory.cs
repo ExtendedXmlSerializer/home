@@ -21,12 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
+using System.Xml;
+
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IXmlFactory
+	public class XmlReaderFactory : IXmlReaderFactory
 	{
-		IXmlWriter Create(System.Xml.XmlWriter writer, object instance);
+		public static XmlReaderFactory Default { get; } = new XmlReaderFactory();
+		XmlReaderFactory() : this(Defaults.ReaderSettings) {}
 
-		IXmlReader Create(System.Xml.XmlReader reader);
+		readonly XmlReaderSettings _settings;
+
+		public XmlReaderFactory(XmlReaderSettings settings)
+		{
+			_settings = settings;
+		}
+
+		public System.Xml.XmlReader Get(Stream parameter) => System.Xml.XmlReader.Create(parameter, _settings);
+
+		public System.Xml.XmlReader Get(TextReader parameter) => System.Xml.XmlReader.Create(parameter, _settings);
 	}
 }

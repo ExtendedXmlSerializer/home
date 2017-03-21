@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 				var current = _accessors.Get(member).Get(instance);
 				if (Schedule(current) && variable.IsSatisfiedBy(current.GetType()))
 				{
-					yield return Defaults.FrameworkType;
+					yield return ContentModel.Defaults.FrameworkType;
 				}
 			}
 		}

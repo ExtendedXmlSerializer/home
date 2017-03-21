@@ -25,17 +25,19 @@ using System;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	class XmlWriter : IXmlWriter
 	{
+		readonly static Func<INamespaces> Namespaces = Activators.Default.New<Namespaces>;
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
 
 		readonly System.Xml.XmlWriter _writer;
 		readonly Source _source;
 
-		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, () => new Namespaces()) {}
+		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, Namespaces) {}
 
 		public XmlWriter(System.Xml.XmlWriter writer, object root, Func<INamespaces> namespaces)
 			: this(writer, root, new Source(namespaces)) {}
@@ -69,8 +71,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		public void Write(string text) => _writer.WriteString(text);
 
 		public void EndCurrent() => _writer.WriteEndElement();
-
-		public void Dispose() => _writer.Dispose();
 
 		public string Get(string identifier) => _writer.LookupPrefix(identifier) ?? Create(identifier);
 

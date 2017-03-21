@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,11 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
+using XmlReader = System.Xml.XmlReader;
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer
 {
@@ -33,31 +34,26 @@ namespace ExtendedXmlSerializer
 	/// Extended Xml Serializer
 	/// </summary>
 	[UsedImplicitly]
-	public class ExtendedXmlSerializer : IExtendedXmlSerializer
+	class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
 		readonly IXmlFactory _factory;
-		readonly ISerializers _serialization;
+		readonly ISerializers _serializers;
 
-		public ExtendedXmlSerializer(IXmlFactory factory, ISerializers serialization)
+		public ExtendedXmlSerializer(IXmlFactory factory, ISerializers serializers)
 		{
 			_factory = factory;
-			_serialization = serialization;
+			_serializers = serializers;
 		}
 
-		public void Serialize(Stream stream, object instance)
-		{
-			using (var writer = _factory.Create(stream, instance))
-			{
-				_serialization.Get(instance.GetType().GetTypeInfo()).Write(writer, instance);
-			}
-		}
+		public void Serialize(XmlWriter writer, object instance)
+			=> _serializers.Get(instance.GetType().GetTypeInfo())
+			               .Write(_factory.Create(writer, instance), instance);
 
-		public object Deserialize(Stream stream)
+		public object Deserialize(XmlReader reader)
 		{
-			using (var reader = _factory.Create(stream))
-			{
-				return _serialization.Get(reader.GetClassification()).Get(reader);
-			}
+			var reading = _factory.Create(reader);
+			var result = _serializers.Get(reading.GetClassification()).Get(reading);
+			return result;
 		}
 	}
 }

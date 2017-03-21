@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.IO;
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Properties;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
@@ -34,25 +32,47 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly ITypeProperty _type;
 		readonly IItemTypeProperty _item;
 		readonly IArgumentsProperty _arguments;
-		readonly XmlReaderSettings _readerSettings;
-		readonly XmlWriterSettings _writerSettings;
 
 		public XmlFactory(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-		                  IArgumentsProperty arguments, XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
+		                  IArgumentsProperty arguments)
 		{
 			_genericTypes = genericTypes;
 			_types = types;
 			_type = type;
 			_item = item;
 			_arguments = arguments;
-			_readerSettings = readerSettings;
-			_writerSettings = writerSettings;
 		}
 
-		public IXmlWriter Create(Stream stream, object instance)
-			=> new XmlWriter(System.Xml.XmlWriter.Create(stream, _writerSettings), instance);
+		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance) => new XmlWriter(writer, instance);
 
-		public IXmlReader Create(Stream stream) =>
-			new XmlReader(_genericTypes, _types, _type, _item, _arguments, System.Xml.XmlReader.Create(stream, _readerSettings));
+		public IXmlReader Create(System.Xml.XmlReader reader) =>
+			new XmlReader(_genericTypes, _types, _type, _item, _arguments, reader);
 	}
+
+	/*public interface IInstanceParser : IParser<object> {}
+
+	class InstanceParser : IInstanceParser
+	{
+		readonly static Encoding Encoding = Encoding.UTF8;
+		readonly IExtendedXmlSerializer _serializer;
+		readonly Encoding _encoding;
+
+		public InstanceParser(IExtendedXmlSerializer serializer) : this(serializer, Encoding) {}
+
+		public InstanceParser(IExtendedXmlSerializer serializer, Encoding encoding)
+		{
+			_serializer = serializer;
+			_encoding = encoding;
+		}
+
+		public object Get(string parameter)
+		{
+			var bytes = _encoding.GetBytes(parameter);
+			using (var stream = new MemoryStream(bytes))
+			{
+				var result = _serializer.Deserialize(stream);
+				return result;
+			}
+		}
+	}*/
 }

@@ -21,12 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IXmlWriter : IPrefixAware, IDisposable, ISource<System.Xml.XmlWriter>
+	public interface IXmlWriter : IPrefixAware, ISource<System.Xml.XmlWriter>
 	{
 		object Root { get; }
 

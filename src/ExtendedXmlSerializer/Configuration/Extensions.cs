@@ -225,7 +225,7 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static IConfiguration WithSettings(this IConfiguration @this,
+		/*public static IConfiguration WithSettings(this IConfiguration @this,
 		                                          XmlReaderSettings readerSettings,
 		                                          XmlWriterSettings writerSettings)
 			=> @this.Extend(new XmlSerializationExtension(readerSettings, writerSettings));
@@ -236,7 +236,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static IConfiguration WithSettings(this IConfiguration @this,
 		                                          XmlWriterSettings writerSettings)
-			=> @this.Extend(new XmlSerializationExtension(writerSettings));
+			=> @this.Extend(new XmlSerializationExtension(writerSettings));*/
 
 		public static IConfiguration Extend(this IConfiguration @this,
 		                                    params ISerializerExtension[] extensions)

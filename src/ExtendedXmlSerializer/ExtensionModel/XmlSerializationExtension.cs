@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Text;
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 
@@ -30,36 +29,12 @@ namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class XmlSerializationExtension : ISerializerExtension
 	{
-		readonly static XmlReaderSettings ReaderSettings = new XmlReaderSettings
-		                                                   {
-			                                                   IgnoreWhitespace = true,
-			                                                   IgnoreComments = true,
-			                                                   IgnoreProcessingInstructions = true
-		                                                   };
-
-		readonly static XmlWriterSettings WriterSettings = new XmlWriterSettings();
-
 		public static XmlSerializationExtension Default { get; } = new XmlSerializationExtension();
-		XmlSerializationExtension() : this(ReaderSettings, WriterSettings) {}
-
-		readonly XmlReaderSettings _readerSettings;
-		readonly XmlWriterSettings _writerSettings;
-
-		public XmlSerializationExtension(XmlWriterSettings writerSettings) : this(ReaderSettings, writerSettings) {}
-
-		public XmlSerializationExtension(XmlReaderSettings readerSettings) : this(readerSettings, WriterSettings) {}
-
-		public XmlSerializationExtension(XmlReaderSettings readerSettings, XmlWriterSettings writerSettings)
-		{
-			_readerSettings = readerSettings;
-			_writerSettings = writerSettings;
-		}
+		XmlSerializationExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance(Encoding.UTF8)
-			            .Register<IXmlFactory, XmlFactory>()
-			            .RegisterInstance(_readerSettings)
-			            .RegisterInstance(_writerSettings);
+			            .Register<IXmlFactory, XmlFactory>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
