@@ -29,7 +29,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class Types : CacheBase<IIdentity, TypeInfo>, ITypes
+	sealed class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		readonly ITypeIdentities _aliased;
 
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		               params ITypePartitions[] partitions)
 			: this(identities, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
 
-		Types(ITypeIdentities aliased, ITypes known, ITypes partitions) : base(IdentityComparer.Default)
+		Types(ITypeIdentities aliased, ITypes known, ITypes partitions) // : base(IdentityComparer.Default)
 		{
 			_aliased = aliased;
 			_known = known;
