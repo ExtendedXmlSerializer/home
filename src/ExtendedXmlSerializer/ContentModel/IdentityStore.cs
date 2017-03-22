@@ -21,25 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.TypeModel;
+using System;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class TypeFormatter : ITypeFormatter
+	sealed class IdentityStore : ReferenceCache<string, Func<string, IIdentity>>, IIdentityStore
 	{
-		readonly INames _names;
-		readonly ITypeFormatter _formatter;
+		public static IdentityStore Default { get; } = new IdentityStore();
+		IdentityStore() : base(i => new Names(i).Get) {}
 
-		public TypeFormatter(INames names) : this(names, ContentModel.TypeFormatter.Default) {}
+		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
 
-
-		public TypeFormatter(INames names, ITypeFormatter formatter)
+		sealed class Names : ReferenceCacheBase<string, IIdentity>
 		{
-			_names = names;
-			_formatter = formatter;
-		}
+			readonly string _identifier;
 
-		public string Get(TypeInfo parameter) => _names.Get(parameter) ?? _formatter.Get(parameter);
+			public Names(string identifier)
+			{
+				_identifier = identifier;
+			}
+
+			protected override IIdentity Create(string parameter) => new Identity(parameter, _identifier);
+		}
 	}
 }

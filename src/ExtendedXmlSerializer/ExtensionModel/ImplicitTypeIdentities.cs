@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,24 +22,23 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class TypeFormatter : ITypeFormatter
+	sealed class ImplicitTypeIdentities : ITypeIdentities
 	{
-		readonly INames _names;
-		readonly ITypeFormatter _formatter;
+		readonly ITypeIdentities _identities;
+		readonly IParameterizedSource<string, TypeInfo> _types;
 
-		public TypeFormatter(INames names) : this(names, ContentModel.TypeFormatter.Default) {}
-
-
-		public TypeFormatter(INames names, ITypeFormatter formatter)
+		public ImplicitTypeIdentities(ITypeIdentities identities, IParameterizedSource<string, TypeInfo> types)
 		{
-			_names = names;
-			_formatter = formatter;
+			_identities = identities;
+			_types = types;
 		}
 
-		public string Get(TypeInfo parameter) => _names.Get(parameter) ?? _formatter.Get(parameter);
+		public TypeInfo Get(IIdentity parameter) => _identities.Get(parameter) ?? _types.Get(parameter.Name);
 	}
 }

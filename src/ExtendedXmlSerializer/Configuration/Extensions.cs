@@ -228,19 +228,6 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		/*public static IConfiguration WithSettings(this IConfiguration @this,
-		                                          XmlReaderSettings readerSettings,
-		                                          XmlWriterSettings writerSettings)
-			=> @this.Extend(new XmlSerializationExtension(readerSettings, writerSettings));
-
-		public static IConfiguration WithSettings(this IConfiguration @this,
-		                                          XmlReaderSettings readerSettings)
-			=> @this.Extend(new XmlSerializationExtension(readerSettings));
-
-		public static IConfiguration WithSettings(this IConfiguration @this,
-		                                          XmlWriterSettings writerSettings)
-			=> @this.Extend(new XmlSerializationExtension(writerSettings));*/
-
 		public static IConfiguration Extend(this IConfiguration @this,
 		                                    params ISerializerExtension[] extensions)
 		{

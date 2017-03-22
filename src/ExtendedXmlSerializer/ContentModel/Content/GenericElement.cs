@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	class GenericElement : ElementBase
+	sealed class GenericElement : ElementBase
 	{
 		readonly IArgumentsProperty _property;
 		readonly ImmutableArray<Type> _arguments;
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_arguments = arguments;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_property.Write(writer, _arguments);

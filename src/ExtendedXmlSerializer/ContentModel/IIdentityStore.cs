@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IIdentities
+	public interface IIdentityStore
 	{
 		IIdentity Get(string name, string identifier);
 	}

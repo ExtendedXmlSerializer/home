@@ -36,12 +36,12 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		readonly static NameConverter Converter = NameConverter.Default;
 
 		readonly IXmlWriter _writer;
-		readonly Xml.IIdentities _identities;
+		readonly IIdentities _identities;
 		readonly INameConverter _converter;
 
-		public TypeFormatter(Xml.IIdentities identities, IXmlWriter writer) : this(identities, writer, Converter) {}
+		public TypeFormatter(IIdentities identities, IXmlWriter writer) : this(identities, writer, Converter) {}
 
-		public TypeFormatter(Xml.IIdentities identities, IXmlWriter writer, INameConverter converter)
+		public TypeFormatter(IIdentities identities, IXmlWriter writer, INameConverter converter)
 		{
 			_writer = writer;
 			_identities = identities;

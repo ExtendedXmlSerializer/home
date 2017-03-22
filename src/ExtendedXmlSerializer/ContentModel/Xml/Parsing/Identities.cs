@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	class Identities : FixedParser<Key>
+	sealed class Identities : FixedParser<Key>
 	{
 		readonly static Func<string, Parser<char>> Separator = Parse.Char(':').Accept;
 

@@ -7011,24 +7011,24 @@ namespace ExtendedXmlSerializer.Core.LightInject
 		/// <param name="value">The value to be added to the tree.</param>
 		internal ImmutableHashTable(ImmutableHashTable<TKey, TValue> previous, TKey key, TValue value)
 		{
-			this.Count = previous.Count + 1;
+			Count = previous.Count + 1;
 			if (previous.Count >= previous.Divisor)
 			{
-				this.Divisor = previous.Divisor * 2;
-				this.Buckets = new ImmutableHashTree<TKey, TValue>[this.Divisor];
-				InitializeBuckets(0, this.Divisor);
-				this.AddExistingValues(previous);
+				Divisor = previous.Divisor * 2;
+				Buckets = new ImmutableHashTree<TKey, TValue>[Divisor];
+				InitializeBuckets(0, Divisor);
+				AddExistingValues(previous);
 			}
 			else
 			{
-				this.Divisor = previous.Divisor;
-				this.Buckets = new ImmutableHashTree<TKey, TValue>[this.Divisor];
-				Array.Copy(previous.Buckets, this.Buckets, previous.Divisor);
+				Divisor = previous.Divisor;
+				Buckets = new ImmutableHashTree<TKey, TValue>[Divisor];
+				Array.Copy(previous.Buckets, Buckets, previous.Divisor);
 			}
 
 			var hashCode = key.GetHashCode();
-			var bucketIndex = hashCode & (this.Divisor - 1);
-			this.Buckets[bucketIndex] = this.Buckets[bucketIndex].Add(key, value);
+			var bucketIndex = hashCode & (Divisor - 1);
+			Buckets[bucketIndex] = Buckets[bucketIndex].Add(key, value);
 		}
 
 		/// <summary>
@@ -7036,8 +7036,8 @@ namespace ExtendedXmlSerializer.Core.LightInject
 		/// </summary>
 		private ImmutableHashTable()
 		{
-			this.Buckets = new ImmutableHashTree<TKey, TValue>[2];
-			this.Divisor = 2;
+			Buckets = new ImmutableHashTree<TKey, TValue>[2];
+			Divisor = 2;
 			InitializeBuckets(0, 2);
 		}
 
@@ -7048,8 +7048,8 @@ namespace ExtendedXmlSerializer.Core.LightInject
 				foreach (var keyValue in bucket.InOrder())
 				{
 					int hashCode = keyValue.Key.GetHashCode();
-					int bucketIndex = hashCode & (this.Divisor - 1);
-					this.Buckets[bucketIndex] = this.Buckets[bucketIndex].Add(keyValue.Key, keyValue.Value);
+					int bucketIndex = hashCode & (Divisor - 1);
+					Buckets[bucketIndex] = Buckets[bucketIndex].Add(keyValue.Key, keyValue.Value);
 				}
 			}
 		}
@@ -7058,7 +7058,7 @@ namespace ExtendedXmlSerializer.Core.LightInject
 		{
 			for (int i = startIndex; i < count; i++)
 			{
-				this.Buckets[i] = ImmutableHashTree<TKey, TValue>.Empty;
+				Buckets[i] = ImmutableHashTree<TKey, TValue>.Empty;
 			}
 		}
 	}

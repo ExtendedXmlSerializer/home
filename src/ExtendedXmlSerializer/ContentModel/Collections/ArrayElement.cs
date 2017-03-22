@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		readonly ITypeProperty _property;
 		readonly TypeInfo _element;
 
-		public ArrayElement(Xml.IIdentities identities, IItemTypeProperty property, TypeInfo element)
+		public ArrayElement(IIdentities identities, IItemTypeProperty property, TypeInfo element)
 			: base(identities.Get(typeof(Array).GetTypeInfo()))
 		{
 			_property = property;

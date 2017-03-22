@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	class XmlWriter : IXmlWriter
+	sealed class XmlWriter : IXmlWriter
 	{
 		readonly static Func<INamespaces> Namespaces = Activators.Default.New<Namespaces>;
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public void EndCurrent() => _writer.WriteEndElement();
 
-		public string Get(string identifier) => _writer.LookupPrefix(identifier) ?? Create(identifier);
+		public string Get(string identifier) => _writer.LookupPrefix(identifier ?? string.Empty) ?? Create(identifier);
 
 		string Create(string identifier)
 		{

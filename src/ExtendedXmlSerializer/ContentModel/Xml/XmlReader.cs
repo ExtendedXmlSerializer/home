@@ -30,7 +30,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	class XmlReader : IXmlReader
+	sealed class XmlReader : IXmlReader
 	{
 		readonly ClassificationSource _classification;
 
@@ -125,7 +125,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public string Get(string parameter) => _reader.LookupNamespace(parameter);
 
-		public sealed override string ToString()
+		public override string ToString()
 			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
 
 		public void Dispose() => _reader.Dispose();
@@ -133,7 +133,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		struct ClassificationSource : ISource<TypeInfo>
 		{
-			readonly static ContentModel.Identities Identities = ContentModel.Identities.Default;
+			readonly static IdentityStore IdentityStore = IdentityStore.Default;
 
 			TypeInfo _classification;
 
@@ -141,15 +141,15 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			readonly System.Xml.XmlReader _reader;
 			readonly ITypeProperty _type, _item;
 			readonly IArgumentsProperty _arguments;
-			readonly ContentModel.IIdentities _identities;
+			readonly IIdentityStore _identities;
 			readonly ITypes _generic, _types;
 
 			public ClassificationSource(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
 			                            IArgumentsProperty arguments, IXmlReader owner, System.Xml.XmlReader reader)
-				: this(owner, reader, type, item, arguments, Identities, genericTypes, types) {}
+				: this(owner, reader, type, item, arguments, IdentityStore, genericTypes, types) {}
 
 			ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
-			                     IArgumentsProperty arguments, ContentModel.IIdentities identities, ITypes generic,
+			                     IArgumentsProperty arguments, IIdentityStore identities, ITypes generic,
 			                     ITypes types)
 			{
 				_owner = owner;

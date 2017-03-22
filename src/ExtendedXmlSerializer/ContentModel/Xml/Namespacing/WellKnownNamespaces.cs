@@ -22,11 +22,12 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	sealed class WellKnownNamespaces : Dictionary<Assembly, Namespace>
+	sealed class WellKnownNamespaces : ReadOnlyDictionary<Assembly, Namespace>
 	{
 		public static WellKnownNamespaces Default { get; } = new WellKnownNamespaces();
 

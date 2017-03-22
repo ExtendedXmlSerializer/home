@@ -31,12 +31,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	sealed class VariableTypeElement : ElementBase
 	{
 		readonly ISpecification<Type> _specification;
-		readonly Xml.IIdentities _identities;
+		readonly IIdentities _identities;
 
-		public VariableTypeElement(Type definition, Xml.IIdentities identities, IIdentity identity)
+		public VariableTypeElement(Type definition, IIdentities identities, IIdentity identity)
 			: this(new VariableTypeSpecification(definition), identities, identity) {}
 
-		public VariableTypeElement(ISpecification<Type> specification, Xml.IIdentities identities, IIdentity identity)
+		public VariableTypeElement(ISpecification<Type> specification, IIdentities identities, IIdentity identity)
 			: base(identity)
 		{
 			_specification = specification;

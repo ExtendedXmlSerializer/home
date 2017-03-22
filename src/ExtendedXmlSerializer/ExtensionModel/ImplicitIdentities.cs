@@ -21,28 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class Identities : Cache<string, Func<string, IIdentity>>, IIdentities
+	sealed class ImplicitIdentities : IIdentities
 	{
-		public static Identities Default { get; } = new Identities();
-		Identities() : base(i => new Names(i).Get) {}
+		readonly ICollection<TypeInfo> _implicit;
+		readonly IIdentities _identities;
 
-		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
-
-		sealed class Names : CacheBase<string, IIdentity>
+		public ImplicitIdentities(ICollection<TypeInfo> @implicit, IIdentities identities)
 		{
-			readonly string _identifier;
+			_implicit = @implicit;
+			_identities = identities;
+		}
 
-			public Names(string identifier)
-			{
-				_identifier = identifier;
-			}
-
-			protected override IIdentity Create(string parameter) => new Identity(parameter, _identifier);
+		public IIdentity Get(TypeInfo parameter)
+		{
+			var identity = _identities.Get(parameter);
+			var result = _implicit.Contains(parameter) ? new Identity(identity.Name, null) : identity;
+			return result;
 		}
 	}
 }

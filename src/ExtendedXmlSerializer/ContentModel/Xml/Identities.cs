@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,16 +31,19 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class Identities : CacheBase<TypeInfo, IIdentity>, IIdentities
 	{
-		readonly ContentModel.IIdentities _source;
+		readonly static IdentityStore IdentityStore = IdentityStore.Default;
+		readonly static ContentModel.TypeFormatter TypeFormatter = ContentModel.TypeFormatter.Default;
+		readonly static Identifiers Identifiers = Identifiers.Default;
+
+		readonly IIdentityStore _source;
 		readonly INames _alias;
 		readonly ITypeFormatter _formatter;
 		readonly IIdentifiers _identifiers;
 
 		[UsedImplicitly]
-		public Identities(INames names)
-			: this(ContentModel.Identities.Default, names, ContentModel.TypeFormatter.Default, Identifiers.Default) {}
+		public Identities(INames names) : this(IdentityStore, names, TypeFormatter, Identifiers) {}
 
-		public Identities(ContentModel.IIdentities source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
+		public Identities(IIdentityStore source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{
 			_source = source;
 			_alias = alias;

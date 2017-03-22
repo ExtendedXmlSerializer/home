@@ -32,17 +32,18 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class TypeParser : CacheBase<string, TypeInfo>, ITypeParser
 	{
-		readonly static Identities Identities = Identities.Default;
+		readonly static IdentityStore IdentityStore = IdentityStore.Default;
 		readonly static NameConverter Converter = NameConverter.Default;
 
-		public TypeParser(IGenericTypes genericTypes, IXmlReader reader) : this(Identities, genericTypes, Converter, reader) {}
+		public TypeParser(IGenericTypes genericTypes, IXmlReader reader)
+			: this(IdentityStore, genericTypes, Converter, reader) {}
 
-		readonly IIdentities _identities;
+		readonly IIdentityStore _identities;
 		readonly IGenericTypes _types;
 		readonly INameConverter _converter;
 		readonly IXmlReader _reader;
 
-		public TypeParser(IIdentities identities, IGenericTypes types, INameConverter converter, IXmlReader reader)
+		public TypeParser(IIdentityStore identities, IGenericTypes types, INameConverter converter, IXmlReader reader)
 		{
 			_identities = identities;
 			_types = types;
