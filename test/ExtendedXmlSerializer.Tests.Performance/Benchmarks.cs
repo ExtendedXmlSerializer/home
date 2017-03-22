@@ -60,16 +60,10 @@ namespace ExtendedXmlSerializer.Tests.Performance
 	[Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
-		class Configuration : ManualConfig
-		{
-			public Configuration()
-			{
-				Add(Job.Default.WithWarmupCount(5).WithTargetCount(10));
-			}
-		}
-
 		readonly IExtendedXmlSerializer _serializer =
-			new ExtendedConfiguration().Emit(EmitBehaviors.Classic).Extend(new OptimizedConvertersExtension()).Create();
+			new ExtendedConfiguration().EnableClassicMode()
+			                           .Extend(new OptimizedConvertersExtension())
+			                           .Create();
 
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _data;
@@ -105,6 +99,14 @@ namespace ExtendedXmlSerializer.Tests.Performance
 				{
 					return _serializer.Deserialize(reader);
 				}
+			}
+		}
+
+		class Configuration : ManualConfig
+		{
+			public Configuration()
+			{
+				Add(Job.Default.WithWarmupCount(5).WithTargetCount(10));
 			}
 		}
 	}

@@ -21,12 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	abstract class ContentOptionsBase : Items<IContentOption>
+	sealed class ClassicContentBody : Items<IContentOption>
 	{
-		protected ContentOptionsBase(params IContentOption[] items) : base(items) {}
+		public ClassicContentBody(
+			ArrayContentOption array,
+			ClassicDictionaryContentOption dictionary,
+			ClassicCollectionContentOption collection) : base(array, dictionary, collection) {}
 	}
 }

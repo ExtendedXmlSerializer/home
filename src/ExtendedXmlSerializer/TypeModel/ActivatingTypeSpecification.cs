@@ -22,33 +22,19 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	public class IsActivatedTypeSpecification : DelegatedSpecification<TypeInfo>, IActivatingTypeSpecification
+	public sealed class ActivatingTypeSpecification : AllSpecification<TypeInfo>, IActivatingTypeSpecification
 	{
-		readonly static TypeInfo GeneralObject = typeof(object).GetTypeInfo();
+		public static ActivatingTypeSpecification Default { get; } = new ActivatingTypeSpecification();
+		ActivatingTypeSpecification() : this(ConstructorLocator.Default) {}
 
-		public static IsActivatedTypeSpecification Default { get; } = new IsActivatedTypeSpecification();
-		IsActivatedTypeSpecification() : this(ConstructorLocator.Default) {}
-
-		public IsActivatedTypeSpecification(IConstructorLocator locator) : base(new Implementation(locator).Get) {}
-
-		sealed class Implementation : StructureCacheBase<TypeInfo, bool>
-		{
-			readonly IConstructorLocator _locator;
-
-			public Implementation(IConstructorLocator locator)
-			{
-				_locator = locator;
-			}
-
-			protected override bool Create(TypeInfo parameter)
-				=> parameter.IsValueType ||
-				   !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject) &&
-				   _locator.Get(parameter) != null;
-		}
+		public ActivatingTypeSpecification(IConstructorLocator locator)
+			: base(
+				ActivatedTypeSpecification.Default.And(
+					new DelegatedAssignedSpecification<TypeInfo, ConstructorInfo>(locator.Get))) {}
 	}
 }

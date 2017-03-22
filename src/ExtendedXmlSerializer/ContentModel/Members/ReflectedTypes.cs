@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class ReflectedTypes : ReferenceCache<MemberInfo, TypeInfo>
+	sealed class ReflectedTypes : ReferenceCache<MemberInfo, TypeInfo>
 	{
 		public static ReflectedTypes Default { get; } = new ReflectedTypes();
 		ReflectedTypes() : base(x => x.DeclaringType.GetTypeInfo()) {}

@@ -25,8 +25,8 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public abstract class StructureCacheBase<TKey, TValue> : IParameterizedSource<TKey, TValue> where TKey : class
-	                                                                                            where TValue : struct
+	public abstract class StructureCacheBase<TKey, TValue> : ITableSource<TKey, TValue> where TKey : class
+	                                                                                    where TValue : struct
 	{
 		readonly ConditionalWeakTable<TKey, Structure> _cache = new ConditionalWeakTable<TKey, Structure>();
 		readonly ConditionalWeakTable<TKey, Structure>.CreateValueCallback _callback;
@@ -41,6 +41,12 @@ namespace ExtendedXmlSerializer.Core.Sources
 		protected abstract TValue Create(TKey parameter);
 
 		public virtual TValue Get(TKey key) => _cache.GetValue(key, _callback).Item;
+
+		public virtual void Assign(TKey key, TValue value)
+		{
+			_cache.Remove(key);
+			_cache.Add(key, new Structure(value));
+		}
 
 		class Structure
 		{

@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,11 +29,18 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.Core
 {
 	public static class Extensions
 	{
+		public static ISortOrder Sort<T>(this ISortOrder @this, int sort)
+		{
+			@this.Assign(Support<T>.Key, sort);
+			return @this;
+		}
+
 		public static MemberInfo GetMemberInfo(this Expression expression)
 		{
 			var lambda = (LambdaExpression) expression;
@@ -51,7 +58,7 @@ namespace ExtendedXmlSerializer.Core
 			return result;
 		}
 
-		public static IEnumerable<T> TypeZip<T>(this IEnumerable<T> @this, params T[] other)
+		public static IEnumerable<T> TypeZip<T>(this IEnumerable<T> @this, IEnumerable<T> other)
 		{
 			var items = other.ToDictionary(x => x.GetType(), x => x);
 			foreach (var item in @this)

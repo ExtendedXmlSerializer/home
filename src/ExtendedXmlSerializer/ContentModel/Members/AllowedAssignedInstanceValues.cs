@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public static AllowedAssignedInstanceValues Default { get; } = new AllowedAssignedInstanceValues();
 
 		AllowedAssignedInstanceValues()
-			: this(IsActivatedTypeSpecification.Default, TypeMemberDefaults.Default) {}
+			: this(ActivatingTypeSpecification.Default, TypeMemberDefaults.Default) {}
 
 		public AllowedAssignedInstanceValues(ISpecification<TypeInfo> specification, ITypeMemberDefaults defaults)
 		{

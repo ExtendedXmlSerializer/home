@@ -38,6 +38,9 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public static class Extensions
 	{
+		public static IConfiguration EnableClassicMode(this IConfiguration @this)
+			=> @this.Emit(EmitBehaviors.Classic).Extend(ClassicExtension.Default);
+
 		public static IConfiguration Apply<T>(this IConfiguration @this)
 			where T : class, ISerializerExtension => Apply(@this, Support<T>.New);
 

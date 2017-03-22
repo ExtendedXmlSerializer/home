@@ -34,9 +34,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter
+				.Register<ISortOrder, SortOrder>()
 				.Register<IActivation, Activation>()
 				.Register<IActivators, Activators>()
-				.Register<IActivatingTypeSpecification, IsActivatedTypeSpecification>()
+				.Register<IActivatingTypeSpecification, ActivatingTypeSpecification>()
 				.Register<IConstructorLocator, ConstructorLocator>()
 				.RegisterInstance<IConstructors>(Constructors.Default)
 				.RegisterInstance<IFields>(Fields.Default)

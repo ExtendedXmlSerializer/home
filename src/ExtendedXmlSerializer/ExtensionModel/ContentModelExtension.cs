@@ -22,10 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel
@@ -35,18 +33,19 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
 		ContentModelExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter
-				.Register<IDictionaryEntries, DictionaryEntries>()
-				.Register<NullableContentOption>()
-				.Register<ArrayContentOption>()
-				.Register<DictionaryContentOption>()
-				.Register<CollectionContentOption>()
-				.Register<MemberedContentOption>()
-				.Register<RuntimeContentOption>()
-				.Register<IEnumerable<IContentOption>, ContentOptions>()
-				.Register(provider => provider.GetAllInstances<IContentOption>().ToArray());
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<IComparer<IContentOption>, SortComparer<IContentOption>>()
+			            .RegisterAsSet<IContentOption, ContentOptions>()
+			            .RegisterAsStart<IContentOption, Start>()
+			            .RegisterAsFinish<IContentOption, Finish>()
+			            .Register<IDictionaryEntries, DictionaryEntries>()
+			            .Register<ArrayContentOption>()
+			            .Register<DictionaryContentOption>()
+			            .Register<CollectionContentOption>();
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public void Execute(IServices parameter) => parameter.Get<ISortOrder>()
+		                                                     .Sort<ArrayContentOption>(0)
+		                                                     .Sort<DictionaryContentOption>(1)
+		                                                     .Sort<CollectionContentOption>(2);
 	}
 }

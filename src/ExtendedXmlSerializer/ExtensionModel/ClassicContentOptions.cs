@@ -21,17 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class ClassicContentOptions : ContentOptionsBase
+	sealed class ClassicContentOptions : Bracket<IContentOption>
 	{
-		public ClassicContentOptions(
-			ArrayContentOption array, ClassicDictionaryContentOption dictionary,
-			ClassicCollectionContentOption collection, MemberedContentOption membered,
-			RuntimeContentOption runtime) : base(array, dictionary, collection, membered, runtime) {}
+		public ClassicContentOptions(IStart<IContentOption> start, ClassicContentBody body,
+		                             IFinish<IContentOption> finish)
+			: base(start, body, finish) {}
 	}
 }

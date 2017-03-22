@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	{
 		readonly IActivation _activation;
 
-		public ClassicCollectionContentOption(IsActivatedTypeSpecification specification, IActivation activation,
+		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IActivation activation,
 		                                      ISerializers serializers)
 			: base(specification, serializers)
 		{
