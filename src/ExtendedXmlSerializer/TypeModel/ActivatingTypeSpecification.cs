@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.TypeModel
@@ -33,8 +32,7 @@ namespace ExtendedXmlSerializer.TypeModel
 		ActivatingTypeSpecification() : this(ConstructorLocator.Default) {}
 
 		public ActivatingTypeSpecification(IConstructorLocator locator)
-			: base(
-				ActivatedTypeSpecification.Default.And(
-					new DelegatedAssignedSpecification<TypeInfo, ConstructorInfo>(locator.Get))) {}
+			: base(ActivatedTypeSpecification.Default,
+			       new DelegatedAssignedSpecification<TypeInfo, ConstructorInfo>(locator.Get)) {}
 	}
 }

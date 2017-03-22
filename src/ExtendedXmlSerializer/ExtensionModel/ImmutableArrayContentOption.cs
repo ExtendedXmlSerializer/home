@@ -21,24 +21,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ArrayContentOption : CollectionContentOptionBase
+	sealed class ImmutableArrayContentOption : CollectionContentOptionBase
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly static ISpecification<TypeInfo> Specification = new IsAssignableGenericSpecification(typeof(ImmutableArray<>));
 
 		readonly IActivation _activation;
 
-		public ArrayContentOption(IActivation activation, ISerializers serializers) : base(Specification, serializers)
+		public ImmutableArrayContentOption(IActivation activation, ISerializers serializers)
+			: base(Specification, serializers)
 		{
 			_activation = activation;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
+			=> new Serializer(CreateReader(_activation, item, itemType), new EnumerableWriter(item));
+
+		static IReader CreateReader(IActivation activation, ISerializer item, TypeInfo itemType)
+			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), activation, item);
+
+		sealed class Reader<T> : DecoratedReader
+		{
+			public Reader(IActivation activation, IReader item)
+				: base(new CollectionContentsReader(activation.Get<Collection<T>>(), item)) {}
+
+			public override object Get(IXmlReader parameter) => base.Get(parameter)
+			                                                        .AsValid<Collection<T>>()
+			                                                        .ToImmutableArray();
+		}
 	}
 }

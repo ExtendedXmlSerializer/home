@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ArrayContentOption : CollectionContentOptionBase
+	public sealed class ImmutableArrayExtension : ISerializerExtension
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		public static ImmutableArrayExtension Default { get; } = new ImmutableArrayExtension();
+		ImmutableArrayExtension() {}
 
-		readonly IActivation _activation;
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<IContentOption, ImmutableArrayContentOption>()
+			            .Decorate<IGenericTypes, ImmutableArrayAwareGenericTypes>();
 
-		public ArrayContentOption(IActivation activation, ISerializers serializers) : base(Specification, serializers)
-		{
-			_activation = activation;
-		}
-
-		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

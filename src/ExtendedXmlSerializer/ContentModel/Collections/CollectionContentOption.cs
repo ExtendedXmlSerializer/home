@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_activation = activation;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification)
+		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{
 			var members = _members.Get(classification);
 			var activator = _activation.Get(classification);

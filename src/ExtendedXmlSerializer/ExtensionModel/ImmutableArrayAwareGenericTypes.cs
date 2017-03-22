@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ArrayContentOption : CollectionContentOptionBase
+	public class ImmutableArrayAwareGenericTypes : IGenericTypes
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly static TypeInfo Type = typeof(ImmutableArray<>).GetTypeInfo();
+		readonly IGenericTypes _types;
+		readonly static TypeInfo Check = typeof(ImmutableArray).GetTypeInfo();
 
-		readonly IActivation _activation;
-
-		public ArrayContentOption(IActivation activation, ISerializers serializers) : base(Specification, serializers)
+		public ImmutableArrayAwareGenericTypes(IGenericTypes types)
 		{
-			_activation = activation;
+			_types = types;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_activation, item), new EnumerableWriter(item));
+		public TypeInfo Get(IIdentity parameter)
+		{
+			var type = _types.Get(parameter);
+			var result = Equals(type, Check) ? Type : type;
+			return result;
+		}
 	}
 }

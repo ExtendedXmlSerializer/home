@@ -36,10 +36,7 @@ namespace ExtendedXmlSerialization.Cache
 		public static ElementTypeLocator Default { get; } = new ElementTypeLocator();
 		ElementTypeLocator() {}
 
-		public Type Locate(Type type)
-		{
-			return GetOrAdd(type, PerformLocationDelegate);
-		}
+		public Type Locate(Type type) => GetOrAdd(type, PerformLocationDelegate);
 
 		// Attribution: http://stackoverflow.com/a/17713382/3602057
 		static Type PerformLocation(Type type)
