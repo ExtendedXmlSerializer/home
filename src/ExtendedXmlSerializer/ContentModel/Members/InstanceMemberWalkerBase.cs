@@ -33,12 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	public abstract class InstanceMemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{
 		readonly ITypeMembers _members;
-		readonly IEnumerators _enumerators;
+		readonly IEnumeratorStore _enumerators;
 		readonly Func<object, IEnumerable<T>> _selector;
 
-		protected InstanceMemberWalkerBase(ITypeMembers members, object root) : this(members, Enumerators.Default, root) {}
+		//protected InstanceMemberWalkerBase(ITypeMembers members, object root) : this(members, EnumeratorStore.Default, root) {}
 
-		protected InstanceMemberWalkerBase(ITypeMembers members, IEnumerators enumerators, object root) : base(root)
+		protected InstanceMemberWalkerBase(ITypeMembers members, IEnumeratorStore enumerators, object root) : base(root)
 		{
 			_members = members;
 			_enumerators = enumerators;
@@ -54,7 +54,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		IEnumerable<object> Enumerate(object parameter)
 		{
-			var iterator = _enumerators.Get(parameter);
+			var iterator = _enumerators.For(parameter);
 			while (iterator?.MoveNext() ?? false)
 			{
 				yield return iterator.Current;

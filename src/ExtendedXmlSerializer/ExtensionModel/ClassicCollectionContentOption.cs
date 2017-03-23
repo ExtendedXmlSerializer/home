@@ -32,17 +32,19 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
 	{
 		readonly IActivation _activation;
+		readonly IEnumerators _enumerators;
 
-		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IActivation activation,
+		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IActivation activation, IEnumerators enumerators,
 		                                      ISerializers serializers)
 			: base(specification, serializers)
 		{
 			_activation = activation;
+			_enumerators = enumerators;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 			=>
 				new Serializer(new CollectionContentsReader(_activation.Get(classification), item),
-				               new EnumerableWriter(item));
+				               new EnumerableWriter(_enumerators, item));
 	}
 }

@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -34,14 +33,16 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	{
 		readonly IActivation _activation;
 		readonly IMemberSerializations _members;
+		readonly IDictionaryEnumerators _enumerators;
 		readonly IDictionaryEntries _entries;
 
 		public DictionaryContentOption(IActivatingTypeSpecification specification, IActivation activation,
-		                               IMemberSerializations members, IDictionaryEntries entries)
+		                               IMemberSerializations members, IDictionaryEnumerators enumerators, IDictionaryEntries entries)
 			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
 			_activation = activation;
 			_members = members;
+			_enumerators = enumerators;
 			_entries = entries;
 		}
 
@@ -52,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var entry = _entries.Get(parameter);
 			var reader = new DictionaryContentsReader(activator, entry, members);
 
-			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(x => ((IDictionary)x).GetEnumerator(), entry));
+			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, entry));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

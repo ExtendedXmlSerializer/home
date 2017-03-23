@@ -21,27 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	public sealed class Enumerators : IEnumerators
+	public interface IEnumeratorStore : IParameterizedSource<TypeInfo, IEnumerators> {}
+
+	public sealed class EnumeratorStore : Selector<TypeInfo, IEnumerators>, IEnumeratorStore
 	{
-		public static Enumerators Default { get; } = new Enumerators();
-		Enumerators() : this(IsCollectionTypeSpecification.Default) {}
-
-		readonly ISpecification<TypeInfo> _specification;
-
-		public Enumerators(ISpecification<TypeInfo> specification)
-		{
-			_specification = specification;
-		}
-
-		public IEnumerator Get(object parameter) => (parameter as IDictionary)?.GetEnumerator() ?? Collection(parameter);
-
-		IEnumerator Collection(object parameter)
-			=> _specification.IsSatisfiedBy(parameter.GetType().GetTypeInfo()) ? (parameter as IEnumerable).GetEnumerator() : null;
+		public EnumeratorStore(IDictionaryEnumerators dictionary, IEnumerators enumerators)
+			: base(
+				new FixedOption<TypeInfo, IEnumerators>(IsDictionaryTypeSpecification.Default, dictionary),
+				new FixedOption<TypeInfo, IEnumerators>(IsCollectionTypeSpecification.Default, enumerators)
+			) {}
 	}
 }

@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -34,16 +35,17 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		readonly static IsReferenceSpecification Specification = IsReferenceSpecification.Default;
 
 		readonly ISpecification<TypeInfo> _specification;
-		readonly IEncounterStore _encounters;
+		readonly IReferenceEncounters _identifiers;
 		readonly IEntities _entities;
 
-		public ReferenceContents(IEncounterStore encounters, IEntities entities, IContents option)
-			: this(Specification, encounters, entities, option) {}
+		[UsedImplicitly]
+		public ReferenceContents(IReferenceEncounters identifiers, IEntities entities, IContents option)
+			: this(Specification, identifiers, entities, option) {}
 
-		public ReferenceContents(ISpecification<TypeInfo> specification, IEncounterStore encounters,
+		public ReferenceContents(ISpecification<TypeInfo> specification, IReferenceEncounters identifiers,
 		                         IEntities entities, IContents option) : base(option)
 		{
-			_encounters = encounters;
+			_identifiers = identifiers;
 			_entities = entities;
 			_specification = specification;
 		}
@@ -53,7 +55,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			var serializer = base.Get(parameter);
 			var result = serializer as RuntimeSerializer ??
 			             (_specification.IsSatisfiedBy(parameter)
-				             ? new ReferenceSerializer(_encounters, new References(serializer, _entities, parameter), serializer)
+				             ? new ReferenceSerializer(_identifiers, new ReferenceReader(serializer, _entities, parameter), serializer)
 				             : serializer);
 			return result;
 		}

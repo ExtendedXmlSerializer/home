@@ -27,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -38,11 +39,11 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IMemberAccessors _accessors;
 
-		public ReferenceWalker(ITypeMembers members, IMemberAccessors accessors, object root)
-			: this(Specifications, members, accessors, root) {}
+		public ReferenceWalker(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
+			: this(Specifications, members, enumerators, accessors, root) {}
 
 		public ReferenceWalker(IVariableTypeMemberSpecifications specifications, ITypeMembers members,
-		                       IMemberAccessors accessors, object root) : base(members, root)
+							   IEnumeratorStore enumerators, IMemberAccessors accessors, object root) : base(members, enumerators, root)
 		{
 			_specifications = specifications;
 			_accessors = accessors;

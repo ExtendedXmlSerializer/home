@@ -25,21 +25,24 @@ using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class RootReferences : StructureCacheBase<IXmlWriter, ImmutableArray<object>>, IRootReferences
 	{
 		readonly ITypeMembers _members;
+		readonly IEnumeratorStore _enumerators;
 		readonly IMemberAccessors _accessors;
 
-		public RootReferences(ITypeMembers members, IMemberAccessors accessors)
+		public RootReferences(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors)
 		{
 			_members = members;
+			_enumerators = enumerators;
 			_accessors = accessors;
 		}
 
 		protected override ImmutableArray<object> Create(IXmlWriter parameter)
-			=> new ReferenceWalker(_members, _accessors, parameter.Root).Get();
+			=> new ReferenceWalker(_members, _enumerators, _accessors, parameter.Root).Get();
 	}
 }
