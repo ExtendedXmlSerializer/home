@@ -21,26 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class ReferenceIdentifiers : IParameterizedSource<object, Identifier>
+	sealed class EncounterStore : ReferenceCacheBase<IXmlWriter, IEncounters>, IEncounterStore
 	{
+		readonly IEncounterSpecification _specification;
+		readonly IRootReferences _references;
 		readonly IEntities _entities;
 		readonly ObjectIdGenerator _generator;
 
-		public ReferenceIdentifiers(IEntities entities) : this(entities, new ObjectIdGenerator()) {}
+		public EncounterStore(IEncounterSpecification specification, IRootReferences references, IEntities entities)
+			: this(specification, references, entities, new ObjectIdGenerator()) {}
 
-		public ReferenceIdentifiers(IEntities entities, ObjectIdGenerator generator)
+		public EncounterStore(IEncounterSpecification specification, IRootReferences references, IEntities entities,
+		                      ObjectIdGenerator generator)
 		{
+			_specification = specification;
+			_references = references;
 			_entities = entities;
 			_generator = generator;
 		}
 
-		public Identifier Get(object parameter)
-			=> new Identifier((uint) _generator.For(parameter).UniqueId, _entities.Get(parameter.GetType().GetTypeInfo()));
+		public bool IsSatisfiedBy(object parameter) => _specification.IsSatisfiedBy(parameter);
+
+		protected override IEncounters Create(IXmlWriter parameter)
+			=> new Encounters(_references.Get(parameter).ToDictionary(x => x, Get));
+
+		Identifier Get(object parameter)
+			=> new Identifier(_generator.For(parameter), _entities.Get(parameter.GetType().GetTypeInfo()));
 	}
 }

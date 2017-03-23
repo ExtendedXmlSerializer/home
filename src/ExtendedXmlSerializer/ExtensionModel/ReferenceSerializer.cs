@@ -27,13 +27,13 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class ReferenceSerializer : ISerializer
+	sealed class ReferenceSerializer : ISerializer
 	{
-		readonly IStoredEncounters _encounters;
+		readonly IEncounterStore _encounters;
 		readonly IReferences _references;
 		readonly ISerializer _serializer;
 
-		public ReferenceSerializer(IStoredEncounters encounters, IReferences references, ISerializer serializer)
+		public ReferenceSerializer(IEncounterStore encounters, IReferences references, ISerializer serializer)
 		{
 			_encounters = encounters;
 			_references = references;
@@ -42,23 +42,23 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public void Write(IXmlWriter writer, object instance)
 		{
-			var context = _encounters.Get(writer).Get(instance);
-			if (context != null)
+			var encounters = _encounters.Get(writer);
+			var identifier = encounters.Get(instance);
+			if (identifier != null)
 			{
-				var identifier = context.Value.Identifier;
-
-				var first = context.Value.FirstEncounter;
-				if (identifier.Entity != null)
+				var first = _encounters.IsSatisfiedBy(instance);
+				var entity = identifier.Value.Entity;
+				if (entity != null)
 				{
 					if (!first)
 					{
-						EntityProperty.Default.Write(writer, identifier.Entity.Get(instance));
+						EntityProperty.Default.Write(writer, entity.Get(instance));
 					}
 				}
 				else
 				{
 					var property = first ? (IProperty<uint>) IdentityProperty.Default : ReferenceProperty.Default;
-					property.Write(writer, identifier.UniqueId);
+					property.Write(writer, identifier.Value.UniqueId);
 				}
 
 				if (!first)

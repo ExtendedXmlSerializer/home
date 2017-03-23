@@ -28,10 +28,16 @@ namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{
+		readonly static TypeInfo Reference = Defaults.Reference;
+
 		readonly int _code;
+
+		public ReferenceIdentity(object identifier) : this(Reference, identifier) {}
 
 		public ReferenceIdentity(TypeInfo type, object identifier)
 			: this((type.GetHashCode() * 397) ^ identifier.GetHashCode()) {}
+
+		public ReferenceIdentity(uint identifier) : this(Reference, identifier) {}
 
 		public ReferenceIdentity(TypeInfo type, uint identifier) : this((type.GetHashCode() * 397) ^ identifier.GetHashCode()) {}
 

@@ -35,10 +35,13 @@ namespace ExtendedXmlSerializer.Core
 		readonly static TInput DefaultValue = default(TInput);
 
 		readonly Stack<TInput> _remaining = new Stack<TInput>();
-		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
+		readonly Conditions _conditions;
 
-		protected ObjectWalkerBase(TInput root)
+		protected ObjectWalkerBase(TInput root) : this(root, new Conditions()) {}
+
+		protected ObjectWalkerBase(TInput root, Conditions conditions)
 		{
+			_conditions = conditions;
 			Schedule(root);
 		}
 
@@ -71,7 +74,7 @@ namespace ExtendedXmlSerializer.Core
 			return false;
 		}
 
-		bool First(object candidate) => _generator.For(candidate).FirstEncounter;
+		bool First(object candidate) => _conditions.Get(candidate).Apply();
 
 		protected abstract TResult Select(TInput input);
 

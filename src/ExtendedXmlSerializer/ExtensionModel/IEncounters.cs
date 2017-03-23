@@ -21,14 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class RecursionSpecification : ISpecification<object>
-	{
-		readonly ObjectIdGenerator _generator = new ObjectIdGenerator();
-
-		public bool IsSatisfiedBy(object parameter) => _generator.For(parameter).FirstEncounter;
-	}
+	public interface IEncounters : IParameterizedSource<object, Identifier?> {}
 }

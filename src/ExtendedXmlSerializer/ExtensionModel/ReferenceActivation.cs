@@ -25,15 +25,17 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class ReferenceActivation : IActivation
+	sealed class ReferenceActivation : IActivation
 	{
 		readonly IActivation _activation;
 		readonly IEntities _entities;
 		readonly IReferenceMaps _maps;
 
+		[UsedImplicitly]
 		public ReferenceActivation(IActivation activation, IEntities entities)
 			: this(activation, entities, ReferenceMaps.Default) {}
 
@@ -46,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
 
-		class Activator : IReader
+		sealed class Activator : IReader
 		{
 			readonly IReader _activator;
 			readonly IEntities _entities;
@@ -61,7 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 			static ReferenceIdentity? Identity(IXmlReader reader) =>
 				reader.Contains(IdentityProperty.Default)
-					? (ReferenceIdentity?) new ReferenceIdentity(Defaults.Reference, IdentityProperty.Default.Get(reader))
+					? (ReferenceIdentity?) new ReferenceIdentity(IdentityProperty.Default.Get(reader))
 					: null;
 
 			ReferenceIdentity? Entity(IXmlReader reader, object instance)

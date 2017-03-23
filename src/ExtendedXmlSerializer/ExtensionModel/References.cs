@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class References : DecoratedReader, IReferences
+	sealed class References : DecoratedReader, IReferences
 	{
 		readonly static ReferenceProperty ReferenceProperty = ReferenceProperty.Default;
 		readonly static ReferenceMaps ReferenceMaps = ReferenceMaps.Default;
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		{
 			if (parameter.Contains(ReferenceProperty))
 			{
-				return new ReferenceIdentity(Defaults.Reference, ReferenceProperty.Get(parameter));
+				return new ReferenceIdentity(ReferenceProperty.Get(parameter));
 			}
 
 			var type = parameter.Classification ?? _definition;
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			return null;
 		}
 
-		public sealed override object Get(IXmlReader parameter)
+		public override object Get(IXmlReader parameter)
 		{
 			var identity = GetReference(parameter);
 			if (identity != null)

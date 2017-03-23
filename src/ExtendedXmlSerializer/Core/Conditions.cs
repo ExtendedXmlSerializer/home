@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ExtensionModel
-{
-	public struct ReferenceEncounter
-	{
-		public ReferenceEncounter(Identifier identifier, bool firstEncounter)
-		{
-			Identifier = identifier;
-			FirstEncounter = firstEncounter;
-		}
+using ExtendedXmlSerializer.Core.Sources;
 
-		public Identifier Identifier { get; }
-		public bool FirstEncounter { get; }
+namespace ExtendedXmlSerializer.Core
+{
+	public sealed class Conditions : Cache<object, ConditionMonitor>
+	{
+		public Conditions() : base(_ => new ConditionMonitor()) {}
 	}
 }

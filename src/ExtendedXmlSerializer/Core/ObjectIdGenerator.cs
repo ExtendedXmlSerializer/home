@@ -33,11 +33,9 @@ namespace ExtendedXmlSerializer.Core
 	{
 		readonly static uint[] Sizes =
 		{
-			5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717,
-			51437,
-			102877, 205759, 411527, 823117, 1646237, 3292489, 6584983
+			5, 11, 29, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877, 205759, 411527, 823117,
+			1646237, 3292489, 6584983
 		};
-
 
 		uint _currentCount, _currentSize;
 		uint[] _ids;
@@ -82,29 +80,28 @@ namespace ExtendedXmlSerializer.Core
 		/// <param name="obj">The object you want an ID for. </param>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
 		/// <exception cref="T:System.Runtime.Serialization.SerializationException">The <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> has been asked to keep track of too many objects. </exception>
-		public virtual IdentityGenerationContext For(object obj)
+		public virtual uint For(object obj)
 		{
 			if (obj == null)
-				throw new ArgumentNullException("obj", "ArgumentNull_Obj");
+				throw new ArgumentNullException(nameof(obj), "ArgumentNull_Obj");
 			bool found;
 			var index = FindIndex(obj, out found);
-			uint id;
-			if (!found)
-			{
-				_objs[index] = obj;
-				var ids = _ids;
-				var currentCount = _currentCount;
-				_currentCount = currentCount + 1;
-				var num = currentCount;
-				ids[index] = num;
-				id = _ids[index];
-				if (_currentCount > _currentSize * 4 / 2)
-					Rehash();
-			}
-			else
-				id = _ids[index];
-			var result = new IdentityGenerationContext(id, obj, !found);
+			var result = found ? _ids[index] : Create(obj, index);
 			return result;
+		}
+
+		uint Create(object obj, uint index)
+		{
+			uint id;
+			_objs[index] = obj;
+			var ids = _ids;
+			var count = _currentCount;
+			_currentCount = count + 1;
+			ids[index] = count;
+			id = _ids[index];
+			if (_currentCount > _currentSize * 4 / 2)
+				Rehash();
+			return id;
 		}
 
 		public virtual bool Contains(object obj)

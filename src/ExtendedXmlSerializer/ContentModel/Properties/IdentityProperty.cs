@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.ContentModel.Converters;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	class IdentityProperty : FrameworkProperty<uint>, IIdentityProperty
+	sealed class IdentityProperty : FrameworkProperty<uint>, IIdentityProperty
 	{
 		public static IdentityProperty Default { get; } = new IdentityProperty();
 		IdentityProperty() : base(UnsignedIntegerConverter.Default, "identity") {}

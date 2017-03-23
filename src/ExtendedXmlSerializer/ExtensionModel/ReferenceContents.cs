@@ -31,18 +31,17 @@ namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class ReferenceContents : DecoratedSource<TypeInfo, ISerializer>, IContents
 	{
-		readonly static IsReferenceSpecification IsReferenceSpecification = IsReferenceSpecification.Default;
+		readonly static IsReferenceSpecification Specification = IsReferenceSpecification.Default;
 
-		readonly IStoredEncounters _encounters;
-		readonly IEntities _entities;
 		readonly ISpecification<TypeInfo> _specification;
+		readonly IEncounterStore _encounters;
+		readonly IEntities _entities;
 
-		public ReferenceContents(IStoredEncounters encounters, IEntities entities, IContents option)
-			: this(IsReferenceSpecification, encounters, entities, option) {}
+		public ReferenceContents(IEncounterStore encounters, IEntities entities, IContents option)
+			: this(Specification, encounters, entities, option) {}
 
-		public ReferenceContents(ISpecification<TypeInfo> specification, IStoredEncounters encounters,
-		                         IEntities entities,
-		                         IContents option) : base(option)
+		public ReferenceContents(ISpecification<TypeInfo> specification, IEncounterStore encounters,
+		                         IEntities entities, IContents option) : base(option)
 		{
 			_encounters = encounters;
 			_entities = entities;

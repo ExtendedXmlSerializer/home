@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,19 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core;
+
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public struct IdentityGenerationContext
+	sealed class Encounters : IEncounters
 	{
-		public IdentityGenerationContext(uint uniqueId, object instance, bool firstEncounter)
+		readonly IDictionary<object, Identifier> _store;
+
+		public Encounters(IDictionary<object, Identifier> store)
 		{
-			UniqueId = uniqueId;
-			Instance = instance;
-			FirstEncounter = firstEncounter;
+			_store = store;
 		}
 
-		public long UniqueId { get; }
-		public object Instance { get; }
-		public bool FirstEncounter { get; }
+		public Identifier? Get(object parameter) => _store.GetStructure(parameter);
 	}
 }

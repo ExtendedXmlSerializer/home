@@ -21,10 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core.Sources;
-
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface IStoredEncounters : IParameterizedSource<IXmlWriter, IReferenceEncounters> {}
+	public struct Encounter
+	{
+		public Encounter(Identifier identifier, bool firstEncounter)
+		{
+			Identifier = identifier;
+			FirstEncounter = firstEncounter;
+		}
+
+		public Identifier Identifier { get; }
+		public bool FirstEncounter { get; }
+	}
 }

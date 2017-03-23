@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class StoredEncounters : ReferenceCacheBase<IXmlWriter, IReferenceEncounters>, IStoredEncounters
+	sealed class EncounterSpecification : IEncounterSpecification
 	{
-		readonly IRootReferences _references;
-		readonly IEntities _entities;
+		readonly Conditions _conditions;
 
-		public StoredEncounters(IRootReferences references, IEntities entities)
+		public EncounterSpecification() : this(new Conditions()) {}
+
+		public EncounterSpecification(Conditions conditions)
 		{
-			_references = references;
-			_entities = entities;
+			_conditions = conditions;
 		}
 
-		protected override IReferenceEncounters Create(IXmlWriter parameter)
-		{
-			var selector = new ReferenceIdentifiers(_entities);
-			var identities = _references.Get(parameter).ToDictionary(x => x, selector.Get);
-			var result = new ReferenceEncounters(identities);
-			return result;
-		}
+		public bool IsSatisfiedBy(object parameter) => _conditions.Get(parameter).Apply();
 	}
 }
