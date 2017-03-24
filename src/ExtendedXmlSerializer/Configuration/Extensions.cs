@@ -32,6 +32,11 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Attributes;
+using ExtendedXmlSerializer.ExtensionModel.Classic;
+using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.Configuration

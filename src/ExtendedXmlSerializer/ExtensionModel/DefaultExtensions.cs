@@ -23,6 +23,9 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Attributes;
+using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
