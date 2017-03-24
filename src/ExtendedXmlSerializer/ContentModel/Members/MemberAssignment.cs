@@ -21,42 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class CollectionContentsReader : DecoratedReader
+	sealed class MemberAssignment : IMemberAssignment
 	{
-		readonly static Lists Lists = Lists.Default;
+		public static MemberAssignment Default { get; } = new MemberAssignment();
+		MemberAssignment() {}
 
-		readonly ICollectionReadAssignment _item;
-		readonly ILists _lists;
+		public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
+			=> access.Assign(instance, reader.Get(context));
 
-		public CollectionContentsReader(IReader reader, ICollectionReadAssignment item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionReadAssignment item, ILists lists) : base(reader)
-		{
-			_item = item;
-			_lists = lists;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-			var token = parameter.New();
-			if (token.HasValue)
-			{
-				var list = result as IList ?? _lists.Get(result);
-				var current = token.Value;
-				while (parameter.Next(current))
-				{
-					_item.Assign(parameter, result, list);
-				}
-
-				return _item.Complete(parameter, result, list);
-			}
-			return result;
-		}
+		public object Complete(IXmlReader context, object instance) => instance;
 	}
 }

@@ -22,31 +22,52 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension
+	sealed class DeferredReferenceMap : IReferenceMap
 	{
-		public ReferencesExtension() : this(new Dictionary<TypeInfo, MemberInfo>()) {}
+		readonly ICollection<ICommand<IXmlReader>> _commands;
+		readonly Stack<IReadContext> _contexts;
+		readonly IReferenceMap _map;
 
-		public ReferencesExtension(IDictionary<TypeInfo, MemberInfo> store) : base(store) {}
+		public DeferredReferenceMap(ICollection<ICommand<IXmlReader>> commands, Stack<IReadContext> contexts,
+		                            IReferenceMap map)
+		{
+			_commands = commands;
+			_contexts = contexts;
+			_map = map;
+		}
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IEntityMembers>(this)
-			         .RegisterInstance<IReferenceMaps>(ReferenceMaps.Default)
-			         .Register<IReferenceEncounters, ReferenceEncounters>()
-			         .Register<IEntities, Entities>()
-			         .Register<IEncounterSpecification, EncounterSpecification>()
-			         .Decorate<IActivation, ReferenceActivation>()
-			         .Decorate<IContents, ReferenceContents>()
-			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
-			         .Decorate<IContents, RecursionAwareContents>();
+		public object Get(ReferenceIdentity parameter)
+		{
+			var result = _map.Get(parameter);
+			if (result == null)
+			{
+				var current = _contexts.Peek();
+				var source = _map.Fix(parameter);
+				var command = Command(current, source);
+				_commands.Add(command);
+			}
+			return result;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		static ICommand<object> Command(IReadContext current, ISource<object> source)
+		{
+			var member = current as IMemberReadContext;
+			if (member != null)
+			{
+				return new DeferredMemberAssignmentCommand(member, source);
+			}
+
+			var list = (ICollectionReadContext) current;
+			var result = new DeferredCollectionAssignmentCommand(list, list.List.Count, source);
+			return result;
+		}
+
+		public void Assign(ReferenceIdentity key, object value) => _map.Assign(key, value);
 	}
 }

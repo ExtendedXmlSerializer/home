@@ -21,32 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
+using System.Linq;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class ExecuteDeferredCommandsCommand<T> : ICommand<IXmlReader> where T : ICommand<IXmlReader>
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		public static ExecuteDeferredCommandsCommand<T> Default { get; } = new ExecuteDeferredCommandsCommand<T>();
+		ExecuteDeferredCommandsCommand() : this(ReaderContexts.Default, DeferredCommands.Default) {}
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		readonly IReaderContexts _contexts;
+		readonly IDeferredCommands _commands;
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public ExecuteDeferredCommandsCommand(IReaderContexts contexts, IDeferredCommands commands)
+		{
+			_contexts = contexts;
+			_commands = commands;
+		}
+
+		public void Execute(IXmlReader parameter)
+		{
+			var commands = _commands.Get(_contexts.Get(parameter));
+			var membered = commands.OfType<T>().ToArray();
+			foreach (var command in membered)
+			{
+				command.Execute(parameter);
+				commands.Remove(command);
+			}
+		}
 	}
 }

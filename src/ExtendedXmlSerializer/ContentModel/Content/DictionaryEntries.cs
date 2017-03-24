@@ -26,6 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
@@ -42,28 +43,31 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
 		readonly IReader _activator;
-		readonly IMembers _profiles;
+		readonly IMembers _members;
 		readonly IMemberSerializers _serializers;
+		readonly IMemberAssignment _member;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(Xml.IIdentities identities, IActivation activation, IMembers profiles,
-		                         IMemberSerializers serializers)
-			: this(activation.Get<DictionaryEntry>(), profiles, serializers, new ElementOption(identities).Get(Type), Pairs) {}
+		public DictionaryEntries(IIdentities identities, IActivation activation, IMembers members,
+		                         IMemberAssignment member, IMemberSerializers serializers)
+			: this(
+				activation.Get<DictionaryEntry>(), members, serializers, member, new ElementOption(identities).Get(Type), Pairs) {}
 
-		public DictionaryEntries(IReader activator, IMembers profiles, IMemberSerializers serializers, IWriter element,
-		                         IDictionaryPairTypesLocator locator)
+		public DictionaryEntries(IReader activator, IMembers members, IMemberSerializers serializers,
+		                         IMemberAssignment member, IWriter element, IDictionaryPairTypesLocator locator)
 		{
 			_activator = activator;
-			_profiles = profiles;
+			_members = members;
 			_serializers = serializers;
+			_member = member;
 			_element = element;
 			_locator = locator;
 		}
 
 		IMemberSerializer Create(PropertyInfo metadata, TypeInfo classification)
-			=> _serializers.Get(_profiles.Get(new MemberDescriptor(metadata, classification)));
+			=> _serializers.Get(_members.Get(new MemberDescriptor(metadata, classification)));
 
 		public ISerializer Get(TypeInfo parameter)
 		{
@@ -71,7 +75,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)}.ToImmutableArray();
 			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members),
 			                                            members.ToDictionary(x => x.Profile.Name, x => x), members);
-			var reader = new MemberContentsReader(_activator, serialization);
+			var reader = new MemberContentsReader(_activator, serialization, _member);
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result = new Container(_element, converter);

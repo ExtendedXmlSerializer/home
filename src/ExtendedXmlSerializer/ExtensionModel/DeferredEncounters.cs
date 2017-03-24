@@ -21,32 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class DeferredEncounters : IEncounters
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		readonly IEncounters _encounters;
+		readonly ITrackedLists _tracked;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		public DeferredEncounters(IEncounters encounters, ITrackedLists tracked)
+		{
+			_encounters = encounters;
+			_tracked = tracked;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public bool IsSatisfiedBy(object parameter) => !_tracked.Get(parameter).Any() && _encounters.IsSatisfiedBy(parameter);
+
+		public Identifier? Get(object parameter) => _encounters.Get(parameter);
 	}
 }

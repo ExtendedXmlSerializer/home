@@ -21,35 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberedCollectionItemReader : ICollectionItemReader
+	sealed class DeferredReferenceEncounters : IReferenceEncounters
 	{
-		readonly ICollectionItemReader _item;
-		readonly IMemberSerialization _members;
+		readonly IReferenceEncounters _encounters;
+		readonly IReservedItems _reserved;
 
-		public MemberedCollectionItemReader(ICollectionItemReader item, IMemberSerialization members)
+		public DeferredReferenceEncounters(IReferenceEncounters encounters) : this(encounters, ReservedItems.Default) {}
+
+		public DeferredReferenceEncounters(IReferenceEncounters encounters, IReservedItems reserved)
 		{
-			_item = item;
-			_members = members;
+			_encounters = encounters;
+			_reserved = reserved;
 		}
 
-		public void Read(IXmlReader reader, object instance, IList list)
-		{
-			if (reader.IsMember())
-			{
-				var member = _members.Get(reader.Name);
-				if (member != null)
-				{
-					member.Access.Assign(instance, member.Get(reader));
-					return;
-				}
-			}
-			_item.Read(reader, instance, list);
-		}
+		public IEncounters Get(IXmlWriter parameter)
+			=> new DeferredEncounters(_encounters.Get(parameter), _reserved.Get(parameter));
 	}
 }

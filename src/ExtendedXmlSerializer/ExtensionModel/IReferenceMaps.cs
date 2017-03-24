@@ -21,11 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface IReferenceMaps : IParameterizedSource<IXmlReader, IDictionary<ReferenceIdentity, object>> {}
+	public interface IReferenceMaps : IParameterizedSource<IXmlReader, IReferenceMap> {}
 }

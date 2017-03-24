@@ -24,7 +24,6 @@
 using System.Collections;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
@@ -32,93 +31,69 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public sealed class DeferredReferencesExtension : ISerializerExtension
+	public sealed class ReaderContextExtension : ISerializerExtension
 	{
-		public static DeferredReferencesExtension Default { get; } = new DeferredReferencesExtension();
-		DeferredReferencesExtension() {}
+		public static ReaderContextExtension Default { get; } = new ReaderContextExtension();
+		ReaderContextExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Decorate<IMemberAssignment, MemberAssignment>()
-			            .Decorate<ICollectionAssignment, CollectionAssignment>()
-			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
-			            .Decorate<IContents, DeferredReferenceContents>()
-			            .Decorate<ISerializers, DeferredReferenceSerializers>()
-			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>();
+			            .Decorate<ICollectionAssignment, CollectionAssignment>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		sealed class MemberAssignment : IMemberAssignment
 		{
-			readonly ICommand<IXmlReader> _command;
+			readonly IReaderContexts _contexts;
 			readonly IMemberAssignment _assignment;
 
 			[UsedImplicitly]
-			public MemberAssignment(IMemberAssignment assignment)
-				: this(ExecuteDeferredCommandsCommand<DeferredMemberAssignmentCommand>.Default, assignment) {}
+			public MemberAssignment(IMemberAssignment assignment) : this(ReaderContexts.Default, assignment) {}
 
-			public MemberAssignment(ICommand<IXmlReader> command, IMemberAssignment assignment)
+			public MemberAssignment(IReaderContexts contexts, IMemberAssignment assignment)
 			{
-				_command = command;
+				_contexts = contexts;
 				_assignment = assignment;
 			}
 
 			public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
-				=> _assignment.Assign(context, reader, instance, access);
-
-			public object Complete(IXmlReader context, object instance)
 			{
-				_command.Execute(context);
-				return _assignment.Complete(context, instance);
+				var contexts = _contexts.Get(context);
+				contexts.Push(new MemberReadContext(instance, access));
+				_assignment.Assign(context, reader, instance, access);
+				contexts.Pop();
 			}
+
+			public object Complete(IXmlReader context, object instance) => _assignment.Complete(context, instance);
 		}
 
 		sealed class CollectionAssignment : ICollectionAssignment
 		{
-			readonly ICommand<IXmlReader> _command;
+			readonly IReaderContexts _contexts;
 			readonly ICollectionAssignment _assignment;
 
 			[UsedImplicitly]
-			public CollectionAssignment(ICollectionAssignment assignment)
-				: this(ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, assignment) {}
+			public CollectionAssignment(ICollectionAssignment assignment) : this(ReaderContexts.Default, assignment) {}
 
-			public CollectionAssignment(ICommand<IXmlReader> command, ICollectionAssignment assignment)
+			public CollectionAssignment(IReaderContexts contexts, ICollectionAssignment assignment)
 			{
-				_command = command;
+				_contexts = contexts;
 				_assignment = assignment;
 			}
 
 			public void Assign(IXmlReader reader, object instance, IList list, object item)
-				=> _assignment.Assign(reader, instance, list, item);
+			{
+				var contexts = _contexts.Get(reader);
+				var context = new CollectionReadContext(instance, list, item);
+				contexts.Push(context);
+				_assignment.Assign(reader, instance, list, item);
+				contexts.Pop();
+			}
 
 			public object Complete(IXmlReader reader, object instance, IList list)
 			{
-				_command.Execute(reader);
 				return _assignment.Complete(reader, instance, list);
 			}
 		}
 	}
-
-	/*sealed class TypedEnumerators : IEnumeratorStore
-	{
-		readonly IEnumeratorStore _store;
-
-		public TypedEnumerators(IEnumeratorStore store)
-		{
-			_store = store;
-		}
-
-		public IEnumerators Get(TypeInfo parameter) => new Enumerators(_store.Get(parameter));
-	}
-
-	class Enumerators : IEnumerators
-	{
-		readonly IEnumerators _enumerators;
-
-		public Enumerators(IEnumerators enumerators)
-		{
-			_enumerators = enumerators;
-		}
-
-		public IEnumerator Get(IEnumerable parameter) => _enumerators.Get(parameter);
-	}*/
 }

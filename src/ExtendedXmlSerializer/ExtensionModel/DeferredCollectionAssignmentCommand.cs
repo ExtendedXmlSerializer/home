@@ -21,32 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class DeferredCollectionAssignmentCommand : ICommand<object>
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		readonly ICollectionReadContext _context;
+		readonly int _index;
+		readonly ISource<object> _source;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		public DeferredCollectionAssignmentCommand(ICollectionReadContext context, int index, ISource<object> source)
+		{
+			_context = context;
+			_index = index;
+			_source = source;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public void Execute(object parameter) => _context.List[_index] = _source.Get();
 	}
 }

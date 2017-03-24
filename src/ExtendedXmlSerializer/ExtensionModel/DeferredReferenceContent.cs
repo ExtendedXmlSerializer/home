@@ -21,32 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using System.Collections;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class DeferredReferenceContent : ISerializer
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		readonly IReservedItems _reserved;
+		readonly IRootReferences _references;
+		readonly ISerializer _serializer;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		public DeferredReferenceContent(IRootReferences references, ISerializer serializer)
+			: this(ReservedItems.Default, references, serializer) {}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public DeferredReferenceContent(IReservedItems reserved, IRootReferences references, ISerializer serializer)
+		{
+			_reserved = reserved;
+			_references = references;
+			_serializer = serializer;
+		}
+
+		public object Get(IXmlReader parameter) => _serializer.Get(parameter);
+
+		public void Write(IXmlWriter writer, object instance)
+		{
+			var list = instance as IList;
+			if (list != null)
+			{
+				var references = _references.Get(writer);
+				var hold = _reserved.Get(writer);
+				foreach (var item in list)
+				{
+					if (references.Contains(item))
+					{
+						hold.Get(item).Push(list);
+					}
+				}
+			}
+
+			_serializer.Write(writer, instance);
+		}
 	}
 }

@@ -29,7 +29,8 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class ArrayReader : DecoratedReader
 	{
-		public ArrayReader(IActivation activation, IReader item) : base(new CollectionContentsReader(activation.Get<ArrayList>(), item) ) {}
+		public ArrayReader(IActivation activation, ICollectionReadAssignment collection)
+			: base(new CollectionContentsReader(activation.Get<ArrayList>(), collection)) {}
 
 		public override object Get(IXmlReader parameter)
 		{

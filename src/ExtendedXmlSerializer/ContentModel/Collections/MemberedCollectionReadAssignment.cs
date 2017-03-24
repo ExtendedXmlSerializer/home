@@ -21,32 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class MemberedCollectionReadAssignment : ICollectionReadAssignment
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		readonly ICollectionReadAssignment _item;
+		readonly IMemberSerialization _serialization;
+		readonly IMemberAssignment _members;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		public MemberedCollectionReadAssignment(IMemberSerialization serialization, ICollectionReadAssignment item,
+		                                        IMemberAssignment members)
+		{
+			_item = item;
+			_serialization = serialization;
+			_members = members;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public void Assign(IXmlReader reader, object instance, IList list)
+		{
+			if (reader.IsMember())
+			{
+				var member = _serialization.Get(reader.Name);
+				if (member != null)
+				{
+					_members.Assign(reader, member, instance, member.Access);
+					return;
+				}
+			}
+			_item.Assign(reader, instance, list);
+		}
+
+		public object Complete(IXmlReader reader, object instance, IList list)
+			=> _item.Complete(reader, _members.Complete(reader, instance), list);
 	}
 }

@@ -36,16 +36,18 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		readonly ISpecification<TypeInfo> _specification;
 		readonly IReferenceEncounters _identifiers;
+		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
 
 		[UsedImplicitly]
-		public ReferenceContents(IReferenceEncounters identifiers, IEntities entities, IContents option)
-			: this(Specification, identifiers, entities, option) {}
+		public ReferenceContents(IReferenceEncounters identifiers, IReferenceMaps maps, IEntities entities, IContents option)
+			: this(Specification, identifiers, maps, entities, option) {}
 
 		public ReferenceContents(ISpecification<TypeInfo> specification, IReferenceEncounters identifiers,
-		                         IEntities entities, IContents option) : base(option)
+		                         IReferenceMaps maps, IEntities entities, IContents option) : base(option)
 		{
 			_identifiers = identifiers;
+			_maps = maps;
 			_entities = entities;
 			_specification = specification;
 		}
@@ -55,7 +57,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			var serializer = base.Get(parameter);
 			var result = serializer as RuntimeSerializer ??
 			             (_specification.IsSatisfiedBy(parameter)
-				             ? new ReferenceSerializer(_identifiers, new ReferenceReader(serializer, _entities, parameter), serializer)
+				             ? new ReferenceSerializer(_identifiers, new ReferenceReader(serializer, _maps, _entities, parameter),
+				                                       serializer)
 				             : serializer);
 			return result;
 		}

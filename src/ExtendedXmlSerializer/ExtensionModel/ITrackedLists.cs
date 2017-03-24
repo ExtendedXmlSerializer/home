@@ -22,12 +22,10 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface ICollectionItemReader
-	{
-		void Read(IXmlReader reader, object instance, IList list);
-	}
+	public interface ITrackedLists : IParameterizedSource<object, Stack<IList>> {}
 }

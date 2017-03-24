@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -41,24 +41,28 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		readonly IActivation _activation;
 		readonly IEnumerators _enumerators;
+		readonly ICollectionAssignment _collection;
 
-		public ImmutableArrayContentOption(IActivation activation, IEnumerators enumerators, ISerializers serializers)
+		public ImmutableArrayContentOption(IActivation activation, IEnumerators enumerators, ISerializers serializers,
+		                                   ICollectionAssignment collection)
 			: base(Specification, serializers)
 		{
 			_activation = activation;
 			_enumerators = enumerators;
+			_collection = collection;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(CreateReader(_activation, item, itemType), new EnumerableWriter(_enumerators, item));
+			=> new Serializer(CreateReader(_activation, new CollectionReadAssignment(item, _collection), itemType),
+			                  new EnumerableWriter(_enumerators, item));
 
-		static IReader CreateReader(IActivation activation, ISerializer item, TypeInfo itemType)
-			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), activation, item);
+		static IReader CreateReader(IActivation activation, ICollectionReadAssignment assignment, TypeInfo itemType)
+			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), activation, assignment);
 
 		sealed class Reader<T> : DecoratedReader
 		{
-			public Reader(IActivation activation, IReader item)
-				: base(new CollectionContentsReader(activation.Get<Collection<T>>(), item)) {}
+			public Reader(IActivation activation, ICollectionReadAssignment assignment)
+				: base(new CollectionContentsReader(activation.Get<Collection<T>>(), assignment)) {}
 
 			public override object Get(IXmlReader parameter) => base.Get(parameter)
 			                                                        .AsValid<Collection<T>>()

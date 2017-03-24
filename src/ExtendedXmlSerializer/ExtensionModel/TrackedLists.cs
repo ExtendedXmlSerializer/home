@@ -22,19 +22,13 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class CollectionItemReader : ICollectionItemReader
+	sealed class TrackedLists : Cache<object, Stack<IList>>, ITrackedLists
 	{
-		readonly IReader _item;
-
-		public CollectionItemReader(IReader item)
-		{
-			_item = item;
-		}
-
-		public void Read(IXmlReader reader, object instance, IList list) => list.Add(_item.Get(reader));
+		public TrackedLists() : base(_ => new Stack<IList>()) {}
 	}
 }

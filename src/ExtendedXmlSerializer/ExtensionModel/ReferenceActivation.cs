@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 				if (identity != null)
 				{
-					_maps.Get(parameter).Add(identity.Value, result);
+					_maps.Get(parameter).Assign(identity.Value, result);
 				}
 				return result;
 			}

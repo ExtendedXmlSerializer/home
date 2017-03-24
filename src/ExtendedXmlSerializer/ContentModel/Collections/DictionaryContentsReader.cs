@@ -30,9 +30,13 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
 
-		public DictionaryContentsReader(IReader reader, IReader entry, IMemberSerialization members)
-			: base(new CollectionContentsReader(new MemberAttributesReader(reader, members),
-			                                    new MemberedCollectionItemReader(new CollectionItemReader(entry), members), Lists)
+		public DictionaryContentsReader(IReader reader, IReader entry, IMemberSerialization members,
+		                                IMemberAssignment member, ICollectionAssignment collection)
+			: base(new CollectionContentsReader(new MemberAttributesReader(reader, members, member),
+			                                    new MemberedCollectionReadAssignment(members,
+			                                                                         new CollectionReadAssignment(entry,
+			                                                                                                      collection),
+			                                                                         member), Lists)
 			) {}
 	}
 }

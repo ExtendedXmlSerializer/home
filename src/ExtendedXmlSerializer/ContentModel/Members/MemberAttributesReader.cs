@@ -27,11 +27,14 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberAttributesReader : DecoratedReader
 	{
-		readonly IMemberSerialization _members;
+		readonly IMemberSerialization _serialization;
+		readonly IMemberAssignment _member;
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization members) : base(activator)
+		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment member)
+			: base(activator)
 		{
-			_members = members;
+			_serialization = serialization;
+			_member = member;
 		}
 
 		public override object Get(IXmlReader parameter)
@@ -42,8 +45,11 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			{
 				if (parameter.IsMember())
 				{
-					var member = _members.Get(parameter.Name);
-					member?.Access.Assign(result, member.Get(parameter));
+					var member = _serialization.Get(parameter.Name);
+					if (member != null)
+					{
+						_member.Assign(parameter, member, result, member.Access);
+					}
 				}
 			}
 			return result;

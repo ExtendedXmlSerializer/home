@@ -26,37 +26,12 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class CollectionContentsReader : DecoratedReader
+	sealed class CollectionAssignment : ICollectionAssignment
 	{
-		readonly static Lists Lists = Lists.Default;
+		public static CollectionAssignment Default { get; } = new CollectionAssignment();
+		CollectionAssignment() {}
 
-		readonly ICollectionReadAssignment _item;
-		readonly ILists _lists;
-
-		public CollectionContentsReader(IReader reader, ICollectionReadAssignment item) : this(reader, item, Lists) {}
-
-		public CollectionContentsReader(IReader reader, ICollectionReadAssignment item, ILists lists) : base(reader)
-		{
-			_item = item;
-			_lists = lists;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-			var token = parameter.New();
-			if (token.HasValue)
-			{
-				var list = result as IList ?? _lists.Get(result);
-				var current = token.Value;
-				while (parameter.Next(current))
-				{
-					_item.Assign(parameter, result, list);
-				}
-
-				return _item.Complete(parameter, result, list);
-			}
-			return result;
-		}
+		public void Assign(IXmlReader reader, object instance, IList list, object item) => list.Add(item);
+		public object Complete(IXmlReader reader, object instance, IList list) => instance;
 	}
 }

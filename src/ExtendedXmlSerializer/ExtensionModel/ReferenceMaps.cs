@@ -21,15 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ReferenceMaps : ReferenceCache<IXmlReader, IDictionary<ReferenceIdentity, object>>, IReferenceMaps
+	sealed class ReferenceMaps : ReferenceCache<IXmlReader, IReferenceMap>, IReferenceMaps
 	{
 		public static ReferenceMaps Default { get; } = new ReferenceMaps();
-		ReferenceMaps() : base(_ => new Dictionary<ReferenceIdentity, object>()) {}
+		ReferenceMaps() : base(_ => new ReferenceMap()) {}
 	}
 }

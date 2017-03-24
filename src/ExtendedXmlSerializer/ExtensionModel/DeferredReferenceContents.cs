@@ -22,29 +22,41 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
+using JetBrains.Annotations;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class ArrayContentOption : CollectionContentOptionBase
+	sealed class DeferredReferenceContents : IContents
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly static IsCollectionTypeSpecification IsCollectionTypeSpecification = IsCollectionTypeSpecification.Default;
 
-		readonly IActivation _activation;
-		readonly IEnumerators _enumerators;
-		readonly ICollectionAssignment _collection;
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IRootReferences _references;
+		readonly IContents _contents;
 
-		public ArrayContentOption(IActivation activation, IEnumerators enumerators, ISerializers serializers,
-		                          ICollectionAssignment collection) : base(Specification, serializers)
+		[UsedImplicitly]
+		public DeferredReferenceContents(IRootReferences references, IContents contents)
+			: this(IsCollectionTypeSpecification, references, contents) {}
+
+		public DeferredReferenceContents(ISpecification<TypeInfo> specification, IRootReferences references,
+		                                 IContents contents)
 		{
-			_activation = activation;
-			_enumerators = enumerators;
-			_collection = collection;
+			_specification = specification;
+			_references = references;
+			_contents = contents;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_activation, new CollectionReadAssignment(item, _collection)),
-			                  new EnumerableWriter(_enumerators, item));
+		public ISerializer Get(TypeInfo parameter)
+		{
+			var serializer = _contents.Get(parameter);
+			var result = serializer is ReferenceSerializer && _specification.IsSatisfiedBy(parameter)
+				? new DeferredReferenceContent(_references, serializer)
+				: serializer;
+			return result;
+		}
 	}
 }

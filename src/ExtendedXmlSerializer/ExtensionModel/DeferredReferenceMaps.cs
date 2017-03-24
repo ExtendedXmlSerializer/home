@@ -21,32 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class DeferredReferenceMaps : IReferenceMaps
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		readonly IReaderContexts _contexts;
+		readonly IDeferredCommands _commands;
+		readonly IReferenceMaps _maps;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+		[UsedImplicitly]
+		public DeferredReferenceMaps(IReferenceMaps maps) : this(ReaderContexts.Default, DeferredCommands.Default, maps) {}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public DeferredReferenceMaps(IReaderContexts contexts, IDeferredCommands commands, IReferenceMaps maps)
+		{
+			_contexts = contexts;
+			_commands = commands;
+			_maps = maps;
+		}
+
+		public IReferenceMap Get(IXmlReader parameter)
+		{
+			var contexts = _contexts.Get(parameter);
+			var result = new DeferredReferenceMap(_commands.Get(contexts), contexts, _maps.Get(parameter));
+			return result;
+		}
 	}
 }
