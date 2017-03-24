@@ -29,6 +29,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Tests
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Tests", "test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.xproj", "{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docGenerator", "docGenerator", "{C90F6D79-DAD5-47F4-9638-23F9941C1C86}"
+EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,8 @@ Global
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +76,6 @@ Global
 		{C3310F48-748F-4808-8AEC-1FEE09BFFE8E} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
+		{87D0B2DD-15F1-4B62-878E-85A665E2D051} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
 	EndGlobalSection
 EndGlobal
