@@ -21,7 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
@@ -39,6 +41,35 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 			Assert.Equal(expected.Message, actual.Message);
 		}
 
+		[Fact]
+		public void MultipleParameters()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedConstructionExtension.Default));
+			var expected = new SubjectWithMultipleParameters("Hello World!", 6776);
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedConstructionExtensionTests-SubjectWithMultipleParameters xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Types;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><Number>6776</Number></ParameterizedConstructionExtensionTests-SubjectWithMultipleParameters>");
+			Assert.Equal(expected.Message, actual.Message);
+			Assert.Equal(expected.Number, actual.Number);
+		}
+
+		[Fact]
+		public void MultipleConstructors()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedConstructionExtension.Default));
+			var expected = new SubjectWithMultipleConstructors(6776, new DateTime(1976, 6, 7));
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedConstructionExtensionTests-SubjectWithMultipleConstructors xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Types;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number><DateTime>1976-06-07T00:00:00</DateTime></ParameterizedConstructionExtensionTests-SubjectWithMultipleConstructors>");
+			Assert.Equal(expected.Number, actual.Number);
+			Assert.Equal(expected.DateTime, actual.DateTime);
+			Assert.Equal(SubjectWithMultipleConstructors.Message, actual.Get());
+		}
+
+		[Fact]
+		public void Invalid()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedConstructionExtension.Default));
+			var expected = new SubjectWithInvalidConstructor("Hello World!", 6776);
+			Assert.Throws<InvalidOperationException>(() => serializer.Serialize(expected));
+		}
+
 		class Subject
 		{
 			public Subject(string message)
@@ -47,6 +78,50 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 			}
 
 			public string Message { get; }
+		}
+
+		class SubjectWithMultipleParameters
+		{
+			public SubjectWithMultipleParameters(string message, int number)
+			{
+				Message = message;
+				Number = number;
+			}
+
+			public string Message { get; }
+			public int Number { get; }
+		}
+
+		class SubjectWithInvalidConstructor
+		{
+			readonly string _message;
+
+			public SubjectWithInvalidConstructor(string message, int number)
+			{
+				Number = number;
+				_message = message;
+			}
+
+			public int Number { get; }
+		}
+
+		class SubjectWithMultipleConstructors : ISource<string>
+		{
+			public const string Message = "Hello World from Second Candidate Selector!";
+			readonly string _message;
+
+			public SubjectWithMultipleConstructors(int number, DateTime dateTime) : this(Message, number, dateTime) {}
+
+			public SubjectWithMultipleConstructors(string message, int number, DateTime dateTime)
+			{
+				Number = number;
+				DateTime = dateTime;
+				_message = message;
+			}
+
+			public int Number { get; }
+			public DateTime DateTime { get; }
+			public string Get() => _message;
 		}
 	}
 }
