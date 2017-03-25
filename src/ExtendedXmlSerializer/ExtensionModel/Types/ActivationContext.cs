@@ -21,44 +21,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Converters
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class Converters : CacheBase<TypeInfo, IConverter>, IConverters
+	sealed class ActivationContext : TableSource<string, object>, IActivationContext
 	{
-		readonly ImmutableArray<IConverter> _converters;
-		readonly ImmutableArray<IConverterSource> _sources;
+		readonly ConstructorInfo _constructor;
+		readonly ImmutableArray<IMember> _members;
+		readonly IMemberAccessors _accessors;
 
-		public Converters(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
+		public ActivationContext(IMemberAccessors accessors, ConstructorInfo constructor, ImmutableArray<IMember> members)
+			: this(accessors, new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase), constructor, members) {}
+
+		public ActivationContext(IMemberAccessors accessors, IDictionary<string, object> source,
+		                         ConstructorInfo constructor, ImmutableArray<IMember> members) : base(source)
 		{
-			_converters = converters.ToImmutableArray();
-			_sources = sources.ToImmutableArray();
+			_constructor = constructor;
+			_members = members;
+			_accessors = accessors;
 		}
 
-		public new bool IsSatisfiedBy(TypeInfo parameter) => Get(parameter) != null;
-
-		protected override IConverter Create(TypeInfo parameter)
+		public object Get()
 		{
-			foreach (var converter in _converters)
-			{
-				if (converter.IsSatisfiedBy(parameter))
-				{
-					return converter;
-				}
-			}
+			var names = _constructor.GetParameters()
+			                        .Select(x => x.Name)
+			                        .ToArray();
+			var parameters = names.Select(Get).ToArray();
+			var result = _constructor.Invoke(parameters);
+			Apply(result);
+			return result;
+		}
 
-			foreach (var source in _sources)
+		void Apply(object result)
+		{
+			foreach (var member in _members)
 			{
-				if (source.IsSatisfiedBy(parameter))
+				if (IsSatisfiedBy(member.Name))
 				{
-					return source.Get(parameter);
+					var access = _accessors.Get(member);
+					access.Assign(result, Get(member.Name));
 				}
 			}
-			return null;
 		}
 	}
 }

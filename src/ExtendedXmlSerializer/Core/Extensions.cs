@@ -35,6 +35,13 @@ namespace ExtendedXmlSerializer.Core
 {
 	public static class Extensions
 	{
+		public static T Only<T>(this IEnumerable<T> @this)
+		{
+			var items = @this.ToArray();
+			var result = items.Length == 1 ? items[0] : default(T);
+			return result;
+		}
+
 		public static ISortOrder Sort<T>(this ISortOrder @this, int sort)
 		{
 			@this.Assign(Support<T>.Key, sort);

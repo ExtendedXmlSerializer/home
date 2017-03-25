@@ -45,6 +45,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			: base(
 				new MemberTypeSpecification(
 					IsCollectionTypeSpecification.Default.And(
+
 						new DelegatedAssignedSpecification<TypeInfo, Action<object, object>>(add.Get)))
 			)
 		{
