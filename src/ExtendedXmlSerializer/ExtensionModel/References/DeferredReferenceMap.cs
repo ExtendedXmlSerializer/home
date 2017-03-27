@@ -43,6 +43,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_map = map;
 		}
 
+		public bool IsSatisfiedBy(ReferenceIdentity parameter) => _map.IsSatisfiedBy(parameter);
+
 		public object Get(ReferenceIdentity parameter)
 		{
 			var result = _map.Get(parameter);

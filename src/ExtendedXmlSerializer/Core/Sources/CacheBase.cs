@@ -40,6 +40,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_create = Create;
 		}
 
+		public bool IsSatisfiedBy(TKey parameter) => ContainsKey(parameter);
+
 		protected abstract TValue Create(TKey parameter);
 
 		public TValue Get(TKey key) => GetOrAdd(key, _create);

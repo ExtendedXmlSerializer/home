@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -49,41 +49,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class MemberAssignment : IMemberAssignment
 		{
-			readonly ICommand<IXmlReader> _command;
 			readonly IMemberAssignment _assignment;
 
 			[UsedImplicitly]
 			public MemberAssignment(IMemberAssignment assignment)
-				: this(ExecuteDeferredCommandsCommand<DeferredMemberAssignmentCommand>.Default, assignment) {}
-
-			public MemberAssignment(ICommand<IXmlReader> command, IMemberAssignment assignment)
 			{
-				_command = command;
 				_assignment = assignment;
 			}
 
 			public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
 				=> _assignment.Assign(context, reader, instance, access);
 
-			public object Complete(IXmlReader context, object instance)
-			{
-				_command.Execute(context);
-				return _assignment.Complete(context, instance);
-			}
+			public object Complete(IXmlReader context, object instance) => _assignment.Complete(context, instance);
 		}
 
 		sealed class CollectionAssignment : ICollectionAssignment
 		{
-			readonly ICommand<IXmlReader> _command;
+			readonly ICommand<IXmlReader> _member;
+			readonly ICommand<IXmlReader> _collection;
 			readonly ICollectionAssignment _assignment;
 
 			[UsedImplicitly]
 			public CollectionAssignment(ICollectionAssignment assignment)
-				: this(ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, assignment) {}
+				: this(
+					  ExecuteDeferredCommandsCommand<DeferredMemberAssignmentCommand>.Default,
+					  ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, assignment) {}
 
-			public CollectionAssignment(ICommand<IXmlReader> command, ICollectionAssignment assignment)
+			public CollectionAssignment(ICommand<IXmlReader> member, ICommand<IXmlReader> collection, ICollectionAssignment assignment)
 			{
-				_command = command;
+				_member = member;
+				_collection = collection;
 				_assignment = assignment;
 			}
 
@@ -92,33 +87,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Complete(IXmlReader reader, object instance, IList list)
 			{
-				_command.Execute(reader);
-				return _assignment.Complete(reader, instance, list);
+				_member.Execute(reader);
+				_collection.Execute(reader);
+				var result = _assignment.Complete(reader, instance, list);
+				return result;
 			}
 		}
 	}
-
-	/*sealed class TypedEnumerators : IEnumeratorStore
-	{
-		readonly IEnumeratorStore _store;
-
-		public TypedEnumerators(IEnumeratorStore store)
-		{
-			_store = store;
-		}
-
-		public IEnumerators Get(TypeInfo parameter) => new Enumerators(_store.Get(parameter));
-	}
-
-	class Enumerators : IEnumerators
-	{
-		readonly IEnumerators _enumerators;
-
-		public Enumerators(IEnumerators enumerators)
-		{
-			_enumerators = enumerators;
-		}
-
-		public IEnumerator Get(IEnumerable parameter) => _enumerators.Get(parameter);
-	}*/
 }

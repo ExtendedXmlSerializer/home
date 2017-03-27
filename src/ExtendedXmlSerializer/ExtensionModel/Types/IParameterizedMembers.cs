@@ -21,20 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class MemberTypeSpecification : IMemberSpecification
-	{
-		readonly ISpecification<TypeInfo> _specification;
-
-		public MemberTypeSpecification(ISpecification<TypeInfo> specification)
-		{
-			_specification = specification;
-		}
-
-		public bool IsSatisfiedBy(IMember parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
-	}
+	public interface IParameterizedMembers : IParameterizedSource<TypeInfo, ImmutableArray<IMember>?> {}
 }

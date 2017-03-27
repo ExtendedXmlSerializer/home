@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,15 +25,24 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.LightInject;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	class ConstructorSelector : IConstructorSelector
+	sealed class ConstructorSelector : IConstructorSelector
 	{
 		public static ConstructorSelector Default { get; } = new ConstructorSelector();
-		ConstructorSelector() {}
+		ConstructorSelector() : this(Constructors.Default) {}
 
-		public ConstructorInfo Execute(Type implementingType)
-			=> implementingType.GetConstructors().OrderBy(c => c.GetParameters().Length).First();
+		readonly IConstructors _constructors;
+
+		public ConstructorSelector(IConstructors constructors)
+		{
+			_constructors = constructors;
+		}
+
+		public ConstructorInfo Execute(Type implementingType) => _constructors.Get(implementingType.GetTypeInfo())
+		                                                                      .OrderBy(c => c.GetParameters().Length)
+		                                                                      .First();
 	}
 }

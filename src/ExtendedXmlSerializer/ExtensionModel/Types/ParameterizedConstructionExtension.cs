@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
-using JetBrains.Annotations;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class GenericTypes : IGenericTypes
+	public sealed class ParameterizedConstructionExtension : ISerializerExtension
 	{
-		readonly ITypes _generic;
+		public static ParameterizedConstructionExtension Default { get; } = new ParameterizedConstructionExtension();
+		ParameterizedConstructionExtension() {}
 
-		readonly ITypes _types;
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<TypeMembers>()
+			            .Register<IConstructorMembers, ConstructorMembers>()
+			            .Register<IParameterizedConstructors, ParameterizedConstructors>()
+			            .Register<IParameterizedMembers, ParameterizedMembers>()
+			            .Decorate<IMemberAccessors, ParameterizedMemberAccessors>()
+			            .Decorate<IValidConstructorSpecification, ParameterizedConstructorSpecification>()
+			            .Decorate<ITypeMembers, ParameterizedTypeMembers>()
+			            .Decorate<IActivators, ParameterizedActivators>()
+			            .Decorate<IMemberAssignment, ParameterizedMemberAssignment>();
 
-		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(IsGenericTypeSpecification.Default.And(specification), types, formatter, identities) {}
-
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

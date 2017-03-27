@@ -21,20 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class MemberTypeSpecification : IMemberSpecification
+	sealed class ParameterizedConstructorAlteration : IAlteration<IEnumerable<ConstructorInfo>>
 	{
-		readonly ISpecification<TypeInfo> _specification;
+		public static ParameterizedConstructorAlteration Default { get; } = new ParameterizedConstructorAlteration();
+		ParameterizedConstructorAlteration() {}
 
-		public MemberTypeSpecification(ISpecification<TypeInfo> specification)
-		{
-			_specification = specification;
-		}
-
-		public bool IsSatisfiedBy(IMember parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
+		public IEnumerable<ConstructorInfo> Get(IEnumerable<ConstructorInfo> parameter)
+			=> parameter.OrderByDescending(c => c.GetParameters().Length);
 	}
 }

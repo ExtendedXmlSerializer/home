@@ -48,6 +48,12 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_cache.Add(key, new Structure(value));
 		}
 
+		public bool IsSatisfiedBy(TKey parameter)
+		{
+			Structure item;
+			return _cache.TryGetValue(parameter, out item);
+		}
+
 		class Structure
 		{
 			public Structure(TValue item)

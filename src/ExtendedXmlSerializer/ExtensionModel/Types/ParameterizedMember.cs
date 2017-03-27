@@ -22,19 +22,29 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Members;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class MemberTypeSpecification : IMemberSpecification
+	sealed class ParameterizedMember : IMember
 	{
-		readonly ISpecification<TypeInfo> _specification;
+		readonly IMember _member;
 
-		public MemberTypeSpecification(ISpecification<TypeInfo> specification)
+		public ParameterizedMember(IMember member)
 		{
-			_specification = specification;
+			_member = member;
 		}
 
-		public bool IsSatisfiedBy(IMember parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
+		public string Identifier => _member.Identifier;
+
+		public string Name => _member.Name;
+
+		public MemberInfo Metadata => _member.Metadata;
+
+		public TypeInfo MemberType => _member.MemberType;
+
+		public bool IsWritable => _member.IsWritable;
+
+		public int Order => _member.Order;
 	}
 }

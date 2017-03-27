@@ -21,13 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class AllowsAccessSpecification : DelegatedAssignedSpecification<IMember, IMemberAccess>,
-	                                         IValidMemberSpecification
+	sealed class ParameterizedMemberAssignment : IMemberAssignment
 	{
-		public AllowsAccessSpecification(IMemberAccessors accessors) : base(accessors.Get) {}
+		readonly IMemberAssignment _assignment;
+
+		public ParameterizedMemberAssignment(IMemberAssignment assignment)
+		{
+			_assignment = assignment;
+		}
+
+		public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
+			=> _assignment.Assign(context, reader, instance, access);
+
+		public object Complete(IXmlReader context, object instance)
+			=> (instance as IActivationContext)?.Get() ?? _assignment.Complete(context, instance);
 	}
 }

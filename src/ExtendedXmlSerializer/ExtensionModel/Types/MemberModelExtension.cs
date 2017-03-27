@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
 			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, AllowsAccessSpecification>()
+			         .Register<IValidMemberSpecification, ValidMemberSpecification>()
 			         .Register<ITypeMemberSource, TypeMemberSource>()
 			         .Register<ITypeMembers, TypeMembers>()
 			         .Register<IMembers, Members>()

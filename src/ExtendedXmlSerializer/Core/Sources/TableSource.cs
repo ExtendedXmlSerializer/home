@@ -36,6 +36,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_store = store;
 		}
 
+		public bool IsSatisfiedBy(TKey parameter) => _store.ContainsKey(parameter);
+
 		public virtual TValue Get(TKey parameter)
 		{
 			TValue result;

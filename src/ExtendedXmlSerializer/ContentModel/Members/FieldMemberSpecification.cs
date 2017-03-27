@@ -33,12 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		public static FieldMemberSpecification Default { get; } = new FieldMemberSpecification();
 
-		readonly ISpecification<MemberInfo> _defined;
-
 		FieldMemberSpecification()
 			: this(IsDefinedSpecification<XmlElementAttribute>.Default.Or(IsDefinedSpecification<XmlAttributeAttribute>.Default)) {}
 
-		FieldMemberSpecification(ISpecification<MemberInfo> defined)
+		readonly ISpecification<MemberInfo> _defined;
+
+		public FieldMemberSpecification(ISpecification<MemberInfo> defined)
 		{
 			_defined = defined;
 		}

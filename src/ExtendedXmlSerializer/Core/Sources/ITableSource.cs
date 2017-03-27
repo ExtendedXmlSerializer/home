@@ -21,9 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Specifications;
+
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface ITableSource<in TKey, TValue> : IParameterizedSource<TKey, TValue>
+	public interface ITableSource<in TKey, TValue> : ISpecification<TKey>, IParameterizedSource<TKey, TValue>
 	{
 		void Assign(TKey key, TValue value);
 	}
