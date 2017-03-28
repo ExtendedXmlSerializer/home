@@ -21,38 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class Properties : FixedParser<IDictionary<string, string>>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
-
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public Properties(Parser<KeyValuePair<string, string>> property)
+			: base(new ItemsParser<KeyValuePair<string, string>>(property).Get().Select(x => x.ToDictionary())) {}
 	}
 }

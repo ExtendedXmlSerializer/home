@@ -21,15 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using System;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.Core.Specifications
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	public class ContainsItemsSpecification : SpecificationAdapterBase<ICollection>
+	sealed class Identity : FixedParser<Key>
 	{
-		public static ContainsItemsSpecification Default { get; } = new ContainsItemsSpecification();
-		ContainsItemsSpecification() {}
+		readonly static Func<string, Parser<char>> Separator = Parse.Char(':').Accept;
 
-		protected sealed override bool IsSatisfiedBy(ICollection parameter) => parameter.Count > 0;
+		public static Identity Default { get; } = new Identity();
+		Identity() : this(Identifier.Default) {}
+
+		public Identity(Parser<string> identifier)
+			: base(
+				identifier.SelectMany(Separator, (prefix, _) => prefix)
+				          .SelectMany(identifier.Accept, (prefix, name) => new Key(name, prefix))
+				          .Or(identifier.Select(x => new Key(x)))
+			) {}
 	}
 }

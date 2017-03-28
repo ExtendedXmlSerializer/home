@@ -27,11 +27,31 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	public static class Extensions
 	{
+		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
+		{
+			if (parser == null) throw new ArgumentNullException(nameof(parser));
+			return i =>
+			       {
+				       var result = parser(i);
+				       if (result.WasSuccessful)
+					       return Result.Success(new Some<T>(result.Value), result.Remainder);
+
+				       if (result.Remainder.Equals(i))
+					       return Result.Success(new None<T>(), i);
+
+				       return Result.Failure<IOption<T>>(result.Remainder, result.Message, result.Expectations);
+			       };
+		}
+
+		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)
+			=> parser.SelectMany(instance.Accept, Tuple.Create);
+
 		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
 			=> @this.Get(new MemoryStream(Encoding.UTF8.GetBytes(parameter)));
 

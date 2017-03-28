@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	interface INameConverter : IConverter<ParsedName> {}
+	interface INameConverter : IConverter<TypeParts> {}
 }

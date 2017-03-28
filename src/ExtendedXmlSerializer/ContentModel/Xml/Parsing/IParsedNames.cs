@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	interface IParsedNames : IParser<ParsedName> {}
+	interface IParsedNames : IParser<TypeParts> {}
 }

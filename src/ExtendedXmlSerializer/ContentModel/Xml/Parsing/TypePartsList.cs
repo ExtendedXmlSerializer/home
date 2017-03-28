@@ -21,38 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class TypePartsList : ItemsParser<TypeParts>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
-
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public static TypePartsList Default { get; } = new TypePartsList();
+		TypePartsList() : base(Parse.Ref(() => TypePartsParser.Default.Get())) {}
 	}
 }

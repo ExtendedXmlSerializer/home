@@ -81,7 +81,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 					throw new InvalidOperationException(
 						$"An attempt was made to configure implicit types, but there is more than one type with the same name, which would result in conflicts.  Please remove one of these types or configure them to have different names from each other: {types} have the shared name {invalid.Key}.");
 				}
-				var store = items.ToDictionary(x => x.Key, x => x.Value);
+				var store = items.ToDictionary();
 				var result = new TableSource<string, TypeInfo>(store);
 				return result;
 			}

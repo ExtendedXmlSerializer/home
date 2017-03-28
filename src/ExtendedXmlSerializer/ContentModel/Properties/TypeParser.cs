@@ -53,16 +53,16 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 
 		protected override TypeInfo Create(string parameter) => Get(_converter.Parse(parameter));
 
-		public TypeInfo Get(ParsedName name)
+		public TypeInfo Get(TypeParts parts)
 		{
-			var identity = _identities.Get(name.Name, _reader.Get(name.Identifier));
+			var identity = _identities.Get(parts.Name, _reader.Get(parts.Identifier));
 			var typeInfo = _types.Get(identity);
-			var arguments = name.GetArguments();
+			var arguments = parts.GetArguments();
 			var result = arguments.HasValue ? typeInfo.MakeGenericType(Arguments(arguments.Value)).GetTypeInfo() : typeInfo;
 			return result;
 		}
 
-		Type[] Arguments(ImmutableArray<ParsedName> names)
+		Type[] Arguments(ImmutableArray<TypeParts> names)
 		{
 			var length = names.Length;
 			var result = new Type[length];

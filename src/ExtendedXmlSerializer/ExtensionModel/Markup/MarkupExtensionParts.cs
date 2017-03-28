@@ -21,38 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	struct MarkupExtensionParts
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
-
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		public MarkupExtensionParts(TypeParts type, ImmutableArray<string> arguments, IDictionary<string, string> properties)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			Type = type;
+			Arguments = arguments;
+			Properties = properties;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public TypeParts Type { get; }
+		public ImmutableArray<string> Arguments { get; }
+		public IDictionary<string, string> Properties { get; }
 	}
 }

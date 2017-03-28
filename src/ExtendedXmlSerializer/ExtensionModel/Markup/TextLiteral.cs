@@ -21,38 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class TextLiteral : FixedParser<string>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		const char Slash = '\\';
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
+		readonly static Parser<char> EscapedCharacter = Parse.Char(Slash).Then(Parse.CharExcept(Slash).Accept);
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
+		public TextLiteral(char containingCharacter) : this(containingCharacter, Parse.Char(containingCharacter)) {}
 
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public TextLiteral(char containingCharacter, Parser<char> container) : base(
+			new EscapedLiteral(containingCharacter).Get().XOr(
+				                                       Parse.CharExcept($"{containingCharacter}{Slash}")
+				                                            .Or(EscapedCharacter)
+				                                            .Many()
+				                                            .Text()
+			                                       ).Contained(container, container)
+			                                       .Select(x => x.Quoted())
+			                                       .Token()
+		) {}
 	}
 }

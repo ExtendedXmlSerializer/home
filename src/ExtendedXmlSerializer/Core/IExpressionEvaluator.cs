@@ -21,38 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.Core
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	public interface IExpressionEvaluator
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
-
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		object Evaluate(object context, string expression);
 	}
 }

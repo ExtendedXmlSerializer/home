@@ -22,26 +22,24 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	class Parser : FixedParser<ParsedName>
+	public struct TypeParts : IIdentity
 	{
-		readonly static Parser<char> Start = Parse.Char('[').Token(), Finish = Parse.Char(']').Token();
+		readonly Func<ImmutableArray<TypeParts>> _arguments;
 
-		public static Parser Default { get; } = new Parser();
-		Parser() : this(Identities.Default, NamesList.Default.Get().Contained(Start, Finish).Accept) {}
+		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null)
+		{
+			Name = name;
+			Identifier = identifier;
+			_arguments = arguments;
+		}
 
-		public Parser(Parser<Key> keys, Func<Key, Parser<IEnumerable<ParsedName>>> arguments)
-			: base(
-				keys.SelectMany(arguments,
-				                (key, argument) => new ParsedName(key.Name, key.Identifier, argument.ToImmutableArray))
-				    .Or(keys.Select(key => new ParsedName(key.Name, key.Identifier)))
-			) {}
+		public string Identifier { get; }
+		public string Name { get; }
+
+		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	/// <summary>
+	/// The exception that is thrown when lambda expression parse error occurs
+	/// </summary>
+	public class LambdaParserException : Exception
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		/// <summary>
+		/// Lambda expression
+		/// </summary>
+		public string Expression { get; private set; }
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		/// <summary>
+		/// Parser position where syntax error occurs 
+		/// </summary>
+		public int Index { get; private set; }
+
+		public LambdaParserException(string expr, int idx, string msg)
+			: base(string.Format("{0} at {1}: {2}", msg, idx, expr))
 		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
-
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
+			Expression = expr;
+			Index = idx;
 		}
 	}
 }

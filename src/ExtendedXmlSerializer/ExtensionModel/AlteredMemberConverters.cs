@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class AlteredMemberConverters : IMemberConverters
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		readonly ISpecification<MemberInfo> _specification;
+		readonly IAlteration<IConverter> _alteration;
+		readonly IMemberConverters _converters;
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		public AlteredMemberConverters(ISpecification<MemberInfo> specification, IAlteration<IConverter> alteration,
+		                               IMemberConverters converters)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			_specification = specification;
+			_alteration = alteration;
+			_converters = converters;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public IConverter Get(MemberInfo parameter)
 		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
+			var converter = _converters.Get(parameter);
+			var result = _specification.IsSatisfiedBy(parameter) ? _alteration.Get(converter) : converter;
 			return result;
 		}
 	}

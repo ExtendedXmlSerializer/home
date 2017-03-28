@@ -43,12 +43,12 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 
 		[Fact]
 		public void Local()
-			=> Assert.Equal(new ParsedName("SomeType"), ParsedNames.Default.Get(Type), ParsedNameEqualityComparer.Default);
+			=> Assert.Equal(new TypeParts("SomeType"), ParsedNames.Default.Get(Type), ParsedNameEqualityComparer.Default);
 
 		[Fact]
 		public void Qualified()
 		{
-			var expected = new ParsedName("SomeType", "ns1");
+			var expected = new TypeParts("SomeType", "ns1");
 			var identity = ParsedNames.Default.Get(QualifiedType);
 			Assert.Equal(expected, identity, ParsedNameEqualityComparer.Default);
 		}
@@ -56,11 +56,11 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 		[Fact]
 		public void Generic()
 		{
-			var expected = new ParsedName("GenericType", "ns123", new[]
+			var expected = new TypeParts("GenericType", "ns123", new[]
 			                                                      {
-				                                                      new ParsedName("string", "sys"),
-				                                                      new ParsedName("int"),
-				                                                      new ParsedName("SomeOtherType", "ns4")
+				                                                      new TypeParts("string", "sys"),
+				                                                      new TypeParts("int"),
+				                                                      new TypeParts("SomeOtherType", "ns4")
 			                                                      }.ToImmutableArray);
 
 			var actual = ParsedNames.Default.Get(GenericType);
@@ -71,16 +71,16 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 		[Fact]
 		public void CompoundGeneric()
 		{
-			var expected = new ParsedName("CompoundGenericType", "ns100", new[]
+			var expected = new TypeParts("CompoundGenericType", "ns100", new[]
 			                                                              {
-				                                                              new ParsedName("string", "sys"),
-				                                                              new ParsedName("AnotherGenericType", "exs",
+				                                                              new TypeParts("string", "sys"),
+				                                                              new TypeParts("AnotherGenericType", "exs",
 				                                                                             new[]
 				                                                                             {
-					                                                                             new ParsedName("AnotherType", "ns5"),
-					                                                                             new ParsedName("OneMoreType", "ns6")
+					                                                                             new TypeParts("AnotherType", "ns5"),
+					                                                                             new TypeParts("OneMoreType", "ns6")
 				                                                                             }.ToImmutableArray),
-				                                                              new ParsedName("SomeOtherType", "ns40")
+				                                                              new TypeParts("SomeOtherType", "ns40")
 			                                                              }.ToImmutableArray);
 
 			var actual = ParsedNames.Default.Get(CompoundGenericType);
@@ -91,19 +91,19 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 		[Fact]
 		public void List()
 		{
-			var actual = NamesList.Default.Get("sys:string, int, ns4:SomeOtherType");
+			var actual = TypePartsList.Default.Get("sys:string, int, ns4:SomeOtherType");
 			Assert.True(new[]
 			            {
-				            new ParsedName("string", "sys"),
-				            new ParsedName("int"),
-				            new ParsedName("SomeOtherType", "ns4")
+				            new TypeParts("string", "sys"),
+				            new TypeParts("int"),
+				            new TypeParts("SomeOtherType", "ns4")
 			            }.ToImmutableArray().SequenceEqual(actual, ParsedNameEqualityComparer.Default));
 		}
 
 		[Fact]
 		public void InvalidList()
 		{
-			var actual = NamesList.Default.Get().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
+			var actual = TypePartsList.Default.Get().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
 			Assert.False(actual);
 		}
 
@@ -124,17 +124,17 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 			Assert.Equal("Dictionary", result);
 		}
 
-		sealed class ParsedNameEqualityComparer : IEqualityComparer<ParsedName>
+		sealed class ParsedNameEqualityComparer : IEqualityComparer<TypeParts>
 		{
-			readonly static IdentityComparer<ParsedName> Comparer = IdentityComparer<ParsedName>.Default;
+			readonly static IdentityComparer<TypeParts> Comparer = IdentityComparer<TypeParts>.Default;
 
 			public static ParsedNameEqualityComparer Default { get; } = new ParsedNameEqualityComparer();
 			ParsedNameEqualityComparer() {}
 
-			public bool Equals(ParsedName x, ParsedName y)
+			public bool Equals(TypeParts x, TypeParts y)
 			{
-				var argumentsX = x.GetArguments().GetValueOrDefault(ImmutableArray<ParsedName>.Empty);
-				var argumentsY = y.GetArguments().GetValueOrDefault(ImmutableArray<ParsedName>.Empty);
+				var argumentsX = x.GetArguments().GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
+				var argumentsY = y.GetArguments().GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
 
 				var arguments = argumentsX.SequenceEqual(argumentsY, this);
 				var identity = Comparer.Equals(x, y);
@@ -142,7 +142,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 				return result;
 			}
 
-			public int GetHashCode(ParsedName obj)
+			public int GetHashCode(TypeParts obj)
 			{
 				unchecked
 				{

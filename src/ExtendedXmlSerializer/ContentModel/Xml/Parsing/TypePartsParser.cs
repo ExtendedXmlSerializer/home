@@ -21,38 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class TypePartsParser : FixedParser<TypeParts>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		readonly static Parser<char> Start = Parse.Char('[').Token(), Finish = Parse.Char(']').Token();
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
+		public static TypePartsParser Default { get; } = new TypePartsParser();
+		TypePartsParser() : this(Identity.Default, TypePartsList.Default.Get().Contained(Start, Finish).Accept) {}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public TypePartsParser(Parser<Key> identity, Func<Key, Parser<IEnumerable<TypeParts>>> arguments)
+			: base(
+				identity.SelectMany(arguments,
+				                    (key, argument) => new TypeParts(key.Name, key.Identifier, argument.ToImmutableArray))
+				        .Or(identity.Select(key => new TypeParts(key.Name, key.Identifier)))
+			) {}
 	}
 }

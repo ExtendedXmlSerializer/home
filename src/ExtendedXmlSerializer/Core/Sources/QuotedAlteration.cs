@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
-
-namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class Identities : FixedParser<Key>
+	sealed class QuotedAlteration : IAlteration<string>
 	{
-		readonly static Func<string, Parser<char>> Separator = Parse.Char(':').Accept;
+		public static QuotedAlteration Default { get; } = new QuotedAlteration();
+		QuotedAlteration() {}
 
-		public static Identities Default { get; } = new Identities();
-		Identities() : this(Identifier.Default) {}
-
-		public Identities(Parser<string> identifier)
-			: base(
-				identifier
-					.SelectMany(Separator, (prefix, _) => prefix)
-					.SelectMany(identifier.Accept, (prefix, name) => new Key(name, prefix))
-					.Or(identifier.Select(x => new Key(x)))
-			) {}
+		public string Get(string parameter) => $@"""{parameter}""";
 	}
 }

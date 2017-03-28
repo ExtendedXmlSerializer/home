@@ -250,7 +250,7 @@ namespace ExtendedXmlSerializer.Configuration
 			=> UseEncryptionAlgorithm(@this, Encryption.Default);
 
 		public static IConfiguration UseEncryptionAlgorithm(this IConfiguration @this, IEncryption encryption)
-			=> @this.Extend(new EncryptionExtension(encryption));
+			=> @this.Extend(new EncryptionExtension(new EncryptionConverterAlteration(encryption)));
 
 		public static IConfiguration UseAutoProperties(this IConfiguration @this)
 			=> @this.Extend(AutoAttributesExtension.Default);

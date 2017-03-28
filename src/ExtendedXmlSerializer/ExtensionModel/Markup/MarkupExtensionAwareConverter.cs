@@ -21,38 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Converters;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class MarkupExtensionAwareConverter : IConverter
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		readonly IConverter _converter;
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		public MarkupExtensionAwareConverter(IConverter converter)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			_converter = converter;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
+		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
+		public object Parse(string data)
+		{
+			return _converter.Parse(data);
 		}
+
+		public string Format(object instance) => _converter.Format(instance);
 	}
 }

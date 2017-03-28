@@ -27,13 +27,13 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	class GenericNameParser : FixedParser<string>
+	sealed class GenericNameParser : FixedParser<string>
 	{
 		public static GenericNameParser Default { get; } = new GenericNameParser();
 
 		GenericNameParser() : base(
-			Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Char('_')))
-			     .SelectMany(Parse.Char(DefaultClrDelimiters.Default.Generic).Optional().Accept, (name, _) => name)
+			CodeIdentifier.Default.Get()
+			              .SelectMany(Parse.Char(DefaultClrDelimiters.Default.Generic).Optional().Accept, (name, _) => name)
 		) {}
 	}
 }

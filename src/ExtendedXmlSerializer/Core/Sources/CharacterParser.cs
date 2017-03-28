@@ -21,38 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class CharacterParser : FixedParser<char>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		public static implicit operator CharacterParser(char instance) => new CharacterParser(instance);
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		public CharacterParser(char character) : this(character, Parse.Char(character)) {}
+
+		public CharacterParser(char character, Parser<char> parser) : base(parser)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			Character = character;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public char Character { get; }
 	}
 }

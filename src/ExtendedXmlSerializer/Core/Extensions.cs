@@ -35,6 +35,11 @@ namespace ExtendedXmlSerializer.Core
 {
 	public static class Extensions
 	{
+		public static string Quoted(this string @this) => QuotedAlteration.Default.Get(@this);
+
+		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this)
+			=> @this.ToDictionary(x => x.Key, x => x.Value);
+
 		public static T Only<T>(this IEnumerable<T> @this)
 		{
 			var items = @this.ToArray();

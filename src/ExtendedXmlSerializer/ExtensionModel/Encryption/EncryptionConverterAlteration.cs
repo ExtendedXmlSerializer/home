@@ -21,17 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
-	class NamesList : FixedParser<IEnumerable<ParsedName>>
+	sealed class EncryptionConverterAlteration : IAlteration<IConverter>
 	{
-		readonly static Parser<char> List = Parse.Char(',').Token();
+		public static EncryptionConverterAlteration Default { get; } = new EncryptionConverterAlteration();
+		EncryptionConverterAlteration() : this(Encryption.Default) {}
 
-		public static NamesList Default { get; } = new NamesList();
-		NamesList() : base(Parse.Ref(() => Parser.Default.Get()).DelimitedBy(List).Token()) {}
+		readonly IEncryption _encryption;
+
+		public EncryptionConverterAlteration(IEncryption encryption)
+		{
+			_encryption = encryption;
+		}
+
+		public IConverter Get(IConverter parameter) => new EncryptedConverter(_encryption, parameter);
 	}
 }

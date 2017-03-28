@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	class Identifier : Xml.Identifier
+	sealed class Identifier : Core.Sources.Identifier
 	{
 		public static Identifier Default { get; } = new Identifier();
 

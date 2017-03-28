@@ -21,25 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Immutable;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public struct ParsedName : IIdentity
+	sealed class Arguments : FixedParser<ImmutableArray<string>>
 	{
-		readonly Func<ImmutableArray<ParsedName>> _arguments;
-
-		public ParsedName(string name, string identifier = "", Func<ImmutableArray<ParsedName>> arguments = null)
-		{
-			Name = name;
-			Identifier = identifier;
-			_arguments = arguments;
-		}
-
-		public string Identifier { get; }
-		public string Name { get; }
-
-		public ImmutableArray<ParsedName>? GetArguments() => _arguments?.Invoke();
+		public Arguments(Parser<string> expression) : base(
+			new ItemsParser<string>(expression).Get()
+			                                   .Select(x => x.ToImmutableArray())) {}
 	}
 }

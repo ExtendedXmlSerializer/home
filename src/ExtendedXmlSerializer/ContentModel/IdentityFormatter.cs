@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	class IdentityFormatter : IdentityFormatter<IIdentity>
+	sealed class IdentityFormatter : IdentityFormatter<IIdentity>
 	{
 		public new static IdentityFormatter Default { get; } = new IdentityFormatter();
 		IdentityFormatter() {}

@@ -21,38 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class Property : FixedParser<KeyValuePair<string, string>>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		public Property(CharacterParser delimiter, Parser<string> expression)
+			: this(CodeIdentifier.Default, delimiter, expression) {}
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
-		{
-			_serialization = serialization;
-			_assignment = assignment;
-		}
+		public Property(Parser<string> name, CharacterParser delimiter, Parser<string> expression)
+			: this(name, delimiter.Get().Token(), expression) {}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public Property(Parser<string> name, Parser<char> delimiter, Parser<string> expression) : base(
+			name.SelectMany(delimiter.Accept, (s, _) => s)
+			    .SelectMany(expression.Accept, (s, u) => new KeyValuePair<string, string>(s, u))
+		) {}
 	}
 }

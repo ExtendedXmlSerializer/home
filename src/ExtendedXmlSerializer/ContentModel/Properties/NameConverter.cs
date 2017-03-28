@@ -29,25 +29,25 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	class NameConverter : ConverterBase<ParsedName>, INameConverter
+	sealed class NameConverter : ConverterBase<TypeParts>, INameConverter
 	{
 		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(IdentityFormatter<ParsedName>.Default, ParsedNames.Default) {}
+		NameConverter() : this(IdentityFormatter<TypeParts>.Default, ParsedNames.Default) {}
 
-		readonly IFormatter<ParsedName> _formatter;
+		readonly IFormatter<TypeParts> _formatter;
 		readonly IParsedNames _names;
-		readonly Func<ParsedName, string> _selector;
+		readonly Func<TypeParts, string> _selector;
 
-		public NameConverter(IFormatter<ParsedName> formatter, IParsedNames names)
+		public NameConverter(IFormatter<TypeParts> formatter, IParsedNames names)
 		{
 			_formatter = formatter;
 			_names = names;
 			_selector = Format;
 		}
 
-		public sealed override ParsedName Parse(string data) => _names.Get(data);
+		public override TypeParts Parse(string data) => _names.Get(data);
 
-		public sealed override string Format(ParsedName instance)
+		public override string Format(TypeParts instance)
 		{
 			var arguments = instance.GetArguments();
 			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;

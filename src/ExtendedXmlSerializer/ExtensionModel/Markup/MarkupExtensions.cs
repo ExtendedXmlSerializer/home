@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,53 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using JetBrains.Annotations;
+using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Encryption
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class EncryptionExtension : ISerializerExtension
+	public sealed class MarkupExtensions : ISerializerExtension
 	{
-		readonly static EncryptionConverterAlteration Alteration = EncryptionConverterAlteration.Default;
+		readonly static AlwaysSpecification<MemberInfo> Always = AlwaysSpecification<MemberInfo>.Default;
 
-		readonly ISpecification<MemberInfo> _specification;
+		public static MarkupExtensions Default { get; } = new MarkupExtensions();
+		MarkupExtensions() : this(MarkupExtensionConverterAlteration.Default) {}
+
 		readonly IAlteration<IConverter> _alteration;
 
-		[UsedImplicitly]
-		public EncryptionExtension() : this(Alteration) {}
-
-		public EncryptionExtension(IAlteration<IConverter> alteration) : this(alteration, new HashSet<MemberInfo>()) {}
-
-		public EncryptionExtension(ICollection<MemberInfo> registered) : this(Alteration, registered) {}
-
-		public EncryptionExtension(IAlteration<IConverter> alteration, ICollection<MemberInfo> registered)
-			: this(new ContainsSpecification<MemberInfo>(registered), alteration, registered) {}
-
-		public EncryptionExtension(ISpecification<MemberInfo> specification, IAlteration<IConverter> alteration,
-		                           ICollection<MemberInfo> registered)
+		public MarkupExtensions(IAlteration<IConverter> alteration)
 		{
-			_specification = specification;
 			_alteration = alteration;
-			Registered = registered;
 		}
 
-		public ICollection<MemberInfo> Registered { get; }
-
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IMemberConverterSpecification>(Register)
+			=> parameter.Decorate<ISerializers, MarkupExtensionSerializers>()
+			            .Decorate<IContents, MarkupExtensionContents>()
 			            .Decorate<IMemberConverters>(Register);
 
-		IMemberConverterSpecification Register(IServiceProvider services, IMemberConverterSpecification specification)
-			=> new MemberConverterSpecification(_specification, specification);
-
 		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
-			=> new AlteredMemberConverters(_specification, _alteration, converters);
+			=> new AlteredMemberConverters(Always, _alteration, converters);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

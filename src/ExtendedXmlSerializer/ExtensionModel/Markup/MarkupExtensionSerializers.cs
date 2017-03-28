@@ -21,38 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	sealed class MarkupExtensionSerializers : ISerializers
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		readonly IServiceProvider _provider;
+		readonly IContents _contents;
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		public MarkupExtensionSerializers(IServiceProvider provider, IContents contents)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			_provider = provider;
+			_contents = contents;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public ISerializer Get(TypeInfo parameter)
+			=> new MarkupExtensionAwareSerializer(_provider, _contents.Get(parameter));
 	}
 }

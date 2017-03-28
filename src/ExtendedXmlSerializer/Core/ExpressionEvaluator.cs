@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,38 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.Core
 {
-	sealed class MemberAttributesReader : DecoratedReader
+	public class ExpressionEvaluator : IExpressionEvaluator
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberAssignment _assignment;
+		const string Context = "context";
 
-		public MemberAttributesReader(IReader activator, IMemberSerialization serialization, IMemberAssignment assignment)
-			: base(activator)
+		readonly LambdaParser _parser;
+
+		public static IExpressionEvaluator Default { get; } = new ExpressionEvaluator();
+
+		public ExpressionEvaluator() : this(new LambdaParser()) {}
+
+		public ExpressionEvaluator(LambdaParser parser)
 		{
-			_serialization = serialization;
-			_assignment = assignment;
+			_parser = parser;
 		}
 
-		public override object Get(IXmlReader parameter)
-		{
-			var result = base.Get(parameter);
-
-			while (parameter.Next())
-			{
-				if (parameter.IsMember())
-				{
-					var member = _serialization.Get(parameter.Name);
-					if (member != null)
-					{
-						_assignment.Assign(parameter, member, result, member.Access);
-					}
-				}
-			}
-			return result;
-		}
+		public object Evaluate(object context, string expression)
+			=>
+				_parser.Eval(string.Concat(Context, ".", expression.TrimStart('.')),
+				             new Dictionary<string, object> {{Context, context}});
 	}
 }

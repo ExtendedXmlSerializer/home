@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
@@ -94,7 +95,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 
 		class SubjectWithInvalidConstructor
 		{
-			readonly string _message;
+			[UsedImplicitly] readonly string _message;
 
 			public SubjectWithInvalidConstructor(string message, int number)
 			{
@@ -102,7 +103,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 				_message = message;
 			}
 
-			public int Number { get; }
+			public int Number { [UsedImplicitly] get; }
 		}
 
 		class SubjectWithMultipleConstructors : ISource<string>

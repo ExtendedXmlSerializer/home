@@ -50,23 +50,23 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 
 		protected override string Create(TypeInfo parameter) => _converter.Format(Name(parameter));
 
-		ParsedName Name(TypeInfo parameter)
+		TypeParts Name(TypeInfo parameter)
 		{
 			var identity = _identities.Get(parameter);
-			var result = new ParsedName(identity.Name, _writer.Get(identity.Identifier),
-			                            parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
+			var result = new TypeParts(identity.Name, _writer.Get(identity.Identifier),
+			                           parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
 			return result;
 		}
 
-		Func<ImmutableArray<ParsedName>> Arguments(Type[] types)
+		Func<ImmutableArray<TypeParts>> Arguments(Type[] types)
 		{
 			var length = types.Length;
-			var names = new ParsedName[length];
+			var names = new TypeParts[length];
 			for (var i = 0; i < length; i++)
 			{
 				names[i] = Name(types[i].GetTypeInfo());
 			}
-			var result = new Func<ImmutableArray<ParsedName>>(names.ToImmutableArray);
+			var result = new Func<ImmutableArray<TypeParts>>(names.ToImmutableArray);
 			return result;
 		}
 	}
