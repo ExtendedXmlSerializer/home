@@ -21,54 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ActivationContext : TableSource<string, object>, IActivationContext
+	sealed class ActivationContext : IActivationContext
 	{
-		readonly ConstructorInfo _constructor;
-		readonly ImmutableArray<IMember> _members;
-		readonly IMemberAccessors _accessors;
+		readonly ITableSource<string, object> _source;
+		readonly IActivator _activator;
 
-		public ActivationContext(IMemberAccessors accessors, ConstructorInfo constructor, ImmutableArray<IMember> members)
-			: this(accessors, new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase), constructor, members) {}
-
-		public ActivationContext(IMemberAccessors accessors, IDictionary<string, object> source,
-		                         ConstructorInfo constructor, ImmutableArray<IMember> members) : base(source)
+		public ActivationContext(ITableSource<string, object> source, IActivator activator)
 		{
-			_constructor = constructor;
-			_members = members;
-			_accessors = accessors;
+			_source = source;
+			_activator = activator;
 		}
 
-		public object Get()
-		{
-			var names = _constructor.GetParameters()
-			                        .Select(x => x.Name)
-			                        .ToArray();
-			var parameters = names.Select(Get).ToArray();
-			var result = _constructor.Invoke(parameters);
-			Apply(result);
-			return result;
-		}
+		public bool IsSatisfiedBy(string parameter) => _source.IsSatisfiedBy(parameter);
 
-		void Apply(object result)
-		{
-			foreach (var member in _members)
-			{
-				if (IsSatisfiedBy(member.Name))
-				{
-					var access = _accessors.Get(member);
-					access.Assign(result, Get(member.Name));
-				}
-			}
-		}
+		public object Get(string parameter) => _source.Get(parameter);
+
+		public void Assign(string key, object value) => _source.Assign(key, value);
+
+		public object Get() => _activator.Get();
 	}
 }

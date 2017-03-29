@@ -32,13 +32,13 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	sealed class NameConverter : ConverterBase<TypeParts>, INameConverter
 	{
 		public static NameConverter Default { get; } = new NameConverter();
-		NameConverter() : this(IdentityFormatter<TypeParts>.Default, ParsedNames.Default) {}
+		NameConverter() : this(IdentityFormatter<TypeParts>.Default, TypePartsContainer.Default) {}
 
 		readonly IFormatter<TypeParts> _formatter;
-		readonly IParsedNames _names;
+		readonly ITypePartsContainer _names;
 		readonly Func<TypeParts, string> _selector;
 
-		public NameConverter(IFormatter<TypeParts> formatter, IParsedNames names)
+		public NameConverter(IFormatter<TypeParts> formatter, ITypePartsContainer names)
 		{
 			_formatter = formatter;
 			_names = names;

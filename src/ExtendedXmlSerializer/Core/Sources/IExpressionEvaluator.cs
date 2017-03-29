@@ -21,30 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
-
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	public interface IExpressionEvaluator : IParameterizedSource<string, object> {}
+
+	/*public struct Evaluation
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		// public static implicit operator Evaluation(string parameter) => new Evaluation(parameter);
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
+		public Evaluation(string expression) : this(null, expression) {}
 
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public Evaluation(object context, string expression)
 		{
-			_container = container;
-			_converter = converter;
+			Context = context;
+			Expression = expression;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
-	}
+		public object Context { get; }
+		public string Expression { get; }
+	}*/
 }

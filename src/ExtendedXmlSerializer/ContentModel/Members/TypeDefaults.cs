@@ -39,6 +39,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_activators = activators;
 		}
 
-		protected override object Create(TypeInfo parameter) => _activators.Get(parameter.AsType()).Invoke();
+		protected override object Create(TypeInfo parameter) => _activators.Get(parameter.AsType()).Get();
 	}
 }

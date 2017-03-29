@@ -28,11 +28,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionAwareSerializer : ISerializer
 	{
+		readonly IMarkupExtensionContainer _container;
 		readonly IServiceProvider _provider;
 		readonly ISerializer _serializer;
 
-		public MarkupExtensionAwareSerializer(IServiceProvider provider, ISerializer serializer)
+		public MarkupExtensionAwareSerializer(IMarkupExtensionContainer container, IServiceProvider provider,
+		                                      ISerializer serializer)
 		{
+			_container = container;
 			_provider = provider;
 			_serializer = serializer;
 		}
@@ -40,7 +43,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public object Get(IXmlReader parameter)
 		{
 			var instance = _serializer.Get(parameter);
-			var result = (instance as IMarkupExtension)?.ProvideValue(_provider) ?? instance;
+			var parts = instance as MarkupExtensionParts;
+			var result = parts != null
+				? _container.Get(parameter)
+				            .Get(parts)
+				            .ProvideValue(_provider)
+				: instance;
 			return result;
 		}
 

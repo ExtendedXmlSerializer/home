@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
@@ -33,11 +34,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	sealed class ParameterizedActivators : IActivators
 	{
 		readonly IActivators _activators;
-		readonly IParameterizedConstructors _constructors;
+		readonly IQueriedConstructors _constructors;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructorMembers _members;
 
-		public ParameterizedActivators(IActivators activators, IParameterizedConstructors constructors,
+		public ParameterizedActivators(IActivators activators, IQueriedConstructors constructors,
 		                               IConstructorMembers members, IMemberAccessors accessors)
 		{
 			_activators = activators;
@@ -46,31 +47,35 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			_accessors = accessors;
 		}
 
-		public Func<object> Get(Type parameter)
+		public IActivator Get(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
-			var constructor = _constructors.Get(parameter);
+			var constructor = _constructors.Get(typeInfo);
 			var members = constructor != null ? _members.Get(constructor) : null;
 			var result = members != null
-				? new Activator(_accessors, constructor, members.GetValueOrDefault()).ToDelegate()
+				? Activator(constructor, members.GetValueOrDefault())
 				: _activators.Get(typeInfo);
 			return result;
 		}
 
-		sealed class Activator : ISource<object>
-		{
-			readonly IMemberAccessors _accessors;
-			readonly ConstructorInfo _constructor;
-			readonly ImmutableArray<IMember> _members;
+		ActivationContextActivator Activator(ConstructorInfo constructor, ImmutableArray<IMember> members)
+			=> new ActivationContextActivator(new ActivationContexts(_accessors, members, new Source(constructor).Get));
 
-			public Activator(IMemberAccessors accessors, ConstructorInfo constructor, ImmutableArray<IMember> members)
+		sealed class Source : IParameterizedSource<Func<string, object>, IActivator>
+		{
+			readonly ConstructorInfo _constructor;
+
+			public Source(ConstructorInfo constructor)
 			{
-				_accessors = accessors;
 				_constructor = constructor;
-				_members = members;
 			}
 
-			public object Get() => new ActivationContext(_accessors, _constructor, _members);
+			public IActivator Get(Func<string, object> parameter)
+			{
+				var arguments = new Enumerable<object>(_constructor.GetParameters().Select(x => x.Name).Select(parameter));
+				var result = new ConstructedActivator(_constructor, arguments);
+				return result;
+			}
 		}
 	}
 }

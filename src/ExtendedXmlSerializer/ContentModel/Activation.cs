@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	class Activation : IActivation
+	sealed class Activation : IActivation
 	{
 		readonly IActivators _activators;
 
@@ -37,9 +37,9 @@ namespace ExtendedXmlSerializer.ContentModel
 			_activators = activators;
 		}
 
-		public IReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()));
+		public IReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()).Get);
 
-		class Activator : IReader
+		sealed class Activator : IReader
 		{
 			readonly Func<object> _activate;
 

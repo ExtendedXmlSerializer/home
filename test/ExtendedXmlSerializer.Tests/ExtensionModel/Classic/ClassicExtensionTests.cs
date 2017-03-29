@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.ExtensionModel
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Classic
 {
 	public class ClassicExtensionTests
 	{

@@ -21,37 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
+using System;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionContents : IContents
+	sealed class MarkupExtensionContainer : ReferenceCacheBase<IXmlReader, IMarkupExtensions>, IMarkupExtensionContainer
 	{
+		readonly static Func<string, object> Evaluator = ExpressionEvaluator.Default.Get;
+
+		readonly Func<string, object> _evaluator;
 		readonly ITypeParsers _parsers;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
-		readonly IServiceProvider _provider;
 		readonly IConstructors _constructors;
-		readonly IContents _contents;
 
-		public MarkupExtensionContents(ITypeParsers parsers, ITypeMembers members, IMemberAccessors accessors,
-		                               IConstructors constructors, IServiceProvider provider, IContents contents)
+		public MarkupExtensionContainer(ITypeParsers parsers, ITypeMembers members, IMemberAccessors accessors,
+		                                IConstructors constructors)
+			: this(Evaluator, parsers, members, accessors, constructors) {}
+
+		public MarkupExtensionContainer(Func<string, object> evaluator, ITypeParsers parsers, ITypeMembers members,
+		                                IMemberAccessors accessors, IConstructors constructors)
 		{
+			_evaluator = evaluator;
 			_parsers = parsers;
 			_members = members;
 			_accessors = accessors;
-			_provider = provider;
 			_constructors = constructors;
-			_contents = contents;
 		}
 
-		public ISerializer Get(TypeInfo parameter)
-			=> new MarkupExtensionAwareSerializer(new MarkupExtensionContainer(_parsers, _members, _accessors, _constructors),
-			                                      _provider, _contents.Get(parameter));
+		protected override IMarkupExtensions Create(IXmlReader parameter)
+			=> new MarkupExtensions(_evaluator, _parsers.Get(parameter), _members, _accessors, _constructors);
 	}
 }

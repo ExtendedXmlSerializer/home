@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.ExtensionModel
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Attributes
 {
 	public class AttributesExtensionTests
 	{
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		{
 			var instance = new Subject {PropertyName = "Testing"};
 			var actual = new SerializationSupport().Assert(instance,
-			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttributesExtensionTests-Subject PropertyName=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel;assembly=ExtendedXmlSerializer.Tests"" />");
+			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttributesExtensionTests-Subject PropertyName=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Attributes;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(instance.PropertyName, actual.PropertyName);
 		}
 
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		{
 			var expected = new SubjectWithName {PropertyName = "Testing"};
 			var actual = new SerializationSupport().Assert(expected,
-														   @"<?xml version=""1.0"" encoding=""utf-8""?><AttributesExtensionTests-SubjectWithName AnotherDifferentName=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel;assembly=ExtendedXmlSerializer.Tests"" />");
+														   @"<?xml version=""1.0"" encoding=""utf-8""?><AttributesExtensionTests-SubjectWithName AnotherDifferentName=""Testing"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Attributes;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(expected.PropertyName, actual.PropertyName);
 		}
 

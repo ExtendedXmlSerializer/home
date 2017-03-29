@@ -30,7 +30,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	sealed class Activators : ReferenceCacheBase<Type, Func<object>>, IActivators
+	sealed class Activators : ReferenceCacheBase<Type, IActivator>, IActivators
 	{
 		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
 
@@ -44,15 +44,13 @@ namespace ExtendedXmlSerializer.TypeModel
 			_locator = locator;
 		}
 
-		public T New<T>() => (T) Get(typeof(T)).Invoke();
-
-		protected override Func<object> Create(Type parameter)
+		protected override IActivator Create(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
 			var expression = typeInfo.IsValueType ? Expression.New(parameter) : Reference(parameter, typeInfo);
 			var convert = Expression.Convert(expression, typeof(object));
 			var lambda = Expression.Lambda<Func<object>>(convert);
-			var result = lambda.Compile();
+			var result = new Activator(lambda.Compile());
 			return result;
 		}
 
@@ -66,7 +64,7 @@ namespace ExtendedXmlSerializer.TypeModel
 			return result;
 		}
 
-		class DefaultParameters : IParameterizedSource<ParameterInfo, Expression>
+		sealed class DefaultParameters : IParameterizedSource<ParameterInfo, Expression>
 		{
 			readonly static IEnumerable<Expression> Initializers = Enumerable.Empty<Expression>();
 

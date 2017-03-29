@@ -29,10 +29,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	sealed class ParameterizedMembers : IParameterizedMembers
 	{
-		readonly IParameterizedConstructors _constructors;
+		readonly IQueriedConstructors _constructors;
 		readonly IConstructorMembers _members;
 
-		public ParameterizedMembers(IParameterizedConstructors constructors, IConstructorMembers members)
+		public ParameterizedMembers(IQueriedConstructors constructors, IConstructorMembers members)
 		{
 			_constructors = constructors;
 			_members = members;

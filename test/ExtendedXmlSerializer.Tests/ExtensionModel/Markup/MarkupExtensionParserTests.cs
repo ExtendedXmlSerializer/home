@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 using ExtendedXmlSerializer.Core;
@@ -36,16 +37,25 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void Type()
 		{
 			const string text = "{x:Testing}";
-			var parts = MarkupExtensionParser.Default.Get(text);
+			var parts = MarkupExtensionPartsContainer.Default.Get(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should().BeEmpty();
+		}
+
+		[Fact]
+		public void Other()
+		{
+			var sut = MarkupExtensionPartsContainer.Default;
+			sut.Get("12345").Should().BeNull();
+			sut.Invoking(x => x.Get("{x:Partial"))
+			   .ShouldThrow<InvalidOperationException>();
 		}
 
 		[Fact]
 		public void VerifySpaced()
 		{
 			const string text = "{x:Testing }";
-			var parts = MarkupExtensionParser.Default.Get(text);
+			var parts = MarkupExtensionPartsContainer.Default.Get(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should().BeEmpty();
 		}
@@ -54,7 +64,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyArguments()
 		{
 			const string text = "{x:Testing 'one', 12345, ' two ', '{}This is an escaped {} literal.', 3 * 3}";
-			var parts = MarkupExtensionParser.Default.Get(text);
+			var parts = MarkupExtensionPartsContainer.Default.Get(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments
 			     .Should().HaveCount(5)
@@ -67,7 +77,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyProperties()
 		{
 			const string text = "{x:Testing MemberName='Value'}";
-			var parts = MarkupExtensionParser.Default.Get(text);
+			var parts = MarkupExtensionPartsContainer.Default.Get(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should().BeEmpty();
 			parts.Properties.ShouldBeEquivalentTo(new Dictionary<string, string> {{"MemberName", "Value".Quoted()}});
@@ -77,7 +87,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyArgumentsAndProperties()
 		{
 			const string text = "{x:Testing 'one', 12345, ' two ', MemberName='Value', MemberTwo = 3 + 4}";
-			var parts = MarkupExtensionParser.Default.Get(text);
+			var parts = MarkupExtensionPartsContainer.Default.Get(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should().HaveCount(3).And.BeEquivalentTo("one".Quoted(), "12345", " two ".Quoted());
 			parts.Properties.ShouldBeEquivalentTo(new Dictionary<string, string>

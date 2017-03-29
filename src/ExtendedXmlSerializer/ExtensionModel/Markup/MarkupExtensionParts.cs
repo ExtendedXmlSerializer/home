@@ -27,9 +27,10 @@ using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	struct MarkupExtensionParts
+	public sealed class MarkupExtensionParts
 	{
-		public MarkupExtensionParts(TypeParts type, ImmutableArray<string> arguments, IDictionary<string, string> properties)
+		public MarkupExtensionParts(TypeParts type, ImmutableArray<string> arguments,
+		                            ImmutableArray<KeyValuePair<string, string>> properties)
 		{
 			Type = type;
 			Arguments = arguments;
@@ -38,6 +39,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		public TypeParts Type { get; }
 		public ImmutableArray<string> Arguments { get; }
-		public IDictionary<string, string> Properties { get; }
+		public ImmutableArray<KeyValuePair<string, string>> Properties { get; }
 	}
 }

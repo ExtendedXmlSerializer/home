@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -32,6 +31,7 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
+using Activator = System.Activator;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {

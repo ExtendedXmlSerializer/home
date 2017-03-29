@@ -21,30 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.TypeModel
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	sealed class ConstructedActivator : IActivator
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		readonly ConstructorInfo _constructor;
+		readonly IEnumerable<object> _arguments;
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
-
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public ConstructedActivator(ConstructorInfo constructor, IEnumerable<object> arguments)
 		{
-			_container = container;
-			_converter = converter;
+			_constructor = constructor;
+			_arguments = arguments;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
+		public object Get() => _constructor.Invoke(_arguments.ToArray());
 	}
 }

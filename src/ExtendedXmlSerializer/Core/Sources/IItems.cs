@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class ParameterizedConstructors : Cache<TypeInfo, ConstructorInfo>, IParameterizedConstructors
-	{
-		public ParameterizedConstructors(IValidConstructorSpecification specification, IConstructors constructors)
-			: base(new ConstructorLocator(specification, new ConstructorCandidates(constructors)).Get) {}
-	}
+	public interface IItems<T> : IEnumerable<T>, ISource<ImmutableArray<T>> {}
 }

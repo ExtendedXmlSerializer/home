@@ -22,15 +22,15 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.Core;
+using System.Collections.Immutable;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class Properties : FixedParser<IDictionary<string, string>>
+	sealed class Properties : FixedParser<ImmutableArray<KeyValuePair<string, string>>>
 	{
 		public Properties(Parser<KeyValuePair<string, string>> property)
-			: base(new ItemsParser<KeyValuePair<string, string>>(property).Get().Select(x => x.ToDictionary())) {}
+			: base(new ItemsParser<KeyValuePair<string, string>>(property).Get().Select(x => x.ToImmutableArray())) {}
 	}
 }

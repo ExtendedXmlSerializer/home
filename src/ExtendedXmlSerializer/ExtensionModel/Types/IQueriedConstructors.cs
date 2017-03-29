@@ -21,19 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ParameterizedConstructorAlteration : IAlteration<IEnumerable<ConstructorInfo>>
-	{
-		public static ParameterizedConstructorAlteration Default { get; } = new ParameterizedConstructorAlteration();
-		ParameterizedConstructorAlteration() {}
-
-		public IEnumerable<ConstructorInfo> Get(IEnumerable<ConstructorInfo> parameter)
-			=> parameter.OrderByDescending(c => c.GetParameters().Length);
-	}
+	public interface IQueriedConstructors : IConstructorLocator {}
 }

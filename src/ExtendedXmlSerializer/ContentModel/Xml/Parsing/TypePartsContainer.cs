@@ -25,9 +25,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Parsing
 {
-	sealed class ParsedNames : Cache<string, TypeParts>, IParsedNames
+	sealed class TypePartsContainer : Cache<string, TypeParts>, ITypePartsContainer
 	{
-		public static ParsedNames Default { get; } = new ParsedNames();
-		ParsedNames() : base(TypePartsParser.Default.Get) {}
+		public static TypePartsContainer Default { get; } = new TypePartsContainer();
+		TypePartsContainer() : base(TypePartsParser.Default.Get) {}
 	}
 }

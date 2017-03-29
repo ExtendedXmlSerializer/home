@@ -27,7 +27,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public abstract class ItemsBase<T> : IEnumerable<T>, ISource<ImmutableArray<T>>
+	public abstract class ItemsBase<T> : IItems<T>
 	{
 		public virtual ImmutableArray<T> Get() => this.ToImmutableArray();
 

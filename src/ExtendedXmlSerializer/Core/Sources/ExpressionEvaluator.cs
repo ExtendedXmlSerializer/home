@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	public sealed class ExpressionEvaluator : IExpressionEvaluator
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		public static ExpressionEvaluator Default { get; } = new ExpressionEvaluator();
+		ExpressionEvaluator() : this(new LambdaParser()) {}
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
+		readonly LambdaParser _parser;
 
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public ExpressionEvaluator(LambdaParser parser)
 		{
-			_container = container;
-			_converter = converter;
+			_parser = parser;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
+		public object Get(string parameter)
+		{
+			try
+			{
+				return _parser.Eval(parameter, x => null);
+			}
+			catch (LambdaParserException)
+			{
+				return _parser.Eval(parameter.Quoted(), x => null);
+			}
+		}
 	}
 }

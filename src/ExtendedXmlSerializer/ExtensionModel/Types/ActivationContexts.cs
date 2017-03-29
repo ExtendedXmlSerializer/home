@@ -21,15 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ConstructorCandidates : AlteredSource<TypeInfo, IEnumerable<ConstructorInfo>>, IConstructors
+	sealed class ActivationContexts : IActivationContexts
 	{
-		public ConstructorCandidates(IConstructors source) : base(ParameterizedConstructorAlteration.Default, source) {}
+		readonly IMemberAccessors _accessors;
+		readonly ImmutableArray<IMember> _members;
+		readonly Func<Func<string, object>, IActivator> _activator;
+
+		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members, IActivator activator)
+			: this(accessors, members, activator.Accept) {}
+
+		public ActivationContexts(IMemberAccessors accessors, ImmutableArray<IMember> members,
+		                          Func<Func<string, object>, IActivator> activator)
+		{
+			_accessors = accessors;
+			_members = members;
+			_activator = activator;
+		}
+
+		public IActivationContext Get(IDictionary<string, object> parameter)
+		{
+			var source = new TableSource<string, object>(parameter);
+			var command = new ApplyMemberValuesCommand(_accessors, _members, source);
+			var alteration = new ConfiguringAlteration<object>(command);
+			var activator = new AlteringActivator(alteration, _activator.Invoke(source.Get));
+			var result = new ActivationContext(source, activator);
+			return result;
+		}
 	}
 }

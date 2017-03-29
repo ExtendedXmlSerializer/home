@@ -21,30 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	sealed class DescendingConstructorQuery : IAlteration<IEnumerable<ConstructorInfo>>
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		public static DescendingConstructorQuery Default { get; } = new DescendingConstructorQuery();
+		DescendingConstructorQuery() {}
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
-
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
-		{
-			_container = container;
-			_converter = converter;
-		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
+		public IEnumerable<ConstructorInfo> Get(IEnumerable<ConstructorInfo> parameter)
+			=> parameter.OrderByDescending(c => c.GetParameters().Length);
 	}
 }

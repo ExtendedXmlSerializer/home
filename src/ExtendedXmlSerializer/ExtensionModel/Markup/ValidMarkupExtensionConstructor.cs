@@ -21,30 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	sealed class ValidMarkupExtensionConstructor : IValidConstructorSpecification
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		readonly ImmutableArray<object> _values;
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
-
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public ValidMarkupExtensionConstructor(ImmutableArray<object> values)
 		{
-			_container = container;
-			_converter = converter;
+			_values = values;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
+		public bool IsSatisfiedBy(ConstructorInfo parameter)
+		{
+			var parameters = parameter.GetParameters().Select(x => x.ParameterType.GetTypeInfo()).ToArray();
+			var result = parameters.Length == _values.Length &&
+			             parameters.Zip(_values.ToArray(), (type, o) => type.IsInstanceOfType(o))
+			                       .All(x => x);
+			return result;
+		}
 	}
 }

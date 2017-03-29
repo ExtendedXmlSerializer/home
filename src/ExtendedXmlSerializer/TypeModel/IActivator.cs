@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core
+using ExtendedXmlSerializer.Core.Sources;
+
+namespace ExtendedXmlSerializer.TypeModel
 {
-	public interface IExpressionEvaluator
-	{
-		object Evaluate(object context, string expression);
-	}
+	public interface IActivator : ISource<object> {}
 }

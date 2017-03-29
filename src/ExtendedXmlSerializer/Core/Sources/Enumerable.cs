@@ -21,30 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Converters;
+using System.Collections.Generic;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	public sealed class Enumerable<T> : ItemsBase<T>
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		readonly IEnumerable<T> _enumerable;
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
-
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
-
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public Enumerable(IEnumerable<T> enumerable)
 		{
-			_container = container;
-			_converter = converter;
+			_enumerable = enumerable;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
-
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
-
-		public string Format(object instance) => _converter.Format(instance);
+		public override IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
 	}
 }

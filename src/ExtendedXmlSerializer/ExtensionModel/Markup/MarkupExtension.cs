@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,29 +22,38 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionAwareConverter : IConverter
+	public sealed class MarkupExtension : ISerializerExtension
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
+		readonly static AlwaysSpecification<MemberInfo> Always = AlwaysSpecification<MemberInfo>.Default;
 
-		readonly IMarkupExtensionPartsContainer _container;
-		readonly IConverter _converter;
+		public static MarkupExtension Default { get; } = new MarkupExtension();
+		MarkupExtension() : this(MarkupExtensionConverterAlteration.Default) {}
 
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
+		readonly IAlteration<IConverter> _alteration;
 
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public MarkupExtension(IAlteration<IConverter> alteration)
 		{
-			_container = container;
-			_converter = converter;
+			_alteration = alteration;
 		}
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Decorate<ISerializers, MarkupExtensionSerializers>()
+			            .Decorate<IContents, MarkupExtensionContents>()
+			            .Decorate<IMemberConverters>(Register);
 
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
+		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
+			=> new AlteredMemberConverters(Always, _alteration, converters);
 
-		public string Format(object instance) => _converter.Format(instance);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

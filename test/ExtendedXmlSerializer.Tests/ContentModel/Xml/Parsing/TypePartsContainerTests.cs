@@ -32,7 +32,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 {
-	public class ParsedNamesTests
+	public class TypePartsContainerTests
 	{
 		const string
 			Type = "SomeType",
@@ -43,13 +43,13 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 
 		[Fact]
 		public void Local()
-			=> Assert.Equal(new TypeParts("SomeType"), ParsedNames.Default.Get(Type), ParsedNameEqualityComparer.Default);
+			=> Assert.Equal(new TypeParts("SomeType"), TypePartsContainer.Default.Get(Type), ParsedNameEqualityComparer.Default);
 
 		[Fact]
 		public void Qualified()
 		{
 			var expected = new TypeParts("SomeType", "ns1");
-			var identity = ParsedNames.Default.Get(QualifiedType);
+			var identity = TypePartsContainer.Default.Get(QualifiedType);
 			Assert.Equal(expected, identity, ParsedNameEqualityComparer.Default);
 		}
 
@@ -63,7 +63,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 				                                                      new TypeParts("SomeOtherType", "ns4")
 			                                                      }.ToImmutableArray);
 
-			var actual = ParsedNames.Default.Get(GenericType);
+			var actual = TypePartsContainer.Default.Get(GenericType);
 			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
 			Assert.Equal(GenericType.Replace(" ", ""), NameConverter.Default.Format(actual));
 		}
@@ -83,7 +83,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml.Parsing
 				                                                              new TypeParts("SomeOtherType", "ns40")
 			                                                              }.ToImmutableArray);
 
-			var actual = ParsedNames.Default.Get(CompoundGenericType);
+			var actual = TypePartsContainer.Default.Get(CompoundGenericType);
 			Assert.Equal(CompoundGenericType.Replace(" ", ""), NameConverter.Default.Format(actual));
 			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
 		}

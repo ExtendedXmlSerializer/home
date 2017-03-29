@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
@@ -39,29 +38,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			PropertyDelimiter = '=',
 			Item = Core.Sources.Defaults.ItemDelimiter;
 
-		readonly static Tuple<ImmutableArray<string>, IDictionary<string, string>> DefaultValue =
-			new Tuple<ImmutableArray<string>, IDictionary<string, string>>(ImmutableArray<string>.Empty,
-			                                                               new ReadOnlyDictionary<string, string>(
-				                                                               new Dictionary<string, string>()));
+		readonly static Tuple<ImmutableArray<string>, ImmutableArray<KeyValuePair<string, string>>> DefaultValue =
+			Tuple.Create(ImmutableArray<string>.Empty, ImmutableArray<KeyValuePair<string, string>>.Empty);
 
 		readonly static Expression Expression = new Expression(Item.Character, Finish.Character);
 
-		readonly static Parser<Tuple<ImmutableArray<string>, IDictionary<string, string>>> DefaultReturn
-			= Parse.String(string.Empty).Return(DefaultValue);
+		readonly static Parser<Tuple<ImmutableArray<string>, ImmutableArray<KeyValuePair<string, string>>>>
+			DefaultReturn = Parse.String(string.Empty).Return(DefaultValue);
 
 		public static MarkupExtensionParser Default { get; } = new MarkupExtensionParser();
-
 		MarkupExtensionParser() : this(Item, Expression, new Property(PropertyDelimiter, Expression)) {}
 
 		public MarkupExtensionParser(Parser<char> item, Parser<string> arguments,
 		                             Parser<KeyValuePair<string, string>> property)
-			: this(
-				Start, TypePartsParser.Default, item, new Arguments(property.Not().Then(arguments.Accept)), new Properties(property),
-				Finish) {}
+			: this(Start, TypePartsParser.Default, item, new Arguments(property.Not().Then(arguments.Accept)),
+			       new Properties(property), Finish) {}
 
 		public MarkupExtensionParser(Parser<char> start, Parser<TypeParts> type, Parser<char> item,
-		                             Parser<ImmutableArray<string>> arguments, Parser<IDictionary<string, string>> properties,
-		                             Parser<char> finish)
+		                             Parser<ImmutableArray<string>> arguments,
+		                             Parser<ImmutableArray<KeyValuePair<string, string>>> properties, Parser<char> finish)
 			: base(
 				type.SelectMany(
 					    Parse.WhiteSpace.AtLeastOnce().Then(
@@ -74,7 +69,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 					    (t, a) =>
 					    {
 						    var construction = a.GetOrElse(DefaultValue);
-						    return new MarkupExtensionParts(t, construction.Item1, construction.Item2);
+						    var result = new MarkupExtensionParts(t, construction.Item1, construction.Item2);
+						    return result;
 					    }
 				    )
 				    .Contained(start, finish)) {}

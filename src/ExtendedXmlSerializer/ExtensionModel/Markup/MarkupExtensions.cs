@@ -1,18 +1,18 @@
-﻿// MIT License
-//
-// Copyright (c) 2016 Wojciech Nagórski
+// MIT License
+// 
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,39 +21,61 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Converters;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public sealed class MarkupExtensions : ISerializerExtension
+	sealed class MarkupExtensions : ReferenceCacheBase<MarkupExtensionParts, IMarkupExtension>, IMarkupExtensions
 	{
-		readonly static AlwaysSpecification<MemberInfo> Always = AlwaysSpecification<MemberInfo>.Default;
+		readonly Func<string, object> _evaluator;
+		readonly ITypeParser _parser;
+		readonly ITypeMembers _members;
+		readonly IMemberAccessors _accessors;
+		readonly IConstructors _constructors;
+		readonly Func<KeyValuePair<string, string>, object> _selector;
 
-		public static MarkupExtensions Default { get; } = new MarkupExtensions();
-		MarkupExtensions() : this(MarkupExtensionConverterAlteration.Default) {}
-
-		readonly IAlteration<IConverter> _alteration;
-
-		public MarkupExtensions(IAlteration<IConverter> alteration)
+		public MarkupExtensions(Func<string, object> evaluator, ITypeParser parser, ITypeMembers members,
+		                        IMemberAccessors accessors, IConstructors constructors)
 		{
-			_alteration = alteration;
+			_evaluator = evaluator;
+			_parser = parser;
+			_members = members;
+			_accessors = accessors;
+			_constructors = constructors;
+			_selector = Create;
 		}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<ISerializers, MarkupExtensionSerializers>()
-			            .Decorate<IContents, MarkupExtensionContents>()
-			            .Decorate<IMemberConverters>(Register);
+		object Create(KeyValuePair<string, string> arg) => _evaluator.Invoke(arg.Value);
 
-		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
-			=> new AlteredMemberConverters(Always, _alteration, converters);
+		protected override IMarkupExtension Create(MarkupExtensionParts parameter)
+		{
+			var values = parameter.Arguments.Select(_evaluator).ToArray();
+			var specification = new ValidMarkupExtensionConstructor(values.ToImmutableArray());
+			var constructors = new QueriedConstructors(specification, _constructors);
+			var type = _parser.Get(parameter.Type);
+			var constructor = constructors.Get(type);
+			if (constructor == null)
+			{
+				throw new InvalidOperationException(
+					$"An attempt was made to describe a markup extension with two parameters with the values '{string.Join(", ", values)}', but a constructor could not be found on the markup extension type that takes the following types in order: '{string.Join(", ", values.Select(x => x?.GetType()))}'.");
+			}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+			var dictionary = parameter.Properties.ToDictionary(x => x.Key, _selector);
+			var activator = new ConstructedActivator(constructor, values);
+			var result = new ActivationContexts(_accessors, _members.Get(type), activator)
+				.Get(dictionary)
+				.Get()
+				.AsValid<IMarkupExtension>();
+			return result;
+		}
 	}
 }

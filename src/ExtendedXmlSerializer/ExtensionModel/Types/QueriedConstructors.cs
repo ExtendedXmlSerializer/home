@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.Core
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public class ExpressionEvaluator : IExpressionEvaluator
+	sealed class QueriedConstructors : Cache<TypeInfo, ConstructorInfo>, IQueriedConstructors
 	{
-		const string Context = "context";
-
-		readonly LambdaParser _parser;
-
-		public static IExpressionEvaluator Default { get; } = new ExpressionEvaluator();
-
-		public ExpressionEvaluator() : this(new LambdaParser()) {}
-
-		public ExpressionEvaluator(LambdaParser parser)
-		{
-			_parser = parser;
-		}
-
-		public object Evaluate(object context, string expression)
-			=>
-				_parser.Eval(string.Concat(Context, ".", expression.TrimStart('.')),
-				             new Dictionary<string, object> {{Context, context}});
+		public QueriedConstructors(IValidConstructorSpecification specification, IConstructors constructors)
+			: base(new ConstructorLocator(specification, new ConstructorQuery(constructors)).Get) {}
 	}
 }

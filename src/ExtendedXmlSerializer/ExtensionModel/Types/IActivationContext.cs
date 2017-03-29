@@ -22,8 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface IActivationContext : ITableSource<string, object>, ISource<object> {}
+	public interface IActivationContext : ITableSource<string, object>, IActivator {}
 }

@@ -29,16 +29,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionSerializers : ISerializers
 	{
-		readonly IServiceProvider _provider;
 		readonly IContents _contents;
 
-		public MarkupExtensionSerializers(IServiceProvider provider, IContents contents)
+		public MarkupExtensionSerializers(IContents contents)
 		{
-			_provider = provider;
 			_contents = contents;
 		}
 
-		public ISerializer Get(TypeInfo parameter)
-			=> new MarkupExtensionAwareSerializer(_provider, _contents.Get(parameter));
+		public ISerializer Get(TypeInfo parameter) => _contents.Get(parameter);
 	}
 }
