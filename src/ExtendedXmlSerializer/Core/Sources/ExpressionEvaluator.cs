@@ -21,31 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
+using System;
+using Z.Expressions;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	public sealed class ExpressionEvaluator : IExpressionEvaluator
 	{
 		public static ExpressionEvaluator Default { get; } = new ExpressionEvaluator();
-		ExpressionEvaluator() : this(new LambdaParser()) {}
-
-		readonly LambdaParser _parser;
-
-		public ExpressionEvaluator(LambdaParser parser)
-		{
-			_parser = parser;
-		}
+		ExpressionEvaluator() {}
 
 		public object Get(string parameter)
 		{
 			try
 			{
-				return _parser.Eval(parameter, x => null);
+				return Eval.Compile(parameter).Invoke();
 			}
-			catch (LambdaParserException)
+			catch (Exception)
 			{
-				return _parser.Eval(parameter.Quoted(), x => null);
+				return Eval.Compile(parameter.Quoted()).Invoke();
 			}
 		}
 	}

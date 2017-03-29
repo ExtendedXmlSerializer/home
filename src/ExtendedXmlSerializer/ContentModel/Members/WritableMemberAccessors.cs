@@ -46,6 +46,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		}
 
 		public IMemberAccess Get(IMember parameter)
-			=> new MemberAccess(_emit.Get(parameter.Metadata), _getter.Get(parameter.Metadata), _setter.Get(parameter.Metadata));
+			=>
+				new MemberAccess(_emit.Get(parameter.Metadata), _getter.Get(parameter.Metadata), _setter.Get(parameter.Metadata)
+					/*new TypeAwareSetter(parameter.MemberType.AsType(), _setter.Get(parameter.Metadata)).Set*/);
 	}
 }

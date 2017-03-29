@@ -51,8 +51,9 @@
         }
     }
   },
-  "dependencies": {
-    "JetBrains.Annotations": "10.2.1",
-    "System.Collections.Immutable": "1.3.0"
-  }
+    "dependencies": {
+        "JetBrains.Annotations": "10.2.1",
+        "Z.Expressions.Eval": "2.0.3",
+        "System.Collections.Immutable": "1.3.0"
+    }
 }

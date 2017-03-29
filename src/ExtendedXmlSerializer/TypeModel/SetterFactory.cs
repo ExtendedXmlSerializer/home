@@ -27,7 +27,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	class SetterFactory : ISetterFactory
+	sealed class SetterFactory : ISetterFactory
 	{
 		public static SetterFactory Default { get; } = new SetterFactory();
 		SetterFactory() {}

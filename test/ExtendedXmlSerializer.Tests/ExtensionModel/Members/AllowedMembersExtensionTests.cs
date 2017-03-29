@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
 {
 	public class AllowedMembersExtensionTests
 	{

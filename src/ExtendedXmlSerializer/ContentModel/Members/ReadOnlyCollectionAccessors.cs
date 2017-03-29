@@ -45,7 +45,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			: base(
 				new MemberTypeSpecification(
 					IsCollectionTypeSpecification.Default.And(
-
 						new DelegatedAssignedSpecification<TypeInfo, Action<object, object>>(add.Get)))
 			)
 		{
@@ -56,7 +55,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public override IMemberAccess Get(IMember parameter)
 			=>
-				new ReadOnlyCollectionMemberAccess(new MemberAccess(_emit.Get(parameter.Metadata), _getter.Get(parameter.Metadata),
+				new ReadOnlyCollectionMemberAccess(new MemberAccess(_emit.Get(parameter.Metadata),
+				                                                    _getter.Get(parameter.Metadata),
 				                                                    _add.Get(parameter.MemberType)));
 	}
 }
