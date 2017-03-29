@@ -21,38 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Converters;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public sealed class MarkupExtension : ISerializerExtension
 	{
-		readonly static AlwaysSpecification<MemberInfo> Always = AlwaysSpecification<MemberInfo>.Default;
-
 		public static MarkupExtension Default { get; } = new MarkupExtension();
-		MarkupExtension() : this(MarkupExtensionConverterAlteration.Default) {}
-
-		readonly IAlteration<IConverter> _alteration;
-
-		public MarkupExtension(IAlteration<IConverter> alteration)
-		{
-			_alteration = alteration;
-		}
+		MarkupExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<ISerializers, MarkupExtensionSerializers>()
-			            .Decorate<IContents, MarkupExtensionContents>()
-			            .Decorate<IMemberConverters>(Register);
-
-		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
-			=> new AlteredMemberConverters(Always, _alteration, converters);
+			=> parameter.Register<IMarkupExtensionContainer, MarkupExtensionContainer>()
+			            .Register<IMarkupExtensionEnhancer, MarkupExtensionEnhancer>()
+			            .Decorate<ISerializers, MarkupExtensionSerializers>()
+			            .Decorate<IContents, MarkupExtensionContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

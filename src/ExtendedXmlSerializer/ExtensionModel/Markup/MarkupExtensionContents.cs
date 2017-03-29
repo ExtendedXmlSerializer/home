@@ -24,34 +24,20 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionContents : IContents
 	{
-		readonly ITypeParsers _parsers;
-		readonly ITypeMembers _members;
-		readonly IMemberAccessors _accessors;
-		readonly IServiceProvider _provider;
-		readonly IConstructors _constructors;
+		readonly IMarkupExtensionEnhancer _enhancer;
 		readonly IContents _contents;
 
-		public MarkupExtensionContents(ITypeParsers parsers, ITypeMembers members, IMemberAccessors accessors,
-		                               IConstructors constructors, IServiceProvider provider, IContents contents)
+		public MarkupExtensionContents(IMarkupExtensionEnhancer enhancer, IContents contents)
 		{
-			_parsers = parsers;
-			_members = members;
-			_accessors = accessors;
-			_provider = provider;
-			_constructors = constructors;
+			_enhancer = enhancer;
 			_contents = contents;
 		}
 
-		public ISerializer Get(TypeInfo parameter)
-			=> new MarkupExtensionAwareSerializer(new MarkupExtensionContainer(_parsers, _members, _accessors, _constructors),
-			                                      _provider, _contents.Get(parameter));
+		public ISerializer Get(TypeInfo parameter) => _enhancer.Get(_contents.Get(parameter));
 	}
 }

@@ -25,40 +25,48 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Converters
 {
-	sealed class Converters : CacheBase<TypeInfo, IConverter>, IConverters
+	sealed class Converters : DecoratedOption<TypeInfo, IConverter>, IConverters
 	{
-		readonly ImmutableArray<IConverter> _converters;
-		readonly ImmutableArray<IConverterSource> _sources;
-
 		public Converters(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
-		{
-			_converters = converters.ToImmutableArray();
-			_sources = sources.ToImmutableArray();
-		}
+			: this(new Implementation(converters.ToImmutableArray(), sources.ToImmutableArray())) {}
 
-		public new bool IsSatisfiedBy(TypeInfo parameter) => Get(parameter) != null;
+		Converters(IParameterizedSource<TypeInfo, IConverter> source)
+			: base(new DelegatedAssignedSpecification<TypeInfo, IConverter>(source.Get), source) {}
 
-		protected override IConverter Create(TypeInfo parameter)
+		sealed class Implementation : CacheBase<TypeInfo, IConverter>
 		{
-			foreach (var converter in _converters)
+			readonly ImmutableArray<IConverter> _converters;
+			readonly ImmutableArray<IConverterSource> _sources;
+
+			public Implementation(ImmutableArray<IConverter> converters, ImmutableArray<IConverterSource> sources)
 			{
-				if (converter.IsSatisfiedBy(parameter))
-				{
-					return converter;
-				}
+				_converters = converters;
+				_sources = sources;
 			}
 
-			foreach (var source in _sources)
+			protected override IConverter Create(TypeInfo parameter)
 			{
-				if (source.IsSatisfiedBy(parameter))
+				foreach (var converter in _converters)
 				{
-					return source.Get(parameter);
+					if (converter.IsSatisfiedBy(parameter))
+					{
+						return converter;
+					}
 				}
+
+				foreach (var source in _sources)
+				{
+					if (source.IsSatisfiedBy(parameter))
+					{
+						return source.Get(parameter);
+					}
+				}
+				return null;
 			}
-			return null;
 		}
 	}
 }

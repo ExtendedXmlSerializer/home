@@ -28,15 +28,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Attributes;
-using ExtendedXmlSerializer.ExtensionModel.Classic;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.Markup;
+using ExtendedXmlSerializer.ExtensionModel.Members;
 using ExtendedXmlSerializer.ExtensionModel.References;
-using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -45,6 +49,22 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		public static IConfiguration EnableClassicMode(this IConfiguration @this)
 			=> @this.Emit(EmitBehaviors.Classic).Extend(ClassicExtension.Default);
+
+		public static IConfiguration Alter(this IConfiguration @this, IAlteration<IConverter> alteration)
+		{
+			@this.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
+			return @this;
+		}
+
+		public static IConfiguration EnableMarkupExtensions(this IConfiguration @this)
+			=> @this.Alter(MarkupExtensionConverterAlteration.Default)
+			        .Extend(MarkupExtension.Default);
+
+		public static IConfiguration OptimizeConverters(this IConfiguration @this)
+			=> OptimizeConverters(@this, new Optimizations());
+
+		public static IConfiguration OptimizeConverters(this IConfiguration @this, Optimizations optimizations)
+			=> @this.Alter(optimizations);
 
 		public static IConfiguration Apply<T>(this IConfiguration @this)
 			where T : class, ISerializerExtension => Apply(@this, Support<T>.New);
@@ -126,20 +146,20 @@ namespace ExtendedXmlSerializer.Configuration
 		public static IMemberConfiguration Attribute<T, TMember>(
 			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Configuration.With<AttributesExtension>().Specifications[@this.Get()] =
+			@this.Configuration.With<MemberFormatExtension>().Specifications[@this.Get()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
 		public static IMemberConfiguration Attribute(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<AttributesExtension>().Registered.Add(@this.Get());
+			@this.Configuration.With<MemberFormatExtension>().Registered.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Content(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<AttributesExtension>().Registered.Remove(@this.Get());
+			@this.Configuration.With<MemberFormatExtension>().Registered.Remove(@this.Get());
 			return @this;
 		}
 
@@ -252,11 +272,11 @@ namespace ExtendedXmlSerializer.Configuration
 		public static IConfiguration UseEncryptionAlgorithm(this IConfiguration @this, IEncryption encryption)
 			=> @this.Extend(new EncryptionExtension(new EncryptionConverterAlteration(encryption)));
 
-		public static IConfiguration UseAutoProperties(this IConfiguration @this)
-			=> @this.Extend(AutoAttributesExtension.Default);
+		public static IConfiguration UseAutoFormatting(this IConfiguration @this)
+			=> @this.Extend(AutoMemberFormatExtension.Default);
 
-		public static IConfiguration UseAutoProperties(this IConfiguration @this, int maxTextLength)
-			=> @this.Extend(new AutoAttributesExtension(maxTextLength));
+		public static IConfiguration UseAutoFormatting(this IConfiguration @this, int maxTextLength)
+			=> @this.Extend(new AutoMemberFormatExtension(maxTextLength));
 
 		public static IConfiguration UseOptimizedNamespaces(this IConfiguration @this)
 			=> @this.Extend(OptimizedNamespaceExtension.Default);

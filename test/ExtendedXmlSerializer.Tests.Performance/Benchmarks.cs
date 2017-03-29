@@ -29,7 +29,6 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Performance.Model;
 
 namespace ExtendedXmlSerializer.Tests.Performance
@@ -62,7 +61,7 @@ namespace ExtendedXmlSerializer.Tests.Performance
 	{
 		readonly IExtendedXmlSerializer _serializer =
 			new ExtendedConfiguration().EnableClassicMode()
-			                           .Extend(new OptimizedConvertersExtension())
+			                           .OptimizeConverters()
 			                           .Create();
 
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();

@@ -23,9 +23,11 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Attributes;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Members;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -40,13 +42,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return ContentModelExtension.Default;
 			yield return TypeModelExtension.Default;
 			yield return XmlSerializationExtension.Default;
-			yield return RegisteredConvertersExtension.Default;
+			yield return new ConverterRegistryExtension();
 			yield return MemberModelExtension.Default;
 			yield return new TypeNamesExtension();
 			yield return new MemberPropertiesExtension();
 			yield return new AllowedMembersExtension();
 			yield return new AllowedMemberValuesExtension();
-			yield return new AttributesExtension();
+			yield return new MemberFormatExtension();
 			yield return SerializationExtension.Default;
 		}
 	}

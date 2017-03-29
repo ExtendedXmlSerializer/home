@@ -25,10 +25,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Attributes;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using JetBrains.Annotations;
@@ -177,7 +176,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
 			                          .Member(nameof(SimpleTestSubject.BasicProperty))
 			                          .Get();
-			Assert.True(configuration.With<AttributesExtension>().Registered.Contains(member));
+			Assert.True(configuration.With<MemberFormatExtension>().Registered.Contains(member));
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,

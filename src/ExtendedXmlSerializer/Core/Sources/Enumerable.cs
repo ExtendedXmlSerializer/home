@@ -25,7 +25,12 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public sealed class Enumerable<T> : ItemsBase<T>
+	/*public sealed class AlteredEnumerable<T> : Enumerable<T>
+	{
+		public AlteredEnumerable(IAlteration<T> alteration, IEnumerable<T> enumerable) : base(enumerable.Select(alteration.Get)) {}
+	}*/
+
+	public class Enumerable<T> : ItemsBase<T>
 	{
 		readonly IEnumerable<T> _enumerable;
 
@@ -34,6 +39,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_enumerable = enumerable;
 		}
 
-		public override IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
+		public sealed override IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
 	}
 }

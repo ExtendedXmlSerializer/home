@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ExtensionModel.Markup;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
@@ -30,7 +31,20 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void Verify()
 		{
+			/*var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(AutoAttributesExtension.Default, MarkupExtension.Default));
+			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{Extension}"" />");
+			subject.PropertyName.Should().Be(Extension.Message);*/
+		}
 
+		class Subject
+		{
+			public string PropertyName { get; set; }
+		}
+
+		class Extension : IMarkupExtension
+		{
+			public const string Message = "Hello World from Markup Extension!";
+			public object ProvideValue(System.IServiceProvider serviceProvider) => Message;
 		}
 	}
 }

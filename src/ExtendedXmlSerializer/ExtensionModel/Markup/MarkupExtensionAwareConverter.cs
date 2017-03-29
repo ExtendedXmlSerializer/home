@@ -43,7 +43,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
+		public object Parse(string data)
+		{
+			var markupExtensionParts = _container.Get(data);
+			return markupExtensionParts ?? _converter.Parse(data);
+		}
 
 		public string Format(object instance) => _converter.Format(instance);
 	}

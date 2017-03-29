@@ -29,10 +29,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	sealed class MarkupExtensionAwareSerializer : ISerializer
 	{
 		readonly IMarkupExtensionContainer _container;
-		readonly IServiceProvider _provider;
+		readonly System.IServiceProvider _provider;
 		readonly ISerializer _serializer;
 
-		public MarkupExtensionAwareSerializer(IMarkupExtensionContainer container, IServiceProvider provider,
+		public MarkupExtensionAwareSerializer(IMarkupExtensionContainer container, System.IServiceProvider provider,
 		                                      ISerializer serializer)
 		{
 			_container = container;

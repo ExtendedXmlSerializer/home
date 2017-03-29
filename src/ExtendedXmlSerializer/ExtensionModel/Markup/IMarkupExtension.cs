@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public interface IMarkupExtension
 	{
-		object ProvideValue(IServiceProvider serviceProvider);
+		object ProvideValue(System.IServiceProvider serviceProvider);
 	}
 }

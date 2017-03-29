@@ -23,7 +23,7 @@
 
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ExtensionModel.Classic;
+using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 
 namespace ExtendedXmlSerializer.Configuration
 {

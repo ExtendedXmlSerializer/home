@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.ExtensionModel.Contexts;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {

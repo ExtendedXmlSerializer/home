@@ -38,12 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			var result = parameter
 				.Register<ISerializer, RuntimeSerializer>()
 				.Register<ISerializers, Serializers>()
-				.Decorate<ISerializers>((factory, serializers) => new ReferenceAwareSerializers(
-					                        factory.Get<IStaticReferenceSpecification>(),
-					                        factory.Get<IRootReferences>(),
-					                        serializers
-				                        )
-				)
+				.Decorate<ISerializers, ReferenceAwareSerializers>()
 				.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
 				.Register<IContents, Contents>()
 				.Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents))
