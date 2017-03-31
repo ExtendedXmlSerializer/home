@@ -28,20 +28,23 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Parsing
 {
-	sealed class TypePartsParser : ParsingSource<TypeParts>
+	sealed class TypePartsParser : Parsing<TypeParts>
 	{
 		readonly static Parser<char> Start = Parse.Char('[').Token(), Finish = Parse.Char(']').Token();
 
 		public static TypePartsParser Default { get; } = new TypePartsParser();
-		TypePartsParser() : this(Identity.Default, TypePartsList.Default.Get().Contained(Start, Finish)) {}
+		TypePartsParser() : this(Identity.Default, TypePartsList.Default) {}
 
 		public TypePartsParser(Parser<Key> identity, Parser<ImmutableArray<TypeParts>> arguments)
 			: base(
-				identity.SelectMany(arguments.Optional().Accept,
+				identity.SelectMany(arguments.Contained(Start, Finish).Optional().Accept,
 				                    (key, argument) =>
 					                    argument.IsDefined
 						                    ? new TypeParts(key.Name, key.Identifier, argument.Get)
 						                    : new TypeParts(key.Name, key.Identifier)
-				)) {}
+				        ).ToDelegate()
+				        .Cache()
+				        .ToParser()
+			) {}
 	}
 }

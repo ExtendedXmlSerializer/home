@@ -29,6 +29,6 @@ namespace ExtendedXmlSerializer.ContentModel.Parsing
 	sealed class TypePartsList : ItemsParser<TypeParts>
 	{
 		public static TypePartsList Default { get; } = new TypePartsList();
-		TypePartsList() : base(Parse.Ref(() => new Parser<TypeParts>(TypePartsParser.Default.Get))) {}
+		TypePartsList() : base(Parse.Ref(() => TypePartsParser.Default.Get())) {}
 	}
 }

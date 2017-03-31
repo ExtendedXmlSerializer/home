@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Runtime.CompilerServices;
+
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
+	public class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<Func<TParameter, TResult>>
 		where TParameter : class where TResult : class
 	{
 		public static ReferenceCachingAlteration<TParameter, TResult> Default { get; } =
@@ -31,7 +34,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		ReferenceCachingAlteration() {}
 
-		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
-			=> new ReferenceCache<TParameter, TResult>(parameter.Get);
+		public Func<TParameter, TResult> Get(Func<TParameter, TResult> parameter)
+			=> new ReferenceCache<TParameter, TResult>(
+				new ConditionalWeakTable<TParameter, TResult>.CreateValueCallback(parameter)).Get;
 	}
 }

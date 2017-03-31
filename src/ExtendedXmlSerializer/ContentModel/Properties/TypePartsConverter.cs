@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
@@ -36,17 +37,17 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		TypePartsConverter() : this(IdentityFormatter<TypeParts>.Default, TypePartsParser.Default) {}
 
 		readonly IFormatter<TypeParts> _formatter;
-		readonly IParser<TypeParts> _parts;
+		readonly Parser<TypeParts> _parts;
 		readonly Func<TypeParts, string> _selector;
 
-		public TypePartsConverter(IFormatter<TypeParts> formatter, IParser<TypeParts> parts)
+		public TypePartsConverter(IFormatter<TypeParts> formatter, Parser<TypeParts> parts)
 		{
 			_formatter = formatter;
 			_parts = parts;
 			_selector = Format;
 		}
 
-		public override TypeParts Parse(string data) => _parts.Get(data);
+		public override TypeParts Parse(string data) => _parts.Parse(data);
 
 		public override string Format(TypeParts instance)
 		{

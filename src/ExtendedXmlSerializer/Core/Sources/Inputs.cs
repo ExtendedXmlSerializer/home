@@ -21,40 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Converters
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	public sealed class Optimizations : IAlteration<IConverter>, IOptimizations
+	/*public class ParsingSource<T> : Parsing<T>, IParser<T>
 	{
-		readonly ICollection<Action> _containers = new HashSet<Action>();
+		public ParsingSource(Parser<T> parser) : this(new Cache<IInput, IResult<T>>(parser.Invoke)) {}
 
-		public IConverter Get(IConverter parameter)
-		{
-			var parse = Create<string, object>(parameter.Parse);
-			var format = Create<object, string>(parameter.Format);
-			var result = new Converter<object>(parameter, parse, format);
-			return result;
-		}
+		public ParsingSource(IParameterizedSource<IInput, IResult<T>> source) : base(source.Get) {}
 
-		Func<TParameter, TResult> Create<TParameter, TResult>(Func<TParameter, TResult> source)
-		{
-			var dictionary = new ConcurrentDictionary<TParameter, TResult>();
-			var cache = new Cache<TParameter, TResult>(source, dictionary);
-			_containers.Add(dictionary.Clear);
-			var result = cache.ToDelegate();
-			return result;
-		}
+		public T Get(string parameter) => Get(Inputs.Default.Get(parameter)).Value;
+	}*/
 
-		public void Clear()
-		{
-			foreach (var container in _containers)
-			{
-				container.Invoke();
-			}
-		}
+	sealed class Inputs : ReferenceCache<string, IInput>
+	{
+		public static Inputs Default { get; } = new Inputs();
+		Inputs() : base(x => new Input(x)) {}
 	}
 }

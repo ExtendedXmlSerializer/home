@@ -24,17 +24,18 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionAwareConverter : IConverter
 	{
-		readonly IParser<MarkupExtensionParts> _parser;
+		readonly Parser<MarkupExtensionParts> _parser;
 		readonly IConverter _converter;
 
 		public MarkupExtensionAwareConverter(IConverter converter) : this(MarkupExtensionParser.Default, converter) {}
 
-		public MarkupExtensionAwareConverter(IParser<MarkupExtensionParts> parser, IConverter converter)
+		public MarkupExtensionAwareConverter(Parser<MarkupExtensionParts> parser, IConverter converter)
 		{
 			_parser = parser;
 			_converter = converter;
@@ -42,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 
-		public object Parse(string data) => _parser.Get(data) ?? _converter.Parse(data);
+		public object Parse(string data) => _parser.ParseAsOptional(data) ?? _converter.Parse(data);
 
 		public string Format(object instance) => _converter.Format(instance);
 	}

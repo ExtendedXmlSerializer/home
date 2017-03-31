@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class CachingAlteration<TParameter, TResult> : IAlteration<IParameterizedSource<TParameter, TResult>>
+	public class CachingAlteration<TParameter, TResult> : IAlteration<Func<TParameter, TResult>>
 	{
 		public static CachingAlteration<TParameter, TResult> Default { get; } = new CachingAlteration<TParameter, TResult>();
 		CachingAlteration() {}
 
-		public IParameterizedSource<TParameter, TResult> Get(IParameterizedSource<TParameter, TResult> parameter)
-			=> new Cache<TParameter, TResult>(parameter.Get);
+		public Func<TParameter, TResult> Get(Func<TParameter, TResult> parameter)
+			=> new Cache<TParameter, TResult>(parameter).Get;
 	}
 }

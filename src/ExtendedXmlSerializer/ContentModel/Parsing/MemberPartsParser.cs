@@ -27,14 +27,13 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Parsing
 {
-	sealed class MemberPartsParser : Parsing<MemberParts?>
+	sealed class MemberPartsParser : Parsing<MemberParts>
 	{
 		public static MemberPartsParser Default { get; } = new MemberPartsParser();
 		MemberPartsParser() : this(TypePartsParser.Default, DefaultClrDelimiters.Default.Separator, CodeIdentifier.Default) {}
 
 		public MemberPartsParser(Parser<TypeParts> type, Parser<char> separator, Parser<string> identifier) : base(
-			type.SelectMany(separator.Then(identifier.Accept).Accept,
-			                (parts, name) => new MemberParts?(new MemberParts(parts, name)))
+			type.SelectMany(separator.Then(identifier.Accept).Accept, (parts, name) => new MemberParts(parts, name))
 		) {}
 	}
 }

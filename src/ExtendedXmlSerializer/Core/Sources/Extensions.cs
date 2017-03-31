@@ -52,14 +52,20 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)
 			=> parser.SelectMany(instance.Accept, Tuple.Create);
 
-		public static Parser<T> Get<T>(this Parsing<T> @this) => @this;
+		public static Parser<T> Get<T>(this IParsing<T> @this) => @this.Get;
 
-		public static T PartialOrDefault<T>(this Parser<T> @this, string data)
-		{
-			var parse = @this.TryParse(data);
-			var result = parse.WasSuccessful || parse.Remainder.Position > 0 ? parse.Value : default(T);
-			return result;
-		}
+		public static T ParseAsOptional<T>(this Parser<T> @this, string data)
+			=> @this.XOptional().Invoke(Inputs.Default.Get(data)).Value.GetOrDefault();
+
+		/*public static T ParseOrDefault<T>(this Parser<IOption<T>> @this, string data)
+			=> @this.Parse(data).GetOrDefault();*/
+
+		public static T Get<T>(this IParsing<T> @this, string parameter) => @this.Get(Inputs.Default.Get(parameter)).Value;
+
+		public static Func<IInput, IResult<T>> ToDelegate<T>(this Parser<T> @this)
+			=> new Func<IInput, IResult<T>>(@this);
+
+		public static Parser<T> ToParser<T>(this Func<IInput, IResult<T>> @this) => new Parser<T>(@this);
 
 		public static T TryOrDefault<T>(this Parser<T> @this, string data)
 		{

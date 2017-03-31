@@ -41,16 +41,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 
 		Evaluation(Implementation implementation) : this(implementation, implementation) {}
 
-		Evaluation(ISource<Exception> exception, IParameterizedSource<TypeInfo, object> implementation) : base(
-			new DelegatedAssignedSpecification<TypeInfo, object>(implementation.Get),
-			implementation)
+		Evaluation(ISource<Exception> exception, IParameterizedSource<TypeInfo, object> implementation)
+			: base(new DelegatedAssignedSpecification<TypeInfo, object>(implementation.Get), implementation)
 		{
 			_exception = exception;
 		}
 
 
-		sealed class Implementation : CacheBase<TypeInfo, Implementation.Result?>, IParameterizedSource<TypeInfo, object>,
-		                              ISource<Exception>
+		sealed class Implementation : CacheBase<TypeInfo, Implementation.Result?>,
+		                              IParameterizedSource<TypeInfo, object>, ISource<Exception>
 		{
 			readonly ICoercers _coercers;
 			readonly string _expression;
@@ -103,16 +102,4 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 
 		public Exception Get() => _exception.Get();
 	}
-
-	/*struct ParameterCandidate
-	{
-		public ParameterCandidate(Evaluation evaluation, ICoercion coercer)
-		{
-			Evaluation = evaluation;
-			Coercer = coercer;
-		}
-
-		public Evaluation Evaluation { get; }
-		public ICoercion Coercer { get; }
-	}*/
 }

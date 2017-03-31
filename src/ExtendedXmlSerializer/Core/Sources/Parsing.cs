@@ -25,17 +25,10 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Parsing<T> : IParsing<T>
+	public class Parsing<T> : DelegatedSource<IInput, IResult<T>>, IParsing<T>
 	{
-		public static implicit operator Parser<T>(Parsing<T> instance) => instance._parser;
+		public static implicit operator Parser<T>(Parsing<T> instance) => instance.Get;
 
-		readonly Parser<T> _parser;
-
-		public Parsing(Parser<T> parser)
-		{
-			_parser = parser;
-		}
-
-		public IResult<T> Get(IInput parameter) => _parser.Invoke(parameter);
+		public Parsing(Parser<T> parser) : base(parser.Invoke) {}
 	}
 }

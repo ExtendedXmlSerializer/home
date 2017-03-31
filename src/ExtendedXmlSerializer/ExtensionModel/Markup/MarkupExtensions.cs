@@ -59,32 +59,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		protected override IMarkupExtension Create(MarkupExtensionParts parameter)
 		{
+			var type = DetermineType(parameter);
+
 			var candidates = parameter.Arguments.Select(_evaluator.Get).ToArray();
-			var specification = new ValidMarkupExtensionConstructor(candidates.ToImmutableArray());
-			var constructors = new QueriedConstructors(specification, _constructors);
-			var type = _parser.Get(parameter.Type) ?? _parser.Get(Copy(parameter.Type));
-			if (type == null)
-			{
-				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);
-				throw new InvalidOperationException($"Could not find a markup extension with the provided data: {name}");
-			}
-
-			if (!IsAssignableSpecification<IMarkupExtension>.Default.IsSatisfiedBy(type))
-			{
-				throw new InvalidOperationException($"{type} does not implement IMarkupExtension.");
-			}
-
-			var constructor = constructors.Get(type);
-
-			if (constructor == null)
-			{
-				var values = parameter.Arguments.Select(x => x.Get()).ToArray();
-
-				var primary = new InvalidOperationException(
-					$"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
-
-				throw new AggregateException(primary.Yield().Concat(candidates.Select(x => x.Get())));
-			}
+			var constructor = DetermineConstructor(parameter, candidates, type);
 
 			var members = _members.Get(type);
 			var evaluator = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), _evaluator);
@@ -98,6 +76,39 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                                                                   .Get()
 			                                                                   .AsValid<IMarkupExtension>();
 			return result;
+		}
+
+		ConstructorInfo DetermineConstructor(MarkupExtensionParts parameter, IEvaluation[] candidates, TypeInfo type)
+		{
+			var specification = new ValidMarkupExtensionConstructor(candidates.ToImmutableArray());
+			var constructors = new QueriedConstructors(specification, _constructors);
+			var constructor = constructors.Get(type);
+			if (constructor == null)
+			{
+				var values = parameter.Arguments.Select(x => x.Get()).ToArray();
+
+				var primary = new InvalidOperationException(
+					$"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+
+				throw new AggregateException(primary.Yield().Concat(candidates.Select(x => x.Get()).Where(x => x != null)));
+			}
+			return constructor;
+		}
+
+		TypeInfo DetermineType(MarkupExtensionParts parameter)
+		{
+			var type = _parser.Get(parameter.Type) ?? _parser.Get(Copy(parameter.Type));
+			if (type == null)
+			{
+				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);
+				throw new InvalidOperationException($"Could not find a markup extension with the provided data: {name}");
+			}
+
+			if (!IsAssignableSpecification<IMarkupExtension>.Default.IsSatisfiedBy(type))
+			{
+				throw new InvalidOperationException($"{type} does not implement IMarkupExtension.");
+			}
+			return type;
 		}
 
 		static TypeParts Copy(TypeParts parameter)

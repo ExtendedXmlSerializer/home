@@ -21,21 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public class ParsingSource<T> : Parsing<T>, IParser<T>
+	sealed class MarkupExtensionExpressionParser : Parsing<IExpression>
 	{
-		readonly IParameterizedSource<string, T> _source;
-
-		public ParsingSource(Parser<T> parser) : this(parser, new DelegatedSource<string, T>(parser.TryOrDefault)) {}
-
-		public ParsingSource(Parser<T> parser, IParameterizedSource<string, T> source) : base(parser)
-		{
-			_source = source;
-		}
-
-		public T Get(string parameter) => _source.Get(parameter);
+		public MarkupExtensionExpressionParser() : base(
+			Parse.Ref(() => MarkupExtensionParser.Default.Get())
+			     .MatchedInput((source, result) => new MarkupExtensionExpression(source, result))
+		) {}
 	}
 }

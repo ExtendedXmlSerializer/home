@@ -26,12 +26,13 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionAwareSerializer : ISerializer
 	{
-		readonly IParser<MarkupExtensionParts> _parser;
+		readonly Parser<MarkupExtensionParts> _parser;
 		readonly IMarkupExtensionContainer _container;
 		readonly System.IServiceProvider _provider;
 		readonly ISerializer _serializer;
@@ -40,7 +41,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		                                      ISerializer serializer)
 			: this(MarkupExtensionParser.Default, container, provider, serializer) {}
 
-		public MarkupExtensionAwareSerializer(IParser<MarkupExtensionParts> parser, IMarkupExtensionContainer container,
+		public MarkupExtensionAwareSerializer(Parser<MarkupExtensionParts> parser, IMarkupExtensionContainer container,
 		                                      System.IServiceProvider provider,
 		                                      ISerializer serializer)
 		{
@@ -70,7 +71,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			}
 			catch (Exception e)
 			{
-				return new CandidateResult(_parser.Get(parameter.Value()), e);
+				return new CandidateResult(_parser.Parse(parameter.Value()), e);
 			}
 		}
 

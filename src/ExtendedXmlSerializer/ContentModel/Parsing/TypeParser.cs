@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Parsing
 {
@@ -30,17 +31,17 @@ namespace ExtendedXmlSerializer.ContentModel.Parsing
 	{
 		readonly static TypePartsParser Parser = TypePartsParser.Default;
 
-		readonly IParser<TypeParts> _parser;
+		readonly Parser<TypeParts> _parser;
 		readonly ITypes _types;
 
 		public TypeParser(ITypes types) : this(Parser, types) {}
 
-		public TypeParser(IParser<TypeParts> parser, ITypes types)
+		public TypeParser(Parser<TypeParts> parser, ITypes types)
 		{
 			_parser = parser;
 			_types = types;
 		}
 
-		protected override TypeInfo Create(string parameter) => _types.Get(_parser.Get(parameter));
+		protected override TypeInfo Create(string parameter) => _types.Get(_parser.Parse(parameter));
 	}
 }

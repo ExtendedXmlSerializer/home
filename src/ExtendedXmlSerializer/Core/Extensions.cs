@@ -100,13 +100,13 @@ namespace ExtendedXmlSerializer.Core
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())?.GetTypeInfo() ?? @this;
 
-		public static IParameterizedSource<TParameter, TResult>
-			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
+		public static Func<TParameter, TResult>
+			ReferenceCache<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			where TParameter : class where TResult : class
 			=> ReferenceCachingAlteration<TParameter, TResult>.Default.Get(@this);
 
-		public static IParameterizedSource<TParameter, TResult> Cache<TParameter, TResult>(
-			this IParameterizedSource<TParameter, TResult> @this)
+		public static Func<TParameter, TResult> Cache<TParameter, TResult>(
+			this Func<TParameter, TResult> @this)
 			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
 		public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key) where TValue : class

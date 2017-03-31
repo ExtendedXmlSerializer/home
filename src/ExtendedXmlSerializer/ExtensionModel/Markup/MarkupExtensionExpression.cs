@@ -21,40 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
-namespace ExtendedXmlSerializer.ContentModel.Converters
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public sealed class Optimizations : IAlteration<IConverter>, IOptimizations
+	sealed class MarkupExtensionExpression : IExpression
 	{
-		readonly ICollection<Action> _containers = new HashSet<Action>();
+		readonly string _source;
 
-		public IConverter Get(IConverter parameter)
+		public MarkupExtensionExpression(string source, MarkupExtensionParts parts)
 		{
-			var parse = Create<string, object>(parameter.Parse);
-			var format = Create<object, string>(parameter.Format);
-			var result = new Converter<object>(parameter, parse, format);
-			return result;
+			Parts = parts;
+			_source = source;
 		}
 
-		Func<TParameter, TResult> Create<TParameter, TResult>(Func<TParameter, TResult> source)
-		{
-			var dictionary = new ConcurrentDictionary<TParameter, TResult>();
-			var cache = new Cache<TParameter, TResult>(source, dictionary);
-			_containers.Add(dictionary.Clear);
-			var result = cache.ToDelegate();
-			return result;
-		}
+		public MarkupExtensionParts Parts { get; }
 
-		public void Clear()
-		{
-			foreach (var container in _containers)
-			{
-				container.Invoke();
-			}
-		}
+		public string Get() => _source;
 	}
 }

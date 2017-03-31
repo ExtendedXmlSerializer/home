@@ -31,11 +31,11 @@ namespace ExtendedXmlSerializer.ContentModel.Parsing
 	sealed class MemberParser : CacheBase<string, MemberInfo>, IMemberParser
 	{
 		readonly ITypes _types;
-		readonly Parser<MemberParts?> _parser;
+		readonly Parser<MemberParts> _parser;
 
 		public MemberParser(ITypes types) : this(types, MemberPartsParser.Default) {}
 
-		public MemberParser(ITypes types, Parser<MemberParts?> parser)
+		public MemberParser(ITypes types, Parser<MemberParts> parser)
 		{
 			_types = types;
 			_parser = parser;
@@ -43,8 +43,8 @@ namespace ExtendedXmlSerializer.ContentModel.Parsing
 
 		protected override MemberInfo Create(string parameter)
 		{
-			var parse = _parser.TryOrDefault(parameter);
-			if (parse != null)
+			var parse = _parser.TryParse(parameter);
+			if (parse.WasSuccessful)
 			{
 				var parts = parse.Value;
 				var type = _types.Get(parts.Type);

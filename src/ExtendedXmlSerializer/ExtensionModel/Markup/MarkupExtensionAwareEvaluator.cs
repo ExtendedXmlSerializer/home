@@ -22,39 +22,29 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
-namespace ExtendedXmlSerializer.ContentModel.Converters
+namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public sealed class Optimizations : IAlteration<IConverter>, IOptimizations
+	sealed class MarkupExtensionAwareEvaluator : IEvaluator
 	{
-		readonly ICollection<Action> _containers = new HashSet<Action>();
+		readonly IEvaluator _evaluator;
 
-		public IConverter Get(IConverter parameter)
+		public MarkupExtensionAwareEvaluator(IEvaluator evaluator)
 		{
-			var parse = Create<string, object>(parameter.Parse);
-			var format = Create<object, string>(parameter.Format);
-			var result = new Converter<object>(parameter, parse, format);
+			_evaluator = evaluator;
+		}
+
+		public IEvaluation Get(IExpression parameter)
+		{
+			var expression = parameter as MarkupExtensionExpression;
+			var result = expression != null ? Resolve(expression) : _evaluator.Get(parameter);
 			return result;
 		}
 
-		Func<TParameter, TResult> Create<TParameter, TResult>(Func<TParameter, TResult> source)
+		IEvaluation Resolve(MarkupExtensionExpression expression)
 		{
-			var dictionary = new ConcurrentDictionary<TParameter, TResult>();
-			var cache = new Cache<TParameter, TResult>(source, dictionary);
-			_containers.Add(dictionary.Clear);
-			var result = cache.ToDelegate();
-			return result;
-		}
-
-		public void Clear()
-		{
-			foreach (var container in _containers)
-			{
-				container.Invoke();
-			}
+			throw new NotImplementedException();
 		}
 	}
 }
