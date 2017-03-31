@@ -22,9 +22,9 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 	sealed class Identities : CacheBase<TypeInfo, IIdentity>, IIdentities
 	{
 		readonly static IdentityStore IdentityStore = IdentityStore.Default;
-		readonly static ContentModel.TypeFormatter TypeFormatter = ContentModel.TypeFormatter.Default;
+		readonly static TypeNameFormatter TypeNameFormatter = TypeNameFormatter.Default;
 		readonly static Identifiers Identifiers = Identifiers.Default;
 
 		readonly IIdentityStore _source;
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly IIdentifiers _identifiers;
 
 		[UsedImplicitly]
-		public Identities(INames names) : this(IdentityStore, names, TypeFormatter, Identifiers) {}
+		public Identities(INames names) : this(IdentityStore, names, TypeNameFormatter, Identifiers) {}
 
 		public Identities(IIdentityStore source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{

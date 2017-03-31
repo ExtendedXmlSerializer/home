@@ -36,11 +36,11 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		public PartitionedTypes(params ITypePartitions[] partitions)
 			: this(AssemblyPathParser, AssemblyLoader, new TypePartitions(partitions)) {}
 
-		readonly IParseContext<AssemblyPath> _parser;
+		readonly Parser<AssemblyPath> _parser;
 		readonly IAssemblyLoader _loader;
 		readonly ITypePartitions _partitions;
 
-		public PartitionedTypes(IParseContext<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions)
+		public PartitionedTypes(Parser<AssemblyPath> parser, IAssemblyLoader loader, ITypePartitions partitions)
 			// : base(IdentityComparer.Default)
 		{
 			_parser = parser;
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		protected override TypeInfo Create(IIdentity parameter)
 		{
-			var parse = _parser.Get().TryParse(parameter.Identifier);
+			var parse = _parser.TryParse(parameter.Identifier);
 			if (parse.WasSuccessful)
 			{
 				var path = parse.Value;

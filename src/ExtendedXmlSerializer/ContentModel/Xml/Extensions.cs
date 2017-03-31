@@ -24,12 +24,13 @@
 using System;
 using System.Reflection;
 using System.Xml.Linq;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	static class Extensions
 	{
-		public static XElement Member(this XElement @this, string name) 
+		public static XElement Member(this XElement @this, string name)
 			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
 
 		public static TypeInfo GetClassification(this IXmlReader @this)

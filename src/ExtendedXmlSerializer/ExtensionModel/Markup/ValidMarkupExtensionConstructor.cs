@@ -24,23 +24,24 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class ValidMarkupExtensionConstructor : IValidConstructorSpecification
 	{
-		readonly ImmutableArray<object> _values;
+		readonly ImmutableArray<IEvaluation> _candidates;
 
-		public ValidMarkupExtensionConstructor(ImmutableArray<object> values)
+		public ValidMarkupExtensionConstructor(ImmutableArray<IEvaluation> candidates)
 		{
-			_values = values;
+			_candidates = candidates;
 		}
 
 		public bool IsSatisfiedBy(ConstructorInfo parameter)
 		{
 			var parameters = parameter.GetParameters().Select(x => x.ParameterType.GetTypeInfo()).ToArray();
-			var result = parameters.Length == _values.Length &&
-			             parameters.Zip(_values.ToArray(), (type, o) => type.IsInstanceOfType(o))
+			var result = parameters.Length == _candidates.Length &&
+			             parameters.Zip(_candidates.ToArray(), (info, evaluation) => evaluation.IsSatisfiedBy(info))
 			                       .All(x => x);
 			return result;
 		}

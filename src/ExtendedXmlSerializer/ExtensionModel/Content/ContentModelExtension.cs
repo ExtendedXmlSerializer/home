@@ -41,7 +41,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Register<IDictionaryEntries, DictionaryEntries>()
 			            .Register<ArrayContentOption>()
 			            .Register<DictionaryContentOption>()
-			            .Register<CollectionContentOption>();
+			            .Register<CollectionContentOption>()
+			            .Register<ReflectionSerializer>();
 
 		public void Execute(IServices parameter) => parameter.Get<ISortOrder>()
 		                                                     .Sort<ArrayContentOption>(0)

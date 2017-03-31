@@ -86,6 +86,9 @@ namespace ExtendedXmlSerializer.Core
 			}
 		}
 
+		public static ISpecification<T> Any<T>(this ISpecification<T> @this, params T[] parameters)
+			=> new AnySpecification<T>();
+
 		public static ISpecification<T> Or<T>(this ISpecification<T> @this, params ISpecification<T>[] others)
 			=> new AnySpecification<T>(@this.Yield().Concat(others).Fixed());
 

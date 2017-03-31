@@ -24,6 +24,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly Func<TypeInfo, string> _key;
 		readonly Func<IGrouping<string, TypeInfo>, Func<string, TypeInfo>> _format;
 
-		public AssemblyTypePartitions(IContainsAliasSpecification specification, ITypeFormatter formatter)
+		public AssemblyTypePartitions(IPartitionedTypeSpecification specification, ITypeFormatter formatter)
 			: this(specification, formatter.Get) {}
 
 		public AssemblyTypePartitions(ISpecification<TypeInfo> specification, Func<TypeInfo, string> formatter)

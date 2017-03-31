@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 {
 	public static class Extensions
 	{
-		/*public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
+		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
 			return i =>
@@ -47,17 +47,24 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 				       return Result.Failure<IOption<T>>(result.Remainder, result.Message, result.Expectations);
 			       };
-		}*/
+		}
 
 		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)
 			=> parser.SelectMany(instance.Accept, Tuple.Create);
 
-		/*public static object Get(this IExpressionEvaluator @this, string parameter) => @this.Get(parameter);*/
+		public static Parser<T> Get<T>(this Parsing<T> @this) => @this;
 
-		public static T Try<T>(this IParseContext<T> @this, string data)
+		public static T PartialOrDefault<T>(this Parser<T> @this, string data)
 		{
-			var parse = @this.Get().TryParse(data);
+			var parse = @this.TryParse(data);
 			var result = parse.WasSuccessful || parse.Remainder.Position > 0 ? parse.Value : default(T);
+			return result;
+		}
+
+		public static T TryOrDefault<T>(this Parser<T> @this, string data)
+		{
+			var parse = @this.TryParse(data);
+			var result = parse.WasSuccessful ? parse.Value : default(T);
 			return result;
 		}
 

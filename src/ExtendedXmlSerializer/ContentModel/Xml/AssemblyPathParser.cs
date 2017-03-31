@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class AssemblyPathParser : FixedParser<AssemblyPath>
+	sealed class AssemblyPathParser : Parsing<AssemblyPath>
 	{
 		readonly static Parser<string>
 			Namespace = new Identifier('_', '.'),

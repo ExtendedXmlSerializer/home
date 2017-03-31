@@ -22,13 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class ItemTypeProperty : TypePropertyBase, IItemTypeProperty
 	{
-		public ItemTypeProperty(ITypeParsers parsers, ITypeFormatters formatters) : base(parsers, formatters, "item") {}
+		public ItemTypeProperty(IReflectionParsers parsers, IReflectionFormatters formatters)
+			: base(parsers, formatters, "item") {}
 
 		public override TypeInfo Get(IXmlReader parameter) => base.Get(parameter)?.MakeArrayType().GetTypeInfo();
 	}

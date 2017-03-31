@@ -22,18 +22,21 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	abstract class TypePropertyBase : FrameworkPropertyBase<TypeInfo>, ITypeProperty
 	{
-		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;
-		readonly IParameterizedSource<IXmlWriter, ITypeFormatter> _formatters;
+		readonly IParameterizedSource<IXmlReader, IReflectionParser> _parsers;
+		readonly IParameterizedSource<IXmlWriter, IReflectionFormatter> _formatters;
 
-		protected TypePropertyBase(ITypeParsers parsers, ITypeFormatters formatters, string displayName) : base(displayName)
+		protected TypePropertyBase(IReflectionParsers parsers, IReflectionFormatters formatters, string displayName)
+			: base(displayName)
 		{
 			_parsers = parsers;
 			_formatters = formatters;
@@ -41,6 +44,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 
 		protected sealed override string Format(IXmlWriter writer, TypeInfo instance) => _formatters.Get(writer).Get(instance);
 
-		protected sealed override TypeInfo Parse(IXmlReader parameter, string data) => _parsers.Get(parameter).Get(data);
+		protected sealed override TypeInfo Parse(IXmlReader parameter, string data)
+			=> _parsers.Get(parameter).Get(data).AsValid<TypeInfo>();
 	}
 }

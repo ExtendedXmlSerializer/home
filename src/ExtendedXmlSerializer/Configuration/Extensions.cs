@@ -36,7 +36,6 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using ExtendedXmlSerializer.ExtensionModel.Markup;
 using ExtendedXmlSerializer.ExtensionModel.Members;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -55,10 +54,6 @@ namespace ExtendedXmlSerializer.Configuration
 			@this.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
 			return @this;
 		}
-
-		public static IConfiguration EnableMarkupExtensions(this IConfiguration @this)
-			=> @this.Alter(MarkupExtensionConverterAlteration.Default)
-			        .Extend(MarkupExtension.Default);
 
 		public static IConfiguration OptimizeConverters(this IConfiguration @this)
 			=> OptimizeConverters(@this, new Optimizations());

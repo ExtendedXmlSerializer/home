@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,13 +26,13 @@ using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
-using Identities = ExtendedXmlSerializer.ContentModel.Xml.Identities;
-using IIdentities = ExtendedXmlSerializer.ContentModel.Xml.IIdentities;
-using TypeFormatter = ExtendedXmlSerializer.ContentModel.Xml.TypeFormatter;
+using ITypes = ExtendedXmlSerializer.ContentModel.Xml.ITypes;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -55,18 +55,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter
 				.RegisterInstance(_defaults)
-				.Register<ITypeFormatters, TypeFormatters>()
-				.Register<ITypeParsers, TypeParsers>()
+				.Register<IReflectionFormatters, ReflectionFormatters>()
+				.Register<IReflectionParsers, ReflectionParsers>()
 				.Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
 				.Register<IElements, Elements>()
 				.Register<ITypeFormatter, TypeFormatter>()
-				.Register<ITypeFormatters, TypeFormatters>()
-				.Register<ITypeParsers, TypeParsers>()
+				.Register<IReflectionFormatters, ReflectionFormatters>()
 				.Register<IIdentities, Identities>()
 				.Register<ITypeIdentities, TypeIdentities>()
 				.Register<IGenericTypes, GenericTypes>()
 				.Register<ITypes, ContentModel.Xml.Types>()
-				.Register<IContainsAliasSpecification, ContainsAliasSpecification>()
+				.Register<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
 				.Register<IArgumentsProperty, ArgumentsProperty>()
 				.Register<IItemTypeProperty, ItemTypeProperty>()
 				.Register<ITypeProperty, TypeProperty>()

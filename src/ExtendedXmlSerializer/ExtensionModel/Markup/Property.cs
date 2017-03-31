@@ -25,20 +25,21 @@ using System.Collections.Generic;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class Property : FixedParser<KeyValuePair<string, string>>
+	sealed class Property : Parsing<KeyValuePair<string, IExpression>>
 	{
-		public Property(CharacterParser delimiter, Parser<string> expression)
+		public Property(CharacterParser delimiter, Parser<IExpression> expression)
 			: this(CodeIdentifier.Default, delimiter, expression) {}
 
-		public Property(Parser<string> name, CharacterParser delimiter, Parser<string> expression)
+		public Property(Parser<string> name, CharacterParser delimiter, Parser<IExpression> expression)
 			: this(name, delimiter.Get().Token(), expression) {}
 
-		public Property(Parser<string> name, Parser<char> delimiter, Parser<string> expression) : base(
+		public Property(Parser<string> name, Parser<char> delimiter, Parser<IExpression> expression) : base(
 			name.SelectMany(delimiter.Accept, (s, _) => s)
-			    .SelectMany(expression.Accept, (s, u) => new KeyValuePair<string, string>(s, u))
+			    .SelectMany(expression.Accept, (s, u) => new KeyValuePair<string, IExpression>(s, u))
 		) {}
 	}
 }

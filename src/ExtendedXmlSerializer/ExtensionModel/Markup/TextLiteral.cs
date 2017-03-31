@@ -24,26 +24,29 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class TextLiteral : FixedParser<string>
+	sealed class TextLiteral : Parsing<IExpression>
 	{
 		const char Slash = '\\';
 
 		readonly static Parser<char> EscapedCharacter = Parse.Char(Slash).Then(Parse.CharExcept(Slash).Accept);
 
-		public TextLiteral(char containingCharacter) : this(containingCharacter, Parse.Char(containingCharacter)) {}
+		public TextLiteral(CharacterParser containingCharacter) : this(containingCharacter, containingCharacter) {}
 
-		public TextLiteral(char containingCharacter, Parser<char> container) : base(
-			new EscapedLiteral(containingCharacter).Get().XOr(
-				                                       Parse.CharExcept($"{containingCharacter}{Slash}")
-				                                            .Or(EscapedCharacter)
-				                                            .Many()
-				                                            .Text()
-			                                       ).Contained(container, container)
-			                                       .Select(x => x.Quoted())
-			                                       .Token()
+		public TextLiteral(CharacterParser containingCharacter, Parser<char> container) : base(
+			new EscapedLiteral(containingCharacter.Character).Get()
+			                                                 .XOr(
+				                                                 Parse.CharExcept(
+					                                                      $"{containingCharacter.Character}{Slash}")
+				                                                      .Or(EscapedCharacter)
+				                                                      .Many()
+				                                                      .Text()
+			                                                 ).Contained(container, container)
+			                                                 .Token()
+			                                                 .Select(x => new LiteralExpression(x))
 		) {}
 	}
 }

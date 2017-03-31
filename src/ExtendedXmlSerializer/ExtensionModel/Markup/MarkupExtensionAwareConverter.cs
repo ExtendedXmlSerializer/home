@@ -23,27 +23,26 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionAwareConverter : IConverter
 	{
-		readonly static MarkupExtensionPartsContainer Container = MarkupExtensionPartsContainer.Default;
-
-		readonly IMarkupExtensionPartsContainer _container;
+		readonly IParser<MarkupExtensionParts> _parser;
 		readonly IConverter _converter;
 
-		public MarkupExtensionAwareConverter(IConverter converter) : this(Container, converter) {}
+		public MarkupExtensionAwareConverter(IConverter converter) : this(MarkupExtensionParser.Default, converter) {}
 
-		public MarkupExtensionAwareConverter(IMarkupExtensionPartsContainer container, IConverter converter)
+		public MarkupExtensionAwareConverter(IParser<MarkupExtensionParts> parser, IConverter converter)
 		{
-			_container = container;
+			_parser = parser;
 			_converter = converter;
 		}
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 
-		public object Parse(string data) => _container.Get(data) ?? _converter.Parse(data);
+		public object Parse(string data) => _parser.Get(data) ?? _converter.Parse(data);
 
 		public string Format(object instance) => _converter.Format(instance);
 	}

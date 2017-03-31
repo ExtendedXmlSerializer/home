@@ -33,10 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 	{
 		public static Prefixes Default { get; } = new Prefixes();
 
-		Prefixes() : this(WellKnownNamespaces.Default,
-		                  WellKnownNamespaces.Default.Values.ToDictionary(x => x.Identifier, x => x.Name)) {}
+		Prefixes() : this(WellKnownNamespaces.Default) {}
 
 		readonly IDictionary<Assembly, Namespace> _known;
+
+		public Prefixes(IDictionary<Assembly, Namespace> known)
+			: this(known, known.Values.ToDictionary(x => x.Identifier, x => x.Name)) {}
 
 		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<string, string> names) : base(names)
 		{

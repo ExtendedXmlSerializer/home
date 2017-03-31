@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
@@ -33,7 +34,7 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	class IdentityPartitionedTypes : ITypes
+	sealed class IdentityPartitionedTypes : ITypes
 	{
 		readonly Partition _partition;
 
@@ -49,7 +50,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public TypeInfo Get(IIdentity parameter) => _partition.Invoke(parameter.Identifier)?.Invoke(parameter.Name);
 
-		class TypeNamePartition : IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, TypeInfo>>
+		sealed class TypeNamePartition : IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, TypeInfo>>
 		{
 			readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
 

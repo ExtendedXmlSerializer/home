@@ -24,55 +24,60 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionParser : FixedParser<MarkupExtensionParts>
+	sealed class MarkupExtensionParser : ParsingSource<MarkupExtensionParts>
 	{
 		readonly static CharacterParser Start = '{',
 			Finish = '}',
 			PropertyDelimiter = '=',
 			Item = Core.Sources.Defaults.ItemDelimiter;
 
-		readonly static Tuple<ImmutableArray<string>, ImmutableArray<KeyValuePair<string, string>>> DefaultValue =
-			Tuple.Create(ImmutableArray<string>.Empty, ImmutableArray<KeyValuePair<string, string>>.Empty);
+		readonly static Tuple<ImmutableArray<IExpression>, ImmutableArray<KeyValuePair<string, IExpression>>>
+			DefaultValue = Tuple.Create(ImmutableArray<IExpression>.Empty,
+			                            ImmutableArray<KeyValuePair<string, IExpression>>.Empty);
 
 		readonly static Expression Expression = new Expression(Item.Character, Finish.Character);
 
-		readonly static Parser<Tuple<ImmutableArray<string>, ImmutableArray<KeyValuePair<string, string>>>>
+		readonly static Parser<Tuple<ImmutableArray<IExpression>, ImmutableArray<KeyValuePair<string, IExpression>>>>
 			DefaultReturn = Parse.String(string.Empty).Return(DefaultValue);
 
 		public static MarkupExtensionParser Default { get; } = new MarkupExtensionParser();
 		MarkupExtensionParser() : this(Item, Expression, new Property(PropertyDelimiter, Expression)) {}
 
-		public MarkupExtensionParser(Parser<char> item, Parser<string> arguments,
-		                             Parser<KeyValuePair<string, string>> property)
-			: this(Start, TypePartsParser.Default, item, new Arguments(property.Not().Then(arguments.Accept)),
-			       new Properties(property), Finish) {}
+		public MarkupExtensionParser(Parser<char> item, Parser<IExpression> arguments,
+		                             Parser<KeyValuePair<string, IExpression>> property)
+			: this(Start, TypePartsParser.Default, item, new ItemsParser<IExpression>(property.Not().Then(arguments.Accept)),
+			       new ItemsParser<KeyValuePair<string, IExpression>>(property), Finish) {}
 
-		public MarkupExtensionParser(Parser<char> start, Parser<TypeParts> type, Parser<char> item,
-		                             Parser<ImmutableArray<string>> arguments,
-		                             Parser<ImmutableArray<KeyValuePair<string, string>>> properties, Parser<char> finish)
-			: base(
-				type.SelectMany(
-					    Parse.WhiteSpace.AtLeastOnce().Then(
-						    arguments.SelectMany(item.Accept, (array, _) => array).SelectMany(properties)
-						             .Or(properties.Select(dictionary => Tuple.Create(DefaultValue.Item1, dictionary)))
-						             .Or(arguments.Select(array => Tuple.Create(array, DefaultValue.Item2)))
-						             .Or(DefaultReturn)
-						             .Accept
-					    ).Optional().Accept,
-					    (t, a) =>
-					    {
-						    var construction = a.GetOrElse(DefaultValue);
-						    var result = new MarkupExtensionParts(t, construction.Item1, construction.Item2);
-						    return result;
-					    }
-				    )
-				    .Contained(start, finish)) {}
+		public MarkupExtensionParser(Parser<char> start, Parser<TypeParts> typeParts, Parser<char> item,
+		                             Parser<ImmutableArray<IExpression>> arguments,
+		                             Parser<ImmutableArray<KeyValuePair<string, IExpression>>> properties, Parser<char> finish)
+			: this(
+				typeParts.SelectMany(
+					         Parse.WhiteSpace.AtLeastOnce().Then(
+						         arguments.SelectMany(item.Accept, (array, _) => array).SelectMany(properties)
+						                  .Or(properties.Select(dictionary => Tuple.Create(DefaultValue.Item1, dictionary)))
+						                  .Or(arguments.Select(array => Tuple.Create(array, DefaultValue.Item2)))
+						                  .Or(DefaultReturn)
+						                  .Accept
+					         ).Optional().Accept,
+					         (type, option) =>
+					         {
+						         var contents = option.GetOrElse(DefaultValue);
+						         var result = new MarkupExtensionParts(type, contents.Item1, contents.Item2);
+						         return result;
+					         }
+				         )
+				         .Contained(start, finish)) {}
+
+		MarkupExtensionParser(Parser<MarkupExtensionParts> parser)
+			: base(parser, new ReferenceCache<string, MarkupExtensionParts>(parser.PartialOrDefault)) {}
 	}
 }

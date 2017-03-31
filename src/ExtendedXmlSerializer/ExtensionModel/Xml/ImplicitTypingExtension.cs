@@ -25,10 +25,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {

@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class CharacterParser : FixedParser<char>
+	sealed class CharacterParser : Parsing<char>
 	{
 		public static implicit operator CharacterParser(char instance) => new CharacterParser(instance);
 

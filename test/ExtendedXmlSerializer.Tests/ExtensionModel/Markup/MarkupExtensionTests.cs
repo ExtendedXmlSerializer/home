@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void Verify()
 		{
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(AutoMemberFormatExtension.Default).EnableMarkupExtensions());
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, Extension.None, " 6776"));
 		}
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithProperty()
 		{
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(AutoMemberFormatExtension.Default).EnableMarkupExtensions());
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension Number=3 * 3}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, Extension.None, " 9"));
 		}
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithParameter()
 		{
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(AutoMemberFormatExtension.Default).EnableMarkupExtensions());
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension 'Provided Message!'}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, "Provided Message!", " 6776"));
 		}
@@ -60,14 +60,30 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithParameterAndProperty()
 		{
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(AutoMemberFormatExtension.Default).EnableMarkupExtensions());
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension 'Provided Message!', Number=3 * 4}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, "Provided Message!", " 12"));
+		}
+
+		[Fact]
+		public void VerifyType()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
+			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  SuppliedType=""{exs:Type sys:int}"" AnotherProperty=""Hello World!"" />");
+			subject.SuppliedType.Should().Be(typeof(int));
+			subject.AnotherProperty.Should().Be("Hello World!");
 		}
 
 		sealed class Subject
 		{
 			public string PropertyName { get; [UsedImplicitly] set; }
+		}
+
+		sealed class TypedSubject
+		{
+			public Type SuppliedType { get; [UsedImplicitly] set; }
+
+			public string AnotherProperty { get; [UsedImplicitly] set; }
 		}
 
 		sealed class Extension : IMarkupExtension
@@ -84,7 +100,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 				_message = message;
 			}
 
-			public object ProvideValue(System.IServiceProvider serviceProvider) => string.Concat(Message, _message, $" {Number.ToString()}");
+			public object ProvideValue(IServiceProvider serviceProvider) => string.Concat(Message, _message, $" {Number.ToString()}");
 
 			public int Number { get; set; } = 6776;
 		}

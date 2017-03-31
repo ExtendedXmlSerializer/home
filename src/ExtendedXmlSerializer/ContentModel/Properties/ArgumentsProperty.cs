@@ -22,15 +22,14 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
-using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
@@ -38,15 +37,15 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	sealed class ArgumentsProperty : FrameworkPropertyBase<ImmutableArray<Type>>, IArgumentsProperty
 	{
 		[UsedImplicitly]
-		public ArgumentsProperty(ITypeParsers parsers, ITypeFormatters formatters)
+		public ArgumentsProperty(IReflectionParsers parsers, IReflectionFormatters formatters)
 			: this(TypePartsList.Default, parsers, formatters) {}
 
-		readonly Parser<IEnumerable<TypeParts>> _names;
-		readonly IParameterizedSource<IXmlReader, ITypeParser> _parsers;
-		readonly IParameterizedSource<IXmlWriter, ITypeFormatter> _formatters;
+		readonly Parser<ImmutableArray<TypeParts>> _names;
+		readonly IParameterizedSource<IXmlReader, IReflectionParser> _parsers;
+		readonly IParameterizedSource<IXmlWriter, IReflectionFormatter> _formatters;
 
-		ArgumentsProperty(Parser<IEnumerable<TypeParts>> names, IParameterizedSource<IXmlReader, ITypeParser> parsers,
-		                  IParameterizedSource<IXmlWriter, ITypeFormatter> formatters) : base("arguments")
+		ArgumentsProperty(Parser<ImmutableArray<TypeParts>> names, IParameterizedSource<IXmlReader, IReflectionParser> parsers,
+		                  IParameterizedSource<IXmlWriter, IReflectionFormatter> formatters) : base("arguments")
 		{
 			_names = names;
 			_parsers = parsers;
@@ -67,7 +66,8 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 			var result = new Type[length];
 			for (var i = 0; i < length; i++)
 			{
-				result[i] = parser.Get(parts[i]).AsType();
+				var typeInfo = parser.Get(parts[i]);
+				result[i] = typeInfo.AsType();
 			}
 			return result;
 		}

@@ -123,7 +123,17 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			return result;
 		}
 
-		public string Get(string parameter) => _reader.LookupNamespace(parameter);
+		public string Get(string parameter)
+		{
+			var result = _reader.LookupNamespace(parameter);
+			if (result == null)
+			{
+				var info = (IXmlLineInfo) _reader;
+				throw new XmlException($"A prefix of {parameter} was provided to perform a namespace lookup, but none was found.",
+				                       null, info.LineNumber, info.LinePosition);
+			}
+			return result;
+		}
 
 		public override string ToString()
 			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";

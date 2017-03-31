@@ -21,30 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Parsing;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionContainer : ReferenceCacheBase<IXmlReader, IMarkupExtensions>, IMarkupExtensionContainer
 	{
-		readonly static Func<string, object> Evaluator = ExpressionEvaluator.Default.Get;
-
-		readonly Func<string, object> _evaluator;
-		readonly ITypeParsers _parsers;
+		readonly IEvaluator _evaluator;
+		readonly IReflectionParsers _parsers;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
 
-		public MarkupExtensionContainer(ITypeParsers parsers, ITypeMembers members, IMemberAccessors accessors,
-		                                IConstructors constructors)
-			: this(Evaluator, parsers, members, accessors, constructors) {}
-
-		public MarkupExtensionContainer(Func<string, object> evaluator, ITypeParsers parsers, ITypeMembers members,
+		public MarkupExtensionContainer(IEvaluator evaluator, IReflectionParsers parsers, ITypeMembers members,
 		                                IMemberAccessors accessors, IConstructors constructors)
 		{
 			_evaluator = evaluator;

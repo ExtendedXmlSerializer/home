@@ -23,12 +23,12 @@
 
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	class Identifiers : IIdentifiers
+	sealed class Identifiers : IIdentifiers
 	{
 		public static Identifiers Default { get; } = new Identifiers();
 		Identifiers() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}

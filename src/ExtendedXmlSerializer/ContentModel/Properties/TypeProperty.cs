@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Parsing;
+
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class TypeProperty : TypePropertyBase
 	{
-		public TypeProperty(ITypeParsers parsers, ITypeFormatters formatters) : base(parsers, formatters, "type") {}
+		public TypeProperty(IReflectionParsers parsers, IReflectionFormatters formatters) : base(parsers, formatters, "type") {}
 	}
 }

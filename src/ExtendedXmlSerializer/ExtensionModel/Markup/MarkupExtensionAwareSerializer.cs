@@ -21,20 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionAwareSerializer : ISerializer
 	{
+		readonly IParser<MarkupExtensionParts> _parser;
 		readonly IMarkupExtensionContainer _container;
 		readonly System.IServiceProvider _provider;
 		readonly ISerializer _serializer;
 
 		public MarkupExtensionAwareSerializer(IMarkupExtensionContainer container, System.IServiceProvider provider,
 		                                      ISerializer serializer)
+			: this(MarkupExtensionParser.Default, container, provider, serializer) {}
+
+		public MarkupExtensionAwareSerializer(IParser<MarkupExtensionParts> parser, IMarkupExtensionContainer container,
+		                                      System.IServiceProvider provider,
+		                                      ISerializer serializer)
 		{
+			_parser = parser;
 			_container = container;
 			_provider = provider;
 			_serializer = serializer;
@@ -42,14 +52,65 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		public object Get(IXmlReader parameter)
 		{
-			var instance = _serializer.Get(parameter);
-			var parts = instance as MarkupExtensionParts;
+			var candidate = Candidate(parameter);
+			var parts = candidate.Instance as MarkupExtensionParts;
 			var result = parts != null
 				? _container.Get(parameter)
 				            .Get(parts)
-				            .ProvideValue(_provider)
-				: instance;
+				            .ProvideValue(new Provider(_provider, parameter, parts))
+				: candidate.Get();
 			return result;
+		}
+
+		CandidateResult Candidate(IXmlReader parameter)
+		{
+			try
+			{
+				return new CandidateResult(_serializer.Get(parameter));
+			}
+			catch (Exception e)
+			{
+				return new CandidateResult(_parser.Get(parameter.Value()), e);
+			}
+		}
+
+		struct CandidateResult : ISource<object>
+		{
+			readonly Exception _error;
+
+			public CandidateResult(object instance, Exception error = null)
+			{
+				_error = error;
+				Instance = instance;
+			}
+
+			public object Instance { get; }
+
+			public object Get()
+			{
+				if (_error != null)
+				{
+					throw _error;
+				}
+				return Instance;
+			}
+		}
+
+		sealed class Provider : System.IServiceProvider
+		{
+			readonly System.IServiceProvider _provider, _services;
+
+			public Provider(System.IServiceProvider provider, params object[] services)
+				: this(provider, new ServiceProvider(services)) {}
+
+			public Provider(System.IServiceProvider provider, System.IServiceProvider services)
+			{
+				_provider = provider;
+				_services = services;
+			}
+
+			public object GetService(Type serviceType)
+				=> _services.GetService(serviceType) ?? _provider.GetService(serviceType);
 		}
 
 		public void Write(IXmlWriter writer, object instance) => _serializer.Write(writer, instance);

@@ -23,6 +23,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core
 {
@@ -46,6 +47,9 @@ namespace ExtendedXmlSerializer.Core
 		public static implicit operator char[](Delimiter delimiter) => delimiter._array;
 
 		public static implicit operator char(Delimiter delimiter) => delimiter._first;
+
+		public static implicit operator Parser<char>(Delimiter delimiter) => Parse.Char(delimiter._first);
+
 		public static implicit operator string(Delimiter delimiter) => delimiter.ToString();
 
 		public override string ToString() => _text;

@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.ContentModel.Parsing;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	class TypeNameAlteration : IAlteration<string>
+	sealed class TypeNameAlteration : IAlteration<string>
 	{
 		readonly char _search;
 		readonly char _replace;

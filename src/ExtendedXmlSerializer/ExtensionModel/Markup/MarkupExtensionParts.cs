@@ -23,14 +23,15 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Xml.Parsing;
+using ExtendedXmlSerializer.ContentModel.Parsing;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public sealed class MarkupExtensionParts
 	{
-		public MarkupExtensionParts(TypeParts type, ImmutableArray<string> arguments,
-		                            ImmutableArray<KeyValuePair<string, string>> properties)
+		public MarkupExtensionParts(TypeParts type, ImmutableArray<IExpression> arguments,
+		                            ImmutableArray<KeyValuePair<string, IExpression>> properties)
 		{
 			Type = type;
 			Arguments = arguments;
@@ -38,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		public TypeParts Type { get; }
-		public ImmutableArray<string> Arguments { get; }
-		public ImmutableArray<KeyValuePair<string, string>> Properties { get; }
+		public ImmutableArray<IExpression> Arguments { get; }
+		public ImmutableArray<KeyValuePair<string, IExpression>> Properties { get; }
 	}
 }

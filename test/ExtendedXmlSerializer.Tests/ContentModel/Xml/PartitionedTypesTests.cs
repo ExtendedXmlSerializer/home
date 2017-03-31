@@ -24,11 +24,12 @@
 using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.TypeModel;
 using Xunit;
-using TypeFormatter = ExtendedXmlSerializer.ContentModel.Xml.TypeFormatter;
+using Identity = ExtendedXmlSerializer.ContentModel.Identity;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Xml
 {
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Xml
 			var @namespace = NamespaceFormatter.Default.Get(expected);
 			var aliases = new Names(new TypedTable<string>(DefaultNames.Default));
 			var formatter = new TypeFormatter(aliases);
-			var partitions = new AssemblyTypePartitions(new ContainsAliasSpecification(aliases),  formatter);
+			var partitions = new AssemblyTypePartitions(new PartitionedTypeSpecification(aliases),  formatter);
 			var type = new PartitionedTypes(TypeLoader.Default, partitions).Get(new Identity(formatter.Get(expected), @namespace));
 			Assert.Equal(expected, type);
 		}

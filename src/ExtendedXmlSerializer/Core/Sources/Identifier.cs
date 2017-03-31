@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class Identifier : FixedParser<string>
+	class Identifier : Parsing<string>
 	{
 		public Identifier(IEnumerable<char> allowed) : this(allowed.Fixed()) {}
 

@@ -21,15 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class ItemsParser<T> : FixedParser<IEnumerable<T>>
+	class ItemsParser<T> : Parsing<ImmutableArray<T>>
 	{
 		public ItemsParser(Parser<T> source) : this(source, Defaults.ItemDelimiter) {}
 
-		public ItemsParser(Parser<T> source, Parser<char> delimiter) : base(source.DelimitedBy(delimiter)) {}
+		public ItemsParser(Parser<T> source, Parser<char> delimiter)
+			: base(source.DelimitedBy(delimiter).Select(x => x.ToImmutableArray())) {}
 	}
 }
