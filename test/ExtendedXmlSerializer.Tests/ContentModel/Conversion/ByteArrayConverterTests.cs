@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Tests.Support;
+using Xunit;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion
 {
-	sealed class MemberDescriptors : StructureCacheBase<MemberInfo, MemberDescriptor>
+	public class ByteArrayConverterTests
 	{
-		public static MemberDescriptors Default { get; } = new MemberDescriptors();
-		MemberDescriptors() {}
-
-		protected override MemberDescriptor Create(MemberInfo parameter)
+		[Fact]
+		public void Verify()
 		{
-			switch (parameter.MemberType)
-			{
-				case MemberTypes.Property:
-					return new MemberDescriptor((PropertyInfo) parameter);
-				case MemberTypes.Field:
-					return new MemberDescriptor((FieldInfo)parameter);
-				case MemberTypes.TypeInfo:
-					return new MemberDescriptor((TypeInfo)parameter);
-			}
-			throw new InvalidOperationException($"{parameter} is not a valid member metadata type.");
+			var instance = new byte[] {1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1};
+
+			var support = new SerializationSupport();
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:item=""unsignedByte"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">AQIDBAUGBwcGBQQDAgE=</Array>");
+			Assert.Equal(instance, actual);
+		}
+
+		[Fact]
+		public void VerifyProperty()
+		{
+			var instance = new Subject { Bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1 } };
+
+			var support = new SerializationSupport();
+			var actual = support.Cycle(instance);
+			Assert.Equal(instance.Bytes, actual.Bytes);
+		}
+
+		class Subject
+		{
+			public byte[] Bytes { get; set; }
 		}
 	}
 }

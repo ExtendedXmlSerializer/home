@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class Members : IMembers
+	sealed class Members : IMembers
 	{
 		readonly INames _names;
 		readonly IMemberOrder _order;

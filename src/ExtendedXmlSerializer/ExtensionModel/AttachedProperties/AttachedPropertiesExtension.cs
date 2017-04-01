@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using JetBrains.Annotations;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	sealed class MemberDescriptors : StructureCacheBase<MemberInfo, MemberDescriptor>
+	sealed class AttachedPropertiesExtension : ISerializerExtension
 	{
-		public static MemberDescriptors Default { get; } = new MemberDescriptors();
-		MemberDescriptors() {}
+		[UsedImplicitly]
+		public AttachedPropertiesExtension() : this(new Registrations<IProperty>()) {}
 
-		protected override MemberDescriptor Create(MemberInfo parameter)
+		public AttachedPropertiesExtension(Registrations<IProperty> registrations)
 		{
-			switch (parameter.MemberType)
-			{
-				case MemberTypes.Property:
-					return new MemberDescriptor((PropertyInfo) parameter);
-				case MemberTypes.Field:
-					return new MemberDescriptor((FieldInfo)parameter);
-				case MemberTypes.TypeInfo:
-					return new MemberDescriptor((TypeInfo)parameter);
-			}
-			throw new InvalidOperationException($"{parameter} is not a valid member metadata type.");
+			Registrations = registrations;
 		}
+
+		public Registrations<IProperty> Registrations { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> Registrations.Alter(parameter)
+			                 .Register(x => x.GetAllInstances<IProperty>().ToImmutableArray())
+			                 .Decorate<IMemberAccessors, MemberAccessors>()
+			                 .Decorate<ITypeMembers, TypeMembers>();
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

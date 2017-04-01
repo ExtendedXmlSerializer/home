@@ -28,7 +28,7 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class RuntimeMemberList : IRuntimeMemberList
+	sealed class RuntimeMemberList : IRuntimeMemberList
 	{
 		readonly Func<IMemberSerializer, bool> _specification;
 		readonly IMemberSerializer[] _properties, _contents;

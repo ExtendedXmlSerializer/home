@@ -33,11 +33,11 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IMemberConverters _converters;
 		readonly IMemberContents _content;
 
-		public MemberSerializers(IMemberAccessors accessors, IAttributeSpecifications runtime,
+		public MemberSerializers(IAttributeSpecifications runtime, IMemberAccessors accessors,
 		                         IMemberConverters converters, IMemberContents content)
 		{
-			_accessors = accessors;
 			_runtime = runtime;
+			_accessors = accessors;
 			_converters = converters;
 			_content = content;
 		}
@@ -61,10 +61,10 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 				: property;
 		}
 
-		MemberSerializer Content(IMember profile, IMemberAccess access)
+		IMemberSerializer Content(IMember profile, IMemberAccess access)
 		{
 			var body = _content.Get(profile);
-			var writer = Wrap(access, new Enclosure(new MemberElement(profile.Name), body));
+			var writer = Wrap(access, new Enclosure(new MemberElement(profile), body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}

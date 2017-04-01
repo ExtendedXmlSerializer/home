@@ -25,10 +25,15 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class MemberElement : Identity, IWriter
+	sealed class MemberElement : IWriter
 	{
-		public MemberElement(string name) : base(name, string.Empty) {}
+		readonly IIdentity _member;
 
-		public void Write(IXmlWriter writer, object instance) => writer.Member(Name);
+		public MemberElement(IIdentity member)
+		{
+			_member = member;
+		}
+
+		public void Write(IXmlWriter writer, object instance) => writer.Member(_member);
 	}
 }

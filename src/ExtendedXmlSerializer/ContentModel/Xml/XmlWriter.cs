@@ -24,6 +24,7 @@
 using System;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
 
@@ -66,7 +67,18 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public void Element(IIdentity name) => _writer.WriteStartElement(name.Name, name.Identifier);
 
-		public void Member(string name) => _writer.WriteStartElement(name);
+		public void Member(IIdentity member)
+		{
+			var identifier = member.Identifier.NullIfEmpty();
+			if (identifier != null)
+			{
+				_writer.WriteStartElement(member.Name, member.Identifier);
+			}
+			else
+			{
+				_writer.WriteStartElement(member.Name);
+			}
+		}
 
 		public void Write(string text) => _writer.WriteString(text);
 

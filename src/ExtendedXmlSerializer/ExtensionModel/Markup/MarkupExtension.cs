@@ -33,11 +33,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		MarkupExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<IMarkupExtensionContainer, MarkupExtensionContainer>()
-			            .Register<IMarkupExtensionEnhancer, MarkupExtensionEnhancer>()
+			=> parameter.Register<IMarkupExtensions, MarkupExtensions>()
+			            .Register<IEnhancer, Enhancer>()
 			            .Decorate<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
-			            .Decorate<ISerializers, MarkupExtensionSerializers>()
-			            .Decorate<IContents, MarkupExtensionContents>();
+			            .Decorate<ISerializers, Serializers>()
+			            .Decorate<IContents, Contents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

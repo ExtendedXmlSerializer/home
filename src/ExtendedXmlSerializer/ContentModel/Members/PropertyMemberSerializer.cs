@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class PropertyMemberSerializer : MemberSerializer
+	sealed class PropertyMemberSerializer : MemberSerializer
 	{
 		public PropertyMemberSerializer(IMember profile, IMemberAccess access, IReader property, IWriter writer)
 			: base(profile, access, property, writer) {}

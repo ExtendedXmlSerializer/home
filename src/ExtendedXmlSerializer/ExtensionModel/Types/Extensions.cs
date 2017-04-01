@@ -37,22 +37,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public static TypeConfiguration<T> Type<T>(this IConfiguration @this)
 			=> TypeConfigurations<T>.Default.Get(@this);
 
-		public static MemberConfiguration<T, TMember> Member<T, TMember>(
-			this TypeConfiguration<T> @this,
-			Expression<Func<T, TMember>> member)
+		public static ITypeConfiguration Type<T>(this IConfigurationItem<T> @this) where T : MemberInfo
+			=> @this as ITypeConfiguration ?? (@this as IMemberConfiguration)?.Owner;
+
+		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
+		                                                                 Expression<Func<T, TMember>> member)
 			=> Members<T, TMember>.Defaults.Get(@this.Configuration).Get(member.GetMemberInfo());
 
 		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                      Expression<Func<T, TMember>> member,
-		                                                      Action<MemberConfiguration<T, TMember>>
-			                                                      configure)
+		                                                      Action<MemberConfiguration<T, TMember>> configure)
 		{
 			configure(@this.Member(member));
 			return @this;
 		}
 
-		public static TypeConfiguration<T> Owner<T>(this IMemberConfiguration @this)
-			=> TypeConfigurations<T>.Default.For(@this.Owner);
+		/*public static TypeConfiguration<T> Owner<T>(this IMemberConfiguration @this)
+			=> TypeConfigurations<T>.Default.For(@this.Owner);*/
 
 		public static string Name<T>(this IConfigurationItem<T> @this) where T : MemberInfo => @this.Name.Get();
 

@@ -37,6 +37,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		void Write(string text);
 
-		void Member(string name);
+		void Member(IIdentity member);
 	}
 }

@@ -21,9 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -37,10 +35,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			        .EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)
 			        .Extend(MarkupExtension.Default);
-
-		public static Parser<TOut> MatchedInput<T, TOut>(this Parser<T> first, Func<string, T, TOut> projector)
-		{
-			return i => first(i).IfSuccess(x => Result.Success(projector(i.Source, x.Value), i));
-		}
 	}
 }

@@ -21,40 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Expressions;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionContainer : ReferenceCacheBase<IXmlReader, IMarkupExtensionPartsEvaluator>,
-	                                        IMarkupExtensionContainer
-	{
-		readonly IEvaluator _evaluator;
-		readonly IReflectionParsers _parsers;
-		readonly ITypeMembers _members;
-		readonly IMemberAccessors _accessors;
-		readonly IConstructors _constructors;
-		readonly System.IServiceProvider _provider;
-
-		public MarkupExtensionContainer(IEvaluator evaluator, IReflectionParsers parsers, ITypeMembers members,
-		                                IMemberAccessors accessors, IConstructors constructors,
-		                                System.IServiceProvider provider)
-		{
-			_evaluator = evaluator;
-			_parsers = parsers;
-			_members = members;
-			_accessors = accessors;
-			_constructors = constructors;
-			_provider = provider;
-		}
-
-		protected override IMarkupExtensionPartsEvaluator Create(IXmlReader parameter)
-			=>
-				new MarkupExtensionPartsEvaluator(parameter, _provider, _evaluator, _parsers.Get(parameter), _members, _accessors,
-				                                  _constructors);
-	}
+	public interface IMarkupExtensions : IParameterizedSource<IXmlReader, IMarkupExtensionPartsEvaluator> {}
 }

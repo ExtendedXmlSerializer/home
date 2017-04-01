@@ -21,23 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
-
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class MarkupExtensionSerializers : ISerializers
+	public sealed class FixedRegistration<T> : IRegistration
 	{
-		readonly IMarkupExtensionEnhancer _enhancer;
-		readonly ISerializers _serializers;
+		readonly T _instance;
 
-		public MarkupExtensionSerializers(IMarkupExtensionEnhancer enhancer, ISerializers serializers)
+		public FixedRegistration(T instance)
 		{
-			_enhancer = enhancer;
-			_serializers = serializers;
+			_instance = instance;
 		}
 
-		public ISerializer Get(TypeInfo parameter) => _enhancer.Get(_serializers.Get(parameter));
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance(_instance, _instance.GetType().AssemblyQualifiedName);
 	}
 }

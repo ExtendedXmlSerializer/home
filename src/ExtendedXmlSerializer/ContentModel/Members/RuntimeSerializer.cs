@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class RuntimeSerializer : IRuntimeSerializer
+	sealed class RuntimeSerializer : IRuntimeSerializer
 	{
 		readonly ISpecification<object> _specification;
 		readonly IMemberSerializer _property;

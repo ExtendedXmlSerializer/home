@@ -21,29 +21,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	sealed class MemberDescriptors : StructureCacheBase<MemberInfo, MemberDescriptor>
+	sealed class TypeMembers : ITypeMembers
 	{
-		public static MemberDescriptors Default { get; } = new MemberDescriptors();
-		MemberDescriptors() {}
+		readonly IIdentities _identities;
+		readonly ITypeMembers _typeMembers;
+		readonly IMembers _members;
+		readonly ImmutableArray<IProperty> _properties;
 
-		protected override MemberDescriptor Create(MemberInfo parameter)
+		public TypeMembers(IIdentities identities, ITypeMembers typeMembers, IMembers members,
+		                   ImmutableArray<IProperty> properties)
 		{
-			switch (parameter.MemberType)
+			_identities = identities;
+			_typeMembers = typeMembers;
+			_members = members;
+			_properties = properties;
+		}
+
+		public ImmutableArray<IMember> Get(TypeInfo parameter)
+			=> _typeMembers.Get(parameter).AddRange(Yield(parameter).OrderBy(x => x.Order));
+
+		IEnumerable<IMember> Yield(TypeInfo parameter)
+		{
+			foreach (var property in _properties)
 			{
-				case MemberTypes.Property:
-					return new MemberDescriptor((PropertyInfo) parameter);
-				case MemberTypes.Field:
-					return new MemberDescriptor((FieldInfo)parameter);
-				case MemberTypes.TypeInfo:
-					return new MemberDescriptor((TypeInfo)parameter);
+				if (property.IsSatisfiedBy(parameter))
+				{
+					var propertyInfo = property.Metadata;
+					var identity = _identities.Get(propertyInfo.DeclaringType);
+					yield return new AttachedMember(identity, _members.Get(propertyInfo), property);
+				}
 			}
-			throw new InvalidOperationException($"{parameter} is not a valid member metadata type.");
 		}
 	}
 }

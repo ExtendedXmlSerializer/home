@@ -26,8 +26,8 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberConverterSpecification : AnySpecification<MemberInfo>, IMemberConverterSpecification
+	sealed class MemberConverterSpecification : DecoratedSpecification<MemberInfo>, IMemberConverterSpecification
 	{
-		public MemberConverterSpecification(params ISpecification<MemberInfo>[] specifications) : base(specifications) {}
+		public MemberConverterSpecification(ISpecification<MemberInfo> specification) : base(specification) {}
 	}
 }

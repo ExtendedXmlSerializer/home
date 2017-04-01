@@ -37,24 +37,24 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			IsTypeSpecification<PropertyMemberSerializer>.Default.IsSatisfiedBy;
 
 		readonly Func<IMemberSerializer, bool> _property;
-		readonly ITypeMembers _profiles;
+		readonly ITypeMembers _members;
 		readonly Func<IMember, IMemberSerializer> _serializers;
 
 		[UsedImplicitly]
-		public MemberSerializations(ITypeMembers profiles, IMemberSerializers serializers)
-			: this(Property, profiles, serializers.Get) {}
+		public MemberSerializations(ITypeMembers members, IMemberSerializers serializers)
+			: this(Property, members, serializers.Get) {}
 
-		public MemberSerializations(Func<IMemberSerializer, bool> property, ITypeMembers profiles,
+		public MemberSerializations(Func<IMemberSerializer, bool> property, ITypeMembers members,
 		                            Func<IMember, IMemberSerializer> serializers)
 		{
 			_property = property;
-			_profiles = profiles;
+			_members = members;
 			_serializers = serializers;
 		}
 
 		protected override IMemberSerialization Create(TypeInfo parameter)
 		{
-			var serializers = _profiles.Get(parameter).Select(_serializers).ToArray();
+			var serializers = _members.Get(parameter).Select(_serializers).ToArray();
 			var properties = serializers.Where(_property).ToArray();
 			var runtime = serializers.OfType<IRuntimeSerializer>().ToArray();
 			var contents = serializers.Except(properties.Concat(runtime)).ToArray();

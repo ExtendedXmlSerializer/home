@@ -29,17 +29,17 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberSerialization : TableSource<string, IMemberSerializer>, IMemberSerialization
 	{
-		readonly IRuntimeMemberList _serializers;
+		readonly IRuntimeMemberList _runtime;
 		readonly ImmutableArray<IMemberSerializer> _all;
 
-		public MemberSerialization(IRuntimeMemberList serializers, IDictionary<string, IMemberSerializer> store,
+		public MemberSerialization(IRuntimeMemberList runtime, IDictionary<string, IMemberSerializer> store,
 		                           ImmutableArray<IMemberSerializer> all) : base(store)
 		{
-			_serializers = serializers;
+			_runtime = runtime;
 			_all = all;
 		}
 
-		public ImmutableArray<IMemberSerializer> Get(object parameter) => _serializers.Get(parameter);
+		public ImmutableArray<IMemberSerializer> Get(object parameter) => _runtime.Get(parameter);
 
 
 		public ImmutableArray<IMemberSerializer> Get() => _all;

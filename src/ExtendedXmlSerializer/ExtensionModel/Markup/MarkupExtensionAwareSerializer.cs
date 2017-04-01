@@ -32,13 +32,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	sealed class MarkupExtensionAwareSerializer : ISerializer
 	{
 		readonly Parser<MarkupExtensionParts> _parser;
-		readonly IMarkupExtensionContainer _container;
+		readonly IMarkupExtensions _container;
 		readonly ISerializer _serializer;
 
-		public MarkupExtensionAwareSerializer(IMarkupExtensionContainer container, ISerializer serializer)
+		public MarkupExtensionAwareSerializer(IMarkupExtensions container, ISerializer serializer)
 			: this(MarkupExtensionParser.Default, container, serializer) {}
 
-		public MarkupExtensionAwareSerializer(Parser<MarkupExtensionParts> parser, IMarkupExtensionContainer container,
+		public MarkupExtensionAwareSerializer(Parser<MarkupExtensionParts> parser, IMarkupExtensions container,
 		                                      ISerializer serializer)
 		{
 			_parser = parser;

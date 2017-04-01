@@ -49,12 +49,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IServiceRepository Get(IServiceRepository parameter)
 		{
-			var specification = new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered),
-			                                                     IsDefinedSpecification<XmlAttributeAttribute>.Default);
-			return parameter
-				.RegisterInstance<IAttributeSpecifications>(new ContentModel.Members.AttributeSpecifications(Specifications))
-				.RegisterInstance<IMemberConverterSpecification>(specification)
-				.Register<IMemberConverters, MemberConverters>();
+			var specification = new MemberConverterSpecification(new ContainsSpecification<MemberInfo>(Registered)
+				                                                     .Or(IsDefinedSpecification<XmlAttributeAttribute>.Default)
+			);
+			var specifications = new ContentModel.Members.AttributeSpecifications(Specifications);
+			return parameter.RegisterInstance<IAttributeSpecifications>(specifications)
+			                .RegisterInstance<IMemberConverterSpecification>(specification)
+			                .Register<IMemberConverters, MemberConverters>();
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
