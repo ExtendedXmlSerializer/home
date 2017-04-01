@@ -23,10 +23,17 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	sealed class GeneralExpression : ExpressionBase
+	abstract class ExpressionBase : IExpression
 	{
-		public GeneralExpression(string expression) : base(expression) {}
+		readonly string _expression;
 
-		public override object Get(IExpressionEvaluator parameter) => parameter.Get(ToString());
+		protected ExpressionBase(string expression)
+		{
+			_expression = expression;
+		}
+
+		public abstract object Get(IExpressionEvaluator parameter);
+
+		public override string ToString() => _expression;
 	}
 }

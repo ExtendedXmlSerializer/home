@@ -21,12 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	sealed class GeneralExpression : ExpressionBase
+	class FixedExpression<T> : IExpression, ISource<T>
 	{
-		public GeneralExpression(string expression) : base(expression) {}
+		readonly T _instance;
 
-		public override object Get(IExpressionEvaluator parameter) => parameter.Get(ToString());
+		public FixedExpression(T instance)
+		{
+			_instance = instance;
+		}
+
+		public object Get(IExpressionEvaluator parameter) => Get();
+
+		public T Get() => _instance;
 	}
 }
