@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;

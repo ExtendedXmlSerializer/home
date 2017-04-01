@@ -24,7 +24,7 @@
 using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.TypeModel;

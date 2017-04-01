@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Converters;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 

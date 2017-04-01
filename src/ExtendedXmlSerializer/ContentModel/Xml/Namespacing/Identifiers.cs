@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing

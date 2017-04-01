@@ -23,7 +23,7 @@
 
 using System.Reflection;
 using System.Runtime.Serialization.Formatters;
-using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing

@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {

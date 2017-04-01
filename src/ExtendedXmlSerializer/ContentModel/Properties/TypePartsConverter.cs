@@ -23,9 +23,9 @@
 
 using System;
 using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Converters;
-using ExtendedXmlSerializer.ContentModel.Formatting;
-using ExtendedXmlSerializer.ContentModel.Parsing;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
