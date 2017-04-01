@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public interface IMarkupExtensionContainer : IParameterizedSource<IXmlReader, IMarkupExtensions> {}
+	public interface IMarkupExtensionContainer : IParameterizedSource<IXmlReader, IMarkupExtensionPartsEvaluator> {}
 }

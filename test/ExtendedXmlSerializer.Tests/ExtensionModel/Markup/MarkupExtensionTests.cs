@@ -74,9 +74,33 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 			subject.AnotherProperty.Should().Be("Hello World!");
 		}
 
+		[Fact]
+		public void VerifyMarkupExtension()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
+			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  AnotherProperty=""{MarkupExtensionTests-TypeName {exs:Type sys:dateTime}}"" />");
+			subject.AnotherProperty.Should().Be(typeof(DateTime).AssemblyQualifiedName);
+		}
+
+		[Fact]
+		public void VerifyStatic()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
+			var subject = serializer.Deserialize<DatedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DatedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  Date=""{exs:Static sys:dateTime.Now}"" DateNullable=""{exs:Static sys:dateTime.Now}"" />");
+			subject.Date.Should().NotBe(default(DateTime)).And.BeAfter(DateTime.Today);
+			subject.DateNullable.Should().NotBeNull().And.BeAfter(DateTime.Today);
+		}
+
 		sealed class Subject
 		{
 			public string PropertyName { get; [UsedImplicitly] set; }
+		}
+
+		sealed class DatedSubject
+		{
+			public DateTime Date { get; [UsedImplicitly] set; }
+
+			public DateTime? DateNullable { get; [UsedImplicitly] set; }
 		}
 
 		sealed class TypedSubject
@@ -84,6 +108,19 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 			public Type SuppliedType { get; [UsedImplicitly] set; }
 
 			public string AnotherProperty { get; [UsedImplicitly] set; }
+		}
+
+		sealed class TypeNameExtension : IMarkupExtension
+		{
+			readonly Type _type;
+
+			[UsedImplicitly]
+			public TypeNameExtension(Type type)
+			{
+				_type = type;
+			}
+
+			public object ProvideValue(IServiceProvider serviceProvider) => _type.AssemblyQualifiedName;
 		}
 
 		sealed class Extension : IMarkupExtension

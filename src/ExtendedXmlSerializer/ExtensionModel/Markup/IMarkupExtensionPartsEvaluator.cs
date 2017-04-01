@@ -22,16 +22,8 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
-using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionExpressionParser : Parsing<IExpression>
-	{
-		public MarkupExtensionExpressionParser() : base(
-			Parse.Ref(() => MarkupExtensionParser.Default.Get())
-			     .MatchedInput((source, result) => new MarkupExtensionExpression(source, result))
-		) {}
-	}
+	public interface IMarkupExtensionPartsEvaluator : IParameterizedSource<MarkupExtensionParts, object> {}
 }

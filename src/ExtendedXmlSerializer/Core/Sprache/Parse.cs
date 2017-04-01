@@ -106,9 +106,9 @@ namespace ExtendedXmlSerializer.Core.Sprache
 
         /// <summary>
         /// Parses a single character except for those in c
-        /// </summary>  
+        /// </summary>
         /// <param name="c"></param>
-        /// <returns></returns> 
+        /// <returns></returns>
         public static Parser<char> CharExcept(string c)
         {
             return CharExcept(c.ToEnumerable().Contains, StringExtensions.Join("|", c.ToEnumerable()));
@@ -170,7 +170,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
         /// Parse a lowercase letter.
         /// </summary>
         public static readonly Parser<char> Lower = Char(char.IsLower, "lowercase letter");
-        
+
         /// <summary>
         /// Parse an uppercase letter.
         /// </summary>
@@ -222,7 +222,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
                 return Result.Success<object>(null, i);
             };
         }
- 
+
         /// <summary>
         /// Parse first, and if successful, then parse second.
         /// </summary>
@@ -331,7 +331,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             return i => parser(i).IfSuccess(s =>
-                s.Remainder.AtEnd 
+                s.Remainder.AtEnd
                     ? s
                     : Result.Failure<T>(
                         s.Remainder,
@@ -429,7 +429,7 @@ namespace ExtendedXmlSerializer.Core.Sprache
                 {
                     return second(i).IfFailure(sf => DetermineBestError(fr, sf));
                 }
-                
+
                 if (fr.Remainder.Equals(i))
                     return second(i).IfFailure(sf => fr);
 
@@ -473,8 +473,8 @@ namespace ExtendedXmlSerializer.Core.Sprache
                 {
                     // The 'X' part
                     if (!fr.Remainder.Equals(i))
-                        return fr; 
-                    
+                        return fr;
+
                     return second(i).IfFailure(sf => DetermineBestError(fr, sf));
                 }
 

@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,6 +29,7 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Formatting;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Parsing;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
@@ -37,19 +38,26 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensions : ReferenceCacheBase<MarkupExtensionParts, IMarkupExtension>, IMarkupExtensions
+	sealed class MarkupExtensionPartsEvaluator : ReferenceCacheBase<MarkupExtensionParts, object>, IEvaluator,
+	                                             IMarkupExtensionPartsEvaluator
 	{
 		const string Extension = "Extension";
 
+		readonly IXmlReader _reader;
+		readonly System.IServiceProvider _provider;
 		readonly IEvaluator _evaluator;
 		readonly IReflectionParser _parser;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
 
-		public MarkupExtensions(IEvaluator evaluator, IReflectionParser parser, ITypeMembers members,
-		                        IMemberAccessors accessors, IConstructors constructors)
+		public MarkupExtensionPartsEvaluator(
+			IXmlReader reader, System.IServiceProvider provider,
+			IEvaluator evaluator, IReflectionParser parser, ITypeMembers members,
+			IMemberAccessors accessors, IConstructors constructors)
 		{
+			_reader = reader;
+			_provider = provider;
 			_evaluator = evaluator;
 			_parser = parser;
 			_members = members;
@@ -57,24 +65,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_constructors = constructors;
 		}
 
-		protected override IMarkupExtension Create(MarkupExtensionParts parameter)
+		public IEvaluation Get(IExpression parameter)
+		{
+			var expression = parameter as MarkupExtensionPartsExpression;
+			var accounted = expression != null ? new FixedExpression<object>(Get(expression.Get())) : parameter;
+			var result = _evaluator.Get(accounted);
+			return result;
+		}
+
+		protected override object Create(MarkupExtensionParts parameter)
 		{
 			var type = DetermineType(parameter);
 
-			var candidates = parameter.Arguments.Select(_evaluator.Get).ToArray();
+			var candidates = parameter.Arguments.Select(Get).ToArray();
 			var constructor = DetermineConstructor(parameter, candidates, type);
 
 			var members = _members.Get(type);
-			var evaluator = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), _evaluator);
+			var evaluator = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), this);
 			var dictionary = parameter.Properties.ToDictionary(x => x.Key, evaluator.Get);
 			var arguments = constructor.GetParameters()
 			                           .Select(x => x.ParameterType.GetTypeInfo())
 			                           .Zip(candidates, (info, evaluation) => evaluation.Get(info))
 			                           .ToArray();
 			var activator = new ConstructedActivator(constructor, arguments);
-			var result = new ActivationContexts(_accessors, members, activator).Get(dictionary)
-			                                                                   .Get()
-			                                                                   .AsValid<IMarkupExtension>();
+			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
+			                                                                      .Get()
+			                                                                      .AsValid<IMarkupExtension>();
+			var result = extension.ProvideValue(new Provider(_provider, _reader, parameter));
 			return result;
 		}
 
@@ -85,12 +102,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var constructor = constructors.Get(type);
 			if (constructor == null)
 			{
-				var values = parameter.Arguments.Select(x => x.Get()).ToArray();
+				var values = parameter.Arguments.Select(x => x.ToString()).ToArray();
 
 				var primary = new InvalidOperationException(
 					$"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
 
-				throw new AggregateException(primary.Yield().Concat(candidates.Select(x => x.Get()).Where(x => x != null)));
+				var exceptions = primary.Yield().Concat(candidates.Select(x => x.Get()).Where(x => x != null));
+				throw new AggregateException(exceptions);
 			}
 			return constructor;
 		}
@@ -153,6 +171,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 				return evaluation.Get(member.MemberType);
 			}
+		}
+
+		sealed class Provider : System.IServiceProvider
+		{
+			readonly System.IServiceProvider _provider, _services;
+
+			public Provider(System.IServiceProvider provider, params object[] services)
+				: this(provider, new ServiceProvider(services)) {}
+
+			public Provider(System.IServiceProvider provider, System.IServiceProvider services)
+			{
+				_provider = provider;
+				_services = services;
+			}
+
+			public object GetService(Type serviceType)
+				=> _services.GetService(serviceType) ?? _provider.GetService(serviceType);
 		}
 	}
 }
