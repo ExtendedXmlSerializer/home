@@ -24,6 +24,7 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
@@ -32,14 +33,14 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
-		readonly Xml.IIdentities _identities;
+		readonly IIdentities _identities;
 		readonly IItemTypeProperty _property;
 		readonly ICollectionItemTypeLocator _locator;
 
-		public ArrayElementOption(Xml.IIdentities identities, IItemTypeProperty property)
+		public ArrayElementOption(IIdentities identities, IItemTypeProperty property)
 			: this(identities, property, CollectionItemTypeLocator.Default) {}
 
-		public ArrayElementOption(Xml.IIdentities identities, IItemTypeProperty property, ICollectionItemTypeLocator locator)
+		public ArrayElementOption(IIdentities identities, IItemTypeProperty property, ICollectionItemTypeLocator locator)
 			: base(Specification)
 		{
 			_identities = identities;

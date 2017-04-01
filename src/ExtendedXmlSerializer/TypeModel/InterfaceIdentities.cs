@@ -41,6 +41,7 @@ namespace ExtendedXmlSerializer.TypeModel
 			_interfaces = interfaces;
 		}
 
-		public ImmutableArray<Guid> Get(TypeInfo parameter) => _interfaces.Get(parameter).Select(x => x.GUID).ToImmutableArray();
+		public ImmutableArray<Guid> Get(TypeInfo parameter)
+			=> _interfaces.Get(parameter).Select(x => x.GUID).ToImmutableArray();
 	}
 }

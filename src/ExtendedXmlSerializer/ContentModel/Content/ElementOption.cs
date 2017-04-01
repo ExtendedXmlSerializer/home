@@ -22,12 +22,13 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class ElementOption : NamedElementOptionBase
 	{
-		public ElementOption(Xml.IIdentities identities) : base(identities) {}
+		public ElementOption(IIdentities identities) : base(identities) {}
 
 		public sealed override IWriter Create(IIdentity identity, TypeInfo classification) => new Element(identity);
 	}

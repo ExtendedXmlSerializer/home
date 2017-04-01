@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
@@ -30,9 +31,9 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	{
 		readonly static ISpecification<TypeInfo> Specification = TypeModel.VariableTypeSpecification.Default;
 
-		readonly Xml.IIdentities _identities;
+		readonly IIdentities _identities;
 
-		public VariableTypeElementOption(Xml.IIdentities identities) : base(Specification, identities)
+		public VariableTypeElementOption(IIdentities identities) : base(Specification, identities)
 		{
 			_identities = identities;
 		}

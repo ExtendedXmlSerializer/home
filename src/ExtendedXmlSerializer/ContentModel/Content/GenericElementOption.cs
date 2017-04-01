@@ -24,6 +24,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	{
 		readonly IArgumentsProperty _arguments;
 
-		public GenericElementOption(Xml.IIdentities identities, IArgumentsProperty arguments)
+		public GenericElementOption(IIdentities identities, IArgumentsProperty arguments)
 			: base(IsGenericTypeSpecification.Default, identities)
 		{
 			_arguments = arguments;

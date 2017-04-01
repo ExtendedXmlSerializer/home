@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.TypeModel
 		}
 
 		protected override ImmutableArray<TypeInfo> Create(Assembly parameter) => _types.Get(parameter)
-		                                                                               .Where(_specification)
-		                                                                               .ToImmutableArray();
+		                                                                                .Where(_specification)
+		                                                                                .ToImmutableArray();
 	}
 }

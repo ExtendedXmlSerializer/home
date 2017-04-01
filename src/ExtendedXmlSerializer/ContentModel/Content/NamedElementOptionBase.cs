@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
@@ -30,11 +31,11 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	{
 		readonly static AlwaysSpecification<TypeInfo> Always = AlwaysSpecification<TypeInfo>.Default;
 
-		readonly Xml.IIdentities _identities;
+		readonly IIdentities _identities;
 
-		protected NamedElementOptionBase(Xml.IIdentities identities) : this(Always, identities) {}
+		protected NamedElementOptionBase(IIdentities identities) : this(Always, identities) {}
 
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, Xml.IIdentities identities)
+		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, IIdentities identities)
 			: base(specification)
 		{
 			_identities = identities;

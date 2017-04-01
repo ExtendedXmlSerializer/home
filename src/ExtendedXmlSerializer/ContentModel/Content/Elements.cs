@@ -24,13 +24,14 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class Elements : Selector<TypeInfo, IWriter>, IElements
 	{
-		public Elements(Xml.IIdentities identities, IItemTypeProperty item, IArgumentsProperty arguments) : base(
+		public Elements(IIdentities identities, IItemTypeProperty item, IArgumentsProperty arguments) : base(
 			new ArrayElementOption(identities, item),
 			new GenericElementOption(identities, arguments),
 			new VariableTypeElementOption(identities),
