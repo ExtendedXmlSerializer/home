@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,33 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class MemberPropertiesExtension : ISerializerExtension
+	sealed class ParameterizedMember : IMember
 	{
-		public MemberPropertiesExtension() : this(new Dictionary<MemberInfo, string>(), new Dictionary<MemberInfo, int>()) {}
+		readonly IMember _member;
 
-		public MemberPropertiesExtension(IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order)
+		public ParameterizedMember(IMember member)
 		{
-			Order = order;
-			Names = names;
+			_member = member;
 		}
 
-		public IDictionary<MemberInfo, string> Names { get; }
-		public IDictionary<MemberInfo, int> Order { get; }
+		public string Identifier => _member.Identifier;
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter
-				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
-				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default));
+		public string Name => _member.Name;
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public MemberInfo Metadata => _member.Metadata;
+
+		public TypeInfo MemberType => _member.MemberType;
+
+		public bool IsWritable => _member.IsWritable;
+
+		public int Order => _member.Order;
 	}
 }

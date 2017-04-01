@@ -26,7 +26,7 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	public interface IConstructorMembers : IParameterizedSource<ConstructorInfo, ImmutableArray<IMember>?> {}
+	public interface IParameterizedMembers : IParameterizedSource<TypeInfo, ImmutableArray<IMember>?> {}
 }

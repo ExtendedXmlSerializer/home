@@ -1,18 +1,18 @@
-// MIT License
-// 
-// Copyright (c) 2016 Wojciech Nag�rski
+﻿// MIT License
+//
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,26 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using System;
+using System.Linq.Expressions;
+using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ParameterizedMemberAssignment : IMemberAssignment
+	public static class Extensions
 	{
-		readonly IMemberAssignment _assignment;
+		public static IConfiguration EnableReferences(this IConfiguration @this)
+			=> @this.Apply<ReferencesExtension>();
 
-		public ParameterizedMemberAssignment(IMemberAssignment assignment)
+		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
+																		Expression<Func<T, TMember>> member)
 		{
-			_assignment = assignment;
+			@this.Member(member).Identity();
+			return @this;
 		}
 
-		public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
-			=> _assignment.Assign(context, reader, instance, access);
-
-		public object Complete(IXmlReader context, object instance)
-			=> (instance as IActivationContext)?.Get() ?? _assignment.Complete(context, instance);
+		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
+		{
+			@this.Attribute()
+			     .Configuration
+			     .With<ReferencesExtension>()
+			     .Assign(@this.Owner.Get(), @this.Get());
+			return @this;
+		}
 	}
 }

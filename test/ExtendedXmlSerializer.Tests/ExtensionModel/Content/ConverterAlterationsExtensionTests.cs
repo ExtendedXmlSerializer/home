@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Converters;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 

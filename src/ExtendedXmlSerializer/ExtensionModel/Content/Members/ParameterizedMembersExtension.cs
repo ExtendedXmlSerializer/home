@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedMembers : IParameterizedMembers
+	public sealed class ParameterizedMembersExtension : ISerializerExtension
 	{
-		readonly IQueriedConstructors _constructors;
-		readonly IConstructorMembers _members;
+		public static ParameterizedMembersExtension Default { get; } = new ParameterizedMembersExtension();
+		ParameterizedMembersExtension() {}
 
-		public ParameterizedMembers(IQueriedConstructors constructors, IConstructorMembers members)
-		{
-			_constructors = constructors;
-			_members = members;
-		}
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<TypeMembers>()
+			            .Register<IConstructorMembers, ConstructorMembers>()
+			            .Register<IQueriedConstructors, QueriedConstructors>()
+			            .Register<IParameterizedMembers, ParameterizedMembers>()
+			            .Decorate<IMemberAccessors, ParameterizedMemberAccessors>()
+			            .Decorate<IValidConstructorSpecification, ParameterizedConstructorSpecification>()
+			            .Decorate<ITypeMembers, ParameterizedTypeMembers>()
+			            .Decorate<IActivators, ParameterizedActivators>()
+			            .Decorate<IMemberAssignment, ParameterizedMemberAssignment>();
 
-		public ImmutableArray<IMember>? Get(TypeInfo parameter)
-		{
-			var constructor = _constructors.Get(parameter);
-			var result = constructor != null ? _members.Get(constructor) : null;
-			return result;
-		}
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

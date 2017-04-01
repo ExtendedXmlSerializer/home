@@ -24,15 +24,9 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedConstructorSpecification :
-		AnySpecification<ConstructorInfo>, IValidConstructorSpecification
-	{
-		public ParameterizedConstructorSpecification(IValidConstructorSpecification specification, IConstructorMembers source)
-			: base(specification, new DelegatedAssignedSpecification<ConstructorInfo, ImmutableArray<IMember>?>(source.Get)) {}
-	}
+	public interface IConstructorMembers : IParameterizedSource<ConstructorInfo, ImmutableArray<IMember>?> {}
 }

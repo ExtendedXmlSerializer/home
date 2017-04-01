@@ -26,6 +26,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {

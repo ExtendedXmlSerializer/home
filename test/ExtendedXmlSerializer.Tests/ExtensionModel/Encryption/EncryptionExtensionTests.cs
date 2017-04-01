@@ -25,7 +25,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
 using Xunit;
@@ -39,13 +41,13 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 		{
 			const string message = "Hello World!  This is my encrypted message!";
 			var support = new SerializationSupport(new ExtendedConfiguration().Emit(EmitBehaviors.Assigned)
-				.Type<SimpleSubject>()
-				.Member(x => x.Message).Encrypt()
-				.Configuration
-				.Create());
+			                                                                  .Type<SimpleSubject>()
+			                                                                  .Member(x => x.Message).Encrypt()
+			                                                                  .Configuration
+			                                                                  .Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests"" />");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(message, actual.Message);
 		}
 
@@ -59,8 +61,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 
 			var converters = new Collection<MemberInfo>
 			                 {
-								 typeInfo.GetProperty(nameof(SimpleSubject.Identifier))
-							 };
+				                 typeInfo.GetProperty(nameof(SimpleSubject.Identifier))
+			                 };
 
 			var sut = new EncryptionExtension(converters);
 

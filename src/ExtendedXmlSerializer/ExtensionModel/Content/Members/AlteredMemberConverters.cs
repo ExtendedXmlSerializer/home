@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class AlteredMemberConverters : IMemberConverters
 	{

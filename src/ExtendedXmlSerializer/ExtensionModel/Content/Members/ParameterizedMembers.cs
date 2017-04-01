@@ -24,25 +24,25 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedTypeMembers : ITypeMembers
+	sealed class ParameterizedMembers : IParameterizedMembers
 	{
-		readonly ITypeMembers _typed;
-		readonly IParameterizedMembers _members;
+		readonly IQueriedConstructors _constructors;
+		readonly IConstructorMembers _members;
 
-		public ParameterizedTypeMembers(ITypeMembers typed, IParameterizedMembers members)
+		public ParameterizedMembers(IQueriedConstructors constructors, IConstructorMembers members)
 		{
-			_typed = typed;
+			_constructors = constructors;
 			_members = members;
 		}
 
-		public ImmutableArray<IMember> Get(TypeInfo parameter)
+		public ImmutableArray<IMember>? Get(TypeInfo parameter)
 		{
-			var members = _members.Get(parameter);
-			var typed = _typed.Get(parameter);
-			var result = members?.AddRange(typed) ?? typed;
+			var constructor = _constructors.Get(parameter);
+			var result = constructor != null ? _members.Get(constructor) : null;
 			return result;
 		}
 	}

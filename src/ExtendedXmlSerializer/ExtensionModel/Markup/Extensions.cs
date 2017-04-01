@@ -24,6 +24,7 @@
 using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 

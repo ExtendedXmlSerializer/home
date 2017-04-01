@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class AllowedMemberValuesExtension : Collection<IAllowedMemberValues>, ISerializerExtension
 	{

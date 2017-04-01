@@ -25,6 +25,8 @@ using System;
 using System.Collections.Generic;
 using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {

@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ExtensionModel.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption

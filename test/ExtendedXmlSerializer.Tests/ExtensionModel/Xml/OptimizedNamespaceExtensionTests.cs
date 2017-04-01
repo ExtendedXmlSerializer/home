@@ -23,6 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using JetBrains.Annotations;
 using Microsoft.DotNet.ProjectModel;
 using Xunit;

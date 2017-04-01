@@ -23,10 +23,12 @@
 
 using System;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 {
 	public class AllowedMembersExtensionTests
 	{

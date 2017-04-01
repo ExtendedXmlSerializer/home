@@ -21,25 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
-namespace ExtendedXmlSerializer.Configuration
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	class AddAlteration : IAlteration<AllowedMemberValuesExtension>
+	sealed class ParameterizedMemberAssignment : IMemberAssignment
 	{
-		readonly IAllowedMemberValues _add;
+		readonly IMemberAssignment _assignment;
 
-		public AddAlteration(IAllowedMemberValues add)
+		public ParameterizedMemberAssignment(IMemberAssignment assignment)
 		{
-			_add = add;
+			_assignment = assignment;
 		}
 
-		public AllowedMemberValuesExtension Get(AllowedMemberValuesExtension parameter)
-		{
-			parameter.Add(_add);
-			return parameter;
-		}
+		public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
+			=> _assignment.Assign(context, reader, instance, access);
+
+		public object Complete(IXmlReader context, object instance)
+			=> (instance as IActivationContext)?.Get() ?? _assignment.Complete(context, instance);
 	}
 }

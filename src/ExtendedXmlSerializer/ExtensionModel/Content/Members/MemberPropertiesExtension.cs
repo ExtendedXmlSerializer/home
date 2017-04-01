@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,31 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	sealed class MemberPropertiesExtension : ISerializerExtension
 	{
-		public static MemberModelExtension Default { get; } = new MemberModelExtension();
-		MemberModelExtension() {}
+		public MemberPropertiesExtension() : this(new Dictionary<MemberInfo, string>(), new Dictionary<MemberInfo, int>()) {}
+
+		public MemberPropertiesExtension(IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order)
+		{
+			Order = order;
+			Names = names;
+		}
+
+		public IDictionary<MemberInfo, string> Names { get; }
+		public IDictionary<MemberInfo, int> Order { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			         .Register<IMetadataSpecification, MetadataSpecification>()
-			         .Register<IValidMemberSpecification, ValidMemberSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
-			         .Register<ITypeMembers, TypeMembers>()
-			         .Register<IMembers, ContentModel.Members.Members>()
-			         .Register<IMemberAccessors, MemberAccessors>()
-			         .Register<WritableMemberAccessors>()
-			         .Register<ReadOnlyCollectionAccessors>()
-			         .Register<VariableTypeMemberContents>()
-			         .Register<DefaultMemberContents>()
-			         .Register<IMemberContents, MemberContents>()
-			         .Register<IMemberSerializers, MemberSerializers>()
-			         .Register<IMemberSerializations, MemberSerializations>();
+			parameter
+				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
+				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

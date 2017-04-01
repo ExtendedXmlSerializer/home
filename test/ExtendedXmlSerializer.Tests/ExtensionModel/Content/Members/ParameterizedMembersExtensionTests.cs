@@ -24,12 +24,12 @@
 using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
 using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 {
 	public class ParameterizedMembersExtensionTests
 	{
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new Subject("Hello World!");
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ParameterizedMembersExtensionTests-Subject>");
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ParameterizedMembersExtensionTests-Subject>");
 			Assert.Equal(expected.Message, actual.Message);
 		}
 
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new SubjectWithMultipleParameters("Hello World!", 6776);
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleParameters xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><Number>6776</Number></ParameterizedMembersExtensionTests-SubjectWithMultipleParameters>");
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleParameters xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><Number>6776</Number></ParameterizedMembersExtensionTests-SubjectWithMultipleParameters>");
 			Assert.Equal(expected.Message, actual.Message);
 			Assert.Equal(expected.Number, actual.Number);
 		}
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new SubjectWithMultipleConstructors(6776, new DateTime(1976, 6, 7));
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Members;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number><DateTime>1976-06-07T00:00:00</DateTime></ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors>");
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number><DateTime>1976-06-07T00:00:00</DateTime></ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors>");
 			Assert.Equal(expected.Number, actual.Number);
 			Assert.Equal(expected.DateTime, actual.DateTime);
 			Assert.Equal(SubjectWithMultipleConstructors.Message, actual.Get());

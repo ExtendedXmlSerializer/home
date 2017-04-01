@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
 {
