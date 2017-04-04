@@ -30,10 +30,13 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class GenericElement : ElementBase
 	{
-		readonly IArgumentsProperty _property;
+		readonly IProperty<ImmutableArray<Type>?> _property;
 		readonly ImmutableArray<Type> _arguments;
 
-		public GenericElement(IArgumentsProperty property, IIdentity identity, ImmutableArray<Type> arguments)
+		public GenericElement(IIdentity identity, ImmutableArray<Type> arguments)
+			: this(ArgumentsTypeProperty.Default, identity, arguments) {}
+
+		public GenericElement(IProperty<ImmutableArray<Type>?> property, IIdentity identity, ImmutableArray<Type> arguments)
 			: base(identity)
 		{
 			_property = property;

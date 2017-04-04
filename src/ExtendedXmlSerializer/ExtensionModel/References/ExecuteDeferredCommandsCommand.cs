@@ -22,13 +22,13 @@
 // SOFTWARE.
 
 using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ExecuteDeferredCommandsCommand<T> : ICommand<IXmlReader> where T : ICommand<IXmlReader>
+	sealed class ExecuteDeferredCommandsCommand<T> : ICommand<IContentAdapter> where T : ICommand<IContentAdapter>
 	{
 		public static ExecuteDeferredCommandsCommand<T> Default { get; } = new ExecuteDeferredCommandsCommand<T>();
 		ExecuteDeferredCommandsCommand() : this(ReaderContexts.Default, DeferredCommands.Default) {}
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_commands = commands;
 		}
 
-		public void Execute(IXmlReader parameter)
+		public void Execute(IContentAdapter parameter)
 		{
 			var commands = _commands.Get(_contexts.Get(parameter));
 			var membered = commands.OfType<T>().ToArray();

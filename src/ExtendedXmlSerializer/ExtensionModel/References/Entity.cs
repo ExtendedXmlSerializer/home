@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class Entity : IEntity
+	sealed class Entity : IEntity
 	{
-		readonly static EntityProperty EntityProperty = EntityProperty.Default;
+		readonly static EntityIdentity EntityIdentity = EntityIdentity.Default;
 
 		readonly IConverter _converter;
 		readonly IMemberSerializer _member;
@@ -43,19 +43,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public string Get(object parameter) => _converter.Format(_member.Access.Get(parameter));
 
-		public object Get(IXmlReader parameter)
+		public object Get(IContentAdapter parameter)
 		{
-			var contains = parameter.Contains(_member.Profile);
+			var contains = parameter.IsSatisfiedBy(_member.Profile);
 			if (contains)
 			{
 				var result = _member.Get(parameter);
-				parameter.Reset();
+				parameter.Set();
 				return result;
 			}
 			return null;
 		}
 
-		public object Reference(IXmlReader parameter)
-			=> parameter.Contains(EntityProperty) ? _converter.Parse(EntityProperty.Get(parameter)) : null;
+		public object Reference(IContentAdapter parameter)
+			=> parameter.IsSatisfiedBy(EntityIdentity) ? _converter.Parse(parameter.Content()) : null;
 	}
 }

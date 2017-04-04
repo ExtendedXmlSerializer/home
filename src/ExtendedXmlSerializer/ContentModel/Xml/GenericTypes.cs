@@ -30,11 +30,9 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class GenericTypes : IGenericTypes
+	sealed class GenericTypes : ITypes
 	{
-		readonly ITypes _generic;
-
-		readonly ITypes _types;
+		readonly ITypes _generic, _types;
 
 		[UsedImplicitly]
 		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
@@ -42,10 +40,11 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			: this(IsGenericTypeSpecification.Default.And(specification), types, formatter, identities) {}
 
 		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
-		             ITypeIdentities identities) : this(
-			new Types(specification, identities, formatter, new AssemblyTypePartitions(specification, formatter.Get),
-			          TypeLoader.Default),
-			types) {}
+		             ITypeIdentities identities)
+			: this(
+				new Types(specification, identities, formatter,
+				          new AssemblyTypePartitions(specification, formatter.Get), TypeLoader.Default),
+				types) {}
 
 		GenericTypes(ITypes generic, ITypes types)
 		{

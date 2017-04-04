@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
@@ -31,12 +30,10 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class Elements : Selector<TypeInfo, IWriter>, IElements
 	{
-		public Elements(IIdentities identities, IItemTypeProperty item, IArgumentsProperty arguments) : base(
-			new ArrayElementOption(identities, item),
-			new GenericElementOption(identities, arguments),
+		public Elements(IIdentities identities) : base(
+			new ArrayElementOption(identities),
+			new GenericElementOption(identities),
 			new VariableTypeElementOption(identities),
 			new ElementOption(identities)) {}
-
-		// public Elements(params IOption<TypeInfo, IWriter>[] options) : base(options) {}
 	}
 }

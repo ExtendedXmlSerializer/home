@@ -31,20 +31,20 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
-		readonly IActivation _activation;
+		readonly IContentsServices _contents;
 		readonly IEnumerators _enumerators;
-		readonly ICollectionAssignment _collection;
+		readonly IClassification _classification;
 
-		public ArrayContentOption(IActivation activation, IEnumerators enumerators, ISerializers serializers,
-		                          ICollectionAssignment collection) : base(Specification, serializers)
+		public ArrayContentOption(IContentsServices contents, IEnumerators enumerators, ISerializers serializers,
+		                          IClassification classification)
+			: base(Specification, serializers)
 		{
-			_activation = activation;
+			_contents = contents;
 			_enumerators = enumerators;
-			_collection = collection;
+			_classification = classification;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_activation, new CollectionReadAssignment(item, _collection)),
-			                  new EnumerableWriter(_enumerators, item));
+			=> new Serializer(new ArrayReader(_contents, _classification, item), new EnumerableWriter(_enumerators, item));
 	}
 }

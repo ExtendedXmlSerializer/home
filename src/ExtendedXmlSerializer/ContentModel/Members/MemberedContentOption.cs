@@ -29,27 +29,24 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberedContentOption : ContentOptionBase
 	{
-		readonly IActivation _activation;
 		readonly IMemberSerializations _serializations;
-		readonly IMemberAssignment _member;
+		readonly IContentsServices _services;
 
-		public MemberedContentOption(IActivatingTypeSpecification specification, IActivation activation,
-		                             IMemberSerializations serializations, IMemberAssignment member)
+		public MemberedContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
+		                             IContentsServices services)
 			: base(specification)
 		{
-			_activation = activation;
 			_serializations = serializations;
-			_member = member;
+			_services = services;
 		}
 
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _serializations.Get(parameter);
-			var activator = _activation.Get(parameter);
-			var reader = new MemberContentsReader(activator, members, _member);
+			var activator = _services.Get(parameter);
+			var reader = new ContentsReader(activator, new MemberContentHandler(members, _services, _services), _services);
 
-			var writer = new MemberListWriter(members);
-			var result = new Serializer(reader, writer);
+			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}
 	}

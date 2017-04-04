@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class Member : Identity, IMember
+	sealed class Member : Identity, IMember
 	{
 		public Member(string name, int order, MemberInfo metadata, TypeInfo memberType, bool isWritable)
 			: base(name, string.Empty)

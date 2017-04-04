@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public interface IMarkupExtensions : IParameterizedSource<IXmlReader, IMarkupExtensionPartsEvaluator> {}
+	public interface IMarkupExtensions : IParameterizedSource<IContentAdapter, IMarkupExtensionPartsEvaluator> {}
 }

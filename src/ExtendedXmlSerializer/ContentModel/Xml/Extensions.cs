@@ -21,10 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
@@ -32,17 +29,5 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 	{
 		public static XElement Member(this XElement @this, string name)
 			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
-
-		public static TypeInfo GetClassification(this IXmlReader @this)
-		{
-			var result = @this.Classification;
-			if (result == null)
-			{
-				var name = IdentityFormatter.Default.Get(@this);
-				throw new InvalidOperationException(
-					$"An attempt was made to load a type with the fully qualified name of '{name}', but no type could be located with that name.");
-			}
-			return result;
-		}
 	}
 }

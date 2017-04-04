@@ -31,23 +31,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IActivation _activation;
+		readonly IContentsServices _contents;
 		readonly IEnumerators _enumerators;
-		readonly ICollectionAssignment _collection;
 
-		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IActivation activation,
-		                                      IEnumerators enumerators, ISerializers serializers,
-		                                      ICollectionAssignment collection)
+		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IContentsServices contents,
+		                                      IEnumerators enumerators, ISerializers serializers)
 			: base(specification, serializers)
 		{
-			_activation = activation;
+			_contents = contents;
 			_enumerators = enumerators;
-			_collection = collection;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new CollectionContentsReader(_activation.Get(classification),
-			                                               new CollectionReadAssignment(item, _collection)),
+			=> new Serializer(new ContentsReader(_contents.Get(itemType),
+			                                     new ConditionalContentHandler(_contents, new ListContentHandler(item, _contents)),
+			                                     _contents),
 			                  new EnumerableWriter(_enumerators, item));
 	}
 }

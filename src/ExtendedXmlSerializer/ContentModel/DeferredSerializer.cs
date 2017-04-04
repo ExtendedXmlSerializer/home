@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	class DeferredSerializer : ISerializer
+	sealed class DeferredSerializer : ISerializer
 	{
 		readonly Func<ISerializer> _serializer;
 
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			_serializer = serializer;
 		}
 
-		public object Get(IXmlReader parameter) => _serializer().Get(parameter);
+		public object Get(IContentAdapter parameter) => _serializer().Get(parameter);
 
 		public void Write(IXmlWriter writer, object instance) => _serializer().Write(writer, instance);
 	}

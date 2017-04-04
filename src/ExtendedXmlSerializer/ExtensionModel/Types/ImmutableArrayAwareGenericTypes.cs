@@ -28,13 +28,13 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public class ImmutableArrayAwareGenericTypes : IGenericTypes
+	public class ImmutableArrayAwareGenericTypes : ITypes
 	{
 		readonly static TypeInfo Type = typeof(ImmutableArray<>).GetTypeInfo();
-		readonly IGenericTypes _types;
+		readonly ITypes _types;
 		readonly static TypeInfo Check = typeof(ImmutableArray).GetTypeInfo();
 
-		public ImmutableArrayAwareGenericTypes(IGenericTypes types)
+		public ImmutableArrayAwareGenericTypes(ITypes types)
 		{
 			_types = types;
 		}

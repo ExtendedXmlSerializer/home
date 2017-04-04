@@ -54,15 +54,15 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		protected override IMemberSerialization Create(TypeInfo parameter)
 		{
-			var serializers = _members.Get(parameter).Select(_serializers).ToArray();
-			var properties = serializers.Where(_property).ToArray();
-			var runtime = serializers.OfType<IRuntimeSerializer>().ToArray();
-			var contents = serializers.Except(properties.Concat(runtime)).ToArray();
+			var members = _members.Get(parameter).Select(_serializers).ToArray();
+			var properties = members.Where(_property).ToArray();
+			var runtime = members.OfType<IRuntimeSerializer>().ToArray();
+			var contents = members.Except(properties.Concat(runtime)).ToArray();
 			var list = runtime.Any()
 				? new RuntimeMemberList(_property, properties, runtime, contents)
 				: (IRuntimeMemberList) new FixedRuntimeMemberList(properties.Concat(contents).ToImmutableArray());
 			var all = properties.Concat(runtime).Concat(contents).OrderBy(x => x.Profile.Order).ToImmutableArray();
-			var result = new MemberSerialization(list, serializers.ToDictionary(x => x.Profile.Name, x => x), all);
+			var result = new MemberSerialization(list, all);
 			return result;
 		}
 	}

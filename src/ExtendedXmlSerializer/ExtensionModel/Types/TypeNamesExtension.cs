@@ -27,12 +27,9 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
-using ITypes = ExtendedXmlSerializer.ContentModel.Xml.ITypes;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -55,20 +52,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter
 				.RegisterInstance(_defaults)
-				.Register<IReflectionFormatters, ReflectionFormatters>()
-				.Register<IReflectionParsers, ReflectionParsers>()
 				.Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
 				.Register<IElements, Elements>()
 				.Register<ITypeFormatter, TypeFormatter>()
-				.Register<IReflectionFormatters, ReflectionFormatters>()
 				.Register<IIdentities, Identities>()
 				.Register<ITypeIdentities, TypeIdentities>()
-				.Register<IGenericTypes, GenericTypes>()
 				.Register<ITypes, ContentModel.Xml.Types>()
+				.Decorate<ITypes, GenericTypes>()
 				.Register<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
-				.Register<IArgumentsProperty, ArgumentsProperty>()
-				.Register<IItemTypeProperty, ItemTypeProperty>()
-				.Register<ITypeProperty, TypeProperty>()
 				.Register(Register);
 
 		INames Register(IServiceProvider provider)

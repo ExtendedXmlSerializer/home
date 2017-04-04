@@ -22,19 +22,43 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class ReflectionParser : DecoratedSource<string, MemberInfo>, IReflectionParser
+	sealed class ReflectionParser : CacheBase<string, MemberInfo>, IReflectionParser
 	{
-		readonly ITypes _types;
+		readonly ITypeParser _types;
+		readonly Parser<MemberParts> _parser;
 
-		public ReflectionParser(ITypes types, ITypeParser type, IMemberParser member) : base(member.Or(type))
+		public ReflectionParser(ITypeParser types) : this(types, MemberPartsParser.Default) {}
+
+		public ReflectionParser(ITypeParser types, Parser<MemberParts> parser)
 		{
 			_types = types;
+			_parser = parser;
 		}
 
 		public TypeInfo Get(TypeParts parameter) => _types.Get(parameter);
+
+		protected override MemberInfo Create(string parameter)
+		{
+			var parse = _parser.TryParse(parameter);
+			if (parse.WasSuccessful)
+			{
+				var parts = parse.Value;
+				var type = _types.Get(parts.Type);
+				var name = parts.MemberName;
+				var result = type.GetMember(name).Only() ??
+				             type.GetProperty(name) ??
+				             type.GetField(name) ??
+				             type.GetMethod(name) ??
+				             (MemberInfo) type.GetEvent(name);
+				return result;
+			}
+			return _types.Get(parameter);
+		}
 	}
 }

@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using JetBrains.Annotations;
 
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_maps = maps;
 		}
 
-		public IReferenceMap Get(IXmlReader parameter)
+		public IReferenceMap Get(IContentAdapter parameter)
 		{
 			var contexts = _contexts.Get(parameter);
 			var result = new DeferredReferenceMap(_commands.Get(contexts), contexts, _maps.Get(parameter));

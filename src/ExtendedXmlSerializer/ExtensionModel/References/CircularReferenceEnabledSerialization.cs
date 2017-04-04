@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
-		class Container : ISerializer
+		sealed class Container : ISerializer
 		{
 			readonly ISerializer _serializer;
 
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_serializer = serializer;
 			}
 
-			public object Get(IXmlReader parameter) => _serializer.Get(parameter);
+			public object Get(IContentAdapter parameter) => _serializer.Get(parameter);
 
 			public void Write(IXmlWriter writer, object instance)
 			{

@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -42,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			            .Decorate<IValidConstructorSpecification, ParameterizedConstructorSpecification>()
 			            .Decorate<ITypeMembers, ParameterizedTypeMembers>()
 			            .Decorate<IActivators, ParameterizedActivators>()
-			            .Decorate<IMemberAssignment, ParameterizedMemberAssignment>();
+			            .Decorate<IContentsResult, ParameterizedResultHandler>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

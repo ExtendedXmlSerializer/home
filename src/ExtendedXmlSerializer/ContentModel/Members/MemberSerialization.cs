@@ -21,8 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
@@ -32,15 +33,14 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IRuntimeMemberList _runtime;
 		readonly ImmutableArray<IMemberSerializer> _all;
 
-		public MemberSerialization(IRuntimeMemberList runtime, IDictionary<string, IMemberSerializer> store,
-		                           ImmutableArray<IMemberSerializer> all) : base(store)
+		public MemberSerialization(IRuntimeMemberList runtime, ImmutableArray<IMemberSerializer> all)
+			: base(all.ToDictionary(x => IdentityFormatter.Default.Get(x.Profile)))
 		{
 			_runtime = runtime;
 			_all = all;
 		}
 
 		public ImmutableArray<IMemberSerializer> Get(object parameter) => _runtime.Get(parameter);
-
 
 		public ImmutableArray<IMemberSerializer> Get() => _all;
 	}

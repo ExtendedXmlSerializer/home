@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel
@@ -48,7 +47,7 @@ namespace ExtendedXmlSerializer.ContentModel
 				_activate = activate;
 			}
 
-			public object Get(IXmlReader parameter) => _activate();
+			public object Get(IContentAdapter parameter) => _activate();
 		}
 	}
 }

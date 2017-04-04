@@ -22,11 +22,12 @@
 // SOFTWARE.
 
 using System;
+using System.Xml;
 using ExtendedXmlSerializer.Configuration;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
-	class SerializationSupport : IExtendedXmlSerializerTestSupport
+	sealed class SerializationSupport : IExtendedXmlSerializerTestSupport
 	{
 		readonly IExtendedXmlSerializer _serializer;
 
@@ -43,15 +44,15 @@ namespace ExtendedXmlSerializer.Tests.Support
 		{
 			var data = _serializer.Serialize(instance);
 			Xunit.Assert.Equal(
-                expected?.Replace("\r\n", "").Replace("\n", ""), 
-                data?.Replace("\r\n", "").Replace("\n", ""));
+				expected?.Replace("\r\n", "").Replace("\n", ""),
+				data?.Replace("\r\n", "").Replace("\n", ""));
 			var result = _serializer.Deserialize<T>(data);
 			return result;
 		}
 
-		public void Serialize(System.Xml.XmlWriter writer, object instance) => _serializer.Serialize(writer, instance);
+		public void Serialize(XmlWriter writer, object instance) => _serializer.Serialize(writer, instance);
 
-		public object Deserialize(System.Xml.XmlReader stream) => _serializer.Deserialize(stream);
+		public object Deserialize(XmlReader stream) => _serializer.Deserialize(stream);
 
 		public void WriteLine(object instance)
 		{

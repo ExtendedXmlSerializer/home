@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public IMember Profile { get; }
 		public IMemberAccess Access { get; }
 
-		public object Get(IXmlReader parameter) => _reader.Get(parameter);
+		public object Get(IContentAdapter parameter) => _reader.Get(parameter);
 
 		public void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
 	}

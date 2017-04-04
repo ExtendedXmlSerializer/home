@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_container = container;
 			}
 
-			public object Get(IXmlReader parameter) => _container.Get(parameter);
+			public object Get(IContentAdapter parameter) => _container.Get(parameter);
 
 			public void Write(IXmlWriter writer, object instance)
 			{

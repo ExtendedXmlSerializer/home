@@ -35,13 +35,13 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 	{
 		readonly static TypePartsConverter Converter = TypePartsConverter.Default;
 
-		readonly IXmlWriter _writer;
+		readonly IIdentityResolver _writer;
 		readonly IIdentities _identities;
 		readonly ITypePartsConverter _converter;
 
-		public TypeInfoFormatter(IIdentities identities, IXmlWriter writer) : this(identities, writer, Converter) {}
+		public TypeInfoFormatter(IIdentities identities, IIdentityResolver writer) : this(identities, writer, Converter) {}
 
-		public TypeInfoFormatter(IIdentities identities, IXmlWriter writer, ITypePartsConverter converter)
+		public TypeInfoFormatter(IIdentities identities, IIdentityResolver writer, ITypePartsConverter converter)
 		{
 			_writer = writer;
 			_identities = identities;

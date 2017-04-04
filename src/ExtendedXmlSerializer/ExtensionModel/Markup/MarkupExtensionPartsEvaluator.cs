@@ -29,7 +29,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
@@ -43,26 +42,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	{
 		const string Extension = "Extension";
 
-		readonly IXmlReader _reader;
-		readonly System.IServiceProvider _provider;
+		readonly ITypeParser _types;
 		readonly IEvaluator _evaluator;
-		readonly IReflectionParser _parser;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
+		readonly System.IServiceProvider _provider;
+		readonly object[] _services;
 
-		public MarkupExtensionPartsEvaluator(
-			IXmlReader reader, System.IServiceProvider provider,
-			IEvaluator evaluator, IReflectionParser parser, ITypeMembers members,
-			IMemberAccessors accessors, IConstructors constructors)
+		public MarkupExtensionPartsEvaluator(ITypeParser types, IEvaluator evaluator, ITypeMembers members,
+		                                     IMemberAccessors accessors, IConstructors constructors,
+		                                     System.IServiceProvider provider, params object[] services)
 		{
-			_reader = reader;
-			_provider = provider;
+			_types = types;
 			_evaluator = evaluator;
-			_parser = parser;
 			_members = members;
 			_accessors = accessors;
 			_constructors = constructors;
+			_provider = provider;
+			_services = services;
 		}
 
 		public IEvaluation Get(IExpression parameter)
@@ -91,7 +89,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
 			                                                                      .Get()
 			                                                                      .AsValid<IMarkupExtension>();
-			var result = extension.ProvideValue(new Provider(_provider, _reader, parameter));
+			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter).ToArray()));
 			return result;
 		}
 
@@ -115,7 +113,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		TypeInfo DetermineType(MarkupExtensionParts parameter)
 		{
-			var type = _parser.Get(parameter.Type) ?? _parser.Get(Copy(parameter.Type));
+			var type = _types.Get(parameter.Type) ?? _types.Get(Copy(parameter.Type));
 			if (type == null)
 			{
 				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);
@@ -186,8 +184,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				_services = services;
 			}
 
-			public object GetService(Type serviceType)
-				=> _services.GetService(serviceType) ?? _provider.GetService(serviceType);
+			public object GetService(Type serviceType) => _services.GetService(serviceType) ?? _provider.GetService(serviceType);
 		}
 	}
 }

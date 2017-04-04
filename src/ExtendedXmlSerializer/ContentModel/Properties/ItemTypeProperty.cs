@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,15 +24,27 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	sealed class ItemTypeProperty : TypePropertyBase, IItemTypeProperty
+	sealed class ItemTypeProperty : Property<TypeInfo>
 	{
-		public ItemTypeProperty(IReflectionParsers parsers, IReflectionFormatters formatters)
-			: base(parsers, formatters, "item") {}
+		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
+		ItemTypeProperty() : this(new FrameworkIdentity("item")) {}
 
-		public override TypeInfo Get(IXmlReader parameter) => base.Get(parameter)?.MakeArrayType().GetTypeInfo();
+		public ItemTypeProperty(IIdentity identity)
+			: base(new Reader(new TypedParsingReader(identity)), new TypedFormattingWriter(identity), identity) {}
+
+		sealed class Reader : IReader<TypeInfo>
+		{
+			readonly IReader<TypeInfo> _reader;
+
+			public Reader(IReader<TypeInfo> reader)
+			{
+				_reader = reader;
+			}
+
+			public TypeInfo Get(IContentAdapter parameter) => _reader.Get(parameter)?.MakeArrayType().GetTypeInfo();
+		}
 	}
 }

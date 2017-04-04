@@ -23,34 +23,37 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class ReferenceReader : DecoratedReader
 	{
-		readonly static ReferenceProperty ReferenceProperty = ReferenceProperty.Default;
+		readonly static ContentModel.Properties.ReferenceIdentity ReferenceIdentity =
+			ContentModel.Properties.ReferenceIdentity.Default;
 
 		readonly IReferenceMaps _maps;
 		readonly IEntities _entities;
 		readonly TypeInfo _definition;
+		readonly IClassification _classification;
 
-		public ReferenceReader(IReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition) : base(reader)
+		public ReferenceReader(IReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition,
+		                       IClassification classification) : base(reader)
 		{
 			_maps = maps;
 			_entities = entities;
 			_definition = definition;
+			_classification = classification;
 		}
 
-		ReferenceIdentity? GetReference(IXmlReader parameter)
+		ReferenceIdentity? GetReference(IContentAdapter parameter)
 		{
-			if (parameter.Contains(ReferenceProperty))
+			var identity = ReferenceIdentity.Get(parameter);
+			if (identity.HasValue)
 			{
-				return new ReferenceIdentity(ReferenceProperty.Get(parameter));
+				return new ReferenceIdentity(identity.Value);
 			}
 
-			var type = parameter.Classification ?? _definition;
+			var type = _classification.GetClassification(parameter, _definition);
 			var entity = _entities.Get(type)?.Reference(parameter);
 			if (entity != null)
 			{
@@ -59,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			return null;
 		}
 
-		public override object Get(IXmlReader parameter)
+		public override object Get(IContentAdapter parameter)
 		{
 			var identity = GetReference(parameter);
 			if (identity != null)

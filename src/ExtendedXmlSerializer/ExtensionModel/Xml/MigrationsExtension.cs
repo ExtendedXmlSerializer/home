@@ -36,7 +36,6 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
-using XmlReader = ExtendedXmlSerializer.ContentModel.Xml.XmlReader;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -50,9 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
 		IContents Register(IServiceProvider services, IContents contents)
-			=>
-				new Contents(services.Get<IGenericTypes>(), services.Get<ITypes>(), services.Get<ITypeProperty>(),
-				             services.Get<IItemTypeProperty>(), services.Get<IArgumentsProperty>(), this, contents);
+			=> new Contents(services.Get<IXmlFactory>(), services.Get<IClassification>(), this, contents);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -64,23 +61,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class Contents : IContents
 		{
-			readonly IGenericTypes _genericTypes;
-			readonly ITypes _types;
-			readonly ITypeProperty _type;
-			readonly IItemTypeProperty _item;
-			readonly IArgumentsProperty _arguments;
+			readonly IXmlFactory _factory;
+			readonly IClassification _classification;
 			readonly ITypedTable<IEnumerable<Action<XElement>>> _migrations;
 			readonly IContents _contents;
 
-			public Contents(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-			                IArgumentsProperty arguments, ITypedTable<IEnumerable<Action<XElement>>> migrations,
-			                IContents contents)
+			public Contents(IXmlFactory factory, IClassification classification,
+			                ITypedTable<IEnumerable<Action<XElement>>> migrations, IContents contents)
 			{
-				_genericTypes = genericTypes;
-				_types = types;
-				_type = type;
-				_item = item;
-				_arguments = arguments;
+				_factory = factory;
+				_classification = classification;
 				_migrations = migrations;
 				_contents = contents;
 			}
@@ -90,55 +80,47 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				var migrations = _migrations.Get(parameter);
 				var content = _contents.Get(parameter);
 				var result = migrations != null
-					? new Serializer(
-						new Migrator(_genericTypes, _types, _type, _item, _arguments, migrations.ToImmutableArray()),
-						content)
+					? new Serializer(new Migrator(_factory, _classification, migrations.ToImmutableArray()), content)
 					: content;
 				return result;
 			}
 
 			interface IMigrator : IAlteration<IXmlReader>, IWriter {}
 
-			class Migrator : IMigrator
+			sealed class Migrator : IMigrator
 			{
-				readonly static MigrationVersionProperty Property = MigrationVersionProperty.Default;
+				readonly static MigrationVersionIdentity Identity = MigrationVersionIdentity.Default;
 
-				readonly IGenericTypes _genericTypes;
-				readonly ITypes _types;
-				readonly ITypeProperty _type;
-				readonly IItemTypeProperty _item;
-				readonly IArgumentsProperty _arguments;
+				readonly IXmlFactory _factory;
+				readonly IClassification _classification;
 				readonly ImmutableArray<Action<XElement>> _migrations;
-				readonly IMigrationVersionProperty _property;
+				readonly IProperty<uint> _property;
 
-				public Migrator(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-				                IArgumentsProperty arguments, ImmutableArray<Action<XElement>> migrations)
-					: this(genericTypes, types, type, item, arguments, Property, migrations) {}
+				public Migrator(IXmlFactory factory, IClassification classification, ImmutableArray<Action<XElement>> migrations)
+					: this(factory, classification, Identity, migrations) {}
 
-				public Migrator(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-				                IArgumentsProperty arguments, IMigrationVersionProperty property,
+				public Migrator(IXmlFactory factory, IClassification classification, IProperty<uint> property,
 				                ImmutableArray<Action<XElement>> migrations)
 				{
-					_genericTypes = genericTypes;
-					_types = types;
-					_type = type;
-					_item = item;
-					_arguments = arguments;
+					_factory = factory;
+					_classification = classification;
 					_migrations = migrations;
 					_property = property;
 				}
 
 				public IXmlReader Get(IXmlReader parameter)
 				{
-					var fullName = parameter.Classification.FullName;
-					var version = parameter.Contains(_property) ? _property.Get(parameter) : 0;
+					var typeInfo = _classification.Get(parameter);
+					var fullName = typeInfo.FullName;
+					var version = parameter.IsSatisfiedBy(_property) ? _property.Get(parameter) : 0;
 
 					var length = _migrations.Length;
 
 					if (version > length)
 					{
-						throw new XmlException($"Unknown varsion number {version} for type {parameter.Classification}.");
+						throw new XmlException($"Unknown varsion number {version} for type {typeInfo}.");
 					}
+
 					if (_migrations == null)
 					{
 						throw new XmlException($"Migrations for type {fullName} is null.");
@@ -154,7 +136,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 								$"Migrations for type {fullName} contains invalid migration at index {i}.");
 						_migrations[index].Invoke(element);
 					}
-					var result = new XmlReader(_genericTypes, _types, _type, _item, _arguments, element.CreateReader());
+					var result = _factory.Create(element.CreateReader());
 					return result;
 				}
 
@@ -173,9 +155,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					_serializer = serializer;
 				}
 
-				public object Get(IXmlReader parameter)
+				public object Get(IContentAdapter parameter)
 				{
-					var reader = _migrator.Get(parameter);
+					var reader = _migrator.Get(parameter.AsValid<IXmlReader>());
 					var result = _serializer.Get(reader);
 					return result;
 				}

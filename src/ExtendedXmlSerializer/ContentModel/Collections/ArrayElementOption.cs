@@ -23,32 +23,27 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	class ArrayElementOption : ElementOptionBase
+	sealed class ArrayElementOption : ElementOptionBase
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
 		readonly IIdentities _identities;
-		readonly IItemTypeProperty _property;
 		readonly ICollectionItemTypeLocator _locator;
 
-		public ArrayElementOption(IIdentities identities, IItemTypeProperty property)
-			: this(identities, property, CollectionItemTypeLocator.Default) {}
+		public ArrayElementOption(IIdentities identities) : this(identities, CollectionItemTypeLocator.Default) {}
 
-		public ArrayElementOption(IIdentities identities, IItemTypeProperty property, ICollectionItemTypeLocator locator)
+		public ArrayElementOption(IIdentities identities, ICollectionItemTypeLocator locator)
 			: base(Specification)
 		{
 			_identities = identities;
-			_property = property;
 			_locator = locator;
 		}
 
-		public sealed override IWriter Get(TypeInfo parameter)
-			=> new ArrayElement(_identities, _property, _locator.Get(parameter));
+		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_identities, _locator.Get(parameter));
 	}
 }

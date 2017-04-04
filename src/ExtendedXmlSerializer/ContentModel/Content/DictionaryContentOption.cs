@@ -31,33 +31,31 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DictionaryContentOption : ContentOptionBase
 	{
-		readonly IActivation _activation;
 		readonly IMemberSerializations _serializations;
 		readonly IDictionaryEnumerators _enumerators;
 		readonly IDictionaryEntries _entries;
-		readonly IMemberAssignment _member;
-		readonly ICollectionAssignment _collection;
+		readonly IContentsServices _contents;
 
-		public DictionaryContentOption(IActivatingTypeSpecification specification, IActivation activation,
+		public DictionaryContentOption(IActivatingTypeSpecification specification,
 		                               IMemberSerializations serializations, IDictionaryEnumerators enumerators,
-		                               IDictionaryEntries entries, IMemberAssignment member, ICollectionAssignment collection)
+		                               IDictionaryEntries entries, IContentsServices contents)
 			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
-			_activation = activation;
 			_serializations = serializations;
 			_enumerators = enumerators;
 			_entries = entries;
-			_member = member;
-			_collection = collection;
+			_contents = contents;
 		}
 
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _serializations.Get(parameter);
-			var activator = _activation.Get(parameter);
+			var activator = _contents.Get(parameter);
 			var entry = _entries.Get(parameter);
-			var reader = new DictionaryContentsReader(activator, entry, members, _member, _collection);
 
+			var handler = new MemberedListContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
+			                                             new ListContentHandler(entry, _contents));
+			var reader = new ContentsReader(activator, handler, _contents);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, entry));
 			var result = new Serializer(reader, writer);
 			return result;

@@ -21,7 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
@@ -29,19 +32,44 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
 	sealed class TypeParser : CacheBase<string, TypeInfo>, ITypeParser
 	{
+		readonly static IdentityStore IdentityStore = IdentityStore.Default;
 		readonly static TypePartsParser Parser = TypePartsParser.Default;
 
+		readonly IIdentityStore _identities;
 		readonly Parser<TypeParts> _parser;
 		readonly ITypes _types;
+		readonly IIdentityResolver _resolver;
 
-		public TypeParser(ITypes types) : this(Parser, types) {}
+		public TypeParser(ITypes types, IIdentityResolver reader) : this(IdentityStore, Parser, types, reader) {}
 
-		public TypeParser(Parser<TypeParts> parser, ITypes types)
+		public TypeParser(IIdentityStore identities, Parser<TypeParts> parser, ITypes types, IIdentityResolver resolver)
 		{
+			_identities = identities;
 			_parser = parser;
 			_types = types;
+			_resolver = resolver;
 		}
 
-		protected override TypeInfo Create(string parameter) => _types.Get(_parser.Parse(parameter));
+		public TypeInfo Get(TypeParts parts)
+		{
+			var identity = _identities.Get(parts.Name, _resolver.Get(parts.Identifier));
+			var typeInfo = _types.Get(identity);
+			var arguments = parts.GetArguments();
+			var result = arguments.HasValue ? typeInfo.MakeGenericType(Arguments(arguments.Value)).GetTypeInfo() : typeInfo;
+			return result;
+		}
+
+		Type[] Arguments(ImmutableArray<TypeParts> names)
+		{
+			var length = names.Length;
+			var result = new Type[length];
+			for (var i = 0; i < length; i++)
+			{
+				result[i] = Get(names[i]).AsType();
+			}
+			return result;
+		}
+
+		protected override TypeInfo Create(string parameter) => Get(_parser.Parse(parameter));
 	}
 }

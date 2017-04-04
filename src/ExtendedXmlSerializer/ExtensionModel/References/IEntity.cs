@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IEntity : IParameterizedSource<object, string>, IActivator<object>
+	public interface IEntity : IParameterizedSource<object, string>, IParameterizedSource<IContentAdapter, object>
 	{
-		object Reference(IXmlReader parameter);
+		object Reference(IContentAdapter parameter);
 	}
 }

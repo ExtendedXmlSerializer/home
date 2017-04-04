@@ -38,8 +38,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		public object ProvideValue(System.IServiceProvider serviceProvider)
-			=> serviceProvider.Get<IReflectionParsers>()
-			                  .Get(serviceProvider.Get<IXmlReader>())
+			=> serviceProvider.Get<IXmlReader>()
+			                  .To<ITypeParser>()
 			                  .Get(_typeName)
 			                  .AsValid<TypeInfo>();
 	}

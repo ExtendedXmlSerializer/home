@@ -25,7 +25,6 @@ using System.Collections;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
 
@@ -56,15 +55,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_assignment = assignment;
 			}
 
-			public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
+			public void Assign(IContentAdapter content, IMemberAccess access, object instance, object value)
 			{
-				var contexts = _contexts.Get(context);
+				var contexts = _contexts.Get(content);
 				contexts.Push(new MemberReadContext(instance, access));
-				_assignment.Assign(context, reader, instance, access);
+				_assignment.Assign(content, access, instance, value);
 				contexts.Pop();
 			}
-
-			public object Complete(IXmlReader context, object instance) => _assignment.Complete(context, instance);
 		}
 
 		sealed class CollectionAssignment : ICollectionAssignment
@@ -81,18 +78,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_assignment = assignment;
 			}
 
-			public void Assign(IXmlReader reader, object instance, IList list, object item)
+			public void Assign(IContentAdapter content, IList list, object instance, object item)
 			{
-				var contexts = _contexts.Get(reader);
+				var contexts = _contexts.Get(content);
 				var context = new CollectionReadContext(instance, list, item);
 				contexts.Push(context);
-				_assignment.Assign(reader, instance, list, item);
+				_assignment.Assign(content, list, instance, item);
 				contexts.Pop();
-			}
-
-			public object Complete(IXmlReader reader, object instance, IList list)
-			{
-				return _assignment.Complete(reader, instance, list);
 			}
 		}
 	}

@@ -26,22 +26,25 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	class ArrayElement : ElementBase
+	sealed class ArrayElement : ElementBase
 	{
-		readonly ITypeProperty _property;
+		readonly IProperty<TypeInfo> _property;
 		readonly TypeInfo _element;
 
-		public ArrayElement(IIdentities identities, IItemTypeProperty property, TypeInfo element)
-			: base(identities.Get(typeof(Array).GetTypeInfo()))
+		public ArrayElement(IIdentities identities, TypeInfo element) : this(identities, ItemTypeProperty.Default, element) {}
+
+		public ArrayElement(IIdentities identities, IProperty<TypeInfo> property, TypeInfo element)
+			: base(identities.Get(Support<Array>.Key))
 		{
 			_property = property;
 			_element = element;
 		}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
+		public override void Write(IXmlWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_property.Write(writer, _element);

@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public interface IReaderContexts : IParameterizedSource<IXmlReader, Stack<IReadContext>> {}
+	public interface IReaderContexts : IParameterizedSource<IContentAdapter, Stack<IReadContext>> {}
 }

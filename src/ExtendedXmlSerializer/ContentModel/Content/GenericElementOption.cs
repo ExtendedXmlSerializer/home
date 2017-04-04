@@ -23,7 +23,6 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
@@ -31,15 +30,9 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class GenericElementOption : NamedElementOptionBase
 	{
-		readonly IArgumentsProperty _arguments;
-
-		public GenericElementOption(IIdentities identities, IArgumentsProperty arguments)
-			: base(IsGenericTypeSpecification.Default, identities)
-		{
-			_arguments = arguments;
-		}
+		public GenericElementOption(IIdentities identities) : base(IsGenericTypeSpecification.Default, identities) {}
 
 		public sealed override IWriter Create(IIdentity identity, TypeInfo classification)
-			=> new GenericElement(_arguments, identity, classification.GetGenericArguments().ToImmutableArray());
+			=> new GenericElement(identity, classification.GetGenericArguments().ToImmutableArray());
 	}
 }

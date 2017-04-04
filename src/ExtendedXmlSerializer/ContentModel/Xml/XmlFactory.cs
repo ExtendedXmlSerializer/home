@@ -21,31 +21,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Properties;
+using System;
+using System.Xml;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	class XmlFactory : IXmlFactory
+	sealed class XmlFactory : IXmlFactory
 	{
-		readonly IGenericTypes _genericTypes;
-		readonly ITypes _types;
-		readonly ITypeProperty _type;
-		readonly IItemTypeProperty _item;
-		readonly IArgumentsProperty _arguments;
+		readonly IIdentities _identities;
+		readonly IXmlReaderContexts _contexts;
 
-		public XmlFactory(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-		                  IArgumentsProperty arguments)
+		public XmlFactory(IIdentities identities, IXmlReaderContexts contexts)
 		{
-			_genericTypes = genericTypes;
-			_types = types;
-			_type = type;
-			_item = item;
-			_arguments = arguments;
+			_identities = identities;
+			_contexts = contexts;
 		}
 
-		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance) => new XmlWriter(writer, instance);
+		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
+		{
+			var support = new XmlWriterSupport(writer);
+			var type = new TypeInfoFormatter(_identities, support);
+			var member = new MemberFormatter(type);
+			var result = new XmlWriter(support, type, member, writer, instance);
+			return result;
+		}
 
-		public IXmlReader Create(System.Xml.XmlReader reader) =>
-			new XmlReader(_genericTypes, _types, _type, _item, _arguments, reader);
+		public IXmlReader Create(System.Xml.XmlReader reader)
+		{
+			switch (reader.MoveToContent())
+			{
+				case XmlNodeType.Element:
+					var result = new XmlReader(_contexts.Get(reader.NameTable), reader);
+					return result;
+				default:
+					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{reader}.'");
+			}
+		}
 	}
 }

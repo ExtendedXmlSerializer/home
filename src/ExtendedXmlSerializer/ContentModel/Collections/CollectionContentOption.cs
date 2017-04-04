@@ -32,33 +32,24 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly IMemberSerializations _serializations;
 		readonly IEnumerators _enumerators;
-		readonly IMemberAssignment _member;
-		readonly ICollectionAssignment _collection;
-		readonly IActivation _activation;
+		readonly IContentsServices _contents;
 
-		public CollectionContentOption(IActivatingTypeSpecification specification, IActivation activation,
-		                               IMemberSerializations serializations, IEnumerators enumerators,
-		                               ISerializers serializers, IMemberAssignment member,
-		                               ICollectionAssignment collection)
+		public CollectionContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
+		                               IEnumerators enumerators, ISerializers serializers, IContentsServices contents)
 			: base(specification, serializers)
 		{
 			_serializations = serializations;
 			_enumerators = enumerators;
-			_member = member;
-			_collection = collection;
-			_activation = activation;
+			_contents = contents;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{
 			var members = _serializations.Get(classification);
-			var activator = _activation.Get(classification);
-
-			var items = new CollectionReadAssignment(item, _collection);
-			var attributes = new MemberAttributesReader(activator, members, _member);
-			var membered = new MemberedCollectionReadAssignment(members, items, _member);
-			var reader = new CollectionContentsReader(attributes, membered);
-
+			var activator = _contents.Get(classification);
+			var handler = new MemberedListContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
+			                                             new ListContentHandler(item, _contents));
+			var reader = new ContentsReader(activator, handler, _contents);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, item));
 			var result = new Serializer(reader, writer);
 			return result;

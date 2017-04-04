@@ -33,10 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel
 	sealed class RuntimeSerializer : ISerializer
 	{
 		readonly IContents _contents;
+		readonly IClassification _classification;
 
-		public RuntimeSerializer(IContents contents)
+		public RuntimeSerializer(IContents contents, IClassification classification)
 		{
 			_contents = contents;
+			_classification = classification;
 		}
 
 		public void Write(IXmlWriter writer, object instance)
@@ -51,6 +53,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			serializer.Write(writer, instance);
 		}
 
-		public object Get(IXmlReader reader) => _contents.Get(reader.GetClassification()).Get(reader);
+		public object Get(IContentAdapter reader) => _contents.Get(_classification.Get(reader)).Get(reader);
 	}
 }

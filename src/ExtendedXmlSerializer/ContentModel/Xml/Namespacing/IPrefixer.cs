@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	public interface IPrefixer : IPrefixAware {}
+	public interface IPrefixer : IIdentityResolver {}
 }

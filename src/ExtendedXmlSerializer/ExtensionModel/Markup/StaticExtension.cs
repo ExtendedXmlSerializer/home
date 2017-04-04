@@ -46,8 +46,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		public object ProvideValue(System.IServiceProvider serviceProvider)
-			=> _singletons.Get(serviceProvider.Get<IReflectionParsers>()
-			                                  .Get(serviceProvider.Get<IXmlReader>())
+			=> _singletons.Get(serviceProvider.Get<IXmlReader>()
+			                                  .To<ITypeParser>()
 			                                  .Get(_memberPath)
 			                                  .AsValid<PropertyInfo>());
 	}

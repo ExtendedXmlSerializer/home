@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	public interface IReflectionParser : IParser<MemberInfo>, ITypes {}
+	public interface IReflectionParser : IParser<MemberInfo>, IParameterizedSource<TypeParts, TypeInfo> {}
 }

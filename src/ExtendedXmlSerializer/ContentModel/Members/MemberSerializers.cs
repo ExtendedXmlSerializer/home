@@ -52,8 +52,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		IMemberSerializer Property(IConverter converter, IMember profile, IMemberAccess access)
 		{
-			var member = new MemberProperty(converter, profile.Name);
-			IMemberSerializer property = new PropertyMemberSerializer(profile, access, member, Wrap(access, member));
+			var serializer = new DelegatedSerializer(converter.Parse, converter.Format);
+			IMemberSerializer property = new PropertyMemberSerializer(profile, access, serializer, Wrap(access, serializer));
 			var runtime = _runtime.Get(profile.Metadata);
 			return runtime != null
 				? new RuntimeSerializer(new AlteredSpecification<object>(new DelegatedAlteration<object>(access.Get), runtime),

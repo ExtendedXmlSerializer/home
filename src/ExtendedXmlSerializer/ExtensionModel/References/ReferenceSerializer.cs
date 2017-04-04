@@ -52,12 +52,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				{
 					if (!first)
 					{
-						EntityProperty.Default.Write(writer, entity.Get(instance));
+						EntityIdentity.Default.Write(writer, entity.Get(instance));
 					}
 				}
 				else
 				{
-					var property = first ? (IProperty<uint>) IdentityProperty.Default : ReferenceProperty.Default;
+					var property = first
+						? (IProperty<uint?>) IdentityIdentity.Default
+						: ContentModel.Properties.ReferenceIdentity.Default;
 					property.Write(writer, identifier.Value.UniqueId);
 				}
 
@@ -69,6 +71,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_writer.Write(writer, instance);
 		}
 
-		public object Get(IXmlReader parameter) => _reader.Get(parameter);
+		public object Get(IContentAdapter parameter) => _reader.Get(parameter);
 	}
 }

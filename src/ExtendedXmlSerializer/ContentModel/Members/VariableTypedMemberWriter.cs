@@ -33,13 +33,18 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly ISpecification<Type> _type;
 		readonly ISerializer _runtime;
-		readonly ITypeProperty _property;
+		readonly IProperty<TypeInfo> _property;
 
-		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body, ITypeProperty property)
+		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
+			: this(type, runtime, body, ExplicitTypeProperty.Default) {}
+
+		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body,
+		                                 IProperty<TypeInfo> property)
 			: base(body)
 		{
 			_type = type;
 			_runtime = runtime;
+			_property = property;
 			_property = property;
 		}
 

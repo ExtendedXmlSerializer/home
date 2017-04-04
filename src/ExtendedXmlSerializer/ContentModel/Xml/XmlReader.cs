@@ -21,68 +21,55 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
 using System.Reflection;
 using System.Xml;
-using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class XmlReader : IXmlReader
 	{
-		readonly ClassificationSource _classification;
+		readonly static IdentityStore Store = IdentityStore.Default;
 
+		readonly IIdentityStore _store;
+		readonly IXmlReaderContext _context;
 		readonly System.Xml.XmlReader _reader;
 
-		public XmlReader(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-		                 IArgumentsProperty arguments, System.Xml.XmlReader reader)
+		public XmlReader(IXmlReaderContext context, System.Xml.XmlReader reader) : this(Store, context, reader) {}
+
+		public XmlReader(IIdentityStore store, IXmlReaderContext context, System.Xml.XmlReader reader)
 		{
-			switch (reader.MoveToContent())
-			{
-				case XmlNodeType.Element:
-					_reader = reader;
-					_classification = new ClassificationSource(genericTypes, types, type, item, arguments, this, _reader);
-					break;
-				default:
-					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{reader}.'");
-			}
+			_store = store;
+			_context = context;
+			_reader = reader;
 		}
 
 		public string Name => _reader.LocalName;
 		public string Identifier => _reader.NamespaceURI;
 
-		public bool IsMember() => _reader.Prefix == string.Empty; // TODO: Probably a better indicator for this?
+		public MemberInfo Get(string parameter) => _context.Get(parameter);
 
-		public TypeInfo Classification
+		public TypeInfo Get(TypeParts parameter) => _context.Get(parameter);
+
+		public override string ToString() => $"{base.ToString()}: {IdentityFormatter.Default.Get(this)}";
+
+		public bool IsSatisfiedBy(IIdentity parameter)
+			=> Any() && _reader.MoveToAttribute(parameter.Name, parameter.Identifier);
+
+		public System.Xml.XmlReader Get() => _reader;
+
+		public bool Any() => _reader.HasAttributes;
+
+		public string Content()
 		{
-			get
-			{
-				var source = _classification;
-				return source.Get();
-			}
+			var result = Value();
+			Set();
+			return result;
 		}
 
-		public bool Contains(IIdentity identity)
-			=> _reader.HasAttributes && _reader.MoveToAttribute(identity.Name, identity.Identifier);
-
-		public bool Next()
-		{
-			if (_reader.HasAttributes)
-			{
-				switch (_reader.NodeType)
-				{
-					case XmlNodeType.Attribute:
-						return _reader.MoveToNextAttribute();
-					default:
-						return _reader.MoveToFirstAttribute();
-				}
-			}
-			return false;
-		}
-
-		public string Value()
+		string Value()
 		{
 			switch (_reader.NodeType)
 			{
@@ -91,117 +78,29 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 				default:
 					_reader.Read();
 					var result = _reader.Value;
-					Read();
+					_reader.Read();
 					return result;
 			}
 		}
 
-
-		public int? New()
+		public void Set()
 		{
-			if (_reader.HasAttributes && _reader.NodeType == XmlNodeType.Attribute)
+			/*switch (_reader.NodeType)
 			{
-				Reset();
-			}
-
-			var result = !_reader.IsEmptyElement ? (int?) (_reader.Depth + 1) : null;
-			return result;
+				case XmlNodeType.EndElement:
+					_reader.ReadEndElement();
+					break;
+			}*/
+			_reader.MoveToContent();
 		}
 
-		public void Reset() => _reader.MoveToElement();
+		public IIdentity Get(IIdentity parameter)
+			=> _store.Get(parameter.Name, _reader.LookupNamespace(parameter.Identifier));
 
-		public bool Next(int depth) => Read() && _reader.IsStartElement() && _reader.Depth == depth;
-
-		bool Read()
+		public void Dispose()
 		{
-			var result = _reader.Read();
-			if (result)
-			{
-				var source = _classification;
-				source.Clear();
-			}
-			return result;
-		}
-
-		public string Get(string parameter)
-		{
-			var result = _reader.LookupNamespace(parameter);
-			if (result == null)
-			{
-				var info = (IXmlLineInfo) _reader;
-				throw new XmlException($"A prefix of {parameter} was provided to perform a namespace lookup, but none was found.",
-				                       null, info.LineNumber, info.LinePosition);
-			}
-			return result;
-		}
-
-		public override string ToString()
-			=> $"{base.ToString()}: {XmlQualifiedName.ToString(_reader.LocalName, _reader.NamespaceURI)}";
-
-		public void Dispose() => _reader.Dispose();
-		public System.Xml.XmlReader Get() => _reader;
-
-		struct ClassificationSource : ISource<TypeInfo>
-		{
-			readonly static IdentityStore IdentityStore = IdentityStore.Default;
-
-			TypeInfo _classification;
-
-			readonly IXmlReader _owner;
-			readonly System.Xml.XmlReader _reader;
-			readonly ITypeProperty _type, _item;
-			readonly IArgumentsProperty _arguments;
-			readonly IIdentityStore _identities;
-			readonly ITypes _generic, _types;
-
-			public ClassificationSource(IGenericTypes genericTypes, ITypes types, ITypeProperty type, IItemTypeProperty item,
-			                            IArgumentsProperty arguments, IXmlReader owner, System.Xml.XmlReader reader)
-				: this(owner, reader, type, item, arguments, IdentityStore, genericTypes, types) {}
-
-			ClassificationSource(IXmlReader owner, System.Xml.XmlReader reader, ITypeProperty type, ITypeProperty item,
-			                     IArgumentsProperty arguments, IIdentityStore identities, ITypes generic,
-			                     ITypes types)
-			{
-				_owner = owner;
-				_reader = reader;
-				_type = type;
-				_item = item;
-				_arguments = arguments;
-				_identities = identities;
-				_generic = generic;
-				_types = types;
-				_classification = null;
-			}
-
-			public TypeInfo Get() => _classification ?? (_classification = Refresh());
-
-			TypeInfo Refresh()
-			{
-				if (_reader.HasAttributes)
-				{
-					if (_owner.Contains(_type))
-					{
-						return _type.Get(_owner);
-					}
-
-					if (_owner.Contains(_item))
-					{
-						return _item.Get(_owner);
-					}
-
-					if (_owner.Contains(_arguments))
-					{
-						var types = _arguments.Get(_owner);
-						var generic = From(_generic).MakeGenericType(types.ToArray()).GetTypeInfo();
-						return generic;
-					}
-				}
-				return From(_types);
-			}
-
-			public void Clear() => _classification = null;
-
-			TypeInfo From(ITypes types) => types.Get(_identities.Get(_owner.Name, _owner.Identifier));
+			_reader.Dispose();
+			_context.Dispose();
 		}
 	}
 }

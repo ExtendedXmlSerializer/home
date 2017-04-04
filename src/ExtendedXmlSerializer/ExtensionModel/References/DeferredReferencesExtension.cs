@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,12 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
 
@@ -38,8 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		DeferredReferencesExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IMemberAssignment, MemberAssignment>()
-			            .Decorate<ICollectionAssignment, CollectionAssignment>()
+			=> parameter.Decorate<IContentsResult, ContentsResult>()
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
 			            .Decorate<IContents, DeferredReferenceContents>()
 			            .Decorate<ISerializers, DeferredReferenceSerializers>()
@@ -47,50 +42,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		sealed class MemberAssignment : IMemberAssignment
+		sealed class ContentsResult : IContentsResult
 		{
-			readonly IMemberAssignment _assignment;
+			readonly ICommand<IContentAdapter> _member;
+			readonly ICommand<IContentAdapter> _collection;
+			readonly IContentsResult _results;
 
 			[UsedImplicitly]
-			public MemberAssignment(IMemberAssignment assignment)
-			{
-				_assignment = assignment;
-			}
-
-			public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
-				=> _assignment.Assign(context, reader, instance, access);
-
-			public object Complete(IXmlReader context, object instance) => _assignment.Complete(context, instance);
-		}
-
-		sealed class CollectionAssignment : ICollectionAssignment
-		{
-			readonly ICommand<IXmlReader> _member;
-			readonly ICommand<IXmlReader> _collection;
-			readonly ICollectionAssignment _assignment;
-
-			[UsedImplicitly]
-			public CollectionAssignment(ICollectionAssignment assignment)
+			public ContentsResult(IContentsResult results)
 				: this(
 					ExecuteDeferredCommandsCommand<DeferredMemberAssignmentCommand>.Default,
-					ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, assignment) {}
+					ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, results) {}
 
-			public CollectionAssignment(ICommand<IXmlReader> member, ICommand<IXmlReader> collection,
-			                            ICollectionAssignment assignment)
+			public ContentsResult(ICommand<IContentAdapter> member, ICommand<IContentAdapter> collection,
+			                      IContentsResult results)
 			{
 				_member = member;
 				_collection = collection;
-				_assignment = assignment;
+				_results = results;
 			}
 
-			public void Assign(IXmlReader reader, object instance, IList list, object item)
-				=> _assignment.Assign(reader, instance, list, item);
-
-			public object Complete(IXmlReader reader, object instance, IList list)
+			public object Get(IContentsAdapter parameter)
 			{
-				_member.Execute(reader);
-				_collection.Execute(reader);
-				var result = _assignment.Complete(reader, instance, list);
+				var adapter = parameter.Get();
+				_member.Execute(adapter);
+				_collection.Execute(adapter);
+
+				var result = _results.Get(parameter);
 				return result;
 			}
 		}

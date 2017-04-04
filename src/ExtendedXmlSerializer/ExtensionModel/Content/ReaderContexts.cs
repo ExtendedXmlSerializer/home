@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ReaderContexts : ReferenceCache<IXmlReader, Stack<IReadContext>>, IReaderContexts
+	sealed class ReaderContexts : ReferenceCache<IContentAdapter, Stack<IReadContext>>, IReaderContexts
 	{
 		public static ReaderContexts Default { get; } = new ReaderContexts();
 		ReaderContexts() : base(_ => new Stack<IReadContext>()) {}

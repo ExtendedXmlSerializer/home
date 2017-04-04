@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel
 {
 	class DecoratedReader : IReader
@@ -34,6 +32,18 @@ namespace ExtendedXmlSerializer.ContentModel
 			_reader = reader;
 		}
 
-		public virtual object Get(IXmlReader parameter) => _reader.Get(parameter);
+		public virtual object Get(IContentAdapter parameter) => _reader.Get(parameter);
+	}
+
+	class DecoratedReader<T> : IReader<T>
+	{
+		readonly IReader<T> _reader;
+
+		public DecoratedReader(IReader<T> reader)
+		{
+			_reader = reader;
+		}
+
+		public T Get(IContentAdapter parameter) => _reader.Get(parameter);
 	}
 }

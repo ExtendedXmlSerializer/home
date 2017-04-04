@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
@@ -31,7 +30,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		public static CollectionAssignment Default { get; } = new CollectionAssignment();
 		CollectionAssignment() {}
 
-		public void Assign(IXmlReader reader, object instance, IList list, object item) => list.Add(item);
-		public object Complete(IXmlReader reader, object instance, IList list) => instance;
+		public void Assign(IContentAdapter content, IList list, object instance, object item) => list.Add(item);
 	}
 }

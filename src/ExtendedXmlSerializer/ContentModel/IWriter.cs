@@ -29,4 +29,9 @@ namespace ExtendedXmlSerializer.ContentModel
 	{
 		void Write(IXmlWriter writer, object instance);
 	}
+
+	public interface IWriter<in T>
+	{
+		void Write(IXmlWriter writer, T instance);
+	}
 }

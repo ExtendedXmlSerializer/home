@@ -24,7 +24,6 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
@@ -61,12 +60,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_maps = maps;
 			}
 
-			static ReferenceIdentity? Identity(IXmlReader reader) =>
-				reader.Contains(IdentityProperty.Default)
-					? (ReferenceIdentity?) new ReferenceIdentity(IdentityProperty.Default.Get(reader))
-					: null;
+			static ReferenceIdentity? Identity(IContentAdapter reader)
+			{
+				var identity = IdentityIdentity.Default.Get(reader);
+				var result = identity.HasValue ? new ReferenceIdentity(identity.Value) : (ReferenceIdentity?) null;
+				return result;
+			}
 
-			ReferenceIdentity? Entity(IXmlReader reader, object instance)
+			ReferenceIdentity? Entity(IContentAdapter reader, object instance)
 			{
 				var typeInfo = instance.GetType().GetTypeInfo();
 				var entity = _entities.Get(typeInfo)?.Get(reader);
@@ -77,7 +78,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			}
 
 
-			public object Get(IXmlReader parameter)
+			public object Get(IContentAdapter parameter)
 			{
 				var declared = Identity(parameter);
 				var result = _activator.Get(parameter);

@@ -27,10 +27,9 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
+using JetBrains.Annotations;
 using Activator = System.Activator;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
@@ -39,34 +38,39 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	{
 		readonly static ISpecification<TypeInfo> Specification = new IsAssignableGenericSpecification(typeof(ImmutableArray<>));
 
-		readonly IActivation _activation;
+		readonly IContentsServices _contents;
 		readonly IEnumerators _enumerators;
-		readonly ICollectionAssignment _collection;
 
-		public ImmutableArrayContentOption(IActivation activation, IEnumerators enumerators, ISerializers serializers,
-		                                   ICollectionAssignment collection)
+		public ImmutableArrayContentOption(IContentsServices contents, IEnumerators enumerators, ISerializers serializers)
 			: base(Specification, serializers)
 		{
-			_activation = activation;
+			_contents = contents;
 			_enumerators = enumerators;
-			_collection = collection;
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(CreateReader(_activation, new CollectionReadAssignment(item, _collection), itemType),
-			                  new EnumerableWriter(_enumerators, item));
+			=> new Serializer(CreateReader(itemType, _contents, item), new EnumerableWriter(_enumerators, item));
 
-		static IReader CreateReader(IActivation activation, ICollectionReadAssignment assignment, TypeInfo itemType)
-			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), activation, assignment);
+		static IReader CreateReader(TypeInfo itemType, IContentsServices contents, IReader item)
+			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), contents, item);
 
-		sealed class Reader<T> : DecoratedReader
+		sealed class Reader<T> : IReader
 		{
-			public Reader(IActivation activation, ICollectionReadAssignment assignment)
-				: base(new CollectionContentsReader(activation.Get<Collection<T>>(), assignment)) {}
+			readonly IReader<Collection<T>> _reader;
 
-			public override object Get(IXmlReader parameter) => base.Get(parameter)
-			                                                        .AsValid<Collection<T>>()
-			                                                        .ToImmutableArray();
+			[UsedImplicitly]
+			public Reader(IContentsServices services, IReader item)
+				: this(
+					new ReaderAdapter<Collection<T>>(
+						new ContentsReader(services.Get<Collection<T>>(),
+						                   new ConditionalContentHandler(services, new ListContentHandler(item, services)), services))) {}
+
+			Reader(IReader<Collection<T>> reader)
+			{
+				_reader = reader;
+			}
+
+			public object Get(IContentAdapter parameter) => _reader.Get(parameter).ToImmutableArray();
 		}
 	}
 }

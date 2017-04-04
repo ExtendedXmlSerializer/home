@@ -21,12 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
 	public static class Extensions
 	{
-		public static IReader Get<T>(this IActivation @this) => @this.Get(typeof(T).GetTypeInfo());
+		public static IContentsActivator Get<T>(this IContentsActivation @this) => @this.Get(typeof(T).GetTypeInfo());
+
+		public static TypeInfo GetClassification(this IClassification @this, IContentAdapter parameter,
+		                                         TypeInfo defaultValue = null)
+		{
+			var result = @this.Get(parameter) ?? defaultValue;
+			if (result == null)
+			{
+				var name = IdentityFormatter.Default.Get(parameter);
+				throw new InvalidOperationException(
+					$"An attempt was made to load a type with the fully qualified name of '{name}', but no type could be located with that name.");
+			}
+			return result;
+		}
 	}
 }

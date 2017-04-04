@@ -29,6 +29,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Performance.Model;
@@ -68,6 +69,8 @@ namespace ExtendedXmlSerializer.Tests.Performance
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _data;
 
+		readonly IXmlReaderFactory _readerFactory = new XmlReaderFactory();
+
 		public ExtendedXmlSerializerV2Test()
 		{
 			_data = Encoding.UTF8.GetBytes(SerializationClassWithPrimitive());
@@ -95,14 +98,14 @@ namespace ExtendedXmlSerializer.Tests.Performance
 		{
 			using (var stream = new MemoryStream(_data))
 			{
-				using (var reader = XmlReader.Create(stream))
+				using (var reader = _readerFactory.Get(stream))
 				{
 					return _serializer.Deserialize(reader);
 				}
 			}
 		}
 
-		class Configuration : ManualConfig
+		sealed class Configuration : ManualConfig
 		{
 			public Configuration()
 			{
@@ -113,6 +116,7 @@ namespace ExtendedXmlSerializer.Tests.Performance
 
 	public class XmlSerializerTest
 	{
+		readonly IXmlReaderFactory _readerFactory = new XmlReaderFactory();
 		readonly XmlSerializer _serializer = new XmlSerializer(typeof(TestClassOtherClass));
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _xml;
@@ -144,7 +148,7 @@ namespace ExtendedXmlSerializer.Tests.Performance
 		{
 			using (var stream = new MemoryStream(_xml))
 			{
-				using (var reader = XmlReader.Create(stream))
+				using (var reader = _readerFactory.Get(stream))
 				{
 					var result = _serializer.Deserialize(reader);
 					return result;

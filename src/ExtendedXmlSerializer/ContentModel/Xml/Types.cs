@@ -38,8 +38,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		[UsedImplicitly]
 		public Types(IPartitionedTypeSpecification specification, IAssemblyTypePartitions partitions,
-		             ITypeIdentities identities,
-		             ITypeFormatter formatter)
+		             ITypeIdentities identities, ITypeFormatter formatter)
 			: this(specification, identities, formatter, TypeLoader.Default, partitions) {}
 
 		internal Types(ISpecification<TypeInfo> specification, ITypeIdentities identities, ITypeFormatter formatter,

@@ -21,33 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class XmlWriter : IXmlWriter
 	{
-		readonly static Func<INamespaces> Namespaces = Activators.Default.New<Namespaces>;
-		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
-
+		readonly IIdentityResolver _resolver;
+		readonly ITypeFormatter _type;
+		readonly IMemberFormatter _member;
 		readonly System.Xml.XmlWriter _writer;
-		readonly Source _source;
 
-		public XmlWriter(System.Xml.XmlWriter writer, object root) : this(writer, root, Namespaces) {}
-
-		public XmlWriter(System.Xml.XmlWriter writer, object root, Func<INamespaces> namespaces)
-			: this(writer, root, new Source(namespaces)) {}
-
-		XmlWriter(System.Xml.XmlWriter writer, object root, Source source)
+		public XmlWriter(IIdentityResolver resolver, ITypeFormatter type, IMemberFormatter member, System.Xml.XmlWriter writer,
+		                 object root)
 		{
-			Root = root;
+			_resolver = resolver;
+			_type = type;
+			_member = member;
 			_writer = writer;
-			_source = source;
+			Root = root;
 		}
 
 		public object Root { get; }
@@ -84,30 +78,11 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public void EndCurrent() => _writer.WriteEndElement();
 
-		public string Get(string identifier) => _writer.LookupPrefix(identifier ?? string.Empty) ?? Create(identifier);
-
-		string Create(string identifier)
-		{
-			var source = _source;
-			_writer.WriteAttributeString(source.Get().Get(identifier).Name, Xmlns, identifier);
-			return _writer.LookupPrefix(identifier);
-		}
-
 		public System.Xml.XmlWriter Get() => _writer;
 
-		struct Source : ISource<INamespaces>
-		{
-			readonly Func<INamespaces> _source;
+		public string Get(TypeInfo parameter) => _type.Get(parameter);
 
-			INamespaces _field;
-
-			public Source(Func<INamespaces> source, INamespaces field = null)
-			{
-				_source = source;
-				_field = field;
-			}
-
-			public INamespaces Get() => _field ?? (_field = _source());
-		}
+		public string Get(MemberInfo parameter) => parameter is TypeInfo ? Get((TypeInfo) parameter) : _member.Get(parameter);
+		public string Get(string parameter) => _resolver.Get(parameter);
 	}
 }

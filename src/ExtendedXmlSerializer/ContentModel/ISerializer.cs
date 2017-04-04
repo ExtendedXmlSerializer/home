@@ -21,14 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel
 {
 	public interface ISerializer : IReader, IWriter {}
 
-	public interface ISerializer<T> : IActivator<T>
-	{
-		void Write(IXmlWriter writer, T instance);
-	}
+	public interface ISerializer<T> : IReader<T>, IWriter<T> {}
 }

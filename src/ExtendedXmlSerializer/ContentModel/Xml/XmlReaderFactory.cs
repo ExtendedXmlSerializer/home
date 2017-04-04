@@ -26,20 +26,21 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public class XmlReaderFactory : IXmlReaderFactory
+	public sealed class XmlReaderFactory : IXmlReaderFactory
 	{
-		public static XmlReaderFactory Default { get; } = new XmlReaderFactory();
-		XmlReaderFactory() : this(Defaults.ReaderSettings) {}
-
+		readonly XmlParserContext _context;
 		readonly XmlReaderSettings _settings;
 
-		public XmlReaderFactory(XmlReaderSettings settings)
+		public XmlReaderFactory() : this(Defaults.ReaderSettings.Clone(), new NameTable().Context()) {}
+
+		public XmlReaderFactory(XmlReaderSettings settings, XmlParserContext context)
 		{
+			_context = context;
 			_settings = settings;
 		}
 
-		public System.Xml.XmlReader Get(Stream parameter) => System.Xml.XmlReader.Create(parameter, _settings);
+		public System.Xml.XmlReader Get(Stream parameter) => System.Xml.XmlReader.Create(parameter, _settings, _context);
 
-		public System.Xml.XmlReader Get(TextReader parameter) => System.Xml.XmlReader.Create(parameter, _settings);
+		public System.Xml.XmlReader Get(TextReader parameter) => System.Xml.XmlReader.Create(parameter, _settings, _context);
 	}
 }

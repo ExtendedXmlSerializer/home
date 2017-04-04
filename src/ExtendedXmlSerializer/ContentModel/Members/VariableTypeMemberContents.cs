@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using JetBrains.Annotations;
@@ -30,15 +31,15 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	sealed class VariableTypeMemberContents : IMemberContents
 	{
 		readonly IVariableTypeMemberSpecifications _specifications;
-		readonly ITypeProperty _type;
+		readonly IProperty<TypeInfo> _type;
 		readonly ISerializer _runtime;
 		readonly IContents _contents;
 
 		[UsedImplicitly]
-		public VariableTypeMemberContents(ISerializer runtime, ITypeProperty type, IContents contents)
-			: this(VariableTypeMemberSpecifications.Default, type, runtime, contents) {}
+		public VariableTypeMemberContents(ISerializer runtime, IContents contents)
+			: this(VariableTypeMemberSpecifications.Default, ExplicitTypeProperty.Default, runtime, contents) {}
 
-		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, ITypeProperty type,
+		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, IProperty<TypeInfo> type,
 		                                  ISerializer runtime, IContents contents)
 		{
 			_specifications = specifications;

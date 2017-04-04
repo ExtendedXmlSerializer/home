@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberAssignment : IMemberAssignment
@@ -30,9 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public static MemberAssignment Default { get; } = new MemberAssignment();
 		MemberAssignment() {}
 
-		public void Assign(IXmlReader context, IReader reader, object instance, IMemberAccess access)
-			=> access.Assign(instance, reader.Get(context));
-
-		public object Complete(IXmlReader context, object instance) => instance;
+		public void Assign(IContentAdapter content, IMemberAccess access, object instance, object value)
+			=> access.Assign(instance, value);
 	}
 }

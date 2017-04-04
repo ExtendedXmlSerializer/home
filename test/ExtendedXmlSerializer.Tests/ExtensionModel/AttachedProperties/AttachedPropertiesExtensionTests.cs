@@ -55,8 +55,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 		public void VerifyAttributes()
 		{
 			var subject = new Subject {Message = "Hello World!"};
-			NameProperty.Default.Assign(subject, "SubjectName");
-			NumberProperty.Default.Assign(subject, 6776);
+			subject.Set(NameProperty.Default, "SubjectName");
+			subject.Set(NumberProperty.Default, 6776);
 
 			var serializer =
 				new SerializationSupport(new ExtendedConfiguration().UseAutoFormatting()
@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 		public void VerifyConfiguration()
 		{
 			var subject = new Subject {Message = "Hello World!"};
-			NumberProperty.Default.Assign(subject, 6776);
+			subject.Set(NumberProperty.Default, 6776);
 
 			var serializer =
 				new SerializationSupport(

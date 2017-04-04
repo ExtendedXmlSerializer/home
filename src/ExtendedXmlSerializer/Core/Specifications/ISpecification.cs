@@ -27,4 +27,26 @@ namespace ExtendedXmlSerializer.Core.Specifications
 	{
 		bool IsSatisfiedBy(T parameter);
 	}
+
+	/*public sealed class CommandSpecification<T> : ISpecification<T>
+	{
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _command;
+
+		public CommandSpecification(ISpecification<T> specification, ICommand<T> command)
+		{
+			_specification = specification;
+			_command = command;
+		}
+
+		public bool IsSatisfiedBy(T parameter)
+		{
+			var result = _specification.IsSatisfiedBy(parameter);
+			if (result)
+			{
+				_command.Execute(parameter);
+			}
+			return result;
+		}
+	}*/
 }

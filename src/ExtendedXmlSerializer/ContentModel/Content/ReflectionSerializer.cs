@@ -22,26 +22,17 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class ReflectionSerializer : ISerializer
 	{
-		readonly IReflectionParsers _parsers;
-		readonly IReflectionFormatters _formatters;
+		public static ReflectionSerializer Default { get; } = new ReflectionSerializer();
+		ReflectionSerializer() {}
 
-		public ReflectionSerializer(IReflectionParsers parsers, IReflectionFormatters formatters)
-		{
-			_parsers = parsers;
-			_formatters = formatters;
-		}
+		public object Get(IContentAdapter parameter) => parameter.Get(parameter.Content());
 
-		public object Get(IXmlReader parameter) => _parsers.Get(parameter).Get(parameter.Value());
-
-		public void Write(IXmlWriter writer, object instance)
-			=> writer.Write(_formatters.Get(writer).Get((MemberInfo) instance));
+		public void Write(IXmlWriter writer, object instance) => writer.Write(writer.Get((MemberInfo) instance));
 	}
 }

@@ -22,23 +22,12 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
-	sealed class TypeFormatter : ITypeFormatter
+	sealed class TypeFormatter : DecoratedSource<TypeInfo, string>, ITypeFormatter
 	{
-		readonly INames _names;
-		readonly ITypeFormatter _formatter;
-
-		public TypeFormatter(INames names) : this(names, TypeNameFormatter.Default) {}
-
-
-		public TypeFormatter(INames names, ITypeFormatter formatter)
-		{
-			_names = names;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter) => _names.Get(parameter) ?? _formatter.Get(parameter);
+		public TypeFormatter(INames names) : base(names.Or(TypeNameFormatter.Default)) {}
 	}
 }

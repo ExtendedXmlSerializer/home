@@ -26,19 +26,25 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	class DelegatedSerializer : ISerializer
+	sealed class DelegatedSerializer : DelegatedSerializer<object>, ISerializer
 	{
-		readonly Func<string, object> _deserialize;
-		readonly Func<object, string> _serialize;
-
 		public DelegatedSerializer(Func<string, object> deserialize, Func<object, string> serialize)
+			: base(deserialize, serialize) {}
+	}
+
+	class DelegatedSerializer<T> : ISerializer<T>
+	{
+		readonly Func<string, T> _deserialize;
+		readonly Func<T, string> _serialize;
+
+		public DelegatedSerializer(Func<string, T> deserialize, Func<T, string> serialize)
 		{
 			_deserialize = deserialize;
 			_serialize = serialize;
 		}
 
-		public void Write(IXmlWriter writer, object instance) => writer.Write(_serialize(instance));
+		public void Write(IXmlWriter writer, T instance) => writer.Write(_serialize(instance));
 
-		public object Get(IXmlReader reader) => _deserialize(reader.Value());
+		public T Get(IContentAdapter reader) => _deserialize(reader.Content());
 	}
 }

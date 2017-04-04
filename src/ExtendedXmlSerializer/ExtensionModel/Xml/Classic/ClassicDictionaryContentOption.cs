@@ -25,7 +25,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
 
@@ -33,44 +32,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicDictionaryContentOption : ContentOptionBase
 	{
-		readonly IActivation _activation;
-		readonly IMemberSerializations _serializations;
+		readonly IContentsServices _contents;
 		readonly IDictionaryEnumerators _enumerators;
 		readonly IDictionaryEntries _entries;
-		readonly ICollectionAssignment _collection;
-		readonly IMemberAssignment _member;
 
-		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IActivation activation,
-		                                      IMemberSerializations serializations, IMemberAssignment member,
-		                                      IDictionaryEnumerators enumerators, IDictionaryEntries entries,
-		                                      ICollectionAssignment collection)
+		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IContentsServices contents,
+		                                      IDictionaryEnumerators enumerators, IDictionaryEntries entries)
 			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
-			_activation = activation;
-			_serializations = serializations;
+			_contents = contents;
 			_enumerators = enumerators;
 			_entries = entries;
-			_collection = collection;
-			_member = member;
 		}
 
 		public override ISerializer Get(TypeInfo parameter)
 		{
-			var activator = _activation.Get(parameter);
+			var activator = _contents.Get(parameter);
 			var entry = _entries.Get(parameter);
-			var reader = new DictionaryContentsReader(activator, entry, _serializations.Get(parameter), _member, _collection);
+			var reader = new ContentsReader(activator,
+			                                new ConditionalContentHandler(_contents, new ListContentHandler(entry, _contents)),
+			                                _contents);
 			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
 			return result;
-		}
-
-		sealed class DictionaryContentsReader : DecoratedReader
-		{
-			readonly static ILists Lists = new Lists(DictionaryAddDelegates.Default);
-
-			public DictionaryContentsReader(IReader reader, IReader entry, IMemberSerialization members,
-			                                IMemberAssignment member, ICollectionAssignment collection)
-				: base(new CollectionContentsReader(new MemberAttributesReader(reader, members, member),
-				                                    new CollectionReadAssignment(entry, collection), Lists)) {}
 		}
 	}
 }

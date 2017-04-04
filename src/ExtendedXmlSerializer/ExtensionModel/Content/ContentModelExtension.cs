@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
@@ -42,7 +43,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Register<ArrayContentOption>()
 			            .Register<DictionaryContentOption>()
 			            .Register<CollectionContentOption>()
-			            .Register<ReflectionSerializer>();
+			            .Register<IClassification, Classification>()
+			            .Register<IContentsServices, ContentsServices>()
+			            .RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default)
+			            .RegisterInstance(ReflectionSerializer.Default);
 
 		public void Execute(IServices parameter) => parameter.Get<ISortOrder>()
 		                                                     .Sort<ArrayContentOption>(0)

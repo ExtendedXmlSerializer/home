@@ -36,4 +36,16 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public virtual void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
 	}
+
+	class DecoratedWriter<T> : IWriter<T>
+	{
+		readonly IWriter<T> _writer;
+
+		public DecoratedWriter(IWriter<T> writer)
+		{
+			_writer = writer;
+		}
+
+		public void Write(IXmlWriter writer, T instance) => _writer.Write(writer, instance);
+	}
 }

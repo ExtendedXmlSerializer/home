@@ -21,12 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// ReSharper disable UnusedAutoPropertyAccessor.Local
-
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
+using FluentAssertions;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests
@@ -91,6 +90,7 @@ namespace ExtendedXmlSerializer.Tests
 			var expected = new List<string> {"Hello", "World", "Hope", "This", "Works!"};
 			var data = _serializer.Serialize(expected);
 			var actual = _serializer.Deserialize<List<string>>(data);
+			actual.Capacity.Should().Be(8);
 			Assert.Equal(expected, actual);
 		}
 

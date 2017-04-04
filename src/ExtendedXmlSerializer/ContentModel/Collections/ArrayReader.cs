@@ -22,22 +22,32 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArrayReader : DecoratedReader
+	sealed class ArrayReader : IReader
 	{
-		public ArrayReader(IActivation activation, ICollectionReadAssignment collection)
-			: base(new CollectionContentsReader(activation.Get<ArrayList>(), collection)) {}
+		readonly IClassification _classification;
+		readonly IReader<ArrayList> _reader;
 
-		public override object Get(IXmlReader parameter)
+		public ArrayReader(IContentsServices services, IClassification classification, IReader item)
+			: this(
+				new ReaderAdapter<ArrayList>(
+					new ContentsReader(services.Get<ArrayList>(),
+					                   new ConditionalContentHandler(services, new ListContentHandler(item, services)), services)))
 		{
-			var elementType = parameter.GetClassification().GetElementType();
-			var result = base.Get(parameter)
-			                 .AsValid<ArrayList>()
-			                 .ToArray(elementType);
+			_classification = classification;
+		}
+
+		ArrayReader(IReader<ArrayList> reader)
+		{
+			_reader = reader;
+		}
+
+		public object Get(IContentAdapter parameter)
+		{
+			var elementType = _classification.GetClassification(parameter).GetElementType();
+			var result = _reader.Get(parameter).ToArray(elementType);
 			return result;
 		}
 	}

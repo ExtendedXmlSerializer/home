@@ -22,25 +22,38 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	class ConverterProperty<T> : PropertyBase<T>
+	class ConverterProperty<T> : DelegatedProperty<T>
 	{
-		readonly IConverter<T> _converter;
-
-		public ConverterProperty(IConverter<T> converter, string name, string identifier)
-			: this(ValueReader.Default, converter, name, identifier) {}
-
-		public ConverterProperty(IValueReader reader, IConverter<T> converter, string name, string identifier)
-			: base(reader, name, identifier)
-		{
-			_converter = converter;
-		}
-
-		protected sealed override T Parse(IXmlReader parameter, string data) => _converter.Parse(data);
-
-		protected sealed override string Format(IXmlWriter writer, T instance) => _converter.Format(instance);
+		public ConverterProperty(IConverter<T> converter, IIdentity identity)
+			: base(converter.Parse, converter.Format, identity) {}
 	}
+
+	/*class ConverterProperty<T> : IProperty<T>
+		{
+			readonly IProperty<T> _property;
+
+			public ConverterProperty(IConverter<T> converter, IIdentity identity)
+				: this(new DelegatedProperty<T>(converter.Parse, converter.Format, identity)) {}
+
+			public ConverterProperty(IProperty<T> property)
+			{
+				_property = property;
+			}
+
+			public T Get(IContentAdapter parameter)
+			{
+				var result = _property.Get(parameter);
+				parameter.Set();
+				return result;
+			}
+
+			public void Write(IXmlWriter writer, T instance) => _property.Write(writer, instance);
+
+			public string Identifier => _property.Identifier;
+
+			public string Name => _property.Name;
+		}*/
 }

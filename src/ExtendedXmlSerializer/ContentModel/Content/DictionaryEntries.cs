@@ -23,7 +23,6 @@
 
 using System.Collections;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
@@ -42,26 +41,26 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
-		readonly IReader _activator;
+		readonly IContentsActivator _activator;
+		readonly IContentsServices _contents;
 		readonly IMembers _members;
 		readonly IMemberSerializers _serializers;
-		readonly IMemberAssignment _member;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IIdentities identities, IActivation activation, IMembers members,
-		                         IMemberAssignment member, IMemberSerializers serializers)
+		public DictionaryEntries(IContentsServices contents, IIdentities identities, IMembers members,
+		                         IMemberSerializers serializers)
 			: this(
-				activation.Get<DictionaryEntry>(), members, serializers, member, new ElementOption(identities).Get(Type), Pairs) {}
+				contents.Get<DictionaryEntry>(), contents, serializers, members, new ElementOption(identities).Get(Type), Pairs) {}
 
-		public DictionaryEntries(IReader activator, IMembers members, IMemberSerializers serializers,
-		                         IMemberAssignment member, IWriter element, IDictionaryPairTypesLocator locator)
+		public DictionaryEntries(IContentsActivator activator, IContentsServices contents, IMemberSerializers serializers,
+		                         IMembers members, IWriter element, IDictionaryPairTypesLocator locator)
 		{
 			_activator = activator;
+			_contents = contents;
 			_members = members;
 			_serializers = serializers;
-			_member = member;
 			_element = element;
 			_locator = locator;
 		}
@@ -73,9 +72,9 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		{
 			var pair = _locator.Get(parameter);
 			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)}.ToImmutableArray();
-			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members),
-			                                            members.ToDictionary(x => x.Profile.Name, x => x), members);
-			var reader = new MemberContentsReader(_activator, serialization, _member);
+			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members), members);
+
+			var reader = new ContentsReader(_activator, new MemberContentHandler(serialization, _contents, _contents), _contents);
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result = new Container(_element, converter);
