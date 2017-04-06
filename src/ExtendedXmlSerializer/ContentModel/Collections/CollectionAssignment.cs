@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class CollectionAssignment : ICollectionAssignment
@@ -30,6 +28,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		public static CollectionAssignment Default { get; } = new CollectionAssignment();
 		CollectionAssignment() {}
 
-		public void Assign(IContentAdapter content, IList list, object instance, object item) => list.Add(item);
+		public void Assign(IReader reader, IListContentsAdapter parameter) => parameter.List.Add(reader.Get(parameter.Get()));
 	}
 }

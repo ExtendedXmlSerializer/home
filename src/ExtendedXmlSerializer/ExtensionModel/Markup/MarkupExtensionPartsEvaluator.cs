@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	{
 		const string Extension = "Extension";
 
-		readonly ITypeParser _types;
+		readonly IReflectionParser _parser;
 		readonly IEvaluator _evaluator;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
@@ -50,11 +50,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		readonly System.IServiceProvider _provider;
 		readonly object[] _services;
 
-		public MarkupExtensionPartsEvaluator(ITypeParser types, IEvaluator evaluator, ITypeMembers members,
+		public MarkupExtensionPartsEvaluator(IReflectionParser parser, IEvaluator evaluator, ITypeMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
 		                                     System.IServiceProvider provider, params object[] services)
 		{
-			_types = types;
+			_parser = parser;
 			_evaluator = evaluator;
 			_members = members;
 			_accessors = accessors;
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		TypeInfo DetermineType(MarkupExtensionParts parameter)
 		{
-			var type = _types.Get(parameter.Type) ?? _types.Get(Copy(parameter.Type));
+			var type = _parser.Get(parameter.Type) ?? _parser.Get(Copy(parameter.Type));
 			if (type == null)
 			{
 				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);

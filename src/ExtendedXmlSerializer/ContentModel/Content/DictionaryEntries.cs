@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DictionaryEntries : IDictionaryEntries
 	{
-		readonly static TypeInfo Type = typeof(DictionaryEntry).GetTypeInfo();
+		readonly static TypeInfo Type = Support<DictionaryEntry>.Key;
 
 		readonly static PropertyInfo
 			Key = Type.GetProperty(nameof(DictionaryEntry.Key)),
@@ -41,7 +41,6 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
-		readonly IContentsActivator _activator;
 		readonly IContentsServices _contents;
 		readonly IMembers _members;
 		readonly IMemberSerializers _serializers;
@@ -51,13 +50,11 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		[UsedImplicitly]
 		public DictionaryEntries(IContentsServices contents, IIdentities identities, IMembers members,
 		                         IMemberSerializers serializers)
-			: this(
-				contents.Get<DictionaryEntry>(), contents, serializers, members, new ElementOption(identities).Get(Type), Pairs) {}
+			: this(contents, serializers, members, new ElementOption(identities).Get(Type), Pairs) {}
 
-		public DictionaryEntries(IContentsActivator activator, IContentsServices contents, IMemberSerializers serializers,
-		                         IMembers members, IWriter element, IDictionaryPairTypesLocator locator)
+		public DictionaryEntries(IContentsServices contents, IMemberSerializers serializers, IMembers members,
+		                         IWriter element, IDictionaryPairTypesLocator locator)
 		{
-			_activator = activator;
 			_contents = contents;
 			_members = members;
 			_serializers = serializers;
@@ -74,7 +71,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)}.ToImmutableArray();
 			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members), members);
 
-			var reader = new ContentsReader(_activator, new MemberContentHandler(serialization, _contents, _contents), _contents);
+			var reader = _contents.Create(Type, new MemberContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result = new Container(_element, converter);

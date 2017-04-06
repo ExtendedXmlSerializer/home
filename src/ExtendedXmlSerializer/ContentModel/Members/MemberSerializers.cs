@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
@@ -46,30 +47,34 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			var converter = _converters.Get(parameter);
 			var access = _accessors.Get(parameter);
-			var result = converter != null ? Property(converter, parameter, access) : Content(parameter, access);
+			var alteration = new DelegatedAlteration<object>(access.Get);
+			var result = converter != null
+				? Property(alteration, converter, parameter, access)
+				: Content(alteration, parameter, access);
 			return result;
 		}
 
-		IMemberSerializer Property(IConverter converter, IMember profile, IMemberAccess access)
+		IMemberSerializer Property(IAlteration<object> alteration, IConverter converter, IMember profile, IMemberAccess access)
 		{
-			var serializer = new DelegatedSerializer(converter.Parse, converter.Format);
-			IMemberSerializer property = new PropertyMemberSerializer(profile, access, serializer, Wrap(access, serializer));
+			var serializer = new ConverterProperty<object>(converter, profile).Adapt();
+			var member = new MemberSerializer(profile, access, serializer, Wrap(alteration, access, serializer));
+			IMemberSerializer property = new PropertyMemberSerializer(member);
 			var runtime = _runtime.Get(profile.Metadata);
 			return runtime != null
-				? new RuntimeSerializer(new AlteredSpecification<object>(new DelegatedAlteration<object>(access.Get), runtime),
-				                        property, Content(profile, access))
+				? new RuntimeSerializer(new AlteredSpecification<object>(alteration, runtime),
+				                        property, Content(alteration, profile, access))
 				: property;
 		}
 
-		IMemberSerializer Content(IMember profile, IMemberAccess access)
+		IMemberSerializer Content(IAlteration<object> alteration, IMember profile, IMemberAccess access)
 		{
 			var body = _content.Get(profile);
-			var writer = Wrap(access, new Enclosure(new MemberElement(profile), body));
+			var writer = Wrap(alteration, access, new Enclosure(new MemberElement(profile), body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}
 
-		static IWriter Wrap(IMemberAccess access, IWriter writer)
-			=> new AlteringWriter(new DelegatedAlteration<object>(access.Get), new ConditionalWriter(access, writer));
+		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter writer)
+			=> new AlteringWriter(alteration, new ConditionalWriter(access, writer));
 	}
 }

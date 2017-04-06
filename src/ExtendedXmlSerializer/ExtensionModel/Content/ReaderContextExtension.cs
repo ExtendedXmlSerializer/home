@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -55,11 +54,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_assignment = assignment;
 			}
 
-			public void Assign(IContentAdapter content, IMemberAccess access, object instance, object value)
+			public void Assign(IReader reader, IContentsAdapter contents, IMemberAccess context)
 			{
-				var contexts = _contexts.Get(content);
-				contexts.Push(new MemberReadContext(instance, access));
-				_assignment.Assign(content, access, instance, value);
+				var contexts = _contexts.Get(contents.Get());
+				contexts.Push(new MemberReadContext(contents, context));
+				_assignment.Assign(reader, contents, context);
 				contexts.Pop();
 			}
 		}
@@ -78,12 +77,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				_assignment = assignment;
 			}
 
-			public void Assign(IContentAdapter content, IList list, object instance, object item)
+			public void Assign(IReader source, IListContentsAdapter parameter)
 			{
-				var contexts = _contexts.Get(content);
-				var context = new CollectionReadContext(instance, list, item);
-				contexts.Push(context);
-				_assignment.Assign(content, list, instance, item);
+				var contexts = _contexts.Get(parameter.Get());
+				var element = new CollectionReadContext(parameter);
+				contexts.Push(element);
+				_assignment.Assign(source, parameter);
 				contexts.Pop();
 			}
 		}

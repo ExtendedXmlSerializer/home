@@ -22,8 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 
@@ -31,12 +30,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class DeferredReferenceMap : IReferenceMap
 	{
-		readonly ICollection<ICommand<IXmlReader>> _commands;
+		readonly ICollection<IDeferredCommand> _commands;
 		readonly Stack<IReadContext> _contexts;
 		readonly IReferenceMap _map;
 
-		public DeferredReferenceMap(ICollection<ICommand<IXmlReader>> commands, Stack<IReadContext> contexts,
-		                            IReferenceMap map)
+		public DeferredReferenceMap(ICollection<IDeferredCommand> commands, Stack<IReadContext> contexts, IReferenceMap map)
 		{
 			_commands = commands;
 			_contexts = contexts;
@@ -50,24 +48,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			var result = _map.Get(parameter);
 			if (result == null)
 			{
-				var current = _contexts.Peek();
 				var source = _map.Fix(parameter);
+				var current = _contexts.Peek();
 				var command = Command(current, source);
 				_commands.Add(command);
 			}
 			return result;
 		}
 
-		static ICommand<object> Command(IReadContext current, ISource<object> source)
+		static IDeferredCommand Command(IReadContext current, ISource<object> source)
 		{
 			var member = current as IMemberReadContext;
-			if (member != null)
-			{
-				return new DeferredMemberAssignmentCommand(member, source);
-			}
-
-			var list = (ICollectionReadContext) current;
-			var result = new DeferredCollectionAssignmentCommand(list, list.List.Count, source);
+			var adapter = current.Get();
+			var result = member != null
+				? (IDeferredCommand) new DeferredMemberAssignmentCommand(adapter.Current, member.Access, source)
+				: new DeferredCollectionAssignmentCommand(((IListContentsAdapter) adapter).List, source);
 			return result;
 		}
 

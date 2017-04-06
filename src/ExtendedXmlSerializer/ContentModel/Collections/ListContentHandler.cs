@@ -34,18 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_collection = collection;
 		}
 
-		public void Execute(IContentsAdapter parameter)
-		{
-			var list = (IListContentsAdapter) parameter;
-			var content = list.Get();
-			var item = _item.Get(content);
-			_collection.Assign(content, list.List, list.Current, item);
-		}
+		public void Execute(IContentsAdapter parameter) => _collection.Assign(_item, (IListContentsAdapter) parameter);
 	}
-
-	/*sealed class ListContentHandler : DecoratedSpecification<IContentsAdapter>, IContentHandler
-	{
-		public ListContentHandler(IListContentsSpecification specification, ICommand<IContentsAdapter> command)
-			: base(new CommandSpecification<IContentsAdapter>(specification, command)) {}
-	}*/
 }

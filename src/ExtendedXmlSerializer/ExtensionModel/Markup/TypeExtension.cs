@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
@@ -38,8 +37,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		public object ProvideValue(System.IServiceProvider serviceProvider)
-			=> serviceProvider.Get<IXmlReader>()
-			                  .To<ITypeParser>()
+			=> serviceProvider.GetValid<IReflectionParser>()
 			                  .Get(_typeName)
 			                  .AsValid<TypeInfo>();
 	}

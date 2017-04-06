@@ -21,10 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
+using XmlReader = System.Xml.XmlReader;
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -38,39 +45,92 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
 			            .Decorate<IContents, DeferredReferenceContents>()
 			            .Decorate<ISerializers, DeferredReferenceSerializers>()
-			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>();
+			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>()
+			            .Decorate<IXmlFactory, Factory>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		sealed class ContentsResult : IContentsResult
 		{
-			readonly ICommand<IContentAdapter> _member;
-			readonly ICommand<IContentAdapter> _collection;
+			readonly ICommand<IContentsAdapter> _command;
 			readonly IContentsResult _results;
 
 			[UsedImplicitly]
-			public ContentsResult(IContentsResult results)
-				: this(
-					ExecuteDeferredCommandsCommand<DeferredMemberAssignmentCommand>.Default,
-					ExecuteDeferredCommandsCommand<DeferredCollectionAssignmentCommand>.Default, results) {}
+			public ContentsResult(IContentsResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
 
-			public ContentsResult(ICommand<IContentAdapter> member, ICommand<IContentAdapter> collection,
-			                      IContentsResult results)
+			public ContentsResult(ICommand<IContentsAdapter> command, IContentsResult results)
 			{
-				_member = member;
-				_collection = collection;
+				_command = command;
 				_results = results;
 			}
 
 			public object Get(IContentsAdapter parameter)
 			{
-				var adapter = parameter.Get();
-				_member.Execute(adapter);
-				_collection.Execute(adapter);
+				_command.Execute(parameter);
 
 				var result = _results.Get(parameter);
 				return result;
 			}
+		}
+
+		[UsedImplicitly]
+		sealed class Factory : IXmlFactory
+		{
+			readonly IXmlFactory _factory;
+
+			public Factory(IXmlFactory factory)
+			{
+				_factory = factory;
+			}
+
+			public IXmlWriter Create(XmlWriter writer, object instance) => _factory.Create(writer, instance);
+
+			public IXmlReader Create(XmlReader reader) => new DeferredReferencesReader(_factory.Create(reader));
+		}
+
+		sealed class DeferredReferencesReader : IXmlReader
+		{
+			readonly IDeferredCommands _commands;
+			readonly IXmlReader _reader;
+
+			public DeferredReferencesReader(IXmlReader reader) : this(DeferredCommands.Default, reader) {}
+
+			public DeferredReferencesReader(IDeferredCommands commands, IXmlReader reader)
+			{
+				_commands = commands;
+				_reader = reader;
+			}
+
+			public bool IsSatisfiedBy(IIdentity parameter) => _reader.IsSatisfiedBy(parameter);
+
+			public string Identifier => _reader.Identifier;
+
+			public string Name => _reader.Name;
+
+			public IIdentity Get(IIdentity parameter) => _reader.Get(parameter);
+
+			public MemberInfo Get(string parameter) => _reader.Get(parameter);
+
+			public TypeInfo Get(TypeParts parameter) => _reader.Get(parameter);
+
+			public void Dispose()
+			{
+				var commands = _commands.Get(this);
+				if (commands.Any())
+				{
+					throw new InvalidOperationException(
+						"Deferred references were applied to this reader to track, but they were not applied and executed as expected. This is considered an unexpected, invalid, and corrupt state.");
+				}
+				_reader.Dispose();
+			}
+
+			public string Content() => _reader.Content();
+
+			public bool Any() => _reader.Any();
+
+			public void Set() => _reader.Set();
+
+			public XmlReader Get() => _reader.Get();
 		}
 	}
 }

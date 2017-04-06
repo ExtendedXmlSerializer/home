@@ -24,32 +24,32 @@
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ExecuteDeferredCommandsCommand<T> : ICommand<IContentAdapter> where T : ICommand<IContentAdapter>
+	sealed class ExecuteDeferredCommandsCommand : ICommand<IContentsAdapter>
 	{
-		public static ExecuteDeferredCommandsCommand<T> Default { get; } = new ExecuteDeferredCommandsCommand<T>();
-		ExecuteDeferredCommandsCommand() : this(ReaderContexts.Default, DeferredCommands.Default) {}
+		public static ExecuteDeferredCommandsCommand Default { get; } = new ExecuteDeferredCommandsCommand();
+		ExecuteDeferredCommandsCommand() : this(DeferredCommands.Default) {}
 
-		readonly IReaderContexts _contexts;
 		readonly IDeferredCommands _commands;
 
-		public ExecuteDeferredCommandsCommand(IReaderContexts contexts, IDeferredCommands commands)
+		public ExecuteDeferredCommandsCommand(IDeferredCommands commands)
 		{
-			_contexts = contexts;
 			_commands = commands;
 		}
 
-		public void Execute(IContentAdapter parameter)
+		public void Execute(IContentsAdapter parameter)
 		{
-			var commands = _commands.Get(_contexts.Get(parameter));
-			var membered = commands.OfType<T>().ToArray();
-			foreach (var command in membered)
+			var commands = _commands.Get(parameter.Get());
+			foreach (var command in commands.ToArray())
 			{
-				command.Execute(parameter);
-				commands.Remove(command);
+				var current = command.Get();
+				if (current != null)
+				{
+					command.Execute(current);
+					commands.Remove(command);
+				}
 			}
 		}
 	}

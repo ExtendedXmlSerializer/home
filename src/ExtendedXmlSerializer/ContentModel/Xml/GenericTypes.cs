@@ -24,34 +24,23 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class GenericTypes : ITypes
+	sealed class GenericTypes : DecoratedSource<IIdentity, TypeInfo>, IGenericTypes
 	{
-		readonly ITypes _generic, _types;
-
 		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypes types, ITypeFormatter formatter,
-		                    ITypeIdentities identities)
-			: this(IsGenericTypeSpecification.Default.And(specification), types, formatter, identities) {}
+		public GenericTypes(IActivatingTypeSpecification specification, ITypeFormatter formatter, ITypeIdentities identities)
+			: this(IsGenericTypeSpecification.Default.And(specification), formatter, identities) {}
 
-		GenericTypes(ISpecification<TypeInfo> specification, ITypes types, ITypeFormatter formatter,
+		GenericTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter,
 		             ITypeIdentities identities)
-			: this(
+			: base(
 				new Types(specification, identities, formatter,
-				          new AssemblyTypePartitions(specification, formatter.Get), TypeLoader.Default),
-				types) {}
-
-		GenericTypes(ITypes generic, ITypes types)
-		{
-			_generic = generic;
-			_types = types;
-		}
-
-		public TypeInfo Get(IIdentity parameter) => _generic.Get(parameter) ?? _types.Get(parameter);
+				          new AssemblyTypePartitions(specification, formatter.Get), TypeLoader.Default)) {}
 	}
 }

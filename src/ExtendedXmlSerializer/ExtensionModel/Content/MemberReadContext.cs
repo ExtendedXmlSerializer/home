@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class MemberReadContext : ReadContextBase, IMemberReadContext
+	sealed class MemberReadContext : ReadContextBase<IContentsAdapter>, IMemberReadContext
 	{
-		public MemberReadContext(object instance, IMemberAccess access) : base(instance)
+		public MemberReadContext(IContentsAdapter contents, IMemberAccess access) : base(contents)
 		{
 			Access = access;
 		}

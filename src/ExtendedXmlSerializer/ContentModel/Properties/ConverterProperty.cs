@@ -22,38 +22,28 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	class ConverterProperty<T> : DelegatedProperty<T>
+	class ConverterProperty<T> : IProperty<T>
 	{
+		readonly IProperty<T> _property;
+
 		public ConverterProperty(IConverter<T> converter, IIdentity identity)
-			: base(converter.Parse, converter.Format, identity) {}
-	}
+			: this(new DelegatedProperty<T>(converter.Parse, converter.Format, identity)) {}
 
-	/*class ConverterProperty<T> : IProperty<T>
+		public ConverterProperty(IProperty<T> property)
 		{
-			readonly IProperty<T> _property;
+			_property = property;
+		}
 
-			public ConverterProperty(IConverter<T> converter, IIdentity identity)
-				: this(new DelegatedProperty<T>(converter.Parse, converter.Format, identity)) {}
+		public T Get(IContentAdapter parameter) => _property.Get(parameter);
 
-			public ConverterProperty(IProperty<T> property)
-			{
-				_property = property;
-			}
+		public void Write(IXmlWriter writer, T instance) => _property.Write(writer, instance);
 
-			public T Get(IContentAdapter parameter)
-			{
-				var result = _property.Get(parameter);
-				parameter.Set();
-				return result;
-			}
+		public string Identifier => _property.Identifier;
 
-			public void Write(IXmlWriter writer, T instance) => _property.Write(writer, instance);
-
-			public string Identifier => _property.Identifier;
-
-			public string Name => _property.Name;
-		}*/
+		public string Name => _property.Name;
+	}
 }

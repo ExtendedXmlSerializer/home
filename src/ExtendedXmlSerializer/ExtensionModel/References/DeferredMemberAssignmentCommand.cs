@@ -21,23 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredMemberAssignmentCommand : ICommand<object>
+	sealed class DeferredMemberAssignmentCommand : IDeferredCommand
 	{
-		readonly IMemberReadContext _context;
+		readonly object _instance;
+		readonly IMemberAccess _access;
 		readonly ISource<object> _source;
 
-		public DeferredMemberAssignmentCommand(IMemberReadContext context, ISource<object> source)
+		public DeferredMemberAssignmentCommand(object instance, IMemberAccess access, ISource<object> source)
 		{
-			_context = context;
+			_instance = instance;
+			_access = access;
 			_source = source;
 		}
 
-		public void Execute(object parameter) => _context.Access.Assign(_context.Instance, _source.Get());
+		public void Execute(object parameter) => _access.Assign(_instance, parameter);
+
+		public object Get() => _source.Get();
 	}
 }

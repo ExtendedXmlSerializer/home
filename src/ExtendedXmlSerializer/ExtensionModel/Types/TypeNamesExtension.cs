@@ -58,14 +58,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 				.Register<IIdentities, Identities>()
 				.Register<ITypeIdentities, TypeIdentities>()
 				.Register<ITypes, ContentModel.Xml.Types>()
-				.Decorate<ITypes, GenericTypes>()
+				.Register<IGenericTypes, GenericTypes>()
 				.Register<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
 				.Register(Register);
 
-		INames Register(IServiceProvider provider)
-			=> new Names(new TypedTable<string>(Names)
-				             .Or(DeclaredNames.Default)
-				             .Or(new TypedTable<string>(_defaults)));
+		INames Register(IServiceProvider provider) => new Names(new TypedTable<string>(Names)
+			                                                        .Or(DeclaredNames.Default)
+			                                                        .Or(new TypedTable<string>(_defaults)));
 
 		public void Execute(IServices parameter) {}
 	}

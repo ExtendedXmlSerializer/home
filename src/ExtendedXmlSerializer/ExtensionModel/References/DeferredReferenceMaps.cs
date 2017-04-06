@@ -22,12 +22,13 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredReferenceMaps : IReferenceMaps
+	sealed class DeferredReferenceMaps : ReferenceCacheBase<IContentAdapter, IReferenceMap>, IReferenceMaps
 	{
 		readonly IReaderContexts _contexts;
 		readonly IDeferredCommands _commands;
@@ -43,11 +44,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_maps = maps;
 		}
 
-		public IReferenceMap Get(IContentAdapter parameter)
-		{
-			var contexts = _contexts.Get(parameter);
-			var result = new DeferredReferenceMap(_commands.Get(contexts), contexts, _maps.Get(parameter));
-			return result;
-		}
+		protected override IReferenceMap Create(IContentAdapter parameter)
+			=> new DeferredReferenceMap(_commands.Get(parameter), _contexts.Get(parameter), _maps.Get(parameter));
 	}
 }

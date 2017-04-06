@@ -64,13 +64,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public string Content()
 		{
-			var result = Value();
-			Set();
-			return result;
-		}
-
-		string Value()
-		{
 			switch (_reader.NodeType)
 			{
 				case XmlNodeType.Attribute:
@@ -79,20 +72,12 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 					_reader.Read();
 					var result = _reader.Value;
 					_reader.Read();
+					Set();
 					return result;
 			}
 		}
 
-		public void Set()
-		{
-			/*switch (_reader.NodeType)
-			{
-				case XmlNodeType.EndElement:
-					_reader.ReadEndElement();
-					break;
-			}*/
-			_reader.MoveToContent();
-		}
+		public void Set() => _reader.MoveToContent();
 
 		public IIdentity Get(IIdentity parameter)
 			=> _store.Get(parameter.Name, _reader.LookupNamespace(parameter.Identifier));

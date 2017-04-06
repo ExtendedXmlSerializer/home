@@ -21,11 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Xml;
+
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class PropertyMemberSerializer : MemberSerializer
+	sealed class PropertyMemberSerializer : IMemberSerializer
 	{
-		public PropertyMemberSerializer(IMember profile, IMemberAccess access, IReader property, IWriter writer)
-			: base(profile, access, property, writer) {}
+		readonly IMemberSerializer _serializer;
+
+		public PropertyMemberSerializer(IMemberSerializer serializer)
+		{
+			_serializer = serializer;
+		}
+
+		public object Get(IContentAdapter parameter) => _serializer.Get(parameter);
+
+		public void Write(IXmlWriter writer, object instance) => _serializer.Write(writer, instance);
+
+		public IMember Profile => _serializer.Profile;
+
+		public IMemberAccess Access => _serializer.Access;
 	}
 }

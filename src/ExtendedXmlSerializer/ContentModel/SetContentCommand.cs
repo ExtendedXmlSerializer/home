@@ -21,14 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Content
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface ICollectionReadContext : IReadContext
+	public class SetContentCommand : ICommand<IContentAdapter>
 	{
-		IList List { get; }
+		public static SetContentCommand Default { get; } = new SetContentCommand();
+		SetContentCommand() {}
 
-		object Item { get; }
+		public void Execute(IContentAdapter parameter) => parameter.Set();
 	}
 }

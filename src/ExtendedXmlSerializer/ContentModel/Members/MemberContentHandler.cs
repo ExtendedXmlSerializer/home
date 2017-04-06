@@ -46,8 +46,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var result = member != null;
 			if (result)
 			{
-				var value = member.Get(content);
-				_assignment.Assign(content, member.Access, parameter.Current, value);
+				_assignment.Assign(member, parameter, member.Access);
 			}
 			return result;
 		}

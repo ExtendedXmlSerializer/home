@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Properties;
@@ -34,42 +33,36 @@ namespace ExtendedXmlSerializer.ContentModel
 		readonly static IdentityStore IdentityStore = IdentityStore.Default;
 
 		readonly IIdentityStore _identities;
+		readonly IGenericTypes _generic;
 		readonly ITypes _types;
 
-		public Classification(ITypes types) : this(IdentityStore, types) {}
+		public Classification(IGenericTypes generic, ITypes types) : this(IdentityStore, generic, types) {}
 
-		public Classification(IIdentityStore identities, ITypes types)
+		public Classification(IIdentityStore identities, IGenericTypes generic, ITypes types)
 		{
 			_identities = identities;
+			_generic = generic;
 			_types = types;
 		}
 
 		public TypeInfo Get(IContentAdapter parameter) => FromAttributes(parameter) ?? FromIdentity(parameter);
 
-		static TypeInfo FromAttributes(IContentAdapter parameter)
+		TypeInfo FromAttributes(IContentAdapter parameter)
 			=> parameter.Any()
-				? ExplicitTypeProperty.Default.Get(parameter) ?? ItemTypeProperty.Default.Get(parameter)
+				? ExplicitTypeProperty.Default.Get(parameter) ?? ItemTypeProperty.Default.Get(parameter) ?? Generic(parameter)
 				: null;
 
-		TypeInfo FromIdentity(IContentAdapter parameter)
+		TypeInfo Generic(IContentAdapter parameter)
 		{
-			var identity = _identities.Get(parameter.Name, parameter.Identifier);
-
-			var result = _types.Get(identity);
-
 			var arguments = ArgumentsTypeProperty.Default.Get(parameter);
-			if (arguments.HasValue)
-			{
-				return result.MakeGenericType(arguments.Value.ToArray()).GetTypeInfo();
-			}
-
-			if (result.IsGenericTypeDefinition)
-			{
-				throw new InvalidOperationException(
-					"An attempt was made to create a generic type, but no type arguments were found.");
-			}
-
+			var result = arguments.HasValue
+				? _generic.Get(_identities.Get(parameter.Name, parameter.Identifier))
+				          .MakeGenericType(arguments.Value.ToArray())
+				          .GetTypeInfo()
+				: null;
 			return result;
 		}
+
+		TypeInfo FromIdentity(IContentAdapter parameter) => _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
 	}
 }

@@ -21,28 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel
 {
-	class Property<T> : Identity, IProperty<T>
+	sealed class ConfiguredReader<T> : IReader<T>
 	{
-		readonly ISerializer<T> _serializer;
+		readonly IReader<T> _reader;
+		readonly ICommand<IContentAdapter> _configuration;
 
-		public Property(IReader<T> reader, IWriter<T> writer, IIdentity identity)
-			: this(
-				new Serializer<T>(
-					identity is FrameworkIdentity ? new ConfiguredReader<T>(reader, SetContentCommand.Default) : reader,
-					writer),
-				identity) {}
-
-		public Property(ISerializer<T> serializer, IIdentity identity) : base(identity.Name, identity.Identifier)
+		public ConfiguredReader(IReader<T> reader, ICommand<IContentAdapter> configuration)
 		{
-			_serializer = serializer;
+			_reader = reader;
+			_configuration = configuration;
 		}
 
-		public T Get(IContentAdapter parameter) => _serializer.Get(parameter);
-
-		public void Write(IXmlWriter writer, T instance) => _serializer.Write(writer, instance);
+		public T Get(IContentAdapter parameter)
+		{
+			var result = _reader.Get(parameter);
+			_configuration.Execute(parameter);
+			return result;
+		}
 	}
 }

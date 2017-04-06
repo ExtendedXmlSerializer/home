@@ -21,25 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
+using System.Collections;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredCollectionAssignmentCommand : ICommand<object>
+	sealed class DeferredCollectionAssignmentCommand : IDeferredCommand
 	{
-		readonly ICollectionReadContext _context;
+		readonly IList _list;
 		readonly int _index;
 		readonly ISource<object> _source;
 
-		public DeferredCollectionAssignmentCommand(ICollectionReadContext context, int index, ISource<object> source)
+		public DeferredCollectionAssignmentCommand(IList list, ISource<object> source) : this(list, list.Count, source) {}
+
+		public DeferredCollectionAssignmentCommand(IList list, int index, ISource<object> source)
 		{
-			_context = context;
+			_list = list;
 			_index = index;
 			_source = source;
 		}
 
-		public void Execute(object parameter) => _context.List[_index] = _source.Get();
+		public void Execute(object parameter) => _list[_index] = parameter;
+
+		public object Get() => _source.Get();
 	}
 }

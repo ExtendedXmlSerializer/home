@@ -24,12 +24,20 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
 	public static class Extensions
 	{
+		public static ISerializer Adapt<T>(this ISerializer<T> @this) => new GenericSerializerAdapter<T>(@this);
+
+		public static ISerializer<T> Adapt<T>(this ISerializer @this) => new SerializerAdapter<T>(@this);
+
 		public static IContentsActivator Get<T>(this IContentsActivation @this) => @this.Get(typeof(T).GetTypeInfo());
+
+		public static IReader<T> CreateContents<T>(this IContentsServices @this, IContentHandler parameter)
+			=> new ReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
 
 		public static TypeInfo GetClassification(this IClassification @this, IContentAdapter parameter,
 		                                         TypeInfo defaultValue = null)

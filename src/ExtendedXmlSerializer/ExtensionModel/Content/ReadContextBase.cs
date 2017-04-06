@@ -21,15 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	abstract class ReadContextBase : IReadContext
+	abstract class ReadContextBase<T> : IReadContext where T : IContentsAdapter
 	{
-		protected ReadContextBase(object instance)
+		readonly T _contents;
+
+		protected ReadContextBase(T contents)
 		{
-			Instance = instance;
+			_contents = contents;
 		}
 
-		public object Instance { get; }
+		public T Get() => _contents;
+
+		IContentsAdapter ISource<IContentsAdapter>.Get() => _contents;
 	}
 }

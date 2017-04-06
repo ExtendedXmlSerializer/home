@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		               params ITypePartitions[] partitions)
 			: this(identities, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
 
-		Types(ITypeIdentities aliased, ITypes known, ITypes partitions) // : base(IdentityComparer.Default)
+		Types(ITypeIdentities aliased, ITypes known, ITypes partitions)
 		{
 			_aliased = aliased;
 			_known = known;

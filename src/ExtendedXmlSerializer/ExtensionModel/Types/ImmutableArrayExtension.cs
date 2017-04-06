@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IContentOption, ImmutableArrayContentOption>()
-			            .Decorate<ITypes, ImmutableArrayAwareGenericTypes>();
+			            .Decorate<IGenericTypes, ImmutableArrayAwareGenericTypes>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

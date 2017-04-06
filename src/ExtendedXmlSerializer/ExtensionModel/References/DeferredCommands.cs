@@ -22,16 +22,14 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredCommands : ReferenceCache<object, ICollection<ICommand<IXmlReader>>>, IDeferredCommands
+	sealed class DeferredCommands : ReferenceCache<IContentAdapter, ICollection<IDeferredCommand>>, IDeferredCommands
 	{
 		public static DeferredCommands Default { get; } = new DeferredCommands();
-		DeferredCommands() : base(_ => new HashSet<ICommand<IXmlReader>>()) {}
+		DeferredCommands() : base(_ => new HashSet<IDeferredCommand>()) {}
 	}
 }

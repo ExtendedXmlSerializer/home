@@ -38,4 +38,9 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		void Set();
 	}
+
+	/*public interface IContentAssignment<in T> where T : IContentsAdapter
+	{
+		void Assign(IReader reader, T contents, T context);
+	}*/
 }

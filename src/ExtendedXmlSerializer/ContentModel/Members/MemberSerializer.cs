@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class MemberSerializer : IMemberSerializer
+	sealed class MemberSerializer : IMemberSerializer
 	{
 		readonly IReader _reader;
 		readonly IWriter _writer;

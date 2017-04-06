@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
@@ -33,17 +32,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	sealed class MarkupExtensions : ReferenceCacheBase<IContentAdapter, IMarkupExtensionPartsEvaluator>,
 	                                IMarkupExtensions
 	{
-		readonly ITypeParser _parser;
 		readonly IEvaluator _evaluator;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
 		readonly System.IServiceProvider _provider;
 
-		public MarkupExtensions(ITypeParser parser, IEvaluator evaluator, ITypeMembers members, IMemberAccessors accessors,
+		public MarkupExtensions(IEvaluator evaluator, ITypeMembers members, IMemberAccessors accessors,
 		                        IConstructors constructors, System.IServiceProvider provider)
 		{
-			_parser = parser;
 			_evaluator = evaluator;
 			_members = members;
 			_accessors = accessors;
@@ -52,7 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		}
 
 		protected override IMarkupExtensionPartsEvaluator Create(IContentAdapter parameter)
-			=> new MarkupExtensionPartsEvaluator(_parser, _evaluator, _members, _accessors, _constructors, _provider,
+			=> new MarkupExtensionPartsEvaluator(parameter, _evaluator, _members, _accessors, _constructors, _provider,
 			                                     parameter);
 	}
 }
