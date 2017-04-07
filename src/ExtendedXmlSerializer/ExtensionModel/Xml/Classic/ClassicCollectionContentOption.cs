@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(_contents.Create(classification, new ConditionalContentHandler(_contents, new ListContentHandler(item, _contents))),
+			=> new Serializer(_contents.Create(classification, new ConditionalContentHandler(_contents, new CollectionContentHandler(item, _contents))),
 			                  new EnumerableWriter(_enumerators, item));
 	}
 }

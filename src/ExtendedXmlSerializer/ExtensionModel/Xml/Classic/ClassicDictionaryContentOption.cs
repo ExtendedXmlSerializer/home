@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var entry = _entries.Get(parameter);
-			var reader = _contents.Create(parameter, new ConditionalContentHandler(_contents, new ListContentHandler(entry, _contents)));
+			var reader = _contents.Create(parameter, new ConditionalContentHandler(_contents, new CollectionContentHandler(entry, _contents)));
 			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
 			return result;
 		}

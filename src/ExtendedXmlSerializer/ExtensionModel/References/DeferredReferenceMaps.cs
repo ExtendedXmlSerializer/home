@@ -30,14 +30,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class DeferredReferenceMaps : ReferenceCacheBase<IContentAdapter, IReferenceMap>, IReferenceMaps
 	{
-		readonly IReaderContexts _contexts;
+		readonly IContentsHistory _contexts;
 		readonly IDeferredCommands _commands;
 		readonly IReferenceMaps _maps;
 
 		[UsedImplicitly]
-		public DeferredReferenceMaps(IReferenceMaps maps) : this(ReaderContexts.Default, DeferredCommands.Default, maps) {}
+		public DeferredReferenceMaps(IReferenceMaps maps) : this(ContentsHistory.Default, DeferredCommands.Default, maps) {}
 
-		public DeferredReferenceMaps(IReaderContexts contexts, IDeferredCommands commands, IReferenceMaps maps)
+		public DeferredReferenceMaps(IContentsHistory contexts, IDeferredCommands commands, IReferenceMaps maps)
 		{
 			_contexts = contexts;
 			_commands = commands;

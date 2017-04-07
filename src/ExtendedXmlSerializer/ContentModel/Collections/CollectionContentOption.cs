@@ -46,8 +46,8 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{
 			var members = _serializations.Get(classification);
-			var reader = _contents.Create(classification, new MemberedListContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
-			                                             new ListContentHandler(item, _contents)));
+			var reader = _contents.Create(classification, new CollectionWithMembersContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
+			                                             new CollectionContentHandler(item, _contents)));
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, item));
 			var result = new Serializer(reader, writer);
 			return result;

@@ -45,5 +45,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 		}
 
 		public void Assign(TKey key, TValue value) => _store[key] = value;
+		public bool Remove(TKey key) => _store.Remove(key);
 	}
 }

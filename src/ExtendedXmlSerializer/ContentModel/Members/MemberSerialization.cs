@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
@@ -43,5 +44,10 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public ImmutableArray<IMemberSerializer> Get(object parameter) => _runtime.Get(parameter);
 
 		public ImmutableArray<IMemberSerializer> Get() => _all;
+
+		public void Execute(IContentsAdapter parameter)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

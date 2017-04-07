@@ -21,21 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberedListContentHandler : SelectedCommand<IContentsAdapter>, IContentHandler
+	public interface IMemberHandler
 	{
-		readonly static EmptyCommand<IContentsAdapter> Empty = EmptyCommand<IContentsAdapter>.Default;
-
-		public MemberedListContentHandler(IListContentsSpecification specification, MemberContentHandler members,
-		                                  ListContentHandler list)
-			: base(
-				new FixedOption<IContentsAdapter, ICommand<IContentsAdapter>>(members, Empty),
-				new FixedOption<IContentsAdapter, ICommand<IContentsAdapter>>(specification, list)
-			) {}
+		void Handle(IContentsAdapter contents, IMemberSerializer member);
 	}
 }

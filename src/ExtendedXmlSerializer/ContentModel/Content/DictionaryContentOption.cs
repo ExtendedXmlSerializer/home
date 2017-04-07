@@ -52,8 +52,8 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = _serializations.Get(parameter);
 			var entry = _entries.Get(parameter);
 
-			var handler = new MemberedListContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
-			                                             new ListContentHandler(entry, _contents));
+			var handler = new CollectionWithMembersContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
+			                                             new CollectionContentHandler(entry, _contents));
 			var reader = _contents.Create(parameter, handler);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, entry));
 			var result = new Serializer(reader, writer);

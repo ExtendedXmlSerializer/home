@@ -60,7 +60,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 			[UsedImplicitly]
 			public Reader(IContentsServices services, IReader item)
-				: this(services.CreateContents<Collection<T>>(new ConditionalContentHandler(services, new ListContentHandler(item, services)))) {}
+				: this(services.CreateContents<Collection<T>>(new ConditionalContentHandler(services, new CollectionContentHandler(item, services)))) {}
 
 			Reader(IReader<Collection<T>> reader)
 			{

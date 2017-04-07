@@ -21,15 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReaderContexts : ReferenceCache<IContentAdapter, Stack<IReadContext>>, IReaderContexts
-	{
-		public static ReaderContexts Default { get; } = new ReaderContexts();
-		ReaderContexts() : base(_ => new Stack<IReadContext>()) {}
-	}
+	public interface IContentsContext : ITableSource<IContentsAdapter, object> {}
 }

@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public static MemberAssignment Default { get; } = new MemberAssignment();
 		MemberAssignment() {}
 
-		public void Assign(IReader reader, IContentsAdapter contents, IMemberAccess context)
-			=> context.Assign(contents.Current, reader.Get(contents.Get()));
+		public void Assign(IContentsAdapter contents, IMemberAccess access, object value)
+			=> access.Assign(contents.Current, value);
 	}
 }

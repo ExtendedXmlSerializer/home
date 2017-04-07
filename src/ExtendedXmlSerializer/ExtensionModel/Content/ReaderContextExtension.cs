@@ -22,10 +22,8 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using JetBrains.Annotations;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -35,56 +33,94 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		ReaderContextExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IMemberAssignment, MemberAssignment>()
-			            .Decorate<ICollectionAssignment, CollectionAssignment>();
+			=> parameter.Decorate<IAlteration<IContentHandler>, Wrapper>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		sealed class MemberAssignment : IMemberAssignment
+		sealed class Wrapper : IAlteration<IContentHandler>
 		{
-			readonly IReaderContexts _contexts;
-			readonly IMemberAssignment _assignment;
+			readonly IAlteration<IContentHandler> _handler;
 
-			[UsedImplicitly]
-			public MemberAssignment(IMemberAssignment assignment) : this(ReaderContexts.Default, assignment) {}
-
-			public MemberAssignment(IReaderContexts contexts, IMemberAssignment assignment)
+			public Wrapper(IAlteration<IContentHandler> handler)
 			{
-				_contexts = contexts;
-				_assignment = assignment;
+				_handler = handler;
 			}
 
-			public void Assign(IReader reader, IContentsAdapter contents, IMemberAccess context)
+			public IContentHandler Get(IContentHandler parameter) => new Handler(_handler.Get(parameter));
+
+			sealed class Handler : IContentHandler
 			{
-				var contexts = _contexts.Get(contents.Get());
-				contexts.Push(new MemberReadContext(contents, context));
-				_assignment.Assign(reader, contents, context);
-				contexts.Pop();
+				readonly IContentsHistory _contexts;
+				readonly IContentHandler _handler;
+
+				public Handler(IContentHandler handler) : this(ContentsHistory.Default, handler) {}
+
+				public Handler(IContentsHistory contexts, IContentHandler handler)
+				{
+					_contexts = contexts;
+					_handler = handler;
+				}
+
+				public void Execute(IContentsAdapter parameter)
+				{
+					var contexts = _contexts.Get(parameter.Get());
+					contexts.Push(parameter);
+					_handler.Execute(parameter);
+					contexts.Pop();
+				}
 			}
 		}
 
-		sealed class CollectionAssignment : ICollectionAssignment
-		{
-			readonly IReaderContexts _contexts;
-			readonly ICollectionAssignment _assignment;
 
-			[UsedImplicitly]
-			public CollectionAssignment(ICollectionAssignment assignment) : this(ReaderContexts.Default, assignment) {}
+		/*
+				sealed class MemberAssignment : IMemberAssignment
+				{
+					readonly IReaderContexts _contexts;
+					readonly IMemberAssignment _assignment;
 
-			public CollectionAssignment(IReaderContexts contexts, ICollectionAssignment assignment)
-			{
-				_contexts = contexts;
-				_assignment = assignment;
-			}
+					[UsedImplicitly]
+					public MemberAssignment(IMemberAssignment assignment) : this(ReaderContexts.Default, assignment) {}
 
-			public void Assign(IReader source, IListContentsAdapter parameter)
-			{
-				var contexts = _contexts.Get(parameter.Get());
-				var element = new CollectionReadContext(parameter);
-				contexts.Push(element);
-				_assignment.Assign(source, parameter);
-				contexts.Pop();
-			}
-		}
+					public MemberAssignment(IReaderContexts contexts, IMemberAssignment assignment)
+					{
+						_contexts = contexts;
+						_assignment = assignment;
+					}
+
+					public void Assign(IReader reader, IContentsAdapter contents, IMemberAccess context)
+					{
+						var contexts = _contexts.Get(contents.Get());
+						contexts.Push(new MemberReadContext(contents, context));
+						_assignment.Assign(reader, contents, context);
+						contexts.Pop();
+					}
+				}
+		*/
+
+		/*
+				sealed class CollectionAssignment : ICollectionAssignment
+				{
+					readonly IReaderContexts _contexts;
+					readonly ICollectionAssignment _assignment;
+
+					[UsedImplicitly]
+					public CollectionAssignment(ICollectionAssignment assignment) : this(ReaderContexts.Default, assignment) {}
+
+					public CollectionAssignment(IReaderContexts contexts, ICollectionAssignment assignment)
+					{
+						_contexts = contexts;
+						_assignment = assignment;
+					}
+
+					public void Assign(IReader source, IListContentsAdapter parameter)
+					{
+						var contexts = _contexts.Get(parameter.Get());
+						var element = new CollectionReadContext(parameter);
+						contexts.Push(element);
+						_assignment.Assign(source, parameter);
+						contexts.Pop();
+					}
+				}
+		*/
 	}
 }

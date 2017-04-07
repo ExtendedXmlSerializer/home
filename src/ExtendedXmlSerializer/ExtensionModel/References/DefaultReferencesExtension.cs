@@ -30,11 +30,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public static DefaultReferencesExtension Default { get; } = new DefaultReferencesExtension();
 		DefaultReferencesExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter
-				.Register<ContainsStaticReferenceSpecification>()
-				.Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
-				.Register<IRootReferences, RootReferences>();
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<ContainsStaticReferenceSpecification>()
+			            .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
+			            .Register<IRootReferences, RootReferences>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

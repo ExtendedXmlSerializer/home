@@ -54,6 +54,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 			return _cache.TryGetValue(parameter, out item);
 		}
 
+		public bool Remove(TKey key) => _cache.Remove(key);
+
 		class Structure
 		{
 			public Structure(TValue item)

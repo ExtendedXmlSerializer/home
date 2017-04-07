@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 
 		readonly ISpecification<TypeInfo> _specification;
 		readonly ITableSource<TType, TValue> _store;
-		
+
 		public Property(ITableSource<TType, TValue> store, Expression<Func<IProperty>> source) : this(Accepts, store, source) {}
 
 		public Property(ISpecification<TypeInfo> specification, ITableSource<TType, TValue> store,
@@ -65,5 +65,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public TypeInfo Get() => TypeInfo;
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
+		bool ITableSource<object, object>.Remove(object key) => Remove(key.AsValid<TType>());
+
+		public bool Remove(TType key) => _store.Remove(key);
 	}
 }

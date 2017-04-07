@@ -44,5 +44,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public void Assign(string key, object value) => _source.Assign(key, value);
 
 		public object Get() => _activator.Get();
+		public bool Remove(string key) => _source.Remove(key);
 	}
 }

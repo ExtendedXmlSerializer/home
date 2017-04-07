@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		public ArrayReader(IContentsServices services, IClassification classification, IReader item)
 			: this(
-				services.CreateContents<ArrayList>(new ConditionalContentHandler(services, new ListContentHandler(item, services))))
+				services.CreateContents<ArrayList>(new ConditionalContentHandler(services, new CollectionContentHandler(item, services))))
 		{
 			_classification = classification;
 		}

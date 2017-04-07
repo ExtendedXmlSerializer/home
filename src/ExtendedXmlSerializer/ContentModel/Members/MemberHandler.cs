@@ -21,12 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.Core.Sources;
-
-namespace ExtendedXmlSerializer.ExtensionModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	/*public interface IReadContext<out T> : ISource<T> where T : IContentsAdapter {}*/
+	sealed class MemberHandler : IMemberHandler
+	{
+		readonly IMemberAssignment _assignment;
 
-	public interface IReadContext : ISource<IContentsAdapter> {}
+		public MemberHandler(IMemberAssignment assignment)
+		{
+			_assignment = assignment;
+		}
+
+		public void Handle(IContentsAdapter contents, IMemberSerializer member)
+			=> _assignment.Assign(contents, member.Access, member.Get(contents.Get()));
+	}
 }

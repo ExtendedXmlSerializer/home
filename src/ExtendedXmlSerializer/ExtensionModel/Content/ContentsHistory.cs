@@ -21,19 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+using System.Collections.Generic;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.Core.Sources;
+
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ListContentHandler : IContentHandler
+	sealed class ContentsHistory : ReferenceCache<IContentAdapter, Stack<IContentsAdapter>>, IContentsHistory
 	{
-		readonly IReader _item;
-		readonly ICollectionAssignment _collection;
-
-		public ListContentHandler(IReader item, ICollectionAssignment collection)
-		{
-			_item = item;
-			_collection = collection;
-		}
-
-		public void Execute(IContentsAdapter parameter) => _collection.Assign(_item, (IListContentsAdapter) parameter);
+		public static ContentsHistory Default { get; } = new ContentsHistory();
+		ContentsHistory() : base(_ => new Stack<IContentsAdapter>()) {}
 	}
 }

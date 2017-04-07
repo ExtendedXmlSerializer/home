@@ -28,6 +28,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		public static CollectionAssignment Default { get; } = new CollectionAssignment();
 		CollectionAssignment() {}
 
-		public void Assign(IReader reader, IListContentsAdapter parameter) => parameter.List.Add(reader.Get(parameter.Get()));
+		public void Assign(IListContentsAdapter contents, object item) => contents.List.Add(item);
 	}
 }

@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
 
@@ -40,7 +39,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<IActivatingTypeSpecification, ActivatingTypeSpecification>()
 			            .Register<IConstructorLocator, ConstructorLocator>()
 			            .Register<IEnumeratorStore, EnumeratorStore>()
-			            .RegisterInstance<ICollectionAssignment>(CollectionAssignment.Default)
 			            .RegisterInstance<IDictionaryEnumerators>(DictionaryEnumerators.Default)
 			            .RegisterInstance<IEnumerators>(Enumerators.Default)
 			            .RegisterInstance<IConstructors>(Constructors.Default)
