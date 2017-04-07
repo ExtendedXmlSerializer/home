@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -70,57 +70,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				}
 			}
 		}
-
-
-		/*
-				sealed class MemberAssignment : IMemberAssignment
-				{
-					readonly IReaderContexts _contexts;
-					readonly IMemberAssignment _assignment;
-
-					[UsedImplicitly]
-					public MemberAssignment(IMemberAssignment assignment) : this(ReaderContexts.Default, assignment) {}
-
-					public MemberAssignment(IReaderContexts contexts, IMemberAssignment assignment)
-					{
-						_contexts = contexts;
-						_assignment = assignment;
-					}
-
-					public void Assign(IReader reader, IContentsAdapter contents, IMemberAccess context)
-					{
-						var contexts = _contexts.Get(contents.Get());
-						contexts.Push(new MemberReadContext(contents, context));
-						_assignment.Assign(reader, contents, context);
-						contexts.Pop();
-					}
-				}
-		*/
-
-		/*
-				sealed class CollectionAssignment : ICollectionAssignment
-				{
-					readonly IReaderContexts _contexts;
-					readonly ICollectionAssignment _assignment;
-
-					[UsedImplicitly]
-					public CollectionAssignment(ICollectionAssignment assignment) : this(ReaderContexts.Default, assignment) {}
-
-					public CollectionAssignment(IReaderContexts contexts, ICollectionAssignment assignment)
-					{
-						_contexts = contexts;
-						_assignment = assignment;
-					}
-
-					public void Assign(IReader source, IListContentsAdapter parameter)
-					{
-						var contexts = _contexts.Get(parameter.Get());
-						var element = new CollectionReadContext(parameter);
-						contexts.Push(element);
-						_assignment.Assign(source, parameter);
-						contexts.Pop();
-					}
-				}
-		*/
 	}
 }

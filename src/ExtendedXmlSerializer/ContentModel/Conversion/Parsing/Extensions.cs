@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,22 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+using System.Reflection;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+
+namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class MemberHandler : IMemberHandler
+	public static class Extensions
 	{
-		readonly IMemberAssignment _assignment;
-
-		public MemberHandler(IMemberAssignment assignment)
-		{
-			_assignment = assignment;
-		}
-
-		public void Handle(IContentsAdapter contents, IMemberSerializer member)
-		{
-			var adapter = contents.Get();
-			var value = member.Get(adapter);
-			_assignment.Assign(contents, member.Access, value);
-		}
+		public static TypeInfo GetType(this IParser<MemberInfo> @this, string parameter)
+			=> @this.Get(parameter).AsValid<TypeInfo>();
 	}
 }

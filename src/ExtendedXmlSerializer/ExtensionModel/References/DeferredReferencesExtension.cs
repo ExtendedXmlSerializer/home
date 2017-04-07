@@ -128,8 +128,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public string Content() => _reader.Content();
 
-			public bool Any() => _reader.Any();
-
 			public void Set() => _reader.Set();
 
 			public XmlReader Get() => _reader.Get();

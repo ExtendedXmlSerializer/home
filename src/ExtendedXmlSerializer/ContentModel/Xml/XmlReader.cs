@@ -36,14 +36,17 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly IIdentityStore _store;
 		readonly IXmlReaderContext _context;
 		readonly System.Xml.XmlReader _reader;
+		readonly string _defaultNamespace;
 
-		public XmlReader(IXmlReaderContext context, System.Xml.XmlReader reader) : this(Store, context, reader) {}
+		public XmlReader(IXmlReaderContext context, System.Xml.XmlReader reader)
+			: this(Store, context, reader, reader.LookupNamespace(string.Empty)) {}
 
-		public XmlReader(IIdentityStore store, IXmlReaderContext context, System.Xml.XmlReader reader)
+		public XmlReader(IIdentityStore store, IXmlReaderContext context, System.Xml.XmlReader reader, string defaultNamespace)
 		{
 			_store = store;
 			_context = context;
 			_reader = reader;
+			_defaultNamespace = defaultNamespace;
 		}
 
 		public string Name => _reader.LocalName;
@@ -56,11 +59,12 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		public override string ToString() => $"{base.ToString()}: {IdentityFormatter.Default.Get(this)}";
 
 		public bool IsSatisfiedBy(IIdentity parameter)
-			=> Any() && _reader.MoveToAttribute(parameter.Name, parameter.Identifier);
+			=>
+				_reader.HasAttributes &&
+				_reader.MoveToAttribute(parameter.Name,
+				                        parameter.Identifier == _defaultNamespace ? string.Empty : parameter.Identifier);
 
 		public System.Xml.XmlReader Get() => _reader;
-
-		public bool Any() => _reader.HasAttributes;
 
 		public string Content()
 		{

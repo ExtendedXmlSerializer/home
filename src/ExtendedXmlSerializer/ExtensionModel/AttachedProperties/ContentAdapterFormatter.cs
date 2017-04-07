@@ -21,22 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.Core;
+
+namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	sealed class MemberHandler : IMemberHandler
+	sealed class ContentAdapterFormatter : IContentAdapterFormatter
 	{
-		readonly IMemberAssignment _assignment;
+		readonly static Delimiter Delimiter = DefaultClrDelimiters.Default.Separator;
 
-		public MemberHandler(IMemberAssignment assignment)
+		readonly IContentAdapterFormatter _formatter;
+		readonly Delimiter _separator;
+
+		public ContentAdapterFormatter(IContentAdapterFormatter formatter) : this(formatter, Delimiter) {}
+
+		public ContentAdapterFormatter(IContentAdapterFormatter formatter, Delimiter separator)
 		{
-			_assignment = assignment;
+			_formatter = formatter;
+			_separator = separator;
 		}
 
-		public void Handle(IContentsAdapter contents, IMemberSerializer member)
-		{
-			var adapter = contents.Get();
-			var value = member.Get(adapter);
-			_assignment.Assign(contents, member.Access, value);
-		}
+		public string Get(IContentAdapter parameter)
+			=>
+				parameter.Name.Contains(_separator)
+					? IdentityFormatter.Default.Get(parameter.Identifier == string.Empty ? parameter.Get(parameter) : parameter)
+					: _formatter.Get(parameter);
 	}
 }

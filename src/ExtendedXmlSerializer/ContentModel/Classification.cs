@@ -32,14 +32,18 @@ namespace ExtendedXmlSerializer.ContentModel
 	{
 		readonly static IdentityStore IdentityStore = IdentityStore.Default;
 
+		readonly IPropertyContentSpecification _specification;
 		readonly IIdentityStore _identities;
 		readonly IGenericTypes _generic;
 		readonly ITypes _types;
 
-		public Classification(IGenericTypes generic, ITypes types) : this(IdentityStore, generic, types) {}
+		public Classification(IPropertyContentSpecification specification, IGenericTypes generic, ITypes types)
+			: this(specification, IdentityStore, generic, types) {}
 
-		public Classification(IIdentityStore identities, IGenericTypes generic, ITypes types)
+		public Classification(IPropertyContentSpecification specification, IIdentityStore identities, IGenericTypes generic,
+		                      ITypes types)
 		{
+			_specification = specification;
 			_identities = identities;
 			_generic = generic;
 			_types = types;
@@ -48,7 +52,7 @@ namespace ExtendedXmlSerializer.ContentModel
 		public TypeInfo Get(IContentAdapter parameter) => FromAttributes(parameter) ?? FromIdentity(parameter);
 
 		TypeInfo FromAttributes(IContentAdapter parameter)
-			=> parameter.Any()
+			=> _specification.IsSatisfiedBy(parameter)
 				? ExplicitTypeProperty.Default.Get(parameter) ?? ItemTypeProperty.Default.Get(parameter) ?? Generic(parameter)
 				: null;
 

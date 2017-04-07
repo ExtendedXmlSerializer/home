@@ -21,22 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class MemberHandler : IMemberHandler
+	sealed class PropertyContentSpecification : IPropertyContentSpecification
 	{
-		readonly IMemberAssignment _assignment;
+		public static PropertyContentSpecification Default { get; } = new PropertyContentSpecification();
+		PropertyContentSpecification() {}
 
-		public MemberHandler(IMemberAssignment assignment)
-		{
-			_assignment = assignment;
-		}
-
-		public void Handle(IContentsAdapter contents, IMemberSerializer member)
-		{
-			var adapter = contents.Get();
-			var value = member.Get(adapter);
-			_assignment.Assign(contents, member.Access, value);
-		}
+		public bool IsSatisfiedBy(IContentAdapter parameter) => ((IXmlReader) parameter).Get().HasAttributes;
 	}
 }

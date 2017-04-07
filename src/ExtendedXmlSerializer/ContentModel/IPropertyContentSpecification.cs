@@ -21,22 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+using ExtendedXmlSerializer.Core.Specifications;
+
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class MemberHandler : IMemberHandler
-	{
-		readonly IMemberAssignment _assignment;
-
-		public MemberHandler(IMemberAssignment assignment)
-		{
-			_assignment = assignment;
-		}
-
-		public void Handle(IContentsAdapter contents, IMemberSerializer member)
-		{
-			var adapter = contents.Get();
-			var value = member.Get(adapter);
-			_assignment.Assign(contents, member.Access, value);
-		}
-	}
+	public interface IPropertyContentSpecification : ISpecification<IContentAdapter> {}
 }

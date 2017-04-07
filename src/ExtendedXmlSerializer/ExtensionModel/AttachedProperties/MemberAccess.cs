@@ -41,6 +41,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 
 		public object Get(object instance) => _property.Get(instance);
 
-		public void Assign(object instance, object value) => _property.Assign(instance, value);
+		public void Assign(object instance, object value)
+		{
+			if (_specification.IsSatisfiedBy(value))
+			{
+				_property.Assign(instance, value);
+			}
+		}
 	}
 }
