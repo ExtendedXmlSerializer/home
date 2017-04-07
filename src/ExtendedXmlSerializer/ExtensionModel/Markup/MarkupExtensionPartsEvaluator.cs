@@ -150,7 +150,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 			public object Get(KeyValuePair<string, IExpression> parameter)
 			{
-				var evaluation = _evaluator.Get(parameter.Value);
 				var member = _members.Get(parameter.Key);
 
 				if (member == null)
@@ -159,12 +158,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 						$"The member '{parameter.Key}' was used to define a property of type '{_type}', but this property does not exist, or is not serializable.");
 				}
 
+				var evaluation = _evaluator.Get(parameter.Value);
 				if (!evaluation.IsSatisfiedBy(member.MemberType))
 				{
-					var primary = new InvalidOperationException(
-						$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the value '{parameter.Value}', but this value could not be assigned to this property. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
-
-					throw new AggregateException(primary, evaluation.Get());
+					var innerException = evaluation.Get();
+					if (innerException != null)
+					{
+						var primary =
+							new InvalidOperationException(
+								$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+						throw new AggregateException(primary, innerException);
+					}
+					throw new InvalidOperationException(
+						$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
 				}
 
 				return evaluation.Get(member.MemberType);

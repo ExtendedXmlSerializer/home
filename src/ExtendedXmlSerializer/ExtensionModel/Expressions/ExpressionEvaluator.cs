@@ -21,7 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using Z.Expressions;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
@@ -30,6 +31,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 		public static ExpressionEvaluator Default { get; } = new ExpressionEvaluator();
 		ExpressionEvaluator() {}
 
-		public object Get(string parameter) => Eval.Compile(parameter).Invoke();
+		public object Get(string parameter)
+		{
+			return new LambdaParser().Eval(parameter, new Dictionary<string, object>());
+			// return Eval.Compile(parameter).Invoke();
+		}
 	}
 }

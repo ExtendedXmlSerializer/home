@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 				{
 					if (candidate.IsSatisfiedBy(parameter))
 					{
-						return candidate.Get(_instance);
+						return candidate.Get(new CoercerParameter(_instance, parameter));
 					}
 				}
 				return null;

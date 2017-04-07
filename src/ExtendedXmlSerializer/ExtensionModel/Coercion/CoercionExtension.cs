@@ -28,7 +28,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
 	public sealed class CoercionExtension : ISerializerExtension
 	{
-		public CoercionExtension() : this(new HashSet<ICoercer> {TypeCoercer.Default, TypeMetadataCoercer.Default}) {}
+		public CoercionExtension()
+			: this(new HashSet<ICoercer> {FrameworkCoercer.Default, TypeCoercer.Default, TypeMetadataCoercer.Default}) {}
 
 		public CoercionExtension(ICollection<ICoercer> coercers)
 		{

@@ -31,6 +31,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 		public static TypeMetadataCoercer Default { get; } = new TypeMetadataCoercer();
 		TypeMetadataCoercer() {}
 
-		public override TypeInfo Get(Type parameter) => parameter.GetTypeInfo();
+		protected override TypeInfo Get(Type parameter, TypeInfo targetType) => parameter.GetTypeInfo();
 	}
 }

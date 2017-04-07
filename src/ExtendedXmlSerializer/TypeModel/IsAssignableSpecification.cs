@@ -28,13 +28,13 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.TypeModel
 {
-	public class IsAssignableSpecification<T> : DelegatedSpecification<TypeInfo>
+	public sealed class IsAssignableSpecification<T> : DelegatedSpecification<TypeInfo>
 	{
 		public static IsAssignableSpecification<T> Default { get; } = new IsAssignableSpecification<T>();
 		IsAssignableSpecification() : base(IsAssignableSpecification.Delegates.Get(typeof(T).GetTypeInfo())) {}
 	}
 
-	public class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
+	public sealed class IsAssignableSpecification : DelegatedSpecification<TypeInfo>
 	{
 		public static IParameterizedSource<TypeInfo, ISpecification<TypeInfo>> Defaults { get; } =
 			new ReferenceCache<TypeInfo, ISpecification<TypeInfo>>(x => new IsAssignableSpecification(x));

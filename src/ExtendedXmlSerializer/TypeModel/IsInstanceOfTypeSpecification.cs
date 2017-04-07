@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Coercion
+namespace ExtendedXmlSerializer.TypeModel
 {
-	abstract class CoercerBase<TFrom, TTo> : ICoercer
+	public sealed class IsInstanceOfTypeSpecification<T> : DelegatedSpecification<object>
 	{
-		readonly static ISpecification<object> From = IsInstanceOfTypeSpecification<TFrom>.Default;
-		readonly static ISpecification<TypeInfo> To = IsAssignableSpecification<TTo>.Default;
+		public static IsInstanceOfTypeSpecification<T> Default { get; } = new IsInstanceOfTypeSpecification<T>();
+		IsInstanceOfTypeSpecification() : base(IsInstanceOfTypeSpecification.Delegates.Get(typeof(T).GetTypeInfo())) {}
+	}
 
-		readonly ISpecification<object> _from;
-		readonly ISpecification<TypeInfo> _to;
+	public sealed class IsInstanceOfTypeSpecification : DelegatedSpecification<object>
+	{
+		public static IParameterizedSource<TypeInfo, ISpecification<object>> Defaults { get; } =
+			new ReferenceCache<TypeInfo, ISpecification<object>>(x => new IsInstanceOfTypeSpecification(x));
 
-		protected CoercerBase() : this(To) {}
+		public static IParameterizedSource<TypeInfo, Func<object, bool>> Delegates { get; } =
+			new ReferenceCache<TypeInfo, Func<object, bool>>(x => Defaults.Get(x).IsSatisfiedBy);
 
-		protected CoercerBase(ISpecification<TypeInfo> to) : this(From, to) {}
-
-		protected CoercerBase(ISpecification<object> from, ISpecification<TypeInfo> to)
-		{
-			_from = from;
-			_to = to;
-		}
-
-		public bool IsSatisfiedBy(object parameter) => _from.IsSatisfiedBy(parameter);
-		public bool IsSatisfiedBy(TypeInfo parameter) => _to.IsSatisfiedBy(parameter);
-
-		protected abstract TTo Get(TFrom parameter, TypeInfo targetType);
-
-		object IParameterizedSource<CoercerParameter, object>.Get(CoercerParameter parameter)
-			=> Get((TFrom) parameter.Instance, parameter.TargetType);
+		IsInstanceOfTypeSpecification(TypeInfo type) : base(type.IsInstanceOfType) {}
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,36 +22,18 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
-	abstract class CoercerBase<TFrom, TTo> : ICoercer
+	public struct CoercerParameter
 	{
-		readonly static ISpecification<object> From = IsInstanceOfTypeSpecification<TFrom>.Default;
-		readonly static ISpecification<TypeInfo> To = IsAssignableSpecification<TTo>.Default;
-
-		readonly ISpecification<object> _from;
-		readonly ISpecification<TypeInfo> _to;
-
-		protected CoercerBase() : this(To) {}
-
-		protected CoercerBase(ISpecification<TypeInfo> to) : this(From, to) {}
-
-		protected CoercerBase(ISpecification<object> from, ISpecification<TypeInfo> to)
+		public CoercerParameter(object instance, TypeInfo targetType)
 		{
-			_from = from;
-			_to = to;
+			Instance = instance;
+			TargetType = targetType;
 		}
 
-		public bool IsSatisfiedBy(object parameter) => _from.IsSatisfiedBy(parameter);
-		public bool IsSatisfiedBy(TypeInfo parameter) => _to.IsSatisfiedBy(parameter);
-
-		protected abstract TTo Get(TFrom parameter, TypeInfo targetType);
-
-		object IParameterizedSource<CoercerParameter, object>.Get(CoercerParameter parameter)
-			=> Get((TFrom) parameter.Instance, parameter.TargetType);
+		public object Instance { get; }
+		public TypeInfo TargetType { get; }
 	}
 }
