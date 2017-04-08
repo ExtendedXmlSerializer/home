@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,10 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
@@ -37,6 +40,7 @@ namespace ExtendedXmlSerializer.ContentModel
 		readonly IGenericTypes _generic;
 		readonly ITypes _types;
 
+		[UsedImplicitly]
 		public Classification(IPropertyContentSpecification specification, IGenericTypes generic, ITypes types)
 			: this(specification, IdentityStore, generic, types) {}
 
@@ -60,11 +64,24 @@ namespace ExtendedXmlSerializer.ContentModel
 		{
 			var arguments = ArgumentsTypeProperty.Default.Get(parameter);
 			var result = arguments.HasValue
-				? _generic.Get(_identities.Get(parameter.Name, parameter.Identifier))
-				          .MakeGenericType(arguments.Value.ToArray())
-				          .GetTypeInfo()
+				? Generic(parameter, arguments.Value)
 				: null;
 			return result;
+		}
+
+		TypeInfo Generic(IContentAdapter parameter, ImmutableArray<Type> arguments)
+		{
+			var candidates = _generic.Get(_identities.Get(parameter.Name, parameter.Identifier));
+			var length = arguments.Length;
+			foreach (var candidate in candidates)
+			{
+				if (candidate.GetGenericArguments().Length == length)
+				{
+					return candidate.MakeGenericType(arguments.ToArray())
+					                .GetTypeInfo();
+				}
+			}
+			return null;
 		}
 
 		TypeInfo FromIdentity(IContentAdapter parameter) => _types.Get(_identities.Get(parameter.Name, parameter.Identifier));

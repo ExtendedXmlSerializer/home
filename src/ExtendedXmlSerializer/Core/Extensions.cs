@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -47,6 +47,8 @@ namespace ExtendedXmlSerializer.Core
 		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this,
 		                                                                  IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
+
+		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default(T);
 
 		public static T Only<T>(this IEnumerable<T> @this)
 		{
@@ -117,7 +119,7 @@ namespace ExtendedXmlSerializer.Core
 			this Func<TParameter, TResult> @this)
 			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
-		public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key) where TValue : class
+		public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
 		{
 			TValue result;
 			return target.TryGetValue(key, out result) ? result : default(TValue);

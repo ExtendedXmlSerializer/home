@@ -21,11 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
@@ -33,26 +32,20 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 	sealed class Types : ReferenceCacheBase<IIdentity, TypeInfo>, ITypes
 	{
 		readonly ITypeIdentities _aliased;
-
-		readonly ITypes _known, _partitions;
+		readonly ITypeCandidates _candidates;
 
 		[UsedImplicitly]
 		public Types(IPartitionedTypeSpecification specification, IAssemblyTypePartitions partitions,
 		             ITypeIdentities identities, ITypeFormatter formatter)
-			: this(specification, identities, formatter, TypeLoader.Default, partitions) {}
+			: this(identities, new TypeCandidates(specification, formatter, TypeLoader.Default, partitions)) {}
 
-		internal Types(ISpecification<TypeInfo> specification, ITypeIdentities identities, ITypeFormatter formatter,
-		               params ITypePartitions[] partitions)
-			: this(identities, new IdentityPartitionedTypes(specification, formatter), new PartitionedTypes(partitions)) {}
-
-		Types(ITypeIdentities aliased, ITypes known, ITypes partitions)
+		Types(ITypeIdentities aliased, ITypeCandidates candidates)
 		{
 			_aliased = aliased;
-			_known = known;
-			_partitions = partitions;
+			_candidates = candidates;
 		}
 
 		protected override TypeInfo Create(IIdentity parameter)
-			=> _aliased.Get(parameter) ?? _known.Get(parameter) ?? _partitions.Get(parameter);
+			=> _aliased.Get(parameter) ?? _candidates.Get(parameter).SingleOrDefault();
 	}
 }

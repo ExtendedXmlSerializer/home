@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
@@ -34,23 +35,25 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class IdentityPartitionedTypes : ITypes
+	sealed class IdentityPartitionedTypeCandidates : ITypeCandidates
 	{
 		readonly Partition _partition;
 
-		public IdentityPartitionedTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
+		public IdentityPartitionedTypeCandidates(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 			: this(WellKnownNamespaces.Default
 			                          .ToDictionary(x => x.Value.Identifier, new TypeNamePartition(specification, formatter).Get)
 			                          .Get) {}
 
-		public IdentityPartitionedTypes(Partition partition)
+		public IdentityPartitionedTypeCandidates(Partition partition)
 		{
 			_partition = partition;
 		}
 
-		public TypeInfo Get(IIdentity parameter) => _partition.Invoke(parameter.Identifier)?.Invoke(parameter.Name);
+		public ImmutableArray<TypeInfo> Get(IIdentity parameter)
+			=> _partition.Invoke(parameter.Identifier)?.Invoke(parameter.Name) ?? ImmutableArray<TypeInfo>.Empty;
 
-		sealed class TypeNamePartition : IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, TypeInfo>>
+		sealed class TypeNamePartition :
+			IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, ImmutableArray<TypeInfo>?>>
 		{
 			readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
 
@@ -68,12 +71,12 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 				_formatter = formatter;
 			}
 
-			public Func<string, TypeInfo> Get(KeyValuePair<Assembly, Namespace> parameter)
+			public Func<string, ImmutableArray<TypeInfo>?> Get(KeyValuePair<Assembly, Namespace> parameter)
 				=> _types.Get(parameter.Key)
 				         .Where(_specification)
 				         .ToLookup(_formatter)
-				         .ToDictionary(y => y.Key, y => y.First())
-				         .Get;
+				         .ToDictionary(y => y.Key, y => y.ToImmutableArray())
+				         .GetStructure;
 		}
 	}
 }

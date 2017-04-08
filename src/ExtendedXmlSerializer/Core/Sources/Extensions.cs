@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -47,6 +48,13 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 				       return Result.Failure<IOption<T>>(result.Remainder, result.Message, result.Expectations);
 			       };
+		}
+
+		public static ImmutableArray<TItem>? GetAny<T, TItem>(this IParameterizedSource<T, ImmutableArray<TItem>> @this, T parameter)
+		{
+			var items = @this.Get(parameter);
+			var result = items.Any() ? items : (ImmutableArray<TItem>?) null;
+			return result;
 		}
 
 		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)

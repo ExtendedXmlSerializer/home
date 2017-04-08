@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
@@ -56,6 +57,11 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 			var typeInfo = _types.Get(identity);
 			var arguments = parts.GetArguments();
 			var result = arguments.HasValue ? typeInfo.MakeGenericType(Arguments(arguments.Value)).GetTypeInfo() : typeInfo;
+			if (result == null)
+			{
+				throw new ParseException(
+					$"An attempt was made to parse the identity '{IdentityFormatter.Default.Get(identity)}', but no type could be located with that name.");
+			}
 			return result;
 		}
 

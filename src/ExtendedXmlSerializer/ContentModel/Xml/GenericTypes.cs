@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core;
@@ -31,16 +32,15 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class GenericTypes : DecoratedSource<IIdentity, TypeInfo>, IGenericTypes
+	sealed class GenericTypes : StructureCache<IIdentity, ImmutableArray<TypeInfo>>, IGenericTypes
 	{
 		[UsedImplicitly]
-		public GenericTypes(IActivatingTypeSpecification specification, ITypeFormatter formatter, ITypeIdentities identities)
-			: this(IsGenericTypeSpecification.Default.And(specification), formatter, identities) {}
+		public GenericTypes(IActivatingTypeSpecification specification, ITypeFormatter formatter)
+			: this(IsGenericTypeSpecification.Default.And(specification), formatter) {}
 
-		GenericTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter,
-		             ITypeIdentities identities)
+		GenericTypes(ISpecification<TypeInfo> specification, ITypeFormatter formatter)
 			: base(
-				new Types(specification, identities, formatter,
-				          new AssemblyTypePartitions(specification, formatter.Get), TypeLoader.Default)) {}
+				new TypeCandidates(specification, formatter,
+				                   new AssemblyTypePartitions(specification, formatter.Get), TypeLoader.Default).Get) {}
 	}
 }

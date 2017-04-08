@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
@@ -35,7 +34,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IMarkupExtensions, MarkupExtensions>()
 			            .Register<IEnhancer, Enhancer>()
-			            .Decorate<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
 			            .Decorate<ISerializers, Serializers>()
 			            .Decorate<IContents, Contents>();
 

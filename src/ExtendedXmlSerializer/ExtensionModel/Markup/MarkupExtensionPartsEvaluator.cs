@@ -31,6 +31,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.TypeModel;
@@ -113,7 +114,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		TypeInfo DetermineType(MarkupExtensionParts parameter)
 		{
-			var type = _parser.Get(parameter.Type) ?? _parser.Get(Copy(parameter.Type));
+			var type = Parse(parameter) ?? _parser.Get(Copy(parameter.Type));
 			if (type == null)
 			{
 				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);
@@ -125,6 +126,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				throw new InvalidOperationException($"{type} does not implement IMarkupExtension.");
 			}
 			return type;
+		}
+
+		TypeInfo Parse(MarkupExtensionParts parameter)
+		{
+			try
+			{
+				return _parser.Get(parameter.Type);
+			}
+			catch (ParseException)
+			{
+				return null;
+			}
 		}
 
 		static TypeParts Copy(TypeParts parameter)

@@ -21,16 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Markup
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class PartitionedTypeSpecification : AnySpecification<TypeInfo>, IPartitionedTypeSpecification
-	{
-		public PartitionedTypeSpecification(IPartitionedTypeSpecification specification)
-			: base(specification, NamespaceSpecification<IMarkupExtension>.Default) {}
-	}
+	public interface ITypeCandidates : IParameterizedSource<IIdentity, ImmutableArray<TypeInfo>> {}
 }

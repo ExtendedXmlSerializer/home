@@ -59,7 +59,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 				.Register<ITypeIdentities, TypeIdentities>()
 				.Register<ITypes, ContentModel.Xml.Types>()
 				.Register<IGenericTypes, GenericTypes>()
-				.Register<IPartitionedTypeSpecification, PartitionedTypeSpecification>()
+				.RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default)
 				.Register(Register);
 
 		INames Register(IServiceProvider provider) => new Names(new TypedTable<string>(Names)

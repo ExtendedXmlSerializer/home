@@ -26,9 +26,10 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class PartitionedTypeSpecification : DelegatedAssignedSpecification<TypeInfo, string>,
+	sealed class PartitionedTypeSpecification : DecoratedSpecification<TypeInfo>,
 	                                            IPartitionedTypeSpecification
 	{
-		public PartitionedTypeSpecification(INames names) : base(names.Get) {}
+		public static PartitionedTypeSpecification Default { get; } = new PartitionedTypeSpecification();
+		PartitionedTypeSpecification() : base(AlwaysSpecification<TypeInfo>.Default) {}
 	}
 }

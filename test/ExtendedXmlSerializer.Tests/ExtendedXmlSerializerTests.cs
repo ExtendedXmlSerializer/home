@@ -21,11 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests
@@ -137,6 +139,13 @@ namespace ExtendedXmlSerializer.Tests
 		}
 
 		[Fact]
+		public void GenericEnumeration()
+		{
+			var expected = new GenericSubject<TypeCode> { PropertyName = TypeCode.SByte};
+			_serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
+		}
+
+		[Fact]
 		public void DifferingProperty()
 		{
 			const string message = "Hello World!  This is a value set in a property with a variable type.";
@@ -176,6 +185,11 @@ namespace ExtendedXmlSerializer.Tests
 		class ClassWithDifferingPropertyType
 		{
 			public IInterface Interface { get; set; }
+		}
+
+		class GenericSubject<T>
+		{
+			public T PropertyName { [UsedImplicitly] get; set; }
 		}
 
 		public interface IInterface {}

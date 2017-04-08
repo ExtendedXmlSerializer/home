@@ -25,24 +25,26 @@ using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public class ImmutableArrayAwareGenericTypes : IGenericTypes
 	{
-		readonly static TypeInfo Type = typeof(ImmutableArray<>).GetTypeInfo(), Check = typeof(ImmutableArray).GetTypeInfo();
+		readonly static TypeInfo Check = typeof(ImmutableArray).GetTypeInfo();
+		readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableArray<>).GetTypeInfo().Yield().ToImmutableArray();
 
-		readonly ITypes _types;
+		readonly IGenericTypes _types;
 
 		public ImmutableArrayAwareGenericTypes(IGenericTypes types)
 		{
 			_types = types;
 		}
 
-		public TypeInfo Get(IIdentity parameter)
+		public ImmutableArray<TypeInfo> Get(IIdentity parameter)
 		{
 			var type = _types.Get(parameter);
-			var result = Equals(type, Check) ? Type : type;
+			var result = Equals(type.Only(), Check) ? Type : type;
 			return result;
 		}
 	}

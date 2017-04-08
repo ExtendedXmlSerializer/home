@@ -25,7 +25,10 @@ using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
 using JetBrains.Annotations;
 using Xunit;
 
@@ -38,8 +41,64 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new Subject("Hello World!");
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ParameterizedMembersExtensionTests-Subject>");
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ParameterizedMembersExtensionTests-Subject>");
 			Assert.Equal(expected.Message, actual.Message);
+		}
+
+		[Fact]
+		public void BasicTuple()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
+			var expected = new Tuple<string>("Hello World!");
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item1>Hello World!</Item1></Tuple>");
+			actual.ShouldBeEquivalentTo(expected);
+		}
+
+
+		[Fact]
+		public void CreatedTuple()
+		{
+			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
+			var expected = Tuple.Create("Hello World!", 6776, TypeCode.Empty);
+
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string,int,TypeCode"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item1>Hello World!</Item1><Item2>6776</Item2><Item3>Empty</Item3></Tuple>");
+			actual.ShouldBeEquivalentTo(expected);
+		}
+
+		[Fact]
+		public void ConfiguredTuple()
+		{
+			var configuration = new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default)
+			                                               .Type<Tuple<string>>()
+			                                               .Member(x => x.Item1)
+			                                               .Name("NewName")
+			                                               .Configuration;
+			var serializer = new SerializationSupport(configuration);
+			var expected = new Tuple<string>("Hello World!");
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><NewName>Hello World!</NewName></Tuple>");
+			actual.ShouldBeEquivalentTo(expected);
+		}
+
+
+		[Fact]
+		public void ConfiguredCreatedTuple()
+		{
+			var configuration = new ExtendedConfiguration().UseAutoFormatting()
+			                                               .Extend(ParameterizedMembersExtension.Default)
+			                                               .Type<Tuple<string, int, TypeCode>>()
+			                                               .Member(x => x.Item1, m => m.Name("Message"))
+														   .Member(x => x.Item2, m => m.Name("Number"))
+														   .Member(x => x.Item3, m => m.Name("Codez"))
+														   .Configuration;
+			var serializer = new SerializationSupport(configuration);
+			var expected = Tuple.Create("Hello World!", 6776, TypeCode.Empty);
+			var actual = serializer.Assert(expected,
+										   @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string,int,TypeCode"" Message=""Hello World!"" Number=""6776"" Codez=""Empty"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" />");
+			actual.ShouldBeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -47,7 +106,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new SubjectWithMultipleParameters("Hello World!", 6776);
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleParameters xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><Number>6776</Number></ParameterizedMembersExtensionTests-SubjectWithMultipleParameters>");
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleParameters xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><Number>6776</Number></ParameterizedMembersExtensionTests-SubjectWithMultipleParameters>");
 			Assert.Equal(expected.Message, actual.Message);
 			Assert.Equal(expected.Number, actual.Number);
 		}
@@ -57,7 +117,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new SubjectWithMultipleConstructors(6776, new DateTime(1976, 6, 7));
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number><DateTime>1976-06-07T00:00:00</DateTime></ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors>");
+			var actual = serializer.Assert(expected,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members;assembly=ExtendedXmlSerializer.Tests""><Number>6776</Number><DateTime>1976-06-07T00:00:00</DateTime></ParameterizedMembersExtensionTests-SubjectWithMultipleConstructors>");
 			Assert.Equal(expected.Number, actual.Number);
 			Assert.Equal(expected.DateTime, actual.DateTime);
 			Assert.Equal(SubjectWithMultipleConstructors.Message, actual.Get());
