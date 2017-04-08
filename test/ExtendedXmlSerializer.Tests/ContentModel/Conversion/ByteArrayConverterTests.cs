@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion
 			var instance = new byte[] {1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1};
 
 			var support = new SerializationSupport();
-			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:item=""unsignedByte"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">AQIDBAUGBwcGBQQDAgE=</Array>");
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:item=""unsignedByte"" xmlns=""https://extendedxmlserializer.github.io/system"">AQIDBAUGBwcGBQQDAgE=</Array>");
 			Assert.Equal(instance, actual);
 		}
 

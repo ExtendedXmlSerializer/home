@@ -69,7 +69,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyType()
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
-			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  SuppliedType=""{exs:Type sys:int}"" AnotherProperty=""Hello World!"" />");
+			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  SuppliedType=""{exs:Type sys:int}"" AnotherProperty=""Hello World!"" />");
 			subject.SuppliedType.Should().Be(typeof(int));
 			subject.AnotherProperty.Should().Be("Hello World!");
 		}
@@ -78,7 +78,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyMarkupExtension()
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
-			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  AnotherProperty=""{MarkupExtensionTests-TypeName {exs:Type sys:dateTime}}"" />");
+			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  AnotherProperty=""{MarkupExtensionTests-TypeName {exs:Type sys:dateTime}}"" />");
 			subject.AnotherProperty.Should().Be(typeof(DateTime).AssemblyQualifiedName);
 		}
 
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifyStatic()
 		{
 			var serializer = new SerializationSupport(new ExtendedConfiguration().EnableMarkupExtensions());
-			var subject = serializer.Deserialize<DatedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DatedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""  Date=""{exs:Static sys:dateTime.Now}"" DateNullable=""{exs:Static sys:dateTime.Now}"" />");
+			var subject = serializer.Deserialize<DatedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DatedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  Date=""{exs:Static sys:dateTime.Now}"" DateNullable=""{exs:Static sys:dateTime.Now}"" />");
 			subject.Date.Should().NotBe(default(DateTime)).And.BeAfter(DateTime.Today);
 			subject.DateNullable.Should().NotBeNull().And.BeAfter(DateTime.Today);
 		}

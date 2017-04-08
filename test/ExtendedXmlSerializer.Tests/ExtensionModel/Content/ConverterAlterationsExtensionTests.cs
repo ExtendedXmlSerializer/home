@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 			var support = new SerializationSupport(new ExtendedConfiguration().Alter(sut).Create());
 
 			const float number = 4.5678f;
-			var actual = support.Assert(number, @"<?xml version=""1.0"" encoding=""utf-8""?><float xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">4.5678</float>");
+			var actual = support.Assert(number, @"<?xml version=""1.0"" encoding=""utf-8""?><float xmlns=""https://extendedxmlserializer.github.io/system"">4.5678</float>");
 			Assert.Equal(number, actual);
 
 			var converter = sut.Get(FloatConverter.Default);

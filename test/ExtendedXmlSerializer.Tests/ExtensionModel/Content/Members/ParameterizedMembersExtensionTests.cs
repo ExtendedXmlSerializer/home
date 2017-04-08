@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ParameterizedMembersExtension.Default));
 			var expected = new Tuple<string>("Hello World!");
 			var actual = serializer.Assert(expected,
-			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item1>Hello World!</Item1></Tuple>");
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string"" xmlns=""https://extendedxmlserializer.github.io/system""><Item1>Hello World!</Item1></Tuple>");
 			actual.ShouldBeEquivalentTo(expected);
 		}
 
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var expected = Tuple.Create("Hello World!", 6776, TypeCode.Empty);
 
 			var actual = serializer.Assert(expected,
-			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string,int,TypeCode"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><Item1>Hello World!</Item1><Item2>6776</Item2><Item3>Empty</Item3></Tuple>");
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string,int,TypeCode"" xmlns=""https://extendedxmlserializer.github.io/system""><Item1>Hello World!</Item1><Item2>6776</Item2><Item3>Empty</Item3></Tuple>");
 			actual.ShouldBeEquivalentTo(expected);
 		}
 
@@ -79,7 +79,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var serializer = new SerializationSupport(configuration);
 			var expected = new Tuple<string>("Hello World!");
 			var actual = serializer.Assert(expected,
-			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system""><NewName>Hello World!</NewName></Tuple>");
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string"" xmlns=""https://extendedxmlserializer.github.io/system""><NewName>Hello World!</NewName></Tuple>");
 			actual.ShouldBeEquivalentTo(expected);
 		}
 
@@ -97,7 +97,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var serializer = new SerializationSupport(configuration);
 			var expected = Tuple.Create("Hello World!", 6776, TypeCode.Empty);
 			var actual = serializer.Assert(expected,
-										   @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:arguments=""string,int,TypeCode"" Message=""Hello World!"" Number=""6776"" Codez=""Empty"" xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" />");
+										   @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string,int,TypeCode"" Message=""Hello World!"" Number=""6776"" Codez=""Empty"" xmlns=""https://extendedxmlserializer.github.io/system"" />");
 			actual.ShouldBeEquivalentTo(expected);
 		}
 

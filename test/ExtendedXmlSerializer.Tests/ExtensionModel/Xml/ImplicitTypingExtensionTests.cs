@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var expected = new Subject {Items = new ExtendedList {"Hello", "World!"}};
 
 			var actual = serializer.Assert(expected,
-			                               @"<?xml version=""1.0"" encoding=""utf-8""?><ImplicitTypingExtensionTests-Subject><Items xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" exs:type=""ImplicitTypingExtensionTests-ExtendedList""><Capacity>4</Capacity><string>Hello</string><string>World!</string></Items></ImplicitTypingExtensionTests-Subject>");
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><ImplicitTypingExtensionTests-Subject><Items xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""ImplicitTypingExtensionTests-ExtendedList""><Capacity>4</Capacity><string>Hello</string><string>World!</string></Items></ImplicitTypingExtensionTests-Subject>");
 			Assert.Equal(expected.Items, actual.Items);
 		}
 

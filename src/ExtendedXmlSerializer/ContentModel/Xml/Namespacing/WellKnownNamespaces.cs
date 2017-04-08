@@ -36,11 +36,11 @@ namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 			{
 				{
 					typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
-					new Namespace("exs", "https://github.com/wojtpl2/ExtendedXmlSerializer/v2")
+					new Namespace("exs", "https://extendedxmlserializer.github.io/v2")
 				},
 				{
 					typeof(object).GetTypeInfo().Assembly,
-					new Namespace("sys", "https://github.com/wojtpl2/ExtendedXmlSerializer/system")
+					new Namespace("sys", "https://extendedxmlserializer.github.io/system")
 				}
 			}) {}
 	}

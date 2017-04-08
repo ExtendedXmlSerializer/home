@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.Tests
 
 			var data = _serializer.Serialize(expected);
 			Assert.Equal(
-				@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">6776</int>",
+				@"<?xml version=""1.0"" encoding=""utf-8""?><int xmlns=""https://extendedxmlserializer.github.io/system"">6776</int>",
 				data);
 			var actual = _serializer.Deserialize<int>(data);
 			Assert.Equal(expected, actual);

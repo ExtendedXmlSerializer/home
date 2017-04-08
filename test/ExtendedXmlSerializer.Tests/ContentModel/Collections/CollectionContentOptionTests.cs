@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 		{
 			var support = new SerializationSupport();
 			var expected = new Subject("Hello", "World!");
-			var actual = support.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><CollectionContentOptionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ContentModel.Collections;assembly=ExtendedXmlSerializer.Tests""><_children><Capacity>4</Capacity><string xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">Hello</string><string xmlns=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"">World!</string></_children></CollectionContentOptionTests-Subject>");
+			var actual = support.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><CollectionContentOptionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ContentModel.Collections;assembly=ExtendedXmlSerializer.Tests""><_children><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">Hello</string><string xmlns=""https://extendedxmlserializer.github.io/system"">World!</string></_children></CollectionContentOptionTests-Subject>");
 			Assert.Equal(expected.ToArray(), actual.ToArray());
 		}
 

@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 		{
 			var expected = ImmutableArray.Create("Hello", "World!");
 			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(ImmutableArrayExtension.Default));
-			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableArray xmlns:exs=""https://github.com/wojtpl2/ExtendedXmlSerializer/v2"" xmlns:sys=""https://github.com/wojtpl2/ExtendedXmlSerializer/system"" exs:arguments=""sys:string"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:string>Hello</sys:string><sys:string>World!</sys:string></ImmutableArray>");
+			var actual = serializer.Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ImmutableArray xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" exs:arguments=""sys:string"" xmlns=""clr-namespace:System.Collections.Immutable;assembly=System.Collections.Immutable""><sys:string>Hello</sys:string><sys:string>World!</sys:string></ImmutableArray>");
 			Assert.True(expected.SequenceEqual(actual));
 		}
 	}
