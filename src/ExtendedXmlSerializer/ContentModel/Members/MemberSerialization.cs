@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public ImmutableArray<IMemberSerializer> Get() => _all;
 
-		public void Execute(IContentsAdapter parameter)
+		public void Execute(IContents parameter)
 		{
 			throw new NotImplementedException();
 		}

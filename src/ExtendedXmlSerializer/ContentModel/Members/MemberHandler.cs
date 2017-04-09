@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_assignment = assignment;
 		}
 
-		public void Handle(IContentsAdapter contents, IMemberSerializer member)
+		public void Handle(IContents contents, IMemberSerializer member)
 		{
 			var adapter = contents.Get();
 			var value = member.Get(adapter);

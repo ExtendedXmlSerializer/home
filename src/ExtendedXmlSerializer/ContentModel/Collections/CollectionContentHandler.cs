@@ -34,6 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_handler = handler;
 		}
 
-		public void Execute(IContentsAdapter parameter) => _handler.Handle((IListContentsAdapter) parameter, _item);
+		public void Execute(IContents parameter) => _handler.Handle((IListContents) parameter, _item);
 	}
 }

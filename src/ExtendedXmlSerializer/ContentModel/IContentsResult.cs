@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IContentsResult : IParameterizedSource<IContentsAdapter, object> {}
+	public interface IContentsResult : IParameterizedSource<IContents, object> {}
 }

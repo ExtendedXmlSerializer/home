@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance<IFormattedContentSpecification>(FormattedContentSpecification.Default)
 			            .RegisterInstance<IListContentsSpecification>(
 				            new ListContentsSpecification(
-					            IsTypeSpecification<IListContentsAdapter>.Default.And(ElementSpecification.Default)))
+					            IsTypeSpecification<IListContents>.Default.And(ElementSpecification.Default)))
 			            .Register<IContentsActivation, XmlContentsActivation>()
 			            .Register<IXmlReaderContexts, XmlReaderContexts>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()

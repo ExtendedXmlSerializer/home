@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using System.Collections;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IListContentsAdapter : IContentsAdapter
-	{
-		IList List { get; }
-	}
+	public interface IContents : ISource<IReader>, IEnumerator {}
 }

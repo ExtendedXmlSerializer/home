@@ -33,10 +33,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	sealed class DeferredReferenceMap : IReferenceMap
 	{
 		readonly ICollection<IDeferredCommand> _commands;
-		readonly Stack<IContentsAdapter> _contexts;
+		readonly Stack<IContents> _contexts;
 		readonly IReferenceMap _map;
 
-		public DeferredReferenceMap(ICollection<IDeferredCommand> commands, Stack<IContentsAdapter> contexts,
+		public DeferredReferenceMap(ICollection<IDeferredCommand> commands, Stack<IContents> contexts,
 		                            IReferenceMap map)
 		{
 			_commands = commands;
@@ -59,16 +59,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			return result;
 		}
 
-		static IDeferredCommand Command(IContentsAdapter current, ISource<object> source)
+		static IDeferredCommand Command(IContents current, ISource<object> source)
 		{
-			var list = current as IListContentsAdapter;
+			var list = current as IListContents;
 			var result = list != null
 				? new DeferredCollectionAssignmentCommand(list.List, source)
 				: Member(current, source);
 			return result;
 		}
 
-		static IDeferredCommand Member(IContentsAdapter current, ISource<object> source)
+		static IDeferredCommand Member(IContents current, ISource<object> source)
 			=>
 				new DeferredMemberAssignmentCommand(current.Current, ContentsContext.Default.Get(current).AsValid<IMemberAccess>(),
 				                                    source);

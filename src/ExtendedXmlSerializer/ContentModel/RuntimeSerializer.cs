@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
 
@@ -32,10 +31,10 @@ namespace ExtendedXmlSerializer.ContentModel
 	[UsedImplicitly]
 	sealed class RuntimeSerializer : ISerializer
 	{
-		readonly IContents _contents;
+		readonly Content.IContents _contents;
 		readonly IClassification _classification;
 
-		public RuntimeSerializer(IContents contents, IClassification classification)
+		public RuntimeSerializer(Content.IContents contents, IClassification classification)
 		{
 			_contents = contents;
 			_classification = classification;

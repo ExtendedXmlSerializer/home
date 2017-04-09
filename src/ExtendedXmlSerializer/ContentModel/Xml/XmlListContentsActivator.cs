@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			_lists = lists;
 		}
 
-		public IContentsAdapter Create(IXmlReader reader, object instance, XmlContents contents)
-			=> new XmlListContentsAdapter(reader, instance, instance as IList ?? _lists.Get(instance), contents);
+		public IContents Create(IXmlReader reader, object instance, XmlContent content)
+			=> new XmlListContents(reader, instance, instance as IList ?? _lists.Get(instance), content);
 	}
 }

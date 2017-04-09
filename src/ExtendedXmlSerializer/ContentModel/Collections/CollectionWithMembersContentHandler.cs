@@ -27,15 +27,15 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class CollectionWithMembersContentHandler : SelectedCommand<IContentsAdapter>, IContentHandler
+	sealed class CollectionWithMembersContentHandler : SelectedCommand<IContents>, IContentHandler
 	{
-		readonly static EmptyCommand<IContentsAdapter> Empty = EmptyCommand<IContentsAdapter>.Default;
+		readonly static EmptyCommand<IContents> Empty = EmptyCommand<IContents>.Default;
 
 		public CollectionWithMembersContentHandler(IListContentsSpecification specification, MemberContentHandler members,
 		                                  CollectionContentHandler collection)
 			: base(
-				new FixedOption<IContentsAdapter, ICommand<IContentsAdapter>>(members, Empty),
-				new FixedOption<IContentsAdapter, ICommand<IContentsAdapter>>(specification, collection)
+				new FixedOption<IContents, ICommand<IContents>>(members, Empty),
+				new FixedOption<IContents, ICommand<IContents>>(specification, collection)
 			) {}
 	}
 }

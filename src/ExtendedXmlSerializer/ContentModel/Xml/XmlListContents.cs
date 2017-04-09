@@ -21,10 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Collections;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IContentsAdapter : ISource<IReader>, IEnumerator {}
+	sealed class XmlListContents : IListContents
+	{
+		readonly IXmlReader _reader;
+		readonly XmlContent _content;
+
+		public XmlListContents(IXmlReader reader, object current, IList list, XmlContent content)
+		{
+			Current = current;
+			List = list;
+			_reader = reader;
+			_content = content;
+		}
+
+		public object Current { get; }
+
+		public IList List { get; }
+
+		public IReader Get() => _reader;
+
+		public bool MoveNext()
+		{
+			var contents = _content;
+			return contents.MoveNext();
+		}
+
+		public void Reset()
+		{
+			throw new NotSupportedException();
+		}
+	}
 }

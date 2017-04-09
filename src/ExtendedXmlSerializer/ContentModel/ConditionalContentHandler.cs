@@ -27,12 +27,12 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class ConditionalContentHandler : FixedOption<IContentsAdapter, ICommand<IContentsAdapter>>, IContentHandler
+	sealed class ConditionalContentHandler : FixedOption<IContents, ICommand<IContents>>, IContentHandler
 	{
-		public ConditionalContentHandler(ISpecification<IContentsAdapter> specification, ICommand<IContentsAdapter> instance)
+		public ConditionalContentHandler(ISpecification<IContents> specification, ICommand<IContents> instance)
 			: base(specification, instance) {}
 
-		public void Execute(IContentsAdapter parameter)
+		public void Execute(IContents parameter)
 		{
 			if (IsSatisfiedBy(parameter))
 			{

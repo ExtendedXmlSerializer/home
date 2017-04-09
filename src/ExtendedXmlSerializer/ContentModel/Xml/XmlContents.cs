@@ -21,26 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	struct XmlContents
+	sealed class XmlContents : IContents
 	{
-		readonly XmlAttributes? _attributes;
-		readonly XmlContent? _content;
+		readonly IXmlReader _reader;
+		readonly XmlContent _content;
 
-		public XmlContents(XmlAttributes? attributes, XmlContent? content)
+		public XmlContents(IXmlReader reader, object current, XmlContent content)
 		{
-			_attributes = attributes;
+			Current = current;
+			_reader = reader;
 			_content = content;
 		}
 
+		public object Current { get; }
+
+		public IReader Get() => _reader;
+
 		public bool MoveNext()
 		{
-			var attributes = _attributes;
-			var content = _content;
-			return (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
+			var contents = _content;
+			return contents.MoveNext();
 		}
 
-		public object Current => null;
+		public void Reset()
+		{
+			throw new NotSupportedException();
+		}
 	}
 }

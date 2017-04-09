@@ -28,6 +28,6 @@ namespace ExtendedXmlSerializer.ContentModel
 		public static ContentsResult Default { get; } = new ContentsResult();
 		ContentsResult() {}
 
-		public object Get(IContentsAdapter parameter) => parameter.Current;
+		public object Get(IContents parameter) => parameter.Current;
 	}
 }

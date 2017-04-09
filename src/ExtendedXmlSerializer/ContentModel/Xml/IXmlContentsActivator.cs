@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	interface IXmlContentsActivator
 	{
-		IContentsAdapter Create(IXmlReader reader, object instance, XmlContents contents);
+		IContents Create(IXmlReader reader, object instance, XmlContent content);
 	}
 }

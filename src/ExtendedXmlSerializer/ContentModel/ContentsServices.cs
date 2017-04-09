@@ -51,14 +51,14 @@ namespace ExtendedXmlSerializer.ContentModel
 			_formatter = formatter;
 		}
 
-		public bool IsSatisfiedBy(IContentsAdapter parameter) => _specification.IsSatisfiedBy(parameter);
+		public bool IsSatisfiedBy(IContents parameter) => _specification.IsSatisfiedBy(parameter);
 
 		public string Get(IReader parameter) => _formatter.Get(parameter);
 
 		public IContentReader Create(TypeInfo classification, IContentHandler handler)
 			=> new ContentsReader(_activation.Get(classification), _handler.Get(handler), _results);
 
-		public void Handle(IContentsAdapter contents, IMemberSerializer member) => _member.Handle(contents, member);
-		public void Handle(IListContentsAdapter contents, IContentReader reader) => _collection.Handle(contents, reader);
+		public void Handle(IContents contents, IMemberSerializer member) => _member.Handle(contents, member);
+		public void Handle(IListContents contents, IContentReader reader) => _collection.Handle(contents, reader);
 	}
 }

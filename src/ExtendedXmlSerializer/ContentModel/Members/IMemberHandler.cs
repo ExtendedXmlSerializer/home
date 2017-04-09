@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface IMemberHandler
 	{
-		void Handle(IContentsAdapter contents, IMemberSerializer member);
+		void Handle(IContents contents, IMemberSerializer member);
 	}
 }

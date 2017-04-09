@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using JetBrains.Annotations;
 
@@ -33,14 +32,14 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IProperty<TypeInfo> _type;
 		readonly ISerializer _runtime;
-		readonly IContents _contents;
+		readonly Content.IContents _contents;
 
 		[UsedImplicitly]
-		public VariableTypeMemberContents(ISerializer runtime, IContents contents)
+		public VariableTypeMemberContents(ISerializer runtime, Content.IContents contents)
 			: this(VariableTypeMemberSpecifications.Default, ExplicitTypeProperty.Default, runtime, contents) {}
 
 		public VariableTypeMemberContents(IVariableTypeMemberSpecifications specifications, IProperty<TypeInfo> type,
-		                                  ISerializer runtime, IContents contents)
+		                                  ISerializer runtime, Content.IContents contents)
 		{
 			_specifications = specifications;
 			_type = type;

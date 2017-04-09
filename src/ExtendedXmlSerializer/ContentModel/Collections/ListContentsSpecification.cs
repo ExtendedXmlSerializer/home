@@ -26,11 +26,11 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ListContentsSpecification : DecoratedSpecification<IContentsAdapter>, IListContentsSpecification
+	sealed class ListContentsSpecification : DecoratedSpecification<IContents>, IListContentsSpecification
 	{
 		public static ListContentsSpecification Default { get; } = new ListContentsSpecification();
-		ListContentsSpecification() : this(IsTypeSpecification<IListContentsAdapter>.Default) {}
+		ListContentsSpecification() : this(IsTypeSpecification<IListContents>.Default) {}
 
-		public ListContentsSpecification(ISpecification<IContentsAdapter> specification) : base(specification) {}
+		public ListContentsSpecification(ISpecification<IContents> specification) : base(specification) {}
 	}
 }

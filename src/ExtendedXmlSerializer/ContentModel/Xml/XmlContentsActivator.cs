@@ -34,17 +34,17 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			_contents = contents;
 		}
 
-		public IContentsAdapter Get(IReader parameter)
+		public IContents Get(IReader parameter)
 		{
 			var reader = (IXmlReader) parameter;
 			var xml = reader.Get();
 			var attributes = xml.HasAttributes ? new XmlAttributes(xml) : (XmlAttributes?) null;
 
 			var depth = XmlDepth.Default.Get(xml);
-			var content = depth.HasValue ? new XmlContent(xml, depth.Value) : (XmlContent?) null;
+			var content = depth.HasValue ? new XmlElements(xml, depth.Value) : (XmlElements?) null;
 
 			var result = attributes.HasValue || content.HasValue
-				? _contents.Create(reader, _activator.Get(parameter), new XmlContents(attributes, content))
+				? _contents.Create(reader, _activator.Get(parameter), new XmlContent(attributes, content))
 				: null;
 			return result;
 		}

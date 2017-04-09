@@ -28,12 +28,12 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ElementSpecification : ISpecification<IContentsAdapter>
+	sealed class ElementSpecification : ISpecification<IContents>
 	{
 		public static ElementSpecification Default { get; } = new ElementSpecification();
 		ElementSpecification() {}
 
-		public bool IsSatisfiedBy(IContentsAdapter parameter)
+		public bool IsSatisfiedBy(IContents parameter)
 			=> ((IXmlReader) parameter.Get()).Get().NodeType == XmlNodeType.Element;
 	}
 }

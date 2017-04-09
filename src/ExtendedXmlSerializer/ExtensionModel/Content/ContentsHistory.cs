@@ -27,9 +27,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ContentsHistory : ReferenceCache<IReader, Stack<IContentsAdapter>>, IContentsHistory
+	sealed class ContentsHistory : ReferenceCache<IReader, Stack<IContents>>, IContentsHistory
 	{
 		public static ContentsHistory Default { get; } = new ContentsHistory();
-		ContentsHistory() : base(_ => new Stack<IContentsAdapter>()) {}
+		ContentsHistory() : base(_ => new Stack<IContents>()) {}
 	}
 }

@@ -61,7 +61,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 					_handler = handler;
 				}
 
-				public void Execute(IContentsAdapter parameter)
+				public void Execute(IContents parameter)
 				{
 					var contexts = _contexts.Get(parameter.Get());
 					contexts.Push(parameter);

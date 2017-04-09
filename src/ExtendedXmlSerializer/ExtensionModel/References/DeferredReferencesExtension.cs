@@ -31,6 +31,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
+using IContents = ExtendedXmlSerializer.ContentModel.IContents;
 using XmlReader = System.Xml.XmlReader;
 using XmlWriter = System.Xml.XmlWriter;
 
@@ -45,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			=> parameter.Decorate<IContentsResult, ContentsResult>()
 			            .Decorate<IMemberHandler, Handler>()
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
-			            .Decorate<IContents, DeferredReferenceContents>()
+			            .Decorate<ContentModel.Content.IContents, DeferredReferenceContents>()
 			            .Decorate<ISerializers, DeferredReferenceSerializers>()
 			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>()
 			            .Decorate<IXmlFactory, Factory>();
@@ -54,19 +55,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class ContentsResult : IContentsResult
 		{
-			readonly ICommand<IContentsAdapter> _command;
+			readonly ICommand<IContents> _command;
 			readonly IContentsResult _results;
 
 			[UsedImplicitly]
 			public ContentsResult(IContentsResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
 
-			public ContentsResult(ICommand<IContentsAdapter> command, IContentsResult results)
+			public ContentsResult(ICommand<IContents> command, IContentsResult results)
 			{
 				_command = command;
 				_results = results;
 			}
 
-			public object Get(IContentsAdapter parameter)
+			public object Get(IContents parameter)
 			{
 				_command.Execute(parameter);
 
@@ -142,7 +143,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_handler = handler;
 			}
 
-			public void Handle(IContentsAdapter contents, IMemberSerializer member)
+			public void Handle(IContents contents, IMemberSerializer member)
 			{
 				ContentsContext.Default.Assign(contents, member.Access);
 				_handler.Handle(contents, member);

@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberContentHandler : IContentHandler, ISpecification<IContentsAdapter>
+	sealed class MemberContentHandler : IContentHandler, ISpecification<IContents>
 	{
 		readonly IMemberSerialization _serialization;
 		readonly IMemberHandler _handler;
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_formatter = formatter;
 		}
 
-		public bool IsSatisfiedBy(IContentsAdapter parameter)
+		public bool IsSatisfiedBy(IContents parameter)
 		{
 			var content = parameter.Get();
 			var key = _formatter.Get(content);
@@ -52,6 +52,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			return result;
 		}
 
-		public void Execute(IContentsAdapter parameter) => IsSatisfiedBy(parameter);
+		public void Execute(IContents parameter) => IsSatisfiedBy(parameter);
 	}
 }

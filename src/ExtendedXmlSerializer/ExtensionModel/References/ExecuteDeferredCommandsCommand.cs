@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ExecuteDeferredCommandsCommand : ICommand<IContentsAdapter>
+	sealed class ExecuteDeferredCommandsCommand : ICommand<IContents>
 	{
 		public static ExecuteDeferredCommandsCommand Default { get; } = new ExecuteDeferredCommandsCommand();
 		ExecuteDeferredCommandsCommand() : this(DeferredCommands.Default) {}
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_commands = commands;
 		}
 
-		public void Execute(IContentsAdapter parameter)
+		public void Execute(IContents parameter)
 		{
 			var commands = _commands.Get(parameter.Get());
 			foreach (var command in commands.ToArray())

@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,40 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Collections;
-
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class XmlListContentsAdapter : IListContentsAdapter
+	struct XmlElements
 	{
-		readonly IXmlReader _reader;
-		readonly XmlContents _contents;
+		readonly System.Xml.XmlReader _reader;
+		readonly int _depth;
 
-		public XmlListContentsAdapter(IXmlReader reader, object current, IList list, XmlContents contents)
+		public XmlElements(System.Xml.XmlReader reader, int depth)
 		{
-			Current = current;
-			List = list;
 			_reader = reader;
-			_contents = contents;
+			_depth = depth;
 		}
 
-		public object Current { get; }
+		public bool MoveNext() => _reader.Read() && _reader.IsStartElement() && _reader.Depth == _depth;
 
-		public IList List { get; }
-
-		public IReader Get() => _reader;
-
-		public bool MoveNext()
-		{
-			var contents = _contents;
-			return contents.MoveNext();
-		}
-
-		public void Reset()
-		{
-			throw new NotSupportedException();
-		}
+		public object Current => _reader;
 	}
 }

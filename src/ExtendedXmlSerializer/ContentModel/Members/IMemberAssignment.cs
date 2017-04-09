@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface IMemberAssignment
 	{
-		void Assign(IContentsAdapter contents, IMemberAccess access, object value);
+		void Assign(IContents contents, IMemberAccess access, object value);
 	}
 }

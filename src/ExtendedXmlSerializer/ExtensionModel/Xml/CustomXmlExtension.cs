@@ -26,11 +26,11 @@ using System.Reflection;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;
+using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {

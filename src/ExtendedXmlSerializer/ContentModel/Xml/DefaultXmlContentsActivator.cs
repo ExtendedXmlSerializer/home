@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		public static DefaultXmlContentsActivator Default { get; } = new DefaultXmlContentsActivator();
 		DefaultXmlContentsActivator() {}
 
-		public IContentsAdapter Create(IXmlReader reader, object instance, XmlContents contents)
-			=> new XmlContentsAdapter(reader, instance, contents);
+		public IContents Create(IXmlReader reader, object instance, XmlContent content)
+			=> new XmlContents(reader, instance, content);
 	}
 }
