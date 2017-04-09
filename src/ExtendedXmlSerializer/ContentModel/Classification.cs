@@ -32,12 +32,12 @@ namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class Classification : IClassification
 	{
-		readonly IPropertyContentSpecification _specification;
+		readonly IFormattedContentSpecification _specification;
 		readonly IIdentityStore _identities;
 		readonly IGenericTypes _generic;
 		readonly ITypes _types;
 
-		public Classification(IPropertyContentSpecification specification, IIdentityStore identities, IGenericTypes generic,
+		public Classification(IFormattedContentSpecification specification, IIdentityStore identities, IGenericTypes generic,
 		                      ITypes types)
 		{
 			_specification = specification;

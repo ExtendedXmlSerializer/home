@@ -26,10 +26,10 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class PropertyContentSpecification : IPropertyContentSpecification
+	sealed class FormattedContentSpecification : IFormattedContentSpecification
 	{
-		public static PropertyContentSpecification Default { get; } = new PropertyContentSpecification();
-		PropertyContentSpecification() {}
+		public static FormattedContentSpecification Default { get; } = new FormattedContentSpecification();
+		FormattedContentSpecification() {}
 
 		public bool IsSatisfiedBy(IContentAdapter parameter) => ((IXmlReader) parameter).Get().HasAttributes;
 	}

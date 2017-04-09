@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance(_reader.Clone())
 			            .RegisterInstance(_writer.Clone())
 			            .RegisterInstance<IContentAdapterFormatter>(ContentAdapterFormatter.Default)
-			            .RegisterInstance<IPropertyContentSpecification>(PropertyContentSpecification.Default)
+			            .RegisterInstance<IFormattedContentSpecification>(FormattedContentSpecification.Default)
 			            .RegisterInstance<IListContentsSpecification>(
 				            new ListContentsSpecification(
 					            IsTypeSpecification<IListContentsAdapter>.Default.And(ElementSpecification.Default)))
