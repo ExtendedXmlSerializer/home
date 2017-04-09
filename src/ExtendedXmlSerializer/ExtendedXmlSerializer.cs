@@ -25,7 +25,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using JetBrains.Annotations;
 using XmlReader = System.Xml.XmlReader;
 using XmlWriter = System.Xml.XmlWriter;
@@ -38,25 +37,27 @@ namespace ExtendedXmlSerializer
 	[UsedImplicitly]
 	sealed class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		readonly IXmlFactory _factory;
+		readonly IFormatReaderFactory _readers;
+		readonly IFormatWriterFactory _writers;
 		readonly IClassification _classification;
 		readonly ISerializers _serializers;
 
-		public ExtendedXmlSerializer(IXmlFactory factory, IClassification classification, ISerializers serializers,
-		                             IXmlReaderContexts contexts)
+		public ExtendedXmlSerializer(IFormatReaderFactory readers, IFormatWriterFactory writers,
+		                             IClassification classification, ISerializers serializers)
 		{
-			_factory = factory;
+			_readers = readers;
+			_writers = writers;
 			_classification = classification;
 			_serializers = serializers;
 		}
 
 		public void Serialize(XmlWriter writer, object instance)
 			=> _serializers.Get(instance.GetType().GetTypeInfo())
-			               .Write(_factory.Create(writer, instance), instance);
+			               .Write(_writers.Create(writer, instance), instance);
 
 		public object Deserialize(XmlReader reader)
 		{
-			using (var content = _factory.Create(reader))
+			using (var content = _readers.Get(reader))
 			{
 				var classification = _classification.GetClassification(content);
 				var result = _serializers.Get(classification).Get(content);

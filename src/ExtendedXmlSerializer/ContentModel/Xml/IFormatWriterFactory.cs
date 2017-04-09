@@ -23,10 +23,8 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IXmlFactory
+	public interface IFormatWriterFactory
 	{
 		IXmlWriter Create(System.Xml.XmlWriter writer, object instance);
-
-		IXmlReader Create(System.Xml.XmlReader reader);
 	}
 }

@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	interface ITypePartsConverter : IConverter<TypeParts> {}
+	public interface IPrefixTable : IIdentityResolver, IParameterizedSource<TypeInfo, string> {}
 }

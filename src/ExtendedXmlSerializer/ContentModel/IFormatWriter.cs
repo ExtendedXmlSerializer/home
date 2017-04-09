@@ -21,20 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerializer.ContentModel;
+using System;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class NamespaceResolver : IIdentityResolver
+	public interface IFormatWriter<out T> : IFormatWriter, ISource<T> {}
+
+	public interface IFormatWriter : IFormatter<MemberInfo>, IDisposable
 	{
-		readonly XmlNamespaceManager _manager;
+		object Root { get; }
 
-		public NamespaceResolver(XmlNamespaceManager manager)
-		{
-			_manager = manager;
-		}
+		void Start(IIdentity identity);
 
-		public string Get(string parameter) => _manager.LookupNamespace(parameter);
+		void EndCurrent();
+
+		void Content(IIdentity property, string content);
+
+		void Content(string content);
 	}
 }

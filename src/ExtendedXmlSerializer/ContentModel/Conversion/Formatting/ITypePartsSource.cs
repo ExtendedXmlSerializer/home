@@ -21,30 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
-	sealed class Prefixes : TableSource<string, string>, IPrefixes
-	{
-		public static Prefixes Default { get; } = new Prefixes();
-
-		Prefixes() : this(WellKnownNamespaces.Default) {}
-
-		readonly IDictionary<Assembly, IIdentity> _known;
-
-		public Prefixes(IDictionary<Assembly, IIdentity> known)
-			: this(known, known.Values.ToDictionary(x => x.Identifier, x => x.Name)) {}
-
-		public Prefixes(IDictionary<Assembly, IIdentity> known, IDictionary<string, string> names) : base(names)
-		{
-			_known = known;
-		}
-
-		public string Get(TypeInfo parameter) => _known.Get(parameter.Assembly)?.Name;
-	}
+	public interface ITypePartsSource : IParameterizedSource<TypeInfo, TypeParts> {}
 }

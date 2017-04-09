@@ -66,7 +66,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion.Parsing
 
 			var actual = TypePartsParser.Default.Get(GenericType);
 			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
-			Assert.Equal(GenericType.Replace(" ", ""), TypePartsConverter.Default.Format(actual));
+			Assert.Equal(GenericType.Replace(" ", ""), TypePartsFormatter.Default.Get(actual));
 		}
 
 		[Fact]
@@ -85,7 +85,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion.Parsing
 			                                                              }.ToImmutableArray);
 
 			var actual = TypePartsParser.Default.Get(CompoundGenericType);
-			Assert.Equal(CompoundGenericType.Replace(" ", ""), TypePartsConverter.Default.Format(actual));
+			Assert.Equal(CompoundGenericType.Replace(" ", ""), TypePartsFormatter.Default.Get(actual));
 			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
 		}
 

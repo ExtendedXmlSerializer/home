@@ -21,40 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class TypePartsConverter : ConverterBase<TypeParts>, ITypePartsConverter
-	{
-		public static TypePartsConverter Default { get; } = new TypePartsConverter();
-		TypePartsConverter() : this(IdentityFormatter<TypeParts>.Default, TypePartsParser.Default) {}
-
-		readonly IFormatter<TypeParts> _formatter;
-		readonly Parser<TypeParts> _parts;
-		readonly Func<TypeParts, string> _selector;
-
-		public TypePartsConverter(IFormatter<TypeParts> formatter, Parser<TypeParts> parts)
-		{
-			_formatter = formatter;
-			_parts = parts;
-			_selector = Format;
-		}
-
-		public override TypeParts Parse(string data) => _parts.Parse(data);
-
-		public override string Format(TypeParts instance)
-		{
-			var arguments = instance.GetArguments();
-			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;
-			var result = $"{_formatter.Get(instance)}{append}";
-			return result;
-		}
-	}
+	public interface IFormatReaderFactory : IParameterizedSource<System.Xml.XmlReader, IXmlReader> {}
 }

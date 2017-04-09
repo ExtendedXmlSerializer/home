@@ -25,35 +25,24 @@ using System;
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
-	sealed class TypeInfoFormatter : CacheBase<TypeInfo, string>, ITypeFormatter
+	sealed class TypePartsSource : StructureCacheBase<TypeInfo, TypeParts>, ITypePartsSource
 	{
-		readonly static TypePartsConverter Converter = TypePartsConverter.Default;
-
-		readonly IIdentityResolver _writer;
 		readonly IIdentities _identities;
-		readonly ITypePartsConverter _converter;
 
-		public TypeInfoFormatter(IIdentities identities, IIdentityResolver writer) : this(identities, writer, Converter) {}
-
-		public TypeInfoFormatter(IIdentities identities, IIdentityResolver writer, ITypePartsConverter converter)
+		public TypePartsSource(IIdentities identities)
 		{
-			_writer = writer;
 			_identities = identities;
-			_converter = converter;
 		}
 
-		protected override string Create(TypeInfo parameter) => _converter.Format(Name(parameter));
-
-		TypeParts Name(TypeInfo parameter)
+		protected override TypeParts Create(TypeInfo parameter)
 		{
 			var identity = _identities.Get(parameter);
-			var result = new TypeParts(identity.Name, _writer.Get(identity.Identifier),
+			var result = new TypeParts(identity.Name, identity.Identifier,
 			                           parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
 			return result;
 		}
@@ -64,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 			var names = new TypeParts[length];
 			for (var i = 0; i < length; i++)
 			{
-				names[i] = Name(types[i].GetTypeInfo());
+				names[i] = Get(types[i].GetTypeInfo());
 			}
 			var result = new Func<ImmutableArray<TypeParts>>(names.ToImmutableArray);
 			return result;

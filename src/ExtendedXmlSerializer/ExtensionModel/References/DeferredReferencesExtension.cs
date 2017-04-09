@@ -31,9 +31,8 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
-using IContents = ExtendedXmlSerializer.ContentModel.IContents;
+using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
 using XmlReader = System.Xml.XmlReader;
-using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -46,49 +45,45 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			=> parameter.Decorate<IContentsResult, ContentsResult>()
 			            .Decorate<IMemberHandler, Handler>()
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
-			            .Decorate<ContentModel.Content.IContents, DeferredReferenceContents>()
+			            .Decorate<IContents, DeferredReferenceContents>()
 			            .Decorate<ISerializers, DeferredReferenceSerializers>()
 			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>()
-			            .Decorate<IXmlFactory, Factory>();
+			            .Decorate<IFormatReaderFactory, Factory>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		sealed class ContentsResult : IContentsResult
 		{
-			readonly ICommand<IContents> _command;
+			readonly ICommand<ContentModel.IContents> _command;
 			readonly IContentsResult _results;
 
 			[UsedImplicitly]
 			public ContentsResult(IContentsResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
 
-			public ContentsResult(ICommand<IContents> command, IContentsResult results)
+			public ContentsResult(ICommand<ContentModel.IContents> command, IContentsResult results)
 			{
 				_command = command;
 				_results = results;
 			}
 
-			public object Get(IContents parameter)
+			public object Get(ContentModel.IContents parameter)
 			{
 				_command.Execute(parameter);
-
-				var result = _results.Get(parameter);
-				return result;
+				return _results.Get(parameter);
 			}
 		}
 
 		[UsedImplicitly]
-		sealed class Factory : IXmlFactory
+		sealed class Factory : IFormatReaderFactory
 		{
-			readonly IXmlFactory _factory;
+			readonly IFormatReaderFactory _factory;
 
-			public Factory(IXmlFactory factory)
+			public Factory(IFormatReaderFactory factory)
 			{
 				_factory = factory;
 			}
 
-			public IXmlWriter Create(XmlWriter writer, object instance) => _factory.Create(writer, instance);
-
-			public IXmlReader Create(XmlReader reader) => new DeferredReferencesReader(_factory.Create(reader));
+			public IXmlReader Get(XmlReader reader) => new DeferredReferencesReader(_factory.Get(reader));
 		}
 
 		sealed class DeferredReferencesReader : IXmlReader
@@ -143,7 +138,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_handler = handler;
 			}
 
-			public void Handle(IContents contents, IMemberSerializer member)
+			public void Handle(ContentModel.IContents contents, IMemberSerializer member)
 			{
 				ContentsContext.Default.Assign(contents, member.Access);
 				_handler.Handle(contents, member);

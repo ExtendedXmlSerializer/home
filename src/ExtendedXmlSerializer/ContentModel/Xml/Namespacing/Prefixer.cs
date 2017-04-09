@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	sealed class Prefixer : CacheBase<string, string>, IPrefixer
+	class Prefixer : CacheBase<string, string>, IPrefixer
 	{
 		readonly ICollection _store;
 
@@ -38,10 +38,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 			_store = store;
 		}
 
-		protected override string Create(string parameter)
-		{
-			var formattableString = $"ns{(_store.Count + 1).ToString()}";
-			return formattableString;
-		}
+		protected override string Create(string parameter) => $"ns{_store.Count + 1}";
 	}
 }

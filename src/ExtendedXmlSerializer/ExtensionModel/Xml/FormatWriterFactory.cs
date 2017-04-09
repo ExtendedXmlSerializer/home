@@ -21,9 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface INamespaceResolver : IIdentityResolver {}
+	sealed class FormatWriterFactory : IFormatWriterFactory
+	{
+		readonly IFormatWriterFactory _factory;
+		readonly IObjectIdentifiers _identifiers;
+
+		public FormatWriterFactory(IFormatWriterFactory factory, IObjectIdentifiers identifiers)
+		{
+			_factory = factory;
+			_identifiers = identifiers;
+		}
+
+		public IXmlWriter Create(XmlWriter writer, object instance)
+			=> new OptimizedNamespaceXmlWriter(_factory.Create(writer, instance), _identifiers.Get(instance));
+	}
 }
