@@ -23,11 +23,11 @@
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class ReaderAdapter<T> : IReader<T>
+	sealed class ContentReaderAdapter<T> : IContentReader<T>
 	{
-		readonly IReader _serializer;
+		readonly IContentReader _serializer;
 
-		public ReaderAdapter(IReader serializer)
+		public ContentReaderAdapter(IContentReader serializer)
 		{
 			_serializer = serializer;
 		}

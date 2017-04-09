@@ -33,13 +33,13 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		ItemTypeProperty() : this(new FrameworkIdentity("item")) {}
 
 		public ItemTypeProperty(IIdentity identity)
-			: base(new Reader(new TypedParsingReader(identity)), new TypedFormattingWriter(identity), identity) {}
+			: base(new ContentReader(new TypedParsingContentReader(identity)), new TypedFormattingWriter(identity), identity) {}
 
-		sealed class Reader : IReader<TypeInfo>
+		sealed class ContentReader : IContentReader<TypeInfo>
 		{
-			readonly IReader<TypeInfo> _reader;
+			readonly IContentReader<TypeInfo> _reader;
 
-			public Reader(IReader<TypeInfo> reader)
+			public ContentReader(IContentReader<TypeInfo> reader)
 			{
 				_reader = reader;
 			}

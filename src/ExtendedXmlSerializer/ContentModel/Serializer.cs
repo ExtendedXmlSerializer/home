@@ -27,25 +27,25 @@ namespace ExtendedXmlSerializer.ContentModel
 {
 	class Serializer : ISerializer
 	{
-		readonly IReader _reader;
+		readonly IContentReader _contentReader;
 		readonly IWriter _writer;
 
-		public Serializer(IReader reader, IWriter writer)
+		public Serializer(IContentReader reader, IWriter writer)
 		{
-			_reader = reader;
+			_contentReader = reader;
 			_writer = writer;
 		}
 
 		public void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
-		public object Get(IContentAdapter reader) => _reader.Get(reader);
+		public object Get(IContentAdapter reader) => _contentReader.Get(reader);
 	}
 
 	class Serializer<T> : ISerializer<T>
 	{
-		readonly IReader<T> _reader;
+		readonly IContentReader<T> _reader;
 		readonly IWriter<T> _writer;
 
-		public Serializer(IReader<T> reader, IWriter<T> writer)
+		public Serializer(IContentReader<T> reader, IWriter<T> writer)
 		{
 			_reader = reader;
 			_writer = writer;

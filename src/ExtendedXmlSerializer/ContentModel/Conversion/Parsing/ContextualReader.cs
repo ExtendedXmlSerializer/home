@@ -25,12 +25,12 @@ using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class ContextualReader<T> : IReader<T>
+	sealed class ContextualContentReader<T> : IContentReader<T>
 	{
 		readonly Func<IContentAdapter, T> _context;
 		readonly IIdentity _identity;
 
-		public ContextualReader(Func<IContentAdapter, T> context, IIdentity identity)
+		public ContextualContentReader(Func<IContentAdapter, T> context, IIdentity identity)
 		{
 			_context = context;
 			_identity = identity;

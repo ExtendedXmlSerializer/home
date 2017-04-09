@@ -25,11 +25,11 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class GenericReaderAdapter<T> : IReader
+	sealed class GenericReaderAdapter<T> : IContentReader
 	{
-		readonly IReader<T> _serializer;
+		readonly IContentReader<T> _serializer;
 
-		public GenericReaderAdapter(IReader<T> serializer)
+		public GenericReaderAdapter(IContentReader<T> serializer)
 		{
 			_serializer = serializer;
 		}

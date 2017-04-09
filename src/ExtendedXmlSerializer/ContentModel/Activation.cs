@@ -36,9 +36,9 @@ namespace ExtendedXmlSerializer.ContentModel
 			_activators = activators;
 		}
 
-		public IReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()).Get);
+		public IContentReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()).Get);
 
-		sealed class Activator : IReader
+		sealed class Activator : IContentReader
 		{
 			readonly Func<object> _activate;
 

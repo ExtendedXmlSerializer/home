@@ -26,9 +26,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class ParsingReader<T> : DecoratedReader<T>
+	sealed class ParsingContentReader<T> : DecoratedContentReader<T>
 	{
-		public ParsingReader(IParser<T> formatter, IIdentity identity)
+		public ParsingContentReader(IParser<T> formatter, IIdentity identity)
 			: base(new ParsedContentReader<T>(formatter.Accept, identity)) {}
 	}
 }

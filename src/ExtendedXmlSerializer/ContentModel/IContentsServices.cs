@@ -30,6 +30,6 @@ namespace ExtendedXmlSerializer.ContentModel
 	public interface IContentsServices : IListContentsSpecification, IMemberHandler, ICollectionContentsHandler,
 	                                     IContentAdapterFormatter
 	{
-		IReader Create(TypeInfo classification, IContentHandler handler);
+		IContentReader Create(TypeInfo classification, IContentHandler handler);
 	}
 }

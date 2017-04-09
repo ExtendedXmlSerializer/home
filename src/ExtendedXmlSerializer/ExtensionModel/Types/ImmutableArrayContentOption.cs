@@ -51,18 +51,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 			=> new Serializer(CreateReader(itemType, _contents, item), new EnumerableWriter(_enumerators, item));
 
-		static IReader CreateReader(TypeInfo itemType, IContentsServices contents, IReader item)
-			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), contents, item);
+		static IContentReader CreateReader(TypeInfo itemType, IContentsServices contents, IContentReader item)
+			=> (IContentReader) Activator.CreateInstance(typeof(ContentReader<>).MakeGenericType(itemType.AsType()), contents, item);
 
-		sealed class Reader<T> : IReader
+		sealed class ContentReader<T> : IContentReader
 		{
-			readonly IReader<Collection<T>> _reader;
+			readonly IContentReader<Collection<T>> _reader;
 
 			[UsedImplicitly]
-			public Reader(IContentsServices services, IReader item)
+			public ContentReader(IContentsServices services, IContentReader item)
 				: this(services.CreateContents<Collection<T>>(new ConditionalContentHandler(services, new CollectionContentHandler(item, services)))) {}
 
-			Reader(IReader<Collection<T>> reader)
+			ContentReader(IContentReader<Collection<T>> reader)
 			{
 				_reader = reader;
 			}

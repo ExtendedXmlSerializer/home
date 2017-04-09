@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_assignment = assignment;
 		}
 
-		public void Handle(IListContentsAdapter contents, IReader reader)
+		public void Handle(IListContentsAdapter contents, IContentReader reader)
 			=> _assignment.Assign(contents, reader.Get(contents.Get()));
 	}
 }

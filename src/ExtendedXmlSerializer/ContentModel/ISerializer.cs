@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface ISerializer : IReader, IWriter {}
+	public interface ISerializer : IContentReader, IWriter {}
 
-	public interface ISerializer<T> : IReader<T>, IWriter<T> {}
+	public interface ISerializer<T> : IContentReader<T>, IWriter<T> {}
 }

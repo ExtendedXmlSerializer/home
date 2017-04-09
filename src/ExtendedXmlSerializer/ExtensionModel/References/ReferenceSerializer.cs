@@ -30,13 +30,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	sealed class ReferenceSerializer : ISerializer
 	{
 		readonly IReferenceEncounters _encounters;
-		readonly IReader _reader;
+		readonly IContentReader _contentReader;
 		readonly IWriter _writer;
 
-		public ReferenceSerializer(IReferenceEncounters encounters, IReader reader, IWriter writer)
+		public ReferenceSerializer(IReferenceEncounters encounters, IContentReader reader, IWriter writer)
 		{
 			_encounters = encounters;
-			_reader = reader;
+			_contentReader = reader;
 			_writer = writer;
 		}
 
@@ -71,6 +71,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_writer.Write(writer, instance);
 		}
 
-		public object Get(IContentAdapter parameter) => _reader.Get(parameter);
+		public object Get(IContentAdapter parameter) => _contentReader.Get(parameter);
 	}
 }

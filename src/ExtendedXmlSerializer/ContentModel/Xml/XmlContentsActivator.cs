@@ -25,10 +25,10 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class XmlContentsActivator : IContentsActivator
 	{
-		readonly IReader _activator;
+		readonly IContentReader _activator;
 		readonly IXmlContentsActivator _contents;
 
-		public XmlContentsActivator(IReader activator, IXmlContentsActivator contents)
+		public XmlContentsActivator(IContentReader activator, IXmlContentsActivator contents)
 		{
 			_activator = activator;
 			_contents = contents;

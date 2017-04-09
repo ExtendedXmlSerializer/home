@@ -55,10 +55,10 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public string Get(IContentAdapter parameter) => _formatter.Get(parameter);
 
-		public IReader Create(TypeInfo classification, IContentHandler handler)
+		public IContentReader Create(TypeInfo classification, IContentHandler handler)
 			=> new ContentsReader(_activation.Get(classification), _handler.Get(handler), _results);
 
 		public void Handle(IContentsAdapter contents, IMemberSerializer member) => _member.Handle(contents, member);
-		public void Handle(IListContentsAdapter contents, IReader reader) => _collection.Handle(contents, reader);
+		public void Handle(IListContentsAdapter contents, IContentReader reader) => _collection.Handle(contents, reader);
 	}
 }

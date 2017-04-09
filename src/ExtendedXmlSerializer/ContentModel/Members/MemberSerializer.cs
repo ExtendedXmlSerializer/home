@@ -27,21 +27,21 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberSerializer : IMemberSerializer
 	{
-		readonly IReader _reader;
+		readonly IContentReader _contentReader;
 		readonly IWriter _writer;
 
-		public MemberSerializer(IMember profile, IMemberAccess access, IReader reader, IWriter writer)
+		public MemberSerializer(IMember profile, IMemberAccess access, IContentReader reader, IWriter writer)
 		{
 			Profile = profile;
 			Access = access;
-			_reader = reader;
+			_contentReader = reader;
 			_writer = writer;
 		}
 
 		public IMember Profile { get; }
 		public IMemberAccess Access { get; }
 
-		public object Get(IContentAdapter parameter) => _reader.Get(parameter);
+		public object Get(IContentAdapter parameter) => _contentReader.Get(parameter);
 
 		public void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
 	}
