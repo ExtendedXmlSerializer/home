@@ -24,7 +24,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public Identifier? Get(object parameter) => _store.GetStructure(parameter);
 	}
 
-	sealed class ReferenceEncounters : ReferenceCacheBase<IXmlWriter, IEncounters>, IReferenceEncounters
+	sealed class ReferenceEncounters : ReferenceCacheBase<IFormatWriter, IEncounters>, IReferenceEncounters
 	{
 		readonly IRootReferences _references;
 		readonly IEntities _entities;
@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_generator = generator;
 		}
 
-		protected override IEncounters Create(IXmlWriter parameter)
+		protected override IEncounters Create(IFormatWriter parameter)
 			=> new Encounters(_references.Get(parameter).ToDictionary(x => x, Get));
 
 		Identifier Get(object parameter)

@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class PropertyMemberSerializer : IMemberSerializer
@@ -36,7 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 
-		public void Write(IXmlWriter writer, object instance) => _serializer.Write(writer, instance);
+		public void Write(IFormatWriter writer, object instance) => _serializer.Write(writer, instance);
 
 		public IMember Profile => _serializer.Profile;
 

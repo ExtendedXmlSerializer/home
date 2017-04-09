@@ -142,7 +142,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				}
 
 				uint Version => (uint) _migrations.Length;
-				public void Write(IXmlWriter writer, object instance) => _property.Write(writer, Version);
+				public void Write(IFormatWriter writer, object instance) => _property.Write(writer, Version);
 			}
 
 			sealed class Serializer : ISerializer
@@ -163,7 +163,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					return result;
 				}
 
-				public void Write(IXmlWriter writer, object instance)
+				public void Write(IFormatWriter writer, object instance)
 				{
 					_migrator.Write(writer, instance);
 					_serializer.Write(writer, instance);

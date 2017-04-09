@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
@@ -38,7 +37,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_item = item;
 		}
 
-		public override void Write(IXmlWriter writer, IEnumerable instance)
+		public override void Write(IFormatWriter writer, IEnumerable instance)
 		{
 			var iterator = _enumerator.Get(instance);
 			while (iterator.MoveNext())

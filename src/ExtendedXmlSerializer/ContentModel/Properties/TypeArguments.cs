@@ -26,7 +26,6 @@ using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
@@ -58,10 +57,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 			return result;
 		}
 
-		public string Get(IXmlWriter writer, ImmutableArray<Type>? instance)
+		public string Get(IFormatWriter writer, ImmutableArray<Type>? instance)
 			=> string.Join(",", Pack(writer, instance.GetValueOrDefault()));
 
-		static string[] Pack(IXmlWriter writer, ImmutableArray<Type> arguments)
+		static string[] Pack(IFormatWriter writer, ImmutableArray<Type> arguments)
 		{
 			var length = arguments.Length;
 			var result = new string[length];

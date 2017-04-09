@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,25 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel
 {
 	abstract class EnclosureBase : DecoratedWriter
 	{
 		protected EnclosureBase(IWriter body) : base(body) {}
 
-		public sealed override void Write(IXmlWriter writer, object instance)
+		public sealed override void Write(IFormatWriter writer, object instance)
 		{
 			Start(writer, instance);
 			Body(writer, instance);
 			Finish(writer, instance);
 		}
 
-		protected abstract void Start(IXmlWriter writer, object instance);
+		protected abstract void Start(IFormatWriter writer, object instance);
 
-		protected void Body(IXmlWriter writer, object instance) => base.Write(writer, instance);
+		protected void Body(IFormatWriter writer, object instance) => base.Write(writer, instance);
 
-		protected abstract void Finish(IXmlWriter writer, object instance);
+		protected abstract void Finish(IFormatWriter writer, object instance);
 	}
 }

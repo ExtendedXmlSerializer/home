@@ -22,14 +22,14 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class RootReferences : StructureCacheBase<IXmlWriter, ImmutableArray<object>>, IRootReferences
+	sealed class RootReferences : StructureCacheBase<IFormatWriter, ImmutableArray<object>>, IRootReferences
 	{
 		readonly ITypeMembers _members;
 		readonly IEnumeratorStore _enumerators;
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_accessors = accessors;
 		}
 
-		protected override ImmutableArray<object> Create(IXmlWriter parameter)
+		protected override ImmutableArray<object> Create(IFormatWriter parameter)
 			=> new ReferenceWalker(_members, _enumerators, _accessors, parameter.Root).Get();
 	}
 }

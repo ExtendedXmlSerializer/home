@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IRootReferences : IParameterizedSource<IXmlWriter, ImmutableArray<object>> {}
+	public interface IRootReferences : IParameterizedSource<IFormatWriter, ImmutableArray<object>> {}
 }

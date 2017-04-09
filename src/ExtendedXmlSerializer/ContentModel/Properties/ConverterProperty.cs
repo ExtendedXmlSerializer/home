@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 
 		public T Get(IFormatReader parameter) => _property.Get(parameter);
 
-		public void Write(IXmlWriter writer, T instance) => _property.Write(writer, instance);
+		public void Write(IFormatWriter writer, T instance) => _property.Write(writer, instance);
 
 		public string Identifier => _property.Identifier;
 

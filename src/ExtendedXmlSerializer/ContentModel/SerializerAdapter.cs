@@ -21,8 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class SerializerAdapter<T> : ISerializer<T>
@@ -36,6 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public T Get(IFormatReader parameter) => (T) _serializer.Get(parameter);
 
-		public void Write(IXmlWriter writer, T instance) => _serializer.Write(writer, instance);
+		public void Write(IFormatWriter writer, T instance) => _serializer.Write(writer, instance);
 	}
 }

@@ -22,21 +22,20 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
 	sealed class ContextualWriter<T> : IWriter<T>
 	{
-		readonly Func<IXmlWriter, T, string> _formatter;
+		readonly Func<IFormatWriter, T, string> _formatter;
 		readonly IIdentity _identity;
 
-		public ContextualWriter(Func<IXmlWriter, T, string> formatter, IIdentity identity)
+		public ContextualWriter(Func<IFormatWriter, T, string> formatter, IIdentity identity)
 		{
 			_formatter = formatter;
 			_identity = identity;
 		}
 
-		public void Write(IXmlWriter writer, T instance) => writer.Content(_identity, _formatter(writer, instance));
+		public void Write(IFormatWriter writer, T instance) => writer.Content(_identity, _formatter(writer, instance));
 	}
 }

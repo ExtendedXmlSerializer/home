@@ -24,7 +24,6 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
@@ -48,7 +47,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			_property = property;
 		}
 
-		public override void Write(IXmlWriter writer, object instance)
+		public override void Write(IFormatWriter writer, object instance)
 		{
 			var type = instance.GetType();
 			if (_type.IsSatisfiedBy(type))

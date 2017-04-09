@@ -21,14 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel
 {
 	abstract class WriterBase<T> : IWriter
 	{
-		void IWriter.Write(IXmlWriter writer, object instance) => Write(writer, (T) instance);
+		void IWriter.Write(IFormatWriter writer, object instance) => Write(writer, (T) instance);
 
-		public abstract void Write(IXmlWriter writer, T instance);
+		public abstract void Write(IFormatWriter writer, T instance);
 	}
 }

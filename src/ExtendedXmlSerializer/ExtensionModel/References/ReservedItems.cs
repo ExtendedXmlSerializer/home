@@ -21,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReservedItems : ReferenceCache<IXmlWriter, ITrackedLists>, IReservedItems
+	sealed class ReservedItems : ReferenceCache<IFormatWriter, ITrackedLists>, IReservedItems
 	{
 		public static ReservedItems Default { get; } = new ReservedItems();
 		ReservedItems() : base(_ => new TrackedLists()) {}

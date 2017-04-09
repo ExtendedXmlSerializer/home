@@ -25,7 +25,6 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
@@ -64,7 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter) => _container.Get(parameter);
 
-			public void Write(IXmlWriter writer, object instance)
+			public void Write(IFormatWriter writer, object instance)
 			{
 				var typeInfo = instance.GetType().GetTypeInfo();
 				var readOnlyList = _references.Get(writer);

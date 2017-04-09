@@ -24,7 +24,6 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -50,7 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 
-			public void Write(IXmlWriter writer, object instance)
+			public void Write(IFormatWriter writer, object instance)
 			{
 				try
 				{

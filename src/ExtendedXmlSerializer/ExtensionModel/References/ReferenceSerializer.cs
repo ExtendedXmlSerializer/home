@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_writer = writer;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
+		public void Write(IFormatWriter writer, object instance)
 		{
 			var encounters = _encounters.Get(writer);
 			var identifier = encounters.Get(instance);

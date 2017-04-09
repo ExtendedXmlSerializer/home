@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
 	public interface IFormattedContent<in T>
 	{
-		string Get(IXmlWriter writer, T instance);
+		string Get(IFormatWriter writer, T instance);
 	}
 }

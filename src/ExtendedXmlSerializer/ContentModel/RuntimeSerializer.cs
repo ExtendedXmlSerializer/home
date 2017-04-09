@@ -23,7 +23,6 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			_classification = classification;
 		}
 
-		public void Write(IXmlWriter writer, object instance)
+		public void Write(IFormatWriter writer, object instance)
 		{
 			var typeInfo = instance.GetType().GetTypeInfo();
 			var serializer = _contents.Get(typeInfo);

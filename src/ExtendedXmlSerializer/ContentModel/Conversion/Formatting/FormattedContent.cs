@@ -22,20 +22,19 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
 	sealed class FormattedContent<T> : IFormattedContent<T>
 	{
-		readonly Func<IXmlWriter, IFormatter<T>> _source;
+		readonly Func<IFormatWriter, IFormatter<T>> _source;
 
-		public FormattedContent(Func<IXmlWriter, IFormatter<T>> source)
+		public FormattedContent(Func<IFormatWriter, IFormatter<T>> source)
 		{
 			_source = source;
 		}
 
-		public string Get(IXmlWriter writer, T instance) => _source(writer).Get(instance);
+		public string Get(IFormatWriter writer, T instance) => _source(writer).Get(instance);
 	}
 }

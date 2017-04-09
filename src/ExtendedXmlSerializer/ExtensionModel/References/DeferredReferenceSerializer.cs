@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
@@ -45,7 +44,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 
-		public void Write(IXmlWriter writer, object instance)
+		public void Write(IFormatWriter writer, object instance)
 		{
 			var lists = _reserved.Get(writer);
 			foreach (var o in Yield(instance))
