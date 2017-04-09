@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReferenceMaps : ReferenceCache<IReader, IReferenceMap>, IReferenceMaps
+	sealed class ReferenceMaps : ReferenceCache<IFormatReader, IReferenceMap>, IReferenceMaps
 	{
 		public static ReferenceMaps Default { get; } = new ReferenceMaps();
 		ReferenceMaps() : base(_ => new ReferenceMap()) {}

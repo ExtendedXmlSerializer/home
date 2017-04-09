@@ -32,7 +32,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	sealed class TypeArguments : IParameterizedSource<IReader, ImmutableArray<Type>?>,
+	sealed class TypeArguments : IParameterizedSource<IFormatReader, ImmutableArray<Type>?>,
 	                             IFormattedContent<ImmutableArray<Type>?>
 	{
 		public static TypeArguments Default { get; } = new TypeArguments();
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 			_list = list;
 		}
 
-		public ImmutableArray<Type>? Get(IReader parameter)
+		public ImmutableArray<Type>? Get(IFormatReader parameter)
 		{
 			var parts = _list.Parse(parameter.Content());
 			var length = parts.Length;

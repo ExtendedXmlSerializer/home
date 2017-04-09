@@ -25,11 +25,11 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public class SetContentCommand : ICommand<IReader>
+	public class SetContentCommand : ICommand<IFormatReader>
 	{
 		public static SetContentCommand Default { get; } = new SetContentCommand();
 		SetContentCommand() {}
 
-		public void Execute(IReader parameter) => parameter.Set();
+		public void Execute(IFormatReader parameter) => parameter.Set();
 	}
 }

@@ -45,6 +45,6 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public void Write(IXmlWriter writer, T instance) => writer.Content(_serialize(instance));
 
-		public T Get(IReader reader) => _deserialize(reader.Content());
+		public T Get(IFormatReader reader) => _deserialize(reader.Content());
 	}
 }

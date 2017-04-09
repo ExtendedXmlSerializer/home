@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public IList List { get; }
 
-		public IReader Get() => _reader;
+		public IFormatReader Get() => _reader;
 
 		public bool MoveNext()
 		{

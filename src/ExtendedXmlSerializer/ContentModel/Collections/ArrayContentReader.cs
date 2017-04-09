@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			_reader = reader;
 		}
 
-		public object Get(IReader parameter)
+		public object Get(IFormatReader parameter)
 		{
 			var elementType = _classification.GetClassification(parameter).GetElementType();
 			var result = _reader.Get(parameter).ToArray(elementType);

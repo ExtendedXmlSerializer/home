@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 			_property = property;
 		}
 
-		public T Get(IReader parameter) => _property.Get(parameter);
+		public T Get(IFormatReader parameter) => _property.Get(parameter);
 
 		public void Write(IXmlWriter writer, T instance) => _property.Write(writer, instance);
 

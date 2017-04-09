@@ -46,14 +46,14 @@ namespace ExtendedXmlSerializer.ContentModel
 			_types = types;
 		}
 
-		public TypeInfo Get(IReader parameter) => FromAttributes(parameter) ?? FromIdentity(parameter);
+		public TypeInfo Get(IFormatReader parameter) => FromAttributes(parameter) ?? FromIdentity(parameter);
 
-		TypeInfo FromAttributes(IReader parameter)
+		TypeInfo FromAttributes(IFormatReader parameter)
 			=> _specification.IsSatisfiedBy(parameter)
 				? ExplicitTypeProperty.Default.Get(parameter) ?? ItemTypeProperty.Default.Get(parameter) ?? Generic(parameter)
 				: null;
 
-		TypeInfo Generic(IReader parameter)
+		TypeInfo Generic(IFormatReader parameter)
 		{
 			var arguments = ArgumentsTypeProperty.Default.Get(parameter);
 			var result = arguments.HasValue
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			return result;
 		}
 
-		TypeInfo Generic(IReader parameter, ImmutableArray<Type> arguments)
+		TypeInfo Generic(IFormatReader parameter, ImmutableArray<Type> arguments)
 		{
 			var candidates = _generic.Get(_identities.Get(parameter.Name, parameter.Identifier));
 			var length = arguments.Length;
@@ -77,6 +77,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			return null;
 		}
 
-		TypeInfo FromIdentity(IReader parameter) => _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
+		TypeInfo FromIdentity(IFormatReader parameter) => _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
 	}
 }

@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 				_reader = reader;
 			}
 
-			public TypeInfo Get(IReader parameter) => _reader.Get(parameter)?.MakeArrayType().GetTypeInfo();
+			public TypeInfo Get(IFormatReader parameter) => _reader.Get(parameter)?.MakeArrayType().GetTypeInfo();
 		}
 	}
 }

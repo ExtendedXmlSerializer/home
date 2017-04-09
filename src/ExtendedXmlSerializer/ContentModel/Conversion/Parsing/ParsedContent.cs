@@ -26,15 +26,15 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class ParsedContent<T> : IParameterizedSource<IReader, T>
+	sealed class ParsedContent<T> : IParameterizedSource<IFormatReader, T>
 	{
-		readonly Func<IReader, IParser<T>> _source;
+		readonly Func<IFormatReader, IParser<T>> _source;
 
-		public ParsedContent(Func<IReader, IParser<T>> source)
+		public ParsedContent(Func<IFormatReader, IParser<T>> source)
 		{
 			_source = source;
 		}
 
-		public T Get(IReader parameter) => _source(parameter).Get(parameter.Content());
+		public T Get(IFormatReader parameter) => _source(parameter).Get(parameter.Content());
 	}
 }

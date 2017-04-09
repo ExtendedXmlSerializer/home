@@ -52,6 +52,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			serializer.Write(writer, instance);
 		}
 
-		public object Get(IReader reader) => _contents.Get(_classification.Get(reader)).Get(reader);
+		public object Get(IFormatReader reader) => _contents.Get(_classification.Get(reader)).Get(reader);
 	}
 }

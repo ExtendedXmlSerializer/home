@@ -31,6 +31,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static ReaderFormatter Default { get; } = new ReaderFormatter();
 		ReaderFormatter() {}
 
-		public string Get(IReader parameter) => ((IXmlReader) parameter).Get().Name;
+		public string Get(IFormatReader parameter) => ((IXmlReader) parameter).Get().Name;
 	}
 }

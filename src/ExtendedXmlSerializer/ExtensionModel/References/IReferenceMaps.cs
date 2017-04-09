@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IReferenceMaps : IParameterizedSource<IReader, IReferenceMap> {}
+	public interface IReferenceMaps : IParameterizedSource<IFormatReader, IReferenceMap> {}
 }

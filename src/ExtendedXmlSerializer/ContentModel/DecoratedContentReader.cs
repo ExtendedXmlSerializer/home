@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			_contentReader = reader;
 		}
 
-		public virtual object Get(IReader parameter) => _contentReader.Get(parameter);
+		public virtual object Get(IFormatReader parameter) => _contentReader.Get(parameter);
 	}
 
 	class DecoratedContentReader<T> : IContentReader<T>
@@ -44,6 +44,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			_reader = reader;
 		}
 
-		public T Get(IReader parameter) => _reader.Get(parameter);
+		public T Get(IFormatReader parameter) => _reader.Get(parameter);
 	}
 }

@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public string Get(object parameter) => _converter.Format(_member.Access.Get(parameter));
 
-		public object Get(IReader parameter)
+		public object Get(IFormatReader parameter)
 		{
 			var contains = parameter.IsSatisfiedBy(_member.Profile);
 			if (contains)
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			return null;
 		}
 
-		public object Reference(IReader parameter)
+		public object Reference(IFormatReader parameter)
 			=> parameter.IsSatisfiedBy(EntityIdentity) ? _converter.Parse(parameter.Content()) : null;
 	}
 }

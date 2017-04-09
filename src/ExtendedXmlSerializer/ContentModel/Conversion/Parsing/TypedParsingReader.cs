@@ -36,6 +36,6 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 			_reader = reader;
 		}
 
-		public TypeInfo Get(IReader parameter) => _reader.Get(parameter)?.AsValid<TypeInfo>();
+		public TypeInfo Get(IFormatReader parameter) => _reader.Get(parameter)?.AsValid<TypeInfo>();
 	}
 }

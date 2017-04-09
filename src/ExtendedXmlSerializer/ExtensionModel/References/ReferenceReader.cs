@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_classification = classification;
 		}
 
-		ReferenceIdentity? GetReference(IReader parameter)
+		ReferenceIdentity? GetReference(IFormatReader parameter)
 		{
 			var identity = ReferenceIdentity.Get(parameter);
 			if (identity.HasValue)
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			return null;
 		}
 
-		public override object Get(IReader parameter)
+		public override object Get(IFormatReader parameter)
 		{
 			var identity = GetReference(parameter);
 			if (identity != null)

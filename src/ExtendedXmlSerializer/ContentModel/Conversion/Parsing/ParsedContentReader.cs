@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
 	sealed class ParsedContentReader<T> : DecoratedContentReader<T>
 	{
-		public ParsedContentReader(Func<IReader, IParser<T>> context, IIdentity identity)
+		public ParsedContentReader(Func<IFormatReader, IParser<T>> context, IIdentity identity)
 			: base(new ContextualContentReader<T>(new ParsedContent<T>(context).Get, identity)) {}
 	}
 }

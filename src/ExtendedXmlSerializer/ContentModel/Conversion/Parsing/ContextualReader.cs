@@ -27,15 +27,15 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
 	sealed class ContextualContentReader<T> : IContentReader<T>
 	{
-		readonly Func<IReader, T> _context;
+		readonly Func<IFormatReader, T> _context;
 		readonly IIdentity _identity;
 
-		public ContextualContentReader(Func<IReader, T> context, IIdentity identity)
+		public ContextualContentReader(Func<IFormatReader, T> context, IIdentity identity)
 		{
 			_context = context;
 			_identity = identity;
 		}
 
-		public T Get(IReader parameter) => parameter.IsSatisfiedBy(_identity) ? _context(parameter) : default(T);
+		public T Get(IFormatReader parameter) => parameter.IsSatisfiedBy(_identity) ? _context(parameter) : default(T);
 	}
 }

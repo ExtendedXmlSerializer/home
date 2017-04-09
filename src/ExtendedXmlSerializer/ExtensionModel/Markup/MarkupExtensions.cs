@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensions : ReferenceCacheBase<IReader, IMarkupExtensionPartsEvaluator>,
+	sealed class MarkupExtensions : ReferenceCacheBase<IFormatReader, IMarkupExtensionPartsEvaluator>,
 	                                IMarkupExtensions
 	{
 		readonly IEvaluator _evaluator;
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_provider = provider;
 		}
 
-		protected override IMarkupExtensionPartsEvaluator Create(IReader parameter)
+		protected override IMarkupExtensionPartsEvaluator Create(IFormatReader parameter)
 			=> new MarkupExtensionPartsEvaluator(parameter, _evaluator, _members, _accessors, _constructors, _provider,
 			                                     parameter);
 	}

@@ -31,6 +31,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static FormattedContentSpecification Default { get; } = new FormattedContentSpecification();
 		FormattedContentSpecification() {}
 
-		public bool IsSatisfiedBy(IReader parameter) => ((IXmlReader) parameter).Get().HasAttributes;
+		public bool IsSatisfiedBy(IFormatReader parameter) => ((IXmlReader) parameter).Get().HasAttributes;
 	}
 }

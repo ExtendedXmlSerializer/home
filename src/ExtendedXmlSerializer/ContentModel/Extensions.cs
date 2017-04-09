@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel
 		public static IContentReader<T> CreateContents<T>(this IContentsServices @this, IContentHandler parameter)
 			=> new ContentReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
 
-		public static TypeInfo GetClassification(this IClassification @this, IReader parameter,
+		public static TypeInfo GetClassification(this IClassification @this, IFormatReader parameter,
 		                                         TypeInfo defaultValue = null)
 		{
 			var result = @this.Get(parameter) ?? defaultValue;

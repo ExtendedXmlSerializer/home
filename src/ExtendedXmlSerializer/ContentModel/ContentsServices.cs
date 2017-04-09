@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public bool IsSatisfiedBy(IContents parameter) => _specification.IsSatisfiedBy(parameter);
 
-		public string Get(IReader parameter) => _formatter.Get(parameter);
+		public string Get(IFormatReader parameter) => _formatter.Get(parameter);
 
 		public IContentReader Create(TypeInfo classification, IContentHandler handler)
 			=> new ContentsReader(_activation.Get(classification), _handler.Get(handler), _results);

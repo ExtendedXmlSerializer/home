@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			_separator = separator;
 		}
 
-		public string Get(IReader parameter)
+		public string Get(IFormatReader parameter)
 			=>
 				parameter.Name.Contains(_separator)
 					? IdentityFormatter.Default.Get(parameter.Identifier == string.Empty ? parameter.Get(parameter) : parameter)

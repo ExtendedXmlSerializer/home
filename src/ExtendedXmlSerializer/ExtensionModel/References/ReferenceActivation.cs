@@ -60,14 +60,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_maps = maps;
 			}
 
-			static ReferenceIdentity? Identity(IReader reader)
+			static ReferenceIdentity? Identity(IFormatReader reader)
 			{
 				var identity = IdentityProperty.Default.Get(reader);
 				var result = identity.HasValue ? new ReferenceIdentity(identity.Value) : (ReferenceIdentity?) null;
 				return result;
 			}
 
-			ReferenceIdentity? Entity(IReader reader, object instance)
+			ReferenceIdentity? Entity(IFormatReader reader, object instance)
 			{
 				var typeInfo = instance.GetType().GetTypeInfo();
 				var entity = _entities.Get(typeInfo)?.Get(reader);
@@ -78,7 +78,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			}
 
 
-			public object Get(IReader parameter)
+			public object Get(IFormatReader parameter)
 			{
 				var declared = Identity(parameter);
 				var result = _activator.Get(parameter);

@@ -32,6 +32,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			_serializer = serializer;
 		}
 
-		public T Get(IReader parameter) => (T) _serializer.Get(parameter);
+		public T Get(IFormatReader parameter) => (T) _serializer.Get(parameter);
 	}
 }
