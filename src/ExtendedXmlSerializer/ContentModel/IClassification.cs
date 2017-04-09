@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IClassification : IParameterizedSource<IContentAdapter, TypeInfo> {}
+	public interface IClassification : IParameterizedSource<IReader, TypeInfo> {}
 }

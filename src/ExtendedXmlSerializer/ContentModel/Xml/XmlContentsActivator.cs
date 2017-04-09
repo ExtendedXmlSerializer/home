@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			_contents = contents;
 		}
 
-		public IContentsAdapter Get(IContentAdapter parameter)
+		public IContentsAdapter Get(IReader parameter)
 		{
 			var reader = (IXmlReader) parameter;
 			var xml = reader.Get();

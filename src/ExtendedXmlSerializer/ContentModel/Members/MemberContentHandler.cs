@@ -29,10 +29,10 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly IMemberSerialization _serialization;
 		readonly IMemberHandler _handler;
-		readonly IContentAdapterFormatter _formatter;
+		readonly IReaderFormatter _formatter;
 
 		public MemberContentHandler(IMemberSerialization serialization, IMemberHandler handler,
-		                            IContentAdapterFormatter formatter)
+		                            IReaderFormatter formatter)
 		{
 			_serialization = serialization;
 			_handler = handler;

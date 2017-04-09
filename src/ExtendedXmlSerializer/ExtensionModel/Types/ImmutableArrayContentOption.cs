@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 				_reader = reader;
 			}
 
-			public object Get(IContentAdapter parameter) => _reader.Get(parameter).ToImmutableArray();
+			public object Get(IReader parameter) => _reader.Get(parameter).ToImmutableArray();
 		}
 	}
 }

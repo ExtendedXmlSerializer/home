@@ -74,7 +74,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					_custom = custom;
 				}
 
-				public object Get(IContentAdapter parameter)
+				public object Get(IReader parameter)
 					=> _custom.Deserialize(XElement.Load(parameter.AsValid<IXmlReader>().Get()));
 
 				public void Write(IXmlWriter writer, object instance) => _custom.Serializer(writer.Get(), instance);

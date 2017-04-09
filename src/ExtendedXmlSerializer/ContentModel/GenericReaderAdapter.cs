@@ -34,6 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			_serializer = serializer;
 		}
 
-		object IParameterizedSource<IContentAdapter, object>.Get(IContentAdapter parameter) => _serializer.Get(parameter);
+		object IParameterizedSource<IReader, object>.Get(IReader parameter) => _serializer.Get(parameter);
 	}
 }

@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.ContentModel
 		}
 
 		public void Write(IXmlWriter writer, object instance) => _writer.Write(writer, instance);
-		public object Get(IContentAdapter reader) => _contentReader.Get(reader);
+		public object Get(IReader reader) => _contentReader.Get(reader);
 	}
 
 	class Serializer<T> : ISerializer<T>
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			_writer = writer;
 		}
 
-		public T Get(IContentAdapter parameter) => _reader.Get(parameter);
+		public T Get(IReader parameter) => _reader.Get(parameter);
 
 		public void Write(IXmlWriter writer, T instance) => _writer.Write(writer, instance);
 	}

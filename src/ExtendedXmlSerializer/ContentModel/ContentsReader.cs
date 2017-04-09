@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			_result = result;
 		}
 
-		public object Get(IContentAdapter parameter)
+		public object Get(IReader parameter)
 		{
 			var adapter = _activator.Get(parameter);
 			while (adapter?.MoveNext() ?? false)

@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public object Current { get; }
 
-		public IContentAdapter Get() => _reader;
+		public IReader Get() => _reader;
 
 		public bool MoveNext()
 		{

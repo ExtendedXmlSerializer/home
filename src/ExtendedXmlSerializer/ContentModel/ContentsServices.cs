@@ -36,11 +36,11 @@ namespace ExtendedXmlSerializer.ContentModel
 		readonly IContentsResult _results;
 		readonly IMemberHandler _member;
 		readonly ICollectionContentsHandler _collection;
-		readonly IContentAdapterFormatter _formatter;
+		readonly IReaderFormatter _formatter;
 
 		public ContentsServices(IListContentsSpecification specification, IContentsActivation activation,
 		                        IAlteration<IContentHandler> handler, IContentsResult results, IMemberHandler member,
-		                        ICollectionContentsHandler collection, IContentAdapterFormatter formatter)
+		                        ICollectionContentsHandler collection, IReaderFormatter formatter)
 		{
 			_specification = specification;
 			_activation = activation;
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public bool IsSatisfiedBy(IContentsAdapter parameter) => _specification.IsSatisfiedBy(parameter);
 
-		public string Get(IContentAdapter parameter) => _formatter.Get(parameter);
+		public string Get(IReader parameter) => _formatter.Get(parameter);
 
 		public IContentReader Create(TypeInfo classification, IContentHandler handler)
 			=> new ContentsReader(_activation.Get(classification), _handler.Get(handler), _results);

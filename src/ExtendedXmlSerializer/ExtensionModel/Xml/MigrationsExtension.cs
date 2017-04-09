@@ -155,7 +155,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					_serializer = serializer;
 				}
 
-				public object Get(IContentAdapter parameter)
+				public object Get(IReader parameter)
 				{
 					var reader = _migrator.Get(parameter.AsValid<IXmlReader>());
 					var result = _serializer.Get(reader);

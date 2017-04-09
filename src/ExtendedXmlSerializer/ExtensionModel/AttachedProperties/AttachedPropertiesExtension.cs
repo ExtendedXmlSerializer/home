@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			                .Register(x => x.GetAllInstances<IProperty>().ToImmutableArray())
 			                .Decorate<IMemberAccessors, MemberAccessors>()
 			                .Decorate<ITypeMembers, TypeMembers>()
-			                .Decorate<IContentAdapterFormatter, ContentAdapterFormatter>();
+			                .Decorate<IReaderFormatter, ReaderFormatter>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

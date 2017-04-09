@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IFormattedContentSpecification : ISpecification<IContentAdapter> {}
+	public interface IFormattedContentSpecification : ISpecification<IReader> {}
 }

@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		public static ReflectionSerializer Default { get; } = new ReflectionSerializer();
 		ReflectionSerializer() {}
 
-		public object Get(IContentAdapter parameter) => parameter.Get(parameter.Content());
+		public object Get(IReader parameter) => parameter.Get(parameter.Content());
 
 		public void Write(IXmlWriter writer, object instance) => writer.Write(writer.Get((MemberInfo) instance));
 	}

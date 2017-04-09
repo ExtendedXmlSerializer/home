@@ -28,15 +28,15 @@ namespace ExtendedXmlSerializer.ContentModel
 	sealed class ConfiguredContentReader<T> : IContentReader<T>
 	{
 		readonly IContentReader<T> _reader;
-		readonly ICommand<IContentAdapter> _configuration;
+		readonly ICommand<IReader> _configuration;
 
-		public ConfiguredContentReader(IContentReader<T> reader, ICommand<IContentAdapter> configuration)
+		public ConfiguredContentReader(IContentReader<T> reader, ICommand<IReader> configuration)
 		{
 			_reader = reader;
 			_configuration = configuration;
 		}
 
-		public T Get(IContentAdapter parameter)
+		public T Get(IReader parameter)
 		{
 			var result = _reader.Get(parameter);
 			_configuration.Execute(parameter);

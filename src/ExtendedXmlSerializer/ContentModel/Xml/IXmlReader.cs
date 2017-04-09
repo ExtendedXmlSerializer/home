@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IXmlReader : IContentAdapter<System.Xml.XmlReader> {}
+	public interface IXmlReader : IReader<System.Xml.XmlReader> {}
 }

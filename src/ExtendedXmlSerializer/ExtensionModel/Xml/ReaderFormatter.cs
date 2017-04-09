@@ -26,11 +26,11 @@ using ExtendedXmlSerializer.ContentModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ContentAdapterFormatter : IContentAdapterFormatter
+	sealed class ReaderFormatter : IReaderFormatter
 	{
-		public static ContentAdapterFormatter Default { get; } = new ContentAdapterFormatter();
-		ContentAdapterFormatter() {}
+		public static ReaderFormatter Default { get; } = new ReaderFormatter();
+		ReaderFormatter() {}
 
-		public string Get(IContentAdapter parameter) => ((IXmlReader) parameter).Get().Name;
+		public string Get(IReader parameter) => ((IXmlReader) parameter).Get().Name;
 	}
 }

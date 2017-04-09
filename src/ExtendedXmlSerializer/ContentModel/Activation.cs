@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.ContentModel
 				_activate = activate;
 			}
 
-			public object Get(IContentAdapter parameter) => _activate();
+			public object Get(IReader parameter) => _activate();
 		}
 	}
 }

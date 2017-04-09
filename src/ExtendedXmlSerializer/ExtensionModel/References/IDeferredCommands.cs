@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IDeferredCommands : IParameterizedSource<IContentAdapter, ICollection<IDeferredCommand>> {}
+	public interface IDeferredCommands : IParameterizedSource<IReader, ICollection<IDeferredCommand>> {}
 }

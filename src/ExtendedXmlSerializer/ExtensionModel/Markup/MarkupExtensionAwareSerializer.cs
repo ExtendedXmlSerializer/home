@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_serializer = serializer;
 		}
 
-		public object Get(IContentAdapter parameter)
+		public object Get(IReader parameter)
 		{
 			var candidate = Candidate(parameter);
 			var parts = candidate.Instance as MarkupExtensionParts;
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			return result;
 		}
 
-		CandidateResult Candidate(IContentAdapter parameter)
+		CandidateResult Candidate(IReader parameter)
 		{
 			try
 			{

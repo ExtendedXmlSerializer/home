@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public interface IContentsHistory : IParameterizedSource<IContentAdapter, Stack<IContentsAdapter>> {}
+	public interface IContentsHistory : IParameterizedSource<IReader, Stack<IContentsAdapter>> {}
 }

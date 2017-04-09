@@ -26,8 +26,8 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IEntity : IParameterizedSource<object, string>, IParameterizedSource<IContentAdapter, object>
+	public interface IEntity : IParameterizedSource<object, string>, IParameterizedSource<IReader, object>
 	{
-		object Reference(IContentAdapter parameter);
+		object Reference(IReader parameter);
 	}
 }
