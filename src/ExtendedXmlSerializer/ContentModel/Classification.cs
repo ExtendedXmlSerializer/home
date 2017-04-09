@@ -27,22 +27,15 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml;
-using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
 	sealed class Classification : IClassification
 	{
-		readonly static IdentityStore IdentityStore = IdentityStore.Default;
-
 		readonly IPropertyContentSpecification _specification;
 		readonly IIdentityStore _identities;
 		readonly IGenericTypes _generic;
 		readonly ITypes _types;
-
-		[UsedImplicitly]
-		public Classification(IPropertyContentSpecification specification, IGenericTypes generic, ITypes types)
-			: this(specification, IdentityStore, generic, types) {}
 
 		public Classification(IPropertyContentSpecification specification, IIdentityStore identities, IGenericTypes generic,
 		                      ITypes types)

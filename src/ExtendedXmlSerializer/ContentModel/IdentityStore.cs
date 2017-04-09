@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,14 +26,13 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class IdentityStore : ReferenceCache<string, Func<string, IIdentity>>, IIdentityStore
+	sealed class IdentityStore : Cache<string, Func<string, IIdentity>>, IIdentityStore
 	{
-		public static IdentityStore Default { get; } = new IdentityStore();
-		IdentityStore() : base(i => new Names(i).Get) {}
+		public IdentityStore() : base(i => new Names(i).Get) {}
 
 		public IIdentity Get(string name, string identifier) => Get(identifier).Invoke(name);
 
-		sealed class Names : ReferenceCacheBase<string, IIdentity>
+		sealed class Names : CacheBase<string, IIdentity>
 		{
 			readonly string _identifier;
 

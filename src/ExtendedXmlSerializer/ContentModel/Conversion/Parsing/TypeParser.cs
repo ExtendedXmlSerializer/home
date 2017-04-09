@@ -33,7 +33,6 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
 	sealed class TypeParser : CacheBase<string, TypeInfo>, ITypeParser
 	{
-		readonly static IdentityStore IdentityStore = IdentityStore.Default;
 		readonly static TypePartsParser Parser = TypePartsParser.Default;
 
 		readonly IIdentityStore _identities;
@@ -41,7 +40,8 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 		readonly ITypes _types;
 		readonly IIdentityResolver _resolver;
 
-		public TypeParser(ITypes types, IIdentityResolver reader) : this(IdentityStore, Parser, types, reader) {}
+		public TypeParser(IIdentityStore identities, ITypes types, IIdentityResolver resolver)
+			: this(identities, Parser, types, resolver) {}
 
 		public TypeParser(IIdentityStore identities, Parser<TypeParts> parser, ITypes types, IIdentityResolver resolver)
 		{
