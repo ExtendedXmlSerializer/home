@@ -24,6 +24,7 @@
 using System;
 using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
@@ -43,10 +44,10 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
 		{
-			var support = new XmlWriterSupport(writer);
-			var type = new TypeInfoFormatter(_identities, support);
-			var member = new MemberFormatter(type);
-			var result = new XmlWriter(support, type, member, writer, instance);
+			var resolver = new IdentityResolver(writer, new PrefixSource());
+			var type = new TypeInfoFormatter(_identities, resolver);
+			var formatter = new ReflectionFormatter(type);
+			var result = new XmlWriter(resolver, formatter, writer, instance);
 			return result;
 		}
 

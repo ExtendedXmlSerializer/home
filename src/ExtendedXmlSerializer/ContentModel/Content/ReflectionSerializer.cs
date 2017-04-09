@@ -33,6 +33,6 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public object Get(IReader parameter) => parameter.Get(parameter.Content());
 
-		public void Write(IXmlWriter writer, object instance) => writer.Write(writer.Get((MemberInfo) instance));
+		public void Write(IXmlWriter writer, object instance) => writer.Content(writer.Get((MemberInfo) instance));
 	}
 }

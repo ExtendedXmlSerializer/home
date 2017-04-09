@@ -34,6 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_identity = identity;
 		}
 
-		public virtual void Write(IXmlWriter writer, object instance) => writer.Element(_identity);
+		public virtual void Write(IXmlWriter writer, object instance) => writer.Start(_identity);
 	}
 }

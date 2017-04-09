@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var type = instance.GetType();
 			if (_specification.IsSatisfiedBy(type))
 			{
-				writer.Element(_identities.Get(type.GetTypeInfo()));
+				writer.Start(_identities.Get(type.GetTypeInfo()));
 			}
 			else
 			{

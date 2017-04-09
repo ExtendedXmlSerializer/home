@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			static ReferenceIdentity? Identity(IReader reader)
 			{
-				var identity = IdentityIdentity.Default.Get(reader);
+				var identity = IdentityProperty.Default.Get(reader);
 				var result = identity.HasValue ? new ReferenceIdentity(identity.Value) : (ReferenceIdentity?) null;
 				return result;
 			}

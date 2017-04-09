@@ -35,16 +35,16 @@ namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 
 		Prefixes() : this(WellKnownNamespaces.Default) {}
 
-		readonly IDictionary<Assembly, Namespace> _known;
+		readonly IDictionary<Assembly, IIdentity> _known;
 
-		public Prefixes(IDictionary<Assembly, Namespace> known)
+		public Prefixes(IDictionary<Assembly, IIdentity> known)
 			: this(known, known.Values.ToDictionary(x => x.Identifier, x => x.Name)) {}
 
-		public Prefixes(IDictionary<Assembly, Namespace> known, IDictionary<string, string> names) : base(names)
+		public Prefixes(IDictionary<Assembly, IIdentity> known, IDictionary<string, string> names) : base(names)
 		{
 			_known = known;
 		}
 
-		public string Get(TypeInfo parameter) => _known.GetStructure(parameter.Assembly)?.Name;
+		public string Get(TypeInfo parameter) => _known.Get(parameter.Assembly)?.Name;
 	}
 }

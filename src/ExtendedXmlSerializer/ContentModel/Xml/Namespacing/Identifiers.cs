@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,26 +23,22 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
 	sealed class Identifiers : IIdentifiers
 	{
-		public static Identifiers Default { get; } = new Identifiers();
-		Identifiers() : this(WellKnownNamespaces.Default, NamespaceFormatter.Default) {}
+		readonly IDictionary<Assembly, IIdentity> _known;
+		readonly INamespaceFormatter _formatter;
 
-		readonly IDictionary<Assembly, Namespace> _known;
-		readonly ITypeFormatter _formatter;
-
-		public Identifiers(IDictionary<Assembly, Namespace> known, ITypeFormatter formatter)
+		public Identifiers(IDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
 		{
 			_known = known;
 			_formatter = formatter;
 		}
 
 		public string Get(TypeInfo parameter)
-			=> _known.GetStructure(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+			=> _known.Get(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
 	}
 }

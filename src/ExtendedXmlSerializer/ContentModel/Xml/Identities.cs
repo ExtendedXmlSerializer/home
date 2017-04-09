@@ -32,7 +32,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 	sealed class Identities : CacheBase<TypeInfo, IIdentity>, IIdentities
 	{
 		readonly static TypeNameFormatter TypeNameFormatter = TypeNameFormatter.Default;
-		readonly static Identifiers Identifiers = Identifiers.Default;
 
 		readonly IIdentityStore _source;
 		readonly INames _alias;
@@ -40,7 +39,8 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly IIdentifiers _identifiers;
 
 		[UsedImplicitly]
-		public Identities(IIdentityStore source, INames names) : this(source, names, TypeNameFormatter, Identifiers) {}
+		public Identities(IIdentifiers identifiers, IIdentityStore source, INames names)
+			: this(source, names, TypeNameFormatter, identifiers) {}
 
 		public Identities(IIdentityStore source, INames alias, ITypeFormatter formatter, IIdentifiers identifiers)
 		{

@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			=> _partition.Invoke(parameter.Identifier)?.Invoke(parameter.Name) ?? ImmutableArray<TypeInfo>.Empty;
 
 		sealed class TypeNamePartition :
-			IParameterizedSource<KeyValuePair<Assembly, Namespace>, Func<string, ImmutableArray<TypeInfo>?>>
+			IParameterizedSource<KeyValuePair<Assembly, IIdentity>, Func<string, ImmutableArray<TypeInfo>?>>
 		{
 			readonly static ApplicationTypes ApplicationTypes = ApplicationTypes.Default;
 
@@ -71,7 +71,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 				_formatter = formatter;
 			}
 
-			public Func<string, ImmutableArray<TypeInfo>?> Get(KeyValuePair<Assembly, Namespace> parameter)
+			public Func<string, ImmutableArray<TypeInfo>?> Get(KeyValuePair<Assembly, IIdentity> parameter)
 				=> _types.Get(parameter.Key)
 				         .Where(_specification)
 				         .ToLookup(_formatter)

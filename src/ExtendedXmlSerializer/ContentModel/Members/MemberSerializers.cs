@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
@@ -69,7 +70,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		IMemberSerializer Content(IAlteration<object> alteration, IMember profile, IMemberAccess access)
 		{
 			var body = _content.Get(profile);
-			var writer = Wrap(alteration, access, new Enclosure(new MemberElement(profile), body));
+			var writer = Wrap(alteration, access, new Enclosure(new Element(profile), body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}

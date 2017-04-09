@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .RegisterInstance<IReferenceMaps>(ReferenceMaps.Default)
 			         .Register<IReferenceEncounters, ReferenceEncounters>()
 			         .Register<IEntities, Entities>()
-			         .Register<IEncounterSpecification, EncounterSpecification>()
+			         /*.Register<IEncounterSpecification, InstanceConditionalSpecification>()*/
 			         .Decorate<IActivation, ReferenceActivation>()
 			         .Decorate<IContents, ReferenceContents>()
 			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()

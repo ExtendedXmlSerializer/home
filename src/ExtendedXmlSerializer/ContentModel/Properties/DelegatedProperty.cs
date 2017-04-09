@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	class DelegatedProperty<T> : Property<T>
 	{
-		public DelegatedProperty(Func<string, T> reader, Func<T, string> writer, IIdentity identity)
-			: base(new DelegatedParsingContentReader<T>(reader, identity), new DelegatedFormattingWriter<T>(writer, identity), identity) {}
+		public DelegatedProperty(Func<string, T> parser, Func<T, string> formatter, IIdentity identity)
+			: base(new DelegatedParsingContentReader<T>(parser, identity), new DelegatedFormattingWriter<T>(formatter, identity), identity) {}
 	}
 }

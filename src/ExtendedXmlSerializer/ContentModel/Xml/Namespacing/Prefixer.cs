@@ -38,6 +38,10 @@ namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 			_store = store;
 		}
 
-		protected override string Create(string parameter) => $"ns{_store.Count + 1}";
+		protected override string Create(string parameter)
+		{
+			var formattableString = $"ns{(_store.Count + 1).ToString()}";
+			return formattableString;
+		}
 	}
 }

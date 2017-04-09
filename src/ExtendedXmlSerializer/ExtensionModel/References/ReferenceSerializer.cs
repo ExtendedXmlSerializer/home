@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				else
 				{
 					var property = first
-						? (IProperty<uint?>) IdentityIdentity.Default
+						? (IProperty<uint?>) IdentityProperty.Default
 						: ContentModel.Properties.ReferenceIdentity.Default;
 					property.Write(writer, identifier.Value.UniqueId);
 				}

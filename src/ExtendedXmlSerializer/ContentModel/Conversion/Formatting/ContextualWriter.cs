@@ -23,8 +23,6 @@
 
 using System;
 using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
-using Attribute = ExtendedXmlSerializer.ContentModel.Xml.Attribute;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
@@ -39,14 +37,6 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 			_identity = identity;
 		}
 
-		public void Write(IXmlWriter writer, T instance)
-		{
-			var identifier = _identity.Identifier;
-			var name = !string.IsNullOrEmpty(identifier) ? writer.Get(identifier) : null;
-			var ns = !string.IsNullOrEmpty(name) ? new Namespace(name, identifier) : (Namespace?) null;
-			var format = _formatter(writer, instance);
-			var attribute = new Attribute(_identity.Name, format, ns);
-			writer.Attribute(attribute);
-		}
+		public void Write(IXmlWriter writer, T instance) => writer.Content(_identity, _formatter(writer, instance));
 	}
 }

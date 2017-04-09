@@ -24,6 +24,7 @@
 using System;
 using System.Xml;
 using ExtendedXmlSerializer.Configuration;
+using FluentAssertions;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
@@ -43,9 +44,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public T Assert<T>(T instance, string expected)
 		{
 			var data = _serializer.Serialize(instance);
-			Xunit.Assert.Equal(
-				expected?.Replace("\r\n", "").Replace("\n", ""),
-				data?.Replace("\r\n", "").Replace("\n", ""));
+			data?.Replace("\r\n", "").Replace("\n", "").Should().Be(expected?.Replace("\r\n", "").Replace("\n", ""));
 			var result = _serializer.Deserialize<T>(data);
 			return result;
 		}
