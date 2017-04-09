@@ -36,8 +36,8 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public static IContentsActivator Get<T>(this IContentsActivation @this) => @this.Get(typeof(T).GetTypeInfo());
 
-		public static IContentReader<T> CreateContents<T>(this IContentsServices @this, IContentHandler parameter)
-			=> new ContentReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
+		public static IReader<T> CreateContents<T>(this IContentsServices @this, IContentHandler parameter)
+			=> new ReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
 
 		public static TypeInfo GetClassification(this IClassification @this, IFormatReader parameter,
 		                                         TypeInfo defaultValue = null)

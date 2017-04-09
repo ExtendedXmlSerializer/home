@@ -25,10 +25,10 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class CollectionContentHandler : IContentHandler
 	{
-		readonly IContentReader _item;
+		readonly IReader _item;
 		readonly ICollectionContentsHandler _handler;
 
-		public CollectionContentHandler(IContentReader item, ICollectionContentsHandler handler)
+		public CollectionContentHandler(IReader item, ICollectionContentsHandler handler)
 		{
 			_item = item;
 			_handler = handler;

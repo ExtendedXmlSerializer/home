@@ -26,12 +26,12 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class TypedParsingContentReader : IContentReader<TypeInfo>
+	sealed class TypedParsingReader : IReader<TypeInfo>
 	{
-		readonly IContentReader<MemberInfo> _reader;
-		public TypedParsingContentReader(IIdentity identity) : this(new ParsedContentReader<MemberInfo>(x => x, identity)) {}
+		readonly IReader<MemberInfo> _reader;
+		public TypedParsingReader(IIdentity identity) : this(new ParsedReader<MemberInfo>(x => x, identity)) {}
 
-		public TypedParsingContentReader(IContentReader<MemberInfo> reader)
+		public TypedParsingReader(IReader<MemberInfo> reader)
 		{
 			_reader = reader;
 		}

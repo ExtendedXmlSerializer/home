@@ -30,6 +30,6 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	class DelegatedProperty<T> : Property<T>
 	{
 		public DelegatedProperty(Func<string, T> parser, Func<T, string> formatter, IIdentity identity)
-			: base(new DelegatedParsingContentReader<T>(parser, identity), new DelegatedFormattingWriter<T>(formatter, identity), identity) {}
+			: base(new DelegatedParsingReader<T>(parser, identity), new DelegatedFormattingWriter<T>(formatter, identity), identity) {}
 	}
 }

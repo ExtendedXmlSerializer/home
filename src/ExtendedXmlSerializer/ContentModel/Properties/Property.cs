@@ -29,10 +29,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	{
 		readonly ISerializer<T> _serializer;
 
-		public Property(IContentReader<T> reader, IWriter<T> writer, IIdentity identity)
+		public Property(IReader<T> reader, IWriter<T> writer, IIdentity identity)
 			: this(
 				new Serializer<T>(
-					identity is FrameworkIdentity ? new ConfiguredContentReader<T>(reader, SetContentCommand.Default) : reader,
+					identity is FrameworkIdentity ? new ConfiguredReader<T>(reader, SetContentCommand.Default) : reader,
 					writer),
 				identity) {}
 

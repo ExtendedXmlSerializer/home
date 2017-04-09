@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	public interface ICollectionContentsHandler
 	{
-		void Handle(IListContents contents, IContentReader reader);
+		void Handle(IListContents contents, IReader reader);
 	}
 }

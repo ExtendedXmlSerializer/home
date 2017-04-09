@@ -33,6 +33,6 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		ExplicitTypeProperty() : this(new FrameworkIdentity("type")) {}
 
 		public ExplicitTypeProperty(IIdentity identity)
-			: base(new TypedParsingContentReader(identity), new TypedFormattingWriter(identity), identity) {}
+			: base(new TypedParsingReader(identity), new TypedFormattingWriter(identity), identity) {}
 	}
 }

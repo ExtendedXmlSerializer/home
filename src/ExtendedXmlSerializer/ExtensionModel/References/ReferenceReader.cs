@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ContentModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReferenceReader : DecoratedContentReader
+	sealed class ReferenceReader : DecoratedReader
 	{
 		readonly static ContentModel.Properties.ReferenceIdentity ReferenceIdentity =
 			ContentModel.Properties.ReferenceIdentity.Default;
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly TypeInfo _definition;
 		readonly IClassification _classification;
 
-		public ReferenceReader(IContentReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition,
+		public ReferenceReader(IReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition,
 		                       IClassification classification) : base(reader)
 		{
 			_maps = maps;

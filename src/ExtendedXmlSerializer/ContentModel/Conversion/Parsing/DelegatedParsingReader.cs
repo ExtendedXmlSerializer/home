@@ -26,9 +26,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class DelegatedParsingContentReader<T> : DecoratedContentReader<T>
+	sealed class DelegatedParsingReader<T> : DecoratedReader<T>
 	{
-		public DelegatedParsingContentReader(Func<string, T> format, IIdentity identity)
-			: base(new ParsingContentReader<T>(new DelegatedParser<T>(format), identity)) {}
+		public DelegatedParsingReader(Func<string, T> format, IIdentity identity)
+			: base(new ParsingReader<T>(new DelegatedParser<T>(format), identity)) {}
 	}
 }

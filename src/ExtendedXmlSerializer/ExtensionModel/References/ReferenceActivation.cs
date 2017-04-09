@@ -45,15 +45,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_maps = maps;
 		}
 
-		public IContentReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
+		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
 
-		sealed class Activator : IContentReader
+		sealed class Activator : IReader
 		{
-			readonly IContentReader _activator;
+			readonly IReader _activator;
 			readonly IEntities _entities;
 			readonly IReferenceMaps _maps;
 
-			public Activator(IContentReader activator, IEntities entities, IReferenceMaps maps)
+			public Activator(IReader activator, IEntities entities, IReferenceMaps maps)
 			{
 				_activator = activator;
 				_entities = entities;

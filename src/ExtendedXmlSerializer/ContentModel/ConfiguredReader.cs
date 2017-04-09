@@ -25,12 +25,12 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class ConfiguredContentReader<T> : IContentReader<T>
+	sealed class ConfiguredReader<T> : IReader<T>
 	{
-		readonly IContentReader<T> _reader;
+		readonly IReader<T> _reader;
 		readonly ICommand<IFormatReader> _configuration;
 
-		public ConfiguredContentReader(IContentReader<T> reader, ICommand<IFormatReader> configuration)
+		public ConfiguredReader(IReader<T> reader, ICommand<IFormatReader> configuration)
 		{
 			_reader = reader;
 			_configuration = configuration;
