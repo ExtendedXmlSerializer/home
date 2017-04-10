@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void Verify()
 		{
-			var configuration = new ExtendedConfiguration().Type<Subject>()
+			var configuration = new ConfigurationContainer().Type<Subject>()
 				.AddMigration(new PropertyMigration("OldPropertyName", nameof(Subject.PropertyName)))
 				.Configuration;
 			var support =

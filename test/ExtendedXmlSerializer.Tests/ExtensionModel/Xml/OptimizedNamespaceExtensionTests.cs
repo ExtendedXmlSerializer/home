@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			const string message = "Hello World!  This is a value set in a property with a variable type.",
 				expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Interface exs:type=""OptimizedNamespaceExtensionTests-Implementation""><PropertyName>Hello World!  This is a value set in a property with a variable type.</PropertyName></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
 			var instance = new ClassWithDifferingPropertyType { Interface = new Implementation { PropertyName = message } };
-			var serializer = new ExtendedConfiguration().UseOptimizedNamespaces().Create();
+			var serializer = new ConfigurationContainer().UseOptimizedNamespaces().Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:ns1=""clr-namespace:System.Collections.Generic;assembly=System.Core"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""ns1:HashSet[sys:string]""><sys:string>Hello</sys:string><sys:string>World</sys:string><sys:string>Hope</sys:string><sys:string>This</sys:string><sys:string>Works!</sys:string></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
 #endif
 			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
-			var serializer = new ExtendedConfiguration().UseOptimizedNamespaces().Create();
+			var serializer = new ConfigurationContainer().UseOptimizedNamespaces().Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}
@@ -79,7 +79,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 					                                      }
 				                           }
 			               };
-			var serializer = new ExtendedConfiguration().UseOptimizedNamespaces().Create();
+			var serializer = new ConfigurationContainer().UseOptimizedNamespaces().Create();
 			var data = serializer.Serialize(instance);
 			Assert.Equal(expected, data);
 		}

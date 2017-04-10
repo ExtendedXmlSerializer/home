@@ -31,10 +31,10 @@ namespace ExtendedXmlSerializer.Configuration
 	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, MemberConfiguration<T, TMember>>,
 	                                   IEnumerable<IMemberConfiguration>
 	{
-		public static IParameterizedSource<IConfiguration, Members<T, TMember>> Defaults { get; } =
-			new ReferenceCache<IConfiguration, Members<T, TMember>>(x => new Members<T, TMember>(x));
+		public static IParameterizedSource<IConfigurationContainer, Members<T, TMember>> Defaults { get; } =
+			new ReferenceCache<IConfigurationContainer, Members<T, TMember>>(x => new Members<T, TMember>(x));
 
-		Members(IConfiguration configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
+		Members(IConfigurationContainer configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
 
 		readonly TypeConfiguration<T> _type;
 		readonly ICollection<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();

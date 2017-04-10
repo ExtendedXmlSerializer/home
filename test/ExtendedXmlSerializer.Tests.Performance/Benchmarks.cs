@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.Tests.Performance
 	[Config(typeof(Configuration))]
 	public class ExtendedXmlSerializerV2Test
 	{
-		readonly IExtendedXmlSerializer _serializer = new ExtendedConfiguration().EnableClassicMode()
+		readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().EnableClassicMode()
 		                                                                         .OptimizeConverters()
 		                                                                         .Create();
 

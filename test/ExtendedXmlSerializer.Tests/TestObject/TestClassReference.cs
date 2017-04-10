@@ -47,6 +47,9 @@ namespace ExtendedXmlSerializer.Tests.TestObject
 	public class TestClassReference : IReference
 	{
 		public int Id { get; set; }
+
+		public string Name { get; set; }
+
 		public IReference CyclicReference { get; set; }
 		public IReference ObjectA { get; set; }
 

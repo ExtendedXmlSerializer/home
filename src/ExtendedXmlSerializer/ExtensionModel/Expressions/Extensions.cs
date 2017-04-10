@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
 	public static class Extensions
 	{
-		public static IConfiguration EnableExpressions(this IConfiguration @this)
+		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
 			=> @this.Apply<CoercionExtension>().Extend(ExpressionsExtension.Default);
 	}
 }

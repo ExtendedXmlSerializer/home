@@ -1,6 +1,6 @@
 ﻿namespace ExtendedXmlSerializer.Tests.Support
 {
-	public interface IExtendedXmlSerializerTestSupport : IExtendedXmlSerializer
+	public interface ISerializationSupport : IExtendedXmlSerializer
 	{
 		T Assert<T>(T instance, string expected);
 	}

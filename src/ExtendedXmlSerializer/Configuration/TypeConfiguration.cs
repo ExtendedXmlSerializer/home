@@ -37,14 +37,14 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly ISet<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();
 		readonly TypeInfo _type;
 
-		public TypeConfiguration(IConfiguration configuration, IProperty<string> name, TypeInfo type)
+		public TypeConfiguration(IConfigurationContainer configuration, IProperty<string> name, TypeInfo type)
 		{
 			Configuration = configuration;
 			Name = name;
 			_type = type;
 		}
 
-		public IConfiguration Configuration { get; }
+		public IConfigurationContainer Configuration { get; }
 		public IProperty<string> Name { get; }
 
 		protected override IMemberConfiguration Create(MemberInfo parameter)
@@ -72,10 +72,10 @@ namespace ExtendedXmlSerializer.Configuration
 
 		readonly ITypeConfiguration _type;
 
-		public TypeConfiguration(IConfiguration configuration)
+		public TypeConfiguration(IConfigurationContainer configuration)
 			: this(configuration, configuration.GetTypeConfiguration(Key)) {}
 
-		public TypeConfiguration(IConfiguration configuration, ITypeConfiguration type)
+		public TypeConfiguration(IConfigurationContainer configuration, ITypeConfiguration type)
 		{
 			Configuration = configuration;
 			var typeInfo = type.Get();
@@ -87,7 +87,7 @@ namespace ExtendedXmlSerializer.Configuration
 			_type = type;
 		}
 
-		public IConfiguration Configuration { get; }
+		public IConfigurationContainer Configuration { get; }
 
 		public TypeInfo Get() => _type.Get();
 

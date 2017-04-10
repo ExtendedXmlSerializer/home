@@ -36,7 +36,7 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 		{
 			Program.PrintHeader("Serialization reference object");
 
-			var serializer = new ExtendedConfiguration().ConfigureType<Person>()
+			var serializer = new ConfigurationContainer().ConfigureType<Person>()
 			                                            .EnableReferences(p => p.Id)
 			                                            .Configuration
 			                                            .Create();

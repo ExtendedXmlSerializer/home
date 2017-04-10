@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			NumberProperty.Default.Assign(subject, 6776);
 
 			var serializer = new SerializationSupport(
-				new ExtendedConfiguration().EnableAttachedProperties(NameProperty.Default, NumberProperty.Default)
+				new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default, NumberProperty.Default)
 			);
 
 			var actual = serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><AttachedPropertiesExtensionTests-NameProperty.Default>SubjectName</AttachedPropertiesExtensionTests-NameProperty.Default><AttachedPropertiesExtensionTests-NumberProperty.Default>6776</AttachedPropertiesExtensionTests-NumberProperty.Default></AttachedPropertiesExtensionTests-Subject>");
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			subject.Set(NumberProperty.Default, 6776);
 
 			var serializer =
-				new SerializationSupport(new ExtendedConfiguration().UseAutoFormatting()
+				new SerializationSupport(new ConfigurationContainer().UseAutoFormatting()
 				                                                    .EnableAttachedProperties(NameProperty.Default,
 				                                                                              NumberProperty.Default));
 			var actual = serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" AttachedPropertiesExtensionTests-NameProperty.Default=""SubjectName"" AttachedPropertiesExtensionTests-NumberProperty.Default=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");
@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 
 			var serializer =
 				new SerializationSupport(
-					new ExtendedConfiguration().UseAutoFormatting()
+					new ConfigurationContainer().UseAutoFormatting()
 					                           .Type<NumberProperty>()
 					                           .Name("ConfiguredAttachedProperty")
 					                           .Configuration

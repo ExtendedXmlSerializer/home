@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void Verify()
 		{
-			var serializer = new ExtendedConfiguration().Type<TestClassWithSerializer>()
+			var serializer = new ConfigurationContainer().Type<TestClassWithSerializer>()
 			                                            .CustomSerializer(new CustomSerializer())
 			                                            .Configuration
 			                                            .Create();

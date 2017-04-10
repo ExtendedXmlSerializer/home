@@ -38,7 +38,7 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 			Program.PrintHeader("Serialization reference object");
 
 			var serializer =
-				new ExtendedConfiguration().Create(cfg => cfg.ConfigureType<Person>().Member(p => p.Password).Encrypt().Configuration);
+				new ConfigurationContainer().Create(cfg => cfg.ConfigureType<Person>().Member(p => p.Password).Encrypt().Configuration);
 
 			Run(serializer);
 		}

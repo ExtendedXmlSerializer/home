@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Configuration
 			_alteration = alteration;
 		}
 
-		public IConfiguration Get(IConfiguration parameter)
+		public IConfigurationContainer Get(IConfigurationContainer parameter)
 			=> parameter.Extend(_alteration.Get(parameter.Find<AllowedMemberValuesExtension>()));
 	}
 }

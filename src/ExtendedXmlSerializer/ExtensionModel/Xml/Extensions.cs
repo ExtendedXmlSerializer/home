@@ -83,16 +83,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return @this;
 		}
 
-		public static IConfiguration UseAutoFormatting(this IConfiguration @this)
+		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this)
 			=> @this.Extend(AutoMemberFormatExtension.Default);
 
-		public static IConfiguration UseAutoFormatting(this IConfiguration @this, int maxTextLength)
+		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this, int maxTextLength)
 			=> @this.Extend(new AutoMemberFormatExtension(maxTextLength));
 
-		public static IConfiguration EnableClassicMode(this IConfiguration @this)
+		public static IConfigurationContainer EnableClassicMode(this IConfigurationContainer @this)
 			=> @this.Emit(EmitBehaviors.Classic).Extend(ClassicExtension.Default);
 
-		public static IConfiguration UseOptimizedNamespaces(this IConfiguration @this)
+		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
 			=> @this.Extend(OptimizedNamespaceExtension.Default);
 	}
 }

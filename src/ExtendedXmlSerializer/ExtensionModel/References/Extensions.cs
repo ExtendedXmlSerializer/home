@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	public static class Extensions
 	{
-		public static IConfiguration EnableReferences(this IConfiguration @this)
+		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
 			=> @this.Apply<ReferencesExtension>();
 
 		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,

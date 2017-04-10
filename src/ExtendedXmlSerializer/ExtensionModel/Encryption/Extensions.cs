@@ -33,10 +33,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 			return @this;
 		}
 
-		public static IConfiguration UseEncryptionAlgorithm(this IConfiguration @this)
+		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this)
 			=> UseEncryptionAlgorithm(@this, Encryption.Default);
 
-		public static IConfiguration UseEncryptionAlgorithm(this IConfiguration @this, IEncryption encryption)
+		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IEncryption encryption)
 			=> @this.Extend(new EncryptionExtension(new EncryptionConverterAlteration(encryption)));
 	}
 }

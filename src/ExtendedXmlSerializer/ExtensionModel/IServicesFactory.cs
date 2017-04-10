@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface IServicesFactory : IParameterizedSource<IConfiguration, IServices> {}
+	public interface IServicesFactory : IParameterizedSource<IConfigurationContainer, IServices> {}
 }

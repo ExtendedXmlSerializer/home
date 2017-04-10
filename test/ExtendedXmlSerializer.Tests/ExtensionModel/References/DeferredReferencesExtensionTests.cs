@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ExtendedConfiguration().Type<TestClassReference>()
+					new ConfigurationContainer().Type<TestClassReference>()
 					                           .EnableReferences(x => x.Id)
 					                           .Configuration.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default));
 

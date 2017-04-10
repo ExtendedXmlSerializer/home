@@ -31,7 +31,7 @@ namespace ExtendedXmlSerialization.Samples.Simple
 	{
 		public static void Run()
 		{
-			var serializer = new ExtendedConfiguration().Create();
+			var serializer = new ConfigurationContainer().Create();
 			Program.PrintHeader("Serialization");
 			var obj = new TestClass();
 			var xml = serializer.Serialize(obj);

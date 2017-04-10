@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests
 	public class ExtendedXmlSerializerTests
 	{
 		const string HelloWorld = "Hello World!";
-		readonly IExtendedXmlSerializer _serializer = new ExtendedConfiguration().Create();
+		readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().Create();
 
 		[Fact]
 		public void Primitive()

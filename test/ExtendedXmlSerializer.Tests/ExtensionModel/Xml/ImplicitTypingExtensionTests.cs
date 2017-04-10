@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void Verify()
 		{
 			var types = new HashSet<Type> {typeof(string), typeof(Subject), typeof(ExtendedList)};
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(new ImplicitTypingExtension(types)));
+			var serializer = new SerializationSupport(new ConfigurationContainer().Extend(new ImplicitTypingExtension(types)));
 			var expected = new Subject {Items = new List<string> {"Hello", "World!"}};
 
 			var actual = serializer.Assert(expected,
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void VerifyExplicit()
 		{
 			var types = new HashSet<Type> {typeof(string), typeof(Subject), typeof(ExtendedList)};
-			var serializer = new SerializationSupport(new ExtendedConfiguration().Extend(new ImplicitTypingExtension(types)));
+			var serializer = new SerializationSupport(new ConfigurationContainer().Extend(new ImplicitTypingExtension(types)));
 			var expected = new Subject {Items = new ExtendedList {"Hello", "World!"}};
 
 			var actual = serializer.Assert(expected,
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		{
 			var types = new HashSet<Type> {typeof(string), typeof(Subject)};
 			var configuration =
-				new ExtendedConfiguration().Extend(new ImplicitTypingExtension(types))
+				new ConfigurationContainer().Extend(new ImplicitTypingExtension(types))
 				                           .Type<Subject>()
 				                           .Name("string")
 				                           .Configuration;

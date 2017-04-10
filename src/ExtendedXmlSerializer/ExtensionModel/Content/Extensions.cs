@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
 	public static class Extensions
 	{
-		public static IConfiguration Emit(this IConfiguration @this, IEmitBehavior behavior) => behavior.Get(@this);
+		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) => behavior.Get(@this);
 
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
 		{
@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfiguration OnlyConfiguredProperties(this IConfiguration @this)
+		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 		{
 			foreach (var type in TypeConfigurations.Defaults.Get(@this))
 			{
@@ -62,16 +62,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfiguration Alter(this IConfiguration @this, IAlteration<IConverter> alteration)
+		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
 			@this.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
 			return @this;
 		}
 
-		public static IConfiguration OptimizeConverters(this IConfiguration @this)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
-		public static IConfiguration OptimizeConverters(this IConfiguration @this, Optimizations optimizations)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this, Optimizations optimizations)
 			=> @this.Alter(optimizations);
 	}
 }

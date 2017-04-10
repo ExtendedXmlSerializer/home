@@ -28,13 +28,13 @@ using FluentAssertions;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
-	sealed class SerializationSupport : IExtendedXmlSerializerTestSupport
+	sealed class SerializationSupport : ISerializationSupport
 	{
 		readonly IExtendedXmlSerializer _serializer;
 
-		public SerializationSupport() : this(new ExtendedConfiguration()) {}
+		public SerializationSupport() : this(new ConfigurationContainer()) {}
 
-		public SerializationSupport(IConfiguration configuration) : this(configuration.Create()) {}
+		public SerializationSupport(IConfigurationContainer configuration) : this(configuration.Create()) {}
 
 		public SerializationSupport(IExtendedXmlSerializer serializer)
 		{

@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic
 		[Fact]
 		public void Verify()
 		{
-			var serializer = new ExtendedConfiguration().EnableClassicMode().Create();
+			var serializer = new ConfigurationContainer().EnableClassicMode().Create();
 
 			var expected = TestClassOtherClass.Create();
 			new SerializationSupport(serializer).Assert(expected,
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic
 		[Fact]
 		public void BasicArray()
 		{
-			var serializer = new ExtendedConfiguration().EnableClassicMode().Create();
+			var serializer = new ConfigurationContainer().EnableClassicMode().Create();
 			var expected = new[] { 1, 2, 3, 4, 5 };
 			var data = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<int[]>(data);
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic
 		[Fact]
 		public void BasicList()
 		{
-			var serializer = new ExtendedConfiguration().EnableClassicMode().Create();
+			var serializer = new ConfigurationContainer().EnableClassicMode().Create();
 			var expected = new List<string> { "Hello", "World", "Hope", "This", "Works!" };
 			var data = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<List<string>>(data);
@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic
 		[Fact]
 		public void BasicHashSet()
 		{
-			var serializer = new ExtendedConfiguration().EnableClassicMode().Create();
+			var serializer = new ConfigurationContainer().EnableClassicMode().Create();
 			var expected = new HashSet<string> { "Hello", "World", "Hope", "This", "Works!" };
 			var data = serializer.Serialize(expected);
 			var actual = serializer.Deserialize<HashSet<string>>(data);
@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml.Classic
 		[Fact]
 		public void Dictionary()
 		{
-			var serializer = new ExtendedConfiguration().EnableClassicMode().Create();
+			var serializer = new ConfigurationContainer().EnableClassicMode().Create();
 			var expected = new Dictionary<int, string>{
 							   {1, "First"},
 							   {2, "Second"},

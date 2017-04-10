@@ -32,10 +32,10 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public static class Extensions
 	{
-		public static IConfiguration Apply<T>(this IConfiguration @this)
+		public static IConfigurationContainer Apply<T>(this IConfigurationContainer @this)
 			where T : class, ISerializerExtension => Apply(@this, Support<T>.New);
 
-		public static IConfiguration Apply<T>(this IConfiguration @this, Func<T> create)
+		public static IConfigurationContainer Apply<T>(this IConfigurationContainer @this, Func<T> create)
 			where T : class, ISerializerExtension
 		{
 			if (@this.Find<T>() == null)
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static IConfiguration With<T>(this IConfiguration @this, Action<T> configure)
+		public static IConfigurationContainer With<T>(this IConfigurationContainer @this, Action<T> configure)
 			where T : class, ISerializerExtension
 		{
 			var extension = @this.With<T>();
@@ -53,20 +53,20 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static T With<T>(this IConfiguration @this) where T : class, ISerializerExtension
+		public static T With<T>(this IConfigurationContainer @this) where T : class, ISerializerExtension
 			=> @this.Find<T>() ?? @this.Add<T>();
 
-		public static T Add<T>(this IConfiguration @this) where T : ISerializerExtension
+		public static T Add<T>(this IConfigurationContainer @this) where T : ISerializerExtension
 			=> Add(@this, Support<T>.New);
 
-		public static T Add<T>(this IConfiguration @this, Func<T> create) where T : ISerializerExtension
+		public static T Add<T>(this IConfigurationContainer @this, Func<T> create) where T : ISerializerExtension
 		{
 			var result = create();
 			@this.Add(result);
 			return result;
 		}
 
-		public static IConfiguration Extend(this IConfiguration @this,
+		public static IConfigurationContainer Extend(this IConfigurationContainer @this,
 		                                    params ISerializerExtension[] extensions)
 		{
 			var items = @this.With(extensions).ToList();

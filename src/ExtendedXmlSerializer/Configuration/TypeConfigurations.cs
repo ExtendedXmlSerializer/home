@@ -31,17 +31,17 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>, IEnumerable<ITypeConfiguration>
 	{
-		public static IParameterizedSource<IConfiguration, TypeConfigurations> Defaults { get; }
-			= new ReferenceCache<IConfiguration, TypeConfigurations>(x => new TypeConfigurations(x));
+		public static IParameterizedSource<IConfigurationContainer, TypeConfigurations> Defaults { get; }
+			= new ReferenceCache<IConfigurationContainer, TypeConfigurations>(x => new TypeConfigurations(x));
 
 		readonly ICollection<ITypeConfiguration> _types = new HashSet<ITypeConfiguration>();
-		readonly IConfiguration _configuration;
+		readonly IConfigurationContainer _configuration;
 		readonly IDictionary<TypeInfo, string> _names;
 
-		TypeConfigurations(IConfiguration configuration)
+		TypeConfigurations(IConfigurationContainer configuration)
 			: this(configuration, configuration.With<TypeNamesExtension>().Names) {}
 
-		TypeConfigurations(IConfiguration configuration, IDictionary<TypeInfo, string> names)
+		TypeConfigurations(IConfigurationContainer configuration, IDictionary<TypeInfo, string> names)
 		{
 			_configuration = configuration;
 			_names = names;
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.Configuration
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
-	sealed class TypeConfigurations<T> : ReferenceCache<IConfiguration, TypeConfiguration<T>>
+	sealed class TypeConfigurations<T> : ReferenceCache<IConfigurationContainer, TypeConfiguration<T>>
 	{
 		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
 		TypeConfigurations() : base(x => new TypeConfiguration<T>(x)) {}

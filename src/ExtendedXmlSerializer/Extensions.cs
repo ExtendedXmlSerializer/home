@@ -44,8 +44,8 @@ namespace ExtendedXmlSerializer
 
 		readonly static XmlReaderSettings CloseRead = CloseSettings.Default.Get(Defaults.ReaderSettings);
 
-		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfiguration> configure)
-			where T : IConfiguration => configure(@this).Create();
+		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
+			where T : IConfigurationContainer => configure(@this).Create();
 
 
 		public static string Serialize(this IExtendedXmlSerializer @this, object instance)

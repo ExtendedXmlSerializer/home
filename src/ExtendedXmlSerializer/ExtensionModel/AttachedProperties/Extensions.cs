@@ -33,13 +33,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
 	public static class Extensions
 	{
-		public static IConfiguration EnableAttachedProperties(this IConfiguration @this, params IProperty[] properties)
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, params IProperty[] properties)
 			=> @this.EnableAttachedProperties(new HashSet<IProperty>(properties));
 
-		public static IConfiguration EnableAttachedProperties(this IConfiguration @this, ICollection<IProperty> properties)
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, ICollection<IProperty> properties)
 			=> EnableAttachedProperties(@this, properties, new HashSet<Type>());
 
-		public static IConfiguration EnableAttachedProperties(this IConfiguration @this, ICollection<IProperty> properties,
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, ICollection<IProperty> properties,
 		                                                      ICollection<Type> types)
 			=> @this.Extend(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)));
 
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(this IConfiguration @this,
+		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
 		                                                                                           Expression
 			                                                                                           <
 				                                                                                           Func
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			return result;
 		}
 
-		public static IConfiguration AttachedProperty<TType, TValue>(this IConfiguration @this,
+		public static IConfigurationContainer AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
 		                                                             Expression<Func<Property<TType, TValue>>> property,
 		                                                             Action<AttachedPropertyConfiguration<TType, TValue>>
 			                                                             configure)

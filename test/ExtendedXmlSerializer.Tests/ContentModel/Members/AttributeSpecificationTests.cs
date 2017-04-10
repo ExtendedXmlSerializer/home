@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 		{
 			const string target = "I am Attribute, Hear me roar! #rawr!";
 
-			var configuration = new ExtendedConfiguration()
+			var configuration = new ConfigurationContainer()
 				.Type<SimpleSubject>()
 				.Member(x => x.Message)
 				.Attribute(x => x == target)

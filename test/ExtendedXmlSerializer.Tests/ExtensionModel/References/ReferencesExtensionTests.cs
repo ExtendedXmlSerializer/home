@@ -28,6 +28,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using JetBrains.Annotations;
@@ -42,11 +43,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SimpleIdentity()
 		{
-			var support = new SerializationSupport(new ExtendedConfiguration().Extend(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension()).Create());
 			var instance = new Subject {Id = new Guid("{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"), PropertyName = "Hello World!"};
 			instance.Self = instance;
 			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.References;assembly=ExtendedXmlSerializer.Tests""><Id>0e2deca4-cc38-46ba-9c47-94b8070d7353</Id><Self exs:reference=""1"" /><PropertyName>Hello World!</PropertyName></ReferencesExtensionTests-Subject>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.References;assembly=ExtendedXmlSerializer.Tests""><Id>0e2deca4-cc38-46ba-9c47-94b8070d7353</Id><Self exs:reference=""1"" /><PropertyName>Hello World!</PropertyName></ReferencesExtensionTests-Subject>");
 			Assert.NotNull(actual.Self);
 			Assert.Same(actual, actual.Self);
 		}
@@ -54,7 +55,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void EnabledWithoutConfiguration()
 		{
-			var support = new SerializationSupport(new ExtendedConfiguration().Extend(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension()).Create());
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -73,7 +74,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SimpleEntity()
 		{
-			var configuration = new ExtendedConfiguration().Type<Subject>().Member(x => x.Id).Identity().Configuration;
+			var configuration = new ConfigurationContainer().Type<Subject>().Member(x => x.Id).Identity().Configuration;
 			var support = new SerializationSupport(configuration);
 			var expected = new Subject
 			               {
@@ -82,7 +83,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			               };
 			expected.Self = expected;
 			var actual = support.Assert(expected,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject Id=""6dbb618f-dbbd-4909-9644-a1d955f06249"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.References;assembly=ExtendedXmlSerializer.Tests""><Self xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""6dbb618f-dbbd-4909-9644-a1d955f06249"" /><PropertyName>Primary Root</PropertyName></ReferencesExtensionTests-Subject>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><ReferencesExtensionTests-Subject Id=""6dbb618f-dbbd-4909-9644-a1d955f06249"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.References;assembly=ExtendedXmlSerializer.Tests""><Self xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""6dbb618f-dbbd-4909-9644-a1d955f06249"" /><PropertyName>Primary Root</PropertyName></ReferencesExtensionTests-Subject>");
 			Assert.NotNull(actual.Self);
 			Assert.Same(actual, actual.Self);
 		}
@@ -92,7 +93,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ExtendedConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var instance = new TestClassReference
 			               {
@@ -121,7 +122,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ExtendedConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -151,9 +152,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ExtendedConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
-			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
+			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1, Name = "Hello World, this is a Name!"}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
 
 			instance.All = new Dictionary<int, IReference>
@@ -163,8 +164,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				               {2, other},
 				               {1, instance.Parent}
 			               };
+
 			var actual = support.Assert(instance,
-			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>3</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>4</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>2</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>1</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></Item></All></TestClassReferenceWithDictionary>");
+										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1""><Name>Hello World, this is a Name!</Name></Parent><All><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>3</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>4</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>2</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>1</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></Item></All></TestClassReferenceWithDictionary>");
 			Assert.NotNull(actual.Parent);
 			var list = actual.All;
 			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ObjectA);
@@ -175,12 +177,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			Assert.Same(actual.Parent, list[1]);
 		}
 
-		/*[Fact]
+		[Fact]
 		public void OptimizedDictionary()
 		{
-			var support =
-				new SerializationSupport(
-					new ExtendedConfiguration().UseOptimizedNamespaces().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+			var support = new ConfigurationContainer().UseOptimizedNamespaces().Type<TestClassReference>().EnableReferences(x => x.Id).ForTesting();
 
 			var instance = new TestClassReferenceWithDictionary { Parent = new TestClassReference { Id = 1 } };
 			var other = new TestClassReference { Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent };
@@ -194,7 +194,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 						   };
 
 			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent exs:type=""TestClassReference"" Id=""1"" /><All><sys:Item><Key>3</Key><Value exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" Id=""1"" /></Value></sys:Item><sys:Item><Key>4</Key><Value exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" Id=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" Id=""1"" /></ReferenceToObjectA></Value></sys:Item><sys:Item><Key>2</Key><Value exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" Id=""1"" /></Value></sys:Item><sys:Item><Key>1</Key><Value exs:type=""TestClassReference"" Id=""1"" /></sys:Item></All></TestClassReferenceWithDictionary>");
+										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent exs:type=""TestClassReference"" Id=""1"" /><All><sys:Item><Key>3</Key><Value exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></sys:Item><sys:Item><Key>4</Key><Value exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></sys:Item><sys:Item><Key>2</Key><Value exs:type=""TestClassReference"" exs:entity=""2"" /></sys:Item><sys:Item><Key>1</Key><Value exs:type=""TestClassReference"" exs:entity=""1"" /></sys:Item></All></TestClassReferenceWithDictionary>");
 			Assert.NotNull(actual.Parent);
 			var list = actual.All;
 			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ObjectA);
@@ -203,14 +203,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			Assert.Same(list[4].To<TestClassReference>().ObjectA.To<TestClassReference>().ObjectA, actual.Parent);
 			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[2]);
 			Assert.Same(actual.Parent, list[1]);
-		}*/
+		}
 
 		[Fact]
 		public void List()
 		{
 			var support =
 				new SerializationSupport(
-					new ExtendedConfiguration().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
 
 			var parent = new TestClassReference {Id = 1};
 			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};
@@ -224,7 +224,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			               };
 
 			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:ns1=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""ns1:IReference"" xmlns=""https://extendedxmlserializer.github.io/system""><Capacity>4</Capacity><ns1:TestClassReference Id=""3""><ObjectA exs:type=""ns1:TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ns1:TestClassReference><ns1:TestClassReference Id=""4""><ObjectA exs:type=""ns1:TestClassReference"" Id=""2""><ObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""2"" /></ns1:TestClassReference><ns1:TestClassReference exs:entity=""2"" /><ns1:TestClassReference exs:entity=""1"" /></List>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:ns1=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""ns1:IReference"" xmlns=""https://extendedxmlserializer.github.io/system""><Capacity>4</Capacity><ns1:TestClassReference Id=""3""><ObjectA exs:type=""ns1:TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ns1:TestClassReference><ns1:TestClassReference Id=""4""><ObjectA exs:type=""ns1:TestClassReference"" Id=""2""><ObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""2"" /></ns1:TestClassReference><ns1:TestClassReference exs:entity=""2"" /><ns1:TestClassReference exs:entity=""1"" /></List>");
 			Assert.Same(actual[0].To<TestClassReference>().ObjectA, actual[0].To<TestClassReference>().ReferenceToObjectA);
 			Assert.Same(actual[1].To<TestClassReference>().ObjectA, actual[1].To<TestClassReference>().ReferenceToObjectA);
 			Assert.Same(actual[2], actual[1].To<TestClassReference>().ObjectA);

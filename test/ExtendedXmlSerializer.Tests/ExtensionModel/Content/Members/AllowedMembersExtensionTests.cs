@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		[Fact]
 		public void Ignore()
 		{
-			var serializer = new ExtendedConfiguration().Type<Subject>().Member(x => x.Property2).Ignore().Configuration;
+			var serializer = new ConfigurationContainer().Type<Subject>().Member(x => x.Property2).Ignore().Configuration;
 			var support = new SerializationSupport(serializer);
 			var instance = new Subject { Property1 = "Hello World!", Property2 = 1000, Property3 = DateTime.Now };
 			var actual = support.Cycle(instance);
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		[Fact]
 		public void Include()
 		{
-			var serializer = new ExtendedConfiguration().Type<Subject>().Member(x => x.Property2).Include().Configuration;
+			var serializer = new ConfigurationContainer().Type<Subject>().Member(x => x.Property2).Include().Configuration;
 			var support = new SerializationSupport(serializer);
 			var instance = new Subject { Property1 = "Hello World!", Property2 = 1000, Property3 = DateTime.Now };
 			var actual = support.Cycle(instance);
@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		public void TypedOnlyConfiguredProperties()
 		{
 			var serializer =
-				new ExtendedConfiguration().Type<Subject>()
+				new ConfigurationContainer().Type<Subject>()
 				                           .Member(x => x.Property2)
 				                           .Owner.Member(x => x.Property1)
 				                           .Owner.OnlyConfiguredProperties()
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		public void GlobalOnlyConfiguredProperties()
 		{
 			var serializer =
-				new ExtendedConfiguration().Type<Subject>()
+				new ConfigurationContainer().Type<Subject>()
 										   .Member(x => x.Property2)
 										   .Owner.Member(x => x.Property3)
 										   .Owner.Configuration.OnlyConfiguredProperties();

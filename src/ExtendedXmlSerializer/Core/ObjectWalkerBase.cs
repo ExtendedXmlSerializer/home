@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.Core
 		readonly Stack<TInput> _remaining = new Stack<TInput>();
 		readonly Conditions _conditions;
 
-		protected ObjectWalkerBase(TInput root) : this(root, Conditions.Default) {}
+		protected ObjectWalkerBase(TInput root) : this(root, new Conditions()) {}
 
 		protected ObjectWalkerBase(TInput root, Conditions conditions)
 		{

@@ -35,7 +35,7 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 		{
 			Program.PrintHeader("Deserialization old version of xml");
 
-			var serializer = new ExtendedConfiguration().ConfigureType<TestClass>()
+			var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
 			                                            .AddMigration(new TestClassSerialiser())
 			                                            .Configuration
 			                                            .Create();

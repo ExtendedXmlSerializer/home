@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public MemberInfo Get() => _configuration.Get();
 
-		public IConfiguration Configuration => _configuration.Configuration;
+		public IConfigurationContainer Configuration => _configuration.Configuration;
 
 		public IProperty<string> Name => _configuration.Name;
 
@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly MemberInfo _memberInfo;
 
 		public MemberConfiguration(
-			IConfiguration configuration,
+			IConfigurationContainer configuration,
 			ITypeConfiguration owner, MemberInfo memberInfo,
 			IProperty<string> name, IProperty<int> order)
 		{
@@ -66,7 +66,7 @@ namespace ExtendedXmlSerializer.Configuration
 			_memberInfo = memberInfo;
 		}
 
-		public IConfiguration Configuration { get; }
+		public IConfigurationContainer Configuration { get; }
 		public ITypeConfiguration Owner { get; }
 
 		public IProperty<string> Name { get; }

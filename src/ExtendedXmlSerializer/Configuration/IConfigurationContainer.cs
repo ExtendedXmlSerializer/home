@@ -21,36 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Linq;
-using ExtendedXmlSerializer.Core;
+using System.Collections.Generic;
 using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class ExtendedConfiguration : KeyedByTypeCollection<ISerializerExtension>, IConfiguration
+	public interface IConfigurationContainer : ICollection<ISerializerExtension>
 	{
-		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
+		T Find<T>() where T : ISerializerExtension;
 
-		readonly IServicesFactory _source;
-
-		public ExtendedConfiguration() : this(DefaultExtensions.Default.ToArray()) {}
-
-		public ExtendedConfiguration(params ISerializerExtension[] extensions) : this(ServicesFactory, extensions) {}
-
-		public ExtendedConfiguration(IServicesFactory source, params ISerializerExtension[] extensions) : base(extensions)
-		{
-			_source = source;
-		}
-
-		public IExtendedXmlSerializer Create()
-		{
-			using (var services = _source.Get(this))
-			{
-				var result = services.Get<IExtendedXmlSerializer>();
-				return result;
-			}
-		}
-
-		T IConfiguration.Find<T>() => Find<T>();
+		IExtendedXmlSerializer Create();
 	}
 }

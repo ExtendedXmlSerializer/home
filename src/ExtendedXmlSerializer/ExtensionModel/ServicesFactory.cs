@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			_options = options;
 		}
 
-		public IServices Get(IConfiguration parameter)
+		public IServices Get(IConfigurationContainer parameter)
 		{
 			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
 
