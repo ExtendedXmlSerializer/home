@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	public interface IXmlWriter : IFormatWriter<System.Xml.XmlWriter>, IIdentityResolver {}
+	public interface IXmlWriter : IFormatWriter, IIdentityResolver {}
 }

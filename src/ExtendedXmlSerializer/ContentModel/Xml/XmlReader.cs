@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,11 +29,10 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class XmlReader : IXmlReader
+	sealed class XmlReader : IFormatReader
 	{
 		readonly IIdentityStore _store;
 		readonly IXmlReaderContext _context;
-		readonly System.Xml.XmlReader _reader;
 		readonly string _defaultNamespace;
 
 		public XmlReader(IIdentityStore store, IXmlReaderContext context, System.Xml.XmlReader reader)
@@ -41,14 +40,16 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public XmlReader(IIdentityStore store, IXmlReaderContext context, System.Xml.XmlReader reader, string defaultNamespace)
 		{
+			Reader = reader;
 			_store = store;
 			_context = context;
-			_reader = reader;
 			_defaultNamespace = defaultNamespace;
 		}
 
-		public string Name => _reader.LocalName;
-		public string Identifier => _reader.NamespaceURI;
+		public System.Xml.XmlReader Reader { get; }
+
+		public string Name => Reader.LocalName;
+		public string Identifier => Reader.NamespaceURI;
 
 		public MemberInfo Get(string parameter) => _context.Get(parameter);
 
@@ -58,35 +59,35 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public bool IsSatisfiedBy(IIdentity parameter)
 			=>
-				_reader.HasAttributes &&
-				_reader.MoveToAttribute(parameter.Name,
-				                        parameter.Identifier == _defaultNamespace ? string.Empty : parameter.Identifier);
+				Reader.HasAttributes &&
+				Reader.MoveToAttribute(parameter.Name,
+				                       parameter.Identifier == _defaultNamespace ? string.Empty : parameter.Identifier);
 
-		public System.Xml.XmlReader Get() => _reader;
+		public object Get() => Reader;
 
 		public string Content()
 		{
-			switch (_reader.NodeType)
+			switch (Reader.NodeType)
 			{
 				case XmlNodeType.Attribute:
-					return _reader.Value;
+					return Reader.Value;
 				default:
-					_reader.Read();
-					var result = _reader.Value;
-					_reader.Read();
+					Reader.Read();
+					var result = Reader.Value;
+					Reader.Read();
 					Set();
 					return result;
 			}
 		}
 
-		public void Set() => _reader.MoveToContent();
+		public void Set() => Reader.MoveToContent();
 
 		public IIdentity Get(IIdentity parameter)
-			=> _store.Get(parameter.Name, _reader.LookupNamespace(parameter.Identifier));
+			=> _store.Get(parameter.Name, Reader.LookupNamespace(parameter.Identifier));
 
 		public void Dispose()
 		{
-			_reader.Dispose();
+			Reader.Dispose();
 			_context.Dispose();
 		}
 	}

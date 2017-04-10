@@ -43,6 +43,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		}
 
 		protected override ImmutableArray<object> Create(IFormatWriter parameter)
-			=> new ReferenceWalker(_members, _enumerators, _accessors, parameter.Root).Get();
+			=> new ReferenceWalker(_members, _enumerators, _accessors, parameter.Instance).Get();
 	}
 }

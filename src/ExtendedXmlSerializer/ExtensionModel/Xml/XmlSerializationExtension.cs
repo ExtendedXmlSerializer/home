@@ -28,6 +28,8 @@ using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
+using XmlReader = System.Xml.XmlReader;
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -59,9 +61,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					            IsTypeSpecification<IListContents>.Default.And(ElementSpecification.Default)))
 			            .Register<IContentsActivation, XmlContentsActivation>()
 			            .Register<IXmlReaderContexts, XmlReaderContexts>()
-			            .Register<IFormatWriterFactory, ContentModel.Xml.FormatWriterFactory>()
+			            .Register<IFormatWriters<XmlWriter>, FormatWriters>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()
-			            .Register<IFormatReaderFactory, FormatReaderFactory>();
+			            .Register<IFormatReaders<XmlReader>, FormatReaders>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

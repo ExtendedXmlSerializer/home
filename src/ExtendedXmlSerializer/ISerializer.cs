@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer
 {
-	public interface IFormatWriterFactory
+	public interface ISerializer<in TRead, in TWrite>
 	{
-		IXmlWriter Create(System.Xml.XmlWriter writer, object instance);
+		void Serialize(TWrite writer, object instance);
+
+		object Deserialize(TRead reader);
 	}
 }

@@ -21,23 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Xml;
-using XmlWriter = System.Xml.XmlWriter;
+using System;
+using System.Xml;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class FormatWriterFactory : IFormatWriterFactory
+	sealed class FormatReaders : IFormatReaders<System.Xml.XmlReader>
 	{
-		readonly IFormatWriterFactory _factory;
-		readonly IObjectIdentifiers _identifiers;
+		readonly IIdentityStore _store;
+		readonly IXmlReaderContexts _read;
 
-		public FormatWriterFactory(IFormatWriterFactory factory, IObjectIdentifiers identifiers)
+		public FormatReaders(IIdentityStore store, IXmlReaderContexts read)
 		{
-			_factory = factory;
-			_identifiers = identifiers;
+			_store = store;
+			_read = read;
 		}
 
-		public IXmlWriter Create(XmlWriter writer, object instance)
-			=> new OptimizedNamespaceXmlWriter(_factory.Create(writer, instance), _identifiers.Get(instance));
+		public IFormatReader Get(System.Xml.XmlReader parameter)
+		{
+			switch (parameter.MoveToContent())
+			{
+				case XmlNodeType.Element:
+					var result = new XmlReader(_store, _read.Get(parameter.NameTable), parameter);
+					return result;
+				default:
+					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{parameter}.'");
+			}
+		}
 	}
 }

@@ -25,10 +25,5 @@ using System.Xml;
 
 namespace ExtendedXmlSerializer
 {
-	public interface IExtendedXmlSerializer
-	{
-		void Serialize(XmlWriter writer, object instance);
-
-		object Deserialize(XmlReader reader);
-	}
+	public interface IExtendedXmlSerializer : ISerializer<XmlReader, XmlWriter> {}
 }

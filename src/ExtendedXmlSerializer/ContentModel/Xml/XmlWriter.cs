@@ -44,30 +44,29 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		readonly IPrefixTable _prefixes;
 		readonly ITypePartsSource _parts;
 		readonly IFormatter<MemberInfo> _formatter;
-
-		readonly System.Xml.XmlWriter _writer;
 		readonly XmlNamespaceManager _manager;
+		readonly System.Xml.XmlWriter _writer;
 		readonly Func<TypeParts, TypeParts> _selector;
 
-		public XmlWriter(ITypePartsSource parts, IFormatter<MemberInfo> formatter, System.Xml.XmlWriter writer,
-		                 XmlNamespaceManager manager, object root)
-			: this(PrefixTable, parts, formatter, writer, manager, root) {}
+		public XmlWriter(ITypePartsSource parts, IFormatter<MemberInfo> formatter, XmlNamespaceManager manager,
+		                 Writing<System.Xml.XmlWriter> parameter)
+			: this(PrefixTable, parts, formatter, manager, parameter.Writer, parameter.Instance) {}
 
 		public XmlWriter(IPrefixTable prefixes, ITypePartsSource parts, IFormatter<MemberInfo> formatter,
-		                 System.Xml.XmlWriter writer, XmlNamespaceManager manager, object root)
+		                 XmlNamespaceManager manager, System.Xml.XmlWriter writer, object instance)
 		{
-			Root = root;
 			_prefixes = prefixes;
 			_parts = parts;
 			_formatter = formatter;
-			_writer = writer;
 			_manager = manager;
+			_writer = writer;
+			Instance = instance;
 			_selector = Get;
 
 			_manager.PushScope();
 		}
 
-		public object Root { get; }
+		public object Instance { get; }
 
 		public void Start(IIdentity identity)
 		{
@@ -84,7 +83,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public void EndCurrent() => _writer.WriteEndElement();
 
-		public System.Xml.XmlWriter Get() => _writer;
+		public object Get() => _writer;
 
 		public void Content(string content) => _writer.WriteString(content);
 

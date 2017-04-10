@@ -27,11 +27,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IFormatWriter<out T> : IFormatWriter, ISource<T> {}
-
-	public interface IFormatWriter : IFormatter<MemberInfo>, IDisposable
+	public interface IFormatWriter : IFormatter<MemberInfo>, ISource<object>, IDisposable
 	{
-		object Root { get; }
+		object Instance { get; }
 
 		void Start(IIdentity identity);
 

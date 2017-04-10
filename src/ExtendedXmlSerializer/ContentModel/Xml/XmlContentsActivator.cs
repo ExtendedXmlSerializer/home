@@ -36,15 +36,14 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 
 		public IContents Get(IFormatReader parameter)
 		{
-			var reader = (IXmlReader) parameter;
-			var xml = reader.Get();
+			var xml = (System.Xml.XmlReader) parameter.Get();
 			var attributes = xml.HasAttributes ? new XmlAttributes(xml) : (XmlAttributes?) null;
 
 			var depth = XmlDepth.Default.Get(xml);
 			var content = depth.HasValue ? new XmlElements(xml, depth.Value) : (XmlElements?) null;
 
 			var result = attributes.HasValue || content.HasValue
-				? _contents.Create(reader, _activator.Get(parameter), new XmlContent(attributes, content))
+				? _contents.Create(parameter, _activator.Get(parameter), new XmlContent(attributes, content))
 				: null;
 			return result;
 		}

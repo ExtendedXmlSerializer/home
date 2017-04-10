@@ -23,7 +23,7 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IFormatReaderFactory : IParameterizedSource<System.Xml.XmlReader, IXmlReader> {}
+	public interface IFormatWriters<T> : IParameterizedSource<Writing<T>, IFormatWriter> {}
 }

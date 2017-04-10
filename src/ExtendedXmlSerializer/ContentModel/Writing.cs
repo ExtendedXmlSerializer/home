@@ -21,14 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class DefaultXmlContentsActivator : IXmlContentsActivator
+	public struct Writing<T>
 	{
-		public static DefaultXmlContentsActivator Default { get; } = new DefaultXmlContentsActivator();
-		DefaultXmlContentsActivator() {}
+		public Writing(T writer, object instance)
+		{
+			Writer = writer;
+			Instance = instance;
+		}
 
-		public IContents Create(IFormatReader reader, object instance, XmlContent content)
-			=> new XmlContents(reader, instance, content);
+		public T Writer { get; }
+		public object Instance { get; }
 	}
 }

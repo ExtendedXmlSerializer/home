@@ -21,23 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
+using XmlWriter = System.Xml.XmlWriter;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatWriterFactory : XmlNamespaceManager, IFormatWriterFactory
+	sealed class OptimizedWriters : IFormatWriters<XmlWriter>
 	{
-		readonly IReflectionFormatter _formatter;
-		readonly ITypePartsSource _parts;
+		readonly IFormatWriters<XmlWriter> _factory;
+		readonly IObjectIdentifiers _identifiers;
 
-		public FormatWriterFactory(IReflectionFormatter formatter, ITypePartsSource parts, XmlNameTable names) : base(names)
+		public OptimizedWriters(IFormatWriters<XmlWriter> factory, IObjectIdentifiers identifiers)
 		{
-			_formatter = formatter;
-			_parts = parts;
+			_factory = factory;
+			_identifiers = identifiers;
 		}
 
-		public IXmlWriter Create(System.Xml.XmlWriter writer, object instance)
-			=> new XmlWriter(_parts, _formatter, writer, this, instance);
+		public IFormatWriter Get(Writing<XmlWriter> parameter)
+			=> new OptimizedNamespaceXmlWriter(_factory.Get(parameter).AsValid<IXmlWriter>(),
+			                                   _identifiers.Get(parameter.Instance));
 	}
 }

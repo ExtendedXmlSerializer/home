@@ -21,33 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Xml;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class FormatReaderFactory : IFormatReaderFactory
-	{
-		readonly IIdentityStore _store;
-		readonly IXmlReaderContexts _read;
-
-		public FormatReaderFactory(IIdentityStore store, IXmlReaderContexts read)
-		{
-			_store = store;
-			_read = read;
-		}
-
-		public IXmlReader Get(System.Xml.XmlReader parameter)
-		{
-			switch (parameter.MoveToContent())
-			{
-				case XmlNodeType.Element:
-					var result = new XmlReader(_store, _read.Get(parameter.NameTable), parameter);
-					return result;
-				default:
-					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{parameter}.'");
-			}
-		}
-	}
+	public interface IFormatReaders<in T> : IParameterizedSource<T, IFormatReader> {}
 }

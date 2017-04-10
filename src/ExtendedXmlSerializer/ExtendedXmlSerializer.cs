@@ -22,12 +22,10 @@
 // SOFTWARE.
 
 using System.Reflection;
+using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using JetBrains.Annotations;
-using XmlReader = System.Xml.XmlReader;
-using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer
 {
@@ -37,12 +35,12 @@ namespace ExtendedXmlSerializer
 	[UsedImplicitly]
 	sealed class ExtendedXmlSerializer : IExtendedXmlSerializer
 	{
-		readonly IFormatReaderFactory _readers;
-		readonly IFormatWriterFactory _writers;
+		readonly IFormatReaders<XmlReader> _readers;
+		readonly IFormatWriters<XmlWriter> _writers;
 		readonly IClassification _classification;
 		readonly ISerializers _serializers;
 
-		public ExtendedXmlSerializer(IFormatReaderFactory readers, IFormatWriterFactory writers,
+		public ExtendedXmlSerializer(IFormatReaders<XmlReader> readers, IFormatWriters<XmlWriter> writers,
 		                             IClassification classification, ISerializers serializers)
 		{
 			_readers = readers;
@@ -53,7 +51,7 @@ namespace ExtendedXmlSerializer
 
 		public void Serialize(XmlWriter writer, object instance)
 			=> _serializers.Get(instance.GetType().GetTypeInfo())
-			               .Write(_writers.Create(writer, instance), instance);
+			               .Write(_writers.Get(new Writing<XmlWriter>(writer, instance)), instance);
 
 		public object Deserialize(XmlReader reader)
 		{

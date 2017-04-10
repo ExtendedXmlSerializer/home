@@ -23,7 +23,7 @@
 
 using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -34,6 +34,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		ElementSpecification() {}
 
 		public bool IsSatisfiedBy(IContents parameter)
-			=> ((IXmlReader) parameter.Get()).Get().NodeType == XmlNodeType.Element;
+			=> parameter.Get()
+			            .Get()
+			            .AsValid<XmlReader>()
+			            .NodeType == XmlNodeType.Element;
 	}
 }

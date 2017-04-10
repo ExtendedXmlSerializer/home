@@ -26,7 +26,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
-using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -46,9 +45,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_condition = condition;
 		}
 
-		public XmlWriter Get() => _writer.Get();
+		public object Get() => _writer.Get();
 
-		public object Root => _writer.Root;
+		public object Instance => _writer.Instance;
 
 		public void Start(IIdentity identity)
 		{

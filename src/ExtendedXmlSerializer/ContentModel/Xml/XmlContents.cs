@@ -27,10 +27,10 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class XmlContents : IContents
 	{
-		readonly IXmlReader _reader;
+		readonly IFormatReader _reader;
 		readonly XmlContent _content;
 
-		public XmlContents(IXmlReader reader, object current, XmlContent content)
+		public XmlContents(IFormatReader reader, object current, XmlContent content)
 		{
 			Current = current;
 			_reader = reader;
