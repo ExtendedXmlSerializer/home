@@ -26,7 +26,6 @@ using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
@@ -103,11 +102,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public string Name => _reader.Name;
 
-			public IIdentity Get(IIdentity parameter) => _reader.Get(parameter);
+			public IIdentity Get(string name, string identifier) => _reader.Get(name, identifier);
 
 			public MemberInfo Get(string parameter) => _reader.Get(parameter);
-
-			public TypeInfo Get(TypeParts parameter) => _reader.Get(parameter);
 
 			public void Dispose()
 			{

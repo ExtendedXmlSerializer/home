@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -46,7 +46,8 @@ namespace ExtendedXmlSerializer.ContentModel
 			_types = types;
 		}
 
-		public TypeInfo Get(IFormatReader parameter) => FromAttributes(parameter) ?? FromIdentity(parameter);
+		public TypeInfo Get(IFormatReader parameter)
+			=> FromAttributes(parameter) ?? _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
 
 		TypeInfo FromAttributes(IFormatReader parameter)
 			=> _specification.IsSatisfiedBy(parameter)
@@ -56,13 +57,11 @@ namespace ExtendedXmlSerializer.ContentModel
 		TypeInfo Generic(IFormatReader parameter)
 		{
 			var arguments = ArgumentsTypeProperty.Default.Get(parameter);
-			var result = arguments.HasValue
-				? Generic(parameter, arguments.Value)
-				: null;
+			var result = !arguments.IsDefault ? Generic(parameter, arguments) : null;
 			return result;
 		}
 
-		TypeInfo Generic(IFormatReader parameter, ImmutableArray<Type> arguments)
+		TypeInfo Generic(IIdentity parameter, ImmutableArray<Type> arguments)
 		{
 			var candidates = _generic.Get(_identities.Get(parameter.Name, parameter.Identifier));
 			var length = arguments.Length;
@@ -76,7 +75,5 @@ namespace ExtendedXmlSerializer.ContentModel
 			}
 			return null;
 		}
-
-		TypeInfo FromIdentity(IFormatReader parameter) => _types.Get(_identities.Get(parameter.Name, parameter.Identifier));
 	}
 }

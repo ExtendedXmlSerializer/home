@@ -21,11 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System.Xml;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface ITypePartsSource : IParameterizedSource<TypeInfo, TypeParts> {}
+	sealed class FormatReaderContexts : ReferenceCacheBase<XmlNameTable, IFormatReaderContext>,
+	                                    IFormatReaderContexts<XmlNameTable>
+	{
+		readonly IIdentityStore _store;
+		readonly IXmlParserContexts _contexts;
+		readonly ITypes _types;
+
+		public FormatReaderContexts(IIdentityStore store, ITypes types) : this(store, types, XmlParserContexts.Default) {}
+
+		public FormatReaderContexts(IIdentityStore store, ITypes types, IXmlParserContexts contexts)
+		{
+			_store = store;
+			_contexts = contexts;
+			_types = types;
+		}
+
+		protected override IFormatReaderContext Create(XmlNameTable parameter)
+		{
+			var context = _contexts.Get(parameter);
+			var mapper = new IdentityMapper(_store, context.NamespaceManager);
+
+			var reflector = new TypePartReflector(mapper, _types);
+			var types = new TypeParser(reflector);
+			var parser = new ReflectionParser(types, reflector);
+			var result = new FormatReaderContext(mapper, parser, mapper);
+			return result;
+		}
+	}
 }

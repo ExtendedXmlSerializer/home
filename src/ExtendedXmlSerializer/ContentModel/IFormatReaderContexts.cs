@@ -21,7 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
+using ExtendedXmlSerializer.Core.Sources;
+
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IPrefixer : IIdentityResolver {}
+	public interface IFormatReaderContexts<in T> : IParameterizedSource<T, IFormatReaderContext> {}
 }

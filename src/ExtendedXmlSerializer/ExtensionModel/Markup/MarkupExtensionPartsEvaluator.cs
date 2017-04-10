@@ -26,9 +26,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
@@ -43,17 +44,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	{
 		const string Extension = "Extension";
 
-		readonly IReflectionParser _parser;
+		readonly IParser<MemberInfo> _parser;
 		readonly IEvaluator _evaluator;
 		readonly ITypeMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
 		readonly System.IServiceProvider _provider;
+		readonly IFormatter<TypeParts> _formatter;
 		readonly object[] _services;
 
-		public MarkupExtensionPartsEvaluator(IReflectionParser parser, IEvaluator evaluator, ITypeMembers members,
+		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
 		                                     System.IServiceProvider provider, params object[] services)
+			: this(parser, evaluator, members, accessors, constructors, provider, TypePartsFormatter.Default, services) {}
+
+		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
+		                                     IMemberAccessors accessors, IConstructors constructors,
+		                                     System.IServiceProvider provider, IFormatter<TypeParts> formatter,
+		                                     params object[] services)
 		{
 			_parser = parser;
 			_evaluator = evaluator;
@@ -61,6 +69,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			_accessors = accessors;
 			_constructors = constructors;
 			_provider = provider;
+			_formatter = formatter;
 			_services = services;
 		}
 
@@ -114,7 +123,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		TypeInfo DetermineType(MarkupExtensionParts parameter)
 		{
-			var type = Parse(parameter) ?? _parser.Get(Copy(parameter.Type));
+			var type = TryParse(parameter.Type);
 			if (type == null)
 			{
 				var name = IdentityFormatter<TypeParts>.Default.Get(parameter.Type);
@@ -128,16 +137,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			return type;
 		}
 
-		TypeInfo Parse(MarkupExtensionParts parameter)
+		TypeInfo TryParse(TypeParts parameter)
 		{
 			try
 			{
-				return _parser.Get(parameter.Type);
+				return Parse(parameter);
 			}
 			catch (ParseException)
 			{
-				return null;
+				return Parse(Copy(parameter));
 			}
+		}
+
+		TypeInfo Parse(TypeParts parameter)
+		{
+			var s = _formatter.Get(parameter);
+			return (TypeInfo) _parser.Get(s);
 		}
 
 		static TypeParts Copy(TypeParts parameter)

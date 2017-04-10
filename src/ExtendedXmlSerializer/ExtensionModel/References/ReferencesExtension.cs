@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,7 +27,6 @@ using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
-using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -42,11 +41,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .RegisterInstance<IReferenceMaps>(ReferenceMaps.Default)
 			         .Register<IReferenceEncounters, ReferenceEncounters>()
 			         .Register<IEntities, Entities>()
-			         /*.Register<IEncounterSpecification, InstanceConditionalSpecification>()*/
 			         .Decorate<IActivation, ReferenceActivation>()
-			         .Decorate<IContents, ReferenceContents>()
 			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
-			         .Decorate<IContents, RecursionAwareContents>();
+					 .Decorate<ContentModel.Content.IContents, ReferenceContents>()
+					 .Decorate<ContentModel.Content.IContents, RecursionAwareContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

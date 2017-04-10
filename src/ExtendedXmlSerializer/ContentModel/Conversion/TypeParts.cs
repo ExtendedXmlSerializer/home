@@ -23,40 +23,23 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
+namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	sealed class TypePartsSource : StructureCacheBase<TypeInfo, TypeParts>, ITypePartsSource
+	public struct TypeParts : IIdentity
 	{
-		readonly IIdentities _identities;
+		readonly Func<ImmutableArray<TypeParts>> _arguments;
 
-		public TypePartsSource(IIdentities identities)
+		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null)
 		{
-			_identities = identities;
+			Name = name;
+			Identifier = identifier;
+			_arguments = arguments;
 		}
 
-		protected override TypeParts Create(TypeInfo parameter)
-		{
-			var identity = _identities.Get(parameter);
-			var result = new TypeParts(identity.Name, identity.Identifier,
-			                           parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
-			return result;
-		}
+		public string Identifier { get; }
+		public string Name { get; }
 
-		Func<ImmutableArray<TypeParts>> Arguments(Type[] types)
-		{
-			var length = types.Length;
-			var names = new TypeParts[length];
-			for (var i = 0; i < length; i++)
-			{
-				names[i] = Get(types[i].GetTypeInfo());
-			}
-			var result = new Func<ImmutableArray<TypeParts>>(names.ToImmutableArray);
-			return result;
-		}
+		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
 	}
 }

@@ -21,10 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface ITypeParser : IParameterizedSource<TypeParts, TypeInfo>, IParser<TypeInfo> {}
+	sealed class IdentifierCommand : ICommand<IIdentityStore>
+	{
+		readonly ImmutableArray<string> _identifiers;
+
+		public IdentifierCommand(ImmutableArray<string> identifiers)
+		{
+			_identifiers = identifiers;
+		}
+
+		public void Execute(IIdentityStore parameter)
+		{
+			foreach (var identifier in _identifiers)
+			{
+				parameter.Get(string.Empty, identifier);
+			}
+		}
+	}
 }

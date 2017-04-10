@@ -21,10 +21,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
+using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	public interface IReflectionParser : IParser<MemberInfo> {}
+	sealed class TypePartReflector : CacheBase<TypeParts, TypeInfo>, ITypePartReflector
+	{
+		readonly IIdentityStore _identities;
+		readonly ITypes _types;
+
+		public TypePartReflector(IIdentityStore identities, ITypes types)
+		{
+			_identities = identities;
+			_types = types;
+		}
+
+		protected override TypeInfo Create(TypeParts parameter)
+		{
+			var identity = _identities.Get(parameter.Name, parameter.Identifier);
+			var typeInfo = _types.Get(identity);
+			var arguments = parameter.GetArguments();
+			var result = arguments.HasValue ? typeInfo.MakeGenericType(Arguments(arguments.Value)).GetTypeInfo() : typeInfo;
+			if (result == null)
+			{
+				throw new ParseException(
+					$"An attempt was made to parse the identity '{IdentityFormatter.Default.Get(identity)}', but no type could be located with that name.");
+			}
+			return result;
+		}
+
+		Type[] Arguments(ImmutableArray<TypeParts> names)
+		{
+			var length = names.Length;
+			var result = new Type[length];
+			for (var i = 0; i < length; i++)
+			{
+				result[i] = Get(names[i]).AsType();
+			}
+			return result;
+		}
+	}
 }

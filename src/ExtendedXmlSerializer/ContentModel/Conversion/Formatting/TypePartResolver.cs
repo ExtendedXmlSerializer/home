@@ -23,29 +23,39 @@
 
 using System;
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Properties;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
-	sealed class GenericElement : ElementBase
+	sealed class TypePartResolver : StructureCacheBase<TypeInfo, TypeParts>, ITypePartResolver
 	{
-		readonly IProperty<ImmutableArray<Type>> _property;
-		readonly ImmutableArray<Type> _arguments;
+		readonly IIdentities _identities;
 
-		public GenericElement(IIdentity identity, ImmutableArray<Type> arguments)
-			: this(ArgumentsTypeProperty.Default, identity, arguments) {}
-
-		public GenericElement(IProperty<ImmutableArray<Type>> property, IIdentity identity, ImmutableArray<Type> arguments)
-			: base(identity)
+		public TypePartResolver(IIdentities identities)
 		{
-			_property = property;
-			_arguments = arguments;
+			_identities = identities;
 		}
 
-		public override void Write(IFormatWriter writer, object instance)
+		protected override TypeParts Create(TypeInfo parameter)
 		{
-			base.Write(writer, instance);
-			_property.Write(writer, _arguments);
+			var identity = _identities.Get(parameter);
+			var result = new TypeParts(identity.Name, identity.Identifier,
+			                           parameter.IsGenericType ? Arguments(parameter.GetGenericArguments()) : null);
+			return result;
+		}
+
+		Func<ImmutableArray<TypeParts>> Arguments(Type[] types)
+		{
+			var length = types.Length;
+			var names = new TypeParts[length];
+			for (var i = 0; i < length; i++)
+			{
+				names[i] = Get(types[i].GetTypeInfo());
+			}
+			var result = new Func<ImmutableArray<TypeParts>>(names.ToImmutableArray);
+			return result;
 		}
 	}
 }

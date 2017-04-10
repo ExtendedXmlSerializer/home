@@ -28,20 +28,21 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class ReflectionParser : CacheBase<string, MemberInfo>, IReflectionParser
+	sealed class ReflectionParser : CacheBase<string, MemberInfo>, IParser<MemberInfo>
 	{
-		readonly ITypeParser _types;
+		readonly IParser<TypeInfo> _types;
+		readonly ITypePartReflector _parts;
 		readonly Parser<MemberParts> _parser;
 
-		public ReflectionParser(ITypeParser types) : this(types, MemberPartsParser.Default) {}
+		public ReflectionParser(IParser<TypeInfo> types, ITypePartReflector parts)
+			: this(types, parts, MemberPartsParser.Default) {}
 
-		public ReflectionParser(ITypeParser types, Parser<MemberParts> parser)
+		public ReflectionParser(IParser<TypeInfo> types, ITypePartReflector parts, Parser<MemberParts> parser)
 		{
 			_types = types;
+			_parts = parts;
 			_parser = parser;
 		}
-
-		public TypeInfo Get(TypeParts parameter) => _types.Get(parameter);
 
 		protected override MemberInfo Create(string parameter)
 		{
@@ -49,7 +50,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 			if (parse.WasSuccessful)
 			{
 				var parts = parse.Value;
-				var type = _types.Get(parts.Type);
+				var type = _parts.Get(parts.Type);
 				var name = parts.MemberName;
 				var result = type.GetMember(name).Only() ??
 				             type.GetProperty(name) ??

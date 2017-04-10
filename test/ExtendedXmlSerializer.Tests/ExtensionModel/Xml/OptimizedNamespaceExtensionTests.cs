@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.DotNet.ProjectModel;
 using Xunit;
@@ -56,8 +57,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 #endif
 			var instance = new ClassWithDifferingPropertyType { Interface = new GeneralImplementation { Instance = new HashSet<string> {"Hello", "World", "Hope", "This", "Works!"} } };
 			var serializer = new ConfigurationContainer().UseOptimizedNamespaces().Create();
-			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
+			serializer.Serialize(instance).Should().Be(expected);
+			serializer.Serialize(instance).Should().Be(expected);
 		}
 
 		[Fact]

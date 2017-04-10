@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
+namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
 {
-	public interface IReflectionFormatter : /*ITypeFormatter, */IFormatter<MemberInfo> {}
+	public interface IPrefixes : IAlteration<string> {}
 }

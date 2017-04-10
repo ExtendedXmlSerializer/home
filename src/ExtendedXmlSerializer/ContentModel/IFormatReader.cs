@@ -21,15 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IFormatReader : ISpecification<IIdentity>, IContentIdentity, IReflectionParser, ISource<object>,
-	                                 IDisposable
+	public interface IFormatReader : IFormat, ISpecification<IIdentity>, IIdentity, IReflectionParser
 	{
 		string Content();
 

@@ -23,18 +23,15 @@
 
 using System;
 using System.Xml;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
 	sealed class FormatReaders : IFormatReaders<System.Xml.XmlReader>
 	{
-		readonly IIdentityStore _store;
-		readonly IXmlReaderContexts _read;
+		readonly IFormatReaderContexts<XmlNameTable> _read;
 
-		public FormatReaders(IIdentityStore store, IXmlReaderContexts read)
+		public FormatReaders(IFormatReaderContexts<XmlNameTable> read)
 		{
-			_store = store;
 			_read = read;
 		}
 
@@ -43,7 +40,7 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			switch (parameter.MoveToContent())
 			{
 				case XmlNodeType.Element:
-					var result = new XmlReader(_store, _read.Get(parameter.NameTable), parameter);
+					var result = new XmlReader(_read.Get(parameter.NameTable), parameter);
 					return result;
 				default:
 					throw new InvalidOperationException($"Could not locate the content from the Xml reader '{parameter}.'");

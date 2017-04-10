@@ -38,6 +38,6 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 				                               .Select(IsAssignableSpecification.Defaults.Get)
 				                               .ToArray());
 
-		public ReflectionContentOption(ReflectionSerializer serializer) : base(Specification, serializer) {}
+		public ReflectionContentOption(ReflectionSerializer serializer) : base(Specification, serializer.Adapt()) {}
 	}
 }

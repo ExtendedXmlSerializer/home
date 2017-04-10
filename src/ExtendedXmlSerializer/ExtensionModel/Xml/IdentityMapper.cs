@@ -21,29 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using System;
+using System.Xml;
+using ExtendedXmlSerializer.ContentModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ReflectionFormatter : IReflectionFormatter
+	sealed class IdentityMapper : IIdentityStore, IDisposable
 	{
-		readonly ITypeFormatter _type;
-		readonly Delimiter _separator;
+		readonly IIdentityStore _store;
+		readonly XmlNamespaceManager _manager;
 
-		public ReflectionFormatter(ITypeFormatter type) : this(type, DefaultClrDelimiters.Default.Separator) {}
-
-		public ReflectionFormatter(ITypeFormatter type, Delimiter separator)
+		public IdentityMapper(IIdentityStore store, XmlNamespaceManager manager)
 		{
-			_type = type;
-			_separator = separator;
+			_store = store;
+			_manager = manager;
 		}
 
-		public string Get(MemberInfo parameter)
-			=>
-				parameter is TypeInfo
-					? _type.Get((TypeInfo) parameter)
-					: string.Concat(_type.Get(parameter.GetReflectedType()), _separator, parameter.Name);
+		public IIdentity Get(string name, string identifier) => _store.Get(name, _manager.LookupNamespace(identifier));
+
+		public void Dispose() => _manager.PopScope();
 	}
 }

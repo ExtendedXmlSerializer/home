@@ -21,25 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class XmlReaderContext : IXmlReaderContext
-	{
-		readonly IReflectionParser _parser;
-		readonly XmlNamespaceManager _manager;
-
-		public XmlReaderContext(IReflectionParser parser, XmlNamespaceManager manager)
-		{
-			_parser = parser;
-			_manager = manager;
-		}
-
-		public MemberInfo Get(string parameter) => _parser.Get(parameter);
-		public TypeInfo Get(TypeParts parameter) => _parser.Get(parameter);
-		public void Dispose() => _manager.PopScope();
-	}
+	public interface IIdentifierFormatter : IFormatter<int> {}
 }

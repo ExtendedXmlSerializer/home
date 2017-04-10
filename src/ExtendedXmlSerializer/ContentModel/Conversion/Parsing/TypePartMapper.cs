@@ -21,20 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
-using ExtendedXmlSerializer.ContentModel;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	sealed class NamespaceResolver : IIdentityResolver
+	sealed class TypePartMapper : IAlteration<TypeParts>
 	{
-		readonly XmlNamespaceManager _manager;
+		readonly IIdentityStore _store;
+		readonly Func<TypeParts, TypeParts> _selector;
 
-		public NamespaceResolver(XmlNamespaceManager manager)
+		public TypePartMapper(IIdentityStore store)
 		{
-			_manager = manager;
+			_store = store;
+			_selector = Get;
 		}
 
-		public string Get(string parameter) => _manager.LookupNamespace(parameter);
+		public TypeParts Get(TypeParts parameter)
+		{
+			var arguments = parameter.GetArguments();
+			var identity = _store.Get(parameter.Name, parameter.Identifier);
+			var result = new TypeParts(identity.Name, identity.Identifier,
+			                           arguments.HasValue
+				                           ? arguments.Value.Select(_selector).ToImmutableArray
+				                           : (Func<ImmutableArray<TypeParts>>) null);
+			return result;
+		}
 	}
 }

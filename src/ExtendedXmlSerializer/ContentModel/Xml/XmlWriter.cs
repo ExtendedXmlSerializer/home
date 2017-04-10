@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,51 +22,54 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Xml
 {
-	sealed class XmlWriter : Prefixer, IXmlWriter
+	sealed class XmlWriter : Dictionary<string, string>, IFormatWriter
 	{
 		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
-		readonly static PrefixTable PrefixTable = PrefixTable.Default;
+		readonly static Delimiter DefaultSeparator = DefaultClrDelimiters.Default.Separator;
 
-		readonly IPrefixTable _prefixes;
-		readonly ITypePartsSource _parts;
-		readonly IFormatter<MemberInfo> _formatter;
-		readonly XmlNamespaceManager _manager;
+		readonly IPrefixes _prefixes;
+		readonly IIdentifierFormatter _formatter;
+		readonly IIdentityStore _store;
+		readonly ITypePartResolver _parts;
+
 		readonly System.Xml.XmlWriter _writer;
+		readonly Delimiter _separator;
 		readonly Func<TypeParts, TypeParts> _selector;
 
-		public XmlWriter(ITypePartsSource parts, IFormatter<MemberInfo> formatter, XmlNamespaceManager manager,
+		public XmlWriter(IPrefixes prefixes, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
 		                 Writing<System.Xml.XmlWriter> parameter)
-			: this(PrefixTable, parts, formatter, manager, parameter.Writer, parameter.Instance) {}
+			: this(prefixes, formatter, store, parts, parameter.Writer, parameter.Instance, DefaultSeparator) {}
 
-		public XmlWriter(IPrefixTable prefixes, ITypePartsSource parts, IFormatter<MemberInfo> formatter,
-		                 XmlNamespaceManager manager, System.Xml.XmlWriter writer, object instance)
+		public XmlWriter(IPrefixes prefixes, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
+		                 System.Xml.XmlWriter writer, object instance,
+		                 Delimiter separator)
 		{
 			_prefixes = prefixes;
-			_parts = parts;
 			_formatter = formatter;
-			_manager = manager;
+			_store = store;
+			_parts = parts;
 			_writer = writer;
+			_separator = separator;
 			Instance = instance;
 			_selector = Get;
-
-			_manager.PushScope();
 		}
 
 		public object Instance { get; }
+		public object Get() => _writer;
 
 		public void Start(IIdentity identity)
 		{
@@ -82,8 +85,6 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 		}
 
 		public void EndCurrent() => _writer.WriteEndElement();
-
-		public object Get() => _writer;
 
 		public void Content(string content) => _writer.WriteString(content);
 
@@ -103,35 +104,42 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			}
 		}
 
-		string IParameterizedSource<string, string>.Get(string parameter) => Prefix(parameter);
-
-		string Prefix(string parameter) => Lookup(parameter) ?? Create(parameter);
+		string Prefix(string parameter) => Lookup(parameter) ?? CreatePrefix(parameter);
 
 		string Lookup(string parameter)
 		{
 			var lookup = _writer.LookupPrefix(parameter ?? string.Empty);
-			if (parameter != null && lookup == string.Empty && !_manager.HasNamespace(parameter))
+			if (parameter != null && lookup == string.Empty && !ContainsKey(string.Empty))
 			{
-				_manager.AddNamespace(string.Empty, parameter);
+				Add(string.Empty, parameter);
 			}
 
-			var result = parameter == _manager.DefaultNamespace ? string.Empty : lookup;
+			var result = parameter == this.Get(string.Empty) ? string.Empty : lookup;
 			return result;
 		}
 
-		new string Create(string identifier)
+		string CreatePrefix(string identifier)
 		{
-			if (!_manager.HasNamespace(identifier))
+			if (!ContainsKey(identifier))
 			{
-				var result = _prefixes.Get(identifier) ?? Get(identifier);
+				var result = _prefixes.Get(identifier) ?? Create(identifier);
 				_writer.WriteAttributeString(result, Xmlns, identifier);
 				return result;
 			}
 			return null;
 		}
 
+		string Create(string parameter)
+		{
+			var result = _formatter.Get(Count + 1);
+			Add(result, parameter);
+			return result;
+		}
+
 		public string Get(MemberInfo parameter)
-			=> parameter is TypeInfo ? GetType((TypeInfo) parameter) : _formatter.Get(parameter);
+			=> parameter is TypeInfo
+				? GetType((TypeInfo) parameter)
+				: string.Concat(GetType(parameter.GetReflectedType()), _separator, parameter.Name);
 
 		string GetType(TypeInfo parameter)
 		{
@@ -151,10 +159,12 @@ namespace ExtendedXmlSerializer.ContentModel.Xml
 			return result;
 		}
 
+		public IIdentity Get(string name, string identifier) => _store.Get(name, Prefix(identifier));
+
 		public void Dispose()
 		{
 			_writer.Dispose();
-			_manager.PopScope();
+			Clear();
 		}
 	}
 }

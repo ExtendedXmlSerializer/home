@@ -21,25 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion.Parsing
 {
-	public struct TypeParts : IIdentity
-	{
-		readonly Func<ImmutableArray<TypeParts>> _arguments;
-
-		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null)
-		{
-			Name = name;
-			Identifier = identifier;
-			_arguments = arguments;
-		}
-
-		public string Identifier { get; }
-		public string Name { get; }
-
-		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
-	}
+	public interface ITypePartReflector : IParameterizedSource<TypeParts, TypeInfo> {}
 }

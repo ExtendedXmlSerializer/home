@@ -21,28 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class OptimizedNamespaceXmlWriter : IXmlWriter
+	sealed class OptimizedNamespaceXmlWriter : IFormatWriter
 	{
-		readonly IXmlWriter _writer;
-		readonly ImmutableArray<string> _identifiers;
-		readonly ConditionMonitor _condition;
+		readonly IFormatWriter _writer;
+		readonly ICommand<IIdentityStore> _command;
 
-		public OptimizedNamespaceXmlWriter(IXmlWriter writer, ImmutableArray<string> identifiers)
-			: this(writer, identifiers, new ConditionMonitor()) {}
-
-		public OptimizedNamespaceXmlWriter(IXmlWriter writer, ImmutableArray<string> identifiers, ConditionMonitor condition)
+		public OptimizedNamespaceXmlWriter(IFormatWriter writer, ICommand<IIdentityStore> command)
 		{
 			_writer = writer;
-			_identifiers = identifiers;
-			_condition = condition;
+			_command = command;
 		}
 
 		public object Get() => _writer.Get();
@@ -53,13 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			_writer.Start(identity);
 
-			if (_condition.Apply())
-			{
-				foreach (var identifier in _identifiers)
-				{
-					Get(identifier);
-				}
-			}
+			_command.Execute(_writer);
 		}
 
 		public void EndCurrent() => _writer.EndCurrent();
@@ -69,7 +56,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public string Get(MemberInfo parameter) => _writer.Get(parameter);
 		public void Dispose() => _writer.Dispose();
-
-		public string Get(string parameter) => _writer.Get(parameter);
+		public IIdentity Get(string name, string identifier) => _writer.Get(name, identifier);
 	}
 }

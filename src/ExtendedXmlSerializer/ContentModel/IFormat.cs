@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IPrefixTable : IIdentityResolver, IParameterizedSource<TypeInfo, string> {}
+	public interface IFormat : ISource<object>, IIdentityStore, IDisposable {}
 }

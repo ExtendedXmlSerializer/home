@@ -21,9 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface IIdentityResolver : IAlteration<string> {}
+	sealed class FormatReaderContext : IFormatReaderContext
+	{
+		readonly IIdentityStore _store;
+		readonly IParser<MemberInfo> _parser;
+		readonly IDisposable _disposable;
+
+
+		public FormatReaderContext(IIdentityStore store, IParser<MemberInfo> parser, IDisposable disposable)
+		{
+			_store = store;
+			_parser = parser;
+			_disposable = disposable;
+		}
+
+		public MemberInfo Get(string parameter) => _parser.Get(parameter);
+
+		public IIdentity Get(string name, string identifier) => _store.Get(name, identifier);
+
+		public void Dispose() => _disposable.Dispose();
+	}
 }

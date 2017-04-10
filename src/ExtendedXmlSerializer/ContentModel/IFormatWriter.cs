@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public interface IFormatWriter : IFormatter<MemberInfo>, ISource<object>, IDisposable
+	public interface IFormatWriter : IFormat, IFormatter<MemberInfo>
 	{
 		object Instance { get; }
 

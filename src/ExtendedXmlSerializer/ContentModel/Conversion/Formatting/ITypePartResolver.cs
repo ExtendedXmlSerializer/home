@@ -21,23 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Concurrent;
+using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Xml.Namespacing
+namespace ExtendedXmlSerializer.ContentModel.Conversion.Formatting
 {
-	class Prefixer : CacheBase<string, string>, IPrefixer
-	{
-		readonly ICollection _store;
-
-		public Prefixer() : this(new ConcurrentDictionary<string, string>()) {}
-
-		public Prefixer(ConcurrentDictionary<string, string> store) : base(store)
-		{
-			_store = store;
-		}
-
-		protected override string Create(string parameter) => $"ns{_store.Count + 1}";
-	}
+	public interface ITypePartResolver : IParameterizedSource<TypeInfo, TypeParts> {}
 }

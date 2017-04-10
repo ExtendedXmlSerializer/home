@@ -21,9 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.Core
 {
-	public interface IContentIdentity : IIdentity, IAlteration<IIdentity> {}
+	sealed class ConditionalCommand<T> : ICommand<T>
+	{
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _command;
+
+		public ConditionalCommand(ICommand<T> command) : this(new ConditionalSpecification<T>(), command) {}
+
+		public ConditionalCommand(ISpecification<T> specification, ICommand<T> command)
+		{
+			_specification = specification;
+			_command = command;
+		}
+
+		public void Execute(T parameter)
+		{
+			if (_specification.IsSatisfiedBy(parameter))
+			{
+				_command.Execute(parameter);
+			}
+		}
+	}
 }

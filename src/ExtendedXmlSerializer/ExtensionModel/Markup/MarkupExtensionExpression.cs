@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;

@@ -54,14 +54,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance(_names)
 			            .RegisterInstance(_reader.Clone())
 			            .RegisterInstance(_writer.Clone())
+			            .RegisterInstance<IIdentifierFormatter>(IdentifierFormatter.Default)
 			            .RegisterInstance<IReaderFormatter>(ReaderFormatter.Default)
 			            .RegisterInstance<IFormattedContentSpecification>(FormattedContentSpecification.Default)
 			            .RegisterInstance<IListContentsSpecification>(
 				            new ListContentsSpecification(
 					            IsTypeSpecification<IListContents>.Default.And(ElementSpecification.Default)))
 			            .Register<IContentsActivation, XmlContentsActivation>()
-			            .Register<IXmlReaderContexts, XmlReaderContexts>()
-			            .Register<IFormatWriters<XmlWriter>, FormatWriters>()
+			            .Register<IFormatReaderContexts<XmlNameTable>, FormatReaderContexts>()
+			            .Register<IFormatWriters<XmlWriter>, FormatWriterContext>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()
 			            .Register<IFormatReaders<XmlReader>, FormatReaders>();
 
