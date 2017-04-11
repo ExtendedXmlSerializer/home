@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,35 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Contents;
-using ExtendedXmlSerializer.ContentModel.Format;
-
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class XmlContentsActivator : IContentsActivator
+	sealed class InnerContentResult : IInnerContentResult
 	{
-		readonly IReader _activator;
-		readonly IXmlContentsActivator _contents;
+		public static InnerContentResult Default { get; } = new InnerContentResult();
+		InnerContentResult() {}
 
-		public XmlContentsActivator(IReader activator, IXmlContentsActivator contents)
-		{
-			_activator = activator;
-			_contents = contents;
-		}
-
-		public IContents Get(IFormatReader parameter)
-		{
-			var xml = (System.Xml.XmlReader) parameter.Get();
-			var attributes = xml.HasAttributes ? new XmlAttributes(xml) : (XmlAttributes?) null;
-
-			var depth = XmlDepth.Default.Get(xml);
-			var content = depth.HasValue ? new XmlElements(xml, depth.Value) : (XmlElements?) null;
-
-			var result = attributes.HasValue || content.HasValue
-				? _contents.Create(parameter, _activator.Get(parameter), new XmlContent(attributes, content))
-				: null;
-			return result;
-		}
+		public object Get(IInnerContent parameter) => parameter.Current;
 	}
 }

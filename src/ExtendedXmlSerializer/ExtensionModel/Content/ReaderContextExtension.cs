@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
@@ -33,35 +33,35 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		ReaderContextExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IAlteration<IContentHandler>, Wrapper>();
+			=> parameter.Decorate<IAlteration<IInnerContentHandler>, Wrapper>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		sealed class Wrapper : IAlteration<IContentHandler>
+		sealed class Wrapper : IAlteration<IInnerContentHandler>
 		{
-			readonly IAlteration<IContentHandler> _handler;
+			readonly IAlteration<IInnerContentHandler> _handler;
 
-			public Wrapper(IAlteration<IContentHandler> handler)
+			public Wrapper(IAlteration<IInnerContentHandler> handler)
 			{
 				_handler = handler;
 			}
 
-			public IContentHandler Get(IContentHandler parameter) => new Handler(_handler.Get(parameter));
+			public IInnerContentHandler Get(IInnerContentHandler parameter) => new Handler(_handler.Get(parameter));
 
-			sealed class Handler : IContentHandler
+			sealed class Handler : IInnerContentHandler
 			{
 				readonly IContentsHistory _contexts;
-				readonly IContentHandler _handler;
+				readonly IInnerContentHandler _handler;
 
-				public Handler(IContentHandler handler) : this(ContentsHistory.Default, handler) {}
+				public Handler(IInnerContentHandler handler) : this(ContentsHistory.Default, handler) {}
 
-				public Handler(IContentsHistory contexts, IContentHandler handler)
+				public Handler(IContentsHistory contexts, IInnerContentHandler handler)
 				{
 					_contexts = contexts;
 					_handler = handler;
 				}
 
-				public void Execute(IContents parameter)
+				public void Execute(IInnerContent parameter)
 				{
 					var contexts = _contexts.Get(parameter.Get());
 					contexts.Push(parameter);

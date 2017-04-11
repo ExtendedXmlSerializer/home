@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 
@@ -33,9 +33,9 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		readonly IClassification _classification;
 		readonly IReader<ArrayList> _reader;
 
-		public ArrayReader(IContentsServices services, IClassification classification, IReader item)
+		public ArrayReader(IInnerContentServices services, IClassification classification, IReader item)
 			: this(
-				services.CreateContents<ArrayList>(new ConditionalContentHandler(services, new CollectionContentHandler(item, services))))
+				services.CreateContents<ArrayList>(new ConditionalInnerContentHandler(services, new CollectionInnerContentHandler(item, services))))
 		{
 			_classification = classification;
 		}

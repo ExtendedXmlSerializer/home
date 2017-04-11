@@ -28,6 +28,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		public static CollectionAssignment Default { get; } = new CollectionAssignment();
 		CollectionAssignment() {}
 
-		public void Assign(IListContents contents, object item) => contents.List.Add(item);
+		public void Assign(IListInnerContent contents, object item) => contents.List.Add(item);
 	}
 }

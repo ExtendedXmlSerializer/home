@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,7 +25,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -41,7 +40,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		DeferredReferencesExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IContentsResult, ContentsResult>()
+			=> parameter.Decorate<IInnerContentResult, InnerContentResult>()
 			            .Decorate<IMemberHandler, Handler>()
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
 			            .Decorate<IContents, DeferredReferenceContents>()
@@ -51,21 +50,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		sealed class ContentsResult : IContentsResult
+		sealed class InnerContentResult : IInnerContentResult
 		{
-			readonly ICommand<ContentModel.Contents.IContents> _command;
-			readonly IContentsResult _results;
+			readonly ICommand<IInnerContent> _command;
+			readonly IInnerContentResult _results;
 
 			[UsedImplicitly]
-			public ContentsResult(IContentsResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
+			public InnerContentResult(IInnerContentResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
 
-			public ContentsResult(ICommand<ContentModel.Contents.IContents> command, IContentsResult results)
+			public InnerContentResult(ICommand<IInnerContent> command, IInnerContentResult results)
 			{
 				_command = command;
 				_results = results;
 			}
 
-			public object Get(ContentModel.Contents.IContents parameter)
+			public object Get(IInnerContent parameter)
 			{
 				_command.Execute(parameter);
 				return _results.Get(parameter);
@@ -134,7 +133,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_handler = handler;
 			}
 
-			public void Handle(ContentModel.Contents.IContents contents, IMemberSerializer member)
+			public void Handle(IInnerContent contents, IMemberSerializer member)
 			{
 				ContentsContext.Default.Assign(contents, member.Access);
 				_handler.Handle(contents, member);

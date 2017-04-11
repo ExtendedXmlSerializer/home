@@ -25,7 +25,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
 
@@ -33,11 +32,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicDictionaryContentOption : ContentOptionBase
 	{
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 		readonly IDictionaryEnumerators _enumerators;
 		readonly IDictionaryEntries _entries;
 
-		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IContentsServices contents,
+		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IInnerContentServices contents,
 		                                      IDictionaryEnumerators enumerators, IDictionaryEntries entries)
 			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
@@ -50,7 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		{
 			var entry = _entries.Get(parameter);
 			var reader = _contents.Create(parameter,
-			                              new ConditionalContentHandler(_contents, new CollectionContentHandler(entry, _contents)));
+			                              new ConditionalInnerContentHandler(_contents, new CollectionInnerContentHandler(entry, _contents)));
 			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
 			return result;
 		}

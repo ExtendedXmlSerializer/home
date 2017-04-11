@@ -21,22 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class CollectionWithMembersContentHandler : SelectedCommand<IContents>, IContentHandler
-	{
-		readonly static EmptyCommand<IContents> Empty = EmptyCommand<IContents>.Default;
-
-		public CollectionWithMembersContentHandler(IListContentsSpecification specification, MemberContentHandler members,
-		                                  CollectionContentHandler collection)
-			: base(
-				new FixedOption<IContents, ICommand<IContents>>(members, Empty),
-				new FixedOption<IContents, ICommand<IContents>>(specification, collection)
-			) {}
-	}
+	public interface IInnerContentActivator : IParameterizedSource<IFormatReader, IInnerContent> {}
 }

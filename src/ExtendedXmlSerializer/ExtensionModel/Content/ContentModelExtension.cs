@@ -24,7 +24,6 @@
 using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Reflection;
@@ -49,11 +48,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Register<CollectionContentOption>()
 			            .Register<IClassification, Classification>()
 			            .Register<IIdentityStore, IdentityStore>()
-			            .Register<IContentsServices, ContentsServices>()
+			            .Register<IInnerContentServices, InnerContentServices>()
 			            .Register<IMemberHandler, MemberHandler>()
 			            .Register<ICollectionContentsHandler, CollectionContentsHandler>()
-			            .RegisterInstance<IAlteration<IContentHandler>>(Self<IContentHandler>.Default)
-			            .RegisterInstance<IContentsResult>(ContentsResult.Default)
+			            .RegisterInstance<IAlteration<IInnerContentHandler>>(Self<IInnerContentHandler>.Default)
+			            .RegisterInstance<IInnerContentResult>(InnerContentResult.Default)
 			            .RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
 			            .RegisterInstance<ICollectionAssignment>(CollectionAssignment.Default)
 			            .RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default)

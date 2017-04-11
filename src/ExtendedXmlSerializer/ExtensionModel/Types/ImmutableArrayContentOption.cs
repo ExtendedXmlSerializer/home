@@ -27,7 +27,6 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -40,10 +39,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	{
 		readonly static ISpecification<TypeInfo> Specification = new IsAssignableGenericSpecification(typeof(ImmutableArray<>));
 
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 		readonly IEnumerators _enumerators;
 
-		public ImmutableArrayContentOption(IContentsServices contents, IEnumerators enumerators, ISerializers serializers)
+		public ImmutableArrayContentOption(IInnerContentServices contents, IEnumerators enumerators, ISerializers serializers)
 			: base(Specification, serializers)
 		{
 			_contents = contents;
@@ -53,7 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 			=> new Serializer(CreateReader(itemType, _contents, item), new EnumerableWriter(_enumerators, item));
 
-		static IReader CreateReader(TypeInfo itemType, IContentsServices contents, IReader item)
+		static IReader CreateReader(TypeInfo itemType, IInnerContentServices contents, IReader item)
 			=> (IReader) Activator.CreateInstance(typeof(Reader<>).MakeGenericType(itemType.AsType()), contents, item);
 
 		sealed class Reader<T> : IReader
@@ -61,8 +60,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			readonly IReader<Collection<T>> _reader;
 
 			[UsedImplicitly]
-			public Reader(IContentsServices services, IReader item)
-				: this(services.CreateContents<Collection<T>>(new ConditionalContentHandler(services, new CollectionContentHandler(item, services)))) {}
+			public Reader(IInnerContentServices services, IReader item)
+				: this(services.CreateContents<Collection<T>>(new ConditionalInnerContentHandler(services, new CollectionInnerContentHandler(item, services)))) {}
 
 			Reader(IReader<Collection<T>> reader)
 			{

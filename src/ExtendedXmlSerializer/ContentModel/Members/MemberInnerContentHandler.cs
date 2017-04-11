@@ -21,41 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class XmlListContents : IListContents
+	sealed class MemberInnerContentHandler : IInnerContentHandler, ISpecification<IInnerContent>
 	{
-		readonly IFormatReader _reader;
-		readonly XmlContent _content;
+		readonly IMemberSerialization _serialization;
+		readonly IMemberHandler _handler;
+		readonly IReaderFormatter _formatter;
 
-		public XmlListContents(IFormatReader reader, object current, IList list, XmlContent content)
+		public MemberInnerContentHandler(IMemberSerialization serialization, IMemberHandler handler,
+		                            IReaderFormatter formatter)
 		{
-			Current = current;
-			List = list;
-			_reader = reader;
-			_content = content;
+			_serialization = serialization;
+			_handler = handler;
+			_formatter = formatter;
 		}
 
-		public object Current { get; }
-
-		public IList List { get; }
-
-		public IFormatReader Get() => _reader;
-
-		public bool MoveNext()
+		public bool IsSatisfiedBy(IInnerContent parameter)
 		{
-			var contents = _content;
-			return contents.MoveNext();
+			var content = parameter.Get();
+			var key = _formatter.Get(content);
+			var member = _serialization.Get(key);
+			var result = member != null;
+			if (result)
+			{
+				_handler.Handle(parameter, member);
+			}
+			return result;
 		}
 
-		public void Reset()
-		{
-			throw new NotSupportedException();
-		}
+		public void Execute(IInnerContent parameter) => IsSatisfiedBy(parameter);
 	}
 }

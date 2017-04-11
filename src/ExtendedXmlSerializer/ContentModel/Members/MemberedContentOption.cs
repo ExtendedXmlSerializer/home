@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
@@ -31,10 +30,10 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	sealed class MemberedContentOption : ContentOptionBase
 	{
 		readonly IMemberSerializations _serializations;
-		readonly IContentsServices _services;
+		readonly IInnerContentServices _services;
 
 		public MemberedContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
-		                             IContentsServices services)
+		                             IInnerContentServices services)
 			: base(specification)
 		{
 			_serializations = serializations;
@@ -44,7 +43,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public override ISerializer Get(TypeInfo parameter)
 		{
 			var members = _serializations.Get(parameter);
-			var reader = _services.Create(parameter, new MemberContentHandler(members, _services, _services));
+			var reader = _services.Create(parameter, new MemberInnerContentHandler(members, _services, _services));
 			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}

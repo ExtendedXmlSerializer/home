@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ContentsContext : ReferenceCache<IContents, object>, IContentsContext
+	sealed class ContentsContext : ReferenceCache<IInnerContent, object>, IContentsContext
 	{
 		public static ContentsContext Default { get; } = new ContentsContext();
 		ContentsContext() : base(_ => null) {}

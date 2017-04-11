@@ -24,7 +24,7 @@
 using System.Text;
 using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
@@ -58,8 +58,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance<IFormattedContentSpecification>(FormattedContentSpecification.Default)
 			            .RegisterInstance<IListContentsSpecification>(
 				            new ListContentsSpecification(
-					            IsTypeSpecification<IListContents>.Default.And(ElementSpecification.Default)))
-			            .Register<IContentsActivation, XmlContentsActivation>()
+					            IsTypeSpecification<IListInnerContent>.Default.And(ElementSpecification.Default)))
+			            .Register<IInnerContentActivation, XmlInnerContentActivation>()
 			            .Register<IFormatReaderContexts<XmlNameTable>, FormatReaderContexts>()
 			            .Register<IFormatWriters<System.Xml.XmlWriter>, FormatWriterContext>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()

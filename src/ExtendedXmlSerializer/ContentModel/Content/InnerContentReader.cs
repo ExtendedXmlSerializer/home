@@ -21,13 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public interface IListContents : IContents
+	sealed class InnerContentReader : IReader
 	{
-		IList List { get; }
+		readonly IInnerContentActivator _activator;
+		readonly IInnerContentHandler _content;
+		readonly IInnerContentResult _result;
+
+		public InnerContentReader(IInnerContentActivator activator, IInnerContentHandler content, IInnerContentResult result)
+		{
+			_activator = activator;
+			_content = content;
+			_result = result;
+		}
+
+		public object Get(IFormatReader parameter)
+		{
+			var adapter = _activator.Get(parameter);
+			while (adapter?.MoveNext() ?? false)
+			{
+				_content.Execute(adapter);
+			}
+			var result = adapter != null ? _result.Get(adapter) : null;
+			return result;
+		}
 	}
 }

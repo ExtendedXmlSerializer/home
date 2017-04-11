@@ -22,15 +22,15 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ContentsHistory : ReferenceCache<IFormatReader, Stack<IContents>>, IContentsHistory
+	sealed class ContentsHistory : ReferenceCache<IFormatReader, Stack<IInnerContent>>, IContentsHistory
 	{
 		public static ContentsHistory Default { get; } = new ContentsHistory();
-		ContentsHistory() : base(_ => new Stack<IContents>()) {}
+		ContentsHistory() : base(_ => new Stack<IInnerContent>()) {}
 	}
 }

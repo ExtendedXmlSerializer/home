@@ -21,13 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.ContentModel.Contents
-{
-	sealed class ContentsResult : IContentsResult
-	{
-		public static ContentsResult Default { get; } = new ContentsResult();
-		ContentsResult() {}
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-		public object Get(IContents parameter) => parameter.Current;
+namespace ExtendedXmlSerializer.ContentModel.Content
+{
+	sealed class ConditionalInnerContentHandler : FixedOption<IInnerContent, ICommand<IInnerContent>>, IInnerContentHandler
+	{
+		public ConditionalInnerContentHandler(ISpecification<IInnerContent> specification, ICommand<IInnerContent> instance)
+			: base(specification, instance) {}
+
+		public void Execute(IInnerContent parameter)
+		{
+			if (IsSatisfiedBy(parameter))
+			{
+				Get(parameter).Execute(parameter);
+			}
+		}
 	}
 }

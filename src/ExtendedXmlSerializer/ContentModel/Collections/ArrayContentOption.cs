@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.ReflectionModel;
 
@@ -33,11 +32,11 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
 
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 		readonly IEnumerators _enumerators;
 		readonly IClassification _classification;
 
-		public ArrayContentOption(IContentsServices contents, IEnumerators enumerators, ISerializers serializers,
+		public ArrayContentOption(IInnerContentServices contents, IEnumerators enumerators, ISerializers serializers,
 		                          IClassification classification)
 			: base(Specification, serializers)
 		{

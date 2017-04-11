@@ -24,7 +24,6 @@
 using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -42,18 +41,18 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 		readonly IMembers _members;
 		readonly IMemberSerializers _serializers;
 		readonly IWriter _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IContentsServices contents, IIdentities identities, IMembers members,
+		public DictionaryEntries(IInnerContentServices contents, IIdentities identities, IMembers members,
 		                         IMemberSerializers serializers)
 			: this(contents, serializers, members, new ElementOption(identities).Get(Type), Pairs) {}
 
-		public DictionaryEntries(IContentsServices contents, IMemberSerializers serializers, IMembers members,
+		public DictionaryEntries(IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
 		                         IWriter element, IDictionaryPairTypesLocator locator)
 		{
 			_contents = contents;
@@ -72,7 +71,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)}.ToImmutableArray();
 			var serialization = new MemberSerialization(new FixedRuntimeMemberList(members), members);
 
-			var reader = _contents.Create(Type, new MemberContentHandler(serialization, _contents, _contents));
+			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
 			var result = new Container(_element, converter);

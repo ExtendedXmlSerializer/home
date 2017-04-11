@@ -22,18 +22,18 @@
 // SOFTWARE.
 
 using System.Xml;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ElementSpecification : ISpecification<IContents>
+	sealed class ElementSpecification : ISpecification<IInnerContent>
 	{
 		public static ElementSpecification Default { get; } = new ElementSpecification();
 		ElementSpecification() {}
 
-		public bool IsSatisfiedBy(IContents parameter)
+		public bool IsSatisfiedBy(IInnerContent parameter)
 			=> parameter.Get()
 			            .Get()
 			            .AsValid<System.Xml.XmlReader>()

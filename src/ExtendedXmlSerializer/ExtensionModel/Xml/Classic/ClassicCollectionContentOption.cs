@@ -25,17 +25,16 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
 	{
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 		readonly IEnumerators _enumerators;
 
-		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IContentsServices contents,
+		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IInnerContentServices contents,
 		                                      IEnumerators enumerators, ISerializers serializers)
 			: base(specification, serializers)
 		{
@@ -47,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			=>
 				new Serializer(
 					_contents.Create(classification,
-					                 new ConditionalContentHandler(_contents, new CollectionContentHandler(item, _contents))),
+					                 new ConditionalInnerContentHandler(_contents, new CollectionInnerContentHandler(item, _contents))),
 					new EnumerableWriter(_enumerators, item));
 	}
 }

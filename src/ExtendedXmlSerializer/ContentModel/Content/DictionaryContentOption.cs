@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -35,11 +34,11 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IMemberSerializations _serializations;
 		readonly IDictionaryEnumerators _enumerators;
 		readonly IDictionaryEntries _entries;
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 
 		public DictionaryContentOption(IActivatingTypeSpecification specification,
 		                               IMemberSerializations serializations, IDictionaryEnumerators enumerators,
-		                               IDictionaryEntries entries, IContentsServices contents)
+		                               IDictionaryEntries entries, IInnerContentServices contents)
 			: base(specification.And(IsDictionaryTypeSpecification.Default))
 		{
 			_serializations = serializations;
@@ -53,8 +52,8 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var members = _serializations.Get(parameter);
 			var entry = _entries.Get(parameter);
 
-			var handler = new CollectionWithMembersContentHandler(_contents, new MemberContentHandler(members, _contents, _contents),
-			                                             new CollectionContentHandler(entry, _contents));
+			var handler = new CollectionWithMembersInnerContentHandler(_contents, new MemberInnerContentHandler(members, _contents, _contents),
+			                                             new CollectionInnerContentHandler(entry, _contents));
 			var reader = _contents.Create(parameter, handler);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, entry));
 			var result = new Serializer(reader, writer);

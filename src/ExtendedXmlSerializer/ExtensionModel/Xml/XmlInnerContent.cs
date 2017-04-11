@@ -21,32 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Contents
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ContentsReader : IReader
+	sealed class XmlInnerContent : IInnerContent
 	{
-		readonly IContentsActivator _activator;
-		readonly IContentHandler _content;
-		readonly IContentsResult _result;
+		readonly IFormatReader _reader;
+		readonly XmlContent _content;
 
-		public ContentsReader(IContentsActivator activator, IContentHandler content, IContentsResult result)
+		public XmlInnerContent(IFormatReader reader, object current, XmlContent content)
 		{
-			_activator = activator;
+			Current = current;
+			_reader = reader;
 			_content = content;
-			_result = result;
 		}
 
-		public object Get(IFormatReader parameter)
+		public object Current { get; }
+
+		public IFormatReader Get() => _reader;
+
+		public bool MoveNext()
 		{
-			var adapter = _activator.Get(parameter);
-			while (adapter?.MoveNext() ?? false)
-			{
-				_content.Execute(adapter);
-			}
-			var result = adapter != null ? _result.Get(adapter) : null;
-			return result;
+			var contents = _content;
+			return contents.MoveNext();
+		}
+
+		public void Reset()
+		{
+			throw new NotSupportedException();
 		}
 	}
 }

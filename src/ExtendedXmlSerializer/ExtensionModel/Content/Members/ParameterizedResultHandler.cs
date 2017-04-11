@@ -21,21 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedResultHandler : IContentsResult
+	sealed class ParameterizedResultHandler : IInnerContentResult
 	{
-		readonly IContentsResult _result;
+		readonly IInnerContentResult _result;
 
-		public ParameterizedResultHandler(IContentsResult result)
+		public ParameterizedResultHandler(IInnerContentResult result)
 		{
 			_result = result;
 		}
 
-		public object Get(IContents parameter)
+		public object Get(IInnerContent parameter)
 			=> (parameter.Current as IActivationContext)?.Get() ?? _result.Get(parameter);
 	}
 }

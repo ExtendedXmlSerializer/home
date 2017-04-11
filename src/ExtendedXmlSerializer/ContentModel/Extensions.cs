@@ -23,7 +23,7 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
@@ -37,9 +37,9 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public static ISerializer<T> Adapt<T>(this ISerializer @this) => new SerializerAdapter<T>(@this);
 
-		public static IContentsActivator Get<T>(this IContentsActivation @this) => @this.Get(typeof(T).GetTypeInfo());
+		public static IInnerContentActivator Get<T>(this IInnerContentActivation @this) => @this.Get(typeof(T).GetTypeInfo());
 
-		public static IReader<T> CreateContents<T>(this IContentsServices @this, IContentHandler parameter)
+		public static IReader<T> CreateContents<T>(this IInnerContentServices @this, IInnerContentHandler parameter)
 			=> new ReaderAdapter<T>(@this.Create(Support<T>.Key, parameter));
 
 		public static TypeInfo GetClassification(this IClassification @this, IFormatReader parameter,

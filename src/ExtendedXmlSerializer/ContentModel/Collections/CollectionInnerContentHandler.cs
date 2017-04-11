@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,29 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Contents;
-using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class XmlContentsActivation : IContentsActivation
+	sealed class CollectionInnerContentHandler : IInnerContentHandler
 	{
-		readonly IActivation _activation;
-		readonly IParameterizedSource<TypeInfo, IXmlContentsActivator> _activator;
+		readonly IReader _item;
+		readonly ICollectionContentsHandler _handler;
 
-		[UsedImplicitly]
-		public XmlContentsActivation(IActivation activation) : this(activation, XmlContentsActivatorSelector.Default) {}
-
-		public XmlContentsActivation(IActivation activation, IParameterizedSource<TypeInfo, IXmlContentsActivator> activator)
+		public CollectionInnerContentHandler(IReader item, ICollectionContentsHandler handler)
 		{
-			_activation = activation;
-			_activator = activator;
+			_item = item;
+			_handler = handler;
 		}
 
-		public IContentsActivator Get(TypeInfo parameter)
-			=> new XmlContentsActivator(_activation.Get(parameter), _activator.Get(parameter));
+		public void Execute(IInnerContent parameter) => _handler.Handle((IListInnerContent) parameter, _item);
 	}
 }

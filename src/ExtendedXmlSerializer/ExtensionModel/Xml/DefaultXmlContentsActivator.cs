@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static DefaultXmlContentsActivator Default { get; } = new DefaultXmlContentsActivator();
 		DefaultXmlContentsActivator() {}
 
-		public IContents Create(IFormatReader reader, object instance, XmlContent content)
-			=> new XmlContents(reader, instance, content);
+		public IInnerContent Create(IFormatReader reader, object instance, XmlContent content)
+			=> new XmlInnerContent(reader, instance, content);
 	}
 }

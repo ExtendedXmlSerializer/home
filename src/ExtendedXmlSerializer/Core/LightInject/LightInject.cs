@@ -1810,7 +1810,7 @@ namespace ExtendedXmlSerializer.Core.LightInject
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LogEntry"/> class.
 		/// </summary>
-		/// <param name="level">The <see cref="System.LogLevel"/> of this entry.</param>
+		/// <param name="level">The <see cref="LogLevel"/> of this entry.</param>
 		/// <param name="message">The log message.</param>
 		public LogEntry(LogLevel level, string message)
 		{

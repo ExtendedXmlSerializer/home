@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using System.Linq;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ExecuteDeferredCommandsCommand : ICommand<IContents>
+	sealed class ExecuteDeferredCommandsCommand : ICommand<IInnerContent>
 	{
 		public static ExecuteDeferredCommandsCommand Default { get; } = new ExecuteDeferredCommandsCommand();
 		ExecuteDeferredCommandsCommand() : this(DeferredCommands.Default) {}
@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			_commands = commands;
 		}
 
-		public void Execute(IContents parameter)
+		public void Execute(IInnerContent parameter)
 		{
 			var commands = _commands.Get(parameter.Get());
 			foreach (var command in commands.ToArray())

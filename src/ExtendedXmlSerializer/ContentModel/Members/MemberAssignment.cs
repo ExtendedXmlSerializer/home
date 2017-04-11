@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public static MemberAssignment Default { get; } = new MemberAssignment();
 		MemberAssignment() {}
 
-		public void Assign(IContents contents, IMemberAccess access, object value)
+		public void Assign(IInnerContent contents, IMemberAccess access, object value)
 			=> access.Assign(contents.Current, value);
 	}
 }

@@ -23,7 +23,7 @@
 
 using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_lists = lists;
 		}
 
-		public IContents Create(IFormatReader reader, object instance, XmlContent content)
-			=> new XmlListContents(reader, instance, instance as IList ?? _lists.Get(instance), content);
+		public IInnerContent Create(IFormatReader reader, object instance, XmlContent content)
+			=> new XmlListInnerContent(reader, instance, instance as IList ?? _lists.Get(instance), content);
 	}
 }

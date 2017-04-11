@@ -21,39 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class MemberContentHandler : IContentHandler, ISpecification<IContents>
+	sealed class XmlInnerContentActivator : IInnerContentActivator
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberHandler _handler;
-		readonly IReaderFormatter _formatter;
+		readonly IReader _activator;
+		readonly IXmlContentsActivator _contents;
 
-		public MemberContentHandler(IMemberSerialization serialization, IMemberHandler handler,
-		                            IReaderFormatter formatter)
+		public XmlInnerContentActivator(IReader activator, IXmlContentsActivator contents)
 		{
-			_serialization = serialization;
-			_handler = handler;
-			_formatter = formatter;
+			_activator = activator;
+			_contents = contents;
 		}
 
-		public bool IsSatisfiedBy(IContents parameter)
+		public IInnerContent Get(IFormatReader parameter)
 		{
-			var content = parameter.Get();
-			var key = _formatter.Get(content);
-			var member = _serialization.Get(key);
-			var result = member != null;
-			if (result)
-			{
-				_handler.Handle(parameter, member);
-			}
+			var xml = (System.Xml.XmlReader) parameter.Get();
+			var attributes = xml.HasAttributes ? new XmlAttributes(xml) : (XmlAttributes?) null;
+
+			var depth = XmlDepth.Default.Get(xml);
+			var content = depth.HasValue ? new XmlElements(xml, depth.Value) : (XmlElements?) null;
+
+			var result = attributes.HasValue || content.HasValue
+				? _contents.Create(parameter, _activator.Get(parameter), new XmlContent(attributes, content))
+				: null;
 			return result;
 		}
-
-		public void Execute(IContents parameter) => IsSatisfiedBy(parameter);
 	}
 }

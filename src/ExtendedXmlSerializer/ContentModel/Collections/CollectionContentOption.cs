@@ -23,7 +23,6 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Contents;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
 
@@ -33,10 +32,10 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly IMemberSerializations _serializations;
 		readonly IEnumerators _enumerators;
-		readonly IContentsServices _contents;
+		readonly IInnerContentServices _contents;
 
 		public CollectionContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
-		                               IEnumerators enumerators, ISerializers serializers, IContentsServices contents)
+		                               IEnumerators enumerators, ISerializers serializers, IInnerContentServices contents)
 			: base(specification, serializers)
 		{
 			_serializations = serializations;
@@ -47,9 +46,9 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
 		{
 			var members = _serializations.Get(classification);
-			var handler = new CollectionWithMembersContentHandler(_contents,
-			                                                      new MemberContentHandler(members, _contents, _contents),
-			                                                      new CollectionContentHandler(item, _contents));
+			var handler = new CollectionWithMembersInnerContentHandler(_contents,
+			                                                      new MemberInnerContentHandler(members, _contents, _contents),
+			                                                      new CollectionInnerContentHandler(item, _contents));
 			var reader = _contents.Create(classification, handler);
 			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, item));
 			var result = new Serializer(reader, writer);

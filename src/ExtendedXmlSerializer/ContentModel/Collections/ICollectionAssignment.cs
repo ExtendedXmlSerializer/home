@@ -25,6 +25,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	public interface ICollectionAssignment
 	{
-		void Assign(IListContents contents, object item);
+		void Assign(IListInnerContent contents, object item);
 	}
 }
