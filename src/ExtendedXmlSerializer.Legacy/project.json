@@ -2,7 +2,7 @@
   "buildOptions": {
   },
   "title": "ExtendedXmlSerializer.Legacy",
-  "version": "2.0.0-alpha2",
+  "version": "2.0.0-alpha3",
   "packOptions": {
     "owners": [ "Wojciech Nagórski", "Michael DeMond" ],
     "licenseUrl": "https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence",
