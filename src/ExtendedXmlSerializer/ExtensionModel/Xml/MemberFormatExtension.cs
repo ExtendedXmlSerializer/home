@@ -27,7 +27,7 @@ using System.Xml.Serialization;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {

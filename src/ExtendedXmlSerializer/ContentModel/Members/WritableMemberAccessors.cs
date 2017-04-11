@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members

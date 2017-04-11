@@ -28,13 +28,13 @@ using System.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
 	sealed class AssemblyTypePartitions : CacheBase<Assembly, Partition>, IAssemblyTypePartitions
 	{
-		readonly static IApplicationTypes ApplicationTypes = TypeModel.ApplicationTypes.All;
+		readonly static IApplicationTypes ApplicationTypes = ReflectionModel.ApplicationTypes.All;
 
 		readonly IApplicationTypes _types;
 		readonly Func<TypeInfo, bool> _specification;

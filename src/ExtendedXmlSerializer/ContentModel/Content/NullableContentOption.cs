@@ -26,7 +26,7 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Content

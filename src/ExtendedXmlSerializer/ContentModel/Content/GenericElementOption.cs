@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {

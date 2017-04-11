@@ -25,7 +25,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.LightInject;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {

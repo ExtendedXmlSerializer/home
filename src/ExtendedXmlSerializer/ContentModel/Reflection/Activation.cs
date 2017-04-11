@@ -24,7 +24,7 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {

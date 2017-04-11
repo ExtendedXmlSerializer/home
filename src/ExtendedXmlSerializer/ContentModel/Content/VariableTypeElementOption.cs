@@ -24,12 +24,13 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	class VariableTypeElementOption : NamedElementOptionBase
 	{
-		readonly static ISpecification<TypeInfo> Specification = TypeModel.VariableTypeSpecification.Default;
+		readonly static ISpecification<TypeInfo> Specification = VariableTypeSpecification.Default;
 
 		readonly IIdentities _identities;
 

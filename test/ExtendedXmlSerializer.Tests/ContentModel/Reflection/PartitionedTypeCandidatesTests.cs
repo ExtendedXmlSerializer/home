@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 using Xunit;
 using Identity = ExtendedXmlSerializer.ContentModel.Identification.Identity;
 

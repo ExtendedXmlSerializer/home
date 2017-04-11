@@ -28,7 +28,7 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml

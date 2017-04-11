@@ -26,7 +26,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.TypeModel;
+using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
