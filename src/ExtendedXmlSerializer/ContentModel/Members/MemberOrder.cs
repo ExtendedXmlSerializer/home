@@ -25,19 +25,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberOrder : StructureCacheBase<MemberInfo, int>, IMemberOrder
 	{
-		readonly static DefaultMemberOrder Source = DefaultMemberOrder.Default;
-
 		readonly IDictionary<MemberInfo, int> _store;
 		readonly IParameterizedSource<MemberInfo, int> _source;
-
-		[UsedImplicitly]
-		public MemberOrder(IDictionary<MemberInfo, int> store) : this(store, Source) {}
 
 		public MemberOrder(IDictionary<MemberInfo, int> store, IParameterizedSource<MemberInfo, int> source)
 		{

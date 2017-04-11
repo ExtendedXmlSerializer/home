@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 
@@ -34,7 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IObjectIdentifiers, ObjectIdentifiers>()
-			            .Decorate<IFormatWriters<XmlWriter>, OptimizedWriters>();
+			            .Decorate<IFormatWriters<System.Xml.XmlWriter>, OptimizedWriters>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System;
-using System.Xml;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
 
 namespace ExtendedXmlSerializer.Tests.Support
@@ -49,9 +49,9 @@ namespace ExtendedXmlSerializer.Tests.Support
 			return result;
 		}
 
-		public void Serialize(XmlWriter writer, object instance) => _serializer.Serialize(writer, instance);
+		public void Serialize(System.Xml.XmlWriter writer, object instance) => _serializer.Serialize(writer, instance);
 
-		public object Deserialize(XmlReader stream) => _serializer.Deserialize(stream);
+		public object Deserialize(System.Xml.XmlReader stream) => _serializer.Deserialize(stream);
 
 		public void WriteLine(object instance)
 		{

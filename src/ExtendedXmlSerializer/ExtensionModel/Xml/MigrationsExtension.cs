@@ -48,7 +48,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents>(Register);
 
 		IContents Register(IServiceProvider services, IContents contents)
-			=> new Contents(services.Get<IFormatReaders<XmlReader>>(), services.Get<IClassification>(), this, contents);
+			=>
+				new Contents(services.Get<IFormatReaders<System.Xml.XmlReader>>(), services.Get<IClassification>(), this, contents);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -60,12 +61,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		sealed class Contents : IContents
 		{
-			readonly IFormatReaders<XmlReader> _factory;
+			readonly IFormatReaders<System.Xml.XmlReader> _factory;
 			readonly IClassification _classification;
 			readonly ITypedTable<IEnumerable<Action<XElement>>> _migrations;
 			readonly IContents _contents;
 
-			public Contents(IFormatReaders<XmlReader> factory, IClassification classification,
+			public Contents(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
 			                ITypedTable<IEnumerable<Action<XElement>>> migrations, IContents contents)
 			{
 				_factory = factory;
@@ -90,16 +91,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			{
 				readonly static MigrationVersionIdentity Identity = MigrationVersionIdentity.Default;
 
-				readonly IFormatReaders<XmlReader> _factory;
+				readonly IFormatReaders<System.Xml.XmlReader> _factory;
 				readonly IClassification _classification;
 				readonly ImmutableArray<Action<XElement>> _migrations;
 				readonly IProperty<uint> _property;
 
-				public Migrator(IFormatReaders<XmlReader> factory, IClassification classification,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
 				                ImmutableArray<Action<XElement>> migrations)
 					: this(factory, classification, Identity, migrations) {}
 
-				public Migrator(IFormatReaders<XmlReader> factory, IClassification classification, IProperty<uint> property,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
+				                IProperty<uint> property,
 				                ImmutableArray<Action<XElement>> migrations)
 				{
 					_factory = factory;
@@ -126,7 +128,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 						throw new XmlException($"Migrations for type {fullName} is null.");
 					}
 
-					var element = XElement.Load(parameter.Get().AsValid<XmlReader>());
+					var element = XElement.Load(parameter.Get().AsValid<System.Xml.XmlReader>());
 					for (var i = version; i < length; i++)
 					{
 						var index = (int) i;

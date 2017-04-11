@@ -25,11 +25,9 @@ using System.Text;
 using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
-using XmlReader = System.Xml.XmlReader;
-using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -40,7 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly XmlNameTable _names;
 
 		public XmlSerializationExtension()
-			: this(ContentModel.Xml.Defaults.ReaderSettings, ContentModel.Xml.Defaults.WriterSettings, new NameTable()) {}
+			: this(Defaults.ReaderSettings, Defaults.WriterSettings, new NameTable()) {}
 
 		public XmlSerializationExtension(XmlReaderSettings reader, XmlWriterSettings writer, XmlNameTable names)
 		{
@@ -62,9 +60,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					            IsTypeSpecification<IListContents>.Default.And(ElementSpecification.Default)))
 			            .Register<IContentsActivation, XmlContentsActivation>()
 			            .Register<IFormatReaderContexts<XmlNameTable>, FormatReaderContexts>()
-			            .Register<IFormatWriters<XmlWriter>, FormatWriterContext>()
+			            .Register<IFormatWriters<System.Xml.XmlWriter>, FormatWriterContext>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()
-			            .Register<IFormatReaders<XmlReader>, FormatReaders>();
+			            .Register<IFormatReaders<System.Xml.XmlReader>, FormatReaders>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

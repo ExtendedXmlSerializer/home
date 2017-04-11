@@ -23,9 +23,7 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
@@ -75,10 +73,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				}
 
 				public object Get(IFormatReader parameter)
-					=> _custom.Deserialize(XElement.Load(parameter.Get().AsValid<XmlReader>()));
+					=> _custom.Deserialize(XElement.Load(parameter.Get().AsValid<System.Xml.XmlReader>()));
 
 				public void Write(IFormatWriter writer, object instance)
-					=> _custom.Serializer(writer.Get().AsValid<XmlWriter>(), instance);
+					=> _custom.Serializer(writer.Get().AsValid<System.Xml.XmlWriter>(), instance);
 			}
 		}
 	}

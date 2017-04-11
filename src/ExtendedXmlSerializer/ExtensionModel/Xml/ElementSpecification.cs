@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public bool IsSatisfiedBy(IContents parameter)
 			=> parameter.Get()
 			            .Get()
-			            .AsValid<XmlReader>()
+			            .AsValid<System.Xml.XmlReader>()
 			            .NodeType == XmlNodeType.Element;
 	}
 }

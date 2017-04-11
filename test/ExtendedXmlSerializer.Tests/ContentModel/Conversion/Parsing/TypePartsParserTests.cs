@@ -26,8 +26,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Xml;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 using Xunit;
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion.Parsing
 		public void AssemblyPathParser()
 		{
 			const string input = "clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests";
-			var path = global::ExtendedXmlSerializer.ContentModel.Xml.AssemblyPathParser.Default.Get().Parse(input);
+			var path = ExtendedXmlSerializer.ContentModel.Reflection.AssemblyPathParser.Default.Get().Parse(input);
 			Assert.Equal("ExtendedXmlSerializer.Tests.TestObject", path.Namespace);
 			Assert.Equal("ExtendedXmlSerializer.Tests", path.Path);
 		}

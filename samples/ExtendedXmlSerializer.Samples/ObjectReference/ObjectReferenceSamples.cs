@@ -23,10 +23,10 @@
 
 using System;
 using System.Collections.Generic;
-using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {

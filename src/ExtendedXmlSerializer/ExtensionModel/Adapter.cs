@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {

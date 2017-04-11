@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 
@@ -32,6 +31,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static FormattedContentSpecification Default { get; } = new FormattedContentSpecification();
 		FormattedContentSpecification() {}
 
-		public bool IsSatisfiedBy(IFormatReader parameter) => parameter.Get().AsValid<XmlReader>().HasAttributes;
+		public bool IsSatisfiedBy(IFormatReader parameter) => parameter.Get().AsValid<System.Xml.XmlReader>().HasAttributes;
 	}
 }

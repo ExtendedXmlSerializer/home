@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;

@@ -1,4 +1,6 @@
-﻿namespace ExtendedXmlSerializer.Tests.Support
+﻿using ExtendedXmlSerializer.ExtensionModel.Xml;
+
+namespace ExtendedXmlSerializer.Tests.Support
 {
 	public interface ISerializationSupport : IExtendedXmlSerializer
 	{

@@ -23,19 +23,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
+using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	public static class Extensions
 	{
+		public static XElement Member(this XElement @this, string name)
+			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
+
 		public static IMemberConfiguration Attribute<T, TMember>(
 			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
@@ -57,7 +64,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		}
 
 		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
-		                                                       Action<XmlWriter, T> serializer,
+		                                                       Action<System.Xml.XmlWriter, T> serializer,
 		                                                       Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
@@ -94,5 +101,89 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
 			=> @this.Extend(OptimizedNamespaceExtension.Default);
+
+
+		readonly static Func<Stream> New = Activators.Default.New<MemoryStream>;
+
+		readonly static IXmlWriterFactory WriterFactory
+			= new XmlWriterFactory(CloseSettings.Default.Get(Defaults.WriterSettings));
+
+		readonly static XmlReaderSettings CloseRead = CloseSettings.Default.Get(Defaults.ReaderSettings);
+
+		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
+			where T : IConfigurationContainer => configure(@this).Create();
+
+
+		public static string Serialize(this IExtendedXmlSerializer @this, object instance)
+			=> Serialize(@this, WriterFactory, New, instance);
+
+		public static string Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, object instance)
+			=> Serialize(@this, new XmlWriterFactory(CloseSettings.Default.Get(settings)), New, instance);
+
+		public static string Serialize(this IExtendedXmlSerializer @this, Stream stream, object instance)
+			=> Serialize(@this, XmlWriterFactory.Default, stream.Self, instance);
+
+		public static string Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, Stream stream,
+		                               object instance)
+			=> Serialize(@this, new XmlWriterFactory(settings), stream.Self, instance);
+
+		static string Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, Func<Stream> stream,
+		                        object instance)
+			=> new InstanceFormatter(@this, factory, stream).Get(instance);
+
+		public static void Serialize(this IExtendedXmlSerializer @this, TextWriter writer, object instance)
+			=> Serialize(@this, XmlWriterFactory.Default, writer, instance);
+
+		public static void Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, TextWriter writer,
+		                             object instance)
+			=> Serialize(@this, new XmlWriterFactory(settings), writer, instance);
+
+		static void Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, TextWriter writer, object instance)
+			=> @this.Serialize(factory.Get(writer), instance);
+
+		public static XmlParserContext Context(this XmlNameTable @this)
+			=> XmlParserContexts.Default.Get(@this ?? new NameTable());
+
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string data)
+			=> Deserialize<T>(@this, CloseRead, new MemoryStream(Encoding.UTF8.GetBytes(data)));
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, Stream stream)
+			=> Deserialize<T>(@this, Defaults.ReaderSettings, stream);
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, Stream stream)
+			=> Deserialize<T>(@this, new XmlReaderFactory(settings, settings.NameTable.Context()), stream);
+
+		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, Stream stream)
+			=> @this.Deserialize(factory.Get(stream)).AsValid<T>();
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, TextReader reader)
+			=> Deserialize<T>(@this, Defaults.ReaderSettings, reader);
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, TextReader reader)
+			=> Deserialize<T>(@this, new XmlReaderFactory(settings, settings.NameTable.Context()), reader);
+
+		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, TextReader reader)
+			=> @this.Deserialize(factory.Get(reader)).AsValid<T>();
+
+		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
+		{
+			public static CloseSettings Default { get; } = new CloseSettings();
+			CloseSettings() {}
+
+			public XmlWriterSettings Get(XmlWriterSettings parameter)
+			{
+				var result = parameter.Clone();
+				result.CloseOutput = true;
+				return result;
+			}
+
+			public XmlReaderSettings Get(XmlReaderSettings parameter)
+			{
+				var result = parameter.Clone();
+				result.CloseInput = true;
+				return result;
+			}
+		}
 	}
 }

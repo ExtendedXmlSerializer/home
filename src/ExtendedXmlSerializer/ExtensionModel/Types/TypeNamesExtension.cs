@@ -27,9 +27,10 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Xml;
-using ExtendedXmlSerializer.ContentModel.Xml.Namespacing;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.TypeModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
@@ -56,12 +57,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<IElements, Elements>()
 			            .Register<ITypeFormatter, TypeFormatter>()
 			            .Register<ITypePartResolver, TypePartResolver>()
-			            .RegisterInstance<IDictionary<Assembly, IIdentity>>(WellKnownNamespaces.Default)
+			            .RegisterInstance<IDictionary<Assembly, IIdentity>>(WellKnownIdentities.Default)
 			            .RegisterInstance<INamespaceFormatter>(NamespaceFormatter.Default)
 			            .Register<IIdentities, Identities>()
 			            .Register<IIdentifiers, Identifiers>()
 			            .Register<ITypeIdentities, TypeIdentities>()
-			            .Register<ITypes, ContentModel.Xml.Types>()
+			            .Register<ITypes, ContentModel.Reflection.Types>()
 			            .Register<IGenericTypes, GenericTypes>()
 			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default)
 			            .Register(Register);

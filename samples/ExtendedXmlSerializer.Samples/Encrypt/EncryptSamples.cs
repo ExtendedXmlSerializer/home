@@ -24,10 +24,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ExtendedXmlSerializer;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {

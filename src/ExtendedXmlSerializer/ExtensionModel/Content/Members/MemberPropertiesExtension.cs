@@ -32,10 +32,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class MemberPropertiesExtension : ISerializerExtension
 	{
-		public MemberPropertiesExtension() : this(new Dictionary<MemberInfo, string>(), new Dictionary<MemberInfo, int>()) {}
+		readonly INames _defaultNames;
+		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
 
-		public MemberPropertiesExtension(IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order)
+		public MemberPropertiesExtension(INames defaultNames, IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+			: this(new Dictionary<MemberInfo, string>(), new Dictionary<MemberInfo, int>(), defaultNames, defaultMemberOrder) {}
+
+		public MemberPropertiesExtension(IDictionary<MemberInfo, string> names, IDictionary<MemberInfo, int> order,
+		                                 INames defaultNames, IParameterizedSource<MemberInfo, int> defaultMemberOrder)
 		{
+			_defaultNames = defaultNames;
+			_defaultMemberOrder = defaultMemberOrder;
 			Order = order;
 			Names = names;
 		}
@@ -45,8 +52,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter
-				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(DeclaredNames.Default)))
-				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, DefaultMemberOrder.Default));
+				.RegisterInstance<INames>(new MemberNames(new MemberTable<string>(Names).Or(_defaultNames)))
+				.RegisterInstance<IMemberOrder>(new MemberOrder(Order, _defaultMemberOrder));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

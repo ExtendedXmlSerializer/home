@@ -22,6 +22,8 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
@@ -34,7 +36,22 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	public sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
 	{
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() {}
+
+		DefaultExtensions()
+			: this(DefaultMetadataSpecification.Default, DeclaredMemberNames.Default, DefaultMemberOrder.Default) {}
+
+		readonly IMetadataSpecification _metadata;
+		readonly INames _defaultNames;
+		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
+
+
+		public DefaultExtensions(IMetadataSpecification metadata, INames defaultNames,
+		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+		{
+			_metadata = metadata;
+			_defaultNames = defaultNames;
+			_defaultMemberOrder = defaultMemberOrder;
+		}
 
 		public override IEnumerator<ISerializerExtension> GetEnumerator()
 		{
@@ -45,8 +62,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new ConverterRegistryExtension();
 			yield return MemberModelExtension.Default;
 			yield return new TypeNamesExtension();
-			yield return new MemberPropertiesExtension();
-			yield return new AllowedMembersExtension();
+			yield return new MemberPropertiesExtension(_defaultNames, _defaultMemberOrder);
+			yield return new AllowedMembersExtension(_metadata);
 			yield return new AllowedMemberValuesExtension();
 			yield return new MemberFormatExtension();
 			yield return SerializationExtension.Default;

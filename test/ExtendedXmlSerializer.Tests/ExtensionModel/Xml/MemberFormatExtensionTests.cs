@@ -23,6 +23,7 @@
 
 using System;
 using System.Xml.Serialization;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
 using Xunit;

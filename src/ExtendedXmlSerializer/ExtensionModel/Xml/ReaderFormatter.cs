@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -31,6 +30,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static ReaderFormatter Default { get; } = new ReaderFormatter();
 		ReaderFormatter() {}
 
-		public string Get(IFormatReader parameter) => ((XmlReader) parameter.Get()).Name;
+		public string Get(IFormatReader parameter) => ((System.Xml.XmlReader) parameter.Get()).Name;
 	}
 }

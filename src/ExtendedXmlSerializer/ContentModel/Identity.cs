@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.ContentModel.Xml;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel
 {

@@ -41,8 +41,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				typeof(IDictionary<,>).GetRuntimeProperty(nameof(IDictionary.Values))
 			};
 
-		public AllowedMembersExtension() : this(DefaultMetadataSpecification.Default) {}
-
 		public AllowedMembersExtension(IMetadataSpecification specification)
 			: this(specification, new HashSet<MemberInfo>(DefaultBlacklist), new HashSet<MemberInfo>()) {}
 
