@@ -23,7 +23,6 @@
 
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
 using JetBrains.Annotations;

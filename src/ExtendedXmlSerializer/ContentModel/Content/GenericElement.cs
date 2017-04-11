@@ -23,6 +23,8 @@
 
 using System;
 using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
 
 namespace ExtendedXmlSerializer.ContentModel.Content

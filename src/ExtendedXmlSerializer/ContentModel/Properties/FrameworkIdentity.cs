@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Identification;
+
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class FrameworkIdentity : IIdentity

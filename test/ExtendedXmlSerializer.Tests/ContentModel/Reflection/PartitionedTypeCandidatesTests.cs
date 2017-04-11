@@ -23,14 +23,12 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
 using Xunit;
-using Identity = ExtendedXmlSerializer.ContentModel.Identity;
+using Identity = ExtendedXmlSerializer.ContentModel.Identification.Identity;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 {

@@ -23,6 +23,8 @@
 
 using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel

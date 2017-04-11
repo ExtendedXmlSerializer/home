@@ -23,7 +23,7 @@
 
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 

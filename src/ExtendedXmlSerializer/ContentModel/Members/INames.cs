@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {

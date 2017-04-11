@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {

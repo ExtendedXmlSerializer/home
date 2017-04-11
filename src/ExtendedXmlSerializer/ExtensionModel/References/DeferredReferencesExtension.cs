@@ -24,8 +24,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Contents;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
@@ -51,19 +53,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class ContentsResult : IContentsResult
 		{
-			readonly ICommand<ContentModel.IContents> _command;
+			readonly ICommand<ContentModel.Contents.IContents> _command;
 			readonly IContentsResult _results;
 
 			[UsedImplicitly]
 			public ContentsResult(IContentsResult results) : this(ExecuteDeferredCommandsCommand.Default, results) {}
 
-			public ContentsResult(ICommand<ContentModel.IContents> command, IContentsResult results)
+			public ContentsResult(ICommand<ContentModel.Contents.IContents> command, IContentsResult results)
 			{
 				_command = command;
 				_results = results;
 			}
 
-			public object Get(ContentModel.IContents parameter)
+			public object Get(ContentModel.Contents.IContents parameter)
 			{
 				_command.Execute(parameter);
 				return _results.Get(parameter);
@@ -132,7 +134,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				_handler = handler;
 			}
 
-			public void Handle(ContentModel.IContents contents, IMemberSerializer member)
+			public void Handle(ContentModel.Contents.IContents contents, IMemberSerializer member)
 			{
 				ContentsContext.Default.Assign(contents, member.Access);
 				_handler.Handle(contents, member);

@@ -22,8 +22,8 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.ContentModel.Conversion.Formatting;
-using ExtendedXmlSerializer.ContentModel.Conversion.Parsing;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {

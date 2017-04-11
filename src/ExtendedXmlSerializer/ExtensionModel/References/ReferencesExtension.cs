@@ -23,8 +23,8 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.TypeModel;
 
@@ -43,8 +43,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .Register<IEntities, Entities>()
 			         .Decorate<IActivation, ReferenceActivation>()
 			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
-					 .Decorate<ContentModel.Content.IContents, ReferenceContents>()
-					 .Decorate<ContentModel.Content.IContents, RecursionAwareContents>();
+					 .Decorate<IContents, ReferenceContents>()
+					 .Decorate<IContents, RecursionAwareContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

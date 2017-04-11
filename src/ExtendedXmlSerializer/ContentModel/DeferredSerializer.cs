@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel
 {

@@ -23,7 +23,7 @@
 
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
