@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
@@ -181,6 +182,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
             var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-GuidProperty xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Guid>7db85a35-1f66-4e5c-9c4a-33a937a9258b</Guid></ExtendedXmlSerializerTests-GuidProperty>");
             Assert.Equal(expected.Guid, actual.Guid);
         }
+
 #if CLASSIC
 	    [Fact]
 	    public void Point()
@@ -190,6 +192,24 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
             Assert.Equal(expected.Point, actual.Point);
 	    }
 #endif
+        [Fact]
+        public void PropertyInterfaceOfList()
+        {
+            var expected = new ClassWithPropertyInterfaceOfList
+            {
+                List = new List<string> { "Item1" },
+                Set = new HashSet<string> { "Item1" },
+                Dictionary = new Dictionary<string, string> { { "Key", "Value" } }
+            };
+
+            var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
+            Assert.Equal(expected.List.Count, actual.List.Count);
+            Assert.Equal(expected.List[0], actual.List[0]);
+            Assert.Equal(expected.Set.Count, actual.Set.Count);
+            Assert.Equal(expected.Set.First(), actual.Set.First());
+            Assert.Equal(expected.Dictionary.Count, actual.Dictionary.Count);
+            Assert.Equal(expected.Dictionary["Key"], actual.Dictionary["Key"]);
+        }
 
         class NullableSubject
 		{
@@ -228,5 +248,13 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 	        public System.Windows.Point Point { get; set; }
 	    }
 #endif
+
+        class ClassWithPropertyInterfaceOfList
+        {
+            public IList<string> List { get; set; }
+            public IDictionary<string, string> Dictionary { get; set; }
+
+            public ISet<string> Set { get; set; }
+        }
     }
 }
