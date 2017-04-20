@@ -173,7 +173,25 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-NullableSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(expected.Number, actual.Number);
 		}
-		class NullableSubject
+
+	    [Fact]
+	    public void Guid()
+	    {
+	        var expected = new GuidProperty { Guid = new Guid("7db85a35-1f66-4e5c-9c4a-33a937a9258b") };
+            var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-GuidProperty xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Guid>7db85a35-1f66-4e5c-9c4a-33a937a9258b</Guid></ExtendedXmlSerializerTests-GuidProperty>");
+            Assert.Equal(expected.Guid, actual.Guid);
+        }
+#if CLASSIC
+	    [Fact]
+	    public void Point()
+	    {
+	        var expected = new PointProperty { Point = new System.Windows.Point(10, 20) };
+            var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-PointProperty xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Point><X>10</X><Y>20</Y></Point></ExtendedXmlSerializerTests-PointProperty>");
+            Assert.Equal(expected.Point, actual.Point);
+	    }
+#endif
+
+        class NullableSubject
 		{
 			public int? Number { get; set; }
 		}
@@ -199,5 +217,16 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		{
 			public string PropertyName { get; set; }
 		}
-	}
+
+        class GuidProperty
+        {
+            public Guid Guid { get; set; }
+        }
+#if CLASSIC
+        class PointProperty
+	    {
+	        public System.Windows.Point Point { get; set; }
+	    }
+#endif
+    }
 }
