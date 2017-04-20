@@ -192,6 +192,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
             Assert.Equal(expected.Point, actual.Point);
 	    }
 #endif
+
         [Fact]
         public void PropertyInterfaceOfList()
         {
@@ -201,14 +202,48 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
                 Set = new HashSet<string> { "Item1" },
                 Dictionary = new Dictionary<string, string> { { "Key", "Value" } }
             };
-
+            
             var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
-            Assert.Equal(expected.List.Count, actual.List.Count);
-            Assert.Equal(expected.List[0], actual.List[0]);
-            Assert.Equal(expected.Set.Count, actual.Set.Count);
-            Assert.Equal(expected.Set.First(), actual.Set.First());
-            Assert.Equal(expected.Dictionary.Count, actual.Dictionary.Count);
-            Assert.Equal(expected.Dictionary["Key"], actual.Dictionary["Key"]);
+            actual.ShouldBeEquivalentTo(expected);
+        }
+
+        [Fact]
+	    public void CustomCollection()
+        {
+            var expected = new TestClassCollection { TestClassPrimitiveTypes.Create() };
+            var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassCollection xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><TestClassPrimitiveTypes><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></TestClassPrimitiveTypes></TestClassCollection>");
+            actual.ShouldBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void DifferentTypeOfProperty()
+	    {
+	        var expected = new TestClassPropertyType();
+            expected.Init();
+            _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
+	    }
+
+        [Fact]
+        public void ClassWithHashSet()
+	    {
+	        var expected = new TestClassWithHashSet();
+            expected.Init();
+            _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassTimeSpan()
+	    {
+	        var expected = new TestClassTimeSpan();
+            expected.Init();
+            _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ClassWithArray()
+        {
+            var expected = new TestClassWithArray() {ArrayOfInt = new int[] {1, 2, 3}};
+            _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
         }
 
         class NullableSubject
