@@ -34,6 +34,7 @@
         "define": [ "CLASSIC" ]
       },
       "frameworkAssemblies": {
+        "WindowsBase": "4.0.0.0"
       },
       "dependencies": {
       }

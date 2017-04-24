@@ -121,5 +121,15 @@ namespace ExtendedXmlSerializer.Tests.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializer.Tests.Legacy.Resources.TestClassTimeSpan.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
-	}
+
+#if CLASSIC
+	    [Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
+	    public void Point()
+	    {
+	        var obj = new PointProperty { Point = new System.Windows.Point(10, 20) };
+            CheckSerializationAndDeserialization("ExtendedXmlSerializer.Tests.Legacy.Resources.PointProperty.xml", obj);
+	    }
+#endif
+
+    }
 }
