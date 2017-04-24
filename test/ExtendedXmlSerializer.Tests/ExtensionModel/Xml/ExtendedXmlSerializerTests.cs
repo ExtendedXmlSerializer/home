@@ -246,6 +246,18 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
             _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
         }
 
+	    [Fact]
+	    public void ClassWithObjectProperty()
+	    {
+            var expected = new List<TestClassWithObjectProperty>
+                      {
+                          new TestClassWithObjectProperty {TestProperty = 1234},
+                          new TestClassWithObjectProperty {TestProperty = "Abc"},
+                          new TestClassWithObjectProperty {TestProperty = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2)}
+                      };
+            _serializer.Cycle(expected).ShouldBeEquivalentTo(expected);
+        }
+
         class NullableSubject
 		{
 			public int? Number { get; set; }
