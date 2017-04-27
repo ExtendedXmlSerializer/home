@@ -38,11 +38,15 @@ namespace ExtendedXmlSerialization
         void ExtractToList(string name);
     }
 
+    public class CustomExtendedXmlSerializerConfig<T> : ExtendedXmlSerializerConfig<T>
+    {
+        public CustomExtendedXmlSerializerConfig() : base(type => type == typeof(T)) {}
+    }
 
     public class ExtendedXmlSerializerConfig<T> : IMigrationConfiguration<T>, IObjectReferenceConfiguration<T>,
         IExtendedXmlSerializerConfig
     {
-        private static readonly Func<Type, bool> Specification = type => typeof(T) == type;
+        private static readonly Func<Type, bool> Specification = typeof(T).IsAssignableFrom;
 
         public ExtendedXmlSerializerConfig() : this(Specification) {}
 

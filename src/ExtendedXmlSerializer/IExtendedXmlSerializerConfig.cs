@@ -27,7 +27,7 @@ namespace ExtendedXmlSerialization
 {
     public interface IExtendedXmlSerializerConfig
     {
-        int Version { get; } // Consider making getter only, defined by implementation.
+        int Version { get; }
         void Map(Type targetType, XElement currentNode);
         object ReadObject(XElement element);
         void WriteObject(XmlWriter writer, object obj);
