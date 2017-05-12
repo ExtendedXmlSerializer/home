@@ -34,10 +34,10 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 
 // XmlFirstVersion
 <? xml version="1.0" encoding="utf-8"?>
-<TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples" >
-  < Id > 1 </ Id >
-  < Type > Type </ Type >
-</ TestClass >
+<TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
+  <Id>1</Id>
+  <Type>Type</Type>
+</TestClass>
 // EndXmlFirstVersion
 
 // SecondVersion

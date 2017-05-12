@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -75,8 +76,9 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 		        }
 		    };
 // EndCreateObject
-            var xml = serializer.Serialize(obj);
-		    File.WriteAllText("bin\\ObjectReferenceSamples.xml", xml);
+		    var xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
+
+            File.WriteAllText("bin\\ObjectReferenceSamples.xml", xml);
             Console.WriteLine(xml);
 
 			var obj2 = serializer.Deserialize<Company>(xml);

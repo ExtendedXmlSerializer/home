@@ -186,10 +186,10 @@ and generated XML look like:
 .. sourcecode:: xml
 
     <? xml version="1.0" encoding="utf-8"?>
-    <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples" >
-      < Id > 1 </ Id >
-      < Type > Type </ Type >
-    </ TestClass >
+    <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
+      <Id>1</Id>
+      <Type>Type</Type>
+    </TestClass>
 
 Then you renamed property:
 
@@ -226,7 +226,12 @@ and new XML should look like:
 
 .. sourcecode:: xml
 
-    <?xml version="1.0" encoding="utf-8"?><TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="2" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples"><Id>1</Id><Name>Type</Name><Value>Calculated</Value></TestClass>
+    <?xml version="1.0" encoding="utf-8"?>
+    <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="2" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
+      <Id>1</Id>
+      <Name>Type</Name>
+      <Value>Calculated</Value>
+    </TestClass>
 
 You can migrate (read) old version of XML using migrations:
 
@@ -317,7 +322,20 @@ Output XML will look like this:
 
 .. sourcecode:: xml
 
-    <?xml version="1.0" encoding="utf-8"?><Company xmlns="clr-namespace:ExtendedXmlSerialization.Samples.ObjectReference;assembly=ExtendedXmlSerializer.Samples"><Employees><Capacity>4</Capacity><Person Id="2"><Name>Oliver</Name><Boss Id="1"><Name>John</Name><Boss xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" /></Boss></Person><Person xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" /></Employees></Company>
+    <?xml version="1.0" encoding="utf-8"?>
+    <Company xmlns="clr-namespace:ExtendedXmlSerialization.Samples.ObjectReference;assembly=ExtendedXmlSerializer.Samples">
+      <Employees>
+        <Capacity>4</Capacity>
+        <Person Id="2">
+          <Name>Oliver</Name>
+          <Boss Id="1">
+            <Name>John</Name>
+            <Boss xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" />
+          </Boss>
+        </Person>
+        <Person xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" />
+      </Employees>
+    </Company>
 
 History
 =======

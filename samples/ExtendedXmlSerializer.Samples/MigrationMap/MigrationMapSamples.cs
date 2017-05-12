@@ -23,6 +23,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -72,8 +73,9 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 			Console.WriteLine("Obiect Value = " + obj.Value);
 
 			Console.WriteLine("Serialization to new version");
-			var xml2 = serializer.Serialize(obj);
-		    File.WriteAllText("bin\\XmlLastVersion.xml", xml2);
+		    var xml2 = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
+
+            File.WriteAllText("bin\\XmlLastVersion.xml", xml2);
             Console.WriteLine(xml2);
 		}
 	}
