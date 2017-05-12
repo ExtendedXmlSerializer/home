@@ -267,6 +267,58 @@ Then, you must register your TestClassMigrations class in configuration
                                                 .Configuration
                                                 .Create();
 
+Object reference and circular reference
+=======================================
+
+If you have a class:
+
+.. sourcecode:: csharp
+
+        public class Person
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+    
+            public Person Boss { get; set; }
+        }
+    
+        public class Company
+        {
+            public List<Person> Employees { get; set; }
+        }
+
+then you create object with circular reference, like this:
+
+.. sourcecode:: csharp
+
+    var boss = new Person {Id = 1, Name = "John"};
+    boss.Boss = boss; //himself boss
+    var worker = new Person {Id = 2, Name = "Oliver"};
+    worker.Boss = boss;
+    var obj = new Company
+    {
+        Employees = new List<Person>
+        {
+            worker,
+            boss
+        }
+    };
+
+You must configure Person class as reference object:
+
+.. sourcecode:: csharp
+
+    var serializer = new ConfigurationContainer().ConfigureType<Person>()
+                                                .EnableReferences(p => p.Id)
+                                                .Configuration
+                                                .Create();
+
+Output XML will look like this:
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?><Company xmlns="clr-namespace:ExtendedXmlSerialization.Samples.ObjectReference;assembly=ExtendedXmlSerializer.Samples"><Employees><Capacity>4</Capacity><Person Id="2"><Name>Oliver</Name><Boss Id="1"><Name>John</Name><Boss xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" /></Boss></Person><Person xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:entity="1" /></Employees></Company>
+
 History
 =======
 
@@ -277,6 +329,6 @@ Authors
 =======
 
 
-* `Wojciech Nagórski < https://github.com/wojtpl2>`__
-* `Mike - EEE < https://github.com/Mike-EEE>`__
+* `Wojciech Nagórski <https://github.com/wojtpl2>`__
+* `Mike-EEE <https://github.com/Mike-EEE>`__
 

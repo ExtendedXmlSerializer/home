@@ -80,13 +80,23 @@ namespace ExtendedXmlSerializer.DocGenerator
             doc.Add("Then, you must register your TestClassMigrations class in configuration");
             doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\MigrationMap\\MigrationMapSamples.cs", "MigrationsConfiguration");
             
+            doc.AddHeader("Object reference and circular reference");
+            doc.Add("If you have a class:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\ObjectReference\\Person.cs", "PersonClass");
+            doc.Add("then you create object with circular reference, like this:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\ObjectReference\\ObjectReferenceSamples.cs", "CreateObject");
+            doc.Add("You must configure Person class as reference object:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\ObjectReference\\ObjectReferenceSamples.cs", "Configure");
+            doc.Add("Output XML will look like this:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\bin\\ObjectReferenceSamples.xml", CodeFormat.Xml);
+
             doc.AddHeader("History");
             doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");
 
             doc.AddHeader("Authors");
             doc.AddList(
-                "`Wojciech Nagórski < https://github.com/wojtpl2>`__",
-                "`Mike - EEE < https://github.com/Mike-EEE>`__"
+                "`Wojciech Nagórski <https://github.com/wojtpl2>`__",
+                "`Mike-EEE <https://github.com/Mike-EEE>`__"
             );
 
             var result = doc.ToString();

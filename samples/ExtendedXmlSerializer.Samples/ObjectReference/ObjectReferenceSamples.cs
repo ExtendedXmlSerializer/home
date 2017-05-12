@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -36,11 +37,13 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 		{
 			Program.PrintHeader("Serialization reference object");
 
+// Configure
 			var serializer = new ConfigurationContainer().ConfigureType<Person>()
 			                                            .EnableReferences(p => p.Id)
 			                                            .Configuration
 			                                            .Create();
-			Run(serializer);
+// EndConfigure
+            Run(serializer);
 		}
 
 //        public static void RunAutofacConfig()
@@ -58,21 +61,23 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 
 		static void Run(IExtendedXmlSerializer serializer)
 		{
+// CreateObject
 			var boss = new Person {Id = 1, Name = "John"};
 			boss.Boss = boss; //himself boss
 			var worker = new Person {Id = 2, Name = "Oliver"};
 			worker.Boss = boss;
-			var obj = new Company
-			          {
-				          Employees = new List<Person>
-				                      {
-					                      worker,
-					                      boss
-				                      }
-			          };
-
-			var xml = serializer.Serialize(obj);
-			Console.WriteLine(xml);
+		    var obj = new Company
+		    {
+		        Employees = new List<Person>
+		        {
+		            worker,
+		            boss
+		        }
+		    };
+// EndCreateObject
+            var xml = serializer.Serialize(obj);
+		    File.WriteAllText("bin\\ObjectReferenceSamples.xml", xml);
+            Console.WriteLine(xml);
 
 			var obj2 = serializer.Deserialize<Company>(xml);
 			Console.WriteLine("Employees count = " + obj2.Employees.Count);

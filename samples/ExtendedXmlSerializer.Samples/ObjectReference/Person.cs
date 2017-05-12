@@ -25,6 +25,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerialization.Samples.ObjectReference
 {
+// PersonClass
 	public class Person
 	{
 		public int Id { get; set; }
@@ -37,4 +38,5 @@ namespace ExtendedXmlSerialization.Samples.ObjectReference
 	{
 		public List<Person> Employees { get; set; }
 	}
+// EndPersonClass
 }
