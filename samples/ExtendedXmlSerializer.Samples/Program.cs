@@ -23,6 +23,7 @@
 
 using System;
 using ExtendedXmlSerialization.Samples.CustomSerializator;
+using ExtendedXmlSerialization.Samples.Dictianary;
 using ExtendedXmlSerialization.Samples.Encrypt;
 using ExtendedXmlSerialization.Samples.MigrationMap;
 using ExtendedXmlSerialization.Samples.ObjectReference;
@@ -42,7 +43,9 @@ namespace ExtendedXmlSerialization.Samples
 		public static void Main(string[] args)
 		{
 			SimpleSamples.Run();
-			CustomSerializatorSamples.RunSimpleConfig();
+		    DictianarySamples.Run();
+
+            CustomSerializatorSamples.RunSimpleConfig();
 			// CustomSerializatorSamples.RunAutofacConfig();
 			MigrationMapSamples.RunSimpleConfig();
 			//MigrationMapSamples.RunAutofacConfig();

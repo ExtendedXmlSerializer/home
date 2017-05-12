@@ -23,10 +23,46 @@
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-	public class TestClass
+    /*
+// FirstVersion
+    public class TestClass
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+    }
+// EndFirstVersion
+
+// XmlFirstVersion
+<? xml version="1.0" encoding="utf-8"?>
+<TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples" >
+  < Id > 1 </ Id >
+  < Type > Type </ Type >
+</ TestClass >
+// EndXmlFirstVersion
+
+// SecondVersion
+    public class TestClass
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+// EndSecondVersion
+
+// XmlSecondVersion
+<? xml version="1.0" encoding="utf-8"?>
+<TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="1" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
+  <Id>1</Id>
+  <Name>Type</Name>
+</TestClass>
+// EndXmlSecondVersion
+*/
+
+    // LastVersion
+    public class TestClass
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Value { get; set; }
 	}
+// EndLastVersion
 }

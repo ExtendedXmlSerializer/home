@@ -34,11 +34,14 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 		{
 			Program.PrintHeader("Custom serialization");
 
-			var serializer = new ConfigurationContainer().Create(
-				cfg => cfg.ConfigureType<TestClass>().CustomSerializer(new TestClassSerializer()).Configuration
-			);
+// AddCustomSerializerToConfiguration
+			var serializer = new ConfigurationContainer().Type<TestClass>()
+		        .CustomSerializer(new TestClassSerializer())
+		        .Configuration
+		        .Create();
+// EndAddCustomSerializerToConfiguration
 
-			Run(serializer);
+            Run(serializer);
 		}
 
 //        public static void RunAutofacConfig()
@@ -56,12 +59,13 @@ namespace ExtendedXmlSerialization.Samples.CustomSerializator
 
 		static void Run(IExtendedXmlSerializer serializer)
 		{
-			var obj = new TestClass("Value");
+			var obj = new TestClass("Value", 1);
 			var xml = serializer.Serialize(obj);
 			Console.WriteLine(xml);
 
 			var obj2 = serializer.Deserialize<TestClass>(xml);
 			Console.WriteLine("Obiect PropStr = " + obj2.PropStr);
+			Console.WriteLine("Obiect PropStr = " + obj2.PropInt);
 		}
 	}
 }

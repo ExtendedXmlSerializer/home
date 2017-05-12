@@ -31,15 +31,19 @@ namespace ExtendedXmlSerialization.Samples.Simple
 	{
 		public static void Run()
 		{
-			var serializer = new ConfigurationContainer().Create();
-			Program.PrintHeader("Serialization");
+		    Program.PrintHeader("Serialization");
+// Serialization
+            var serializer = new ConfigurationContainer().Create();
 			var obj = new TestClass();
 			var xml = serializer.Serialize(obj);
+// EndSerialization
 			Console.WriteLine(xml);
 
 			Program.PrintHeader("Deserialization");
+// Deserialization
 			var obj2 = serializer.Deserialize<TestClass>(xml);
-			Console.WriteLine("Obiect id = " + obj2.Id);
+// EndDeserialization
+            Console.WriteLine("Obiect id = " + obj2.Id);
 		}
 	}
 }

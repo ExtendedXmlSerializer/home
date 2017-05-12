@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System;
+using System.IO;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -33,12 +34,13 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 		public static void RunSimpleConfig()
 		{
 			Program.PrintHeader("Deserialization old version of xml");
-
+// MigrationsConfiguration
 			var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
-			                                            .AddMigration(new TestClassSerialiser())
+			                                            .AddMigration(new TestClassMigrations())
 			                                            .Configuration
 			                                            .Create();
-			Run(serializer);
+// EndMigrationsConfiguration
+            Run(serializer);
 		}
 
 //        public static void RunAutofacConfig()
@@ -57,8 +59,8 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 		static void Run(IExtendedXmlSerializer serializer)
 		{
 			var xml =
-				@"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClass type=""ExtendedXmlSerialization.Samples.MigrationMap.TestClass"">
+                @"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClass xmlns=""clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples"">
 <Id>1</Id>
 <Type>Type</Type>
 </TestClass>";
@@ -71,7 +73,8 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 
 			Console.WriteLine("Serialization to new version");
 			var xml2 = serializer.Serialize(obj);
-			Console.WriteLine(xml2);
+		    File.WriteAllText("bin\\XmlLastVersion.xml", xml2);
+            Console.WriteLine(xml2);
 		}
 	}
 }

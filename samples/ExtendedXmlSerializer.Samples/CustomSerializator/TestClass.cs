@@ -23,13 +23,17 @@
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-	public class TestClass
-	{
-		public TestClass(string paramStr)
-		{
-			PropStr = paramStr;
-		}
+// CustomSerializator
+    public class TestClass
+    {
+        public TestClass(string paramStr, int paramInt)
+        {
+            PropStr = paramStr;
+            PropInt = paramInt;
+        }
 
-		public string PropStr { get; private set; }
-	}
+        public string PropStr { get; private set; }
+        public int PropInt { get; private set; }
+    }
+// EndCustomSerializator
 }

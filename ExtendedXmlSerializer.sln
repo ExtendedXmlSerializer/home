@@ -33,6 +33,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docGenerator", "docGenerato
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{85C5AA66-2D86-43DB-80EE-D48836C0B79C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedXmlSerializer.DocGenerator", "docGenerator\ExtendedXmlSerializer.DocGenerator\ExtendedXmlSerializer.DocGenerator.csproj", "{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +69,10 @@ Global
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87D0B2DD-15F1-4B62-878E-85A665E2D051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +85,6 @@ Global
 		{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{87D0B2DD-15F1-4B62-878E-85A665E2D051} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
+		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
 	EndGlobalSection
 EndGlobal

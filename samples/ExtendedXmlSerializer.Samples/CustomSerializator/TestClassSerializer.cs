@@ -21,22 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerialization.Samples.CustomSerializator
 {
-	public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
-	{
-		public TestClass Deserialize(XElement element)
-		{
-			return new TestClass(element.Element("String").Value);
-		}
+// TestClassSerializer
+    public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+    {
+        public TestClass Deserialize(XElement element)
+        {
+            var xElement = element.Member("String");
+            var xElement1 = element.Member("Int");
+            if (xElement != null && xElement1 != null)
+            {
+                var strValue = xElement.Value;
 
-		public void Serializer(XmlWriter writer, TestClass obj)
-		{
-			writer.WriteElementString("String", obj.PropStr);
-		}
-	}
+                var intValue = Convert.ToInt32(xElement1.Value);
+                return new TestClass(strValue, intValue);
+            }
+            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+        }
+
+        public void Serializer(XmlWriter writer, TestClass obj)
+        {
+            writer.WriteElementString("String", obj.PropStr);
+            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+        }
+    }
+// EndTestClassSerializer
 }

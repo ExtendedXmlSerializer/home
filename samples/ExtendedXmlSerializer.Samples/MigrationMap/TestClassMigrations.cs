@@ -24,16 +24,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerialization.Samples.MigrationMap
 {
-	public class TestClassSerialiser : IEnumerable<Action<XElement>>
+// TestClassMigrations
+    public class TestClassMigrations : IEnumerable<Action<XElement>>
 	{
 		public static void MigrationV0(XElement node)
 		{
-			var typeElement = node.Elements().FirstOrDefault(x => x.Name == "Type");
+			var typeElement = node.Member("Type");
 			// Add new node
 			node.Add(new XElement("Name", typeElement.Value));
 			// Remove old node
@@ -54,4 +55,5 @@ namespace ExtendedXmlSerialization.Samples.MigrationMap
 			yield return MigrationV1;
 		}
 	}
+// EndTestClassMigrations
 }
