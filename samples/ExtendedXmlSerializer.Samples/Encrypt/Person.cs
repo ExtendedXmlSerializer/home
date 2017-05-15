@@ -23,9 +23,11 @@
 
 namespace ExtendedXmlSerialization.Samples.Encrypt
 {
+// EncryptClass
 	public class Person
 	{
 		public string Name { get; set; }
 		public string Password { get; set; }
 	}
+// EndEncryptClass
 }

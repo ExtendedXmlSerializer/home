@@ -337,6 +337,46 @@ Output XML will look like this:
       </Employees>
     </Company>
 
+Property Encryption
+===================
+
+If you have a class with a property that needs to be encrypted:
+
+.. sourcecode:: csharp
+
+    public class Person
+    {
+        public string Name { get; set; }
+        public string Password { get; set; }
+    }
+
+You must implement interface IEncryption. For example, it will show the Base64 encoding, but in the real world better to use something safer, eg. RSA.:
+
+.. sourcecode:: csharp
+
+        public class CustomEncryption : ConverterBase<string>, IEncryption
+        {
+            public override string Parse(string data)
+            {
+                return Encoding.UTF8.GetString(Convert.FromBase64String(data));
+            }
+    
+            public override string Format(string instance)
+            {
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
+            }
+        }
+
+Then, you have to specify which properties are to be encrypted and register your IEncryption implementation.
+
+.. sourcecode:: csharp
+
+    var serializer = new ConfigurationContainer()
+        .UseEncryptionAlgorithm(new CustomEncryption())
+        .ConfigureType<Person>().Member(p => p.Password).Encrypt()
+        .Configuration
+        .Create();
+
 History
 =======
 

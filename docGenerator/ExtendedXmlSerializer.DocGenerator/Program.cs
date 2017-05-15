@@ -90,6 +90,14 @@ namespace ExtendedXmlSerializer.DocGenerator
             doc.Add("Output XML will look like this:");
             doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\bin\\ObjectReferenceSamples.xml", CodeFormat.Xml);
 
+            doc.AddHeader("Property Encryption");
+            doc.Add("If you have a class with a property that needs to be encrypted:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Encrypt\\Person.cs", "EncryptClass");
+            doc.Add("You must implement interface IEncryption. For example, it will show the Base64 encoding, but in the real world better to use something safer, eg. RSA.:");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Encrypt\\EncryptSamples.cs", "CustomEncryption");
+            doc.Add("Then, you have to specify which properties are to be encrypted and register your IEncryption implementation.");
+            doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Encrypt\\EncryptSamples.cs", "Configuration");
+
             doc.AddHeader("History");
             doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");
 

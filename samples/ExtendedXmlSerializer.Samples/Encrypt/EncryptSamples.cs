@@ -24,7 +24,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -37,8 +39,13 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 		{
 			Program.PrintHeader("Serialization reference object");
 
-			var serializer =
-				new ConfigurationContainer().Create(cfg => cfg.ConfigureType<Person>().Member(p => p.Password).Encrypt().Configuration);
+// Configuration
+			var serializer = new ConfigurationContainer()
+			    .UseEncryptionAlgorithm(new CustomEncryption())
+                .ConfigureType<Person>().Member(p => p.Password).Encrypt()
+                .Configuration
+                .Create();
+// EndConfiguration
 
 			Run(serializer);
 		}
@@ -73,4 +80,20 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 			                  string.Join(", ", obj2.Select(p => p.Password)));
 		}
 	}
+
+
+// CustomEncryption
+    public class CustomEncryption : ConverterBase<string>, IEncryption
+    {
+        public override string Parse(string data)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(data));
+        }
+
+        public override string Format(string instance)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
+        }
+    }
+// EndCustomEncryption
 }
