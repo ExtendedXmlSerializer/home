@@ -109,8 +109,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 
             var result = doc.ToString();
             File.WriteAllText("..\\..\\..\\..\\docs\\get-started\\index.rst", result);
-            //TODO generate readme
-            //File.WriteAllText("..\\..\\..\\..\\docs\\get-started\\index.rst", result);
+            File.WriteAllText("..\\..\\..\\..\\readme.rst", result);
         }
     }
 }
