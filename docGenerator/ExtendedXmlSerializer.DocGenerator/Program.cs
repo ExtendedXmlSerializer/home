@@ -108,7 +108,14 @@ namespace ExtendedXmlSerializer.DocGenerator
             );
 
             var result = doc.ToString();
+
             File.WriteAllText("..\\..\\..\\..\\docs\\get-started\\index.rst", result);
+            
+            result =
+                ".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg   :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine +
+                ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true   :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine +
+               result; 
+            
             File.WriteAllText("..\\..\\..\\..\\readme.rst", result);
         }
     }
