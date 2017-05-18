@@ -7,6 +7,7 @@ ExtendedXmlSerializer for .NET
    :maxdepth: 3
 
    get-started/index.rst
+   API Documentation <https://extendedxmlserializer.github.io/doc-v2.0.0>
 
 
 Indices and tables
