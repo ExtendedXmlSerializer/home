@@ -210,7 +210,33 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			Assert.Equal(salary, actual.Salary);
 		}
 
-		class SimpleTestSubject
+	    [Fact]
+	    public void ConfigureEncryptDifferenetOrder()
+	    {
+	        var before = new ConfigurationContainer();
+	        Assert.Null(before.Find<EncryptionExtension>());
+	        var configuration = before
+	            .ConfigureType<TestClassWithEncryptedData>()
+	            .Member(p => p.Password, x => x.Encrypt())
+	            .Member(p => p.Salary).Encrypt().Owner.Configuration
+	            .UseEncryptionAlgorithm(); //call UseEncryptionAlgorithm on the end
+
+            var extension = configuration.Find<EncryptionExtension>();
+	        Assert.NotNull(extension);
+	        var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
+	        Assert.NotNull(type);
+
+	        var property = type.Member(nameof(TestClassWithEncryptedData.Salary)).Get();
+	        Assert.NotNull(property);
+	        Assert.Contains(property, extension.Registered);
+
+	        const int salary = 6776;
+	        var instance = new TestClassWithEncryptedData { Salary = salary };
+	        var actual = new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
+	        Assert.Equal(salary, actual.Salary);
+	    }
+
+        class SimpleTestSubject
 		{
 			public string BasicProperty { get; set; }
 		}
