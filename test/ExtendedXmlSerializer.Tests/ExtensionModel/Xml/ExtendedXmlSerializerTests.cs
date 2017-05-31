@@ -140,7 +140,26 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			Assert.Equal(data, _serializer.Serialize(actual));
 		}
 
-		[Fact]
+	    [Fact]
+	    public void GenericProperty()
+	    {
+	        var obj = new TestClassGenericThree<string, int, decimal> ();
+	        obj.Init("StringValue", 1, 123.1m);
+
+	        var expected = new TestClassPropGeneric() {PropGenric = obj};
+
+
+            var data = _serializer.Serialize(expected);
+	        var actual = _serializer.Deserialize<TestClassPropGeneric>(data);
+	        Assert.NotNull(actual);
+	        Assert.Equal(obj.GenericProp, actual.PropGenric.GenericProp);
+	        Assert.Equal(obj.GenericProp2, actual.PropGenric.GenericProp2);
+	        Assert.Equal(obj.GenericProp3, actual.PropGenric.GenericProp3);
+	        Assert.Equal(data, _serializer.Serialize(actual));
+	    }
+
+
+        [Fact]
 		public void GenericEnumeration()
 		{
 			var expected = new GenericSubject<TypeCode> { PropertyName = TypeCode.SByte};

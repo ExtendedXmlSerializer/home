@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
+using FluentAssertions;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Members
@@ -66,7 +67,16 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 			Assert.Equal(expected.D, actual.D);
 		}
 
-		[Fact]
+	    [Fact]
+	    public void TestClassInheritanceWithDefaultOrder()
+	    {
+	        TestClassInheritanceBase expected = new TestClassInheritance();
+	        expected.Init();
+	        var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassInheritance xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Id>2</Id><Id2>3</Id2></TestClassInheritance>");
+	        actual.ShouldBeEquivalentTo(expected);
+	    }
+
+        [Fact]
 		public void TestClassInheritanceWithOrder()
 		{
 			var expected = TestObject.TestClassInheritanceWithOrder.Create();

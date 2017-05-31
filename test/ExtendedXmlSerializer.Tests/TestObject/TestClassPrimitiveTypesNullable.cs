@@ -29,21 +29,21 @@ namespace ExtendedXmlSerializer.Tests.TestObject
 	{
 		public void Init()
 		{
-			PropString = "Str";
-			PropInt = 1;
-			PropuInt = 2;
-			PropDecimal = 3.3m;
-			PropFloat = 7.4f;
-			PropDouble = 3.4;
-			PropEnum = TestEnum.EnumValue1;
-			PropLong = 234234142;
-			PropUlong = 2345352534;
-			PropShort = 23;
-			PropUshort = 2344;
-			PropDateTime = new DateTime(2014, 01, 23);
-			PropByte = 23;
-			PropSbyte = 33;
-			PropChar = 'g';
+		    PropString = "TestString";
+		    PropInt = -1;
+		    PropuInt = 2234;
+		    PropDecimal = 3.346m;
+		    PropFloat = 7.4432f;
+		    PropDouble = 3.4234;
+		    PropEnum = TestEnum.EnumValue1;
+		    PropLong = 234234142;
+		    PropUlong = 2345352534;
+		    PropShort = 23;
+		    PropUshort = 2344;
+		    PropDateTime = new DateTime(2014, 01, 23);
+		    PropByte = 23;
+		    PropSbyte = 33;
+		    PropChar = 'g';
 		}
 
 		public void InitNull()
