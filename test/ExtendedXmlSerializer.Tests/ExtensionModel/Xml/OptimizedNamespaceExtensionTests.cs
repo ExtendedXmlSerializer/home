@@ -64,7 +64,13 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		[Fact]
 		public void OptimizedDictionary()
 		{
-			const string expected = @"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:ns1=""clr-namespace:JetBrains.Annotations;assembly=JetBrains.Annotations"" xmlns:ns2=""clr-namespace:System.ComponentModel;assembly=System.ComponentModel"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:CancelEventArgs"" /><Value exs:type=""ns1:UsedImplicitlyAttribute"" /></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+			const string expected =
+#if CORE
+			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:ns1=""clr-namespace:JetBrains.Annotations;assembly=JetBrains.Annotations.NetStandard"" xmlns:ns2=""clr-namespace:System.ComponentModel;assembly=System.ComponentModel"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:CancelEventArgs""><Cancel>false</Cancel></Key><Value exs:type=""ns1:UsedImplicitlyAttribute"" /></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#else
+			@"<?xml version=""1.0"" encoding=""utf-8""?><OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:ns1=""clr-namespace:JetBrains.Annotations;assembly=JetBrains.Annotations"" xmlns:ns2=""clr-namespace:System.ComponentModel;assembly=System"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests""><Interface exs:type=""OptimizedNamespaceExtensionTests-GeneralImplementation""><Instance exs:type=""sys:Dictionary[sys:Object,sys:Object]""><sys:Item><Key exs:type=""ns2:CancelEventArgs""><Cancel>false</Cancel></Key><Value exs:type=""ns1:UsedImplicitlyAttribute"" /></sys:Item></Instance></Interface></OptimizedNamespaceExtensionTests-ClassWithDifferingPropertyType>";
+#endif
+
 
 			var instance = new ClassWithDifferingPropertyType
 			               {
@@ -78,7 +84,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			               };
 			var serializer = new ConfigurationContainer().UseOptimizedNamespaces().Create();
 			var data = serializer.Serialize(instance);
-			Assert.Equal(expected, data);
+			data.Should()
+			    .Be(expected);
 		}
 
 		class ClassWithDifferingPropertyType
