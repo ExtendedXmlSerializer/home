@@ -51,9 +51,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var instance = new TestClassPrimitiveTypesNullable();
 			instance.Init();
 			var data = support.Serialize(instance);
-			var expected = @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassPrimitiveTypesNullable PropString=""TestString"" PropInt=""-1"" PropuInt=""2234"" PropDecimal=""3.346"" PropDecimalMinValue=""-79228162514264337593543950335"" PropDecimalMaxValue=""79228162514264337593543950335"" PropFloat=""7.4432"" PropFloatNaN=""NaN"" PropFloatPositiveInfinity=""INF"" PropFloatNegativeInfinity=""-INF"" PropFloatMinValue=""-3.40282347E+38"" PropFloatMaxValue=""3.40282347E+38"" PropDouble=""3.4234"" PropDoubleNaN=""NaN"" PropDoublePositiveInfinity=""INF"" PropDoubleNegativeInfinity=""-INF"" PropDoubleMinValue=""-1.7976931348623157E+308"" PropDoubleMaxValue=""1.7976931348623157E+308"" PropEnum=""EnumValue1"" PropLong=""234234142"" PropUlong=""2345352534"" PropShort=""23"" PropUshort=""2344"" PropDateTime=""2014-01-23T00:00:00"" PropByte=""23"" PropSbyte=""33"" PropChar=""g"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />";
-			data.Should()
-				.Be(expected);
+			var expected = @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassPrimitiveTypesNullable PropString=""TestString"" PropInt=""-1"" PropuInt=""2234"" PropDecimal=""3.346"" PropFloat=""7.4432"" PropDouble=""3.4234"" PropEnum=""EnumValue1"" PropLong=""234234142"" PropUlong=""2345352534"" PropShort=""23"" PropUshort=""2344"" PropDateTime=""2014-01-23T00:00:00"" PropByte=""23"" PropSbyte=""33"" PropChar=""g"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />";
+			data.ShouldBeEquivalentTo(expected);
 		}
 
 		[Fact]

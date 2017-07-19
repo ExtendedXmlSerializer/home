@@ -39,10 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public AutoMemberFormatExtension(int maxTextLength)
 			: this(new AttributeSpecification(new TextSpecification(maxTextLength).Adapt())) {}
 
-		public AutoMemberFormatExtension(IAttributeSpecification text)
-		{
-			_text = text;
-		}
+		public AutoMemberFormatExtension(IAttributeSpecification text) => _text = text;
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<Converters>()
@@ -59,10 +56,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			readonly int _maxTextLength;
 
-			public TextSpecification(int maxTextLength)
-			{
-				_maxTextLength = maxTextLength;
-			}
+			public TextSpecification(int maxTextLength) => _maxTextLength = maxTextLength;
 
 			public bool IsSatisfiedBy(string parameter) => parameter.Length < _maxTextLength;
 		}
@@ -80,7 +74,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 			public IConverter Get(MemberInfo parameter) => _members.Get(parameter) ?? From(parameter);
 
-			IConverter From(MemberDescriptor parameter) => _converters.Get(parameter.MemberType);
+			IConverter From(MemberDescriptor parameter) => _converters.Get(parameter.MemberType.AccountForNullable());
 		}
 	}
 }
