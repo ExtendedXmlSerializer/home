@@ -56,6 +56,7 @@ namespace ExtendedXmlSerialization.Cache
 			var type = Type.GetType(typeName);
 			if (type != null)
 				return type;
+			string msg = string.Empty;
 #if CORE
 // TODO In .Net Core 1.1 will be new API or reuse an existing one (AppDomain.GetAssemblies)
 // https://github.com/dotnet/corefx/issues/8806
@@ -73,8 +74,10 @@ namespace ExtendedXmlSerialization.Cache
 				catch (FileNotFoundException) {}
 			}
 #else
-			foreach (var c in AppDomain.CurrentDomain.GetAssemblies())
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var c in assemblies)
 			{
+				msg += c.FullName + ", ";
 				type = c.GetType(typeName);
 				if (type != null)
 				{
@@ -83,7 +86,7 @@ namespace ExtendedXmlSerialization.Cache
 			}
 #endif
 
-			throw new Exception("Unknown type " + typeName);
+			throw new Exception("Unknown type " + msg);
 		}
 	}
 }

@@ -28,9 +28,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyConfiguration("")]
+/*[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ExtendedXmlSerializer.Tests")]
+[assembly: AssemblyProduct("ExtendedXmlSerializer.Tests")]*/
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
