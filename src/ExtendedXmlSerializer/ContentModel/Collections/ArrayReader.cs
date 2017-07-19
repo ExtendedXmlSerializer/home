@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
@@ -31,23 +32,26 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	sealed class ArrayReader : IReader
 	{
 		readonly IClassification _classification;
+		readonly TypeInfo _declaredType;
 		readonly IReader<ArrayList> _reader;
 
-		public ArrayReader(IInnerContentServices services, IClassification classification, IReader item)
-			: this(
-				services.CreateContents<ArrayList>(new ConditionalInnerContentHandler(services, new CollectionInnerContentHandler(item, services))))
+		public ArrayReader(IInnerContentServices services, IClassification classification, TypeInfo elementType, IReader item)
+			: this(classification,
+					elementType,
+					services.CreateContents<ArrayList>(new ConditionalInnerContentHandler(services, new CollectionInnerContentHandler(item, services))))
 		{
-			_classification = classification;
 		}
 
-		ArrayReader(IReader<ArrayList> reader)
+		ArrayReader(IClassification classification, TypeInfo elementType, IReader<ArrayList> reader)
 		{
+			_classification = classification;
+			_declaredType = elementType;
 			_reader = reader;
 		}
 
 		public object Get(IFormatReader parameter)
 		{
-			var elementType = _classification.GetClassification(parameter).GetElementType();
+			var elementType = _classification.GetClassification(parameter, _declaredType).GetElementType();
 			var result = _reader.Get(parameter).ToArray(elementType);
 			return result;
 		}

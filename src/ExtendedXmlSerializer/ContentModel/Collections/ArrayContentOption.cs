@@ -46,6 +46,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		}
 
 		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=> new Serializer(new ArrayReader(_contents, _classification, item), new EnumerableWriter(_enumerators, item));
+			=> new Serializer(new ArrayReader(_contents, _classification, classification, item), new EnumerableWriter(_enumerators, item));
 	}
 }
