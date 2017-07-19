@@ -1,37 +1,36 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AE37E1DA-5619-45C0-A086-2F2619503BCA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2859812B-6D27-4A85-AC4A-8D3A55D9E3CD}"
 	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
 		Licence = Licence
 	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer", "src\ExtendedXmlSerializer\ExtendedXmlSerializer.xproj", "{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{EBF1CB73-BE8A-4E00-A964-1A3E59503A52}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{A789F6C4-91DE-47A0-BD7E-E59562409BE7}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Samples", "samples\ExtendedXmlSerializer.Samples\ExtendedXmlSerializer.Samples.xproj", "{426AF10E-B683-44C4-9849-FF8E14D3A3AD}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Legacy", "src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.xproj", "{0ED3FC9D-7372-4828-AC1B-30DA740FCFC2}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Tests.Legacy", "test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.xproj", "{C3310F48-748F-4808-8AEC-1FEE09BFFE8E}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Tests.Performance", "test\ExtendedXmlSerializer.Tests.Performance\ExtendedXmlSerializer.Tests.Performance.xproj", "{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ExtendedXmlSerializer.Tests", "test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.xproj", "{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docGenerator", "docGenerator", "{C90F6D79-DAD5-47F4-9638-23F9941C1C86}"
 EndProject
-Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{85C5AA66-2D86-43DB-80EE-D48836C0B79C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer", "src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj", "{474C8CF3-1FBB-4507-9156-D5DC153F4EB8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Samples", "samples\ExtendedXmlSerializer.Samples\ExtendedXmlSerializer.Samples.csproj", "{426AF10E-B683-44C4-9849-FF8E14D3A3AD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Legacy", "src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj", "{0ED3FC9D-7372-4828-AC1B-30DA740FCFC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests.Legacy", "test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj", "{C3310F48-748F-4808-8AEC-1FEE09BFFE8E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests.Performance", "test\ExtendedXmlSerializer.Tests.Performance\ExtendedXmlSerializer.Tests.Performance.csproj", "{CFFDB849-45FE-4D38-BE40-6F015BEC8BCB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtendedXmlSerializer.Tests", "test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj", "{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3}"
+EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedXmlSerializer.DocGenerator", "docGenerator\ExtendedXmlSerializer.DocGenerator\ExtendedXmlSerializer.DocGenerator.csproj", "{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}"
 EndProject
@@ -84,5 +83,8 @@ Global
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{87D0B2DD-15F1-4B62-878E-85A665E2D051} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
 		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0980EF53-85ED-482A-8798-690538C3F7A4}
 	EndGlobalSection
 EndGlobal
