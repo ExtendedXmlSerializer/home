@@ -210,7 +210,10 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			Assert.Equal(salary, actual.Salary);
 		}
 
-	    [Fact]
+		// TODO: Uncomment after https://github.com/wojtpl2/ExtendedXmlSerializer/issues/109 is complete.
+		/*
+		 *
+		 * [Fact]
 	    public void ConfigureEncryptDifferenetOrder()
 	    {
 	        var before = new ConfigurationContainer();
@@ -234,9 +237,9 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 	        var instance = new TestClassWithEncryptedData { Salary = salary };
 	        var actual = new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
 	        Assert.Equal(salary, actual.Salary);
-	    }
+	    }*/
 
-        class SimpleTestSubject
+		class SimpleTestSubject
 		{
 			public string BasicProperty { get; set; }
 		}

@@ -34,6 +34,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		ActivatedTypeSpecification() {}
 
 		public bool IsSatisfiedBy(TypeInfo parameter)
-			=> parameter.IsValueType || !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject);
+			=> !parameter.IsAbstract && parameter.IsClass && !parameter.Equals(GeneralObject);
 	}
 }

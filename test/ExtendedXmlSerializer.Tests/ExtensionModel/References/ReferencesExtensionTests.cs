@@ -31,6 +31,7 @@ using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
+using FluentAssertions;
 using JetBrains.Annotations;
 using Xunit;
 
@@ -117,6 +118,26 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			Assert.Equal(4, instance.Lists.Last().Id);
 		}
 
+		[Fact]
+		public void PropertyInterfaceOfList()
+		{
+			var expected = new ClassWithPropertyInterfaceOfList
+			               {
+				               List = new List<string> { "Item1" },
+				               Set = new List<string> { "Item1" }
+			               };
+
+			var actual = new SerializationSupport(new ConfigurationContainer().EnableReferences()).Cycle(expected);
+			actual.ShouldBeEquivalentTo(expected);
+		}
+
+		class ClassWithPropertyInterfaceOfList
+		{
+			public IList<string> List { get; set; }
+
+			public IList<string> Set { get; set; }
+		}
+		;
 		[Fact]
 		public void ComplexList()
 		{
