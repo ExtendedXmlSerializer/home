@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
@@ -32,22 +33,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class ReferenceActivation : IActivation
 	{
-		readonly IActivation _activation;
+		readonly Func<TypeInfo, IReader> _activation;
 		readonly IEntities _entities;
 		readonly IReferenceMaps _maps;
 
 		[UsedImplicitly]
-		public ReferenceActivation(IActivation activation, IEntities entities)
+		public ReferenceActivation(IActivation activation, IEntities entities) : this(activation.Get, entities) {}
+
+		public ReferenceActivation(Func<TypeInfo, IReader> activation, IEntities entities)
 			: this(activation, entities, ReferenceMaps.Default) {}
 
-		public ReferenceActivation(IActivation activation, IEntities entities, IReferenceMaps maps)
+		public ReferenceActivation(Func<TypeInfo, IReader> activation, IEntities entities, IReferenceMaps maps)
 		{
 			_activation = activation;
 			_entities = entities;
 			_maps = maps;
 		}
 
-		public IReader Get(TypeInfo parameter) => new Activator(_activation.Get(parameter), _entities, _maps);
+		public IReader Get(TypeInfo parameter) => new Activator(_activation(parameter), _entities, _maps);
 
 		sealed class Activator : IReader
 		{
@@ -78,7 +81,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 					: null;
 				return result;
 			}
-
 
 			public object Get(IFormatReader parameter)
 			{

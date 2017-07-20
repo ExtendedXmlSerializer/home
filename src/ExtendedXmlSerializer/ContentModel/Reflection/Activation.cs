@@ -32,10 +32,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	{
 		readonly IActivators _activators;
 
-		public Activation(IActivators activators)
-		{
-			_activators = activators;
-		}
+		public Activation(IActivators activators) => _activators = activators;
 
 		public IReader Get(TypeInfo parameter) => new Activator(_activators.Get(parameter.AsType()).Get);
 
@@ -43,10 +40,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		{
 			readonly Func<object> _activate;
 
-			public Activator(Func<object> activate)
-			{
-				_activate = activate;
-			}
+			public Activator(Func<object> activate) => _activate = activate;
 
 			public object Get(IFormatReader parameter) => _activate();
 		}

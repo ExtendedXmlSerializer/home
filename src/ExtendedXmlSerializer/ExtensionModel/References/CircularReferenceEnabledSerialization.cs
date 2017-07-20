@@ -32,10 +32,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	{
 		readonly ISerializers _context;
 
-		public CircularReferenceEnabledSerialization(ISerializers context)
-		{
-			_context = context;
-		}
+		public CircularReferenceEnabledSerialization(ISerializers context) => _context = context;
 
 		public ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
@@ -43,10 +40,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		{
 			readonly ISerializer _serializer;
 
-			public Container(ISerializer serializer)
-			{
-				_serializer = serializer;
-			}
+			public Container(ISerializer serializer) => _serializer = serializer;
 
 			public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 
