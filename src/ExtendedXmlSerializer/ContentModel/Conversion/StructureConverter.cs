@@ -30,10 +30,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 	{
 		readonly IConverter<T> _converter;
 
-		public StructureConverter(IConverter<T> converter)
-		{
-			_converter = converter;
-		}
+		public StructureConverter(IConverter<T> converter) => _converter = converter;
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _converter.IsSatisfiedBy(parameter);
 

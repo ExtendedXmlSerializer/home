@@ -83,17 +83,13 @@ namespace ExtendedXmlSerialization.Samples.Encrypt
 
 
 // CustomEncryption
-    public class CustomEncryption : ConverterBase<string>, IEncryption
+    public class CustomEncryption : IEncryption
     {
-        public override string Parse(string data)
-        {
-            return Encoding.UTF8.GetString(Convert.FromBase64String(data));
-        }
+        public string Parse(string data)
+	        => Encoding.UTF8.GetString(Convert.FromBase64String(data));
 
-        public override string Format(string instance)
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
-        }
+	    public string Format(string instance)
+		    => Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
     }
 // EndCustomEncryption
 }

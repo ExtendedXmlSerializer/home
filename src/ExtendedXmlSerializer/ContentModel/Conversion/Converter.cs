@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 		public sealed override T Parse(string data) => _deserialize(data);
 		public sealed override string Format(T instance) => _serialize(instance);
 
-		object IConverter<object>.Parse(string data) => Parse(data);
-		string IConverter<object>.Format(object instance) => Format((T) instance);
+		object IConvert<object>.Parse(string data) => Parse(data);
+		string IConvert<object>.Format(object instance) => Format((T) instance);
 	}
 }
