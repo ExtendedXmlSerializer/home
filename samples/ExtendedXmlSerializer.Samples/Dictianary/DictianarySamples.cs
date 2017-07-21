@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Xml;
-using ExtendedXmlSerialization.Samples.Encrypt;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerialization.Samples.Dictianary
+namespace ExtendedXmlSerializer.Samples.Dictianary
 {
     public static class DictianarySamples
     {

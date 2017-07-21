@@ -23,7 +23,7 @@
 
 using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Samples.ObjectReference
+namespace ExtendedXmlSerializer.Samples.ObjectReference
 {
 // PersonClass
 	public class Person

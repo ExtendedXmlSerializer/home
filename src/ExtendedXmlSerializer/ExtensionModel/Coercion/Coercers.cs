@@ -63,7 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 			readonly ImmutableArray<ICoercer> _candidates;
 
 			public Context(object instance, ImmutableArray<ICoercer> candidates)
-				: base(new AnySpecification<TypeInfo>(candidates.ToArray()))
+				: base(new AnySpecification<TypeInfo>(candidates.ToArray<ISpecification<TypeInfo>>()))
 			{
 				_instance = instance;
 				_candidates = candidates;

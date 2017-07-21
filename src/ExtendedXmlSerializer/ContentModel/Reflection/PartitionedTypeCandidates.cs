@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
@@ -36,7 +37,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		readonly static AssemblyLoader AssemblyLoader = AssemblyLoader.Default;
 
 		public PartitionedTypeCandidates(params ITypePartitions[] partitions)
-			: this(AssemblyPathParser, AssemblyLoader, new TypePartitions(partitions)) {}
+			: this(AssemblyPathParser, AssemblyLoader, new TypePartitions(partitions.ToArray<IParameterizedSource<TypePartition, ImmutableArray<TypeInfo>?>>())) {}
 
 		readonly Parser<AssemblyPath> _parser;
 		readonly IAssemblyLoader _loader;

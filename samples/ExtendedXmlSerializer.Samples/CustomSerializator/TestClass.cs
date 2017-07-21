@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerialization.Samples.CustomSerializator
+namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
 // CustomSerializator
     public class TestClass

@@ -366,6 +366,7 @@ namespace ExtendedXmlSerialization
 			Array array = null;
 			if (type.IsArray)
 			{
+				// ReSharper disable once AssignNullToNotNullAttribute
 				array = instance as Array ?? Array.CreateInstance(type.Type.GetElementType(), arrayCount);
 			}
 			else

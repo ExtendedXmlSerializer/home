@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace ExtendedXmlSerialization.Samples.Dictianary
+namespace ExtendedXmlSerializer.Samples.Dictianary
 {
 // TestClass
     public class TestClass

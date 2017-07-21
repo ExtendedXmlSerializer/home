@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Tests.Legacy.TestObject;
 using Xunit;
 
@@ -39,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.Legacy
 			CheckSerializationAndDeserialization("ExtendedXmlSerializer.Tests.Legacy.Resources.TestClassGeneric.xml", obj);
 			CheckCompatibilityWithDefaultSerializator(obj);
 		}
-		
+
 		// TODO: Undo.  For some reason this cannot resolve a type.
 		/*[Fact, Trait(Traits.Category, Traits.Categories.Legacy)]
 		public void TestClassGenericThree()

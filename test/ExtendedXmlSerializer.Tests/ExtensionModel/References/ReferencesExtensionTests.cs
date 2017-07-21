@@ -133,8 +133,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 
 		class ClassWithPropertyInterfaceOfList
 		{
+			[UsedImplicitly]
 			public IList<string> List { get; set; }
 
+			[UsedImplicitly]
 			public IList<string> Set { get; set; }
 		}
 		;

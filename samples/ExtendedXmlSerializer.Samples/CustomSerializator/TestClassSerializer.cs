@@ -27,7 +27,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerialization.Samples.CustomSerializator
+namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
 // TestClassSerializer
     public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>

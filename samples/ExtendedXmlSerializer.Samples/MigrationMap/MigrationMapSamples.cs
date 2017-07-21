@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerialization.Samples.MigrationMap
+namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
 	public class MigrationMapSamples
 	{

@@ -26,12 +26,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerialization.Samples.Encrypt
+namespace ExtendedXmlSerializer.Samples.Encrypt
 {
 	public class EncryptSamples
 	{

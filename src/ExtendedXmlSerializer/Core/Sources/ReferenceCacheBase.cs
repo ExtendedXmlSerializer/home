@@ -49,11 +49,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_cache.Add(key, value);
 		}
 
-		public bool IsSatisfiedBy(TKey parameter)
-		{
-			TValue item;
-			return _cache.TryGetValue(parameter, out item);
-		}
+		public bool IsSatisfiedBy(TKey parameter) => _cache.TryGetValue(parameter, out _);
 
 		public bool Remove(TKey key) => _cache.Remove(key);
 	}

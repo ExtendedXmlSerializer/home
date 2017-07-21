@@ -25,7 +25,7 @@ using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerialization.Samples.Simple
+namespace ExtendedXmlSerializer.Samples.Simple
 {
 	public class SimpleSamples
 	{

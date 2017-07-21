@@ -23,17 +23,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Xunit;
+
+// ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 {
@@ -224,7 +222,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 				               Dictionary = new Dictionary<string, string> {{"Key", "Value"}}
 			               };
 
-			const string @NS =
+			const string ns =
 #if CORE
 				"Collections";
 #else
@@ -233,7 +231,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 
 			var actual =
 				new SerializationSupport(new ConfigurationContainer()).Assert(expected,
-				                                                              $"<?xml version=\"1.0\" encoding=\"utf-8\"?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=\"clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests\"><List xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:List[sys:string]\"><Capacity>4</Capacity><sys:string>Item1</sys:string></List><Dictionary xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:Dictionary[sys:string,sys:string]\"><sys:Item><Key>Key</Key><Value>Value</Value></sys:Item></Dictionary><Set xmlns:ns1=\"clr-namespace:System.Collections.Generic;assembly=System.{NS}\" xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"ns1:HashSet[sys:string]\"><sys:string>Item2</sys:string></Set></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
+				                                                              $"<?xml version=\"1.0\" encoding=\"utf-8\"?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=\"clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests\"><List xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:List[sys:string]\"><Capacity>4</Capacity><sys:string>Item1</sys:string></List><Dictionary xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:Dictionary[sys:string,sys:string]\"><sys:Item><Key>Key</Key><Value>Value</Value></sys:Item></Dictionary><Set xmlns:ns1=\"clr-namespace:System.Collections.Generic;assembly=System.{ns}\" xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"ns1:HashSet[sys:string]\"><sys:string>Item2</sys:string></Set></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
 			actual.ShouldBeEquivalentTo(expected);
 		}
 

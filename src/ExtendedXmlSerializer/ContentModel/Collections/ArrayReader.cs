@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections;
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
@@ -52,7 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		public object Get(IFormatReader parameter)
 		{
 			var elementType = _classification.GetClassification(parameter, _declaredType).GetElementType();
-			var result = _reader.Get(parameter).ToArray(elementType);
+			var result = _reader.Get(parameter).ToArray(elementType ?? throw new InvalidOperationException("Element type not found."));
 			return result;
 		}
 	}

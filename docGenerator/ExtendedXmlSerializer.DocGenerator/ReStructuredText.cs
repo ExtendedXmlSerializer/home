@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
+// ReSharper disable StringIndexOfIsCultureSpecific.1
 
 namespace ExtendedXmlSerializer.DocGenerator
 {
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.DocGenerator
         void NormalizeIndent(string line, int minIndent)
         {
             var currentIndent = GetIndent(line) - minIndent + 4;
-           
+
             for (int i = 0; i < currentIndent; i++)
             {
                 _builder.Append(' ');
@@ -119,7 +119,7 @@ namespace ExtendedXmlSerializer.DocGenerator
             string text, string startString, string endString)
         {
             List<string> matched = new List<string>();
-            int indexStart = 0, indexEnd = 0;
+            int indexStart, indexEnd;
             bool exit = false;
             while (!exit)
             {

@@ -22,14 +22,14 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerialization.Samples.CustomSerializator;
-using ExtendedXmlSerialization.Samples.Dictianary;
-using ExtendedXmlSerialization.Samples.Encrypt;
-using ExtendedXmlSerialization.Samples.MigrationMap;
-using ExtendedXmlSerialization.Samples.ObjectReference;
-using ExtendedXmlSerialization.Samples.Simple;
+using ExtendedXmlSerializer.Samples.CustomSerializator;
+using ExtendedXmlSerializer.Samples.Dictianary;
+using ExtendedXmlSerializer.Samples.Encrypt;
+using ExtendedXmlSerializer.Samples.MigrationMap;
+using ExtendedXmlSerializer.Samples.ObjectReference;
+using ExtendedXmlSerializer.Samples.Simple;
 
-namespace ExtendedXmlSerialization.Samples
+namespace ExtendedXmlSerializer.Samples
 {
 	public class Program
 	{

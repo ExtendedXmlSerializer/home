@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
@@ -31,7 +32,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		readonly ISpecification<TParameter> _specification;
 
 		public CompositeOption(params IOption<TParameter, TResult>[] options)
-			: this(new AnySpecification<TParameter>(options), options) {}
+			: this(new AnySpecification<TParameter>(options.ToArray<ISpecification<TParameter>>()), options) {}
 
 		public CompositeOption(ISpecification<TParameter> specification, params IOption<TParameter, TResult>[] options)
 			: base(options)
