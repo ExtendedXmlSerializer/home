@@ -71,7 +71,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
-		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this, Optimizations optimizations)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this, IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 	}
 }

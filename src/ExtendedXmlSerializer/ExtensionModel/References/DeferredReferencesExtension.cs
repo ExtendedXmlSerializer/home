@@ -34,7 +34,7 @@ using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public sealed class DeferredReferencesExtension : ISerializerExtension
+	sealed class DeferredReferencesExtension : ISerializerExtension
 	{
 		public static DeferredReferencesExtension Default { get; } = new DeferredReferencesExtension();
 		DeferredReferencesExtension() {}

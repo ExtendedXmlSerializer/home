@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	public sealed class ParameterizedMembersExtension : ISerializerExtension
+	sealed class ParameterizedMembersExtension : ISerializerExtension
 	{
 		public static ParameterizedMembersExtension Default { get; } = new ParameterizedMembersExtension();
 		ParameterizedMembersExtension() {}

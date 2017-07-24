@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public sealed class AddMethodLocator : IAddMethodLocator
+	sealed class AddMethodLocator : IAddMethodLocator
 	{
 		public static AddMethodLocator Default { get; } = new AddMethodLocator();
 		AddMethodLocator() {}

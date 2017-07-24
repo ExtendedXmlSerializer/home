@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class ReaderContextExtension : ISerializerExtension
+	sealed class ReaderContextExtension : ISerializerExtension
 	{
 		public static ReaderContextExtension Default { get; } = new ReaderContextExtension();
 		ReaderContextExtension() {}

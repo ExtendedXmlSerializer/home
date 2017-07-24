@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	interface IOptimizations
+	public interface IOptimizations
 	{
 		void Clear();
 	}

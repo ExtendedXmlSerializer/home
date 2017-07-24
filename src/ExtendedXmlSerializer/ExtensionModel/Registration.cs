@@ -25,32 +25,13 @@ using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public sealed class Registration<TFrom, TTo> : IRegistration
-	{
-		public static Registration<TFrom, TTo> Default { get; } = new Registration<TFrom, TTo>();
-		Registration() : this(new Registration<TFrom>(typeof(TTo))) {}
-
-
-		readonly IRegistration _registration;
-
-		public Registration(IRegistration registration)
-		{
-			_registration = registration;
-		}
-
-		public IServiceRepository Get(IServiceRepository parameter) => _registration.Get(parameter);
-	}
-
-	public sealed class Registration<T> : IRegistration
+	sealed class Registration<T> : IRegistration
 	{
 		readonly static Type ServiceType = typeof(T);
 
 		readonly Type _type;
 
-		public Registration(Type type)
-		{
-			_type = type;
-		}
+		public Registration(Type type) => _type = type;
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Register(ServiceType, _type);
 	}

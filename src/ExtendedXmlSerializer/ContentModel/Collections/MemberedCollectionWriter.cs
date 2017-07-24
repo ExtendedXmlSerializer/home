@@ -25,16 +25,13 @@ using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	class MemberedCollectionWriter : DecoratedWriter
+	sealed class MemberedCollectionWriter : DecoratedWriter
 	{
 		readonly IWriter _items;
 
-		public MemberedCollectionWriter(IWriter members, IWriter items) : base(members)
-		{
-			_items = items;
-		}
+		public MemberedCollectionWriter(IWriter members, IWriter items) : base(members) => _items = items;
 
-		public sealed override void Write(IFormatWriter writer, object instance)
+		public override void Write(IFormatWriter writer, object instance)
 		{
 			base.Write(writer, instance);
 			_items.Write(writer, instance);

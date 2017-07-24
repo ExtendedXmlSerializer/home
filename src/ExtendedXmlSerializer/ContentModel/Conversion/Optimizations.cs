@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	public sealed class Optimizations : IAlteration<IConverter>, IOptimizations
+	sealed class Optimizations : IAlteration<IConverter>, IOptimizations
 	{
 		readonly ICollection<Action> _containers = new HashSet<Action>();
 

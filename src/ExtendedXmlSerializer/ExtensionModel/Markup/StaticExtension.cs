@@ -25,9 +25,11 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
+	[UsedImplicitly]
 	public sealed class StaticExtension : IMarkupExtension
 	{
 		readonly ISingletons _singletons;
