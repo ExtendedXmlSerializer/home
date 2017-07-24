@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
-	public struct Writing<T>
+	struct Writing<T>
 	{
 		public Writing(T writer, object instance)
 		{

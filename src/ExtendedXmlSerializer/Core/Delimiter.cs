@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core
 {
-	public struct Delimiter
+	struct Delimiter
 	{
 		readonly char[] _array;
 		readonly char _first;

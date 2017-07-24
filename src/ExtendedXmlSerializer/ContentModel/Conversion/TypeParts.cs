@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	public struct TypeParts : IIdentity
+	struct TypeParts : IIdentity
 	{
 		readonly Func<ImmutableArray<TypeParts>> _arguments;
 

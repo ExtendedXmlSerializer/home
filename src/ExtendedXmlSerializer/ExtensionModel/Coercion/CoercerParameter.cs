@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
-	public struct CoercerParameter
+	struct CoercerParameter
 	{
 		public CoercerParameter(object instance, TypeInfo targetType)
 		{

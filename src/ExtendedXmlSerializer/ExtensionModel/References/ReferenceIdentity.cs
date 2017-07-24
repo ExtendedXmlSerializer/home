@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public struct ReferenceIdentity : IEquatable<ReferenceIdentity>
+	struct ReferenceIdentity : IEquatable<ReferenceIdentity>
 	{
 		readonly static TypeInfo Reference = Defaults.Reference;
 

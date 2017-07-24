@@ -27,7 +27,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public struct MemberDescriptor : IEquatable<MemberDescriptor>
+	struct MemberDescriptor : IEquatable<MemberDescriptor>
 	{
 		public static implicit operator MemberDescriptor(MemberInfo member) => MemberDescriptors.Default.Get(member);
 

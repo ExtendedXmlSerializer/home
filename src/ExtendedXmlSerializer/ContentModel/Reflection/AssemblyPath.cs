@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	public struct AssemblyPath
+	struct AssemblyPath
 	{
 		public AssemblyPath(string @namespace, string path)
 		{
