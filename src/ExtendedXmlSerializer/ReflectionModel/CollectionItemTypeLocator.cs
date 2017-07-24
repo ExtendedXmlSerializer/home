@@ -28,7 +28,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class CollectionItemTypeLocator : ICollectionItemTypeLocator
+	sealed class CollectionItemTypeLocator : ICollectionItemTypeLocator
 	{
 		public static CollectionItemTypeLocator Default { get; } = new CollectionItemTypeLocator();
 		CollectionItemTypeLocator() {}

@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class CommandSelector<T> : Selector<T, ICommand<T>>, ICommandSelector<T>
+	sealed class CommandSelector<T> : Selector<T, ICommand<T>>, ICommandSelector<T>
 	{
 		public CommandSelector(params IOption<T, ICommand<T>>[] options) : base(options) {}
 	}

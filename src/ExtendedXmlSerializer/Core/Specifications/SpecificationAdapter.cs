@@ -23,15 +23,12 @@
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	public class SpecificationAdapter<T> : SpecificationAdapterBase<T>
+	sealed class SpecificationAdapter<T> : SpecificationAdapterBase<T>
 	{
 		readonly ISpecification<T> _specification;
 
-		public SpecificationAdapter(ISpecification<T> specification)
-		{
-			_specification = specification;
-		}
+		public SpecificationAdapter(ISpecification<T> specification) => _specification = specification;
 
-		protected sealed override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+		protected override bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
 	}
 }

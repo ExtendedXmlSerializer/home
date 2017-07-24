@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core
 {
-	public class DictionaryPairTypes
+	sealed class DictionaryPairTypes
 	{
 		public DictionaryPairTypes(TypeInfo keyType, TypeInfo valueType)
 		{

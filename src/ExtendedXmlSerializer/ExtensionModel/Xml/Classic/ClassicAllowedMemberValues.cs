@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	class ClassicAllowedMemberValues : IAllowedMemberValues
+	sealed class ClassicAllowedMemberValues : IAllowedMemberValues
 	{
 		readonly static IAllowedValueSpecification
 			Always = AlwaysEmitMemberSpecification.Default,
@@ -39,10 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 
 		readonly ISpecification<TypeInfo> _valueType;
 
-		public ClassicAllowedMemberValues(ISpecification<TypeInfo> valueType)
-		{
-			_valueType = valueType;
-		}
+		public ClassicAllowedMemberValues(ISpecification<TypeInfo> valueType) => _valueType = valueType;
 
 		public IAllowedValueSpecification Get(MemberInfo parameter) => From(parameter);
 

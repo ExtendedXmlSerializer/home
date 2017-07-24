@@ -28,7 +28,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T>
+	class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T>
 	{
 		[UsedImplicitly]
 		public TypedTable() {}

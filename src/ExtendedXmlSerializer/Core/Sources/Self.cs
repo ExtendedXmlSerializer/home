@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Self<T> : IAlteration<T>
+	sealed class Self<T> : IAlteration<T>
 	{
 		public static Self<T> Default { get; } = new Self<T>();
 		Self() {}

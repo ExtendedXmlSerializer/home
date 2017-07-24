@@ -27,7 +27,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Cache<TKey, TValue> : CacheBase<TKey, TValue>
+	class Cache<TKey, TValue> : CacheBase<TKey, TValue>
 	{
 		readonly Func<TKey, TValue> _factory;
 

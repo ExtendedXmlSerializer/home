@@ -27,7 +27,7 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Bracket<T> : Items<T> where T : class
+	class Bracket<T> : Items<T> where T : class
 	{
 		readonly static TypeComparer<T> Typed = TypeComparer<T>.Default;
 		readonly static IComparer<T> Comparer = new SortComparer<T>(new SortOrder());

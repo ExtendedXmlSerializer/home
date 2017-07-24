@@ -25,14 +25,11 @@ using System;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class DelegatedAlteration<T> : IAlteration<T>
+	sealed class DelegatedAlteration<T> : IAlteration<T>
 	{
 		readonly Func<T, T> _alteration;
 
-		public DelegatedAlteration(Func<T, T> alteration)
-		{
-			_alteration = alteration;
-		}
+		public DelegatedAlteration(Func<T, T> alteration) => _alteration = alteration;
 
 		public T Get(T parameter) => _alteration(parameter);
 	}

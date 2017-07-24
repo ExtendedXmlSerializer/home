@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class DelegatedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
+	class DelegatedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
 	{
 		readonly Func<TParameter, TResult> _source;
 

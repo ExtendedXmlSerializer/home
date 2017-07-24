@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class FixedTypeSpecification : ISpecification<TypeInfo>
+	sealed class FixedTypeSpecification : ISpecification<TypeInfo>
 	{
 		public static FixedTypeSpecification Default { get; } = new FixedTypeSpecification();
 		FixedTypeSpecification() {}

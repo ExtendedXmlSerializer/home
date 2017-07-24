@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class IsAssignableGenericSpecification : ISpecification<TypeInfo>
+	sealed class IsAssignableGenericSpecification : ISpecification<TypeInfo>
 	{
 		readonly static GenericDefinitionCandidates Candidates = GenericDefinitionCandidates.Default;
 

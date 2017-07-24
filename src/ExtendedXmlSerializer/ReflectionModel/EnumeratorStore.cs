@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public sealed class EnumeratorStore : Selector<TypeInfo, IEnumerators>, IEnumeratorStore
+	sealed class EnumeratorStore : Selector<TypeInfo, IEnumerators>, IEnumeratorStore
 	{
 		public EnumeratorStore(IDictionaryEnumerators dictionary, IEnumerators enumerators)
 			: base(

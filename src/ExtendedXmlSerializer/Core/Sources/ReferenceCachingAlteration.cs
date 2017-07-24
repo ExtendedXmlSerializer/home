@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<Func<TParameter, TResult>>
+	sealed class ReferenceCachingAlteration<TParameter, TResult> : IAlteration<Func<TParameter, TResult>>
 		where TParameter : class where TResult : class
 	{
 		public static ReferenceCachingAlteration<TParameter, TResult> Default { get; } =

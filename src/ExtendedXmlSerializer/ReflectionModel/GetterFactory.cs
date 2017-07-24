@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class GetterFactory : ReferenceCacheBase<MemberInfo, Func<object, object>>, IGetterFactory
+	sealed class GetterFactory : ReferenceCacheBase<MemberInfo, Func<object, object>>, IGetterFactory
 	{
 		public static GetterFactory Default { get; } = new GetterFactory();
 		GetterFactory() {}

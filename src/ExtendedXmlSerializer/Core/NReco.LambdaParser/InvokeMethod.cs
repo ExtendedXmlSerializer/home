@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Core.NReco.LambdaParser {
 	/// <summary>
 	/// Invoke object's method that is most compatible with provided arguments
 	/// </summary>
-	public class InvokeMethod {
+	sealed class InvokeMethod {
 
 		public object TargetObject { get; set; }
 

@@ -26,7 +26,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class CompositeTypeComparer : ITypeComparer
+	sealed class CompositeTypeComparer : ITypeComparer
 	{
 		readonly ImmutableArray<ITypeComparer> _comparers;
 

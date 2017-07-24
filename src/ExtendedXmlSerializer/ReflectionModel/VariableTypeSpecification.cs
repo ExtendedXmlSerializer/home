@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class VariableTypeSpecification : InverseSpecification<TypeInfo>
+	sealed class VariableTypeSpecification : InverseSpecification<TypeInfo>
 	{
 		public static VariableTypeSpecification Default { get; } = new VariableTypeSpecification();
 		VariableTypeSpecification() : base(FixedTypeSpecification.Default) {}

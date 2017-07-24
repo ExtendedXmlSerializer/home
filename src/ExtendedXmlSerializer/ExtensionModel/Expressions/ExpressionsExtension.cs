@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	public class ExpressionsExtension : ISerializerExtension
+	sealed class ExpressionsExtension : ISerializerExtension
 	{
 		public static ExpressionsExtension Default { get; } = new ExpressionsExtension();
 		ExpressionsExtension() {}

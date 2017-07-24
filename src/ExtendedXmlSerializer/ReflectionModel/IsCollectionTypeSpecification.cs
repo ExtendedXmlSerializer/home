@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class IsCollectionTypeSpecification : AnySpecification<TypeInfo>
+	sealed class IsCollectionTypeSpecification : AnySpecification<TypeInfo>
 	{
 		public static IsCollectionTypeSpecification Default { get; } = new IsCollectionTypeSpecification();
 

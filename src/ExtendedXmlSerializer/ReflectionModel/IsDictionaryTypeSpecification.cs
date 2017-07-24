@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class IsDictionaryTypeSpecification : AnySpecification<TypeInfo>
+	sealed class IsDictionaryTypeSpecification : AnySpecification<TypeInfo>
 	{
 		public static IsDictionaryTypeSpecification Default { get; } = new IsDictionaryTypeSpecification();
 

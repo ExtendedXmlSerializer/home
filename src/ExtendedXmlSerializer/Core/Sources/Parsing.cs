@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Parsing<T> : DelegatedSource<IInput, IResult<T>>, IParsing<T>
+	class Parsing<T> : DelegatedSource<IInput, IResult<T>>, IParsing<T>
 	{
 		public static implicit operator Parser<T>(Parsing<T> instance) => instance.Get;
 

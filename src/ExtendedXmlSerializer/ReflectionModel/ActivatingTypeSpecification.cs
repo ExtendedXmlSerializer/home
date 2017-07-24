@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public sealed class ActivatingTypeSpecification : AnySpecification<TypeInfo>, IActivatingTypeSpecification
+	sealed class ActivatingTypeSpecification : AnySpecification<TypeInfo>, IActivatingTypeSpecification
 	{
 		public static ActivatingTypeSpecification Default { get; } = new ActivatingTypeSpecification();
 		ActivatingTypeSpecification() : this(ConstructorLocator.Default) {}

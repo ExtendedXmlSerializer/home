@@ -23,7 +23,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq {
 
-	public class LambdaParser {
+	sealed class LambdaParser {
 
 		static readonly char[] delimiters = new char[] {
 			'(', ')', '[', ']', '?', ':', '.', ',', '=', '<', '>', '!', '&', '|', '*', '/', '%', '+','-', '{', '}'};

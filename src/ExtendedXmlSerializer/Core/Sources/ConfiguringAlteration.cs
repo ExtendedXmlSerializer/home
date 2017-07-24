@@ -23,14 +23,11 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class ConfiguringAlteration<T> : IAlteration<T>
+	sealed class ConfiguringAlteration<T> : IAlteration<T>
 	{
 		readonly ICommand<T> _configuration;
 
-		public ConfiguringAlteration(ICommand<T> configuration)
-		{
-			_configuration = configuration;
-		}
+		public ConfiguringAlteration(ICommand<T> configuration) => _configuration = configuration;
 
 		public T Get(T parameter)
 		{

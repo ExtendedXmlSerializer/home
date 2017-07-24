@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public class ImmutableArrayAwareGenericTypes : IGenericTypes
+	sealed class ImmutableArrayAwareGenericTypes : IGenericTypes
 	{
 		readonly static TypeInfo Check = typeof(ImmutableArray).GetTypeInfo();
 		readonly static ImmutableArray<TypeInfo> Type = typeof(ImmutableArray<>).GetTypeInfo().Yield().ToImmutableArray();

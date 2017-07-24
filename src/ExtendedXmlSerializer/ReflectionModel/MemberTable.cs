@@ -28,7 +28,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
+	sealed class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
 	{
 		[UsedImplicitly]
 		public MemberTable() {}

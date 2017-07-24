@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
-	public class Encryption : IEncryption
+	sealed class Encryption : IEncryption
 	{
 		public static Encryption Default { get; } = new Encryption();
 		Encryption() : this(Encrypt.Default, Decrypt.Default) {}

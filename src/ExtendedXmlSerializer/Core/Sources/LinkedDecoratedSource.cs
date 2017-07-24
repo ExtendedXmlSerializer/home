@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public sealed class LinkedDecoratedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
+	sealed class LinkedDecoratedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
 		where TResult : class
 	{
 		readonly IParameterizedSource<TParameter, TResult> _next;

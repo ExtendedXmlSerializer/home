@@ -15,11 +15,11 @@
 using System;
 
 namespace ExtendedXmlSerializer.Core.NReco.LambdaParser.Linq {
-	
+
 	/// <summary>
 	/// The exception that is thrown when lambda expression parse error occurs
 	/// </summary>
-	public class LambdaParserException : Exception {
+	sealed class LambdaParserException : Exception {
 
 		/// <summary>
 		/// Lambda expression

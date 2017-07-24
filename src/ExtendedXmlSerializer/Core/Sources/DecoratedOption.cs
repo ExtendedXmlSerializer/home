@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class DecoratedOption<TParameter, TResult> : IOption<TParameter, TResult>
+	class DecoratedOption<TParameter, TResult> : IOption<TParameter, TResult>
 	{
 		readonly ISpecification<TParameter> _specification;
 		readonly IParameterizedSource<TParameter, TResult> _source;

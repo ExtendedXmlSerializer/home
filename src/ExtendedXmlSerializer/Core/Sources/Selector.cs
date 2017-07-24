@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class Selector<TParameter, TResult> : ISelector<TParameter, TResult>
+	class Selector<TParameter, TResult> : ISelector<TParameter, TResult>
 	{
 		readonly static TResult Default = default(TResult);
 

@@ -32,14 +32,11 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public class ImplicitTypingExtension : ISerializerExtension
+	sealed class ImplicitTypingExtension : ISerializerExtension
 	{
 		public ImplicitTypingExtension() : this(new HashSet<Type>()) {}
 
-		public ImplicitTypingExtension(ICollection<Type> registered)
-		{
-			Registered = registered;
-		}
+		public ImplicitTypingExtension(ICollection<Type> registered) => Registered = registered;
 
 		public ICollection<Type> Registered { get; }
 

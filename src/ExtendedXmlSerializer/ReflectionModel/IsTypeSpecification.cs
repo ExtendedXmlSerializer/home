@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class IsTypeSpecification<T> : ISpecification<object>
+	sealed class IsTypeSpecification<T> : ISpecification<object>
 	{
 		public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
 		IsTypeSpecification() {}

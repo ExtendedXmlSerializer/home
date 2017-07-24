@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class ImplementedTypeComparer : ITypeComparer
+	sealed class ImplementedTypeComparer : ITypeComparer
 	{
 		public static ImplementedTypeComparer Default { get; } = new ImplementedTypeComparer();
 		ImplementedTypeComparer() : this(InterfaceIdentities.Default, TypeDefinitionIdentityComparer.Default) {}

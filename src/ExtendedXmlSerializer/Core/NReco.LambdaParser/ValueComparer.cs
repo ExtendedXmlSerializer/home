@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Core.NReco.LambdaParser {
 	/// <summary>
 	/// Generic "by value" comparer that uses ConvertManager for types harmonization
 	/// </summary>
-	public class ValueComparer : IComparer, IComparer<object> {
+	sealed class ValueComparer : IComparer, IComparer<object> {
 
 		static ValueComparer _Instance = new ValueComparer();
 

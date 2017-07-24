@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class TypeComparer<T> : IEqualityComparer<T>
+	sealed class TypeComparer<T> : IEqualityComparer<T>
 	{
 		public static TypeComparer<T> Default { get; } = new TypeComparer<T>();
 		TypeComparer() {}

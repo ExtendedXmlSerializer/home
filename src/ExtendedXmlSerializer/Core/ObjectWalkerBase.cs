@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.Core
 	/// <summary>
 	/// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
 	/// </summary>
-	public abstract class ObjectWalkerBase<TInput, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
+	abstract class ObjectWalkerBase<TInput, TResult> : IEnumerable<TResult>, IEnumerator<TResult>
 	{
 		readonly static TInput DefaultValue = default(TInput);
 

@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class IsArraySpecification : ISpecification<TypeInfo>
+	sealed class IsArraySpecification : ISpecification<TypeInfo>
 	{
 		public static IsArraySpecification Default { get; } = new IsArraySpecification();
 		IsArraySpecification() {}

@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class ConfigurationContainer : KeyedByTypeCollection<ISerializerExtension>, IConfigurationContainer
+	public sealed class ConfigurationContainer : KeyedByTypeCollection<ISerializerExtension>, IConfigurationContainer
 	{
 		readonly static ServicesFactory ServicesFactory = ServicesFactory.Default;
 

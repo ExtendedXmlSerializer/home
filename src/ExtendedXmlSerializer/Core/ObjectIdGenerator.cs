@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.Core
 	/// <summary>
 	/// Attribution: https://msdn.microsoft.com/en-us/library/system.runtime.serialization.objectmanager(v=vs.110).aspx
 	/// </summary>
-	public class ObjectIdGenerator
+	sealed class ObjectIdGenerator
 	{
 		readonly static uint[] Sizes =
 		{
@@ -80,7 +80,7 @@ namespace ExtendedXmlSerializer.Core
 		/// <param name="obj">The object you want an ID for. </param>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
 		/// <exception cref="T:System.Runtime.Serialization.SerializationException">The <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> has been asked to keep track of too many objects. </exception>
-		public virtual uint For(object obj)
+		public uint For(object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException(nameof(obj), "ArgumentNull_Obj");
@@ -104,7 +104,7 @@ namespace ExtendedXmlSerializer.Core
 			return id;
 		}
 
-		public virtual bool Contains(object obj)
+		public bool Contains(object obj)
 		{
 			bool result;
 			FindIndex(obj, out result);
@@ -118,7 +118,7 @@ namespace ExtendedXmlSerializer.Core
 			while (index1 < Sizes.Length && Sizes[index1] <= currentSize)
 				++index1;
 			if (index1 == Sizes.Length)
-				throw new SerializationException("Serialization_TooManyElements");
+				throw new InvalidOperationException("Serialization_TooManyElements");
 			_currentSize = Sizes[index1];
 			var numArray = new uint[_currentSize * 4];
 			var objArray = new object[_currentSize * 4];

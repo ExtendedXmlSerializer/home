@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	class FirstAssignedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly TResult _defaultValue;
 		readonly ImmutableArray<IParameterizedSource<TParameter, TResult>> _sources;

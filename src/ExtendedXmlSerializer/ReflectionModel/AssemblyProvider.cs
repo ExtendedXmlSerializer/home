@@ -33,7 +33,7 @@ using System;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public class AssemblyProvider : IAssemblyProvider
+	sealed class AssemblyProvider : IAssemblyProvider
 	{
 		public static AssemblyProvider Default { get; } = new AssemblyProvider();
 		AssemblyProvider() {}
