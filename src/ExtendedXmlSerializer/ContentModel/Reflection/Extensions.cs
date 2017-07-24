@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	public static class Extensions
+	static class Extensions
 	{
 		public static TypeInfo GetType(this IParser<MemberInfo> @this, string parameter)
 			=> @this.Get(parameter).AsValid<TypeInfo>();

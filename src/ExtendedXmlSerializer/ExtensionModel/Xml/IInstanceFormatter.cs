@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface IInstanceFormatter : IFormatter<object> {}
+	interface IInstanceFormatter : IFormatter<object> {}
 }

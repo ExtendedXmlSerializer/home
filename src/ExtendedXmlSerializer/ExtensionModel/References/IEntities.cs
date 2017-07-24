@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IEntities : IParameterizedSource<TypeInfo, IEntity> {}
+	interface IEntities : IParameterizedSource<TypeInfo, IEntity> {}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public interface IElements : ISelector<TypeInfo, IWriter> {}
+	interface IElements : ISelector<TypeInfo, IWriter> {}
 }

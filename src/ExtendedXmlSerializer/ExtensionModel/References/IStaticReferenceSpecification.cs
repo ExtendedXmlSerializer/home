@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IStaticReferenceSpecification : ISpecification<TypeInfo> {}
+	interface IStaticReferenceSpecification : ISpecification<TypeInfo> {}
 }

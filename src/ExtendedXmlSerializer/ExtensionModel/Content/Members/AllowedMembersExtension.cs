@@ -32,7 +32,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	public sealed class AllowedMembersExtension : ISerializerExtension
+	sealed class AllowedMembersExtension : ISerializerExtension
 	{
 		readonly static Collection<MemberInfo> DefaultBlacklist =
 			new Collection<MemberInfo>

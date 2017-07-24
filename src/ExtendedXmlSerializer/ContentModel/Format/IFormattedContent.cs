@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
-	public interface IFormattedContent<in T>
+	interface IFormattedContent<in T>
 	{
 		string Get(IFormatWriter writer, T instance);
 	}

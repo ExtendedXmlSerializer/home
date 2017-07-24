@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public interface IVariableTypeMemberSpecifications : IParameterizedSource<IMember, IVariableTypeSpecification> {}
+	interface IVariableTypeMemberSpecifications : IParameterizedSource<IMember, IVariableTypeSpecification> {}
 }

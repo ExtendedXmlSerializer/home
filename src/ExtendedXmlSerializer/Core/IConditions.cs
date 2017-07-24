@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Core
 {
-	public interface IConditions : IParameterizedSource<object, ConditionMonitor> {}
+	interface IConditions : IParameterizedSource<object, ConditionMonitor> {}
 }

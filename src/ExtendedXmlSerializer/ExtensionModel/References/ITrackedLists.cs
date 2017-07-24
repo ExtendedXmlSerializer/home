@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface ITrackedLists : IParameterizedSource<object, Stack<IList>> {}
+	interface ITrackedLists : IParameterizedSource<object, Stack<IList>> {}
 }

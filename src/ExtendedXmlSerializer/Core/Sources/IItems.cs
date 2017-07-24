@@ -26,5 +26,5 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface IItems<T> : IEnumerable<T>, ISource<ImmutableArray<T>> {}
+	interface IItems<T> : IEnumerable<T>, ISource<ImmutableArray<T>> {}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
-	public interface ICoercion : IOption<TypeInfo, object> {}
+	interface ICoercion : IOption<TypeInfo, object> {}
 }

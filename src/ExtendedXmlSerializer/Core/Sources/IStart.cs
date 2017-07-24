@@ -25,5 +25,5 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface IStart<out T> : IEnumerable<T> {}
+	interface IStart<out T> : IEnumerable<T> {}
 }

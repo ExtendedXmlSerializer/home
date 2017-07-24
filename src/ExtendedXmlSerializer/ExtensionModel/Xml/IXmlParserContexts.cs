@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface IXmlParserContexts : IParameterizedSource<XmlNameTable, XmlParserContext> {}
+	interface IXmlParserContexts : IParameterizedSource<XmlNameTable, XmlParserContext> {}
 }

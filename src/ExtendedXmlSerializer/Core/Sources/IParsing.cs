@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface IParsing<out T> : IParameterizedSource<IInput, IResult<T>> {}
+	interface IParsing<out T> : IParameterizedSource<IInput, IResult<T>> {}
 }

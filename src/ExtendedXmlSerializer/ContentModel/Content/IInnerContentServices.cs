@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public interface IInnerContentServices : IListContentsSpecification, IMemberHandler, ICollectionContentsHandler,
+	interface IInnerContentServices : IListContentsSpecification, IMemberHandler, ICollectionContentsHandler,
 	                                         IReaderFormatter
 	{
 		IReader Create(TypeInfo classification, IInnerContentHandler handler);

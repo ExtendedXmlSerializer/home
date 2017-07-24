@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	public interface IConverters : IConverterSource {}
+	interface IConverters : IConverterSource {}
 }

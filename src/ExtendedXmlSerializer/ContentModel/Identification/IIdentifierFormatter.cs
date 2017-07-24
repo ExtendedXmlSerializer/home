@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
-	public interface IIdentifierFormatter : IFormatter<int> {}
+	interface IIdentifierFormatter : IFormatter<int> {}
 }

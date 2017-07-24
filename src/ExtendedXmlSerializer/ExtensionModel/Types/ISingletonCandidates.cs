@@ -25,5 +25,5 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface ISingletonCandidates : IEnumerable<string> {}
+	interface ISingletonCandidates : IEnumerable<string> {}
 }

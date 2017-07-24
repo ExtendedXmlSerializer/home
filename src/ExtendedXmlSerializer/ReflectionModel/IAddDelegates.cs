@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IAddDelegates : IParameterizedSource<TypeInfo, Action<object, object>> {}
+	interface IAddDelegates : IParameterizedSource<TypeInfo, Action<object, object>> {}
 }

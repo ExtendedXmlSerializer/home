@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	public interface IProperty<T> : ISerializer<T>, IIdentity {}
+	interface IProperty<T> : ISerializer<T>, IIdentity {}
 }

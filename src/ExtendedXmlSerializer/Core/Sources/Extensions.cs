@@ -32,7 +32,7 @@ using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public static class Extensions
+	static class Extensions
 	{
 		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
 		{

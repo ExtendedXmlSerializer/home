@@ -31,7 +31,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	public static class Extensions
+	static class Extensions
 	{
 		public static ISerializer Adapt<T>(this ISerializer<T> @this) => new GenericSerializerAdapter<T>(@this);
 

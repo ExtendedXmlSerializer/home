@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface IQueriedConstructors : IConstructorLocator {}
+	interface IQueriedConstructors : IConstructorLocator {}
 }

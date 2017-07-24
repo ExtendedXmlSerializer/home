@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	public interface IExpression : IParameterizedSource<IExpressionEvaluator, object> {}
+	interface IExpression : IParameterizedSource<IExpressionEvaluator, object> {}
 }

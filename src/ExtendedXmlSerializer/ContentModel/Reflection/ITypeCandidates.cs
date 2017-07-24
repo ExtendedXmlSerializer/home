@@ -28,5 +28,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	public interface ITypeCandidates : IParameterizedSource<IIdentity, ImmutableArray<TypeInfo>> {}
+	interface ITypeCandidates : IParameterizedSource<IIdentity, ImmutableArray<TypeInfo>> {}
 }

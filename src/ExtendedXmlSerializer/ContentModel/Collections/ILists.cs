@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	public interface ILists : IParameterizedSource<object, IList> {}
+	interface ILists : IParameterizedSource<object, IList> {}
 }

@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public static class Extensions
+	static class Extensions
 	{
 		public static T New<T>(this IActivators @this) => New<T>(@this, typeof(T));
 

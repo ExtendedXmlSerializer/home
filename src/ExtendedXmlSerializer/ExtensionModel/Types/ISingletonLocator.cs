@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface ISingletonLocator : IParameterizedSource<TypeInfo, object> {}
+	interface ISingletonLocator : IParameterizedSource<TypeInfo, object> {}
 }

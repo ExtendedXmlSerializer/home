@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IActivator : ISource<object> {}
+	interface IActivator : ISource<object> {}
 }

@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IApplicationTypes : IParameterizedSource<Assembly, ImmutableArray<TypeInfo>> {}
+	interface IApplicationTypes : IParameterizedSource<Assembly, ImmutableArray<TypeInfo>> {}
 }

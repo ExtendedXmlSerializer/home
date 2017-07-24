@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IContentsContext : ITableSource<IInnerContent, object> {}
+	interface IContentsContext : ITableSource<IInnerContent, object> {}
 }

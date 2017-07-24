@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public interface IRuntimeMemberList : IParameterizedSource<object, ImmutableArray<IMemberSerializer>> {}
+	interface IRuntimeMemberList : IParameterizedSource<object, ImmutableArray<IMemberSerializer>> {}
 }

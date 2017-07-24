@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
-	public interface ICoercers : IParameterizedSource<object, ICoercion> {}
+	interface ICoercers : IParameterizedSource<object, ICoercion> {}
 }

@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.ExtensionModel.References;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public interface IReservedItems : IParameterizedSource<IFormatWriter, ITrackedLists> {}
+	interface IReservedItems : IParameterizedSource<IFormatWriter, ITrackedLists> {}
 }

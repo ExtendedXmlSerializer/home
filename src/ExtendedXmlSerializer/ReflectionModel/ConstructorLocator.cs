@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public sealed class ConstructorLocator : ReferenceCacheBase<TypeInfo, ConstructorInfo>, IConstructorLocator
+	sealed class ConstructorLocator : ReferenceCacheBase<TypeInfo, ConstructorInfo>, IConstructorLocator
 	{
 		public static ConstructorLocator Default { get; } = new ConstructorLocator();
 		ConstructorLocator() : this(ValidConstructorSpecification.Default, Constructors.Default) {}

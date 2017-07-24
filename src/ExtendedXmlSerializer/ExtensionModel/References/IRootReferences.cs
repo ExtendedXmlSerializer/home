@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IRootReferences : IParameterizedSource<IFormatWriter, ImmutableArray<object>> {}
+	interface IRootReferences : IParameterizedSource<IFormatWriter, ImmutableArray<object>> {}
 }

@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public interface IMemberSerializers : IParameterizedSource<IMember, IMemberSerializer> {}
+	interface IMemberSerializers : IParameterizedSource<IMember, IMemberSerializer> {}
 }

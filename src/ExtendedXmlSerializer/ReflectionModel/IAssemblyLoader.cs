@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IAssemblyLoader : IParameterizedSource<string, Assembly> {}
+	interface IAssemblyLoader : IParameterizedSource<string, Assembly> {}
 }

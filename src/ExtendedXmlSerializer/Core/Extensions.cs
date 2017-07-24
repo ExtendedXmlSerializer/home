@@ -33,7 +33,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core
 {
-	public static class Extensions
+	static class Extensions
 	{
 		public static T With<T>(this T @this, Action<T> action)
 		{

@@ -28,5 +28,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
-	public interface IFormatReaderContext : IParser<MemberInfo>, IIdentityStore, IDisposable {}
+	interface IFormatReaderContext : IParser<MemberInfo>, IIdentityStore, IDisposable {}
 }

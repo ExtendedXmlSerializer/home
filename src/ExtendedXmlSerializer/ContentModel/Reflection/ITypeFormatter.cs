@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	public interface ITypeFormatter : IFormatter<TypeInfo> {}
+	interface ITypeFormatter : IFormatter<TypeInfo> {}
 }

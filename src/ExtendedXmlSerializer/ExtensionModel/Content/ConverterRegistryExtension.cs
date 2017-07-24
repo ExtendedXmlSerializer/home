@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class ConverterRegistryExtension : ISerializerExtension
+	sealed class ConverterRegistryExtension : ISerializerExtension
 	{
 		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
 

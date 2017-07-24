@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface ITypePartitions : IParameterizedSource<TypePartition, ImmutableArray<TypeInfo>?> {}
+	interface ITypePartitions : IParameterizedSource<TypePartition, ImmutableArray<TypeInfo>?> {}
 }

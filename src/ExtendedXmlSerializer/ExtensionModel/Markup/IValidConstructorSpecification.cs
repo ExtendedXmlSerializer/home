@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public interface IValidConstructorSpecification : ReflectionModel.IValidConstructorSpecification {}
+	interface IValidConstructorSpecification : ReflectionModel.IValidConstructorSpecification {}
 }

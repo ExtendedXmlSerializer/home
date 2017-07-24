@@ -23,7 +23,7 @@
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public interface IMemberSerializer : ISerializer
+	interface IMemberSerializer : ISerializer
 	{
 		IMember Profile { get; }
 

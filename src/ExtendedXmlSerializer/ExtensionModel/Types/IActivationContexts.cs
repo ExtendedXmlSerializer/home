@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface IActivationContexts : IParameterizedSource<IDictionary<string, object>, IActivationContext> {}
+	interface IActivationContexts : IParameterizedSource<IDictionary<string, object>, IActivationContext> {}
 }

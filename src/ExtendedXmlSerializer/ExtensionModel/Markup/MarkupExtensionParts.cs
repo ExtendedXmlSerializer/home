@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public sealed class MarkupExtensionParts
+	sealed class MarkupExtensionParts
 	{
 		public MarkupExtensionParts(TypeParts type, ImmutableArray<IExpression> arguments,
 		                            ImmutableArray<KeyValuePair<string, IExpression>> properties)

@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public abstract class ElementOptionBase : OptionBase<TypeInfo, IWriter>
+	abstract class ElementOptionBase : OptionBase<TypeInfo, IWriter>
 	{
 		protected ElementOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
 	}

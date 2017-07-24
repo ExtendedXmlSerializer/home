@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
-	public interface IAliases : IAlteration<string> {}
+	interface IAliases : IAlteration<string> {}
 }

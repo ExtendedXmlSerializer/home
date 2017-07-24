@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IActivatingTypeSpecification : ISpecification<TypeInfo> {}
+	interface IActivatingTypeSpecification : ISpecification<TypeInfo> {}
 }

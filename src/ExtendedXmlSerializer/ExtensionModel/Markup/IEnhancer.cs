@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	public interface IEnhancer : IAlteration<ISerializer> {}
+	interface IEnhancer : IAlteration<ISerializer> {}
 }

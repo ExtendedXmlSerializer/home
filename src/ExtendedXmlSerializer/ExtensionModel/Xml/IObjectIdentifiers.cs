@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public interface IObjectIdentifiers : IParameterizedSource<object, ImmutableArray<string>> {}
+	interface IObjectIdentifiers : IParameterizedSource<object, ImmutableArray<string>> {}
 }

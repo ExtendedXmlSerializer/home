@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IEncounters : ISpecification<object>, IParameterizedSource<object, Identifier?> {}
+	interface IEncounters : ISpecification<object>, IParameterizedSource<object, Identifier?> {}
 }

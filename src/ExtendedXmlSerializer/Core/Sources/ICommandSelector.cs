@@ -23,5 +23,5 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface ICommandSelector<in T> : IParameterizedSource<T, ICommand<T>> {}
+	interface ICommandSelector<in T> : IParameterizedSource<T, ICommand<T>> {}
 }

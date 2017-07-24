@@ -25,7 +25,7 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	public sealed class InstanceConditionalSpecification : ISpecification<object>
+	sealed class InstanceConditionalSpecification : ISpecification<object>
 	{
 		readonly IConditions _conditions;
 

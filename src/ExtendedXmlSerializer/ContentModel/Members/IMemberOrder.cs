@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public interface IMemberOrder : IParameterizedSource<MemberInfo, int> {}
+	interface IMemberOrder : IParameterizedSource<MemberInfo, int> {}
 }

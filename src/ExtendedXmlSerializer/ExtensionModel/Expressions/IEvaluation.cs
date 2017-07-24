@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	public interface IEvaluation : IOption<TypeInfo, object>, ISource<Exception> {}
+	interface IEvaluation : IOption<TypeInfo, object>, ISource<Exception> {}
 }

@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public static class Extensions
+	static class Extensions
 	{
 		readonly static Func<Type, bool>
 			IsSatisfiedBy = new ActivatingTypeSpecification(PublicConstructorLocator.Default).IsSatisfiedBy;

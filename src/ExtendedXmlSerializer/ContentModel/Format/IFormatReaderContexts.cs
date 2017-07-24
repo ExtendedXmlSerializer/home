@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
-	public interface IFormatReaderContexts<in T> : IParameterizedSource<T, IFormatReaderContext> {}
+	interface IFormatReaderContexts<in T> : IParameterizedSource<T, IFormatReaderContext> {}
 }
