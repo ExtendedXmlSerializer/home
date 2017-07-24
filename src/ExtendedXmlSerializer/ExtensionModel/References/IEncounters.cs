@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,12 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core
+namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public sealed class Conditions : ReferenceCache<object, ConditionMonitor>, IConditions
-	{
-		public static Conditions Default { get; } = new Conditions();
-		public Conditions() : base(_ => new ConditionMonitor()) {}
-	}
+	public interface IEncounters : ISpecification<object>, IParameterizedSource<object, Identifier?> {}
 }

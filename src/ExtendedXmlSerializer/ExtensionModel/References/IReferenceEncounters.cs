@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,19 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	public interface IEnumeratorStore : IParameterizedSource<TypeInfo, IEnumerators> {}
-
-	public sealed class EnumeratorStore : Selector<TypeInfo, IEnumerators>, IEnumeratorStore
-	{
-		public EnumeratorStore(IDictionaryEnumerators dictionary, IEnumerators enumerators)
-			: base(
-				new FixedOption<TypeInfo, IEnumerators>(IsDictionaryTypeSpecification.Default, dictionary),
-				new FixedOption<TypeInfo, IEnumerators>(IsCollectionTypeSpecification.Default, enumerators)
-			) {}
-	}
+	public interface IReferenceEncounters : IParameterizedSource<IFormatWriter, IEncounters> {}
 }

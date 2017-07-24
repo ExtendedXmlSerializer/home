@@ -28,16 +28,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	public interface IEnumerators : IParameterizedSource<IEnumerable, IEnumerator> {}
 
-	public interface IDictionaryEnumerators : IEnumerators {}
-
-	sealed class DictionaryEnumerators : IDictionaryEnumerators
-	{
-		public static DictionaryEnumerators Default { get; } = new DictionaryEnumerators();
-		DictionaryEnumerators() {}
-
-		public IEnumerator Get(IEnumerable parameter) => ((IDictionary) parameter).GetEnumerator();
-	}
-
 	sealed class Enumerators : IEnumerators
 	{
 		public static Enumerators Default { get; } = new Enumerators();

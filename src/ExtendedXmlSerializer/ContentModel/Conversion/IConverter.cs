@@ -29,11 +29,4 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 	public interface IConverter : IConverter<object> {}
 
 	public interface IConverter<T> : ISpecification<TypeInfo>, IConvert<T> {}
-
-	public interface IConvert<T>
-	{
-		T Parse(string data);
-
-		string Format(T instance);
-	}
 }
