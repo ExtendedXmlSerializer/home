@@ -24,6 +24,7 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -49,12 +50,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		IMemberSerializer Locate(TypeInfo parameter, MemberInfo memberInfo)
 		{
+			var comparer = /*new MemberComparer(ImplementedTypeComparer.Default)*/MemberComparer.Default;
+			
 			var members = _members.Get(parameter).Get();
 			var length = members.Length;
 			for (var i = 0; i < length; i++)
 			{
 				var member = members[i];
-				if (Equals(member.Profile.Metadata, memberInfo))
+				
+				if (comparer.Equals(member.Profile.Metadata, memberInfo))
 				{
 					return member;
 				}

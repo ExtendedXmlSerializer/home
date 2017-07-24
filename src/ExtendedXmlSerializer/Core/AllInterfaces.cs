@@ -36,10 +36,7 @@ namespace ExtendedXmlSerializer.Core
 
 		public static AllInterfaces Default { get; } = new AllInterfaces();
 
-		AllInterfaces()
-		{
-			_selector = Yield;
-		}
+		AllInterfaces() => _selector = Yield;
 
 		IEnumerable<TypeInfo> Yield(TypeInfo parameter) =>
 			parameter.Yield()

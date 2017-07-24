@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	class VariableTypeSpecification : InverseSpecification<Type>, IVariableTypeSpecification
+	sealed class VariableTypeSpecification : InverseSpecification<Type>, IVariableTypeSpecification
 	{
 		public VariableTypeSpecification(Type type) : base(new EqualitySpecification<Type>(type)) {}
 

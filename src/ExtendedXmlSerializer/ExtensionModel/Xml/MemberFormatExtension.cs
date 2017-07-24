@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	sealed class MemberFormatExtension : ISerializerExtension
 	{
 		public MemberFormatExtension()
-			: this(new Dictionary<MemberInfo, IAttributeSpecification>(), new HashSet<MemberInfo>()) {}
+			: this(new Dictionary<MemberInfo, IAttributeSpecification>(MemberComparer.Default), new HashSet<MemberInfo>(MemberComparer.Default)) {}
 
 		public MemberFormatExtension(IDictionary<MemberInfo, IAttributeSpecification> specifications,
 		                             ICollection<MemberInfo> registered)

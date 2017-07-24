@@ -131,6 +131,56 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			actual.ShouldBeEquivalentTo(expected);
 		}
 
+		[Fact]
+		public void GeneralInheritance()
+		{
+			var first = new ChildClass { Name = "Key" };
+			var instance = new Container{ First = first, Second = first };
+			var support = new SerializationSupport(new ConfigurationContainer().EnableReferences());
+			var actual = support.Cycle(instance);
+			actual.First.Should()
+			       .NotBeNull()
+			       .And.BeOfType<ChildClass>()
+			       .And.BeSameAs(actual.Second);
+		}
+
+		[Fact]
+		public void SpecificParentInheritance()
+		{
+			var first = new ChildClass { Name = "Key" };
+			var instance = new Container { First = first, Second = first };
+			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ParentClass>().EnableReferences(x => x.Name).Configuration);
+			var actual = support.Cycle(instance);
+			actual.First.Should()
+			       .NotBeNull()
+			       .And.BeOfType<ChildClass>()
+			       .And.BeSameAs(actual.Second);
+		}
+
+
+		[Fact]
+		public void SpecificChildInheritance()
+		{
+			var first = new ChildClass { Name = "Key" };
+			var instance = new Container { First = first, Second = first };
+			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ChildClass>().EnableReferences(x => x.Name).Configuration);
+			var actual = support.Cycle(instance);
+			actual.First.Should()
+			       .NotBeNull()
+			       .And.BeOfType<ChildClass>()
+			       .And.BeSameAs(actual.Second);
+		}
+
+		class Container
+		{
+			public ChildClass First { get; set; }
+			public ChildClass Second { get; set; }
+		}
+
+		public class ParentClass { public string Name { get; set; } }
+
+		public class ChildClass : ParentClass {}
+
 		class ClassWithPropertyInterfaceOfList
 		{
 			[UsedImplicitly]

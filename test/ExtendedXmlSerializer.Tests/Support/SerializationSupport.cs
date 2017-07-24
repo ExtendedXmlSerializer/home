@@ -53,10 +53,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 
 		public object Deserialize(System.Xml.XmlReader stream) => _serializer.Deserialize(stream);
 
-		public void WriteLine(object instance)
-		{
-			// https://github.com/aspnet/Tooling/issues/324#issuecomment-275236780
-			throw new InvalidOperationException(_serializer.Serialize(instance));
-		}
+		// Used for a simple way to emit instances as text in tests:
+		public void WriteLine(object instance) => throw new InvalidOperationException(_serializer.Serialize(instance));
 	}
 }

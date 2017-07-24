@@ -37,9 +37,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly ISpecification<IMember> _specification;
 
 		public VariableTypeMemberSpecifications(ISpecification<IMember> specification)
-		{
-			_specification = specification;
-		}
+			=> _specification = specification;
 
 		protected override IVariableTypeSpecification Create(IMember parameter)
 			=> _specification.IsSatisfiedBy(parameter)
