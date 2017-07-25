@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleTestSubject {BasicProperty = "Hello World!"};
 			var actual = support.Assert(expected,
-			                            @"<?xml version=""1.0"" encoding=""utf-8""?><UpdatedTestClassName xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><BasicProperty>Hello World!</BasicProperty></UpdatedTestClassName>");
+										@"<?xml version=""1.0"" encoding=""utf-8""?><UpdatedTestClassName xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><BasicProperty>Hello World!</BasicProperty></UpdatedTestClassName>");
 			Assert.Equal(expected.BasicProperty, actual.BasicProperty);
 		}
 
@@ -101,11 +101,11 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigureCustomSerializerForType()
 		{
 			var config = Configure(cfg =>
-			                       {
-				                       var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
-				                       Assert.Null(cfg.With<CustomXmlExtension>().Get(t.Get()));
-				                       t.CustomSerializer((writer, types) => { }, element => null);
-			                       });
+								   {
+									   var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
+									   Assert.Null(cfg.With<CustomXmlExtension>().Get(t.Get()));
+									   t.CustomSerializer((writer, types) => { }, element => null);
+								   });
 			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
 			Assert.NotNull(config.With<CustomXmlExtension>().Get(type.Get()));
 		}
@@ -146,7 +146,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};
 			support.Assert(instance,
-			               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><UpdatedMemberName>Hello World!  Testing Member.</UpdatedMemberName></ConfigurationContainerTests-SimpleTestSubject>");
+						   @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><UpdatedMemberName>Hello World!  Testing Member.</UpdatedMemberName></ConfigurationContainerTests-SimpleTestSubject>");
 		}
 
 		[Fact]
@@ -154,19 +154,19 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var order = 0;
 			var configuration = Configure(cfg =>
-				                              cfg.ConfigureType<SimpleOrderedTestSubject>().Member(p => p.Property2).Order(order));
+											  cfg.ConfigureType<SimpleOrderedTestSubject>().Member(p => p.Property2).Order(order));
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleOrderedTestSubject))
-				             .Member(nameof(SimpleOrderedTestSubject.Property2));
+							 .Member(nameof(SimpleOrderedTestSubject.Property2));
 			Assert.Equal(member.Order(), order);
 
 			var instance = new SimpleOrderedTestSubject {Property2 = "World!", Property1 = "Hello"};
 
 			new SerializationSupport().Assert(instance,
-			                                  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><Property1>Hello</Property1><Property2>World!</Property2></ConfigurationContainerTests-SimpleOrderedTestSubject>");
+											  @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><Property1>Hello</Property1><Property2>World!</Property2></ConfigurationContainerTests-SimpleOrderedTestSubject>");
 
 			new SerializationSupport(configuration).Assert(instance,
-			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><Property2>World!</Property2><Property1>Hello</Property1></ConfigurationContainerTests-SimpleOrderedTestSubject>");
+														   @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleOrderedTestSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests""><Property2>World!</Property2><Property1>Hello</Property1></ConfigurationContainerTests-SimpleOrderedTestSubject>");
 		}
 
 		[Fact]
@@ -175,13 +175,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration =
 				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Attribute(); });
 			var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
-			                          .Member(nameof(SimpleTestSubject.BasicProperty))
-			                          .Get();
+									  .Member(nameof(SimpleTestSubject.BasicProperty))
+									  .Get();
 			Assert.True(configuration.With<MemberFormatExtension>().Registered.Contains(member));
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,
-			                                               @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleTestSubject BasicProperty=""Hello World as Attribute!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests"" />");
+														   @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleTestSubject BasicProperty=""Hello World as Attribute!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests"" />");
 		}
 
 		[Fact]
@@ -191,9 +191,9 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			Assert.Null(before.Find<EncryptionExtension>());
 			var configuration = before
 				.UseEncryptionAlgorithm()
-			    .ConfigureType<TestClassWithEncryptedData>()
-			    .Member(p => p.Password, x => x.Encrypt())
-			    .Member(p => p.Salary).Encrypt().Owner.Configuration;
+				.ConfigureType<TestClassWithEncryptedData>()
+				.Member(p => p.Password, x => x.Encrypt())
+				.Member(p => p.Salary).Encrypt().Owner.Configuration;
 
 			var extension = configuration.Find<EncryptionExtension>();
 			Assert.NotNull(extension);
@@ -214,30 +214,30 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		/*
 		 *
 		 * [Fact]
-	    public void ConfigureEncryptDifferenetOrder()
-	    {
-	        var before = new ConfigurationContainer();
-	        Assert.Null(before.Find<EncryptionExtension>());
-	        var configuration = before
-	            .ConfigureType<TestClassWithEncryptedData>()
-	            .Member(p => p.Password, x => x.Encrypt())
-	            .Member(p => p.Salary).Encrypt().Owner.Configuration
-	            .UseEncryptionAlgorithm(); //call UseEncryptionAlgorithm on the end
+		public void ConfigureEncryptDifferenetOrder()
+		{
+			var before = new ConfigurationContainer();
+			Assert.Null(before.Find<EncryptionExtension>());
+			var configuration = before
+				.ConfigureType<TestClassWithEncryptedData>()
+				.Member(p => p.Password, x => x.Encrypt())
+				.Member(p => p.Salary).Encrypt().Owner.Configuration
+				.UseEncryptionAlgorithm(); //call UseEncryptionAlgorithm on the end
 
-            var extension = configuration.Find<EncryptionExtension>();
-	        Assert.NotNull(extension);
-	        var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
-	        Assert.NotNull(type);
+			var extension = configuration.Find<EncryptionExtension>();
+			Assert.NotNull(extension);
+			var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
+			Assert.NotNull(type);
 
-	        var property = type.Member(nameof(TestClassWithEncryptedData.Salary)).Get();
-	        Assert.NotNull(property);
-	        Assert.Contains(property, extension.Registered);
+			var property = type.Member(nameof(TestClassWithEncryptedData.Salary)).Get();
+			Assert.NotNull(property);
+			Assert.Contains(property, extension.Registered);
 
-	        const int salary = 6776;
-	        var instance = new TestClassWithEncryptedData { Salary = salary };
-	        var actual = new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
-	        Assert.Equal(salary, actual.Salary);
-	    }*/
+			const int salary = 6776;
+			var instance = new TestClassWithEncryptedData { Salary = salary };
+			var actual = new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
+			Assert.Equal(salary, actual.Salary);
+		}*/
 
 		class SimpleTestSubject
 		{

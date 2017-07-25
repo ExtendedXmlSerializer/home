@@ -31,18 +31,9 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly ITypeMembers _members;
 
-		protected TypeMemberWalkerBase(ITypeMembers members, TypeInfo root) : base(root)
-		{
-			_members = members;
-		}
+		protected TypeMemberWalkerBase(ITypeMembers members, TypeInfo root) : base(root) => _members = members;
 
-		protected override IEnumerable<T> Select(TypeInfo type)
-		{
-			foreach (var item in Members(type))
-			{
-				yield return item;
-			}
-		}
+		protected override IEnumerable<T> Select(TypeInfo type) => Members(type);
 
 		protected virtual IEnumerable<T> Members(TypeInfo parameter)
 		{

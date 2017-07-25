@@ -136,8 +136,48 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				               Set = new List<string> {"Item1"}
 			               };
 
+			var actual = new SerializationSupport(new ConfigurationContainer()).Cycle(expected);
+			actual.List.Only()
+			      .Should()
+			      .NotBeNull()
+			      .And
+			      .Be(actual.Set.Only());
+		}
+
+
+		[Fact]
+		public void PropertyInterfaceOfListEnabledReferences()
+		{
+			var expected = new ClassWithPropertyInterfaceOfList
+			               {
+				               List = new List<string> { "Item1" },
+				               Set = new List<string> { "Item1" }
+			               };
+
 			var actual = new SerializationSupport(new ConfigurationContainer().EnableReferences()).Cycle(expected);
-			actual.ShouldBeEquivalentTo(expected);
+			actual.List.Only()
+			      .Should()
+			      .NotBeNull()
+			      .And
+			      .Be(actual.Set.Only());
+		}
+
+		[Fact]
+		public void PropertyInterfaceOfListReferencesCleared()
+		{
+			var expected = new ClassWithPropertyInterfaceOfList
+			               {
+				               List = new List<string> { "Item1" },
+				               Set = new List<string> { "Item1" }
+			               };
+
+			var configuration = new ConfigurationContainer().EnableReferences();
+			configuration.IgnoredReferenceTypes().Clear();
+			var actual = new SerializationSupport(configuration).Cycle(expected);
+			actual.List.Only()
+			      .Should()
+			      .NotBeNull()
+			      .And.BeSameAs(actual.Set.Only());
 		}
 
 		[Fact]

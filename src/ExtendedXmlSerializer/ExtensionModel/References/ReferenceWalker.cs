@@ -36,16 +36,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly static VariableTypeMemberSpecifications Specifications = VariableTypeMemberSpecifications.Default;
 		readonly static IEnumerable<object> Empty = Enumerable.Empty<object>();
 
+		readonly IReferencesPolicy _policy;
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IMemberAccessors _accessors;
 
-		public ReferenceWalker(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
-			: this(Specifications, members, enumerators, accessors, root) {}
+		public ReferenceWalker(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
+		                       IMemberAccessors accessors, object root)
+			: this(policy, Specifications, members, enumerators, accessors, root) {}
 
-		public ReferenceWalker(IVariableTypeMemberSpecifications specifications, ITypeMembers members,
+		public ReferenceWalker(IReferencesPolicy policy, IVariableTypeMemberSpecifications specifications,
+		                       ITypeMembers members,
 		                       IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
 			: base(members, enumerators, root)
 		{
+			_policy = policy;
 			_specifications = specifications;
 			_accessors = accessors;
 		}
@@ -53,20 +57,31 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		protected override IEnumerable<object> Yield(IMember member, object instance)
 		{
 			var variable = _specifications.Get(member);
-			var result = variable != null ? Yield(_accessors.Get(member).Get(instance)) : Empty;
+			var result = variable != null
+				             ? Yield(_accessors.Get(member)
+				                               .Get(instance))
+				             : Empty;
 			return result;
 		}
 
 		protected override IEnumerable<object> Yield(object instance)
 		{
-			if (Check(instance))
+			if (!Schedule(instance) && Check(instance))
 			{
 				yield return instance;
 			}
 		}
 
-		bool Check(object instance) => !Schedule(instance) && (!instance?.GetType().GetTypeInfo().IsValueType ?? false);
+		bool Check(object instance)
+		{
+			var info = instance?.GetType()
+			                   .GetTypeInfo();
+			var check = info != null && !info.IsValueType && _policy.IsSatisfiedBy(info);
+			return check;
+		}
 
-		public ImmutableArray<object> Get() => this.SelectMany(x => x).Distinct().ToImmutableArray();
+		public ImmutableArray<object> Get() => this.SelectMany(x => x)
+		                                           .Distinct()
+		                                           .ToImmutableArray();
 	}
 }

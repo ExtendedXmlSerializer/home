@@ -30,7 +30,7 @@ using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
+	sealed class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
 	{
 		public ContainsStaticReferenceSpecification(ITypeMembers members) : base(new Cache(members).Get) {}
 
@@ -45,7 +45,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			protected override bool Create(TypeInfo parameter)
 			{
-				var variables = new VariableTypeWalker(_members, parameter).Get().ToArray();
+				var variables = new VariableTypeWalker(_members, parameter).Get()
+				                                                           .ToArray();
 				var length = variables.Length;
 				for (var i = 0; i < length; i++)
 				{

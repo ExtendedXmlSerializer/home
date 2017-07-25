@@ -22,7 +22,9 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -37,17 +39,26 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                Expression<Func<T, TMember>> member)
 		{
-			@this.Member(member).Identity();
+			@this.Member(member)
+			     .Identity();
 			return @this;
 		}
 
 		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
 		{
 			@this.Attribute()
-			     .Configuration
-			     .With<ReferencesExtension>()
-			     .Assign(@this.Owner.Get(), @this.Get());
+			      .Configuration
+			      .With<ReferencesExtension>()
+			      .Assign(@this.Owner.Get(), @this.Get());
 			return @this;
 		}
+
+		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationContainer @this)
+			=> @this.With<DefaultReferencesExtension>()
+			        .Whitelist;
+
+		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
+			=> @this.With<DefaultReferencesExtension>()
+			        .Blacklist;
 	}
 }

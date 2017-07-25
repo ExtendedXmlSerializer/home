@@ -21,19 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class DefaultReferencesExtension : ISerializerExtension
 	{
-		public static DefaultReferencesExtension Default { get; } = new DefaultReferencesExtension();
-		DefaultReferencesExtension() {}
+		public DefaultReferencesExtension() : this(new HashSet<TypeInfo> {Support<string>.Key}, new HashSet<TypeInfo>()) {}
+
+		public DefaultReferencesExtension(ICollection<TypeInfo> blacklist,
+		                                  ICollection<TypeInfo> whitelist)
+		{
+			Blacklist = blacklist;
+			Whitelist = whitelist;
+		}
+
+		public ICollection<TypeInfo> Blacklist { get; }
+		public ICollection<TypeInfo> Whitelist { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ContainsStaticReferenceSpecification>()
-			            .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
-			            .Register<IRootReferences, RootReferences>();
+		{
+			var policy = Whitelist.Any()
+				             ? (IReferencesPolicy) new WhitelistReferencesPolicy(Whitelist.ToArray())
+				             : new BlacklistReferencesPolicy(Blacklist.ToArray());
+
+			return parameter.RegisterInstance(policy)
+			                 .Register<ContainsStaticReferenceSpecification>()
+			                 .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
+			                 .Register<IRootReferences, RootReferences>();
+		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
