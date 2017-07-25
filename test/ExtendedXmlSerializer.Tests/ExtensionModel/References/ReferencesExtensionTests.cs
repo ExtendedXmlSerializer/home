@@ -44,7 +44,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SimpleIdentity()
 		{
-			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension())
+			                                                                   .Create());
 			var instance = new Subject {Id = new Guid("{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"), PropertyName = "Hello World!"};
 			instance.Self = instance;
 			var actual = support.Assert(instance,
@@ -56,7 +57,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void EnabledWithoutConfiguration()
 		{
-			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension()).Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Extend(new ReferencesExtension())
+			                                                                   .Create());
 			var expected = new Subject
 			               {
 				               Id = Guid,
@@ -75,7 +77,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SimpleEntity()
 		{
-			var configuration = new ConfigurationContainer().Type<Subject>().Member(x => x.Id).Identity().Configuration;
+			var configuration = new ConfigurationContainer().Type<Subject>()
+			                                                .Member(x => x.Id)
+			                                                .Identity()
+			                                                .Configuration;
 			var support = new SerializationSupport(configuration);
 			var expected = new Subject
 			               {
@@ -94,7 +99,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+				                         new ConfigurationContainer().Type<TestClassReference>()
+				                                                     .EnableReferences(x => x.Id)
+				                                                     .Configuration);
 
 			var instance = new TestClassReference
 			               {
@@ -114,8 +121,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			Assert.NotNull(actual.ObjectA);
 			Assert.Same(instance, instance.CyclicReference);
 			Assert.Same(instance.ObjectA, instance.ReferenceToObjectA);
-			Assert.Equal(3, instance.Lists.First().Id);
-			Assert.Equal(4, instance.Lists.Last().Id);
+			Assert.Equal(3, instance.Lists.First()
+			                        .Id);
+			Assert.Equal(4, instance.Lists.Last()
+			                        .Id);
 		}
 
 		[Fact]
@@ -123,8 +132,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var expected = new ClassWithPropertyInterfaceOfList
 			               {
-				               List = new List<string> { "Item1" },
-				               Set = new List<string> { "Item1" }
+				               List = new List<string> {"Item1"},
+				               Set = new List<string> {"Item1"}
 			               };
 
 			var actual = new SerializationSupport(new ConfigurationContainer().EnableReferences()).Cycle(expected);
@@ -134,8 +143,8 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void GeneralInheritance()
 		{
-			var first = new ChildClass { Name = "Key" };
-			var instance = new Container{ First = first, Second = first };
+			var first = new ChildClass {Name = "Key"};
+			var instance = new Container {First = first, Second = first};
 			var support = new SerializationSupport(new ConfigurationContainer().EnableReferences());
 			var actual = support.Cycle(instance);
 			actual.First.Should()
@@ -147,9 +156,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SpecificParentInheritance()
 		{
-			var first = new ChildClass { Name = "Key" };
-			var instance = new Container { First = first, Second = first };
-			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ParentClass>().EnableReferences(x => x.Name).Configuration);
+			var first = new ChildClass {Name = "Key"};
+			var instance = new Container {First = first, Second = first};
+			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ParentClass>()
+			                                                                   .EnableReferences(x => x.Name)
+			                                                                   .Configuration);
 			var actual = support.Cycle(instance);
 			actual.First.Should()
 			       .NotBeNull()
@@ -161,9 +172,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SpecificChildInheritance()
 		{
-			var first = new ChildClass { Name = "Key" };
-			var instance = new Container { First = first, Second = first };
-			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ChildClass>().EnableReferences(x => x.Name).Configuration);
+			var first = new ChildClass {Name = "Key"};
+			var instance = new Container {First = first, Second = first};
+			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ChildClass>()
+			                                                                   .EnableReferences(x => x.Name)
+			                                                                   .Configuration);
 			var actual = support.Cycle(instance);
 			actual.First.Should()
 			       .NotBeNull()
@@ -177,7 +190,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			public ChildClass Second { get; set; }
 		}
 
-		public class ParentClass { public string Name { get; set; } }
+		public class ParentClass
+		{
+			public string Name { get; set; }
+		}
 
 		public class ChildClass : ParentClass {}
 
@@ -188,14 +204,16 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 
 			[UsedImplicitly]
 			public IList<string> Set { get; set; }
-		}
-		;
+		};
+
 		[Fact]
 		public void ComplexList()
 		{
 			var support =
 				new SerializationSupport(
-					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+				                         new ConfigurationContainer().Type<TestClassReference>()
+				                                                     .EnableReferences(x => x.Id)
+				                                                     .Configuration);
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -209,14 +227,26 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			var actual = support.Assert(instance,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Capacity>4</Capacity><TestClassReference Id=""3""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference Id=""4""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></TestClassReference><TestClassReference xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""2"" /><TestClassReference xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""1"" /></All></TestClassReferenceWithList>");
 			Assert.NotNull(actual.Parent);
-			var list = actual.All.Cast<TestClassReference>().ToList();
-			Assert.Same(actual.Parent, list[0].ObjectA);
-			Assert.Same(actual.Parent, list[0].ReferenceToObjectA);
-			Assert.Same(list[1].ObjectA, list[1].ReferenceToObjectA);
-			Assert.Same(list[1].ObjectA.To<TestClassReference>().ObjectA,
-			            list[1].ObjectA.To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(actual.Parent, list[1].ObjectA.To<TestClassReference>().ObjectA);
-			Assert.Same(list[2], list[1].ObjectA);
+			var list = actual.All.Cast<TestClassReference>()
+			                  .ToList();
+			Assert.Same(actual.Parent, list[0]
+				            .ObjectA);
+			Assert.Same(actual.Parent, list[0]
+				            .ReferenceToObjectA);
+			Assert.Same(list[1]
+				            .ObjectA, list[1]
+				            .ReferenceToObjectA);
+			Assert.Same(list[1]
+				            .ObjectA.To<TestClassReference>()
+				             .ObjectA,
+			            list[1]
+				            .ObjectA.To<TestClassReference>()
+				             .ReferenceToObjectA);
+			Assert.Same(actual.Parent, list[1]
+				            .ObjectA.To<TestClassReference>()
+				             .ObjectA);
+			Assert.Same(list[2], list[1]
+				            .ObjectA);
 			Assert.Same(actual.Parent, list[3]);
 		}
 
@@ -225,56 +255,99 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+				                         new ConfigurationContainer().Type<TestClassReference>()
+				                                                     .EnableReferences(x => x.Id)
+				                                                     .Configuration);
 
-			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1, Name = "Hello World, this is a Name!"}};
+			var instance =
+				new TestClassReferenceWithDictionary
+				{
+					Parent = new TestClassReference
+					         {
+						         Id = 1,
+						         Name = "Hello World, this is a Name!"
+					         }
+				};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
 
 			instance.All = new Dictionary<int, IReference>
 			               {
-				               {3, new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent}},
+				               {
+					               3, new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent}
+				               },
 				               {4, new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other}},
 				               {2, other},
 				               {1, instance.Parent}
 			               };
 
 			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1""><Name>Hello World, this is a Name!</Name></Parent><All><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>3</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>4</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>2</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>1</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></Item></All></TestClassReferenceWithDictionary>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1""><Name>Hello World, this is a Name!</Name></Parent><All><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>3</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>4</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>2</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></Item><Item xmlns=""https://extendedxmlserializer.github.io/system""><Key>1</Key><Value xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></Item></All></TestClassReferenceWithDictionary>");
 			Assert.NotNull(actual.Parent);
 			var list = actual.All;
-			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ObjectA);
-			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[4].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA.To<TestClassReference>().ObjectA, actual.Parent);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[2]);
+			Assert.Same(actual.Parent, list[3]
+				            .To<TestClassReference>()
+				            .ObjectA);
+			Assert.Same(actual.Parent, list[3]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				            .ObjectA, list[4]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				             .ObjectA.To<TestClassReference>()
+				             .ObjectA, actual.Parent);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				            .ObjectA, list[2]);
 			Assert.Same(actual.Parent, list[1]);
 		}
 
 		[Fact]
 		public void OptimizedDictionary()
 		{
-			var support = new ConfigurationContainer().UseOptimizedNamespaces().Type<TestClassReference>().EnableReferences(x => x.Id).ForTesting();
+			var support = new ConfigurationContainer().UseOptimizedNamespaces()
+			                                           .Type<TestClassReference>()
+			                                           .EnableReferences(x => x.Id)
+			                                           .ForTesting();
 
-			var instance = new TestClassReferenceWithDictionary { Parent = new TestClassReference { Id = 1 } };
-			var other = new TestClassReference { Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent };
+			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
+			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
 
 			instance.All = new Dictionary<int, IReference>
-						   {
-							   {3, new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent}},
-							   {4, new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other}},
-							   {2, other},
-							   {1, instance.Parent}
-						   };
+			               {
+				               {
+					               3, new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent}
+				               },
+				               {4, new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other}},
+				               {2, other},
+				               {1, instance.Parent}
+			               };
 
 			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent exs:type=""TestClassReference"" Id=""1"" /><All><sys:Item><Key>3</Key><Value exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></sys:Item><sys:Item><Key>4</Key><Value exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></sys:Item><sys:Item><Key>2</Key><Value exs:type=""TestClassReference"" exs:entity=""2"" /></sys:Item><sys:Item><Key>1</Key><Value exs:type=""TestClassReference"" exs:entity=""1"" /></sys:Item></All></TestClassReferenceWithDictionary>");
+			                            @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithDictionary xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent exs:type=""TestClassReference"" Id=""1"" /><All><sys:Item><Key>3</Key><Value exs:type=""TestClassReference"" Id=""3""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></Value></sys:Item><sys:Item><Key>4</Key><Value exs:type=""TestClassReference"" Id=""4""><ObjectA exs:type=""TestClassReference"" Id=""2""><ObjectA exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""TestClassReference"" exs:entity=""2"" /></Value></sys:Item><sys:Item><Key>2</Key><Value exs:type=""TestClassReference"" exs:entity=""2"" /></sys:Item><sys:Item><Key>1</Key><Value exs:type=""TestClassReference"" exs:entity=""1"" /></sys:Item></All></TestClassReferenceWithDictionary>");
 			Assert.NotNull(actual.Parent);
 			var list = actual.All;
-			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ObjectA);
-			Assert.Same(actual.Parent, list[3].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[4].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA.To<TestClassReference>().ObjectA, actual.Parent);
-			Assert.Same(list[4].To<TestClassReference>().ObjectA, list[2]);
+			Assert.Same(actual.Parent, list[3]
+				            .To<TestClassReference>()
+				            .ObjectA);
+			Assert.Same(actual.Parent, list[3]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				            .ObjectA, list[4]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				             .ObjectA.To<TestClassReference>()
+				             .ObjectA, actual.Parent);
+			Assert.Same(list[4]
+				            .To<TestClassReference>()
+				            .ObjectA, list[2]);
 			Assert.Same(actual.Parent, list[1]);
 		}
 
@@ -283,7 +356,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var support =
 				new SerializationSupport(
-					new ConfigurationContainer().Type<TestClassReference>().EnableReferences(x => x.Id).Configuration);
+				                         new ConfigurationContainer().Type<TestClassReference>()
+				                                                     .EnableReferences(x => x.Id)
+				                                                     .Configuration);
 
 			var parent = new TestClassReference {Id = 1};
 			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};
@@ -298,27 +373,44 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 
 			var actual = support.Assert(instance,
 			                            @"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:ns1=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""ns1:IReference"" xmlns=""https://extendedxmlserializer.github.io/system""><Capacity>4</Capacity><ns1:TestClassReference Id=""3""><ObjectA exs:type=""ns1:TestClassReference"" Id=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ns1:TestClassReference><ns1:TestClassReference Id=""4""><ObjectA exs:type=""ns1:TestClassReference"" Id=""2""><ObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""1"" /></ObjectA><ReferenceToObjectA exs:type=""ns1:TestClassReference"" exs:entity=""2"" /></ns1:TestClassReference><ns1:TestClassReference exs:entity=""2"" /><ns1:TestClassReference exs:entity=""1"" /></List>");
-			Assert.Same(actual[0].To<TestClassReference>().ObjectA, actual[0].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(actual[1].To<TestClassReference>().ObjectA, actual[1].To<TestClassReference>().ReferenceToObjectA);
-			Assert.Same(actual[2], actual[1].To<TestClassReference>().ObjectA);
-			Assert.Same(actual[3], actual[0].To<TestClassReference>().ObjectA);
+			Assert.Same(actual[0]
+				            .To<TestClassReference>()
+				            .ObjectA, actual[0]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(actual[1]
+				            .To<TestClassReference>()
+				            .ObjectA, actual[1]
+				            .To<TestClassReference>()
+				            .ReferenceToObjectA);
+			Assert.Same(actual[2], actual[1]
+				            .To<TestClassReference>()
+				            .ObjectA);
+			Assert.Same(actual[3], actual[0]
+				            .To<TestClassReference>()
+				            .ObjectA);
 		}
 
 		[Fact]
 		public void VerifyThrow()
-			=> Assert.Throws<CircularReferencesDetectedException>(() =>
-			                                                      {
-				                                                      var support = new SerializationSupport();
-				                                                      var instance = new Subject
-				                                                                     {
-					                                                                     Id =
-						                                                                     new Guid(
-							                                                                     "{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"),
-					                                                                     PropertyName = "Hello World!"
-				                                                                     };
-				                                                      instance.Self = instance;
-				                                                      support.Serialize(instance);
-			                                                      });
+		{
+			Action sut = () =>
+			             {
+				             var support = new SerializationSupport();
+				             var instance = new Subject
+				                            {
+					                            Id =
+						                            new Guid(
+						                                     "{0E2DECA4-CC38-46BA-9C47-94B8070D7353}"),
+					                            PropertyName = "Hello World!"
+				                            };
+				             instance.Self = instance;
+				             support.Serialize(instance);
+			             };
+
+			sut.ShouldThrow<CircularReferencesDetectedException>()
+			   .WithMessage(@"The provided instance of type 'ExtendedXmlSerializer.Tests.ExtensionModel.References.ReferencesExtensionTests+Subject' contains circular references within its graph. Serializing this instance would result in a recursive, endless loop. To properly serialize this instance, please create a serializer that has referential support enabled by extending it with the ReferencesExtension.\r\n\r\nHere is a list of found references:\r\n- ExtendedXmlSerializer.Tests.ExtensionModel.References.ReferencesExtensionTests+Subject");
+		}
 
 		class Subject
 		{
