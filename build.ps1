@@ -57,11 +57,17 @@ exec { & dotnet restore .\src\ExtendedXmlSerializer.Legacy }
 exec { & dotnet restore .\test\ExtendedXmlSerializer.Tests }
 exec { & dotnet restore .\test\ExtendedXmlSerializer.Tests.Legacy }
 
-Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
-Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.xproj -configuration Release 
-Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.xproj -configuration Release 
-Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.xproj -configuration Release 
-Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.xproj -configuration Release 
+exec { & dotnet build .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -c Release }
+exec { & dotnet build .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -c Release }
+exec { & dotnet build .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
+exec { & dotnet build .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -c Release }
+
+
+#Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
+#Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -configuration Release 
+#Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -configuration Release 
+#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -configuration Release 
+#Invoke-MSBuild .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -configuration Release 
 
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
