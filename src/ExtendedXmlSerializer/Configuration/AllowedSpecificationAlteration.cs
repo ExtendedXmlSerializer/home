@@ -29,21 +29,16 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	class AllowedSpecificationAlteration : IAlteration<AllowedMemberValuesExtension>
+	sealed class AllowedSpecificationAlteration : IAlteration<AllowedMemberValuesExtension>
 	{
 		readonly IAllowedValueSpecification _specification;
 
 		public AllowedSpecificationAlteration(ISpecification<object> specification)
 			: this(new AllowedValueSpecification(specification)) {}
 
-		public AllowedSpecificationAlteration(IAllowedValueSpecification specification)
-		{
-			_specification = specification;
-		}
+		public AllowedSpecificationAlteration(IAllowedValueSpecification specification) => _specification = specification;
 
 		public AllowedMemberValuesExtension Get(AllowedMemberValuesExtension parameter)
-		{
-			return new AllowedMemberValuesExtension(_specification, parameter.Specifications, parameter.ToArray());
-		}
+			=> new AllowedMemberValuesExtension(_specification, parameter.Specifications, parameter.ToArray());
 	}
 }
