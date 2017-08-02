@@ -71,11 +71,11 @@ exec { & dotnet build .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSeria
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-exec { & dotnet test .\test\ExtendedXmlSerializer.Tests -c Release }
-exec { & dotnet test .\test\ExtendedXmlSerializer.Tests.Legacy -c Release }
+exec { & dotnet test .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
+exec { & dotnet test .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -c Release }
 
-exec { & dotnet pack .\src\ExtendedXmlSerializer -c Release -o .\artifacts --version-suffix=$revision }  
-exec { & dotnet pack .\src\ExtendedXmlSerializer.Legacy -c Release -o .\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -c Release -o .\..\..\artifacts --version-suffix=$revision }  
+exec { & dotnet pack .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -c Release -o .\..\..\artifacts --version-suffix=$revision }  
 # exec { & dotnet pack .\src\ExtendedXmlSerializer.Autofac -c Release -o .\artifacts --version-suffix=$revision }  
 # exec { & dotnet pack .\src\ExtendedXmlSerializer.AspCore -c Release -o .\artifacts --version-suffix=$revision}
 # exec { & dotnet pack .\src\ExtendedXmlSerializer.WebApi -c Release -o .\artifacts --version-suffix=$revision}
