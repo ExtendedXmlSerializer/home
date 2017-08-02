@@ -62,7 +62,6 @@ exec { & dotnet build .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.L
 exec { & dotnet build .\test\ExtendedXmlSerializer.Tests\ExtendedXmlSerializer.Tests.csproj -c Release }
 exec { & dotnet build .\test\ExtendedXmlSerializer.Tests.Legacy\ExtendedXmlSerializer.Tests.Legacy.csproj -c Release }
 
-
 #Set-MsBuild "C:\Program Files (x86)\MSBuild\14.0\bin\msbuild.exe"
 #Invoke-MSBuild .\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj -configuration Release 
 #Invoke-MSBuild .\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj -configuration Release 

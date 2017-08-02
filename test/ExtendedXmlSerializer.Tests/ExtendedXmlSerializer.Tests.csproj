@@ -2,12 +2,14 @@
 
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
-    <VersionPrefix>2.0.0-alpha3</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionSuffix>alpha4</VersionSuffix>
     <ClassicFrameworkVersion>net462</ClassicFrameworkVersion>
     <TargetFrameworks>netcoreapp1.1;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <Version>2.0.0-alpha4</Version>
     <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.6.1</NetStandardImplicitPackageVersion>
     <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.0.4</RuntimeFrameworkVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>

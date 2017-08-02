@@ -3,7 +3,8 @@
   <PropertyGroup>
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer.Legacy</AssemblyTitle>
-    <VersionPrefix>1.0.0.0</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionSuffix>alpha4</VersionSuffix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Legacy</AssemblyName>
@@ -18,6 +19,7 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
     <RootNamespace>ExtendedXmlSerialization</RootNamespace>
+    <Version>2.0.0-alpha4</Version>
   </PropertyGroup>
 
   <ItemGroup>

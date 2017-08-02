@@ -7,7 +7,8 @@
     <Company>ExtendedXmlSerializer</Company>
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
-    <VersionPrefix>2.0.0-alpha3</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionSuffix>alpha4</VersionSuffix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net46</ClassicFrameworkVersion>
     <TargetFrameworks>$(ClassicFrameworkVersion);netstandard1.6</TargetFrameworks>
@@ -23,6 +24,11 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;</NoWarn>
+    <PackageReleaseNotes>* Support System.Windows.Point
+* Support int[] property
+* Improve custom Encryption
+* Support nullable types wit UseAutoProperty</PackageReleaseNotes>
+    <Version>2.0.0-alpha4</Version>
   </PropertyGroup>
 
  <!-- <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
