@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 				? Expression.Unbox(itemObject, type)
 				: Expression.Convert(itemObject, type);
 			// Property from casted object
-			var property = Expression.PropertyOrField(itemCasted, name);
+			var property = itemCasted.PropertyOrField(type, name);
 
 			// Secound parameter - value to set
 			var value = Expression.Parameter(typeof(object), "value");
