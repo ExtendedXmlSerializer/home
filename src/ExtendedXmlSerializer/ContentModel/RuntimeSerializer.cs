@@ -54,7 +54,7 @@ namespace ExtendedXmlSerializer.ContentModel
 			if (serializer is RuntimeSerializer)
 			{
 				throw new InvalidOperationException(
-				                                    $"The serializer for type '{typeInfo}' could not be found.  Please ensure that the type is a valid type can be activated.");
+				                                    $"The serializer for type '{typeInfo}' could not be found.  Please ensure that the type is a valid type can be activated.  The default behavior requires an empty public constructor on the (non-abstract) class to activate.");
 			}
 			return serializer;
 		}
