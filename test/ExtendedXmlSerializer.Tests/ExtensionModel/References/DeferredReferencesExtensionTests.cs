@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
@@ -43,7 +42,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				new SerializationSupport(
 					new ConfigurationContainer().Type<TestClassReference>()
 					                           .EnableReferences(x => x.Id)
-					                           .Configuration.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default));
+					                           .Configuration.EnableDeferredReferences());
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};

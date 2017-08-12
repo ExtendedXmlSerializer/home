@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 		[Fact]
 		public void PrivateConstructor()
 		{
-			var configuration = new ConfigurationContainer().Extend(AllConstructorsExtension.Default);
+			var configuration = new ConfigurationContainer().EnableAllConstructors();
 			var support = new SerializationSupport(configuration);
 			var instance = Subject.Create("Hello World from Private Constructor (hopefully)!");
 			var actual = support.Cycle(instance);

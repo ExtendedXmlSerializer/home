@@ -166,6 +166,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, TextReader reader)
 			=> @this.Deserialize(factory.Get(reader)).AsValid<T>();
 
+		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, ICollection<Type> types)
+			=> @this.Extend(new ImplicitTypingExtension(types));
+
 		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
 		{
 			public static CloseSettings Default { get; } = new CloseSettings();
