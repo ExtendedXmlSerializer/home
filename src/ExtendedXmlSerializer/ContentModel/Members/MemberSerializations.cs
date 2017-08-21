@@ -25,6 +25,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
@@ -54,7 +55,9 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		protected override IMemberSerialization Create(TypeInfo parameter)
 		{
-			var members = _members.Get(parameter).Select(_serializers).ToArray();
+			var members = _members.Get(parameter)
+			                      .Select(_serializers)
+			                      .ToArray();
 			var properties = members.Where(_property).ToArray();
 			var runtime = members.OfType<IRuntimeSerializer>().ToArray();
 			var contents = members.Except(properties.Concat(runtime)).ToArray();
