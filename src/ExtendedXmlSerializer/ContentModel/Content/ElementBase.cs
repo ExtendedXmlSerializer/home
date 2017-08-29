@@ -23,18 +23,36 @@
 
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Properties;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	abstract class ElementBase : IWriter
 	{
-		readonly IIdentity _identity;
+		readonly IIdentity _identity, _null;
 
-		protected ElementBase(IIdentity identity)
+		protected ElementBase(IIdentity identity) : this(identity, NullIdentity.Default) {}
+
+		protected ElementBase(IIdentity identity, IIdentity @null)
 		{
 			_identity = identity;
+			_null = @null;
 		}
 
-		public virtual void Write(IFormatWriter writer, object instance) => writer.Start(_identity);
+		public virtual void Write(IFormatWriter writer, object instance) => writer.Start(instance != null ? _identity : _null);
+	}
+
+	sealed class NullIdentity : IIdentity
+	{
+		public static NullIdentity Default { get; } = new NullIdentity();
+		NullIdentity() : this(new FrameworkIdentity("Null")) {}
+
+		readonly IIdentity _identity;
+
+		public NullIdentity(IIdentity identity) => _identity = identity;
+
+		public string Identifier => _identity.Identifier;
+
+		public string Name => _identity.Name;
 	}
 }

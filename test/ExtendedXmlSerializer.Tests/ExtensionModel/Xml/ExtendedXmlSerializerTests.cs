@@ -21,14 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 // ReSharper disable All
@@ -64,6 +65,50 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var read = _serializer.Deserialize<SimpleNestedClass>(data);
 			Assert.NotNull(read);
 			Assert.Equal(HelloWorld, read.PropertyName);
+		}
+
+		[Fact]
+		public void ArrayWithBasicNullElement()
+		{
+			var items = new[] {new Subject(), null, new Subject()};
+			var support = new SerializationSupport(_serializer);
+
+			support.Cycle(items).ShouldBeEquivalentTo(items);
+		}
+
+		[Fact]
+		public void ListWithBasicNullElement()
+		{
+			var items = new[] { new Subject(), null, new Subject() }.ToList();
+			var support = new SerializationSupport(_serializer);
+
+			support.Cycle(items).ShouldBeEquivalentTo(items);
+		}
+
+		public sealed class Subject {}
+
+
+		[Fact]
+		public void ArrayWithNullElement()
+		{
+			var items = new[] { new SubjectWithProperty { Message =  "Hello"}, null, new SubjectWithProperty { Message = "World" } };
+			var support = new SerializationSupport(_serializer);
+
+			support.Cycle(items).ShouldBeEquivalentTo(items);
+		}
+
+		[Fact]
+		public void ListWithNullElement()
+		{
+			var items = new[] { new SubjectWithProperty { Message = "Hello" }, null, new SubjectWithProperty { Message = "World" } }.ToList();
+			var support = new SerializationSupport(_serializer);
+
+			support.Cycle(items).ShouldBeEquivalentTo(items);
+		}
+
+		public sealed class SubjectWithProperty
+		{
+			public string Message { get; set; }
 		}
 
 		[Fact]

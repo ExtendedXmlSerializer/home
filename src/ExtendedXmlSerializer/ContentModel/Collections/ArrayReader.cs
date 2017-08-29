@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
+using System;
+using System.Collections;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
@@ -40,8 +40,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			: this(classification,
 					elementType,
 					services.CreateContents<ArrayList>(new ConditionalInnerContentHandler(services, new CollectionInnerContentHandler(item, services))))
-		{
-		}
+		{}
 
 		ArrayReader(IClassification classification, TypeInfo elementType, IReader<ArrayList> reader)
 		{

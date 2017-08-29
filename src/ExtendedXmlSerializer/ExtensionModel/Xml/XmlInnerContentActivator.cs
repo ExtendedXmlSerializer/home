@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -46,9 +47,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var depth = XmlDepth.Default.Get(xml);
 			var content = depth.HasValue ? new XmlElements(xml, depth.Value) : (XmlElements?) null;
 
-			var result = attributes.HasValue || content.HasValue
-				? _contents.Create(parameter, _activator.Get(parameter), new XmlContent(attributes, content))
-				: null;
+			var result = !IdentityComparer.Default.Equals(parameter, NullIdentity.Default) ?
+				_contents.Create(parameter, _activator.Get(parameter), new XmlContent(attributes, content)) : null;
 			return result;
 		}
 	}

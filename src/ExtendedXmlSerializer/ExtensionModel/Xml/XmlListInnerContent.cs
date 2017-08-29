@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Format;
+using System;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -53,9 +53,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return contents.MoveNext();
 		}
 
-		public void Reset()
-		{
-			throw new NotSupportedException();
-		}
+		public void Reset() => throw new NotSupportedException();
 	}
 }
