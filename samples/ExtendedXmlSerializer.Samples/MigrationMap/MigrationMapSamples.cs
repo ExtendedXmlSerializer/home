@@ -60,8 +60,8 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 		static void Run(IExtendedXmlSerializer serializer)
 		{
 			var xml =
-                @"<?xml version=""1.0"" encoding=""utf-8""?>
-<TestClass xmlns=""clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples"">
+				@"<?xml version=""1.0"" encoding=""utf-8""?>
+<TestClass xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples"">
 <Id>1</Id>
 <Type>Type</Type>
 </TestClass>";

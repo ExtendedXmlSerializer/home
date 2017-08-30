@@ -73,7 +73,7 @@ Output XML will look like:
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.Dictianary;assembly=ExtendedXmlSerializer.Samples">
+    <TestClass xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Dictianary;assembly=ExtendedXmlSerializer.Samples">
       <Dictionary>
         <Item xmlns="https://extendedxmlserializer.github.io/system">
           <Key>1</Key>
@@ -95,7 +95,7 @@ If you use UseOptimizedNamespaces function xml will look like:
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <TestClass xmlns:sys="https://extendedxmlserializer.github.io/system" xmlns:exs="https://extendedxmlserializer.github.io/v2" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.Dictianary;assembly=ExtendedXmlSerializer.Samples">
+    <TestClass xmlns:sys="https://extendedxmlserializer.github.io/system" xmlns:exs="https://extendedxmlserializer.github.io/v2" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Dictianary;assembly=ExtendedXmlSerializer.Samples">
       <Dictionary>
         <sys:Item>
           <Key>1</Key>
@@ -227,7 +227,7 @@ and new XML should look like:
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="2" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
+    <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="2" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Name>Type</Name>
       <Value>Calculated</Value>
@@ -323,7 +323,7 @@ Output XML will look like this:
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <Company xmlns="clr-namespace:ExtendedXmlSerialization.Samples.ObjectReference;assembly=ExtendedXmlSerializer.Samples">
+    <Company xmlns="clr-namespace:ExtendedXmlSerializer.Samples.ObjectReference;assembly=ExtendedXmlSerializer.Samples">
       <Employees>
         <Capacity>4</Capacity>
         <Person Id="2">
@@ -354,17 +354,13 @@ You must implement interface IEncryption. For example, it will show the Base64 e
 
 .. sourcecode:: csharp
 
-        public class CustomEncryption : ConverterBase<string>, IEncryption
+        public class CustomEncryption : IEncryption
         {
-            public override string Parse(string data)
-            {
-                return Encoding.UTF8.GetString(Convert.FromBase64String(data));
-            }
+            public string Parse(string data)
+                => Encoding.UTF8.GetString(Convert.FromBase64String(data));
     
-            public override string Format(string instance)
-            {
-                return Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
-            }
+            public string Format(string instance)
+                => Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
         }
 
 Then, you have to specify which properties are to be encrypted and register your IEncryption implementation.
