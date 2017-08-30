@@ -27,10 +27,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly Content.IContents _contents;
 
-		public DefaultMemberContents(Content.IContents contents)
-		{
-			_contents = contents;
-		}
+		public DefaultMemberContents(Content.IContents contents) => _contents = contents;
 
 		public ISerializer Get(IMember parameter) => _contents.Get(parameter.MemberType);
 	}

@@ -21,15 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
@@ -61,7 +62,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 		public ICollection<MemberInfo> Registered { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<IMemberConverterSpecification>(Register)
+			=> parameter.Decorate<IMemberContents>(Register)
+			           // .Decorate<IMemberConverterSpecification>(Register)
 			            .Decorate<IMemberConverters>(Register);
 
 		IMemberConverterSpecification Register(IServiceProvider services, IMemberConverterSpecification specification)
@@ -70,6 +72,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
 			=> new AlteredMemberConverters(_specification, _alteration, converters);
 
+		IMemberContents Register(IServiceProvider services, IMemberContents contents)
+			=> new AlteredMemberContents(_specification, _alteration, contents, services.Get<IConverters>(),
+			                             services.Get<ISerializers>()
+			                                     .Get(Support<string>.Key));
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

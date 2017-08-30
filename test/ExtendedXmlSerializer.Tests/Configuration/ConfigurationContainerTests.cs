@@ -21,9 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.References;
@@ -32,6 +29,9 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using JetBrains.Annotations;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
@@ -206,7 +206,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 			const int salary = 6776;
 			var instance = new TestClassWithEncryptedData { Salary = salary };
-			var actual = new SerializationSupport(configuration).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
+			var support = new SerializationSupport(configuration);
+			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Salary>Njc3Ng==</Salary></TestClassWithEncryptedData>");
 			Assert.Equal(salary, actual.Salary);
 		}
 
