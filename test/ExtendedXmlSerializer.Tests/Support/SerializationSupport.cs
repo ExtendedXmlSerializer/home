@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
+using System;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
@@ -44,7 +44,11 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public T Assert<T>(T instance, string expected)
 		{
 			var data = _serializer.Serialize(instance);
-			data?.Replace("\r\n", "").Replace("\n", "").Should().Be(expected?.Replace("\r\n", "").Replace("\n", ""));
+			data?.Replace("\r\n", string.Empty)
+			    .Replace("\n", string.Empty)
+			    .Should()
+			    .Be(expected?.Replace("\r\n", string.Empty)
+			                .Replace("\n", string.Empty));
 			var result = _serializer.Deserialize<T>(data);
 			return result;
 		}
