@@ -63,11 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Decorate<IMemberContents>(Register)
-			           // .Decorate<IMemberConverterSpecification>(Register)
 			            .Decorate<IMemberConverters>(Register);
-
-		IMemberConverterSpecification Register(IServiceProvider services, IMemberConverterSpecification specification)
-			=> new MemberConverterSpecification(_specification.Or(specification));
 
 		IMemberConverters Register(IServiceProvider services, IMemberConverters converters)
 			=> new AlteredMemberConverters(_specification, _alteration, converters);
