@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -35,10 +35,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		readonly ILists _lists;
 
-		public XmlListContentsActivator(ILists lists)
-		{
-			_lists = lists;
-		}
+		public XmlListContentsActivator(ILists lists) => _lists = lists;
 
 		public IInnerContent Create(IFormatReader reader, object instance, XmlContent content)
 			=> new XmlListInnerContent(reader, instance, instance as IList ?? _lists.Get(instance), content);

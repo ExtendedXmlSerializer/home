@@ -21,15 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.ObjectModel;
-using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
+using System;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
@@ -41,13 +40,29 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 		{
 			const string message = "Hello World!  This is my encrypted message!";
 			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
-			                                                                  .Type<SimpleSubject>()
-			                                                                  .Member(x => x.Message).Encrypt()
-			                                                                  .Configuration
-			                                                                  .Create());
+			                                                                   .Type<SimpleSubject>()
+			                                                                   .Member(x => x.Message)
+			                                                                   .Encrypt()
+			                                                                   .Configuration
+			                                                                   .Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
-			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests"" />");
+										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Message>SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ==</Message></EncryptionExtensionTests-SimpleSubject>");
+			Assert.Equal(message, actual.Message);
+		}
+
+		[Fact]
+		public void SimpleStringAsAttribute()
+		{
+			const string message = "Hello World!  This is my encrypted message!";
+			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			                                                                   .Type<SimpleSubject>()
+			                                                                   .Member(x => x.Message).Attribute().Encrypt()
+																			   .Configuration
+			                                                                   .Create());
+			var expected = new SimpleSubject { Message = message };
+			var actual = support.Assert(expected,
+										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(message, actual.Message);
 		}
 
@@ -57,19 +72,24 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 			const string message = "Hello World!  This is my unencrypted message!";
 			var identifier = new Guid("B496F7F5-58F8-41BF-AF18-117B8F3743BF");
 
-			var typeInfo = typeof(SimpleSubject).GetTypeInfo();
-
-			var converters = new Collection<MemberInfo>
-			                 {
-				                 typeInfo.GetProperty(nameof(SimpleSubject.Identifier))
-			                 };
-
-			var sut = new EncryptionExtension(converters);
-
-			var support = new SerializationSupport(new ConfigurationContainer().Extend(sut).Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Encrypt().Configuration.Create());
 			var expected = new SimpleSubject {Identifier = identifier, Message = message};
 			var actual = support.Assert(expected,
-			                            @"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");
+										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Identifier>YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm</Identifier><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");
+			Assert.Equal(identifier, actual.Identifier);
+			Assert.Equal(message, actual.Message);
+		}
+
+		[Fact]
+		public void SimpleNonStringAsAttribute()
+		{
+			const string message = "Hello World!  This is my unencrypted message!";
+			var identifier = new Guid("B496F7F5-58F8-41BF-AF18-117B8F3743BF");
+
+			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Attribute().Encrypt().Configuration.Create());
+			var expected = new SimpleSubject { Identifier = identifier, Message = message };
+			var actual = support.Assert(expected,
+										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");
 			Assert.Equal(identifier, actual.Identifier);
 			Assert.Equal(message, actual.Message);
 		}

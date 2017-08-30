@@ -30,6 +30,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
 	public static class Extensions
 	{
+		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
+			=> @this.Extend(ParameterizedMembersExtension.Default);
+
+		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
+			=> @this.Extend(ReaderContextExtension.Default);
+
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) => behavior.Get(@this);
 
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)

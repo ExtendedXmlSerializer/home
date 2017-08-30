@@ -32,7 +32,10 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		public sealed override void Write(IFormatWriter writer, object instance)
 		{
 			Start(writer, instance);
-			Body(writer, instance);
+			if (instance != null)
+			{
+				Body(writer, instance);
+			}
 			Finish(writer, instance);
 		}
 

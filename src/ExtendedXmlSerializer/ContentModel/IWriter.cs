@@ -25,12 +25,12 @@ using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
-	interface IWriter
+	public interface IWriter
 	{
 		void Write(IFormatWriter writer, object instance);
 	}
 
-	interface IWriter<in T>
+	public interface IWriter<in T>
 	{
 		void Write(IFormatWriter writer, T instance);
 	}

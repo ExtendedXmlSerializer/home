@@ -27,10 +27,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		readonly ICollectionAssignment _assignment;
 
-		public CollectionContentsHandler(ICollectionAssignment assignment)
-		{
-			_assignment = assignment;
-		}
+		public CollectionContentsHandler(ICollectionAssignment assignment) => _assignment = assignment;
 
 		public void Handle(IListInnerContent contents, IReader reader)
 			=> _assignment.Assign(contents, reader.Get(contents.Get()));

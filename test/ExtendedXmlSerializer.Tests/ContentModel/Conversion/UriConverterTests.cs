@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,30 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
+using System;
+using Xunit;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.Tests.ContentModel.Conversion
 {
-	sealed class EnumerableWriter : WriterBase<IEnumerable>
+	public class UriConverterTests
 	{
-		readonly IEnumerators _enumerator;
-		readonly IWriter _item;
-
-		public EnumerableWriter(IEnumerators enumerators, IWriter item)
+		[Fact]
+		public void Verify()
 		{
-			_enumerator = enumerators;
-			_item = item;
-		}
+			var instance = new Uri("https://extendedxmlserializer.github.io");
 
-		public override void Write(IFormatWriter writer, IEnumerable instance)
-		{
-			var iterator = _enumerator.Get(instance);
-			while (iterator.MoveNext())
-			{
-				_item.Write(writer, iterator.Current);
-			}
+			new SerializationSupport().Cycle(instance)
+			                          .ShouldBeEquivalentTo(instance);
 		}
 	}
 }

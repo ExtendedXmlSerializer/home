@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix>alpha4</VersionSuffix>
+    <VersionSuffix>alpha5</VersionSuffix>
     <TargetFrameworks>netcoreapp1.1;net462</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Samples</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -10,7 +10,7 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>2.0.0-alpha4</Version>
+    <Version>2.0.0-alpha5</Version>
   </PropertyGroup>
 
   <ItemGroup>
