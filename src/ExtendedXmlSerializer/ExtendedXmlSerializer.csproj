@@ -8,7 +8,7 @@
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix>alpha5</VersionSuffix>
+    <VersionSuffix>alpha6</VersionSuffix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>$(ClassicFrameworkVersion);netstandard1.6</TargetFrameworks>
@@ -24,11 +24,11 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;0628</NoWarn>
-    <PackageReleaseNotes>* Accounting for ambiguous property names.
-* Support .Net 4.5
-* Fix reference LightInject
+    <PackageReleaseNotes>* Breaking Change: Fixing how encryption handles member format
+* Serializing Array fails with null item
+* Improve custom serializer
 </PackageReleaseNotes>
-    <Version>2.0.0-alpha5</Version>
+    <Version>2.0.0-alpha6</Version>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 

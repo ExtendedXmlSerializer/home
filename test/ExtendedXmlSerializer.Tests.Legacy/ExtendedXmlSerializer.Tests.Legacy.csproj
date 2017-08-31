@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests.Legacy</AssemblyTitle>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix>alpha5</VersionSuffix>
+    <VersionSuffix>alpha6</VersionSuffix>
     <TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests.Legacy</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests.Legacy</PackageId>
@@ -13,7 +13,7 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>2.0.0-alpha5</Version>
+    <Version>2.0.0-alpha6</Version>
   </PropertyGroup>
 
   <ItemGroup>
