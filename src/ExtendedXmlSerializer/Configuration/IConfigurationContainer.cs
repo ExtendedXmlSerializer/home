@@ -22,11 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ExtensionModel;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IConfigurationContainer : IRootContext
+	public interface IConfigurationContainer : IContext, IEnumerable<ITypeConfiguration>
 	{
 		ITypeConfiguration Type(TypeInfo type);
 

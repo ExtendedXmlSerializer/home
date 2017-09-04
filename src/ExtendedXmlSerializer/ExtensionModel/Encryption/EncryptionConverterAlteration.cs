@@ -33,10 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 
 		readonly IEncryption _encryption;
 
-		public EncryptionConverterAlteration(IEncryption encryption)
-		{
-			_encryption = encryption;
-		}
+		public EncryptionConverterAlteration(IEncryption encryption) => _encryption = encryption;
 
 		public IConverter Get(IConverter parameter) => new EncryptedConverter(_encryption, parameter);
 	}

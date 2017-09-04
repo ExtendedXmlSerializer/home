@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -30,7 +29,5 @@ namespace ExtendedXmlSerializer.Configuration
 		IRootContext Root { get; }
 
 		IContext Parent { get; }
-
-		IExtendedXmlSerializer Create();
 	}
 }

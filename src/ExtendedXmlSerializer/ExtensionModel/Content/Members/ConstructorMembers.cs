@@ -69,7 +69,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 
 		static IEnumerable<MemberInfo> Members(TypeInfo typeInfo, string name)
 		{
-			foreach (var member in typeInfo.GetMembers())
+			foreach (var member in typeInfo.GetMembers().Where(IsSerializableMember.Default.IsSatisfiedBy))
 			{
 				if (member.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
 				{

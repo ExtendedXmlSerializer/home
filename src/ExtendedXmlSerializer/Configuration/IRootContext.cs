@@ -21,7 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IRootContext : IContext, IExtensionCollection {}
+	public interface IRootContext : IContext, IExtensionCollection
+	{
+		IExtendedXmlSerializer Create();
+	}
 }

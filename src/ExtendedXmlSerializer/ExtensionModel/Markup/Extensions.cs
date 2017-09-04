@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public static class Extensions
 	{
-		public static IRootContext EnableMarkupExtensions(this IRootContext @this)
+		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableSingletons()
 			        .EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)

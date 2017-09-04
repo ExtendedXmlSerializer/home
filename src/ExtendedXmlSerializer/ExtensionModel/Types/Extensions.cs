@@ -37,13 +37,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			return @this;
 		}
 
-		public static IRootContext EnableSingletons(this IRootContext @this)
+		public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this)
 			=> @this.Extend(SingletonActivationExtension.Default);
 
-		public static IRootContext EnableAllConstructors(this IRootContext @this)
+		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
 			=> @this.Extend(AllConstructorsExtension.Default);
 
-		public static IRootContext EnableImmutableArrays(this IRootContext @this)
+		public static IConfigurationContainer EnableImmutableArrays(this IConfigurationContainer @this)
 			=> @this.Extend(ImmutableArrayExtension.Default);
 	}
 }

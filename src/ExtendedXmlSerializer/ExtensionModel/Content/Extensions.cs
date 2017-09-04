@@ -52,11 +52,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 		{
-			// TODO: Implement:
-			/*foreach (var type in TypeConfigurations.Defaults.Get(@this))
+			foreach (var type in @this)
 			{
 				type.OnlyConfiguredProperties();
-			}*/
+			}
 			return @this;
 		}
 
@@ -69,16 +68,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IRootContext Alter(this IRootContext @this, IAlteration<IConverter> alteration)
+		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
-			@this.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
+			@this.Root.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
 			return @this;
 		}
 
-		public static IRootContext OptimizeConverters(this IRootContext @this)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
-		public static IRootContext OptimizeConverters(this IRootContext @this, IAlteration<IConverter> optimizations)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this, IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 	}
 }

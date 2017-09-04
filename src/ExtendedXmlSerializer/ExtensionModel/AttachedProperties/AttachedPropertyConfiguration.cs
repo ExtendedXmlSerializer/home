@@ -22,29 +22,27 @@
 // SOFTWARE.
 
 
+using ExtendedXmlSerializer.Configuration;
+using System.Reflection;
+
+// ReSharper disable UnusedTypeParameter
+
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	/*public sealed class AttachedPropertyConfiguration<TType, TValue> : IMemberConfiguration
+	public sealed class AttachedPropertyConfiguration<TType, TValue> : IMemberConfiguration
 	{
-		readonly MemberConfiguration<TType, TValue> _configuration;
+		readonly IMemberConfiguration _configuration;
 
-		public AttachedPropertyConfiguration(ITypeConfiguration declaringProperty,
-		                                     MemberConfiguration<TType, TValue> configuration)
-		{
-			DeclaringProperty = declaringProperty;
-			_configuration = configuration;
-		}
+		public AttachedPropertyConfiguration(IMemberConfiguration configuration) => _configuration = configuration;
 
-		public ITypeConfiguration DeclaringProperty { get; }
+		public IRootContext Root => _configuration.Root;
+
+		public IContext Parent => _configuration.Parent;
 
 		public MemberInfo Get() => _configuration.Get();
 
-		public IConfigurationContainer Configuration => _configuration.Configuration;
+		public IMemberConfiguration Name(string name) => _configuration.Name(name);
 
-		public IProperty<string> Name => _configuration.Name;
-
-		public ITypeConfiguration Owner => ((IMemberConfiguration) _configuration).Owner;
-
-		public IProperty<int> Order => _configuration.Order;
-	}*/
+		public IMemberConfiguration Order(int order) => _configuration.Order(order);
+	}
 }

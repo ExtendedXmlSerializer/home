@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public static class Extensions
 	{
+		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
+
 		public static IRootContext Apply<T>(this IRootContext @this)
 			where T : class, ISerializerExtension => Apply(@this, Support<T>.New);
 
@@ -100,9 +103,14 @@ namespace ExtendedXmlSerializer.Configuration
 			@this.Member(member.GetMemberInfo())
 			     .AsValid<MemberConfiguration<T, TMember>>();
 
-		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member) => @this.Member(@this.Get()
-		                                                                                                             .GetMember(member)
-		                                                                                                             .Single());
+		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
+		{
+			var metadata = @this.Get()
+			                    .GetMember(member)
+			                    .SingleOrDefault();
+			var result = metadata != null ? @this.Member(metadata) : null;
+			return result;
+		}
 
 		/*public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this) =>
 			@this.Extend(SingletonActivationExtension.Default);*/

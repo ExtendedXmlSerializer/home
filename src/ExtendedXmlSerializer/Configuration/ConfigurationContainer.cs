@@ -24,18 +24,17 @@
 using ExtendedXmlSerializer.ExtensionModel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
 	public sealed class ConfigurationContainer : ContextBase, IConfigurationContainer
 	{
-		readonly static ISerializerExtension[] Extensions = {};
-
 		readonly IRootContext _context;
 		readonly ITypeConfigurations _types;
 
-		public ConfigurationContainer() : this(Extensions) {}
+		public ConfigurationContainer() : this(DefaultExtensions.Default.ToArray()) {}
 
 		public ConfigurationContainer(params ISerializerExtension[] extensions) : this(new ExtensionCollection(extensions)) {}
 
@@ -53,11 +52,17 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public IConfigurationContainer Extend(ISerializerExtension extension)
 		{
+			var existing = _context.SingleOrDefault(extension.GetType()
+			                                                 .IsInstanceOfType);
+			if (existing != null)
+			{
+				_context.Remove(existing);
+			}
 			_context.Add(extension);
 			return this;
 		}
 
-		IEnumerator<ISerializerExtension> IEnumerable<ISerializerExtension>.GetEnumerator() => _context.GetEnumerator();
+		/*IEnumerator<ISerializerExtension> IEnumerable<ISerializerExtension>.GetEnumerator() => _context.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => _context.GetEnumerator();
 		void ICollection<ISerializerExtension>.Add(ISerializerExtension item) => _context.Add(item);
 		void ICollection<ISerializerExtension>.Clear() => _context.Clear();
@@ -70,6 +75,10 @@ namespace ExtendedXmlSerializer.Configuration
 		int ICollection<ISerializerExtension>.Count => _context.Count;
 		bool ICollection<ISerializerExtension>.IsReadOnly => _context.IsReadOnly;
 		public bool Contains<T>() where T : ISerializerExtension => _context.Contains<T>();
-		public T Find<T>() where T : ISerializerExtension => _context.Find<T>();
+		public T Find<T>() where T : ISerializerExtension => _context.Find<T>();*/
+
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => _context.GetEnumerator();
 	}
 }

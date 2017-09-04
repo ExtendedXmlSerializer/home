@@ -21,19 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Coercion;
+using ExtendedXmlSerializer.Core.Specifications;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Expressions
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public static class Extensions
+	sealed class IsSerializableMember : ISpecification<MemberInfo>
 	{
-		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
+		public static IsSerializableMember Default { get; } = new IsSerializableMember();
+		IsSerializableMember() {}
+
+		public bool IsSatisfiedBy(MemberInfo parameter)
 		{
-			@this.Root
-			     .Apply<CoercionExtension>()
-			     .Extend(ExpressionsExtension.Default);
-			return @this;
+			switch (parameter.MemberType)
+			{
+				case MemberTypes.Property:
+				case MemberTypes.Field:
+				case MemberTypes.TypeInfo:
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 }
