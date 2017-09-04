@@ -21,16 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IConfigurationContainer : ICollection<ISerializerExtension>
+	public interface IConfigurationContainer : IRootContext
 	{
-		T Find<T>() where T : ISerializerExtension;
+		ITypeConfiguration Type(TypeInfo type);
 
-		IExtendedXmlSerializer Create();
+		IConfigurationContainer Extend(ISerializerExtension extension);
 	}
 }

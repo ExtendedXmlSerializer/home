@@ -21,13 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
@@ -51,7 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
+		/*public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
 			this IConfigurationContainer @this,
 			Expression<Func<Property<TType, TValue>>>property)
 		{
@@ -65,9 +61,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			                                                              Members<TType, TValue>.Defaults.Get(@this)
 			                                                                                    .Get(subject));
 			return result;
-		}
+		}*/
 
-		public static IConfigurationContainer AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
+		/*public static IConfigurationContainer AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
 		                                                                      Expression<Func<Property<TType, TValue>>>
 			                                                                      property,
 		                                                                      Action<AttachedPropertyConfiguration<TType,
@@ -76,6 +72,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		{
 			configure(@this.AttachedProperty(property));
 			return @this;
-		}
+		}*/
 	}
 }

@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System;
 
 namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
@@ -36,12 +35,11 @@ namespace ExtendedXmlSerializer.Samples.CustomSerializator
 
 // AddCustomSerializerToConfiguration
 			var serializer = new ConfigurationContainer().Type<TestClass>()
-		        .CustomSerializer(new TestClassSerializer())
-		        .Configuration
-		        .Create();
+			                                             .CustomSerializer(new TestClassSerializer())
+			                                             .Create();
 // EndAddCustomSerializerToConfiguration
 
-            Run(serializer);
+			Run(serializer);
 		}
 
 //        public static void RunAutofacConfig()

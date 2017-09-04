@@ -21,24 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using ExtendedXmlSerializer.ExtensionModel;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	abstract class MemberPropertyBase<TMember, T> : FixedSource<TMember, T>, IProperty<T> where TMember : MemberInfo
+	public interface IExtensionCollection : ICollection<ISerializerExtension>
 	{
-		readonly IMetadataTable<TMember, T> _table;
-		readonly TMember _member;
+		bool Contains<T>() where T : ISerializerExtension;
 
-		protected MemberPropertyBase(IMetadataTable<TMember, T> table, TMember member) : base(table, member)
-		{
-			_table = table;
-			_member = member;
-		}
-
-		public void Assign(T value) => _table.Assign(_member, value);
+		T Find<T>() where T : ISerializerExtension;
 	}
 }

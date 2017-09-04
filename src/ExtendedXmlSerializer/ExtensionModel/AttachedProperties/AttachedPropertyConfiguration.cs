@@ -21,12 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	public sealed class AttachedPropertyConfiguration<TType, TValue> : IMemberConfiguration
+	/*public sealed class AttachedPropertyConfiguration<TType, TValue> : IMemberConfiguration
 	{
 		readonly MemberConfiguration<TType, TValue> _configuration;
 
@@ -48,5 +46,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public ITypeConfiguration Owner => ((IMemberConfiguration) _configuration).Owner;
 
 		public IProperty<int> Order => _configuration.Order;
-	}
+	}*/
 }

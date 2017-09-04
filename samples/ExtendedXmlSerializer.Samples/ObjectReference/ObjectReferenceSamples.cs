@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.References;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Samples.ObjectReference
 {
@@ -40,9 +39,8 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 
 // Configure
 			var serializer = new ConfigurationContainer().ConfigureType<Person>()
-			                                            .EnableReferences(p => p.Id)
-			                                            .Configuration
-			                                            .Create();
+			                                             .EnableReferences(p => p.Id)
+			                                             .Create();
 // EndConfigure
             Run(serializer);
 		}

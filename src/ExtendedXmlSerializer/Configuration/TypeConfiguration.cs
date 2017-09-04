@@ -21,81 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Content.Members;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class TypeConfiguration : ReferenceCacheBase<MemberInfo, IMemberConfiguration>, ITypeConfiguration
+	public sealed class TypeConfiguration<T> : ContextBase, ITypeConfiguration
 	{
-		readonly ISet<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();
-		readonly TypeInfo _type;
+		readonly IProperty<string> _name;
+		readonly IMemberConfigurations _members;
 
-		public TypeConfiguration(IConfigurationContainer configuration, IProperty<string> name, TypeInfo type)
+		public TypeConfiguration(IRootContext root, IProperty<string> name)
+			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
+
+		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
+			: base(context, context)
 		{
-			Configuration = configuration;
-			Name = name;
-			_type = type;
+			_name = name;
+			_members = members;
 		}
 
-		public IConfigurationContainer Configuration { get; }
-		public IProperty<string> Name { get; }
-
-		protected override IMemberConfiguration Create(MemberInfo parameter)
+		public ITypeConfiguration Name(string name)
 		{
-			var extension = Configuration.With<MemberPropertiesExtension>();
-			var result = new MemberConfiguration(Configuration, this, parameter,
-			                                     new MemberProperty<string>(extension.Names, parameter),
-			                                     new MemberProperty<int>(extension.Order, parameter)
-			                                    );
-			_members.Add(result);
-			return result;
+			_name.Assign(name);
+			return this;
 		}
 
-		public IMemberConfiguration Member(MemberInfo member) => Get(member);
-
-		public TypeInfo Get() => _type;
+		public IMemberConfiguration Member(MemberInfo member) => _members.Get(member);
 
 		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _members).GetEnumerator();
-	}
 
-	public sealed class TypeConfiguration<T> : ITypeConfiguration
-	{
-		readonly static TypeInfo Key = Support<T>.Key;
-
-		readonly ITypeConfiguration _type;
-
-		public TypeConfiguration(IConfigurationContainer configuration)
-			: this(configuration, configuration.GetTypeConfiguration(Key)) {}
-
-		public TypeConfiguration(IConfigurationContainer configuration, ITypeConfiguration type)
-		{
-			Configuration = configuration;
-			var typeInfo = type.Get();
-			if (!Key.IsAssignableFrom(typeInfo))
-			{
-				throw new InvalidOperationException($"{typeInfo} cannot be assigned to type '{Key}'");
-			}
-
-			_type = type;
-		}
-
-		public IConfigurationContainer Configuration { get; }
-
-		public TypeInfo Get() => _type.Get();
-
-		public IProperty<string> Name => _type.Name;
-
-		public IMemberConfiguration Member(MemberInfo member) => _type.Member(member);
-
-		public IEnumerator<IMemberConfiguration> GetEnumerator() => _type.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _type).GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public TypeInfo Get() => Support<T>.Key;
+		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
 	}
 }

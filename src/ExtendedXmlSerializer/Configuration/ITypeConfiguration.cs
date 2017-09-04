@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface ITypeConfiguration : IConfigurationItem<TypeInfo>, IEnumerable<IMemberConfiguration>
+	public interface ITypeConfiguration : ITypeConfigurationContext, IMemberConfigurations
 	{
+		ITypeConfiguration Name(string name);
+
 		IMemberConfiguration Member(MemberInfo member);
 	}
 }

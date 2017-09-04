@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Globalization;
-using System.Xml.Linq;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
+using System;
+using System.Globalization;
+using System.Xml.Linq;
 using Xunit;
 using XmlWriter = System.Xml.XmlWriter;
 
@@ -41,7 +40,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		{
 			var serializer = new ConfigurationContainer().Type<TestClassWithSerializer>()
 			                                            .CustomSerializer(new CustomSerializer())
-			                                            .Configuration
 			                                            .Create();
 			var support = new SerializationSupport(serializer);
 			var expected = new TestClassWithSerializer("String", 17);

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel;
-using System.Collections.Generic;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IExtensionCollection : ICollection<ISerializerExtension>
+	public abstract class ContextBase : IContext
 	{
-		bool Contains<T>() where T : ISerializerExtension;
+		protected ContextBase(IContext parent) : this(parent.Root, parent) {}
 
-		T Find<T>() where T : ISerializerExtension;
+		protected ContextBase(IRootContext root, IContext parent)
+		{
+			Root = root;
+			Parent = parent;
+		}
+
+		public IRootContext Root { get; }
+		public IContext Parent { get; }
+
+		public IExtendedXmlSerializer Create() => Root.Create();
 	}
 }

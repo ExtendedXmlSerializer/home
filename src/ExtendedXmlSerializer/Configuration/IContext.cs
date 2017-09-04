@@ -21,10 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using System.Reflection;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	public interface ITypeConfigurationContext : IContext, ISource<TypeInfo> {}
+	public interface IContext
+	{
+		IRootContext Root { get; }
+
+		IContext Parent { get; }
+
+		IExtendedXmlSerializer Create();
+	}
 }

@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using IServiceProvider = System.IServiceProvider;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class ServicesFactory : IServicesFactory
 	{

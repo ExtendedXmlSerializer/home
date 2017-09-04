@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,13 +22,16 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+
+// ReSharper disable UnusedTypeParameter
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration : IConfigurationItem<MemberInfo>
+	public interface IMemberConfiguration : IContext, ISource<MemberInfo>
 	{
-		ITypeConfiguration Owner { get; }
+		IMemberConfiguration Name(string name);
 
-		IProperty<int> Order { get; }
+		IMemberConfiguration Order(int order);
 	}
 }

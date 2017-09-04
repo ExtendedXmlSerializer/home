@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 	{
 		public static IMemberConfiguration Encrypt(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<EncryptionExtension>().Registered.Add(@this.Get());
+			@this.Root.With<EncryptionExtension>().Registered.Add(@this.Get());
 			return @this;
 		}
 

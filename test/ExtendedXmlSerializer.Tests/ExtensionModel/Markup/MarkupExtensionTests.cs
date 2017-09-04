@@ -21,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
@@ -37,7 +37,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void Verify()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, Extension.None, " 6776"));
 		}
@@ -45,7 +47,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithProperty()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension Number=3 * 3}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, Extension.None, " 9"));
 		}
@@ -53,7 +57,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithParameter()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension 'Provided Message!'}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, "Provided Message!", " 6776"));
 		}
@@ -61,7 +67,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyWithParameterAndProperty()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<Subject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" PropertyName=""{MarkupExtensionTests-Extension 'Provided Message!', Number=3 * 4}"" />");
 			subject.PropertyName.Should().Be(string.Concat(Extension.Message, "Provided Message!", " 12"));
 		}
@@ -69,7 +77,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyType()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  SuppliedType=""{exs:Type sys:int}"" AnotherProperty=""Hello World!"" />");
 			subject.SuppliedType.Should().Be(typeof(int));
 			subject.AnotherProperty.Should().Be("Hello World!");
@@ -78,7 +88,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyMarkupExtension()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<TypedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-TypedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  AnotherProperty=""{MarkupExtensionTests-TypeName {exs:Type sys:dateTime}}"" />");
 			subject.AnotherProperty.Should().Be(typeof(DateTime).AssemblyQualifiedName);
 		}
@@ -86,7 +98,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		[Fact]
 		public void VerifyStatic()
 		{
-			var serializer = new SerializationSupport(new ConfigurationContainer().EnableMarkupExtensions());
+			var container = new ConfigurationContainer();
+			container.EnableMarkupExtensions();
+			var serializer = new SerializationSupport(container);
 			var subject = serializer.Deserialize<DatedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DatedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  Date=""{exs:Static sys:dateTime.Now}"" DateNullable=""{exs:Static sys:dateTime.Now}"" />");
 			subject.Date.Should().NotBe(default(DateTime)).And.BeAfter(DateTime.Today);
 			subject.DateNullable.Should().NotBeNull().And.BeAfter(DateTime.Today);

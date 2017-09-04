@@ -21,12 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.IO;
 using System.Xml;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
@@ -37,9 +36,8 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 			Program.PrintHeader("Deserialization old version of xml");
 // MigrationsConfiguration
 			var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
-			                                            .AddMigration(new TestClassMigrations())
-			                                            .Configuration
-			                                            .Create();
+			                                             .AddMigration(new TestClassMigrations())
+			                                             .Create();
 // EndMigrationsConfiguration
             Run(serializer);
 		}

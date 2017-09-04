@@ -21,50 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>, IEnumerable<ITypeConfiguration>
+	sealed class TypeConfigurations : CacheBase<TypeInfo, ITypeConfiguration>, ITypeConfigurations
 	{
-		public static IParameterizedSource<IConfigurationContainer, TypeConfigurations> Defaults { get; }
-			= new ReferenceCache<IConfigurationContainer, TypeConfigurations>(x => new TypeConfigurations(x));
-
-		readonly ICollection<ITypeConfiguration> _types = new HashSet<ITypeConfiguration>();
-		readonly IConfigurationContainer _configuration;
+		readonly IRootContext _context;
 		readonly IDictionary<TypeInfo, string> _names;
 
-		TypeConfigurations(IConfigurationContainer configuration)
-			: this(configuration, configuration.With<TypeNamesExtension>()
-			                                   .Names) {}
+		public TypeConfigurations(IRootContext context) : this(context, context.Find<TypeNamesExtension>()
+		                                                                       .Names) {}
 
-		TypeConfigurations(IConfigurationContainer configuration, IDictionary<TypeInfo, string> names)
+		public TypeConfigurations(IRootContext context, IDictionary<TypeInfo, string> names)
 		{
-			_configuration = configuration;
+			_context = context;
 			_names = names;
 		}
 
 		protected override ITypeConfiguration Create(TypeInfo parameter)
 		{
-			var result = new TypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
-			_types.Add(result);
+			var property = new TypeProperty<string>(_names, parameter);
+			var result = Source.Default
+			                   .Get(parameter)
+			                   .Invoke(_context, property);
 			return result;
 		}
 
-		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
-
-	sealed class TypeConfigurations<T> : ReferenceCache<IConfigurationContainer, TypeConfiguration<T>>
-	{
-		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
-		TypeConfigurations() : base(x => new TypeConfiguration<T>(x)) {}
-
-		public TypeConfiguration<T> For(ITypeConfiguration type)
-			=> type as TypeConfiguration<T> ?? Get(type.Configuration);
+		sealed class Source : Generic<IRootContext, IProperty<string>, ITypeConfiguration>
+		{
+			public static Source Default { get; } = new Source();
+			Source() : base(typeof(TypeConfiguration<>)) {}
+		}
 	}
 }

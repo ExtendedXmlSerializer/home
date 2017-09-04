@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
@@ -30,6 +29,7 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
@@ -71,12 +71,12 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		[Fact]
 		public void ConfiguredTuple()
 		{
-			var configuration = new ConfigurationContainer().EnableParameterizedContent()
-														   .Type<Tuple<string>>()
-			                                               .Member(x => x.Item1)
-			                                               .Name("NewName")
-			                                               .Configuration;
-			var serializer = new SerializationSupport(configuration);
+			var container = new ConfigurationContainer();
+			container.EnableParameterizedContent()
+			         .Type<Tuple<string>>()
+			         .Member(x => x.Item1)
+			         .Name("NewName");
+			var serializer = new SerializationSupport(container);
 			var expected = new Tuple<string>("Hello World!");
 			var actual = serializer.Assert(expected,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string"" xmlns=""https://extendedxmlserializer.github.io/system""><NewName>Hello World!</NewName></Tuple>");
@@ -87,14 +87,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 		[Fact]
 		public void ConfiguredCreatedTuple()
 		{
-			var configuration = new ConfigurationContainer().UseAutoFormatting()
-			                                               .EnableParameterizedContent()
-														   .Type<Tuple<string, int, TypeCode>>()
-			                                               .Member(x => x.Item1, m => m.Name("Message"))
-														   .Member(x => x.Item2, m => m.Name("Number"))
-														   .Member(x => x.Item3, m => m.Name("Codez"))
-														   .Configuration;
-			var serializer = new SerializationSupport(configuration);
+			var container = new ConfigurationContainer();
+			container.UseAutoFormatting()
+			         .EnableParameterizedContent()
+			         .Type<Tuple<string, int, TypeCode>>()
+			         .Member(x => x.Item1, m => m.Name("Message"))
+			         .Member(x => x.Item2, m => m.Name("Number"))
+			         .Member(x => x.Item3, m => m.Name("Codez"));
+			var serializer = new SerializationSupport(container);
 			var expected = Tuple.Create("Hello World!", 6776, TypeCode.Empty);
 			var actual = serializer.Assert(expected,
 										   @"<?xml version=""1.0"" encoding=""utf-8""?><Tuple xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""string,int,TypeCode"" Message=""Hello World!"" Number=""6776"" Codez=""Empty"" xmlns=""https://extendedxmlserializer.github.io/system"" />");

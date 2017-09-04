@@ -21,23 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	public static class Extensions
 	{
-		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
+		public static IRootContext EnableReferences(this IRootContext @this)
 			=> @this.Apply<ReferencesExtension>();
 
-		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
+		public static IRootContext EnableDeferredReferences(this IRootContext @this)
 			=> @this.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default);
 
 		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
@@ -51,9 +51,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
 		{
 			@this.Attribute()
-			      .Configuration
+			      .Root
 			      .With<ReferencesExtension>()
-			      .Assign(@this.Owner.Get(), @this.Get());
+			      .Assign(@this.Parent.AsValid<ITypeConfiguration>().Get(), @this.Get());
 			return @this;
 		}
 

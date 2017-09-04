@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,12 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
@@ -35,6 +29,12 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -46,20 +46,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IMemberConfiguration Attribute<T, TMember>(
 			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Configuration.With<MemberFormatExtension>().Specifications[@this.Get()] =
+			@this.Root.With<MemberFormatExtension>().Specifications[@this.Get()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
 		public static IMemberConfiguration Attribute(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<MemberFormatExtension>().Registered.Add(@this.Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Content(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<MemberFormatExtension>().Registered.Remove(@this.Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Remove(@this.Get());
 			return @this;
 		}
 
@@ -71,7 +71,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
 		                                                       IExtendedXmlCustomSerializer<T> serializer)
 		{
-			@this.Configuration.With<CustomXmlExtension>().Assign(@this.Get(), new Adapter<T>(serializer));
+			@this.Root.With<CustomXmlExtension>().Assign(@this.Get(), new Adapter<T>(serializer));
 			return @this;
 		}
 
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
 		                                                   IEnumerable<Action<XElement>> migrations)
 		{
-			@this.Configuration.With<MigrationsExtension>().Add(@this.Get(), migrations.Fixed());
+			@this.Root.With<MigrationsExtension>().Add(@this.Get(), migrations.Fixed());
 			return @this;
 		}
 

@@ -21,24 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	public abstract class ContextBase : IContext
-	{
-		readonly IContext _parent;
-
-		protected ContextBase(IContext parent) : this(parent.Root, parent) {}
-
-		protected ContextBase(IRootContext root, IContext parent)
-		{
-			_parent = parent;
-			Root = root;
-		}
-
-		public IRootContext Root { get; }
-
-		public IExtendedXmlSerializer Create() => _parent.Create();
-	}
+	public interface ITypeConfigurationContext : IContext, ISource<TypeInfo> {}
 }

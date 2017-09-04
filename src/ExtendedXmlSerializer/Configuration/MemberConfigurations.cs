@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
 	/*public interface ITypeMemberConfigurations : IParameterizedSource<ITypeConfiguration, IReadOnlyDictionary<MemberInfo, IMemberConfiguration>> {}
 
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ConfigurationModel
 	/*public interface IMemberConfigurations : IParameterizedSource<MemberInfo, IMemberConfiguration> {}*/
 
 	// ReSharper disable once UnusedTypeParameter
-	sealed class MemberConfigurations<T> : CacheBase<MemberInfo, IMemberConfiguration>, IMemberSource
+	sealed class MemberConfigurations<T> : CacheBase<MemberInfo, IMemberConfiguration>, IMemberConfigurations
 	{
 		readonly ITypeConfigurationContext _parent;
 		readonly ConcurrentDictionary<MemberInfo, IMemberConfiguration> _store;

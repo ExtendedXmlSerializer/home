@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Linq;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ConfigurationModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberSource
-		: IParameterizedSource<MemberInfo, IMemberConfiguration>,
-		  IEnumerable<IMemberConfiguration> {}
+	sealed class ExtensionCollection : KeyedByTypeCollection<ISerializerExtension>, IExtensionCollection
+	{
+		public ExtensionCollection() : this(DefaultExtensions.Default.ToArray()) {}
+
+		public ExtensionCollection(params ISerializerExtension[] extensions) : base(extensions) {}
+
+		public bool Contains<T>() where T : ISerializerExtension => base.Contains(Support<T>.Key.AsType());
+
+		public new T Find<T>() where T : ISerializerExtension => base.Find<T>();
+	}
 }
