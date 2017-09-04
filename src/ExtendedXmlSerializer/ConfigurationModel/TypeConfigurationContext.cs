@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class TypeConfigurationContext : DelegatedSource<TypeInfo>, ITypeConfigurationContext
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
-
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		public TypeConfigurationContext(IRootContext root, TypeInfo type) : base(type.Self)
 		{
-			_known = known;
-			_formatter = formatter;
+			Root = root;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public IRootContext Root { get; }
+
+		public IExtendedXmlSerializer Create() => Root.Create();
 	}
 }

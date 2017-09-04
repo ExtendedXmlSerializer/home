@@ -23,23 +23,40 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class TypeConfigurations : CacheBase<TypeInfo, ITypeConfiguration>, ITypeConfigurations
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		readonly IRootContext _context;
+		readonly IDictionary<TypeInfo, string> _names;
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		public TypeConfigurations(IRootContext context) : this(context, context.Find<TypeNamesExtension>()
+		                                                                       .Names) {}
+
+		public TypeConfigurations(IRootContext context, IDictionary<TypeInfo, string> names)
 		{
-			_known = known;
-			_formatter = formatter;
+			_context = context;
+			_names = names;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		protected override ITypeConfiguration Create(TypeInfo parameter)
+		{
+			var property = new TypeProperty<string>(_names, parameter);
+			var result = Source.Default
+			                   .Get(parameter)
+			                   .Invoke(_context, property);
+			return result;
+		}
+
+		sealed class Source : Generic<IRootContext, IProperty<string>, ITypeConfiguration>
+		{
+			public static Source Default { get; } = new Source();
+			Source() : base(typeof(TypeConfiguration<>)) {}
+		}
 	}
 }

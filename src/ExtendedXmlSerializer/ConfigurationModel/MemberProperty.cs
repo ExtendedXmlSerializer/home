@@ -23,23 +23,13 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class MemberProperty<T> : MemberPropertyBase<MemberInfo, T>
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
-
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public MemberProperty(IDictionary<MemberInfo, T> store, MemberInfo type) : this(new MemberTable<T>(store), type) {}
+		public MemberProperty(IMetadataTable<MemberInfo, T> table, MemberInfo type) : base(table, type) {}
 	}
 }

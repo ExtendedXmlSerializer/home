@@ -21,25 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	abstract class MemberPropertyBase<TMember, T> : FixedSource<TMember, T>, IProperty<T> where TMember : MemberInfo
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		readonly IMetadataTable<TMember, T> _table;
+		readonly TMember _member;
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		protected MemberPropertyBase(IMetadataTable<TMember, T> table, TMember member) : base(table, member)
 		{
-			_known = known;
-			_formatter = formatter;
+			_table = table;
+			_member = member;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public void Assign(T value) => _table.Assign(_member, value);
 	}
 }

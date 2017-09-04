@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	public sealed class TypeConfiguration<T> : ContextBase, ITypeConfiguration
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		readonly IProperty<string> _name;
+		readonly IMemberSource _members;
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		public TypeConfiguration(IRootContext root, IProperty<string> name)
+			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
+
+		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberSource members)
+			: base(context, context)
 		{
-			_known = known;
-			_formatter = formatter;
+			_name = name;
+			_members = members;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public ITypeConfiguration Name(string name)
+		{
+			_name.Assign(name);
+			return this;
+		}
+
+		public IMemberConfiguration Member(MemberInfo member) => _members.Get(member);
+
+		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public TypeInfo Get() => Support<T>.Key;
+		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
 	}
 }

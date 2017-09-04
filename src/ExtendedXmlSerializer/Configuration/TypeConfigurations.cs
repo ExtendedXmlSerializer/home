@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -39,7 +39,8 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IDictionary<TypeInfo, string> _names;
 
 		TypeConfigurations(IConfigurationContainer configuration)
-			: this(configuration, configuration.With<TypeNamesExtension>().Names) {}
+			: this(configuration, configuration.With<TypeNamesExtension>()
+			                                   .Names) {}
 
 		TypeConfigurations(IConfigurationContainer configuration, IDictionary<TypeInfo, string> names)
 		{

@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.Configuration
 			var result = new MemberConfiguration(Configuration, this, parameter,
 			                                     new MemberProperty<string>(extension.Names, parameter),
 			                                     new MemberProperty<int>(extension.Order, parameter)
-			);
+			                                    );
 			_members.Add(result);
 			return result;
 		}

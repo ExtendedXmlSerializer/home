@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.Core;
-
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class CoercedParameter<TFrom, TTo, TResult> : IParameterizedSource<TFrom, TResult>
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		readonly IParameterizedSource<TFrom, TTo> _coercer;
+		readonly IParameterizedSource<TTo, TResult> _source;
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		public CoercedParameter(IParameterizedSource<TFrom, TTo> coercer, IParameterizedSource<TTo, TResult> source)
 		{
-			_known = known;
-			_formatter = formatter;
+			_coercer = coercer;
+			_source = source;
 		}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public TResult Get(TFrom parameter) => _source.Get(_coercer.Get(parameter));
 	}
 }

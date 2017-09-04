@@ -21,25 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class ExtensionCollection : KeyedByTypeCollection<ISerializerExtension>, IExtensionCollection
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		public ExtensionCollection() : this(DefaultExtensions.Default.ToArray()) {}
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
+		public ExtensionCollection(params ISerializerExtension[] extensions) : base(extensions) {}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public bool Contains<T>() where T : ISerializerExtension => base.Contains(Support<T>.Key.AsType());
+
+		public new T Find<T>() where T : ISerializerExtension => base.Find<T>();
 	}
 }

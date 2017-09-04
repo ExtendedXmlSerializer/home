@@ -33,14 +33,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
 	public static class Extensions
 	{
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, params IProperty[] properties)
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		                                                               params IProperty[] properties)
 			=> @this.EnableAttachedProperties(new HashSet<IProperty>(properties));
 
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, ICollection<IProperty> properties)
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		                                                               ICollection<IProperty> properties)
 			=> EnableAttachedProperties(@this, properties, new HashSet<Type>());
 
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this, ICollection<IProperty> properties,
-		                                                      ICollection<Type> types)
+		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		                                                               ICollection<IProperty> properties,
+		                                                               ICollection<Type> types)
 			=> @this.Extend(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)));
 
 		public static TValue Get<TType, TValue>(this TType @this, Property<TType, TValue> property) => property.Get(@this);
@@ -48,26 +51,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
-		                                                                                           Expression
-			                                                                                           <
-				                                                                                           Func
-				                                                                                           <Property<TType, TValue>>
-			                                                                                           >
-			                                                                                           property)
+		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
+			this IConfigurationContainer @this,
+			Expression<Func<Property<TType, TValue>>>property)
 		{
-			var instance = property.Compile().Invoke();
-			@this.With<AttachedPropertiesExtension>().Registrations.Instances.Add(instance);
-			var subject = property.GetMemberInfo().AsValid<PropertyInfo>();
+			var instance = property.Compile()
+			                       .Invoke();
+			@this.With<AttachedPropertiesExtension>()
+			     .Registrations.Instances.Add(instance);
+			var subject = property.GetMemberInfo()
+			                      .AsValid<PropertyInfo>();
 			var result = new AttachedPropertyConfiguration<TType, TValue>(@this.GetTypeConfiguration(subject.DeclaringType),
-			                                                              Members<TType, TValue>.Defaults.Get(@this).Get(subject));
+			                                                              Members<TType, TValue>.Defaults.Get(@this)
+			                                                                                    .Get(subject));
 			return result;
 		}
 
 		public static IConfigurationContainer AttachedProperty<TType, TValue>(this IConfigurationContainer @this,
-		                                                             Expression<Func<Property<TType, TValue>>> property,
-		                                                             Action<AttachedPropertyConfiguration<TType, TValue>>
-			                                                             configure)
+		                                                                      Expression<Func<Property<TType, TValue>>>
+			                                                                      property,
+		                                                                      Action<AttachedPropertyConfiguration<TType,
+				                                                                      TValue>>
+			                                                                      configure)
 		{
 			configure(@this.AttachedProperty(property));
 			return @this;

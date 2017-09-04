@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -34,6 +34,14 @@ namespace ExtendedXmlSerializer.Core.Sources
 {
 	static class Extensions
 	{
+		public static IParameterizedSource<TParameter, TTo> To<TParameter, TResult, TTo>(
+			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
+			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer);
+
+		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
+			this IParameterizedSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
+			=> new CoercedParameter<TFrom, TTo, TResult>(coercer, @this);
+
 		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
 		{
 			if (parser == null) throw new ArgumentNullException(nameof(parser));
@@ -50,7 +58,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 			       };
 		}
 
-		public static ImmutableArray<TItem>? GetAny<T, TItem>(this IParameterizedSource<T, ImmutableArray<TItem>> @this, T parameter)
+		public static ImmutableArray<TItem>? GetAny<T, TItem>(this IParameterizedSource<T, ImmutableArray<TItem>> @this,
+		                                                      T parameter)
 		{
 			var items = @this.Get(parameter);
 			var result = items.Any() ? items : (ImmutableArray<TItem>?) null;
@@ -63,9 +72,12 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static Parser<T> Get<T>(this IParsing<T> @this) => @this.Get;
 
 		public static T ParseAsOptional<T>(this Parser<T> @this, string data)
-			=> @this.XOptional().Invoke(Inputs.Default.Get(data)).Value.GetOrDefault();
+			=> @this.XOptional()
+			        .Invoke(Inputs.Default.Get(data))
+			        .Value.GetOrDefault();
 
-		public static T Get<T>(this IParsing<T> @this, string parameter) => @this.Get(Inputs.Default.Get(parameter)).Value;
+		public static T Get<T>(this IParsing<T> @this, string parameter) => @this.Get(Inputs.Default.Get(parameter))
+		                                                                         .Value;
 
 		public static Func<IInput, IResult<T>> ToDelegate<T>(this Parser<T> @this)
 			=> new Func<IInput, IResult<T>>(@this);
@@ -97,7 +109,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static Func<TResult> Build<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                       TParameter parameter)
-			=> @this.Fix(parameter).Singleton().Get;
+			=> @this.Fix(parameter)
+			        .Singleton()
+			        .Get;
 
 		public static ISource<TResult> Fix<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
 		                                                        TParameter parameter)

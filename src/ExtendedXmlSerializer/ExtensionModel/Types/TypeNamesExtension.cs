@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<IElements, Elements>()
 			            .Register<ITypeFormatter, TypeFormatter>()
 			            .Register<ITypePartResolver, TypePartResolver>()
-			            .RegisterInstance<IDictionary<Assembly, IIdentity>>(WellKnownIdentities.Default)
+			            .RegisterInstance<IReadOnlyDictionary<Assembly, IIdentity>>(WellKnownIdentities.Default)
 			            .RegisterInstance<INamespaceFormatter>(NamespaceFormatter.Default)
 			            .Register<IIdentities, Identities>()
 			            .Register<IIdentifiers, Identifiers>()

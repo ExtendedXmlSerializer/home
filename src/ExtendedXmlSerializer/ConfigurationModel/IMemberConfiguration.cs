@@ -21,25 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Sources;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+// ReSharper disable UnusedTypeParameter
+
+namespace ExtendedXmlSerializer.ConfigurationModel
 {
-	sealed class Identifiers : IIdentifiers
+	public interface IMemberConfiguration : IContext, ISource<MemberInfo>
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		IMemberConfiguration Name(string name);
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
-		{
-			_known = known;
-			_formatter = formatter;
-		}
-
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		IMemberConfiguration Order(int order);
 	}
 }

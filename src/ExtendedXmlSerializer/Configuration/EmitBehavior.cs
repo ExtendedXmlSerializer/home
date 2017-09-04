@@ -30,10 +30,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly IAlteration<AllowedMemberValuesExtension> _alteration;
 
-		public EmitBehavior(IAlteration<AllowedMemberValuesExtension> alteration)
-		{
-			_alteration = alteration;
-		}
+		public EmitBehavior(IAlteration<AllowedMemberValuesExtension> alteration) => _alteration = alteration;
 
 		public IConfigurationContainer Get(IConfigurationContainer parameter)
 			=> parameter.Extend(_alteration.Get(parameter.Find<AllowedMemberValuesExtension>()));
