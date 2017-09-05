@@ -1,18 +1,18 @@
-// MIT License
-//
-// Copyright (c) 2016 Wojciech Nag�rski
+﻿// MIT License
+// 
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,16 +23,17 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class CoercedSource<TParameter, TResult> : DecoratedSource<TParameter, TResult>
+	sealed class CoercedResult<TParameter, TResult, TTo> : IParameterizedSource<TParameter, TTo>
 	{
-		readonly IAlteration<TParameter> _alteration;
+		readonly IParameterizedSource<TResult, TTo> _coercer;
+		readonly IParameterizedSource<TParameter, TResult> _source;
 
-		public CoercedSource(IAlteration<TParameter> alteration, IParameterizedSource<TParameter, TResult> source)
-			: base(source)
+		public CoercedResult(IParameterizedSource<TParameter, TResult> source, IParameterizedSource<TResult, TTo> coercer)
 		{
-			_alteration = alteration;
+			_coercer = coercer;
+			_source = source;
 		}
 
-		public override TResult Get(TParameter parameter) => base.Get(_alteration.Get(parameter));
+		public TTo Get(TParameter parameter) => _coercer.Get(_source.Get(parameter));
 	}
 }

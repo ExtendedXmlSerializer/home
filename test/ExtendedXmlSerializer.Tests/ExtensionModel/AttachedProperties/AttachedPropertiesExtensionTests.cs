@@ -22,9 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.AttachedProperties;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
@@ -77,15 +75,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			var subject = new Subject {Message = "Hello World!"};
 			subject.Set(NumberProperty.Default, 6776);
 
-			var serializer =
-				new SerializationSupport(
-					new ConfigurationContainer().UseAutoFormatting()
-					                            .Type<NumberProperty>()
-					                            .Name("ConfiguredAttachedProperty")
-					                            .Configuration
-					                            .AttachedProperty(() => NumberProperty.Default)
-					                            .With(x => x.DeclaringProperty.Name("ConfiguredAttachedProperty"))
-					                            .Name("NewNumberPropertyName").Configuration);
+			var container = new ConfigurationContainer();
+			container.UseAutoFormatting()
+			         .Type<NumberProperty>()
+			         .Name("ConfiguredAttachedProperty");
+
+			container.AttachedProperty(() => NumberProperty.Default)
+			         .Name("NewNumberPropertyName");
+			var serializer = new SerializationSupport(container);
 
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" ConfiguredAttachedProperty.NewNumberPropertyName=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");

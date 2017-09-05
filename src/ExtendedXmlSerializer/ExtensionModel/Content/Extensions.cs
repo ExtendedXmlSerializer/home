@@ -40,19 +40,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<AllowedMembersExtension>().Blacklist.Add(@this.Get());
+			@this.Root.With<AllowedMembersExtension>().Blacklist.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
-			@this.Configuration.With<AllowedMembersExtension>().Whitelist.Add(@this.Get());
+			@this.Root.With<AllowedMembersExtension>().Whitelist.Add(@this.Get());
 			return @this;
 		}
 
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 		{
-			foreach (var type in TypeConfigurations.Defaults.Get(@this))
+			foreach (var type in @this)
 			{
 				type.OnlyConfiguredProperties();
 			}
@@ -70,7 +70,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
-			@this.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
+			@this.Root.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
 			return @this;
 		}
 

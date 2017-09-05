@@ -21,18 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
@@ -77,10 +76,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void SimpleEntity()
 		{
-			var configuration = new ConfigurationContainer().Type<Subject>()
-			                                                .Member(x => x.Id)
-			                                                .Identity()
-			                                                .Configuration;
+			var configuration = new ConfigurationContainer();
+			configuration.Type<Subject>()
+			             .Member(x => x.Id)
+			             .Identity();
 			var support = new SerializationSupport(configuration);
 			var expected = new Subject
 			               {
@@ -97,11 +96,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void ComplexInstance()
 		{
-			var support =
-				new SerializationSupport(
-				                         new ConfigurationContainer().Type<TestClassReference>()
-				                                                     .EnableReferences(x => x.Id)
-				                                                     .Configuration);
+			var configuration = new ConfigurationContainer();
+			configuration.Type<TestClassReference>()
+			             .EnableReferences(x => x.Id);
+			var support = new SerializationSupport(configuration);
 
 			var instance = new TestClassReference
 			               {
@@ -154,7 +152,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				               Set = new List<string> { "Item1" }
 			               };
 
-			var actual = new SerializationSupport(new ConfigurationContainer().EnableReferences()).Cycle(expected);
+			var container = new ConfigurationContainer();
+			container.EnableReferences();
+			var actual = new SerializationSupport(container).Cycle(expected);
 			actual.List.Only()
 			      .Should()
 			      .NotBeNull()
@@ -171,9 +171,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				               Set = new List<string> { "Item1" }
 			               };
 
-			var configuration = new ConfigurationContainer().EnableReferences();
-			configuration.IgnoredReferenceTypes().Clear();
-			var actual = new SerializationSupport(configuration).Cycle(expected);
+			var container = new ConfigurationContainer();
+			container.EnableReferences();
+			container.IgnoredReferenceTypes().Clear();
+			var actual = new SerializationSupport(container).Cycle(expected);
 			actual.List.Only()
 			      .Should()
 			      .NotBeNull()
@@ -185,7 +186,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var first = new ChildClass {Name = "Key"};
 			var instance = new Container {First = first, Second = first};
-			var support = new SerializationSupport(new ConfigurationContainer().EnableReferences());
+			var container = new ConfigurationContainer();
+			container.EnableReferences();
+			var support = new SerializationSupport(container);
 			var actual = support.Cycle(instance);
 			actual.First.Should()
 			       .NotBeNull()
@@ -198,9 +201,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var first = new ChildClass {Name = "Key"};
 			var instance = new Container {First = first, Second = first};
-			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ParentClass>()
-			                                                                   .EnableReferences(x => x.Name)
-			                                                                   .Configuration);
+			var container = new ConfigurationContainer();
+			container.ConfigureType<ParentClass>()
+			         .EnableReferences(x => x.Name);
+			var support = new SerializationSupport(container);
 			var actual = support.Cycle(instance);
 			actual.First.Should()
 			       .NotBeNull()
@@ -214,9 +218,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		{
 			var first = new ChildClass {Name = "Key"};
 			var instance = new Container {First = first, Second = first};
-			var support = new SerializationSupport(new ConfigurationContainer().ConfigureType<ChildClass>()
-			                                                                   .EnableReferences(x => x.Name)
-			                                                                   .Configuration);
+			var container = new ConfigurationContainer();
+			container.ConfigureType<ChildClass>()
+			         .EnableReferences(x => x.Name);
+			var support = new SerializationSupport(container);
 			var actual = support.Cycle(instance);
 			actual.First.Should()
 			       .NotBeNull()
@@ -249,11 +254,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void ComplexList()
 		{
-			var support =
-				new SerializationSupport(
-				                         new ConfigurationContainer().Type<TestClassReference>()
-				                                                     .EnableReferences(x => x.Id)
-				                                                     .Configuration);
+			var container = new ConfigurationContainer();
+			container.Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			var support = new SerializationSupport(container);
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -293,11 +297,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void Dictionary()
 		{
-			var support =
-				new SerializationSupport(
-				                         new ConfigurationContainer().Type<TestClassReference>()
-				                                                     .EnableReferences(x => x.Id)
-				                                                     .Configuration);
+			var container = new ConfigurationContainer();
+			container.Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			var support = new SerializationSupport(container);
 
 			var instance =
 				new TestClassReferenceWithDictionary
@@ -348,10 +351,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void OptimizedDictionary()
 		{
-			var support = new ConfigurationContainer().UseOptimizedNamespaces()
-			                                           .Type<TestClassReference>()
-			                                           .EnableReferences(x => x.Id)
-			                                           .ForTesting();
+			var container = new ConfigurationContainer();
+			container.UseOptimizedNamespaces()
+			         .Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			var support = container.ForTesting();
 
 			var instance = new TestClassReferenceWithDictionary {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
@@ -394,11 +398,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void List()
 		{
-			var support =
-				new SerializationSupport(
-				                         new ConfigurationContainer().Type<TestClassReference>()
-				                                                     .EnableReferences(x => x.Id)
-				                                                     .Configuration);
+			var container = new ConfigurationContainer();
+			container.Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			var support = new SerializationSupport(container);
 
 			var parent = new TestClassReference {Id = 1};
 			var other = new TestClassReference {Id = 2, ObjectA = parent, ReferenceToObjectA = parent};

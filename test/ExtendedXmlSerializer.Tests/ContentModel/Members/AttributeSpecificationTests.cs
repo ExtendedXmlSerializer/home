@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
@@ -36,11 +35,10 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 		{
 			const string target = "I am Attribute, Hear me roar! #rawr!";
 
-			var configuration = new ConfigurationContainer()
-				.Type<SimpleSubject>()
-				.Member(x => x.Message)
-				.Attribute(x => x == target)
-				.Configuration;
+			var configuration = new ConfigurationContainer();
+			configuration.Type<SimpleSubject>()
+			             .Member(x => x.Message)
+			             .Attribute(x => x == target);
 
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleSubject {Message = "Hello World!", Number = 6776};

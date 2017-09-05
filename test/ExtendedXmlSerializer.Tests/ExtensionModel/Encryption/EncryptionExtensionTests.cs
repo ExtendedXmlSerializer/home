@@ -24,7 +24,6 @@
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
@@ -43,7 +42,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 			                                                                   .Type<SimpleSubject>()
 			                                                                   .Member(x => x.Message)
 			                                                                   .Encrypt()
-			                                                                   .Configuration
 			                                                                   .Create());
 			var expected = new SimpleSubject {Message = message};
 			var actual = support.Assert(expected,
@@ -58,8 +56,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 			var support = new SerializationSupport(new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
 			                                                                   .Type<SimpleSubject>()
 			                                                                   .Member(x => x.Message).Attribute().Encrypt()
-																			   .Configuration
-			                                                                   .Create());
+																			   .Create());
 			var expected = new SimpleSubject { Message = message };
 			var actual = support.Assert(expected,
 										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Message=""SGVsbG8gV29ybGQhICBUaGlzIGlzIG15IGVuY3J5cHRlZCBtZXNzYWdlIQ=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests"" />");
@@ -72,7 +69,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 			const string message = "Hello World!  This is my unencrypted message!";
 			var identifier = new Guid("B496F7F5-58F8-41BF-AF18-117B8F3743BF");
 
-			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Encrypt().Configuration.Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Encrypt().Create());
 			var expected = new SimpleSubject {Identifier = identifier, Message = message};
 			var actual = support.Assert(expected,
 										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Identifier>YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm</Identifier><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");
@@ -86,7 +83,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Encryption
 			const string message = "Hello World!  This is my unencrypted message!";
 			var identifier = new Guid("B496F7F5-58F8-41BF-AF18-117B8F3743BF");
 
-			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Attribute().Encrypt().Configuration.Create());
+			var support = new SerializationSupport(new ConfigurationContainer().Type<SimpleSubject>().Member(x => x.Identifier).Attribute().Encrypt().Create());
 			var expected = new SimpleSubject { Identifier = identifier, Message = message };
 			var actual = support.Assert(expected,
 										@"<?xml version=""1.0"" encoding=""utf-8""?><EncryptionExtensionTests-SimpleSubject Identifier=""YjQ5NmY3ZjUtNThmOC00MWJmLWFmMTgtMTE3YjhmMzc0M2Jm"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Encryption;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!  This is my unencrypted message!</Message></EncryptionExtensionTests-SimpleSubject>");

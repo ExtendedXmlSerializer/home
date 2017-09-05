@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Encryption;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Samples.Encrypt
 {
@@ -39,11 +38,11 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 			Program.PrintHeader("Serialization reference object");
 
 // Configuration
-			var serializer = new ConfigurationContainer()
-			    .UseEncryptionAlgorithm(new CustomEncryption())
-                .ConfigureType<Person>().Member(p => p.Password).Encrypt()
-                .Configuration
-                .Create();
+			var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
+			                                             .ConfigureType<Person>()
+			                                             .Member(p => p.Password)
+			                                             .Encrypt()
+			                                             .Create();
 // EndConfiguration
 
 			Run(serializer);
@@ -66,29 +65,29 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 		static void Run(IExtendedXmlSerializer serializer)
 		{
 			var list = new List<Person>
-			           {
-				           new Person {Name = "John", Password = "Ab238ds2"},
-				           new Person {Name = "Oliver", Password = "df89nmXhdf"}
-			           };
+					   {
+						   new Person {Name = "John", Password = "Ab238ds2"},
+						   new Person {Name = "Oliver", Password = "df89nmXhdf"}
+					   };
 
 			var xml = serializer.Serialize(list);
 			Console.WriteLine(xml);
 
 			var obj2 = serializer.Deserialize<List<Person>>(xml);
 			Console.WriteLine("Employees count = " + obj2.Count + " - passwords " +
-			                  string.Join(", ", obj2.Select(p => p.Password)));
+							  string.Join(", ", obj2.Select(p => p.Password)));
 		}
 	}
 
 
 // CustomEncryption
-    public class CustomEncryption : IEncryption
-    {
-        public string Parse(string data)
-	        => Encoding.UTF8.GetString(Convert.FromBase64String(data));
+	public class CustomEncryption : IEncryption
+	{
+		public string Parse(string data)
+			=> Encoding.UTF8.GetString(Convert.FromBase64String(data));
 
-	    public string Format(string instance)
-		    => Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
-    }
+		public string Format(string instance)
+			=> Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
+	}
 // EndCustomEncryption
 }

@@ -21,12 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
@@ -61,11 +60,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		public void VerifyConflict()
 		{
 			var types = new HashSet<Type> {typeof(string), typeof(Subject)};
-			var configuration =
-				new ConfigurationContainer().EnableImplicitTyping(types)
-				                             .Type<Subject>()
-				                             .Name("string")
-				                             .Configuration;
+			var configuration = new ConfigurationContainer();
+			configuration.EnableImplicitTyping(types)
+			             .Type<Subject>()
+			             .Name("string");
 			Assert.Throws<InvalidOperationException>(() => configuration.Create());
 		}
 

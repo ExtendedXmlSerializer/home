@@ -27,11 +27,8 @@ namespace ExtendedXmlSerializer.Core.Sources
 	{
 		readonly IParameterizedSource<TParameter, TResult> _source;
 
-		public DecoratedSource(IParameterizedSource<TParameter, TResult> source)
-		{
-			_source = source;
-		}
+		public DecoratedSource(IParameterizedSource<TParameter, TResult> source) => _source = source;
 
-		public virtual TResult Get(TParameter parameter) => _source.Get(parameter);
+		public TResult Get(TParameter parameter) => _source.Get(parameter);
 	}
 }

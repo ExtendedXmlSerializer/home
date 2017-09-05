@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class Members<T, TMember> : ReferenceCacheBase<MemberInfo, MemberConfiguration<T, TMember>>,
-	                                   IEnumerable<IMemberConfiguration>
-	{
-		public static IParameterizedSource<IConfigurationContainer, Members<T, TMember>> Defaults { get; } =
-			new ReferenceCache<IConfigurationContainer, Members<T, TMember>>(x => new Members<T, TMember>(x));
-
-		Members(IConfigurationContainer configuration) : this(TypeConfigurations<T>.Default.Get(configuration)) {}
-
-		readonly TypeConfiguration<T> _type;
-		readonly ICollection<IMemberConfiguration> _members = new HashSet<IMemberConfiguration>();
-
-		public Members(TypeConfiguration<T> type)
-		{
-			_type = type;
-		}
-
-		protected override MemberConfiguration<T, TMember> Create(MemberInfo parameter)
-		{
-			var result = new MemberConfiguration<T, TMember>(_type.Member(parameter), _type);
-			_members.Add(result);
-			return result;
-		}
-
-		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
+	public interface IServicesFactory : IParameterizedSource<IExtensionCollection, IServices> {}
 }

@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
@@ -40,7 +40,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 			var serializer = new ConfigurationContainer()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new SimpleSubject {Message = "Hello World!", Number = 6776};
@@ -69,7 +68,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 			var serializer = new ConfigurationContainer()
 				.Type<ListWithProperties>()
 				.Member(x => x.Message, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new ListWithProperties {"Hello", "World", "Hope", "This", "Works!"};
@@ -101,7 +99,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 				.Type<ListWithProperties<string>>()
 				.Member(x => x.Message, x => x.Attribute())
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new ListWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
@@ -133,7 +130,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 			var serializer = new ConfigurationContainer()
 				.Type<HashSetWithProperties>()
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new HashSetWithProperties {"Hello", "World", "Hope", "This", "Works!"};
@@ -165,7 +161,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 			var serializer = new ConfigurationContainer()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new HashSetWithProperties<string> {"Hello", "World", "Hope", "This", "Works!"};
@@ -208,7 +203,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 			var serializer = new ConfigurationContainer()
 				.Type<SimpleSubject>()
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new DictionaryWithProperties
@@ -263,7 +257,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 				.Type<GenericDictionaryWithProperties<int, string>>()
 				.Member(x => x.Message, x => x.Attribute())
 				.Member(x => x.Number, x => x.Attribute())
-				.Configuration
 				.Create();
 
 			var expected = new GenericDictionaryWithProperties<int, string>

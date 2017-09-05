@@ -29,16 +29,17 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 {
 	sealed class Identifiers : IIdentifiers
 	{
-		readonly IDictionary<Assembly, IIdentity> _known;
+		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
 		readonly INamespaceFormatter _formatter;
 
-		public Identifiers(IDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
 		{
 			_known = known;
 			_formatter = formatter;
 		}
 
 		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)?.Identifier ?? _formatter.Get(parameter);
+			=> _known.Get(parameter.Assembly)
+			         ?.Identifier ?? _formatter.Get(parameter);
 	}
 }

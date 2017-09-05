@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,15 +22,16 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using IServiceProvider = System.IServiceProvider;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.Configuration
 {
-	class ServicesFactory : IServicesFactory
+	sealed class ServicesFactory : IServicesFactory
 	{
 		public static ServicesFactory Default { get; } = new ServicesFactory();
 		ServicesFactory() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
@@ -44,12 +45,12 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			_options = options;
 		}
 
-		public IServices Get(IConfigurationContainer parameter)
+		public IServices Get(IExtensionCollection parameter)
 		{
 			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
 
 			var services = result.RegisterInstance(parameter)
-			                     .RegisterInstance<System.IServiceProvider>(new Provider(result.GetService));
+			                     .RegisterInstance<IServiceProvider>(new Provider(result.GetService));
 
 			var extensions = parameter.Fixed();
 			extensions.Alter(services);
@@ -61,7 +62,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			return result;
 		}
 
-		sealed class Provider : DelegatedSource<Type, object>, System.IServiceProvider
+		sealed class Provider : DelegatedSource<Type, object>, IServiceProvider
 		{
 			public Provider(Func<Type, object> source) : base(source) {}
 

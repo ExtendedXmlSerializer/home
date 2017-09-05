@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
-using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
@@ -38,11 +37,11 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void ComplexList()
 		{
-			var support =
-				new SerializationSupport(
-					new ConfigurationContainer().Type<TestClassReference>()
-					                           .EnableReferences(x => x.Id)
-					                           .Configuration.EnableDeferredReferences());
+			var container = new ConfigurationContainer();
+			container.Type<TestClassReference>()
+			         .EnableReferences(x => x.Id);
+			container.EnableDeferredReferences();
+			var support = new SerializationSupport(container);
 
 			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
 			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};

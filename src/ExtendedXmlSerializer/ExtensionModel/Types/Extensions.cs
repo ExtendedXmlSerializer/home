@@ -21,64 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
+using System;
+using System.Linq.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public static class Extensions
 	{
-		public static TypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
-
-		public static TypeConfiguration<T> Type<T>(this IConfigurationContainer @this)
-			=> TypeConfigurations<T>.Default.Get(@this);
-
-		public static ITypeConfiguration Type<T>(this IConfigurationItem<T> @this) where T : MemberInfo
-			=> @this as ITypeConfiguration ?? (@this as IMemberConfiguration)?.Owner;
-
-		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
-		                                                                 Expression<Func<T, TMember>> member)
-			=> Members<T, TMember>.Defaults.Get(@this.Configuration).Get(member.GetMemberInfo());
-
 		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                      Expression<Func<T, TMember>> member,
 		                                                      Action<MemberConfiguration<T, TMember>> configure)
 		{
 			configure(@this.Member(member));
 			return @this;
-		}
-
-		public static string Name<T>(this IConfigurationItem<T> @this) where T : MemberInfo => @this.Name.Get();
-
-		public static IConfigurationItem<T> Name<T>(this IConfigurationItem<T> @this, string name) where T : MemberInfo
-		{
-			@this.Name.Assign(name);
-			return @this;
-		}
-
-		public static int Order(this IMemberConfiguration @this) => @this.Order.Get();
-
-		public static IMemberConfiguration Order(this IMemberConfiguration @this, int order)
-		{
-			@this.Order.Assign(order);
-			return @this;
-		}
-
-		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationContainer @this, Type type)
-			=> @this.GetTypeConfiguration(type.GetTypeInfo());
-
-		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationContainer @this, TypeInfo type)
-			=> TypeConfigurations.Defaults.Get(@this).Get(type);
-
-		public static IMemberConfiguration Member(this ITypeConfiguration @this, string name)
-		{
-			var member = @this.Get().GetMember(name).SingleOrDefault();
-			var result = member != null ? @this.Member(member) : null;
-			return result;
 		}
 
 		public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this)

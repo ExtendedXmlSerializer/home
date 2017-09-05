@@ -34,7 +34,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
-	public sealed class EncryptionExtension : ISerializerExtension
+	public sealed class EncryptionExtension : ISerializerExtension, ISpecification<IAlteration<IConverter>>
 	{
 		readonly static EncryptionConverterAlteration Alteration = EncryptionConverterAlteration.Default;
 
@@ -58,6 +58,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 			_alteration = alteration;
 			Registered = registered;
 		}
+
+		public bool IsSatisfiedBy(IAlteration<IConverter> parameter) => parameter == _alteration;
 
 		public ICollection<MemberInfo> Registered { get; }
 

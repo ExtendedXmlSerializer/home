@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,49 +21,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class TypeConfigurations : ReferenceCacheBase<TypeInfo, ITypeConfiguration>, IEnumerable<ITypeConfiguration>
+	sealed class TypeConfigurations : CacheBase<TypeInfo, ITypeConfiguration>, ITypeConfigurations
 	{
-		public static IParameterizedSource<IConfigurationContainer, TypeConfigurations> Defaults { get; }
-			= new ReferenceCache<IConfigurationContainer, TypeConfigurations>(x => new TypeConfigurations(x));
-
-		readonly ICollection<ITypeConfiguration> _types = new HashSet<ITypeConfiguration>();
-		readonly IConfigurationContainer _configuration;
+		readonly IRootContext _context;
 		readonly IDictionary<TypeInfo, string> _names;
+		readonly ConcurrentDictionary<TypeInfo, ITypeConfiguration> _store;
 
-		TypeConfigurations(IConfigurationContainer configuration)
-			: this(configuration, configuration.With<TypeNamesExtension>().Names) {}
+		public TypeConfigurations(IRootContext context)
+			: this(context, context.Find<TypeNamesExtension>()
+			                       .Names, new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
 
-		TypeConfigurations(IConfigurationContainer configuration, IDictionary<TypeInfo, string> names)
+		public TypeConfigurations(IRootContext context, IDictionary<TypeInfo, string> names, ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(store)
 		{
-			_configuration = configuration;
+			_context = context;
 			_names = names;
+			_store = store;
 		}
 
 		protected override ITypeConfiguration Create(TypeInfo parameter)
 		{
-			var result = new TypeConfiguration(_configuration, new TypeProperty<string>(_names, parameter), parameter);
-			_types.Add(result);
+			var property = new TypeProperty<string>(_names, parameter);
+			var result = Source.Default
+			                   .Get(parameter)
+			                   .Invoke(_context, property);
 			return result;
 		}
 
-		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
+		sealed class Source : Generic<IRootContext, IProperty<string>, ITypeConfiguration>
+		{
+			public static Source Default { get; } = new Source();
+			Source() : base(typeof(TypeConfiguration<>)) {}
+		}
+
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _store.Values.GetEnumerator();
+
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-	}
-
-	sealed class TypeConfigurations<T> : ReferenceCache<IConfigurationContainer, TypeConfiguration<T>>
-	{
-		public static TypeConfigurations<T> Default { get; } = new TypeConfigurations<T>();
-		TypeConfigurations() : base(x => new TypeConfiguration<T>(x)) {}
-
-		public TypeConfiguration<T> For(ITypeConfiguration type)
-			=> type as TypeConfiguration<T> ?? Get(type.Configuration);
 	}
 }

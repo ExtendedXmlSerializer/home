@@ -1,18 +1,18 @@
-﻿// MIT License
-// 
-// Copyright (c) 2016 Wojciech Nagórski
+// MIT License
+//
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,56 +22,49 @@
 // SOFTWARE.
 
 using System.Reflection;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+
+// ReSharper disable UnusedTypeParameter
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	// ReSharper disable once UnusedTypeParameter
-	public class MemberConfiguration<T, TMember> : IMemberConfiguration
+	public sealed class MemberConfiguration<T, TMember> : ContextBase, IMemberConfiguration
 	{
-		readonly IMemberConfiguration _configuration;
+		readonly IProperty<string> _name;
+		readonly IProperty<int> _order;
+		readonly MemberInfo _member;
 
-		public MemberConfiguration(IMemberConfiguration configuration,
-		                           TypeConfiguration<T> owner)
+		public MemberConfiguration(ITypeConfigurationContext parent, MemberInfo member)
+			: this(parent, parent.Root.With<MemberPropertiesExtension>(), member) {}
+
+		MemberConfiguration(
+			ITypeConfigurationContext parent,
+			MemberPropertiesExtension extension,
+			MemberInfo member) : this(parent,
+			                          new MemberProperty<string>(extension.Names, member),
+			                          new MemberProperty<int>(extension.Order, member),
+			                          member) {}
+
+		public MemberConfiguration(ITypeConfigurationContext parent, IProperty<string> name, IProperty<int> order,
+		                           MemberInfo member) : base(parent)
 		{
-			Owner = owner;
-			_configuration = configuration;
+			_name = name;
+			_order = order;
+			_member = member;
 		}
 
-		public TypeConfiguration<T> Owner { get; }
-
-		public MemberInfo Get() => _configuration.Get();
-
-		public IConfigurationContainer Configuration => _configuration.Configuration;
-
-		public IProperty<string> Name => _configuration.Name;
-
-		ITypeConfiguration IMemberConfiguration.Owner => Owner;
-
-		public IProperty<int> Order => _configuration.Order;
-	}
-
-	public class MemberConfiguration : IMemberConfiguration
-	{
-		readonly MemberInfo _memberInfo;
-
-		public MemberConfiguration(
-			IConfigurationContainer configuration,
-			ITypeConfiguration owner, MemberInfo memberInfo,
-			IProperty<string> name, IProperty<int> order)
+		public IMemberConfiguration Name(string name)
 		{
-			Configuration = configuration;
-			Owner = owner;
-			Name = name;
-			Order = order;
-			_memberInfo = memberInfo;
+			_name.Assign(name);
+			return this;
 		}
 
-		public IConfigurationContainer Configuration { get; }
-		public ITypeConfiguration Owner { get; }
+		public IMemberConfiguration Order(int order)
+		{
+			_order.Assign(order);
+			return this;
+		}
 
-		public IProperty<string> Name { get; }
-		public IProperty<int> Order { get; }
-
-		public MemberInfo Get() => _memberInfo;
+		public MemberInfo Get() => _member;
 	}
 }

@@ -39,8 +39,9 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
-	sealed class MarkupExtensionPartsEvaluator : ReferenceCacheBase<MarkupExtensionParts, object>, IEvaluator,
-	                                             IMarkupExtensionPartsEvaluator
+	sealed class MarkupExtensionPartsEvaluator
+		: ReferenceCacheBase<MarkupExtensionParts, object>, IEvaluator,
+		  IMarkupExtensionPartsEvaluator
 	{
 		const string Extension = "Extension";
 
@@ -85,7 +86,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		{
 			var type = DetermineType(parameter);
 
-			var candidates = parameter.Arguments.Select(Get).ToArray();
+			var candidates = parameter.Arguments.Select(Get)
+			                          .ToArray();
 			var constructor = DetermineConstructor(parameter, candidates, type);
 
 			var members = _members.Get(type);
@@ -99,7 +101,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
 			                                                                      .Get()
 			                                                                      .AsValid<IMarkupExtension>();
-			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter).ToArray()));
+			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
+			                                                                     .ToArray()));
 			return result;
 		}
 
@@ -110,12 +113,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var constructor = constructors.Get(type);
 			if (constructor == null)
 			{
-				var values = parameter.Arguments.Select(x => x.ToString()).ToArray();
+				var values = parameter.Arguments.Select(x => x.ToString())
+				                      .ToArray();
 
 				var primary = new InvalidOperationException(
-					$"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+				                                            $"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
 
-				var exceptions = primary.Yield().Concat(candidates.Select(x => x.Get()).Where(x => x != null));
+				var exceptions = primary.Yield()
+				                        .Concat(candidates.Select(x => x.Get())
+				                                          .Where(x => x != null));
 				throw new AggregateException(exceptions);
 			}
 			return constructor;
@@ -157,7 +163,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		static TypeParts Copy(TypeParts parameter)
 		{
-			var array = parameter.GetArguments()?.ToArray();
+			var array = parameter.GetArguments()
+			                     ?.ToArray();
 			var result = new TypeParts(string.Concat(parameter.Name, Extension), parameter.Identifier,
 			                           array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>) null);
 			return result;
@@ -166,10 +173,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		sealed class PropertyEvaluator : IParameterizedSource<KeyValuePair<string, IExpression>, object>
 		{
 			readonly TypeInfo _type;
-			readonly IDictionary<string, IMember> _members;
+			readonly IReadOnlyDictionary<string, IMember> _members;
 			readonly IEvaluator _evaluator;
 
-			public PropertyEvaluator(TypeInfo type, IDictionary<string, IMember> members, IEvaluator evaluator)
+			public PropertyEvaluator(TypeInfo type, IReadOnlyDictionary<string, IMember> members, IEvaluator evaluator)
 			{
 				_type = type;
 				_members = members;
@@ -183,7 +190,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				if (member == null)
 				{
 					throw new InvalidOperationException(
-						$"The member '{parameter.Key}' was used to define a property of type '{_type}', but this property does not exist, or is not serializable.");
+					                                    $"The member '{parameter.Key}' was used to define a property of type '{_type}', but this property does not exist, or is not serializable.");
 				}
 
 				var evaluation = _evaluator.Get(parameter.Value);
@@ -194,11 +201,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 					{
 						var primary =
 							new InvalidOperationException(
-								$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+							                              $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
 						throw new AggregateException(primary, innerException);
 					}
 					throw new InvalidOperationException(
-						$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
+					                                    $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
 				}
 
 				return evaluation.Get(member.MemberType);

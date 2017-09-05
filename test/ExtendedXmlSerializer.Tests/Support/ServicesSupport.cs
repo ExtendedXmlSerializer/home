@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel;
 using IServiceProvider = ExtendedXmlSerializer.ExtensionModel.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Tests.Support
@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public ServicesSupport() : this(DefaultExtensions.Default.ToArray()) {}
 
 		public ServicesSupport(params ISerializerExtension[] extensions)
-			: this(ServicesFactory.Default.Get(new ConfigurationContainer(extensions))) {}
+			: this(ServicesFactory.Default.Get(new ConfigurationContainer(extensions).Root)) {}
 
 		public ServicesSupport(IServices services)
 		{

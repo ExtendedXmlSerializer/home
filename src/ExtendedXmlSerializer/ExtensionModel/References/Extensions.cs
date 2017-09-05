@@ -21,24 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	public static class Extensions
 	{
 		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
-			=> @this.Apply<ReferencesExtension>();
+		{
+			@this.Root.Apply<ReferencesExtension>();
+			return @this;
+		}
 
 		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
-			=> @this.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default);
+		{
+			@this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default);
+			return @this;
+		}
 
 		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                Expression<Func<T, TMember>> member)
@@ -51,18 +57,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
 		{
 			@this.Attribute()
-			      .Configuration
+			      .Root
 			      .With<ReferencesExtension>()
-			      .Assign(@this.Owner.Get(), @this.Get());
+			      .Assign(@this.Parent.AsValid<ITypeConfigurationContext>().Get(), @this.Get());
 			return @this;
 		}
 
 		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationContainer @this)
-			=> @this.With<DefaultReferencesExtension>()
+			=> @this.Root.With<DefaultReferencesExtension>()
 			        .Whitelist;
 
 		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
-			=> @this.With<DefaultReferencesExtension>()
+			=> @this.Root.With<DefaultReferencesExtension>()
 			        .Blacklist;
 	}
 }
