@@ -169,9 +169,8 @@ Then, you have to add custom serializer to configuration of TestClass:
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().Type<TestClass>()
-        .CustomSerializer(new TestClassSerializer())
-        .Configuration
-        .Create();
+                                                 .CustomSerializer(new TestClassSerializer())
+                                                 .Create();
 
 Deserialize old version of xml
 ==============================
@@ -274,9 +273,8 @@ Then, you must register your TestClassMigrations class in configuration
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().ConfigureType<TestClass>()
-                                                .AddMigration(new TestClassMigrations())
-                                                .Configuration
-                                                .Create();
+                                                 .AddMigration(new TestClassMigrations())
+                                                 .Create();
 
 Object reference and circular reference
 =======================================
@@ -320,9 +318,8 @@ You must configure Person class as reference object:
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().ConfigureType<Person>()
-                                                .EnableReferences(p => p.Id)
-                                                .Configuration
-                                                .Create();
+                                                 .EnableReferences(p => p.Id)
+                                                 .Create();
 
 Output XML will look like this:
 
@@ -373,11 +370,11 @@ Then, you have to specify which properties are to be encrypted and register your
 
 .. sourcecode:: csharp
 
-    var serializer = new ConfigurationContainer()
-        .UseEncryptionAlgorithm(new CustomEncryption())
-        .ConfigureType<Person>().Member(p => p.Password).Encrypt()
-        .Configuration
-        .Create();
+    var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
+                                                 .ConfigureType<Person>()
+                                                 .Member(p => p.Password)
+                                                 .Encrypt()
+                                                 .Create();
 
 History
 =======
