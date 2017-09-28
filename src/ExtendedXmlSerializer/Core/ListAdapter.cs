@@ -23,15 +23,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core
 {
-	sealed class ListAdapter : IList
+	sealed class ListAdapter<T> : IList
 	{
-		readonly object _instance;
+		readonly ICollection<T> _instance;
 		readonly Action<object, object> _add;
 
-		public ListAdapter(object instance, Action<object, object> add)
+		public ListAdapter(ICollection<T> instance, Action<object, object> add)
 		{
 			_instance = instance;
 			_add = add;
@@ -47,20 +48,11 @@ namespace ExtendedXmlSerializer.Core
 			throw new NotSupportedException();
 		}
 
-		int ICollection.Count
-		{
-			get { throw new NotSupportedException(); }
-		}
+		int ICollection.Count => _instance.Count;
 
-		object ICollection.SyncRoot
-		{
-			get { throw new NotSupportedException(); }
-		}
+		object ICollection.SyncRoot => throw new NotSupportedException();
 
-		bool ICollection.IsSynchronized
-		{
-			get { throw new NotSupportedException(); }
-		}
+		bool ICollection.IsSynchronized => throw new NotSupportedException();
 
 		int IList.Add(object value)
 		{
@@ -100,18 +92,12 @@ namespace ExtendedXmlSerializer.Core
 
 		object IList.this[int index]
 		{
-			get { throw new NotSupportedException(); }
-			set { throw new NotSupportedException(); }
+			get => throw new NotSupportedException();
+			set => throw new NotSupportedException();
 		}
 
-		bool IList.IsReadOnly
-		{
-			get { throw new NotSupportedException(); }
-		}
+		bool IList.IsReadOnly => throw new NotSupportedException();
 
-		bool IList.IsFixedSize
-		{
-			get { throw new NotSupportedException(); }
-		}
+		bool IList.IsFixedSize => throw new NotSupportedException();
 	}
 }

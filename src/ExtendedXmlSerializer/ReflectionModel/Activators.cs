@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -39,15 +39,16 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		readonly IConstructorLocator _locator;
 
-		public Activators(IConstructorLocator locator)
-		{
-			_locator = locator;
-		}
+		public Activators(IConstructorLocator locator) => _locator = locator;
 
 		protected override IActivator Create(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
-			var expression = typeInfo.IsValueType ? Expression.New(parameter) : Reference(parameter, typeInfo);
+			var expression = parameter == typeof(string)
+				                 ? (Expression) Expression.Default(parameter)
+				                 : typeInfo.IsValueType
+					                 ? Expression.New(parameter)
+					                 : Reference(parameter, typeInfo);
 			var convert = Expression.Convert(expression, typeof(object));
 			var lambda = Expression.Lambda<Func<object>>(convert);
 			var result = new Activator(lambda.Compile());

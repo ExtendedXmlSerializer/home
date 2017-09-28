@@ -23,8 +23,12 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -38,6 +42,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
+
+		public static MemberConfiguration<T, TMember> EmitWhen<T, TMember>(this MemberConfiguration<T, TMember> @this,
+		                                                                Func<TMember, bool> specification)
+		{
+			@this.Root.Find<AllowedMemberValuesExtension>()
+			     .Specifications[@this.Get()] =
+				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).Adapt());
+			return @this;
+		}
 
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
 		{
