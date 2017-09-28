@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
 			=> @this.Extend(AllConstructorsExtension.Default);
 
-		public static IConfigurationContainer EnableImmutableArrays(this IConfigurationContainer @this)
-			=> @this.Extend(ImmutableArrayExtension.Default);
+		/*public static IConfigurationContainer EnableImmutableArrays(this IConfigurationContainer @this)
+			=> @this.Extend(ImmutableArrayExtension.Default);*/
 	}
 }
