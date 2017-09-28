@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,25 +22,57 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using System.Collections.Generic;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ConverterAlterationsExtension : ISerializerExtension
+	sealed class ImplicitlyDefinedDefaultValueAlteration : IAlteration<IConverter>
 	{
-		public ConverterAlterationsExtension() : this(new List<IAlteration<IConverter>>()) {}
+		public static ImplicitlyDefinedDefaultValueAlteration Default { get; } =
+			new ImplicitlyDefinedDefaultValueAlteration();
 
-		public ConverterAlterationsExtension(ICollection<IAlteration<IConverter>> alterations) => Alterations = alterations;
+		ImplicitlyDefinedDefaultValueAlteration() {}
 
-		public ICollection<IAlteration<IConverter>> Alterations { get; }
+		public IConverter Get(IConverter parameter)
+		{
+			var @default = Defaults.Instance.Get(parameter.Get())
+			                       .Invoke()
+			                       .Get();
+			var parser = new Parser(parameter.Parse, @default);
+			var result = new Converter<object>(parameter, parser.Get, parameter.Format);
+			return result;
+		}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=>
-				parameter.RegisterInstance<IAlteration<IConverter>>(new CompositeAlteration<IConverter>(Alterations))
-				         .Decorate<IConverters, AlteredConverters>();
+		sealed class Defaults : Generic<ISource<object>>
+		{
+			public static Defaults Instance { get; } = new Defaults();
+			public Defaults() : base(typeof(DefaultValues<>)) {}
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		sealed class Parser : IParser<object>
+		{
+			readonly Func<string, object> _parser;
+			readonly object _defaultValue;
+
+			public Parser(Func<string, object> parser, object defaultValue)
+			{
+				_parser = parser;
+				_defaultValue = defaultValue;
+			}
+
+			public object Get(string parameter)
+			{
+				try
+				{
+					return _parser(parameter);
+				}
+				catch (FormatException)
+				{
+					return _defaultValue;
+				}
+			}
+		}
 	}
 }

@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
@@ -46,5 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public object Parse(string data) => _parser.ParseAsOptional(data) ?? _converter.Parse(data);
 
 		public string Format(object instance) => _converter.Format(instance);
+
+		public TypeInfo Get() => _converter.Get();
 	}
 }

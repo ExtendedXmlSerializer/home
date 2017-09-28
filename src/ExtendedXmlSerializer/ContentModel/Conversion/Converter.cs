@@ -21,9 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
@@ -32,7 +33,8 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 		readonly Func<string, T> _deserialize;
 		readonly Func<T, string> _serialize;
 
-		public Converter(Func<string, T> deserialize, Func<T, string> serialize) : this(Specification, deserialize, serialize) {}
+		public Converter(Func<string, T> deserialize, Func<T, string> serialize) :
+			this(Specification, deserialize, serialize) {}
 
 		public Converter(ISpecification<TypeInfo> specification, Func<string, T> deserialize, Func<T, string> serialize)
 			: base(specification)
@@ -46,5 +48,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 
 		object IConvert<object>.Parse(string data) => Parse(data);
 		string IConvert<object>.Format(object instance) => Format((T) instance);
+
+		public TypeInfo Get() => Support<T>.Key;
 	}
 }

@@ -36,17 +36,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
 			=> @this.Extend(ReaderContextExtension.Default);
 
-		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) => behavior.Get(@this);
+		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
+			behavior.Get(@this);
 
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
 		{
-			@this.Root.With<AllowedMembersExtension>().Blacklist.Add(@this.Get());
+			@this.Root.With<AllowedMembersExtension>()
+			     .Blacklist.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
-			@this.Root.With<AllowedMembersExtension>().Whitelist.Add(@this.Get());
+			@this.Root.With<AllowedMembersExtension>()
+			     .Whitelist.Add(@this.Get());
 			return @this;
 		}
 
@@ -70,14 +73,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
-			@this.Root.With<ConverterAlterationsExtension>().Alterations.Add(alteration);
+			@this.Root.With<ConverterAlterationsExtension>()
+			     .Alterations.Add(alteration);
 			return @this;
 		}
+
+		public static IConfigurationContainer EnableImplicitlyDefinedDefaultValues(this IConfigurationContainer @this)
+			=> @this.Alter(ImplicitlyDefinedDefaultValueAlteration.Default);
 
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
-		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this, IAlteration<IConverter> optimizations)
+		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this,
+		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 	}
 }
