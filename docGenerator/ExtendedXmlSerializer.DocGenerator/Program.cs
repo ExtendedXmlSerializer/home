@@ -30,8 +30,29 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddList(
 				"Does not support serialization of class with circular reference or class with interface property.",
 				"There is no mechanism for reading the old version of XML.",
+				"Does not support properties that are defined with interface types.",
+				"Does not support read-only properties (like Xaml does).",
 				"If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.",
 				"Does not support IoC");
+
+			doc.AddHeader("The Basics");
+			doc.Add("Everything in ExtendedXmlSerializer begins with a configuration container, from which you can use to configure the serializer and ultimately create it:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Create.cs", "Create");
+
+			doc.Add("Using this simple subject class:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Subject.cs", "Subject");
+
+			doc.Add("The results of the default serializer will look like this:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.xml", CodeFormat.Xml);
+
+			doc.Add("We can take this a step further by configuring the `Subject`'s Type and Member properties, which will effect how its Xml is emitted.  Here is an example of configuring the `Subject`'s name to emit as `ModifiedSubject`:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Type.cs", "Type");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.Type.xml", CodeFormat.Xml);
+
+			doc.Add("Diving a bit further, we can also configure the type's member information.  For example, configuring `Subject.Message` to emit as `Text` instead:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Member.cs", "Member");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.Member.xml", CodeFormat.Xml);
+
 
 			doc.AddHeader("Serialization");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\SimpleSamples.cs",

@@ -22,8 +22,83 @@ Standard XML Serializer in .NET is very limited:
 
 * Does not support serialization of class with circular reference or class with interface property.
 * There is no mechanism for reading the old version of XML.
+* Does not support properties that are defined with interface types.
+* Does not support read-only properties (like Xaml does).
 * If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.
 * Does not support IoC
+
+The Basics
+==========
+
+Everything in ExtendedXmlSerializer begins with a configuration container, from which you can use to configure the serializer and ultimately create it:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer()
+                                                    // Configure...
+                                                    .Create();
+    
+
+Using this simple subject class:
+
+.. sourcecode:: csharp
+
+        public sealed class Subject
+        {
+            public string Message { get; set; }
+    
+            public int Count { get; set; }
+        }
+    
+
+The results of the default serializer will look like this:
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples">
+      <Message>Hello World!</Message>
+      <Count>6776</Count>
+    </Subject>
+
+We can take this a step further by configuring the `Subject`'s Type and Member properties, which will effect how its Xml is emitted.  Here is an example of configuring the `Subject`'s name to emit as `ModifiedSubject`:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer()
+            .ConfigureType<Subject>()
+            .Name("ModifiedSubject")
+            .Create();
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <ModifiedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples">
+      <Message>Hello World!</Message>
+      <Count>6776</Count>
+    </ModifiedSubject>
+
+Diving a bit further, we can also configure the type's member information.  For example, configuring `Subject.Message` to emit as `Text` instead:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer()
+            .ConfigureType<Subject>()
+            .Member(x => x.Message)
+            .Name("Text")
+            .Create();
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples">
+      <Text>Hello World!</Text>
+      <Count>6776</Count>
+    </Subject>
 
 Serialization
 =============
@@ -32,8 +107,8 @@ Serialization
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().Create();
-    var obj = new TestClass();
-    var xml = serializer.Serialize(obj);
+     var obj = new TestClass();
+     var xml = serializer.Serialize(obj);
 
 Deserialization
 ===============
@@ -51,22 +126,22 @@ You can serialize generic dictionary, that can store any type.
 .. sourcecode:: csharp
 
     public class TestClass
-    {
-        public Dictionary<int, string> Dictionary { get; set; }
-    }
+     {
+         public Dictionary<int, string> Dictionary { get; set; }
+     }
 
 
 .. sourcecode:: csharp
 
     var obj = new TestClass
-    {
-        Dictionary = new Dictionary<int, string>
-        {
-            {1, "First"},
-            {2, "Second"},
-            {3, "Other"},
-        }
-    };
+     {
+         Dictionary = new Dictionary<int, string>
+         {
+             {1, "First"},
+             {2, "Second"},
+             {3, "Other"},
+         }
+     };
 
 Output XML will look like:
 
@@ -119,7 +194,7 @@ If your class has to be serialized in a non-standard way:
 
 .. sourcecode:: csharp
 
-        public class TestClass
+       public class TestClass
         {
             public TestClass(string paramStr, int paramInt)
             {
@@ -135,7 +210,7 @@ You must create custom serializer:
 
 .. sourcecode:: csharp
 
-        public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+       public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
         {
             public TestClass Deserialize(XElement element)
             {
@@ -236,7 +311,7 @@ You can migrate (read) old version of XML using migrations:
 
 .. sourcecode:: csharp
 
-        public class TestClassMigrations : IEnumerable<Action<XElement>>
+       public class TestClassMigrations : IEnumerable<Action<XElement>>
         {
             public static void MigrationV0(XElement node)
             {
@@ -277,7 +352,7 @@ If you have a class:
 
 .. sourcecode:: csharp
 
-        public class Person
+    public class Person
         {
             public int Id { get; set; }
             public string Name { get; set; }
@@ -342,10 +417,10 @@ If you have a class with a property that needs to be encrypted:
 .. sourcecode:: csharp
 
     public class Person
-    {
-        public string Name { get; set; }
-        public string Password { get; set; }
-    }
+        {
+            public string Name { get; set; }
+            public string Password { get; set; }
+        }
 
 You must implement interface IEncryption. For example, it will show the Base64 encoding, but in the real world better to use something safer, eg. RSA.:
 
