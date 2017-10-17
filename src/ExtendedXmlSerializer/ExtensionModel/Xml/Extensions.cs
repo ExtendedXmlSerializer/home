@@ -146,7 +146,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string data)
-			=> Deserialize<T>(@this, CloseRead, new MemoryStream(Encoding.UTF8.GetBytes(data)));
+			=> Deserialize<T>(@this, CloseRead, data);
+
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, XmlReaderSettings settings, string data)
+			=> Deserialize<T>(@this, settings, new MemoryStream(Encoding.UTF8.GetBytes(data)));
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, Stream stream)
 			=> Deserialize<T>(@this, Defaults.ReaderSettings, stream);

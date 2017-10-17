@@ -14,11 +14,10 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 		public void Execute(object parameter)
 		{
 			// Member
-			var serializer = new ConfigurationContainer()
-				.ConfigureType<Subject>()
-				.Member(x => x.Message)
-				.Name("Text")
-				.Create();
+			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			                                             .Member(x => x.Message)
+			                                             .Name("Text")
+			                                             .Create();
 			// EndMember
 
 			var subject = new Subject{ Count = 6776, Message = "Hello World!" };

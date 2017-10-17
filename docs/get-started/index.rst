@@ -34,7 +34,7 @@ Everything in ExtendedXmlSerializer begins with a configuration container, from 
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer()
+    var serializer = new ConfigurationContainer()
                                                     // Configure...
                                                     .Create();
     
@@ -43,7 +43,7 @@ Using this simple subject class:
 
 .. sourcecode:: csharp
 
-        public sealed class Subject
+    public sealed class Subject
         {
             public string Message { get; set; }
     
@@ -65,10 +65,9 @@ We can take this a step further by configuring the `Subject`'s Type and Member p
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer()
-            .ConfigureType<Subject>()
-            .Name("ModifiedSubject")
-            .Create();
+    var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+                                                     .Name("ModifiedSubject")
+                                                     .Create();
     
 
 
@@ -84,11 +83,10 @@ Diving a bit further, we can also configure the type's member information.  For 
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer()
-            .ConfigureType<Subject>()
-            .Member(x => x.Message)
-            .Name("Text")
-            .Create();
+    var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+                                                     .Member(x => x.Message)
+                                                     .Name("Text")
+                                                     .Create();
     
 
 
@@ -100,9 +98,31 @@ Diving a bit further, we can also configure the type's member information.  For 
       <Count>6776</Count>
     </Subject>
 
+Xml Settings
+============
+
+In case you want to configure the XML write and read settings via `XmlWriterSettings` and `XmlReaderSettings` respectively, you can do that via extension methods created for you to do so:
+
+.. sourcecode:: csharp
+
+        var subject = new Subject{ Count = 6776, Message = "Hello World!" };
+        var serializer = new ConfigurationContainer().Create();
+        var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+        // ...
+    
+
+And for reading:
+
+.. sourcecode:: csharp
+
+        var instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+        // ...
+    
+
 Serialization
 =============
 
+Now that your configuration container has been configured and your serializer has been created, it's time to get to the serialization.
 
 .. sourcecode:: csharp
 
@@ -345,6 +365,11 @@ Then, you must register your TestClassMigrations class in configuration
                                                  .AddMigration(new TestClassMigrations())
                                                  .Create();
 
+Extensibility
+=============
+
+With type and member configuration out of the way, we can turn our attention to what really makes ExtendedXmlSeralizer tick: extensibility.  As its name suggests, ExtendedXmlSeralizer offers a very flexible (but albeit new) extension model from which you can build your own extensions.  Pretty much all if not all features you encounter with ExtendedXmlSeralizer are through extensions.  There are quite a few in our latest version here that showcase this extensibility.  The remainder of this document will showcase the top features of ExtendedXmlSerializer that are accomplished through its extension system.
+
 Object reference and circular reference
 =======================================
 
@@ -444,6 +469,57 @@ Then, you have to specify which properties are to be encrypted and register your
                                                  .Member(p => p.Password)
                                                  .Encrypt()
                                                  .Create();
+
+Custom Conversion
+=================
+
+ExtendedXmlSerializer does a pretty decent job (if we do say so ourselves) of composing and decomposing objects, but if you happen to have a type that you want serialized in a certain way, and this type can be destructured into a `string`, then you can register a custom converter for it.
+
+Using the following:
+
+.. sourcecode:: csharp
+
+        public sealed class CustomStructConverter : IConverter<CustomStruct>
+        {
+            public static CustomStructConverter Default { get; } = new CustomStructConverter();
+            CustomStructConverter() {}
+    
+            public bool IsSatisfiedBy(TypeInfo parameter) => typeof(CustomStruct).GetTypeInfo()
+                                                                                 .IsAssignableFrom(parameter);
+    
+            public CustomStruct Parse(string data) =>
+                int.TryParse(data, out var number) ? new CustomStruct(number) : CustomStruct.Default;
+    
+            public string Format(CustomStruct instance) => instance.Number.ToString();
+        }
+    
+        public struct CustomStruct
+        {
+            public static CustomStruct Default { get; } = new CustomStruct(6776);
+    
+            public CustomStruct(int number)
+            {
+                Number = number;
+            }
+            public int Number { get; }
+        }
+    
+
+Register the converter:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+        var subject = new CustomStruct(123);
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <CustomStruct xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">123</CustomStruct>
 
 History
 =======

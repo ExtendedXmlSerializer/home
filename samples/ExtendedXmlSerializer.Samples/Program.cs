@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.Samples.CustomSerializator;
 using ExtendedXmlSerializer.Samples.Dictianary;
 using ExtendedXmlSerializer.Samples.Encrypt;
+using ExtendedXmlSerializer.Samples.Extensibility;
 using ExtendedXmlSerializer.Samples.MigrationMap;
 using ExtendedXmlSerializer.Samples.ObjectReference;
 using ExtendedXmlSerializer.Samples.Simple;
@@ -43,11 +44,12 @@ namespace ExtendedXmlSerializer.Samples
 		public static void Main(string[] args)
 		{
 			Introduction.Run.Default.Execute(null);
+			Converters.Default.Execute(null);
 
 			SimpleSamples.Run();
-		    DictianarySamples.Run();
+			DictianarySamples.Run();
 
-            CustomSerializatorSamples.RunSimpleConfig();
+			CustomSerializatorSamples.RunSimpleConfig();
 			// CustomSerializatorSamples.RunAutofacConfig();
 			MigrationMapSamples.RunSimpleConfig();
 			//MigrationMapSamples.RunAutofacConfig();

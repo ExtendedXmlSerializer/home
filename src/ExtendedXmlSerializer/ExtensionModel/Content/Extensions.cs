@@ -100,5 +100,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this,
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
+
+		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this, IConverter<T> converter)
+		{
+			@this.Root.Find<ConverterRegistryExtension>()
+			     .Converters.Add(Converters<T>.Default.Get(converter));
+			return @this;
+		}
+
+		public static bool Unregister<T>(this IConfigurationContainer @this, IConverter<T> converter)
+			=> @this.Root.Find<ConverterRegistryExtension>()
+			        .Converters.Remove(Converters<T>.Default.Get(converter));
+
+		sealed class Converters<T> : ReferenceCache<IConverter<T>, IConverter>
+		{
+			public static Converters<T> Default { get; } = new Converters<T>();
+			Converters() : base(key => new Converter<T>(key, key.Parse, key.Format)) {}
+		}
 	}
 }

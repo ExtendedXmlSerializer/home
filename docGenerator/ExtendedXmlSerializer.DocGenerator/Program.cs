@@ -53,8 +53,15 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Member.cs", "Member");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.Member.xml", CodeFormat.Xml);
 
+			doc.AddHeader("Xml Settings");
+			doc.Add("In case you want to configure the XML write and read settings via `XmlWriterSettings` and `XmlReaderSettings` respectively, you can do that via extension methods created for you to do so:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Settings.cs", "Write");
+
+			doc.Add("And for reading:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Settings.cs", "Read");
 
 			doc.AddHeader("Serialization");
+			doc.Add("Now that your configuration container has been configured and your serializer has been created, it's time to get to the serialization.");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\SimpleSamples.cs",
 				"Serialization");
 
@@ -98,6 +105,10 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add("Then, you must register your TestClassMigrations class in configuration");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\MigrationMap\\MigrationMapSamples.cs", "MigrationsConfiguration");
 
+			doc.AddHeader("Extensibility");
+			doc.Add("With type and member configuration out of the way, we can turn our attention to what really makes ExtendedXmlSeralizer tick: extensibility.  As its name suggests, ExtendedXmlSeralizer offers a very flexible (but albeit new) extension model from which you can build your own extensions.  Pretty much all if not all features you encounter with ExtendedXmlSeralizer are through extensions.  There are quite a few in our latest version here that showcase this extensibility.  The remainder of this document will showcase the top features of ExtendedXmlSerializer that are accomplished through its extension system.");
+			doc.Add(string.Empty);
+
 			doc.AddHeader("Object reference and circular reference");
 			doc.Add("If you have a class:");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\ObjectReference\\Person.cs", "PersonClass");
@@ -115,6 +126,18 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Encrypt\\EncryptSamples.cs", "CustomEncryption");
 			doc.Add("Then, you have to specify which properties are to be encrypted and register your IEncryption implementation.");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Encrypt\\EncryptSamples.cs", "Configuration");
+
+			doc.AddHeader("Custom Conversion");
+			doc.Add("ExtendedXmlSerializer does a pretty decent job (if we do say so ourselves) of composing and decomposing objects, but if you happen to have a type that you want serialized in a certain way, and this type can be destructured into a `string`, then you can register a custom converter for it.");
+			doc.Add(string.Empty);
+
+			doc.Add("Using the following:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\CustomStructConverter.cs", "CustomConverter");
+
+			doc.Add("Register the converter:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\Converters.cs", "Converter");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.Converters.xml", CodeFormat.Xml);
+
 
 			doc.AddHeader("History");
 			doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");
