@@ -45,6 +45,13 @@ namespace ExtendedXmlSerializer.Samples
 		{
 			Introduction.Run.Default.Execute(null);
 			Converters.Default.Execute(null);
+			OptimizedNamespaces.Default.Execute(null);
+			AutoFormatting.Default.Execute(null);
+			PrivateConstructors.Default.Execute(null);
+			ParameterizedContent.Default.Execute(null);
+			Tuples.Default.Execute(null);
+			AttachedProperties.Default.Execute(null);
+			MarkupExtensions.Default.Execute(null);
 
 			SimpleSamples.Run();
 			DictianarySamples.Run();

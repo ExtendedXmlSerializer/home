@@ -23,7 +23,9 @@ Standard XML Serializer in .NET is very limited:
 * Does not support serialization of class with circular reference or class with interface property.
 * There is no mechanism for reading the old version of XML.
 * Does not support properties that are defined with interface types.
-* Does not support read-only properties (like Xaml does).
+* Does not support read-only collection properties (like Xaml does).
+* Does not support parameterized constructors.
+* Does not support private constructors.
 * If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.
 * Does not support IoC
 
@@ -105,7 +107,7 @@ In case you want to configure the XML write and read settings via `XmlWriterSett
 
 .. sourcecode:: csharp
 
-        var subject = new Subject{ Count = 6776, Message = "Hello World!" };
+    var subject = new Subject{ Count = 6776, Message = "Hello World!" };
         var serializer = new ConfigurationContainer().Create();
         var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
         // ...
@@ -115,7 +117,7 @@ And for reading:
 
 .. sourcecode:: csharp
 
-        var instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+    var instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
         // ...
     
 
@@ -479,7 +481,7 @@ Using the following:
 
 .. sourcecode:: csharp
 
-        public sealed class CustomStructConverter : IConverter<CustomStruct>
+    public sealed class CustomStructConverter : IConverter<CustomStruct>
         {
             public static CustomStructConverter Default { get; } = new CustomStructConverter();
             CustomStructConverter() {}
@@ -509,7 +511,7 @@ Register the converter:
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+    var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
         var subject = new CustomStruct(123);
         var contents = serializer.Serialize(subject);
         // ...
@@ -520,6 +522,279 @@ Register the converter:
 
     <?xml version="1.0" encoding="utf-8"?>
     <CustomStruct xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">123</CustomStruct>
+
+Optimized Namespaces
+====================
+
+By default Xml namespaces are emitted on an "as needed" basis:
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <List xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:arguments="Object" xmlns="https://extendedxmlserializer.github.io/system">
+      <Capacity>4</Capacity>
+      <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+        <Message>First</Message>
+      </Subject>
+      <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+        <Message>Second</Message>
+      </Subject>
+      <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+        <Message>Third</Message>
+      </Subject>
+    </List>
+
+But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at the root of the document, thereby reducing document footprint:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+                                                     .Create();
+        var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <List xmlns:ns1="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:arguments="Object" xmlns="https://extendedxmlserializer.github.io/system">
+      <Capacity>4</Capacity>
+      <ns1:Subject>
+        <Message>First</Message>
+      </ns1:Subject>
+      <ns1:Subject>
+        <Message>Second</Message>
+      </ns1:Subject>
+      <ns1:Subject>
+        <Message>Third</Message>
+      </ns1:Subject>
+    </List>
+
+Auto-Formatting (Attributes)
+============================
+
+The default behavior for emitting data in an Xml document is to use elements, which can be a little chatty and verbose:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+                                                     .Create();
+        var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+      <Number>123</Number>
+      <Message>Hello World!</Message>
+      <Time>2017-10-18T09:29:18.2025028-04:00</Time>
+    </SubjectWithThreeProperties>
+
+Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-18T09:29:18.2025028-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+
+Private Constructors
+====================
+
+One of the limitations of the classic XmlSerializer is that it does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:
+
+.. sourcecode:: csharp
+
+        public sealed class SubjectByFactory
+        {
+            public static SubjectByFactory Create(string message) => new SubjectByFactory(message);
+    
+            SubjectByFactory() : this(null) {} // Used by serializer.
+    
+            SubjectByFactory(string message) => Message = message;
+    
+            public string Message { get; set; }
+        }
+    
+
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().EnableAllConstructors()
+                                                     .Create();
+        var subject = SubjectByFactory.Create("Hello World!");
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <SubjectByFactory xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+      <Message>Hello World!</Message>
+    </SubjectByFactory>
+
+Parameterized Members and Content
+=================================
+
+Taking this concept bit further leads to a favorite feature of ours in ExtendedXmlSerlializer.  The classic serializer only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:
+
+.. sourcecode:: csharp
+
+        public sealed class ParameterizedSubject
+        {
+            public ParameterizedSubject(string message, int number, DateTime time)
+            {
+                Message = message;
+                Number = number;
+                Time = time;
+            }
+    
+            public string Message { get; }
+            public int Number { get; }
+            public DateTime Time { get; }
+        }
+    
+
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().EnableParameterizedContent()
+                                                     .Create();
+        var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+      <Message>Hello World!</Message>
+      <Number>123</Number>
+      <Time>2017-10-18T09:29:18.3335128-04:00</Time>
+    </ParameterizedSubject>
+
+Tuples
+======
+
+By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples.  Of course, serializable Tuples were introduced recently with the latest version of C#.  Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:
+
+.. sourcecode:: csharp
+
+        var serializer = new ConfigurationContainer().EnableParameterizedContent()
+                                                     .Type<Tuple<string>>()
+                                                     .Member(x => x.Item1)
+                                                     .Name("Message")
+                                                     .Create();
+        var subject = Tuple.Create("Hello World!");
+        var contents = serializer.Serialize(subject);
+        // ...
+    
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Tuple xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:arguments="string" xmlns="https://extendedxmlserializer.github.io/system">
+      <Message>Hello World!</Message>
+    </Tuple>
+
+Experimental Xaml-ness: Attached Properties
+===========================================
+
+We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding support for Attached Properties on objects in your serialized object graph.  But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it.  Check it out:
+
+.. sourcecode:: csharp
+
+        sealed class NameProperty : ReferenceProperty<Subject, string>
+        {
+            public const string DefaultMessage = "The Name Has Not Been Set";
+    
+            public static NameProperty Default { get; } = new NameProperty();
+            NameProperty() : base(() => Default, x => DefaultMessage) {}
+        }
+    
+        sealed class NumberProperty : StructureProperty<Subject, int>
+        {
+            public const int DefaultValue = 123;
+    
+            public static NumberProperty Default { get; } = new NumberProperty();
+            NumberProperty() : base(() => Default, x => DefaultValue) {}
+        }
+    
+
+
+.. sourcecode:: csharp
+
+                var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
+                                                                                       NumberProperty.Default)
+                                                             .Create();
+                var subject = new Subject {Message = "Hello World!"};
+                subject.Set(NameProperty.Default, "Hello World from Attached Properties!");
+                subject.Set(NumberProperty.Default, 123);
+    
+                var contents = serializer.Serialize(subject);
+                // ...
+            
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+      <Message>Hello World!</Message>
+      <NameProperty.Default>Hello World from Attached Properties!</NameProperty.Default>
+      <NumberProperty.Default>123</NumberProperty.Default>
+    </Subject>
+
+(Please note that this feature is experimental, but please try it out and let us know what you think!)
+
+Experimental Xaml-ness: Markup Extensions
+=========================================
+
+Finally -- saving the best for last -- we have experimental support for one of Xaml's greatest features, Markup Extensions:
+
+.. sourcecode:: csharp
+
+        sealed class Extension : IMarkupExtension
+        {
+            const string Message = "Hello World from Markup Extension! Your message is: ", None = "N/A";
+    
+            readonly string _message;
+    
+            public Extension() : this(None) {}
+    
+            public Extension(string message)
+            {
+                _message = message;
+            }
+    
+            public object ProvideValue(IServiceProvider serviceProvider) => string.Concat(Message, _message);
+        }
+    
+
+
+.. sourcecode:: csharp
+
+        var contents =
+            @"<?xml version=""1.0"" encoding=""utf-8""?>
+              <Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples""
+                Message=""{Extension 'PRETTY COOL HUH!!!'}"" />";
+        var serializer = new ConfigurationContainer().EnableMarkupExtensions()
+                                                     .Create();
+        var subject = serializer.Deserialize<Subject>(contents);
+        Console.WriteLine(subject.Message); // "Hello World from Markup Extension! Your message is: PRETTY COOL HUH!!!"
+    
+
+(Please note that this feature is experimental, but please try it out and let us know what you think!)
 
 History
 =======

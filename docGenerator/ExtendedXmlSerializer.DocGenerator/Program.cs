@@ -142,37 +142,55 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 			doc.AddHeader("Optimized Namespaces");
 			doc.Add(@"By default Xml namespaces are emitted on an ""as needed"" basis:");
-
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.OptimizedNamepsaces.Default.xml", CodeFormat.Xml);
 
 			doc.Add(@"But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at the root of the document, thereby reducing document footprint:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\OptimizedNamespaces.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.OptimizedNamepsaces.Optimized.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Auto-Formatting (Attributes)");
 			doc.Add("The default behavior for emitting data in an Xml document is to use elements, which can be a little chatty and verbose:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\OptimizedNamespaces.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.AutoFormatting.Default.xml", CodeFormat.Xml);
 
 			doc.Add("Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:");
-
-
-			doc.AddHeader("Parameterized Members and Content");
-			doc.Add("This happens to be a favorite of ours.  A huge limitation of the default serializer is that it only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call and enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:");
-			doc.Add("");
-
-			doc.AddHeader("Tuples");
-			doc.Add("A cool feature of ExtendedXmlSerializer is being able to serialize Tuples, much like what was enabled with the latest version of C#.  However, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:");
-			doc.Add("");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.AutoFormatting.Enabled.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Private Constructors");
-			doc.Add("Speaking of classic serializer limitations, XmlSerializer does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:");
-			doc.Add("");
+			doc.Add("One of the limitations of the classic XmlSerializer is that it does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:");
 
-			doc.AddHeader("Xaml-ness: Attached Properties");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\PrivateConstructors.cs", "Subject");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\PrivateConstructors.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.PrivateConstructors.xml", CodeFormat.Xml);
+
+			doc.AddHeader("Parameterized Members and Content");
+			doc.Add("Taking this concept bit further leads to a favorite feature of ours in ExtendedXmlSerlializer.  The classic serializer only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\ParameterizedContent.cs", "Subject");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\ParameterizedContent.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.ParameterizedContent.xml", CodeFormat.Xml);
+
+			doc.AddHeader("Tuples");
+			doc.Add("By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples.  Of course, serializable Tuples were introduced recently with the latest version of C#.  Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\Tuples.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.Tuples.xml", CodeFormat.Xml);
+
+			doc.AddHeader("Experimental Xaml-ness: Attached Properties");
 			doc.Add("We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding support for Attached Properties on objects in your serialized object graph.  But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it.  Check it out:");
 
-			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\AttachedProperties.cs", "Properties");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\AttachedProperties.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.AttachedProperties.xml", CodeFormat.Xml);
 
-			doc.AddHeader("Xaml-ness: Markup Extensions");
+			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
+			doc.Add(string.Empty);
+
+			doc.AddHeader("Experimental Xaml-ness: Markup Extensions");
 			doc.Add("Finally -- saving the best for last -- we have experimental support for one of Xaml's greatest features, Markup Extensions:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\MarkupExtensions.cs", "Extension");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\MarkupExtensions.cs", "Example");
 
 			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
+			doc.Add(string.Empty);
 
 			doc.AddHeader("History");
 			doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");

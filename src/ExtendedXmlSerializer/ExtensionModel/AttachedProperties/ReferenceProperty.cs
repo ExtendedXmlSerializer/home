@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	class ReferenceProperty<TType, TValue> : Property<TType, TValue> where TType : class where TValue : class
+	public class ReferenceProperty<TType, TValue> : Property<TType, TValue> where TType : class where TValue : class
 	{
 		public ReferenceProperty(Expression<Func<IProperty>> source) : this(source, _ => default(TValue)) {}
 
