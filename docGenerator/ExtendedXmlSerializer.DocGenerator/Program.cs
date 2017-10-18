@@ -31,7 +31,9 @@ namespace ExtendedXmlSerializer.DocGenerator
 				"Does not support serialization of class with circular reference or class with interface property.",
 				"There is no mechanism for reading the old version of XML.",
 				"Does not support properties that are defined with interface types.",
-				"Does not support read-only properties (like Xaml does).",
+				"Does not support read-only collection properties (like Xaml does).",
+				"Does not support parameterized constructors.",
+				"Does not support private constructors.",
 				"If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.",
 				"Does not support IoC");
 
@@ -138,6 +140,39 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\Converters.cs", "Converter");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.Converters.xml", CodeFormat.Xml);
 
+			doc.AddHeader("Optimized Namespaces");
+			doc.Add(@"By default Xml namespaces are emitted on an ""as needed"" basis:");
+
+
+			doc.Add(@"But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at the root of the document, thereby reducing document footprint:");
+
+			doc.AddHeader("Auto-Formatting (Attributes)");
+			doc.Add("The default behavior for emitting data in an Xml document is to use elements, which can be a little chatty and verbose:");
+
+			doc.Add("Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:");
+
+
+			doc.AddHeader("Parameterized Members and Content");
+			doc.Add("This happens to be a favorite of ours.  A huge limitation of the default serializer is that it only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call and enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:");
+			doc.Add("");
+
+			doc.AddHeader("Tuples");
+			doc.Add("A cool feature of ExtendedXmlSerializer is being able to serialize Tuples, much like what was enabled with the latest version of C#.  However, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:");
+			doc.Add("");
+
+			doc.AddHeader("Private Constructors");
+			doc.Add("Speaking of classic serializer limitations, XmlSerializer does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:");
+			doc.Add("");
+
+			doc.AddHeader("Xaml-ness: Attached Properties");
+			doc.Add("We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding support for Attached Properties on objects in your serialized object graph.  But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it.  Check it out:");
+
+			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
+
+			doc.AddHeader("Xaml-ness: Markup Extensions");
+			doc.Add("Finally -- saving the best for last -- we have experimental support for one of Xaml's greatest features, Markup Extensions:");
+
+			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
 
 			doc.AddHeader("History");
 			doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");
