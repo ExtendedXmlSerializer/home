@@ -185,12 +185,18 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add(string.Empty);
 
 			doc.AddHeader("Experimental Xaml-ness: Markup Extensions");
-			doc.Add("Finally -- saving the best for last -- we have experimental support for one of Xaml's greatest features, Markup Extensions:");
+			doc.Add("Saving the best feaure for last, we have experimental support for one of Xaml's greatest features, Markup Extensions:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\MarkupExtensions.cs", "Extension");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\MarkupExtensions.cs", "Example");
 
 			doc.Add("(Please note that this feature is experimental, but please try it out and let us know what you think!)");
 			doc.Add(string.Empty);
+
+			doc.AddHeader("How to Upgrade from v1.x to v2");
+			doc.Add("Finally, if you have documents from v1, you will need to upgrade them to v2 to work.  This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer.  We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Upgrade.Example.v1.xml", CodeFormat.Xml);
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Upgrade\Example.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Upgrade.Example.v2.xml", CodeFormat.Xml);
 
 			doc.AddHeader("History");
 			doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");

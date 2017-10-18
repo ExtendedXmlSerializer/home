@@ -29,6 +29,7 @@ using ExtendedXmlSerializer.Samples.MigrationMap;
 using ExtendedXmlSerializer.Samples.ObjectReference;
 using ExtendedXmlSerializer.Samples.Simple;
 using System;
+using ExtendedXmlSerializer.Samples.Upgrade;
 
 namespace ExtendedXmlSerializer.Samples
 {
@@ -52,6 +53,7 @@ namespace ExtendedXmlSerializer.Samples
 			Tuples.Default.Execute(null);
 			AttachedProperties.Default.Execute(null);
 			MarkupExtensions.Default.Execute(null);
+			Example.Default.Execute(null);
 
 			SimpleSamples.Run();
 			DictianarySamples.Run();

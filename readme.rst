@@ -554,7 +554,7 @@ But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                      .Create();
         var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
         var contents = serializer.Serialize(subject);
@@ -585,7 +585,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                      .Create();
         var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
         var contents = serializer.Serialize(subject);
@@ -599,7 +599,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2017-10-18T09:29:18.2025028-04:00</Time>
+      <Time>2017-10-18T09:54:15.3536943-04:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -607,7 +607,7 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-18T09:29:18.2025028-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-18T09:54:15.3536943-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Private Constructors
 ====================
@@ -616,7 +616,7 @@ One of the limitations of the classic XmlSerializer is that it does not support 
 
 .. sourcecode:: csharp
 
-        public sealed class SubjectByFactory
+    public sealed class SubjectByFactory
         {
             public static SubjectByFactory Create(string message) => new SubjectByFactory(message);
     
@@ -631,7 +631,7 @@ One of the limitations of the classic XmlSerializer is that it does not support 
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().EnableAllConstructors()
+    var serializer = new ConfigurationContainer().EnableAllConstructors()
                                                      .Create();
         var subject = SubjectByFactory.Create("Hello World!");
         var contents = serializer.Serialize(subject);
@@ -653,7 +653,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
 
 .. sourcecode:: csharp
 
-        public sealed class ParameterizedSubject
+    public sealed class ParameterizedSubject
         {
             public ParameterizedSubject(string message, int number, DateTime time)
             {
@@ -671,7 +671,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().EnableParameterizedContent()
+    var serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                      .Create();
         var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
         var contents = serializer.Serialize(subject);
@@ -685,7 +685,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2017-10-18T09:29:18.3335128-04:00</Time>
+      <Time>2017-10-18T09:54:15.4897079-04:00</Time>
     </ParameterizedSubject>
 
 Tuples
@@ -695,7 +695,7 @@ By enabling parameterized content, it opens up a lot of possibilities, like bein
 
 .. sourcecode:: csharp
 
-        var serializer = new ConfigurationContainer().EnableParameterizedContent()
+    var serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                      .Type<Tuple<string>>()
                                                      .Member(x => x.Item1)
                                                      .Name("Message")
@@ -720,7 +720,7 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 
 .. sourcecode:: csharp
 
-        sealed class NameProperty : ReferenceProperty<Subject, string>
+    sealed class NameProperty : ReferenceProperty<Subject, string>
         {
             public const string DefaultMessage = "The Name Has Not Been Set";
     
@@ -740,7 +740,7 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 
 .. sourcecode:: csharp
 
-                var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
+            var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
                                                                                        NumberProperty.Default)
                                                              .Create();
                 var subject = new Subject {Message = "Hello World!"};
@@ -766,11 +766,11 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 Experimental Xaml-ness: Markup Extensions
 =========================================
 
-Finally -- saving the best for last -- we have experimental support for one of Xaml's greatest features, Markup Extensions:
+Saving the best feaure for last, we have experimental support for one of Xaml's greatest features, Markup Extensions:
 
 .. sourcecode:: csharp
 
-        sealed class Extension : IMarkupExtension
+    sealed class Extension : IMarkupExtension
         {
             const string Message = "Hello World from Markup Extension! Your message is: ", None = "N/A";
     
@@ -790,7 +790,7 @@ Finally -- saving the best for last -- we have experimental support for one of X
 
 .. sourcecode:: csharp
 
-        var contents =
+    var contents =
             @"<?xml version=""1.0"" encoding=""utf-8""?>
               <Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples""
                 Message=""{Extension 'PRETTY COOL HUH!!!'}"" />";
@@ -801,6 +801,49 @@ Finally -- saving the best for last -- we have experimental support for one of X
     
 
 (Please note that this feature is experimental, but please try it out and let us know what you think!)
+
+How to Upgrade from v1.x to v2
+==============================
+
+Finally, if you have documents from v1, you will need to upgrade them to v2 to work.  This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer.  We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?><ArrayOfSubject><Subject type="ExtendedXmlSerializer.Samples.Introduction.Subject"><Message>First</Message><Count>0</Count></Subject><Subject type="ExtendedXmlSerializer.Samples.Introduction.Subject"><Message>Second</Message><Count>0</Count></Subject><Subject type="ExtendedXmlSerializer.Samples.Introduction.Subject"><Message>Third</Message><Count>0</Count></Subject></ArrayOfSubject>
+
+
+.. sourcecode:: csharp
+
+                var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+                var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
+                var subject = legacySerializer.Deserialize<List<Subject>>(content);
+    
+                // Upgrade
+                var serializer = new ConfigurationContainer().Create();
+                var contents = serializer.Serialize(new XmlWriterSettings{Indent = true}, subject);
+                File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
+                // ...
+            
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <List xmlns:ns1="clr-namespace:ExtendedXmlSerializer.Samples.Introduction;assembly=ExtendedXmlSerializer.Samples" xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:arguments="ns1:Subject" xmlns="https://extendedxmlserializer.github.io/system">
+      <Capacity>4</Capacity>
+      <ns1:Subject>
+        <Message>First</Message>
+        <Count>0</Count>
+      </ns1:Subject>
+      <ns1:Subject>
+        <Message>Second</Message>
+        <Count>0</Count>
+      </ns1:Subject>
+      <ns1:Subject>
+        <Message>Third</Message>
+        <Count>0</Count>
+      </ns1:Subject>
+    </List>
 
 History
 =======
