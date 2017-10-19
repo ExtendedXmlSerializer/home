@@ -9,15 +9,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public void Examples()
 		{
 			new ConfigurationContainer().EnableDeferredReferences()
-				.Type<IElement>(t => t.EnableReferences(p => p.Id))
-				.Type<Section>(t => t.EnableReferences(p => p.Id))
-				.Type<Building>().EnableReferences(p => p.Id)
-				                 .Create();
+			                            .Type<IElement>(t => t.EnableReferences(p => p.Id))
+			                            .Type<Section>(t => t.EnableReferences(p => p.Id))
+			                            .Type<Building>()
+			                            .EnableReferences(p => p.Id)
+			                            .Create();
 
 
 			new ConfigurationContainer()
 				.Type<Section>()
-				.Member(p=>p.IsSelected, x => x.Name("Selected"))
+				.Member(p => p.IsSelected, x => x.Name("Selected"))
 				.Member(p => p.IsEmpty, x => x.Name("Empty"))
 				.Create();
 
