@@ -1,5 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.References;
+
 // ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -20,6 +20,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Member(p => p.IsSelected, x => x.Name("Selected"))
 			                            .Member(p => p.IsEmpty, x => x.Name("Empty"))
 			                            .Create();
+
+			var config = new ConfigurationContainer();
+			config.EnableDeferredReferences();
+			config.Type<Section>().Member(p => p.Id).Name("Identity");
+			config.Type<Section>().EnableReferences(p => p.Id);
+			var exs = config.Create();
+
 		}
 
 		interface IElement

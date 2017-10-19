@@ -23,6 +23,8 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -126,6 +128,43 @@ namespace ExtendedXmlSerializer.Configuration
 			configure(@this.Member(member));
 			return @this;
 		}
+
+		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
+		{
+			@this.Root.Apply<ReferencesExtension>();
+			return @this;
+		}
+
+		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
+		{
+			@this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default);
+			return @this;
+		}
+
+		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
+		                                                                Expression<Func<T, TMember>> member)
+		{
+			@this.Member(member)
+			     .Identity();
+			return @this;
+		}
+
+		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
+		{
+			@this.Attribute()
+			     .Root
+			     .With<ReferencesExtension>()
+			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>().Get(), @this.Get());
+			return @this;
+		}
+
+		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationContainer @this)
+			=> @this.Root.With<DefaultReferencesExtension>()
+			        .Whitelist;
+
+		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
+			=> @this.Root.With<DefaultReferencesExtension>()
+			        .Blacklist;
 
 		/*public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this) =>
 			@this.Extend(SingletonActivationExtension.Default);*/
