@@ -475,7 +475,7 @@ Using the following:
 
 .. sourcecode:: csharp
 
-    ublic sealed class CustomStructConverter : IConverter<CustomStruct>
+    public sealed class CustomStructConverter : IConverter<CustomStruct>
     {
         public static CustomStructConverter Default { get; } = new CustomStructConverter();
         CustomStructConverter() {}
