@@ -22,21 +22,11 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using System;
-using System.Linq.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public static class Extensions
 	{
-		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
-		                                                      Expression<Func<T, TMember>> member,
-		                                                      Action<MemberConfiguration<T, TMember>> configure)
-		{
-			configure(@this.Member(member));
-			return @this;
-		}
-
 		public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this)
 			=> @this.Extend(SingletonActivationExtension.Default);
 

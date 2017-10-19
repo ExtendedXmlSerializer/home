@@ -93,6 +93,13 @@ namespace ExtendedXmlSerializer.Configuration
 		public static TypeConfiguration<T> Type<T>(this IConfigurationContainer @this) => @this.Type(Support<T>.Key)
 		                                                                              .AsValid<TypeConfiguration<T>>();
 
+		public static IConfigurationContainer Type<T>(this IConfigurationContainer @this, Action<TypeConfiguration<T>> configure)
+		{
+			var result = @this.Type<T>();
+			configure(result);
+			return @this;
+		}
+
 		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationContainer @this, Type type)
 			=> @this.GetTypeConfiguration(type.GetTypeInfo());
 
@@ -110,6 +117,14 @@ namespace ExtendedXmlSerializer.Configuration
 			                    .SingleOrDefault();
 			var result = metadata != null ? @this.Member(metadata) : null;
 			return result;
+		}
+
+		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
+		                                                      Expression<Func<T, TMember>> member,
+		                                                      Action<MemberConfiguration<T, TMember>> configure)
+		{
+			configure(@this.Member(member));
+			return @this;
 		}
 
 		/*public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this) =>
