@@ -16,6 +16,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
+
 var serializer = new ConfigurationContainer().UseAutoFormatting()
 											 .Create();
 var subject = new SubjectWithThreeProperties{ Message = "Hello World!", Number = 123, Time = DateTime.Now };

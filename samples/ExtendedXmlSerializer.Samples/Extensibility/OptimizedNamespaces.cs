@@ -16,6 +16,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Example
+
 var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
 											 .Create();
 var subject = new List<object>

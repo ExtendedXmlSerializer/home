@@ -546,7 +546,7 @@ But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
     var subject = new List<object>
                     {
@@ -602,7 +602,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
     var subject = new List<object>
                     {
@@ -827,15 +827,15 @@ Finally, if you have documents from v1, you will need to upgrade them to v2 to w
 
 .. sourcecode:: csharp
 
-            var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
-                var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
-                var subject = legacySerializer.Deserialize<List<Subject>>(content);
+    var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+    var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
+    var subject = legacySerializer.Deserialize<List<Subject>>(content);
     
-                // Upgrade:
-                var serializer = new ConfigurationContainer().Create();
-                var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
-                File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
-                // ...
+    // Upgrade:
+    var serializer = new ConfigurationContainer().Create();
+    var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+    File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
+    // ...
 
 
 .. sourcecode:: xml
