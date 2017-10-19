@@ -16,12 +16,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create();
 
 
-			new ConfigurationContainer()
-				.Type<Section>()
-				.Member(p => p.IsSelected, x => x.Name("Selected"))
-				.Member(p => p.IsEmpty, x => x.Name("Empty"))
-				.Create();
-
+			new ConfigurationContainer().Type<Section>()
+			                            .Member(p => p.IsSelected, x => x.Name("Selected"))
+			                            .Member(p => p.IsEmpty, x => x.Name("Empty"))
+			                            .Create();
 		}
 
 		interface IElement
