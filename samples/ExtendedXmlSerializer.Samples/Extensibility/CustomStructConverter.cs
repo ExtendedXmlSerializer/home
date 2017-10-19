@@ -3,8 +3,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
 {
-	// CustomConverter
-	public sealed class CustomStructConverter : IConverter<CustomStruct>
+// CustomConverter
+public sealed class CustomStructConverter : IConverter<CustomStruct>
 {
 	public static CustomStructConverter Default { get; } = new CustomStructConverter();
 	CustomStructConverter() {}

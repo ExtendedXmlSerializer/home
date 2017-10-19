@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		{
 // Example
 var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
-																		NumberProperty.Default)
+                                                                       NumberProperty.Default)
 											 .Create();
 var subject = new Subject {Message = "Hello World!"};
 subject.Set(NameProperty.Default, "Hello World from Attached Properties!");
