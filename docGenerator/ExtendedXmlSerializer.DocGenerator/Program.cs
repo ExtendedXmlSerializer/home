@@ -148,6 +148,12 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\OptimizedNamespaces.cs", "Example");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.OptimizedNamepsaces.Optimized.xml", CodeFormat.Xml);
 
+			doc.AddHeader("Implicit Namespaces/Typing");
+			doc.Add(@"If you don't like namespaces at all, you can register types so that they do not emit namespaces when they are rendered into a document:");
+
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\ImplicitTypes.cs", "Example");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.ImplicitTypes.xml", CodeFormat.Xml);
+
 			doc.AddHeader("Auto-Formatting (Attributes)");
 			doc.Add("The default behavior for emitting data in an Xml document is to use elements, which can be a little chatty and verbose:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\OptimizedNamespaces.cs", "Example");

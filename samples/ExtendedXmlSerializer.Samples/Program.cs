@@ -47,6 +47,7 @@ namespace ExtendedXmlSerializer.Samples
 			Introduction.Run.Default.Execute(null);
 			Converters.Default.Execute(null);
 			OptimizedNamespaces.Default.Execute(null);
+			ImplicitTypes.Default.Execute(null);
 			AutoFormatting.Default.Execute(null);
 			PrivateConstructors.Default.Execute(null);
 			ParameterizedContent.Default.Execute(null);

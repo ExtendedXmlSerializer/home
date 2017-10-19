@@ -578,6 +578,27 @@ But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at
       </ns1:Subject>
     </List>
 
+Implicit Namespaces/Typing
+==========================
+
+If you don't like namespaces at all, you can register types so that they do not emit namespaces when they are rendered into a document:
+
+.. sourcecode:: csharp
+
+    var serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+                                                 .Create();
+    var subject = new Subject{ Message = "Hello World!  No namespaces, yay!" };
+    var contents = serializer.Serialize(subject);
+    // ...
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Subject>
+      <Message>Hello World!  No namespaces, yay!</Message>
+    </Subject>
+
 Auto-Formatting (Attributes)
 ============================
 
@@ -599,7 +620,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2017-10-18T09:54:15.3536943-04:00</Time>
+      <Time>2017-10-19T03:06:31.5282123-04:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -607,7 +628,7 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-18T09:54:15.3536943-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-19T03:06:31.5282123-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Private Constructors
 ====================
@@ -671,12 +692,12 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
 
 .. sourcecode:: csharp
 
-    var serializer = new ConfigurationContainer().EnableParameterizedContent()
-                                                     .Create();
-        var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
-        var contents = serializer.Serialize(subject);
-        // ...
-    
+    ar serializer = new ConfigurationContainer().EnableParameterizedContent()
+                                                 .Create();
+    var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
+    var contents = serializer.Serialize(subject);
+                // ...
+            
 
 
 .. sourcecode:: xml
@@ -685,7 +706,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2017-10-18T09:54:15.4897079-04:00</Time>
+      <Time>2017-10-19T03:06:31.664737-04:00</Time>
     </ParameterizedSubject>
 
 Tuples
@@ -814,7 +835,7 @@ Finally, if you have documents from v1, you will need to upgrade them to v2 to w
 
 .. sourcecode:: csharp
 
-                var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+            var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
                 var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
                 var subject = legacySerializer.Deserialize<List<Subject>>(content);
     
