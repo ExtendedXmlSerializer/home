@@ -26,15 +26,15 @@ namespace ExtendedXmlSerializer.Samples.Upgrade
 			File.WriteAllText(@"bin\Upgrade.Example.v1.xml", new ExtendedXmlSerialization.ExtendedXmlSerializer().Serialize(legacy));
 
 // Example
-var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
-var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
-var subject = legacySerializer.Deserialize<List<Subject>>(content);
+			var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+			var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
+			var subject = legacySerializer.Deserialize<List<Subject>>(content);
 
-// Upgrade
-var serializer = new ConfigurationContainer().Create();
-var contents = serializer.Serialize(new XmlWriterSettings{Indent = true}, subject);
-File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
-// ...
+			// Upgrade:
+			var serializer = new ConfigurationContainer().Create();
+			var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+			File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
+			// ...
 // EndExample
 #pragma warning restore 618
 		}

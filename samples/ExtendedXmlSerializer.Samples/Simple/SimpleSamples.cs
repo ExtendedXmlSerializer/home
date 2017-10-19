@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System;
 
 namespace ExtendedXmlSerializer.Samples.Simple
 {
@@ -31,19 +31,21 @@ namespace ExtendedXmlSerializer.Samples.Simple
 	{
 		public static void Run()
 		{
-		    Program.PrintHeader("Serialization");
+			Program.PrintHeader("Serialization");
 // Serialization
-            var serializer = new ConfigurationContainer().Create();
-			var obj = new TestClass();
-			var xml = serializer.Serialize(obj);
+
+var serializer = new ConfigurationContainer().Create();
+var obj = new TestClass();
+var xml = serializer.Serialize(obj);
 // EndSerialization
 			Console.WriteLine(xml);
 
 			Program.PrintHeader("Deserialization");
 // Deserialization
-			var obj2 = serializer.Deserialize<TestClass>(xml);
+
+var obj2 = serializer.Deserialize<TestClass>(xml);
 // EndDeserialization
-            Console.WriteLine("Obiect id = " + obj2.Id);
+			Console.WriteLine("Obiect id = " + obj2.Id);
 		}
 	}
 }

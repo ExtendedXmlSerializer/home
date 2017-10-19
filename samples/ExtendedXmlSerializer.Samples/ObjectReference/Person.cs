@@ -26,17 +26,18 @@ using System.Collections.Generic;
 namespace ExtendedXmlSerializer.Samples.ObjectReference
 {
 // PersonClass
-	public class Person
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
 
-		public Person Boss { get; set; }
-	}
+public class Person
+{
+	public int Id { get; set; }
+	public string Name { get; set; }
 
-	public class Company
-	{
-		public List<Person> Employees { get; set; }
-	}
+	public Person Boss { get; set; }
+}
+
+public class Company
+{
+	public List<Person> Employees { get; set; }
+}
 // EndPersonClass
 }

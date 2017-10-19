@@ -21,36 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Globalization;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Samples.CustomSerializator
 {
 // TestClassSerializer
-    public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+
+public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+{
+    public TestClass Deserialize(XElement element)
     {
-        public TestClass Deserialize(XElement element)
+        var xElement = element.Member("String");
+        var xElement1 = element.Member("Int");
+        if (xElement != null && xElement1 != null)
         {
-            var xElement = element.Member("String");
-            var xElement1 = element.Member("Int");
-            if (xElement != null && xElement1 != null)
-            {
-                var strValue = xElement.Value;
+            var strValue = xElement.Value;
 
-                var intValue = Convert.ToInt32(xElement1.Value);
-                return new TestClass(strValue, intValue);
-            }
-            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+            var intValue = Convert.ToInt32(xElement1.Value);
+            return new TestClass(strValue, intValue);
         }
-
-        public void Serializer(XmlWriter writer, TestClass obj)
-        {
-            writer.WriteElementString("String", obj.PropStr);
-            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
-        }
+        throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
     }
+
+    public void Serializer(XmlWriter writer, TestClass obj)
+    {
+        writer.WriteElementString("String", obj.PropStr);
+        writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+    }
+}
 // EndTestClassSerializer
 }

@@ -38,11 +38,12 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 			Program.PrintHeader("Serialization reference object");
 
 // Configuration
-			var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
-			                                             .ConfigureType<Person>()
-			                                             .Member(p => p.Password)
-			                                             .Encrypt()
-			                                             .Create();
+
+var serializer = new ConfigurationContainer().UseEncryptionAlgorithm(new CustomEncryption())
+                                             .ConfigureType<Person>()
+                                             .Member(p => p.Password)
+                                             .Encrypt()
+                                             .Create();
 // EndConfiguration
 
 			Run(serializer);
@@ -81,13 +82,14 @@ namespace ExtendedXmlSerializer.Samples.Encrypt
 
 
 // CustomEncryption
-	public class CustomEncryption : IEncryption
-	{
-		public string Parse(string data)
-			=> Encoding.UTF8.GetString(Convert.FromBase64String(data));
 
-		public string Format(string instance)
-			=> Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
-	}
+public class CustomEncryption : IEncryption
+{
+	public string Parse(string data)
+		=> Encoding.UTF8.GetString(Convert.FromBase64String(data));
+
+	public string Format(string instance)
+		=> Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
+}
 // EndCustomEncryption
 }

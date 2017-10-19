@@ -57,12 +57,13 @@ namespace ExtendedXmlSerializer.Samples.MigrationMap
 // EndXmlSecondVersion
 */
 
-    // LastVersion
-    public class TestClass
-	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Value { get; set; }
-	}
+// LastVersion
+
+public class TestClass
+{
+	public int Id { get; set; }
+	public string Name { get; set; }
+	public string Value { get; set; }
+}
 // EndLastVersion
 }

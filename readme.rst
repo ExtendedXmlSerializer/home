@@ -42,7 +42,7 @@ Everything in ExtendedXmlSerializer begins with a configuration container, from 
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer()
+    var serializer = new ConfigurationContainer()
                                                 // Configure...
                                                 .Create();
 
@@ -50,7 +50,7 @@ Using this simple subject class:
 
 .. sourcecode:: csharp
 
-    ublic sealed class Subject
+    public sealed class Subject
     {
         public string Message { get; set; }
     
@@ -71,7 +71,7 @@ We can take this a step further by configuring the `Subject`'s Type and Member p
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().ConfigureType<Subject>()
+    var serializer = new ConfigurationContainer().ConfigureType<Subject>()
                                                  .Name("ModifiedSubject")
                                                  .Create();
 
@@ -88,7 +88,7 @@ Diving a bit further, we can also configure the type's member information.  For 
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().ConfigureType<Subject>()
+    var serializer = new ConfigurationContainer().ConfigureType<Subject>()
                                                  .Member(x => x.Message)
                                                  .Name("Text")
                                                  .Create();
@@ -109,7 +109,7 @@ In case you want to configure the XML write and read settings via `XmlWriterSett
 
 .. sourcecode:: csharp
 
-    ar subject = new Subject{ Count = 6776, Message = "Hello World!" };
+    var subject = new Subject{ Count = 6776, Message = "Hello World!" };
     var serializer = new ConfigurationContainer().Create();
     var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
     // ...
@@ -118,7 +118,7 @@ And for reading:
 
 .. sourcecode:: csharp
 
-    ar instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
+    var instance = serializer.Deserialize<Subject>(new XmlReaderSettings{IgnoreWhitespace = false}, contents);
     // ...
 
 Serialization
@@ -129,8 +129,8 @@ Now that your configuration container has been configured and your serializer ha
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().Create();
-     var obj = new TestClass();
-     var xml = serializer.Serialize(obj);
+    var obj = new TestClass();
+    var xml = serializer.Serialize(obj);
 
 Deserialization
 ===============
@@ -148,22 +148,22 @@ You can serialize generic dictionary, that can store any type.
 .. sourcecode:: csharp
 
     public class TestClass
-     {
-         public Dictionary<int, string> Dictionary { get; set; }
-     }
+    {
+        public Dictionary<int, string> Dictionary { get; set; }
+    }
 
 
 .. sourcecode:: csharp
 
     var obj = new TestClass
-     {
-         Dictionary = new Dictionary<int, string>
-         {
-             {1, "First"},
-             {2, "Second"},
-             {3, "Other"},
-         }
-     };
+    {
+        Dictionary = new Dictionary<int, string>
+        {
+            {1, "First"},
+            {2, "Second"},
+            {3, "Other"},
+        }
+    };
 
 Output XML will look like:
 
@@ -216,44 +216,44 @@ If your class has to be serialized in a non-standard way:
 
 .. sourcecode:: csharp
 
-       public class TestClass
+    public class TestClass
+    {
+        public TestClass(string paramStr, int paramInt)
         {
-            public TestClass(string paramStr, int paramInt)
-            {
-                PropStr = paramStr;
-                PropInt = paramInt;
-            }
-    
-            public string PropStr { get; private set; }
-            public int PropInt { get; private set; }
+            PropStr = paramStr;
+            PropInt = paramInt;
         }
+    
+        public string PropStr { get; private set; }
+        public int PropInt { get; private set; }
+    }
 
 You must create custom serializer:
 
 .. sourcecode:: csharp
 
-       public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+    public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+    {
+        public TestClass Deserialize(XElement element)
         {
-            public TestClass Deserialize(XElement element)
+            var xElement = element.Member("String");
+            var xElement1 = element.Member("Int");
+            if (xElement != null && xElement1 != null)
             {
-                var xElement = element.Member("String");
-                var xElement1 = element.Member("Int");
-                if (xElement != null && xElement1 != null)
-                {
-                    var strValue = xElement.Value;
+                var strValue = xElement.Value;
     
-                    var intValue = Convert.ToInt32(xElement1.Value);
-                    return new TestClass(strValue, intValue);
-                }
-                throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
+                var intValue = Convert.ToInt32(xElement1.Value);
+                return new TestClass(strValue, intValue);
             }
-    
-            public void Serializer(XmlWriter writer, TestClass obj)
-            {
-                writer.WriteElementString("String", obj.PropStr);
-                writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
-            }
+            throw new InvalidOperationException("Invalid xml for class TestClassWithSerializer");
         }
+    
+        public void Serializer(XmlWriter writer, TestClass obj)
+        {
+            writer.WriteElementString("String", obj.PropStr);
+            writer.WriteElementString("Int", obj.PropInt.ToString(CultureInfo.InvariantCulture));
+        }
+    }
 
 Then, you have to add custom serializer to configuration of TestClass:
 
@@ -333,31 +333,31 @@ You can migrate (read) old version of XML using migrations:
 
 .. sourcecode:: csharp
 
-       public class TestClassMigrations : IEnumerable<Action<XElement>>
+    public class TestClassMigrations : IEnumerable<Action<XElement>>
+    {
+        public static void MigrationV0(XElement node)
         {
-            public static void MigrationV0(XElement node)
-            {
-                var typeElement = node.Member("Type");
-                // Add new node
-                node.Add(new XElement("Name", typeElement.Value));
-                // Remove old node
-                typeElement.Remove();
-            }
-    
-            public static void MigrationV1(XElement node)
-            {
-                // Add new node
-                node.Add(new XElement("Value", "Calculated"));
-            }
-    
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
-            public IEnumerator<Action<XElement>> GetEnumerator()
-            {
-                yield return MigrationV0;
-                yield return MigrationV1;
-            }
+            var typeElement = node.Member("Type");
+            // Add new node
+            node.Add(new XElement("Name", typeElement.Value));
+            // Remove old node
+            typeElement.Remove();
         }
+    
+        public static void MigrationV1(XElement node)
+        {
+            // Add new node
+            node.Add(new XElement("Value", "Calculated"));
+        }
+    
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    
+        public IEnumerator<Action<XElement>> GetEnumerator()
+        {
+            yield return MigrationV0;
+            yield return MigrationV1;
+        }
+    }
 
 Then, you must register your TestClassMigrations class in configuration
 
@@ -380,17 +380,17 @@ If you have a class:
 .. sourcecode:: csharp
 
     public class Person
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     
-            public Person Boss { get; set; }
-        }
+        public Person Boss { get; set; }
+    }
     
-        public class Company
-        {
-            public List<Person> Employees { get; set; }
-        }
+    public class Company
+    {
+        public List<Person> Employees { get; set; }
+    }
 
 then you create object with circular reference, like this:
 
@@ -444,23 +444,23 @@ If you have a class with a property that needs to be encrypted:
 .. sourcecode:: csharp
 
     public class Person
-        {
-            public string Name { get; set; }
-            public string Password { get; set; }
-        }
+    {
+        public string Name { get; set; }
+        public string Password { get; set; }
+    }
 
 You must implement interface IEncryption. For example, it will show the Base64 encoding, but in the real world better to use something safer, eg. RSA.:
 
 .. sourcecode:: csharp
 
-        public class CustomEncryption : IEncryption
-        {
-            public string Parse(string data)
-                => Encoding.UTF8.GetString(Convert.FromBase64String(data));
+    public class CustomEncryption : IEncryption
+    {
+        public string Parse(string data)
+            => Encoding.UTF8.GetString(Convert.FromBase64String(data));
     
-            public string Format(string instance)
-                => Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
-        }
+        public string Format(string instance)
+            => Convert.ToBase64String(Encoding.UTF8.GetBytes(instance));
+    }
 
 Then, you have to specify which properties are to be encrypted and register your IEncryption implementation.
 
@@ -481,13 +481,13 @@ Using the following:
 
 .. sourcecode:: csharp
 
-    ublic sealed class CustomStructConverter : IConverter<CustomStruct>
+        public sealed class CustomStructConverter : IConverter<CustomStruct>
     {
         public static CustomStructConverter Default { get; } = new CustomStructConverter();
         CustomStructConverter() {}
     
         public bool IsSatisfiedBy(TypeInfo parameter) => typeof(CustomStruct).GetTypeInfo()
-                                                                                .IsAssignableFrom(parameter);
+                                                                             .IsAssignableFrom(parameter);
     
         public CustomStruct Parse(string data) =>
             int.TryParse(data, out var number) ? new CustomStruct(number) : CustomStruct.Default;
@@ -510,7 +510,7 @@ Register the converter:
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+    var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
     var subject = new CustomStruct(123);
     var contents = serializer.Serialize(subject);
     // ...
@@ -546,9 +546,14 @@ But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
-    var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
+    var subject = new List<object>
+                    {
+                        new Subject {Message = "First"},
+                        new Subject {Message = "Second"},
+                        new Subject {Message = "Third"}
+                    };
     var contents = serializer.Serialize(subject);
     // ...
 
@@ -576,7 +581,7 @@ If you don't like namespaces at all, you can register types so that they do not 
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
+    var serializer = new ConfigurationContainer().EnableImplicitTyping(typeof(Subject))
                                                  .Create();
     var subject = new Subject{ Message = "Hello World!  No namespaces, yay!" };
     var contents = serializer.Serialize(subject);
@@ -597,9 +602,14 @@ The default behavior for emitting data in an Xml document is to use elements, wh
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
-    var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
+    var subject = new List<object>
+                    {
+                        new Subject {Message = "First"},
+                        new Subject {Message = "Second"},
+                        new Subject {Message = "Third"}
+                    };
     var contents = serializer.Serialize(subject);
     // ...
 
@@ -627,7 +637,7 @@ One of the limitations of the classic XmlSerializer is that it does not support 
 
 .. sourcecode:: csharp
 
-    ublic sealed class SubjectByFactory
+    public sealed class SubjectByFactory
     {
         public static SubjectByFactory Create(string message) => new SubjectByFactory(message);
     
@@ -641,7 +651,7 @@ One of the limitations of the classic XmlSerializer is that it does not support 
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().EnableAllConstructors()
+    var serializer = new ConfigurationContainer().EnableAllConstructors()
                                                  .Create();
     var subject = SubjectByFactory.Create("Hello World!");
     var contents = serializer.Serialize(subject);
@@ -662,7 +672,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
 
 .. sourcecode:: csharp
 
-    ublic sealed class ParameterizedSubject
+    public sealed class ParameterizedSubject
     {
         public ParameterizedSubject(string message, int number, DateTime time)
         {
@@ -679,7 +689,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().EnableParameterizedContent()
+    var serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                  .Create();
     var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
     var contents = serializer.Serialize(subject);
@@ -702,7 +712,7 @@ By enabling parameterized content, it opens up a lot of possibilities, like bein
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().EnableParameterizedContent()
+    var serializer = new ConfigurationContainer().EnableParameterizedContent()
                                                  .Type<Tuple<string>>()
                                                  .Member(x => x.Item1)
                                                  .Name("Message")
@@ -726,7 +736,7 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 
 .. sourcecode:: csharp
 
-    sealed class NameProperty : ReferenceProperty<Subject, string>
+        sealed class NameProperty : ReferenceProperty<Subject, string>
         {
             public const string DefaultMessage = "The Name Has Not Been Set";
     
@@ -746,7 +756,7 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 
 .. sourcecode:: csharp
 
-    ar serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
+    var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
                                                                             NumberProperty.Default)
                                                  .Create();
     var subject = new Subject {Message = "Hello World!"};
@@ -775,7 +785,7 @@ Saving the best feaure for last, we have experimental support for one of Xaml's 
 
 .. sourcecode:: csharp
 
-    ealed class Extension : IMarkupExtension
+    sealed class Extension : IMarkupExtension
     {
         const string Message = "Hello World from Markup Extension! Your message is: ", None = "N/A";
     
@@ -794,7 +804,7 @@ Saving the best feaure for last, we have experimental support for one of Xaml's 
 
 .. sourcecode:: csharp
 
-    ar contents =
+    var contents =
         @"<?xml version=""1.0"" encoding=""utf-8""?>
             <Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples""
             Message=""{Extension 'PRETTY COOL HUH!!!'}"" />";
@@ -817,15 +827,15 @@ Finally, if you have documents from v1, you will need to upgrade them to v2 to w
 
 .. sourcecode:: csharp
 
-    ar legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
-    var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
-    var subject = legacySerializer.Deserialize<List<Subject>>(content);
+            var legacySerializer = new ExtendedXmlSerialization.ExtendedXmlSerializer();
+                var content = File.ReadAllText(@"bin\Upgrade.Example.v1.xml"); // Path to your legacy xml file.
+                var subject = legacySerializer.Deserialize<List<Subject>>(content);
     
-    // Upgrade
-    var serializer = new ConfigurationContainer().Create();
-    var contents = serializer.Serialize(new XmlWriterSettings{Indent = true}, subject);
-    File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
-    // ...
+                // Upgrade:
+                var serializer = new ConfigurationContainer().Create();
+                var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
+                File.WriteAllText(@"bin\Upgrade.Example.v2.xml", contents);
+                // ...
 
 
 .. sourcecode:: xml

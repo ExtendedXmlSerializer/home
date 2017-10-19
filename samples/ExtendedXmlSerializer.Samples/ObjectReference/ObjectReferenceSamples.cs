@@ -38,9 +38,10 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 			Program.PrintHeader("Serialization reference object");
 
 // Configure
-			var serializer = new ConfigurationContainer().ConfigureType<Person>()
-			                                             .EnableReferences(p => p.Id)
-			                                             .Create();
+
+var serializer = new ConfigurationContainer().ConfigureType<Person>()
+                                             .EnableReferences(p => p.Id)
+                                             .Create();
 // EndConfigure
             Run(serializer);
 		}
@@ -61,18 +62,19 @@ namespace ExtendedXmlSerializer.Samples.ObjectReference
 		static void Run(IExtendedXmlSerializer serializer)
 		{
 // CreateObject
-			var boss = new Person {Id = 1, Name = "John"};
-			boss.Boss = boss; //himself boss
-			var worker = new Person {Id = 2, Name = "Oliver"};
-			worker.Boss = boss;
-		    var obj = new Company
-		    {
-		        Employees = new List<Person>
-		        {
-		            worker,
-		            boss
-		        }
-		    };
+
+var boss = new Person {Id = 1, Name = "John"};
+boss.Boss = boss; //himself boss
+var worker = new Person {Id = 2, Name = "Oliver"};
+worker.Boss = boss;
+var obj = new Company
+{
+	Employees = new List<Person>
+	{
+		worker,
+		boss
+	}
+};
 // EndCreateObject
 		    var xml = serializer.Serialize(new XmlWriterSettings {Indent = true}, obj);
 

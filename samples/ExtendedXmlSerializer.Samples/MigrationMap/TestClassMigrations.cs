@@ -21,39 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Samples.MigrationMap
 {
 // TestClassMigrations
-    public class TestClassMigrations : IEnumerable<Action<XElement>>
+
+public class TestClassMigrations : IEnumerable<Action<XElement>>
+{
+	public static void MigrationV0(XElement node)
 	{
-		public static void MigrationV0(XElement node)
-		{
-			var typeElement = node.Member("Type");
-			// Add new node
-			node.Add(new XElement("Name", typeElement.Value));
-			// Remove old node
-			typeElement.Remove();
-		}
-
-		public static void MigrationV1(XElement node)
-		{
-			// Add new node
-			node.Add(new XElement("Value", "Calculated"));
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		public IEnumerator<Action<XElement>> GetEnumerator()
-		{
-			yield return MigrationV0;
-			yield return MigrationV1;
-		}
+		var typeElement = node.Member("Type");
+		// Add new node
+		node.Add(new XElement("Name", typeElement.Value));
+		// Remove old node
+		typeElement.Remove();
 	}
+
+	public static void MigrationV1(XElement node)
+	{
+		// Add new node
+		node.Add(new XElement("Value", "Calculated"));
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	public IEnumerator<Action<XElement>> GetEnumerator()
+	{
+		yield return MigrationV0;
+		yield return MigrationV1;
+	}
+}
 // EndTestClassMigrations
 }

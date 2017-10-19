@@ -3,14 +3,14 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
 {
-// CustomConverter
-public sealed class CustomStructConverter : IConverter<CustomStruct>
+	// CustomConverter
+	public sealed class CustomStructConverter : IConverter<CustomStruct>
 {
 	public static CustomStructConverter Default { get; } = new CustomStructConverter();
 	CustomStructConverter() {}
 
 	public bool IsSatisfiedBy(TypeInfo parameter) => typeof(CustomStruct).GetTypeInfo()
-		                                                                    .IsAssignableFrom(parameter);
+	                                                                     .IsAssignableFrom(parameter);
 
 	public CustomStruct Parse(string data) =>
 		int.TryParse(data, out var number) ? new CustomStruct(number) : CustomStruct.Default;

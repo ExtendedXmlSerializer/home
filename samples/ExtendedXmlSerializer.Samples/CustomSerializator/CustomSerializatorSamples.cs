@@ -34,9 +34,10 @@ namespace ExtendedXmlSerializer.Samples.CustomSerializator
 			Program.PrintHeader("Custom serialization");
 
 // AddCustomSerializerToConfiguration
-			var serializer = new ConfigurationContainer().Type<TestClass>()
-			                                             .CustomSerializer(new TestClassSerializer())
-			                                             .Create();
+
+var serializer = new ConfigurationContainer().Type<TestClass>()
+											 .CustomSerializer(new TestClassSerializer())
+											 .Create();
 // EndAddCustomSerializerToConfiguration
 
 			Run(serializer);
