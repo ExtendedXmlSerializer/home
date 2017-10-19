@@ -15,16 +15,16 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Example
-			var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
-			                                             .Create();
-			var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndExample
+// Example
+var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+											 .Create();
+var subject = new List<object>{ new Subject{ Message = "First" }, new Subject{ Message = "Second" }, new Subject{ Message = "Third" } };
+var contents = serializer.Serialize(subject);
+// ...
+// EndExample
 
 			var @default = new ConfigurationContainer().Create()
-			                                           .Serialize(new XmlWriterSettings {Indent = true}, subject);
+													   .Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.OptimizedNamepsaces.Default.xml", @default);
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);

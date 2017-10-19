@@ -13,11 +13,11 @@ namespace ExtendedXmlSerializer.Samples.Introduction
 
 		public void Execute(object parameter)
 		{
-			// Type
-			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
-			                                             .Name("ModifiedSubject")
-			                                             .Create();
-			// EndType
+// Type
+var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+											 .Name("ModifiedSubject")
+											 .Create();
+// EndType
 
 			var subject = new Subject{ Count = 6776, Message = "Hello World!" };
 			var contents = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);

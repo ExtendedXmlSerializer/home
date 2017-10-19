@@ -16,32 +16,32 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Example
-			var serializer = new ConfigurationContainer().EnableParameterizedContent()
-														 .Create();
-			var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndExample
+// Example
+var serializer = new ConfigurationContainer().EnableParameterizedContent()
+											 .Create();
+var subject = new ParameterizedSubject("Hello World!", 123, DateTime.Now);
+var contents = serializer.Serialize(subject);
+// ...
+// EndExample
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.ParameterizedContent.xml", data);
 		}
 	}
 
-	// Subject
-	public sealed class ParameterizedSubject
+// Subject
+public sealed class ParameterizedSubject
+{
+	public ParameterizedSubject(string message, int number, DateTime time)
 	{
-		public ParameterizedSubject(string message, int number, DateTime time)
-		{
-			Message = message;
-			Number = number;
-			Time = time;
-		}
-
-		public string Message { get; }
-		public int Number { get; }
-		public DateTime Time { get; }
+		Message = message;
+		Number = number;
+		Time = time;
 	}
-	// EndSubject
+
+	public string Message { get; }
+	public int Number { get; }
+	public DateTime Time { get; }
+}
+// EndSubject
 }

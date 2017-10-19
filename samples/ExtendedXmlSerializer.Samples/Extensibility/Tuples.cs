@@ -16,16 +16,16 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Example
-			var serializer = new ConfigurationContainer().EnableParameterizedContent()
-			                                             .Type<Tuple<string>>()
-			                                             .Member(x => x.Item1)
-			                                             .Name("Message")
-			                                             .Create();
-			var subject = Tuple.Create("Hello World!");
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndExample
+// Example
+var serializer = new ConfigurationContainer().EnableParameterizedContent()
+                                             .Type<Tuple<string>>()
+                                             .Member(x => x.Item1)
+                                             .Name("Message")
+                                             .Create();
+var subject = Tuple.Create("Hello World!");
+var contents = serializer.Serialize(subject);
+// ...
+// EndExample
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.Tuples.xml", data);

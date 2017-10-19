@@ -15,29 +15,29 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Example
-			var serializer = new ConfigurationContainer().EnableAllConstructors()
-														 .Create();
-			var subject = SubjectByFactory.Create("Hello World!");
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndExample
+// Example
+var serializer = new ConfigurationContainer().EnableAllConstructors()
+											 .Create();
+var subject = SubjectByFactory.Create("Hello World!");
+var contents = serializer.Serialize(subject);
+// ...
+// EndExample
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.PrivateConstructors.xml", data);
 		}
 	}
 
-	// Subject
-	public sealed class SubjectByFactory
-	{
-		public static SubjectByFactory Create(string message) => new SubjectByFactory(message);
+// Subject
+public sealed class SubjectByFactory
+{
+	public static SubjectByFactory Create(string message) => new SubjectByFactory(message);
 
-		SubjectByFactory() : this(null) {} // Used by serializer.
+	SubjectByFactory() : this(null) {} // Used by serializer.
 
-		SubjectByFactory(string message) => Message = message;
+	SubjectByFactory(string message) => Message = message;
 
-		public string Message { get; set; }
-	}
-	// EndSubject
+	public string Message { get; set; }
+}
+// EndSubject
 }

@@ -15,12 +15,12 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Converter
-			var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
-			var subject = new CustomStruct(123);
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndConverter
+// Converter
+var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+var subject = new CustomStruct(123);
+var contents = serializer.Serialize(subject);
+// ...
+// EndConverter
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.Converters.xml", data);

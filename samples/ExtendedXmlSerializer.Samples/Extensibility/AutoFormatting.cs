@@ -15,16 +15,16 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 		public void Execute(object parameter)
 		{
-			// Example
-			var serializer = new ConfigurationContainer().UseAutoFormatting()
-														 .Create();
-			var subject = new SubjectWithThreeProperties{ Message = "Hello World!", Number = 123, Time = DateTime.Now };
-			var contents = serializer.Serialize(subject);
-			// ...
-			// EndExample
+// Example
+var serializer = new ConfigurationContainer().UseAutoFormatting()
+											 .Create();
+var subject = new SubjectWithThreeProperties{ Message = "Hello World!", Number = 123, Time = DateTime.Now };
+var contents = serializer.Serialize(subject);
+// ...
+// EndExample
 
 			var @default = new ConfigurationContainer().Create()
-			                                           .Serialize(new XmlWriterSettings {Indent = true}, subject);
+													   .Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.AutoFormatting.Default.xml", @default);
 
 			var data = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
