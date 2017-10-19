@@ -266,16 +266,16 @@ If you had a class:
 .. sourcecode:: csharp
 
     public class TestClass
-    {
-        public int Id { get; set; }
-        public string Type { get; set; }
-    }
+     {
+         public int Id { get; set; }
+         public string Type { get; set; }
+     }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    <? xml version="1.0" encoding="utf-8"?>
+    ? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Type>Type</Type>
@@ -286,16 +286,16 @@ Then you renamed property:
 .. sourcecode:: csharp
 
     public class TestClass
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+     {
+         public int Id { get; set; }
+         public string Name { get; set; }
+     }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    <? xml version="1.0" encoding="utf-8"?>
+    ? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="1" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Name>Type</Name>
@@ -475,7 +475,7 @@ Using the following:
 
 .. sourcecode:: csharp
 
-        public sealed class CustomStructConverter : IConverter<CustomStruct>
+    ublic sealed class CustomStructConverter : IConverter<CustomStruct>
     {
         public static CustomStructConverter Default { get; } = new CustomStructConverter();
         CustomStructConverter() {}
@@ -540,7 +540,7 @@ But with one call to the `UseOptimizedNamespaces` call, namespaces get placed at
 
 .. sourcecode:: csharp
 
-    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
     var subject = new List<object>
                     {
@@ -596,7 +596,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
 
 .. sourcecode:: csharp
 
-    var serializer = new ConfigurationContainer().UseOptimizedNamespaces()
+    ar serializer = new ConfigurationContainer().UseOptimizedNamespaces()
                                                  .Create();
     var subject = new List<object>
                     {
@@ -751,7 +751,7 @@ We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding sup
 .. sourcecode:: csharp
 
     var serializer = new ConfigurationContainer().EnableAttachedProperties(NameProperty.Default,
-                                                                            NumberProperty.Default)
+                                                                           NumberProperty.Default)
                                                  .Create();
     var subject = new Subject {Message = "Hello World!"};
     subject.Set(NameProperty.Default, "Hello World from Attached Properties!");
