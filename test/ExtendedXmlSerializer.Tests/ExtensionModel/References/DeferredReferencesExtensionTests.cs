@@ -33,8 +33,6 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 {
 	public class DeferredReferencesExtensionTests
 	{
-		SerializationSupport support;
-
 		[Fact]
 		public void ComplexListConfigUseFluentApi()
 		{
@@ -43,9 +41,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 				.Type<TestClassReference>()
 				.EnableReferences(x => x.Id);
 
-			support = new SerializationSupport(container);
-
-			this.DoTest();
+			DoTest(new SerializationSupport(container));
 		}
 
 		[Fact]
@@ -55,12 +51,10 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			container.Type<TestClassReference>()
 			         .EnableReferences(x => x.Id);
 			container.EnableDeferredReferences();
-			support = new SerializationSupport(container);
-
-			this.DoTest();
+			DoTest(new SerializationSupport(container));
 		}
 
-		void DoTest()
+		void DoTest(SerializationSupport support)
 		{
 			var instance = new TestClassReferenceWithList { Parent = new TestClassReference { Id = 1 } };
 			var other = new TestClassReference { Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent };
@@ -77,7 +71,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 					               instance.Parent
 				               };
 
-			var actual = this.support.Assert(
+			var actual = support.Assert(
 				instance,
 				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Capacity>4</Capacity><TestClassReference Id=""3""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference Id=""4""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></TestClassReference><TestClassReference Id=""2""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""1"" /></All></TestClassReferenceWithList>");
 			Assert.NotNull(actual.Parent);

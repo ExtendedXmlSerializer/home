@@ -21,24 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core
 {
-	class Bracket<T> : Items<T> where T : class
+	sealed class TypedSortOrder : StructureCache<TypeInfo, int>, ITypedSortOrder
 	{
-		readonly static TypeComparer<T> Typed = TypeComparer<T>.Default;
-		readonly static IComparer<T> Comparer = new TypedSortComparer<T>(new TypedSortOrder());
-
-		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish) : this(start, body, finish, Comparer) {}
-
-		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish, IComparer<T> comparer)
-			: base(
-			       start.Concat(body.Except(start.Union(finish, Typed), Typed)
-			                        .OrderBy(x => x, comparer))
-			            .Concat(finish)
-			            .ToImmutableArray()) {}
+		public TypedSortOrder() : base(info => 1) {}
 	}
 }

@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using System;
+using System.Linq;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -52,7 +53,8 @@ namespace ExtendedXmlSerializer.Configuration
 			var services = result.RegisterInstance(parameter)
 			                     .RegisterInstance<IServiceProvider>(new Provider(result.GetService));
 
-			var extensions = parameter.Fixed();
+			var extensions = parameter.OrderBy(x => x, SortComparer<ISerializerExtension>.Default)
+			                          .Fixed();
 			extensions.Alter(services);
 
 			foreach (var extension in extensions)
