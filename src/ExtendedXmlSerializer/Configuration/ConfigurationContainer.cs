@@ -32,7 +32,6 @@ namespace ExtendedXmlSerializer.Configuration
 	public sealed class ConfigurationContainer : ContextBase, IConfigurationContainer
 	{
 		readonly IRootContext _context;
-		readonly ITypeConfigurations _types;
 
 		public ConfigurationContainer() : this(DefaultExtensions.Default.ToArray()) {}
 
@@ -40,19 +39,15 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public ConfigurationContainer(IExtensionCollection extensions) : this(new RootContext(extensions)) {}
 
-		public ConfigurationContainer(IRootContext context) : this(context, new TypeConfigurations(context)) {}
-
-		public ConfigurationContainer(IRootContext context, ITypeConfigurations types) : base(context, context)
+		public ConfigurationContainer(IRootContext context) : base(context)
 		{
 			_context = context;
-			_types = types;
 		}
-
-		public ITypeConfiguration Type(TypeInfo type) => _types.Get(type);
 
 		public IConfigurationContainer Extend(ISerializerExtension extension)
 		{
 			var existing = _context.SingleOrDefault(extension.GetType()
+			                                                 .GetTypeInfo()
 			                                                 .IsInstanceOfType);
 			if (existing != null)
 			{
@@ -62,7 +57,7 @@ namespace ExtendedXmlSerializer.Configuration
 			return this;
 		}
 
-		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _context.Types.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using System.Reflection;
-
-// ReSharper disable UnusedTypeParameter
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration : IContext, ISource<MemberInfo>
+	sealed class RootContextExtension : ISerializerExtension
 	{
-		IMemberConfiguration Name(string name);
+		public RootContextExtension(IRootContext root) => Root = root;
 
-		IMemberConfiguration Order(int order);
+		public IRootContext Root { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) => parameter;
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

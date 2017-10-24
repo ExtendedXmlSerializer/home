@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,17 +33,18 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class TypeConfigurations : CacheBase<TypeInfo, ITypeConfiguration>, ITypeConfigurations
 	{
-		readonly IRootContext _context;
+		readonly IExtensionCollection _extensions;
 		readonly IDictionary<TypeInfo, string> _names;
 		readonly ConcurrentDictionary<TypeInfo, ITypeConfiguration> _store;
 
-		public TypeConfigurations(IRootContext context)
-			: this(context, context.Find<TypeNamesExtension>()
-			                       .Names, new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
+		public TypeConfigurations(IExtensionCollection extensions)
+			: this(extensions, extensions.Find<TypeNamesExtension>()
+			                             .Names, new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
 
-		public TypeConfigurations(IRootContext context, IDictionary<TypeInfo, string> names, ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(store)
+		public TypeConfigurations(IExtensionCollection extensions, IDictionary<TypeInfo, string> names,
+		                          ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(store)
 		{
-			_context = context;
+			_extensions = extensions;
 			_names = names;
 			_store = store;
 		}
@@ -51,9 +52,11 @@ namespace ExtendedXmlSerializer.Configuration
 		protected override ITypeConfiguration Create(TypeInfo parameter)
 		{
 			var property = new TypeProperty<string>(_names, parameter);
+			var root = _extensions.Find<RootContextExtension>()
+			                      .Root;
 			var result = Source.Default
 			                   .Get(parameter)
-			                   .Invoke(_context, property);
+			                   .Invoke(root, property);
 			return result;
 		}
 
