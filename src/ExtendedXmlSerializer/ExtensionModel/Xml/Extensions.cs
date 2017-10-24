@@ -38,6 +38,8 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
+	using System.Reflection;
+
 	public static class Extensions
 	{
 		public static XElement Member(this XElement @this, string name)
@@ -53,38 +55,38 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static IMemberConfiguration Attribute(this IMemberConfiguration @this)
 		{
-			@this.Root.With<MemberFormatExtension>().Registered.Add(@this.Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Content(this IMemberConfiguration @this)
 		{
-			@this.Root.With<MemberFormatExtension>().Registered.Remove(@this.Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Remove(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
 		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
-		                                                       Action<System.Xml.XmlWriter, T> serializer,
-		                                                       Func<XElement, T> deserialize)
+															   Action<System.Xml.XmlWriter, T> serializer,
+															   Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
 		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
-		                                                       IExtendedXmlCustomSerializer<T> serializer)
+															   IExtendedXmlCustomSerializer<T> serializer)
 		{
 			@this.Root.With<CustomXmlExtension>().Assign(@this.Get(), new Adapter<T>(serializer));
 			return @this;
 		}
 
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
-		                                                   ICommand<XElement> migration)
+														   ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
-		                                                   Action<XElement> migration)
+														   Action<XElement> migration)
 			=> @this.AddMigration(migration.Yield());
 
 		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
-		                                                   IEnumerable<Action<XElement>> migrations)
+														   IEnumerable<Action<XElement>> migrations)
 		{
 			@this.Root.With<MigrationsExtension>().Add(@this.Get(), migrations.Fixed());
 			return @this;
@@ -124,18 +126,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> Serialize(@this, XmlWriterFactory.Default, stream.Self, instance);
 
 		public static string Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, Stream stream,
-		                               object instance)
+									   object instance)
 			=> Serialize(@this, new XmlWriterFactory(settings), stream.Self, instance);
 
 		static string Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, Func<Stream> stream,
-		                        object instance)
+								object instance)
 			=> new InstanceFormatter(@this, factory, stream).Get(instance);
 
 		public static void Serialize(this IExtendedXmlSerializer @this, TextWriter writer, object instance)
 			=> Serialize(@this, XmlWriterFactory.Default, writer, instance);
 
 		public static void Serialize(this IExtendedXmlSerializer @this, XmlWriterSettings settings, TextWriter writer,
-		                             object instance)
+									 object instance)
 			=> Serialize(@this, new XmlWriterFactory(settings), writer, instance);
 
 		static void Serialize(this IExtendedXmlSerializer @this, IXmlWriterFactory factory, TextWriter writer, object instance)

@@ -28,20 +28,34 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class TypeConfiguration<T> : ContextBase, ITypeConfiguration
+	public class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IMemberConfigurations _members;
 
 		public TypeConfiguration(IRootContext root, IProperty<string> name)
-			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
+			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) { }
 
 		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
-			: base(context, context)
+			: base(context)
 		{
 			_name = name;
 			_members = members;
 		}
+		public TypeConfiguration(ITypeConfigurationContext context, IProperty<string> name, IMemberConfigurations members)
+			: base(context)
+		{
+			_name = name;
+			_members = members;
+		}
+
+		public TypeConfiguration(ITypeConfigurationContext parent, IProperty<string> name)
+			: this(parent, name, new MemberConfigurations<T>(new TypeConfigurationContext(parent.Root, Support<T>.Key))) 
+		{
+			
+		}
+
+		
 
 		public ITypeConfiguration Name(string name)
 		{

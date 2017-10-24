@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class MemberConfiguration<T, TMember> : ContextBase, IMemberConfiguration
+	public sealed class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IProperty<int> _order;
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Configuration
 			                          member) {}
 
 		public MemberConfiguration(ITypeConfigurationContext parent, IProperty<string> name, IProperty<int> order,
-		                           MemberInfo member) : base(parent)
+		                           MemberInfo member) : base(parent, name)
 		{
 			_name = name;
 			_order = order;

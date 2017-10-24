@@ -35,6 +35,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	using ExtendedXmlSerializer.Core.Sources;
+
 	public static class Extensions
 	{
 		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
@@ -110,7 +112,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                 Expression<Func<T, TMember>> member) =>
 			@this.Member(member.GetMemberInfo())
-			     .AsValid<MemberConfiguration<T, TMember>>();
+				 .AsValid<MemberConfiguration<T, TMember>>();
 
 		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 		{
@@ -154,7 +156,7 @@ namespace ExtendedXmlSerializer.Configuration
 			@this.Attribute()
 			     .Root
 			     .With<ReferencesExtension>()
-			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>().Get(), @this.Get());
+				.Assign(@this.Parent.AsValid<ITypeConfigurationContext>().Get(), ((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 

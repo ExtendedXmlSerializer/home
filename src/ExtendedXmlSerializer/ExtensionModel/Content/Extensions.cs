@@ -32,6 +32,9 @@ using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
+	using System.Collections.Generic;
+	using System.Reflection;
+
 	public static class Extensions
 	{
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
@@ -55,14 +58,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(@this.Get());
+			     .Blacklist.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(@this.Get());
+			     .Whitelist.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
@@ -77,7 +80,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static ITypeConfiguration OnlyConfiguredProperties(this ITypeConfiguration @this)
 		{
-			foreach (var member in @this)
+			foreach (var member in (IEnumerable<IMemberConfiguration>)@this)
 			{
 				member.Include();
 			}

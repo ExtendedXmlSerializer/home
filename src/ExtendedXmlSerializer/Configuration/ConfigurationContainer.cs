@@ -29,7 +29,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class ConfigurationContainer : ContextBase, IConfigurationContainer
+	public class ConfigurationContainer : ContextBase, IConfigurationContainer
 	{
 		readonly IRootContext _context;
 		readonly ITypeConfigurations _types;
@@ -41,10 +41,16 @@ namespace ExtendedXmlSerializer.Configuration
 		public ConfigurationContainer(IExtensionCollection extensions) : this(new RootContext(extensions)) {}
 
 		public ConfigurationContainer(IRootContext context) : this(context, new TypeConfigurations(context)) {}
+		public ConfigurationContainer(ITypeConfigurationContext parent) : this(parent, new TypeConfigurations(parent.Root)) {}
 
 		public ConfigurationContainer(IRootContext context, ITypeConfigurations types) : base(context, context)
 		{
 			_context = context;
+			_types = types;
+		}
+		public ConfigurationContainer(ITypeConfigurationContext parent, ITypeConfigurations types) : base(parent)
+		{
+			_context = parent.Root;
 			_types = types;
 		}
 

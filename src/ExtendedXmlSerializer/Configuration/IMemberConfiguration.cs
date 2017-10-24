@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration : IContext, ISource<MemberInfo>
+	public interface IMemberConfiguration : ITypeConfiguration, ISource<MemberInfo>
 	{
 		IMemberConfiguration Name(string name);
 

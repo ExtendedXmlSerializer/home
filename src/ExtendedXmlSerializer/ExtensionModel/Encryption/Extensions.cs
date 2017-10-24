@@ -27,11 +27,13 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
+	using System.Reflection;
+
 	public static class Extensions
 	{
 		public static IMemberConfiguration Encrypt(this IMemberConfiguration @this)
 		{
-			@this.Root.With<EncryptionExtension>().Registered.Add(@this.Get());
+			@this.Root.With<EncryptionExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
