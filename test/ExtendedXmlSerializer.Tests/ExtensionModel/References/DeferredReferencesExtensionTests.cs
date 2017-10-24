@@ -33,6 +33,21 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 {
 	public class DeferredReferencesExtensionTests
 	{
+		SerializationSupport support;
+
+		[Fact]
+		public void ComplexListConfigUseFluentApi()
+		{
+			var container = new ConfigurationContainer();
+			container.EnableDeferredReferences()
+				.Type<TestClassReference>()
+				.EnableReferences(x => x.Id);
+
+			support = new SerializationSupport(container);
+
+			this.DoTest();
+		}
+
 		[Fact]
 		public void ComplexList()
 		{
@@ -40,22 +55,34 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 			container.Type<TestClassReference>()
 			         .EnableReferences(x => x.Id);
 			container.EnableDeferredReferences();
-			var support = new SerializationSupport(container);
+			support = new SerializationSupport(container);
 
-			var instance = new TestClassReferenceWithList {Parent = new TestClassReference {Id = 1}};
-			var other = new TestClassReference {Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent};
+			this.DoTest();
+		}
+
+		void DoTest()
+		{
+			var instance = new TestClassReferenceWithList { Parent = new TestClassReference { Id = 1 } };
+			var other = new TestClassReference { Id = 2, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent };
 			instance.All = new List<IReference>
-			               {
-				               new TestClassReference {Id = 3, ObjectA = instance.Parent, ReferenceToObjectA = instance.Parent},
-				               new TestClassReference {Id = 4, ObjectA = other, ReferenceToObjectA = other},
-				               other,
-				               instance.Parent
-			               };
+				               {
+					               new TestClassReference
+						               {
+							               Id = 3,
+							               ObjectA = instance.Parent,
+							               ReferenceToObjectA = instance.Parent
+						               },
+					               new TestClassReference { Id = 4, ObjectA = other, ReferenceToObjectA = other },
+					               other,
+					               instance.Parent
+				               };
 
-			var actual = support.Assert(instance,
-										@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Capacity>4</Capacity><TestClassReference Id=""3""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference Id=""4""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></TestClassReference><TestClassReference Id=""2""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""1"" /></All></TestClassReferenceWithList>");
+			var actual = this.support.Assert(
+				instance,
+				@"<?xml version=""1.0"" encoding=""utf-8""?><TestClassReferenceWithList xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Parent xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" Id=""1"" /><All><Capacity>4</Capacity><TestClassReference Id=""3""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference Id=""4""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""2"" /></TestClassReference><TestClassReference Id=""2""><ObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /><ReferenceToObjectA xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""TestClassReference"" exs:entity=""1"" /></TestClassReference><TestClassReference xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:entity=""1"" /></All></TestClassReferenceWithList>");
 			Assert.NotNull(actual.Parent);
-			var list = actual.All.Cast<TestClassReference>().ToList();
+			var list = actual.All.Cast<TestClassReference>()
+				.ToList();
 			Assert.Same(actual.Parent, list[0].ObjectA);
 			Assert.Same(actual.Parent, list[0].ReferenceToObjectA);
 			Assert.Same(list[1].ObjectA, list[1].ReferenceToObjectA);
