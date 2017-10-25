@@ -25,7 +25,16 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	public interface ITypeConfiguration<T> : ITypeConfiguration
+	{
+	}
+
 	public interface ITypeConfiguration : IConfigurationContainer, ITypeConfigurationContext, IMemberConfigurations
+	{
+		
+	}
+
+	interface IInternalTypeConfiguration
 	{
 		ITypeConfiguration Name(string name);
 

@@ -46,26 +46,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
-		public static MemberConfiguration<T, TMember> EmitWhen<T, TMember>(this MemberConfiguration<T, TMember> @this,
+		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                Func<TMember, bool> specification)
 		{
 			@this.Root.Find<AllowedMemberValuesExtension>()
-			     .Specifications[@this.Get()] =
+			     .Specifications[((ISource<MemberInfo>)@this).Get()] =
 				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).Adapt());
 			return @this;
 		}
 
-		public static IMemberConfiguration Ignore(this IMemberConfiguration @this)
+		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
 			     .Blacklist.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
-		public static IMemberConfiguration Include(this IMemberConfiguration @this)
+		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
 			     .Whitelist.Add(((ISource<MemberInfo>)@this).Get());
+			return @this;
+		}
+
+		internal static IMemberConfiguration Include(this IMemberConfiguration @this)
+		{
+			@this.Root.With<AllowedMembersExtension>()
+				.Whitelist.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
@@ -78,7 +85,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static ITypeConfiguration OnlyConfiguredProperties(this ITypeConfiguration @this)
+		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 		{
 			foreach (var member in (IEnumerable<IMemberConfiguration>)@this)
 			{

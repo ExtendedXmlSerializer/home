@@ -28,10 +28,28 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration
+	{
+		
+	}
+
 	public interface IMemberConfiguration : ITypeConfiguration, ISource<MemberInfo>
+	{
+	
+	}
+
+	interface IInternalMemberConfiguration
 	{
 		IMemberConfiguration Name(string name);
 
 		IMemberConfiguration Order(int order);
+	}
+
+	static class MemberConfigurationExtensions
+	{
+		public static IInternalMemberConfiguration AsInternal(this IMemberConfiguration @this)
+		{
+			return (IInternalMemberConfiguration)@this;
+		}
 	}
 }

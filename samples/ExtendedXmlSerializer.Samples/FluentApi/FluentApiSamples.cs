@@ -18,18 +18,22 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 	    {
 		    Program.PrintHeader("Serialization reference object");
 
-		    // Configuration
+//		     Configuration
 
-//		    var serializer = new ConfigurationContainer()
-//				.UseEncryptionAlgorithm(new CustomEncryption())
-//			    .Type<Person>()
-//					.Member(p => p.Password).Name("Pwd")
-//			    .Type<Person>()
+		    var serializer = new ConfigurationContainer()
+				.UseEncryptionAlgorithm(new CustomEncryption())
+			    .Type<Person>()
+					.Member(p => p.Password).Name("P").Encrypt()
+					.Member(p => p.Name).Name("T")
+				.Type<CustomSerializator.TestClass>()
+					.CustomSerializer(new TestClassSerializer())
 
-//				.Create();
-		    // EndConfiguration
 
-//		    Run(serializer);
+
+				.Create();
+//		     EndConfiguration
+
+		    Run(serializer);
 	    }
 
 	    //        public static void RunAutofacConfig()

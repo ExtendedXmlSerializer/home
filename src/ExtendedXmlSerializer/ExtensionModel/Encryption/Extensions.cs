@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 
 	public static class Extensions
 	{
-		public static IMemberConfiguration Encrypt(this IMemberConfiguration @this)
+		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<EncryptionExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
 			return @this;

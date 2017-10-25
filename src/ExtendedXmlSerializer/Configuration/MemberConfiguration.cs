@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration
+	public sealed class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration<T, TMember>, IInternalMemberConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IProperty<int> _order;
@@ -53,13 +53,13 @@ namespace ExtendedXmlSerializer.Configuration
 			_member = member;
 		}
 
-		public IMemberConfiguration Name(string name)
+		IMemberConfiguration IInternalMemberConfiguration.Name(string name)
 		{
 			_name.Assign(name);
 			return this;
 		}
 
-		public IMemberConfiguration Order(int order)
+		IMemberConfiguration IInternalMemberConfiguration.Order(int order)
 		{
 			_order.Assign(order);
 			return this;

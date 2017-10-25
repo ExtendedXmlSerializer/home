@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration
+	public class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration<T>, IInternalTypeConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IMemberConfigurations _members;
@@ -57,13 +57,13 @@ namespace ExtendedXmlSerializer.Configuration
 
 		
 
-		public ITypeConfiguration Name(string name)
+		ITypeConfiguration IInternalTypeConfiguration.Name(string name)
 		{
 			_name.Assign(name);
 			return this;
 		}
 
-		public IMemberConfiguration Member(MemberInfo member) => _members.Get(member);
+		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
 
 		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
 

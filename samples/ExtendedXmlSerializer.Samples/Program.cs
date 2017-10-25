@@ -38,6 +38,7 @@ namespace ExtendedXmlSerializer.Samples
 	using ExtendedXmlSerializer.Configuration;
 	using ExtendedXmlSerializer.ExtensionModel.Encryption;
 	using ExtendedXmlSerializer.ExtensionModel.Xml;
+	using ExtendedXmlSerializer.Samples.FluentApi;
 
 	using Person = ExtendedXmlSerializer.Samples.Encrypt.Person;
 
@@ -52,26 +53,7 @@ namespace ExtendedXmlSerializer.Samples
 
 		public static void Main(string[] args)
 		{
-			var serializer = new ConfigurationContainer()
-				.UseEncryptionAlgorithm(new CustomEncryption())
-				.ConfigureType<Person>()
-				.Member(p => p.Password)
-				.Encrypt().Type<CustomSerializator.TestClass>()
-				.CustomSerializer(new TestClassSerializer())
-				.Create();
-
-			var list = new List<Person>
-				           {
-					           new Person {Name = "John", Password = "Ab238ds2"},
-					           new Person {Name = "Oliver", Password = "df89nmXhdf"}
-				           };
-
-			var xml = serializer.Serialize(list);
-			Console.WriteLine(xml);
-
-			var obj = new CustomSerializator.TestClass("Value", 1);
-			xml = serializer.Serialize(obj);
-			Console.WriteLine(xml);
+			FluentApiSamples.RunSimpleConfig();
 
 			Introduction.Run.Default.Execute(null);
 			Converters.Default.Execute(null);
