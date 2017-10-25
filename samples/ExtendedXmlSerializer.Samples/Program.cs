@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.Samples
 
 		public static void Main(string[] args)
 		{
-			FluentApiSamples.RunSimpleConfig();
+			FluentApiSamples.Run();
 
 			Introduction.Run.Default.Execute(null);
 			Converters.Default.Execute(null);
@@ -69,6 +69,7 @@ namespace ExtendedXmlSerializer.Samples
 
 			SimpleSamples.Run();
 			DictianarySamples.Run();
+			FluentApiSamples.Run();
 
 			CustomSerializatorSamples.RunSimpleConfig();
 			// CustomSerializatorSamples.RunAutofacConfig();

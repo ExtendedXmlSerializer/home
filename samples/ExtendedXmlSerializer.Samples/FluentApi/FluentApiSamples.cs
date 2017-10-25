@@ -14,41 +14,26 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 
 	public class FluentApiSamples
     {
-	    public static void RunSimpleConfig()
+	    public static void Run()
 	    {
 		    Program.PrintHeader("Serialization reference object");
 
-//		     Configuration
-
+// FluentAPI
 		    var serializer = new ConfigurationContainer()
 				.UseEncryptionAlgorithm(new CustomEncryption())
-			    .Type<Person>()
-					.Member(p => p.Password).Name("P").Encrypt()
-					.Member(p => p.Name).Name("T")
-				.Type<CustomSerializator.TestClass>()
+			    .Type<Person>() // Configuration of Person class
+					.Member(p => p.Password) // First member
+						.Name("P")
+						.Encrypt()
+					.Member(p => p.Name) // Second member
+						.Name("T")
+				.Type<TestClass>() // Configuration of another class
 					.CustomSerializer(new TestClassSerializer())
+			    .Create();
+// EndFluentAPI
 
-
-
-				.Create();
-//		     EndConfiguration
-
-		    Run(serializer);
+			Run(serializer);
 	    }
-
-	    //        public static void RunAutofacConfig()
-	    //        {
-	    //            Program.PrintHeader("Serialization reference object - autofac config");
-	    //
-	    //            var builder = new ContainerBuilder();
-	    //            builder.RegisterModule<AutofacExtendedXmlSerializerModule>();
-	    //            builder.RegisterType<PersonConfig>().As<ExtendedXmlSerializerConfig<Person>>().SingleInstance();
-	    //            builder.RegisterType<Base64PropertyEncryption>().As<IPropertyEncryption>().SingleInstance();
-	    //            var containter = builder.Build();
-	    //
-	    //            var serializer = containter.Resolve<IExtendedXmlSerializer>();
-	    //            Run(serializer);
-	    //        }
 
 	    static void Run(IExtendedXmlSerializer serializer)
 	    {
@@ -63,7 +48,7 @@ namespace ExtendedXmlSerializer.Samples.FluentApi
 
 		    var obj2 = serializer.Deserialize<List<Person>>(xml);
 		    Console.WriteLine("Employees count = " + obj2.Count + " - passwords " +
-		                      string.Join(", ", obj2.Select(p => p.Password)));
+		    string.Join(", ", obj2.Select(p => p.Password)));
 	    }
     }
 }

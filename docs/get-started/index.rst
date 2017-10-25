@@ -134,6 +134,25 @@ Deserialization
 
     var obj2 = serializer.Deserialize<TestClass>(xml);
 
+Fluent API
+==========
+
+ExtendedXmlSerializer use fluent API to configuration. Example
+
+.. sourcecode:: csharp
+
+    var serializer = new ConfigurationContainer()
+        .UseEncryptionAlgorithm(new CustomEncryption())
+        .Type<Person>() // Configuration of Person class
+            .Member(p => p.Password) // First member
+                .Name("P")
+                .Encrypt()
+            .Member(p => p.Name) // Second member
+                .Name("T")
+        .Type<TestClass>() // Configuration of another class
+            .CustomSerializer(new TestClassSerializer())
+        .Create();
+
 Serialization of dictionary
 ===========================
 
@@ -266,16 +285,16 @@ If you had a class:
 .. sourcecode:: csharp
 
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Type { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+    }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    ? xml version="1.0" encoding="utf-8"?>
+    <? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Type>Type</Type>
@@ -286,16 +305,16 @@ Then you renamed property:
 .. sourcecode:: csharp
 
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Name { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    ? xml version="1.0" encoding="utf-8"?>
+    <? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="1" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Name>Type</Name>
@@ -614,7 +633,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2017-10-19T03:06:31.5282123-04:00</Time>
+      <Time>2017-10-25T08:38:36.9033659+02:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -622,7 +641,7 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-19T03:06:31.5282123-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-25T08:38:36.9033659+02:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Private Constructors
 ====================
@@ -696,7 +715,7 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2017-10-19T03:06:31.664737-04:00</Time>
+      <Time>2017-10-25T08:38:37.1053861+02:00</Time>
     </ParameterizedSubject>
 
 Tuples
