@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration<T, TMember>, IInternalMemberConfiguration
+	class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration<T, TMember>, IInternalMemberConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IProperty<int> _order;

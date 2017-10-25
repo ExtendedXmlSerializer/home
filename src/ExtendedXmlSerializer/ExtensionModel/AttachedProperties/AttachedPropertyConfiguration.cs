@@ -30,7 +30,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-	public sealed class AttachedPropertyConfiguration<TType, TValue> : MemberConfiguration<TType, TValue>
+	class AttachedPropertyConfiguration<TType, TValue> : MemberConfiguration<TType, TValue>
 	{
 
 		public AttachedPropertyConfiguration(IMemberConfiguration configuration)

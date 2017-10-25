@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration<T>, IInternalTypeConfiguration
+	class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration<T>, IInternalTypeConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IMemberConfigurations _members;
