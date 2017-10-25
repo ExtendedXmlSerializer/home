@@ -38,8 +38,6 @@ using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	using System.Reflection;
-
 	public static class Extensions
 	{
 		public static XElement Member(this XElement @this, string name)
@@ -48,20 +46,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
 			this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Root.With<MemberFormatExtension>().Specifications[((ISource<MemberInfo>)@this).Get()] =
+			@this.Root.With<MemberFormatExtension>().Specifications[@this.Get()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
-			@this.Root.With<MemberFormatExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
-			@this.Root.With<MemberFormatExtension>().Registered.Remove(((ISource<MemberInfo>)@this).Get());
+			@this.Root.With<MemberFormatExtension>().Registered.Remove(@this.Get());
 			return @this;
 		}
 

@@ -28,19 +28,12 @@ using ExtendedXmlSerializer.Samples.Extensibility;
 using ExtendedXmlSerializer.Samples.MigrationMap;
 using ExtendedXmlSerializer.Samples.ObjectReference;
 using ExtendedXmlSerializer.Samples.Simple;
-using System;
 using ExtendedXmlSerializer.Samples.Upgrade;
+using System;
 
 namespace ExtendedXmlSerializer.Samples
 {
-	using System.Collections.Generic;
-
-	using ExtendedXmlSerializer.Configuration;
-	using ExtendedXmlSerializer.ExtensionModel.Encryption;
-	using ExtendedXmlSerializer.ExtensionModel.Xml;
-	using ExtendedXmlSerializer.Samples.FluentApi;
-
-	using Person = ExtendedXmlSerializer.Samples.Encrypt.Person;
+	using FluentApi;
 
 	public class Program
 	{

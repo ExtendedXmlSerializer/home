@@ -29,12 +29,10 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using System;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	using System.Collections.Generic;
-	using System.Reflection;
-
 	public static class Extensions
 	{
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
@@ -50,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		                                                                Func<TMember, bool> specification)
 		{
 			@this.Root.Find<AllowedMemberValuesExtension>()
-			     .Specifications[((ISource<MemberInfo>)@this).Get()] =
+			     .Specifications[@this.Get()] =
 				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).Adapt());
 			return @this;
 		}
@@ -58,36 +56,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(((ISource<MemberInfo>)@this).Get());
+			     .Blacklist.Add(@this.Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(((ISource<MemberInfo>)@this).Get());
+			     .Whitelist.Add(@this.Get());
 			return @this;
 		}
 
 		internal static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-				.Whitelist.Add(((ISource<MemberInfo>)@this).Get());
+				.Whitelist.Add(@this.Get());
 			return @this;
 		}
 
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 		{
-			foreach (var type in @this)
+			foreach (var member in @this.SelectMany(x => x))
 			{
-				type.OnlyConfiguredProperties();
+				member.Include();
 			}
 			return @this;
 		}
 
 		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 		{
-			foreach (var member in (IEnumerable<IMemberConfiguration>)@this)
+			foreach (var member in @this)
 			{
 				member.Include();
 			}

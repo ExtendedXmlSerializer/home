@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 
 			new ConfigurationContainer().Type<Section>().Member(p => p.IsSelected).Name("Selected")
-			                            .Type<Section>().Member(p => p.IsEmpty).Name("Empty")
+														.Member(p => p.IsEmpty).Name("Empty")
 			                            .Create();
 
 			var config = new ConfigurationContainer();

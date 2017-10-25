@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,8 +35,6 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	using ExtendedXmlSerializer.Core.Sources;
-
 	public static class Extensions
 	{
 		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
@@ -95,7 +93,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
-		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this) => @this.Root.Types.Get(Support<T>.Key)
+		public static ITypeConfiguration<T> Type<T>(this IContext @this) => @this.Root.Types.Get(Support<T>.Key)
 		                                                                              .AsValid<TypeConfiguration<T>>();
 
 		public static IConfigurationContainer Type<T>(this IConfigurationContainer @this, Action<ITypeConfiguration<T>> configure)
@@ -118,8 +116,12 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static IMemberConfiguration<T, TMember> Member<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                 Expression<Func<T, TMember>> member) =>
-			((IInternalTypeConfiguration)@this).Member(member.GetMemberInfo())
-				.AsValid<MemberConfiguration<T, TMember>>();
+			@this.AsInternal()
+			     .Get()
+			     .AsValid<ITypeConfiguration<T>>()
+			     .AsInternal()
+			     .Member(member.GetMemberInfo())
+			     .AsValid<MemberConfiguration<T, TMember>>();
 
 		public static IMemberConfiguration<T, TMember> Name<T, TMember>(this IMemberConfiguration<T, TMember> @this, string name)
 		{
@@ -136,12 +138,6 @@ namespace ExtendedXmlSerializer.Configuration
 		public static ITypeConfiguration<T> Name<T>(this ITypeConfiguration<T> @this, string name)
 		{
 			((IInternalTypeConfiguration)@this).Name(name);
-			return @this;
-		}
-
-		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
-		{
-			((IInternalTypeConfiguration)@this).Member(member);
 			return @this;
 		}
 
@@ -188,7 +184,7 @@ namespace ExtendedXmlSerializer.Configuration
 			     .Root
 			     .With<ReferencesExtension>()
 			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
-			                  .Get(), ((ISource<MemberInfo>)@this).Get());
+			                  .Get(), @this.Get());
 			return @this;
 		}
 
