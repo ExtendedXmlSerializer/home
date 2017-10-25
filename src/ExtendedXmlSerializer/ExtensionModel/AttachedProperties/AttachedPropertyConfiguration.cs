@@ -24,25 +24,18 @@
 
 using ExtendedXmlSerializer.Configuration;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
 // ReSharper disable UnusedTypeParameter
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
-//	public sealed class AttachedPropertyConfiguration<TType, TValue> : IMemberConfiguration
-//	{
-//		readonly IMemberConfiguration _configuration;
-//
-//		public AttachedPropertyConfiguration(IMemberConfiguration configuration) => _configuration = configuration;
-//
-//		public IRootContext Root => _configuration.Root;
-//
-//		public IContext Parent => _configuration.Parent;
-//
-//		public MemberInfo Get() => _configuration.Get();
-//
-//		public IMemberConfiguration Name(string name) => _configuration.Name(name);
-//
-//		public IMemberConfiguration Order(int order) => _configuration.Order(order);
-//	}
+	public sealed class AttachedPropertyConfiguration<TType, TValue> : MemberConfiguration<TType, TValue>
+	{
+
+		public AttachedPropertyConfiguration(IMemberConfiguration configuration)
+			: base(configuration, ((ISource<MemberInfo>)configuration).Get())
+		{
+		}
+	}
 }

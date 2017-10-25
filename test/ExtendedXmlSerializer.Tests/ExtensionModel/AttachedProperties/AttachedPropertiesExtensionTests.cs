@@ -79,9 +79,9 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			container.UseAutoFormatting()
 			         .Type<NumberProperty>()
 			         .Name("ConfiguredAttachedProperty");
-			Assert.True(false, "TODO AttachedProperty");
-			//container.AttachedProperty(() => NumberProperty.Default)
-			//         .Name("NewNumberPropertyName");
+			
+			container.AttachedProperty(() => NumberProperty.Default)
+			         .Name("NewNumberPropertyName");
 			var serializer = new SerializationSupport(container);
 
 			var actual = serializer.Assert(subject,

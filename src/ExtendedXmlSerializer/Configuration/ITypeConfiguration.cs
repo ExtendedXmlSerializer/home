@@ -40,4 +40,12 @@ namespace ExtendedXmlSerializer.Configuration
 
 		IMemberConfiguration Member(MemberInfo member);
 	}
+
+	static class TypeConfigurationExtensions
+	{
+		public static IInternalTypeConfiguration AsInternal(this ITypeConfiguration @this)
+		{
+			return (IInternalTypeConfiguration)@this;
+		}
+	}
 }
