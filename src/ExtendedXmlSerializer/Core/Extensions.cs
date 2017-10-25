@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.Core
 			return result;
 		}
 
-		public static ISortOrder Sort<T>(this ISortOrder @this, int sort)
+		public static ITypedSortOrder Sort<T>(this ITypedSortOrder @this, int sort)
 		{
 			@this.Assign(Support<T>.Key, sort);
 			return @this;

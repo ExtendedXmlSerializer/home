@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,7 +32,6 @@ namespace ExtendedXmlSerializer.Configuration
 	public class ConfigurationContainer : ContextBase, IConfigurationContainer
 	{
 		readonly IRootContext _context;
-		readonly ITypeConfigurations _types;
 
 		public ConfigurationContainer() : this(DefaultExtensions.Default.ToArray()) {}
 
@@ -40,25 +39,19 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public ConfigurationContainer(IExtensionCollection extensions) : this(new RootContext(extensions)) {}
 
-		public ConfigurationContainer(IRootContext context) : this(context, new TypeConfigurations(context)) {}
-		public ConfigurationContainer(ITypeConfigurationContext parent) : this(parent, new TypeConfigurations(parent.Root)) {}
-
-		public ConfigurationContainer(IRootContext context, ITypeConfigurations types) : base(context, context)
+		public ConfigurationContainer(IRootContext context) : base(context)
 		{
 			_context = context;
-			_types = types;
 		}
-		public ConfigurationContainer(ITypeConfigurationContext parent, ITypeConfigurations types) : base(parent)
+		public ConfigurationContainer(ITypeConfigurationContext parent) : base(parent)
 		{
 			_context = parent.Root;
-			_types = types;
 		}
-
-		public ITypeConfiguration Type(TypeInfo type) => _types.Get(type);
 
 		public IConfigurationContainer Extend(ISerializerExtension extension)
 		{
 			var existing = _context.SingleOrDefault(extension.GetType()
+			                                                 .GetTypeInfo()
 			                                                 .IsInstanceOfType);
 			if (existing != null)
 			{
@@ -68,23 +61,8 @@ namespace ExtendedXmlSerializer.Configuration
 			return this;
 		}
 
-		/*IEnumerator<ISerializerExtension> IEnumerable<ISerializerExtension>.GetEnumerator() => _context.GetEnumerator();
-		IEnumerator IEnumerable.GetEnumerator() => _context.GetEnumerator();
-		void ICollection<ISerializerExtension>.Add(ISerializerExtension item) => _context.Add(item);
-		void ICollection<ISerializerExtension>.Clear() => _context.Clear();
-		bool ICollection<ISerializerExtension>.Contains(ISerializerExtension item) => _context.Contains(item);
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _context.Types.GetEnumerator();
 
-		void ICollection<ISerializerExtension>.CopyTo(ISerializerExtension[] array, int arrayIndex) =>
-			_context.CopyTo(array, arrayIndex);
-
-		bool ICollection<ISerializerExtension>.Remove(ISerializerExtension item) => _context.Remove(item);
-		int ICollection<ISerializerExtension>.Count => _context.Count;
-		bool ICollection<ISerializerExtension>.IsReadOnly => _context.IsReadOnly;
-		public bool Contains<T>() where T : ISerializerExtension => _context.Contains<T>();
-		public T Find<T>() where T : ISerializerExtension => _context.Find<T>();*/
-
-		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => _context.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

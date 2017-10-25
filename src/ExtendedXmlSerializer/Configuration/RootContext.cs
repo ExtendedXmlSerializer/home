@@ -34,16 +34,24 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IExtensionCollection _extensions;
 		readonly IServicesFactory _factory;
 
-		public RootContext(IExtensionCollection extensions) : this(extensions, ServicesFactory.Default) {}
+		public RootContext(IExtensionCollection extensions) : this(new TypeConfigurations(extensions), extensions) {}
 
-		public RootContext(IExtensionCollection extensions, IServicesFactory factory)
+		public RootContext(ITypeConfigurations types, IExtensionCollection extensions) : this(types, extensions,
+		                                                                                      ServicesFactory.Default) {}
+
+		public RootContext(ITypeConfigurations types, IExtensionCollection extensions, IServicesFactory factory)
 		{
+			Types = types;
 			_extensions = extensions;
 			_factory = factory;
+
+			_extensions.Add(new RootContextExtension(this));
 		}
 
 		public IRootContext Root => this;
 		public IContext Parent => null;
+
+		public ITypeConfigurations Types { get; }
 
 		public IExtendedXmlSerializer Create()
 		{

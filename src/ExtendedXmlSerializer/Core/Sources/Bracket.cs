@@ -30,14 +30,15 @@ namespace ExtendedXmlSerializer.Core.Sources
 	class Bracket<T> : Items<T> where T : class
 	{
 		readonly static TypeComparer<T> Typed = TypeComparer<T>.Default;
-		readonly static IComparer<T> Comparer = new SortComparer<T>(new SortOrder());
+		readonly static IComparer<T> Comparer = new TypedSortComparer<T>(new TypedSortOrder());
 
 		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish) : this(start, body, finish, Comparer) {}
 
 		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish, IComparer<T> comparer)
 			: base(
-				start.Concat(body.Except(start.Union(finish, Typed), Typed).OrderBy(x => x, comparer))
-				     .Concat(finish)
-				     .ToImmutableArray()) {}
+			       start.Concat(body.Except(start.Union(finish, Typed), Typed)
+			                        .OrderBy(x => x, comparer))
+			            .Concat(finish)
+			            .ToImmutableArray()) {}
 	}
 }

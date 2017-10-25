@@ -21,14 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IRootContext : IContext, IExtensionCollection
+	sealed class RootContextExtension : ISerializerExtension
 	{
-		ITypeConfigurations Types { get; }
+		public RootContextExtension(IRootContext root) => Root = root;
 
-		IExtendedXmlSerializer Create();
+		public IRootContext Root { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) => parameter;
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

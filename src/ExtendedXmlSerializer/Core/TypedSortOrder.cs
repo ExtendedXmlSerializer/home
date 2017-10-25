@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.Configuration
+namespace ExtendedXmlSerializer.Core
 {
-	public interface IRootContext : IContext, IExtensionCollection
+	sealed class TypedSortOrder : StructureCache<TypeInfo, int>, ITypedSortOrder
 	{
-		ITypeConfigurations Types { get; }
-
-		IExtendedXmlSerializer Create();
+		public TypedSortOrder() : base(info => 1) {}
 	}
 }

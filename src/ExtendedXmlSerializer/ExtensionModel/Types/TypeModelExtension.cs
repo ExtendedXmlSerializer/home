@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		TypeModelExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ISortOrder, SortOrder>()
+			=> parameter.Register<ITypedSortOrder, TypedSortOrder>()
 			            .Register<IActivation, Activation>()
 			            .Register<IActivators, Activators>()
 			            .Register<IActivatingTypeSpecification, ActivatingTypeSpecification>()
