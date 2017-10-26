@@ -27,7 +27,6 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfigurations
-		: IParameterizedSource<MemberInfo, IMemberConfiguration>,
-		  IEnumerable<IMemberConfiguration> {}
+	public interface IMemberConfigurations : IParameterizedSource<MemberInfo, IMemberConfiguration>,
+	                                         IEnumerable<IMemberConfiguration> {}
 }

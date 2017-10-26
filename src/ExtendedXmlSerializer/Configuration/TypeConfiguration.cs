@@ -21,27 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	class TypeConfiguration<T> : ContextBase, ITypeConfiguration<T>, IInternalTypeConfiguration
+	sealed class TypeConfiguration<T> : ContextBase, ITypeConfiguration<T>, IInternalTypeConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IMemberConfigurations _members;
 
 		public TypeConfiguration(IRootContext root, IProperty<string> name)
-			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) { }
+			: this(root, name, new MemberConfigurations<T>(root))
+		{}
 
-		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
-			: base(context)
+		public TypeConfiguration(IRootContext root, IProperty<string> name, IMemberConfigurations members)
+			: base(root)
 		{
 			_name = name;
 			_members = members;
 		}
+
+		public TypeInfo Get() => Support<T>.Key;
 
 		ITypeConfiguration IInternalTypeConfiguration.Name(string name)
 		{
@@ -51,10 +53,6 @@ namespace ExtendedXmlSerializer.Configuration
 
 		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
 
-		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public TypeInfo Get() => Support<T>.Key;
-		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
+		IMemberConfigurations ISource<IMemberConfigurations>.Get() => _members;
 	}
 }

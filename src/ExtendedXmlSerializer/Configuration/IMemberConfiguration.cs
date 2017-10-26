@@ -22,24 +22,17 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using System.Reflection;
 
 // ReSharper disable UnusedTypeParameter
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration
-	{
+	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration {}
 
-	}
+	public interface IMemberConfiguration : IMetadataContext<MemberInfo> {}
 
-	public interface IMemberConfiguration : IContext, ISource<MemberInfo>
-	{
-
-	}
-
-	interface IInternalMemberConfiguration : ISource<ITypeConfigurationContext>
+	interface IInternalMemberConfiguration : IIInternalConfiguration
 	{
 		IMemberConfiguration Name(string name);
 

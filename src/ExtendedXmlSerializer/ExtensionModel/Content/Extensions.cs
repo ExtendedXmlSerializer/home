@@ -30,6 +30,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -70,22 +71,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		internal static IMemberConfiguration Include(this IMemberConfiguration @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
-				.Whitelist.Add(@this.Get());
+			     .Whitelist.Add(@this.Get());
 			return @this;
 		}
 
-		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
+		public static IMetadataContext<T> OnlyConfiguredProperties<T>(this IMetadataContext<T> @this) where T : MemberInfo
 		{
-			foreach (var member in @this.SelectMany(x => x))
-			{
-				member.Include();
-			}
-			return @this;
-		}
-
-		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
-		{
-			foreach (var member in @this)
+			foreach (var member in @this.AsInternal().Get().SelectMany(x => x.AsInternal().Get()))
 			{
 				member.Include();
 			}

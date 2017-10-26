@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 //
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,21 +23,15 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class TypeConfigurationContext : DelegatedSource<TypeInfo>, ITypeConfigurationContext
+	public interface IMetadataContext<out T> : IContext, ISource<T> where T : MemberInfo {}
+
+	static class MetadataContextConfigurationExtensions
 	{
-		public TypeConfigurationContext(IRootContext root, TypeInfo type) : base(type.Self)
-		{
-			Root = root;
-		}
-
-		public IRootContext Root { get; }
-		public IContext Parent => Root;
-
-		public IExtendedXmlSerializer Create() => Root.Create();
+		public static IIInternalConfiguration AsInternal<T>(this IMetadataContext<T> @this) where T : MemberInfo
+			=> @this.AsValid<IIInternalConfiguration>();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Xml.Linq;
@@ -37,6 +38,14 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.Type<TestClass>() // Configuration of another class
 				.CustomSerializer(new TestClassSerializer())
 				.Create();
+
+
+			new ConfigurationContainer()
+				.Type<Person>()
+				.Member(p => p.Name).Identity()
+				.OnlyConfiguredProperties()
+				.Create();
+
 
 
 			var config = new ConfigurationContainer();

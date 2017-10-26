@@ -31,30 +31,33 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	// ReSharper disable once UnusedTypeParameter
 	sealed class MemberConfigurations<T> : CacheBase<MemberInfo, IMemberConfiguration>, IMemberConfigurations
 	{
-		readonly ITypeConfigurationContext _parent;
+		readonly IRootContext _root;
 		readonly ConcurrentDictionary<MemberInfo, IMemberConfiguration> _store;
 
-		public MemberConfigurations(ITypeConfigurationContext parent) :
-			this(parent, new ConcurrentDictionary<MemberInfo, IMemberConfiguration>()) {}
+		public MemberConfigurations(IRootContext root) :
+			this(root, new ConcurrentDictionary<MemberInfo, IMemberConfiguration>()) {}
 
-		public MemberConfigurations(ITypeConfigurationContext parent,
-		                            ConcurrentDictionary<MemberInfo, IMemberConfiguration> store)
+		public MemberConfigurations(IRootContext root,
+		                                ConcurrentDictionary<MemberInfo, IMemberConfiguration> store)
 			: base(store)
 		{
-			_parent = parent;
+			_root = root;
 			_store = store;
 		}
 
 		protected override IMemberConfiguration Create(MemberInfo parameter)
-			=> Source.Default
-			         .Get(_parent.Get(), MemberDescriptors.Default.Get(parameter)
-			                                              .MemberType)
-			         .Invoke(_parent, parameter);
+		{
+			var type = Support<T>.Key;
+			var configuration = _root.Types.Get(type);
+			var memberType = MemberDescriptors.Default.Get(parameter).MemberType;
+			var result = Source.Default.Get(type, memberType)
+			                   .Invoke(configuration, parameter);
+			return result;
+		}
 
-		sealed class Source : Generic<ITypeConfigurationContext, MemberInfo, IMemberConfiguration>
+		sealed class Source : Generic<ITypeConfiguration, MemberInfo, IMemberConfiguration>
 		{
 			public static Source Default { get; } = new Source();
 			Source() : base(typeof(MemberConfiguration<,>)) {}
@@ -63,15 +66,4 @@ namespace ExtendedXmlSerializer.Configuration
 		public IEnumerator<IMemberConfiguration> GetEnumerator() => _store.Values.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
-
-/*
-	sealed class Property<T> : IProperty<T>
-	{
-		T _value;
-
-		public T Get() => _value;
-
-		public void Assign(T value) => _value = value;
-	}
-*/
 }

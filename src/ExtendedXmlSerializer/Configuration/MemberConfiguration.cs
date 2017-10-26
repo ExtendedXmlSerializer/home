@@ -36,18 +36,18 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IProperty<int> _order;
 		readonly MemberInfo _member;
 
-		public MemberConfiguration(ITypeConfigurationContext parent, MemberInfo member)
+		public MemberConfiguration(ITypeConfiguration parent, MemberInfo member)
 			: this(parent, parent.Root.With<MemberPropertiesExtension>(), member) {}
 
 		MemberConfiguration(
-			ITypeConfigurationContext parent,
+			ITypeConfiguration parent,
 			MemberPropertiesExtension extension,
 			MemberInfo member) : this(parent,
 			                          new MemberProperty<string>(extension.Names, member),
 			                          new MemberProperty<int>(extension.Order, member),
 			                          member) {}
 
-		public MemberConfiguration(ITypeConfigurationContext parent, IProperty<string> name, IProperty<int> order,
+		public MemberConfiguration(ITypeConfiguration parent, IProperty<string> name, IProperty<int> order,
 		                           MemberInfo member) : base(parent)
 		{
 			_name = name;
@@ -68,6 +68,6 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		MemberInfo ISource<MemberInfo>.Get() => _member;
-		public ITypeConfigurationContext Get() => Parent.AsValid<ITypeConfigurationContext>();
+		public IMemberConfigurations Get() => Parent.AsValid<ITypeConfiguration>().AsInternal().Get();
 	}
 }

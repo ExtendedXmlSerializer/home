@@ -21,22 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core;
 using System.Reflection;
 
 // ReSharper disable UnusedTypeParameter
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface ITypeConfiguration<T> : ITypeConfiguration
-	{
-	}
+	public interface ITypeConfiguration<T> : ITypeConfiguration {}
 
-	public interface ITypeConfiguration : ITypeConfigurationContext, IMemberConfigurations
-	{
+	public interface ITypeConfiguration : IMetadataContext<TypeInfo> {}
 
-	}
-
-	interface IInternalTypeConfiguration
+	interface IInternalTypeConfiguration : IIInternalConfiguration
 	{
 		ITypeConfiguration Name(string name);
 
@@ -45,6 +41,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 	static class TypeConfigurationExtensions
 	{
-		public static IInternalTypeConfiguration AsInternal(this ITypeConfiguration @this) => (IInternalTypeConfiguration)@this;
+		public static IInternalTypeConfiguration AsInternal(this ITypeConfiguration @this) =>
+			@this.AsValid<IInternalTypeConfiguration>();
 	}
 }

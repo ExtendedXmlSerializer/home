@@ -183,7 +183,7 @@ namespace ExtendedXmlSerializer.Configuration
 			@this.Attribute()
 			     .Root
 			     .With<ReferencesExtension>()
-			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
+			     .Assign(@this.Parent.AsValid<ITypeConfiguration>()
 			                  .Get(), @this.Get());
 			return @this;
 		}

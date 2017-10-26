@@ -23,6 +23,7 @@
 
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 
 // ReSharper disable UnusedTypeParameter
 
@@ -32,7 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 	{
 
 		public AttachedPropertyConfiguration(IMemberConfiguration configuration)
-			: base(configuration.AsInternal().Get(), configuration.Get())
+			: base(configuration.Parent.AsValid<ITypeConfiguration>(), configuration.Get())
 		{
 		}
 	}
