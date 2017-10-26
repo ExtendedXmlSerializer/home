@@ -35,17 +35,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 			return @this;
 		}
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this)
+		public static IContext UseEncryptionAlgorithm(this IContext @this)
 			=> UseEncryptionAlgorithm(@this, EncryptionConverterAlteration.Default);
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IEncryption encryption)
+		public static IContext UseEncryptionAlgorithm(this IContext @this, IEncryption encryption)
 			=> UseEncryptionAlgorithm(@this, new EncryptionConverterAlteration(encryption));
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IAlteration<IConverter> parameter)
+		public static IContext UseEncryptionAlgorithm(this IContext @this, IAlteration<IConverter> parameter)
 			=> @this.Root
 			        .With<EncryptionExtension>()
 			        .IsSatisfiedBy(parameter)
 				   ? @this
-				   : @this.Extend(new EncryptionExtension(parameter));
+				   : @this.Root.Extend(new EncryptionExtension(parameter));
 	}
 }

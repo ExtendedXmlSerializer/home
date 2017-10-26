@@ -1,4 +1,8 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Encryption;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Xml.Linq;
+using XmlWriter = System.Xml.XmlWriter;
 
 // ReSharper disable All
 
@@ -17,13 +21,66 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			new ConfigurationContainer().Type<Section>().Member(p => p.IsSelected).Name("Selected")
 														.Member(p => p.IsEmpty).Name("Empty")
+
 			                            .Create();
+
+
+			var serializer = new ConfigurationContainer()
+
+				.Type<Person>() // Configuration of Person class
+				.Member(p => p.Password) // First member
+				.Name("P")
+				.Encrypt()
+				.Member(p => p.Name) // Second member
+				.Name("T")
+				.UseEncryptionAlgorithm(new CustomEncryption())
+				.Type<TestClass>() // Configuration of another class
+				.CustomSerializer(new TestClassSerializer())
+				.Create();
+
 
 			var config = new ConfigurationContainer();
 			config.EnableDeferredReferences();
 			config.Type<Section>().Member(p => p.Id).Name("Identity");
 			config.Type<Section>().EnableReferences(p => p.Id);
 			var exs = config.Create();
+
+		}
+
+		public class TestClassSerializer : IExtendedXmlCustomSerializer<TestClass>
+		{
+			public TestClass Deserialize(XElement xElement)
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public void Serializer(XmlWriter xmlWriter, TestClass obj)
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
+		public class Person
+		{
+			public string Name { get; set; }
+			public string Password { get; set; }
+		}
+
+		class CustomEncryption : IEncryption
+		{
+			public string Parse(string data)
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public string Format(string instance)
+			{
+				throw new System.NotImplementedException();
+			}
+		}
+
+		public class TestClass
+		{
 
 		}
 

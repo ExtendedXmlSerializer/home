@@ -195,7 +195,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration = new ConfigurationContainer();
 			Assert.Null(configuration.Root.Find<EncryptionExtension>());
 			configuration.UseEncryptionAlgorithm()
-			             .ConfigureType<TestClassWithEncryptedData>()
+			             .Type<TestClassWithEncryptedData>()
 			             .Member(p => p.Password, x => x.Encrypt())
 			             .Member(p => p.Salary)
 			             .Encrypt();
