@@ -20,7 +20,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create();
 
 
-			new ConfigurationContainer().Type<Section>().Member(p => p.IsSelected).Name("Selected")
+			new ConfigurationContainer().Type<Section>()
+				.Name("person")
+				.Member(p => p.IsSelected).Name("Selected").Identity().Order(2)
 														.Member(p => p.IsEmpty).Name("Empty")
 
 			                            .Create();
@@ -46,7 +48,27 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.OnlyConfiguredProperties()
 				.Create();
 
+			new ConfigurationContainer().Type<Person>()
+				.AddMigration(element => {})
+				.OnlyConfiguredProperties()
+				.Create();
 
+			new ConfigurationContainer().Type<Person>()
+				.OnlyConfiguredProperties()
+				.AddMigration(element => { })
+				.Create();
+
+			new ConfigurationContainer()
+				.Type<Person>()
+				.Member(p => p.Name).Identity()
+				.OnlyConfiguredProperties()
+				.Create();
+
+			new ConfigurationContainer()
+				.Type<Person>()
+				.OnlyConfiguredProperties()
+				.Member(p => p.Name).Identity()
+				.Create();
 
 			var config = new ConfigurationContainer();
 			config.EnableDeferredReferences();
