@@ -75,12 +75,25 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IMetadataContext<T> OnlyConfiguredProperties<T>(this IMetadataContext<T> @this) where T : MemberInfo
+		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 		{
-			foreach (var member in @this.AsInternal().Get().SelectMany(x => x.AsInternal().Get()))
+			@this.AsInternal()
+			     .OnlyConfiguredProperties();
+			return @this;
+		}
+
+		static void OnlyConfiguredProperties(this IIInternalConfiguration @this)
+		{
+			foreach (var member in @this.Get().SelectMany(x => x.AsInternal().Get()))
 			{
 				member.Include();
 			}
+		}
+
+		public static IMetadataContext<T> OnlyConfiguredProperties<T>(this IMetadataContext<T> @this) where T : MemberInfo
+		{
+			@this.AsInternal()
+			     .OnlyConfiguredProperties();
 			return @this;
 		}
 
