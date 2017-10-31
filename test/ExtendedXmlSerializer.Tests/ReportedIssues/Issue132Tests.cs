@@ -9,6 +9,8 @@ using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
+	using System;
+
 	public sealed class Issue132Tests
 	{
 		public void Examples()
@@ -69,6 +71,31 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.OnlyConfiguredProperties()
 				.Member(p => p.Name).Identity()
 				.Create();
+
+			new ConfigurationContainer().Type<Person>()
+				.CustomSerializer((writer, person) => {}, element => new Person())
+				.EnableReferences(p=>p.Name);
+
+			new ConfigurationContainer().Type<Person>()
+				.EnableReferences(p => p.Name)
+				.CustomSerializer((writer, person) => { }, element => new Person());
+
+			new ConfigurationContainer().Type<Person>()
+				.CustomSerializer((writer, person) => { }, element => new Person())
+				.Member(p => p.Name).Identity();
+
+			new ConfigurationContainer().Type<Person>()
+				.Member(p => p.Name).Identity()
+				.CustomSerializer((writer, person) => { }, element => new Person());
+
+			new ConfigurationContainer().Type<Person>()
+				.AddMigration(element => { })
+				.Member(p => p.Name).Identity();
+
+			new ConfigurationContainer().Type<Person>()
+				.Member(p => p.Name)
+				.Identity()
+				.AddMigration(element => {});
 
 			var config = new ConfigurationContainer();
 			config.EnableDeferredReferences();
