@@ -41,6 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 				case MemberTypes.Field:
 					return new MemberDescriptor((FieldInfo)parameter);
 				case MemberTypes.TypeInfo:
+				case MemberTypes.NestedType:
 					return new MemberDescriptor((TypeInfo)parameter);
 			}
 			throw new InvalidOperationException($"{parameter} is not a valid member metadata type.");
