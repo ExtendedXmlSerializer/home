@@ -9,20 +9,19 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
-	public struct SomeKey
-	{
-		public string Message { get; }
-
-		public SomeKey(string message)
-		{
-			Message = message;
-		}
-
-	}
-
-
 	public class Issue134Tests
 	{
+		public struct SomeKey
+		{
+			public string Message { get; }
+
+			public SomeKey(string message)
+			{
+				Message = message;
+			}
+
+		}
+
 		[Fact]
 		public void Fix()
 		{
