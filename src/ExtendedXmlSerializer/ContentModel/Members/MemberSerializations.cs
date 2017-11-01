@@ -22,10 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -33,21 +32,18 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberSerializations : CacheBase<TypeInfo, IMemberSerialization>, IMemberSerializations
 	{
-		readonly static Func<IMemberSerializer, bool> Property =
-			IsTypeSpecification<PropertyMemberSerializer>.Default.IsSatisfiedBy;
-
-		readonly Func<IMemberSerializer, bool> _property;
+		readonly Func<IEnumerable<IMemberSerializer>, IMemberSerialization> _builder;
 		readonly ITypeMembers _members;
 		readonly Func<IMember, IMemberSerializer> _serializers;
 
 		[UsedImplicitly]
 		public MemberSerializations(ITypeMembers members, IMemberSerializers serializers)
-			: this(Property, members, serializers.Get) {}
+			: this(MemberSerializationBuilder.Default.Get, members, serializers.Get) {}
 
-		public MemberSerializations(Func<IMemberSerializer, bool> property, ITypeMembers members,
+		public MemberSerializations(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder, ITypeMembers members,
 		                            Func<IMember, IMemberSerializer> serializers)
 		{
-			_property = property;
+			_builder = builder;
 			_members = members;
 			_serializers = serializers;
 		}
@@ -57,14 +53,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var members = _members.Get(parameter)
 			                      .Select(_serializers)
 			                      .ToArray();
-			var properties = members.Where(_property).ToArray();
-			var runtime = members.OfType<IRuntimeSerializer>().ToArray();
-			var contents = members.Except(properties.Concat(runtime)).ToArray();
-			var list = runtime.Any()
-				? new RuntimeMemberList(_property, properties, runtime, contents)
-				: (IRuntimeMemberList) new FixedRuntimeMemberList(properties.Concat(contents).ToImmutableArray());
-			var all = properties.Concat(runtime).Concat(contents).OrderBy(x => x.Profile.Order).ToImmutableArray();
-			var result = new MemberSerialization(list, all);
+			var result = _builder(members);
 			return result;
 		}
 	}

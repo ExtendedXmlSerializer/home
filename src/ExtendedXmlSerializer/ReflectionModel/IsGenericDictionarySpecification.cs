@@ -22,34 +22,16 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Specifications;
-using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class IsAssignableGenericSpecification : ISpecification<TypeInfo>
+	sealed class IsGenericDictionarySpecification : AllSpecification<TypeInfo>
 	{
-		readonly static GenericDefinitionCandidates Candidates = GenericDefinitionCandidates.Default;
+		public static IsGenericDictionarySpecification Default { get; } = new IsGenericDictionarySpecification();
 
-		readonly IGenericDefinitionCandidates _candidates;
-		readonly Type _genericDefinition;
-
-		public IsAssignableGenericSpecification(Type genericType) : this(Candidates, genericType) {}
-
-		public IsAssignableGenericSpecification(IGenericDefinitionCandidates candidates, Type genericDefinition)
-		{
-			_candidates = candidates;
-			_genericDefinition = genericDefinition;
-		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter)
-			=> _candidates.Get(parameter).Contains(_genericDefinition) || Base(parameter);
-
-		bool Base(TypeInfo parameter)
-		{
-			var baseType = parameter.BaseType?.GetTypeInfo();
-			var result = baseType != null && IsSatisfiedBy(baseType);
-			return result;
-		}
+		IsGenericDictionarySpecification() : base(IsGenericTypeSpecification.Default,
+		                                          new IsGenericDefinitionSpecification(typeof(Dictionary<,>))) {}
 	}
 }

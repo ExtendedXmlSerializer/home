@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -44,10 +45,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			if (parameters.Any())
 			{
 				var type = parameter.DeclaringType.GetTypeInfo();
-				var result = Yield(type, parameters).ToImmutableArray();
-				if (result.Length == parameters.Length)
+				if (!IsGenericDictionarySpecification.Default.IsSatisfiedBy(type)) // A bit of a hack to circumvent https://github.com/wojtpl2/ExtendedXmlSerializer/issues/134
+																				   // might want to pretty this up at some point.
 				{
-					return result;
+					var result = Yield(type, parameters).ToImmutableArray();
+					if (result.Length == parameters.Length)
+					{
+						return result;
+					}
 				}
 			}
 			return null;
