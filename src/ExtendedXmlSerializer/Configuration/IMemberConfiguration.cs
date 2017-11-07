@@ -28,7 +28,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration
+	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration, ITypeConfiguration<T>
 	{
 		
 	}

@@ -116,11 +116,6 @@ namespace ExtendedXmlSerializer.Configuration
 			((IInternalTypeConfiguration)@this).Member(member.GetMemberInfo())
 				 .AsValid<MemberConfiguration<T, TMember>>();
 
-		public static IMemberConfiguration<T, TMember> Member<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                 Expression<Func<T, TMember>> member) =>
-			((IInternalTypeConfiguration)@this).Member(member.GetMemberInfo())
-				.AsValid<MemberConfiguration<T, TMember>>();
-
 		public static IMemberConfiguration<T, TMember> Name<T, TMember>(this IMemberConfiguration<T, TMember> @this, string name)
 		{
 			@this.AsInternal().Name(name);
