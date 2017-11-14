@@ -8,7 +8,6 @@
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix>alpha7</VersionSuffix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>$(ClassicFrameworkVersion);netstandard1.6</TargetFrameworks>
@@ -24,12 +23,14 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;0628</NoWarn>
-    <PackageReleaseNotes>* Fix deserialize string.Empty
-* Add EnableImplicitlyDefinedDefaultValues()
-* Fix serialize empty collections
-* Improve bad debug performance with circular references
-</PackageReleaseNotes>
-    <Version>2.0.0-alpha7</Version>
+    <PackageReleaseNotes>* Engine rewrite
+* Introduces extensibility model
+* Lots (!) of extensions
+* New configuration API
+* Bug fixes
+* ... and much much more!
+    </PackageReleaseNotes>
+    <Version>2.0.0</Version>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 
