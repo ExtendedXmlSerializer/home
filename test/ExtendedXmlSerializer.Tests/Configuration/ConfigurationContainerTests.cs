@@ -38,6 +38,8 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {
+	using ExtendedXmlSerializer.Core.Sources;
+
 	[SuppressMessage("ReSharper", "TestFileNameWarning")]
 	public class ConfigurationContainerTests
 	{
@@ -135,7 +137,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 			var extension = configuration.Root.Find<ReferencesExtension>();
 			Assert.NotNull(extension);
-			Assert.Same(property.Get(), extension.Get(configType.Get()));
+			Assert.Same(((ISource<MemberInfo>)property).Get(), extension.Get(configType.Get()));
 		}
 
 		[Fact]
@@ -147,7 +149,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(configuration.Root.Find<MemberPropertiesExtension>().Names[member.Get()], MemberName);
+			Assert.Equal(configuration.Root.Find<MemberPropertiesExtension>().Names[((ISource<MemberInfo>)member).Get()], MemberName);
 
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};
@@ -164,7 +166,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleOrderedTestSubject))
 							 .Member(nameof(SimpleOrderedTestSubject.Property2));
-			Assert.Equal(configuration.Root.Find<MemberPropertiesExtension>().Order[member.Get()], order);
+			Assert.Equal(configuration.Root.Find<MemberPropertiesExtension>().Order[((ISource<MemberInfo>)member).Get()], order);
 
 			var instance = new SimpleOrderedTestSubject {Property2 = "World!", Property1 = "Hello"};
 
@@ -181,9 +183,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration =
 				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Attribute(); });
 			var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
-									  .Member(nameof(SimpleTestSubject.BasicProperty))
-									  .Get();
-			Assert.True(configuration.Root.With<MemberFormatExtension>().Registered.Contains(member));
+				.Member(nameof(SimpleTestSubject.BasicProperty));
+			Assert.True(configuration.Root.With<MemberFormatExtension>().Registered.Contains(((ISource<MemberInfo>)member).Get()));
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,
@@ -205,8 +206,9 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			Assert.NotNull(extension);
 			var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
 			Assert.NotNull(type);
-
-			var property = type.Member(nameof(TestClassWithEncryptedData.Salary)).Get();
+			
+			var member = type.Member(nameof(TestClassWithEncryptedData.Salary));
+			var property = ((ISource<MemberInfo>)member).Get();
 			Assert.NotNull(property);
 			Assert.Contains(property, extension.Registered);
 
@@ -237,7 +239,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var type = container.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
 			Assert.NotNull(type);
 
-			var property = type.Member(nameof(TestClassWithEncryptedData.Salary)).Get();
+			var member = type.Member(nameof(TestClassWithEncryptedData.Salary));
+			var property = ((ISource<MemberInfo>)member).Get();
 			Assert.NotNull(property);
 			Assert.Contains(property, extension.Registered);
 

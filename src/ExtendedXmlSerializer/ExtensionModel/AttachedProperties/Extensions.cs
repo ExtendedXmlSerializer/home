@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static AttachedPropertyConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
+		public static IMemberConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
 			this IConfigurationContainer @this,
 			Expression<Func<Property<TType, TValue>>> property)
 		{
@@ -63,7 +63,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 
 
 			var type = @this.GetTypeConfiguration(subject.DeclaringType);
-			var current = type.Member(subject);
+			var current = type.AsInternal().Member(subject);
+
 			var result = new AttachedPropertyConfiguration<TType, TValue>(current);
 			return result;
 		}
@@ -71,7 +72,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static IConfigurationContainer AttachedProperty<TType, TValue>(
 			this IConfigurationContainer @this,
 				Expression<Func<Property<TType, TValue>>> property,
-				Action<AttachedPropertyConfiguration<TType, TValue>> configure)
+				Action<IMemberConfiguration<TType, TValue>> configure)
 		{
 			configure(@this.AttachedProperty(property));
 			return @this;

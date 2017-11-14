@@ -79,7 +79,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 			container.UseAutoFormatting()
 			         .Type<NumberProperty>()
 			         .Name("ConfiguredAttachedProperty");
-
+			
 			container.AttachedProperty(() => NumberProperty.Default)
 			         .Name("NewNumberPropertyName");
 			var serializer = new SerializationSupport(container);

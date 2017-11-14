@@ -33,6 +33,15 @@ using ExtendedXmlSerializer.Samples.Upgrade;
 
 namespace ExtendedXmlSerializer.Samples
 {
+	using System.Collections.Generic;
+
+	using ExtendedXmlSerializer.Configuration;
+	using ExtendedXmlSerializer.ExtensionModel.Encryption;
+	using ExtendedXmlSerializer.ExtensionModel.Xml;
+	using ExtendedXmlSerializer.Samples.FluentApi;
+
+	using Person = ExtendedXmlSerializer.Samples.Encrypt.Person;
+
 	public class Program
 	{
 		public static void PrintHeader(string title)
@@ -44,6 +53,8 @@ namespace ExtendedXmlSerializer.Samples
 
 		public static void Main(string[] args)
 		{
+			FluentApiSamples.Run();
+
 			Introduction.Run.Default.Execute(null);
 			Converters.Default.Execute(null);
 			OptimizedNamespaces.Default.Execute(null);
@@ -58,6 +69,7 @@ namespace ExtendedXmlSerializer.Samples
 
 			SimpleSamples.Run();
 			DictianarySamples.Run();
+			FluentApiSamples.Run();
 
 			CustomSerializatorSamples.RunSimpleConfig();
 			// CustomSerializatorSamples.RunAutofacConfig();

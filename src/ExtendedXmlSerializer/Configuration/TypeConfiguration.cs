@@ -28,28 +28,42 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class TypeConfiguration<T> : ContextBase, ITypeConfiguration
+	class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration<T>, IInternalTypeConfiguration
 	{
 		readonly IProperty<string> _name;
 		readonly IMemberConfigurations _members;
 
 		public TypeConfiguration(IRootContext root, IProperty<string> name)
-			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
+			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) { }
 
 		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
-			: base(context, context)
+			: base(context)
+		{
+			_name = name;
+			_members = members;
+		}
+		public TypeConfiguration(ITypeConfigurationContext context, IProperty<string> name, IMemberConfigurations members)
+			: base(context)
 		{
 			_name = name;
 			_members = members;
 		}
 
-		public ITypeConfiguration Name(string name)
+		public TypeConfiguration(ITypeConfigurationContext parent, IProperty<string> name)
+			: this(parent, name, new MemberConfigurations<T>(new TypeConfigurationContext(parent.Root, Support<T>.Key))) 
+		{
+			
+		}
+
+		
+
+		ITypeConfiguration IInternalTypeConfiguration.Name(string name)
 		{
 			_name.Assign(name);
 			return this;
 		}
 
-		public IMemberConfiguration Member(MemberInfo member) => _members.Get(member);
+		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
 
 		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
 

@@ -71,6 +71,11 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\SimpleSamples.cs",
 				"Deserialization");
 
+			doc.AddHeader("Fluent API");
+			doc.Add("ExtendedXmlSerializer use fluent API to configuration. Example");
+			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\FluentApi\\FluentApiSamples.cs", "FluentAPI");
+
+
 			doc.AddHeader("Serialization of dictionary");
 			doc.Add("You can serialize generic dictionary, that can store any type.");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Dictianary\\TestClass.cs", "TestClass");

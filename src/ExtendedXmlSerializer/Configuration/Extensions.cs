@@ -35,6 +35,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
+	using ExtendedXmlSerializer.Core.Sources;
+
 	public static class Extensions
 	{
 		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
@@ -91,13 +93,12 @@ namespace ExtendedXmlSerializer.Configuration
 
 		/*public static ITypeConfiguration Type(this IConfiguration @this, TypeInfo type) => @this.Get(type);*/
 
-		public static TypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
+		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
-		public static TypeConfiguration<T> Type<T>(this IContext @this) => @this.Root.Types.Get(Support<T>.Key)
-		                                                                        .AsValid<TypeConfiguration<T>>();
+		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this) => @this.Root.Types.Get(Support<T>.Key)
+		                                                                              .AsValid<TypeConfiguration<T>>();
 
-		public static IConfigurationContainer Type<T>(this IConfigurationContainer @this,
-		                                              Action<TypeConfiguration<T>> configure)
+		public static IConfigurationContainer Type<T>(this IConfigurationContainer @this, Action<ITypeConfiguration<T>> configure)
 		{
 			var result = @this.Type<T>();
 			configure(result);
@@ -110,23 +111,47 @@ namespace ExtendedXmlSerializer.Configuration
 		public static ITypeConfiguration GetTypeConfiguration(this IContext @this, TypeInfo type) =>
 			@this.Root.Types.Get(type);
 
-		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
+		public static IMemberConfiguration<T, TMember> Member<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                                 Expression<Func<T, TMember>> member) =>
-			@this.Member(member.GetMemberInfo())
-			     .AsValid<MemberConfiguration<T, TMember>>();
+			((IInternalTypeConfiguration)@this).Member(member.GetMemberInfo())
+				 .AsValid<MemberConfiguration<T, TMember>>();
 
-		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
+		public static IMemberConfiguration<T, TMember> Name<T, TMember>(this IMemberConfiguration<T, TMember> @this, string name)
+		{
+			@this.AsInternal().Name(name);
+			return @this;
+		}
+
+		public static IMemberConfiguration<T, TMember> Order<T, TMember>(this IMemberConfiguration<T, TMember> @this, int order)
+		{
+			@this.AsInternal().Order(order);
+			return @this;
+		}
+
+		public static ITypeConfiguration<T> Name<T>(this ITypeConfiguration<T> @this, string name)
+		{
+			((IInternalTypeConfiguration)@this).Name(name);
+			return @this;
+		}
+
+		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
+		{
+			((IInternalTypeConfiguration)@this).Member(member);
+			return @this;
+		}
+
+		internal static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 		{
 			var metadata = @this.Get()
 			                    .GetMember(member)
 			                    .SingleOrDefault();
-			var result = metadata != null ? @this.Member(metadata) : null;
+			var result = metadata != null ? ((IInternalTypeConfiguration)@this).Member(metadata) : null;
 			return result;
 		}
 
-		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
+		public static ITypeConfiguration<T> Member<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                      Expression<Func<T, TMember>> member,
-		                                                      Action<MemberConfiguration<T, TMember>> configure)
+		                                                      Action<IMemberConfiguration<T, TMember>> configure)
 		{
 			configure(@this.Member(member));
 			return @this;
@@ -144,7 +169,7 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
+		public static ITypeConfiguration<T> EnableReferences<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                                Expression<Func<T, TMember>> member)
 		{
 			@this.Member(member)
@@ -152,13 +177,13 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static IMemberConfiguration Identity(this IMemberConfiguration @this)
+		public static IMemberConfiguration<T, TMember> Identity<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Attribute()
 			     .Root
 			     .With<ReferencesExtension>()
 			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
-			                  .Get(), @this.Get());
+			                  .Get(), ((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 

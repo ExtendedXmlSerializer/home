@@ -25,10 +25,27 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface ITypeConfiguration : ITypeConfigurationContext, IMemberConfigurations
+	public interface ITypeConfiguration<T> : ITypeConfiguration
+	{
+	}
+
+	public interface ITypeConfiguration : IConfigurationContainer, ITypeConfigurationContext, IMemberConfigurations
+	{
+		
+	}
+
+	interface IInternalTypeConfiguration
 	{
 		ITypeConfiguration Name(string name);
 
 		IMemberConfiguration Member(MemberInfo member);
+	}
+
+	static class TypeConfigurationExtensions
+	{
+		public static IInternalTypeConfiguration AsInternal(this ITypeConfiguration @this)
+		{
+			return (IInternalTypeConfiguration)@this;
+		}
 	}
 }

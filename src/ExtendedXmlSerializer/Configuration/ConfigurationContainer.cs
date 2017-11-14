@@ -29,7 +29,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public sealed class ConfigurationContainer : ContextBase, IConfigurationContainer
+	public class ConfigurationContainer : ContextBase, IConfigurationContainer
 	{
 		readonly IRootContext _context;
 
@@ -42,6 +42,10 @@ namespace ExtendedXmlSerializer.Configuration
 		public ConfigurationContainer(IRootContext context) : base(context)
 		{
 			_context = context;
+		}
+		public ConfigurationContainer(ITypeConfigurationContext parent) : base(parent)
+		{
+			_context = parent.Root;
 		}
 
 		public IConfigurationContainer Extend(ISerializerExtension extension)
