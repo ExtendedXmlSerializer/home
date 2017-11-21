@@ -3,12 +3,22 @@ using System.IO;
 
 namespace ExtendedXmlSerializer.DocGenerator
 {
+	using System.Collections.Generic;
+
+	using ExtendedXmlSerializer.DocGenerator.ExportedTypes;
+
 	class Program
 	{
 		// ReSharper disable once UnusedParameter.Local
 		static void Main(string[] args)
 		{
-			ReStructuredText doc = new ReStructuredText();
+			var doc = new ExportedTypeManager(
+				new List<IExportedType>
+					{
+						new ReStructuredText(),
+						new HtmlText()
+					}
+				);
 
 			doc.AddHeader("Information");
 
@@ -16,14 +26,14 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddList(".NET 4.5", ".NET Platform Standard 1.6");
 			doc.Add("Support features:");
 			doc.AddList(
-				"Deserialization xml from standard XMLSerializer",
+				"Deserialization xml from standard `XMLSerializer`",
 				"Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum",
 				"Serialization class with property interface",
 				"Serialization circular reference and reference Id",
 				"Deserialization of old version of xml",
 				"Property encryption",
 				"Custom serializer",
-				"Support XmlElementAttribute and XmlRootAttribute",
+				"Support `XmlElementAttribute` and `XmlRootAttribute`",
 				"POCO - all configurations (migrations, custom serializer...) are outside the clas");
 
 			doc.Add("Standard XML Serializer in .NET is very limited:");
@@ -34,11 +44,11 @@ namespace ExtendedXmlSerializer.DocGenerator
 				"Does not support read-only collection properties (like Xaml does).",
 				"Does not support parameterized constructors.",
 				"Does not support private constructors.",
-				"If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.",
+				"If you want create custom serializer, your class must inherit from `IXmlSerializable`. This means that your class will not be a POCO class.",
 				"Does not support IoC");
 
 			doc.AddHeader("The Basics");
-			doc.Add("Everything in ExtendedXmlSerializer begins with a configuration container, from which you can use to configure the serializer and ultimately create it:");
+			doc.Add("Everything in `ExtendedXmlSerializer` begins with a configuration container, from which you can use to configure the serializer and ultimately create it:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Create.cs", "Create");
 
 			doc.Add("Using this simple subject class:");
@@ -51,7 +61,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Type.cs", "Type");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.Type.xml", CodeFormat.Xml);
 
-			doc.Add("Diving a bit further, we can also configure the type's member information.  For example, configuring `Subject.Message` to emit as `Text` instead:");
+			doc.Add("Diving a bit further, we can also configure the type's member information. For example, configuring `Subject.Message` to emit as `Text` instead:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Introduction\Member.cs", "Member");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Introduction.Member.xml", CodeFormat.Xml);
 
@@ -72,7 +82,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 				"Deserialization");
 
 			doc.AddHeader("Fluent API");
-			doc.Add("ExtendedXmlSerializer use fluent API to configuration. Example");
+			doc.Add("ExtendedXmlSerializer use fluent API to configuration. Example:");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\FluentApi\\FluentApiSamples.cs", "FluentAPI");
 
 
@@ -94,7 +104,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\CustomSerializator\\CustomSerializatorSamples.cs", "AddCustomSerializerToConfiguration");
 
 			doc.AddHeader("Deserialize old version of xml");
-			doc.Add("In standard XMLSerializer you can't deserialize XML in case you change model. In ExtendedXMLSerializer you can create migrator for each class separately. E.g.: If you have big class, that uses small class and this small class will be changed you can create migrator only for this small class. You don't have to modify whole big XML. Now I will show you a simple example:");
+			doc.Add("In standard `XMLSerializer` you can't deserialize XML in case you change model. In `ExtendedXMLSerializer` you can create migrator for each class separately. E.g.: If you have big class, that uses small class and this small class will be changed you can create migrator only for this small class. You don't have to modify whole big XML. Now I will show you a simple example:");
 			doc.Add("If you had a class:");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\MigrationMap\\TestClass.cs", "FirstVersion");
 			doc.Add("and generated XML look like:");
@@ -109,7 +119,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\bin\\XmlLastVersion.xml", CodeFormat.Xml);
 			doc.Add("You can migrate (read) old version of XML using migrations:");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\MigrationMap\\TestClassMigrations.cs", "TestClassMigrations");
-			doc.Add("Then, you must register your TestClassMigrations class in configuration");
+			doc.Add("Then, you must register your `TestClassMigrations` class in configuration");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\MigrationMap\\MigrationMapSamples.cs", "MigrationsConfiguration");
 
 			doc.AddHeader("Extensibility");
@@ -168,25 +178,25 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.AutoFormatting.Enabled.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Private Constructors");
-			doc.Add("One of the limitations of the classic XmlSerializer is that it does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:");
+			doc.Add("One of the limitations of the classic `XmlSerializer` is that it does not support private constructors, but `ExtendedXmlSerializer` does via its `EnableAllConstructors` call:");
 
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\PrivateConstructors.cs", "Subject");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\PrivateConstructors.cs", "Example");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.PrivateConstructors.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Parameterized Members and Content");
-			doc.Add("Taking this concept bit further leads to a favorite feature of ours in ExtendedXmlSerlializer.  The classic serializer only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:");
+			doc.Add("Taking this concept bit further leads to a favorite feature of ours in `ExtendedXmlSerlializer`. The classic serializer only supports parameterless public constructors. With `ExtendedXmlSerializer`, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\ParameterizedContent.cs", "Subject");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\ParameterizedContent.cs", "Example");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.ParameterizedContent.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Tuples");
-			doc.Add("By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples.  Of course, serializable Tuples were introduced recently with the latest version of C#.  Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:");
+			doc.Add("By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples. Of course, serializable Tuples were introduced recently with the latest version of C#. Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\Tuples.cs", "Example");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.Tuples.xml", CodeFormat.Xml);
 
 			doc.AddHeader("Experimental Xaml-ness: Attached Properties");
-			doc.Add("We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding support for Attached Properties on objects in your serialized object graph.  But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it.  Check it out:");
+			doc.Add("We went ahead and got a little cute with v2 of `ExtendedXmlSerializer`, adding support for Attached Properties on objects in your serialized object graph. But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it. Check it out:");
 
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\AttachedProperties.cs", "Properties");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\AttachedProperties.cs", "Example");
@@ -204,13 +214,13 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add(string.Empty);
 
 			doc.AddHeader("How to Upgrade from v1.x to v2");
-			doc.Add("Finally, if you have documents from v1, you will need to upgrade them to v2 to work.  This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer.  We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.");
+			doc.Add("Finally, if you have documents from v1, you will need to upgrade them to v2 to work. This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer. We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Upgrade.Example.v1.xml", CodeFormat.Xml);
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Upgrade\Example.cs", "Example");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Upgrade.Example.v2.xml", CodeFormat.Xml);
 
 			doc.AddHeader("History");
-			doc.AddList("2017-??-?? - v2.0.0 - Rewritten version");
+			doc.AddList("2017-11-14 - v2.0.0 - Rewritten version");
 
 			doc.AddHeader("Authors");
 			doc.AddList(
@@ -218,10 +228,11 @@ namespace ExtendedXmlSerializer.DocGenerator
 				"`Mike-EEE <https://github.com/Mike-EEE>`__"
 			);
 
-			var result = doc.ToString();
+			doc.Save(ExportedType.ReStructuredText, "..\\..\\..\\..\\docs\\get-started\\index.rst");
+			doc.Save(ExportedType.Html, "..\\..\\..\\..\\CodeProject.html");
 
-			File.WriteAllText("..\\..\\..\\..\\docs\\get-started\\index.rst", result);
 
+			var result = doc.ToString(ExportedType.ReStructuredText);
 			result =
 				".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg" + Environment.NewLine + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine +
 				".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine +

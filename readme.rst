@@ -14,14 +14,14 @@ Support platforms:
 
 Support features:
 
-* Deserialization xml from standard XMLSerializer
+* Deserialization xml from standard `XMLSerializer`
 * Serialization class, struct, generic class, primitive type, generic list and dictionary, array, enum
 * Serialization class with property interface
 * Serialization circular reference and reference Id
 * Deserialization of old version of xml
 * Property encryption
 * Custom serializer
-* Support XmlElementAttribute and XmlRootAttribute
+* Support `XmlElementAttribute` and `XmlRootAttribute`
 * POCO - all configurations (migrations, custom serializer...) are outside the clas
 
 Standard XML Serializer in .NET is very limited:
@@ -32,13 +32,13 @@ Standard XML Serializer in .NET is very limited:
 * Does not support read-only collection properties (like Xaml does).
 * Does not support parameterized constructors.
 * Does not support private constructors.
-* If you want create custom serializer, your class must inherit from IXmlSerializable. This means that your class will not be a POCO class.
+* If you want create custom serializer, your class must inherit from `IXmlSerializable`. This means that your class will not be a POCO class.
 * Does not support IoC
 
 The Basics
 ==========
 
-Everything in ExtendedXmlSerializer begins with a configuration container, from which you can use to configure the serializer and ultimately create it:
+Everything in `ExtendedXmlSerializer` begins with a configuration container, from which you can use to configure the serializer and ultimately create it:
 
 .. sourcecode:: csharp
 
@@ -84,7 +84,7 @@ We can take this a step further by configuring the `Subject`'s Type and Member p
       <Count>6776</Count>
     </ModifiedSubject>
 
-Diving a bit further, we can also configure the type's member information.  For example, configuring `Subject.Message` to emit as `Text` instead:
+Diving a bit further, we can also configure the type's member information. For example, configuring `Subject.Message` to emit as `Text` instead:
 
 .. sourcecode:: csharp
 
@@ -143,7 +143,7 @@ Deserialization
 Fluent API
 ==========
 
-ExtendedXmlSerializer use fluent API to configuration. Example
+ExtendedXmlSerializer use fluent API to configuration. Example:
 
 .. sourcecode:: csharp
 
@@ -285,7 +285,7 @@ Then, you have to add custom serializer to configuration of TestClass:
 Deserialize old version of xml
 ==============================
 
-In standard XMLSerializer you can't deserialize XML in case you change model. In ExtendedXMLSerializer you can create migrator for each class separately. E.g.: If you have big class, that uses small class and this small class will be changed you can create migrator only for this small class. You don't have to modify whole big XML. Now I will show you a simple example:
+In standard `XMLSerializer` you can't deserialize XML in case you change model. In `ExtendedXMLSerializer` you can create migrator for each class separately. E.g.: If you have big class, that uses small class and this small class will be changed you can create migrator only for this small class. You don't have to modify whole big XML. Now I will show you a simple example:
 If you had a class:
 
 .. sourcecode:: csharp
@@ -378,7 +378,7 @@ You can migrate (read) old version of XML using migrations:
         }
     }
 
-Then, you must register your TestClassMigrations class in configuration
+Then, you must register your `TestClassMigrations` class in configuration
 
 .. sourcecode:: csharp
 
@@ -639,7 +639,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2017-10-25T08:38:36.9033659+02:00</Time>
+      <Time>2017-11-21T10:55:38.0990077+01:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -647,12 +647,12 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-10-25T08:38:36.9033659+02:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2017-11-21T10:55:38.0990077+01:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Private Constructors
 ====================
 
-One of the limitations of the classic XmlSerializer is that it does not support private constructors, but ExtendedXmlSerializer does via its `EnableAllConstructors` call:
+One of the limitations of the classic `XmlSerializer` is that it does not support private constructors, but `ExtendedXmlSerializer` does via its `EnableAllConstructors` call:
 
 .. sourcecode:: csharp
 
@@ -687,7 +687,7 @@ One of the limitations of the classic XmlSerializer is that it does not support 
 Parameterized Members and Content
 =================================
 
-Taking this concept bit further leads to a favorite feature of ours in ExtendedXmlSerlializer.  The classic serializer only supports parameterless public constructors.  With ExtendedXmlSerializer, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:
+Taking this concept bit further leads to a favorite feature of ours in `ExtendedXmlSerlializer`. The classic serializer only supports parameterless public constructors. With `ExtendedXmlSerializer`, you can use the `EnableParameterizedContent` call to enable parameterized parameters in the constructor that by convention have the same name as the property for which they are meant to assign:
 
 .. sourcecode:: csharp
 
@@ -721,13 +721,13 @@ Taking this concept bit further leads to a favorite feature of ours in ExtendedX
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2017-10-25T08:38:37.1053861+02:00</Time>
+      <Time>2017-11-21T10:55:38.3180296+01:00</Time>
     </ParameterizedSubject>
 
 Tuples
 ======
 
-By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples.  Of course, serializable Tuples were introduced recently with the latest version of C#.  Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:
+By enabling parameterized content, it opens up a lot of possibilities, like being able to serialize Tuples. Of course, serializable Tuples were introduced recently with the latest version of C#. Here, however, you can couple this with our member-naming funtionality and provide better naming for your tuple properties:
 
 .. sourcecode:: csharp
 
@@ -751,7 +751,7 @@ By enabling parameterized content, it opens up a lot of possibilities, like bein
 Experimental Xaml-ness: Attached Properties
 ===========================================
 
-We went ahead and got a little cute with v2 of ExtendedXmlSerializer, adding support for Attached Properties on objects in your serialized object graph.  But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it.  Check it out:
+We went ahead and got a little cute with v2 of `ExtendedXmlSerializer`, adding support for Attached Properties on objects in your serialized object graph. But instead of constraining it to objects that inherit from `DependencyObject`, *every* object can benefit from it. Check it out:
 
 .. sourcecode:: csharp
 
@@ -837,7 +837,7 @@ Saving the best feaure for last, we have experimental support for one of Xaml's 
 How to Upgrade from v1.x to v2
 ==============================
 
-Finally, if you have documents from v1, you will need to upgrade them to v2 to work.  This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer.  We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.
+Finally, if you have documents from v1, you will need to upgrade them to v2 to work. This involves reading the document in an instance of v1 serializer, and then writing it in an instance of v2 serializer. We have provided the `ExtendedXmlSerializer.Legacy` nuget package to assist in this goal.
 
 .. sourcecode:: xml
 
@@ -880,7 +880,7 @@ History
 =======
 
 
-* 2017-??-?? - v2.0.0 - Rewritten version
+* 2017-11-14 - v2.0.0 - Rewritten version
 
 Authors
 =======
