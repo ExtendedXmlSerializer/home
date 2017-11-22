@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
         public void ShouldPreserveNullStringValueIfDefaultIsNotNull()
         {
             var config = new ConfigurationContainer();
-            config.Emit(EmitBehaviors.Assigned); //no matter what we put here
+            config.Emit(EmitBehaviors.Assigned);
             var serializer = config.Create();
 
             string xml = serializer.Serialize(new ClassWithDefautString() { Name = null, SubNode = null });
@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
         public void ShouldPreserveNullObjectValueIfDefaultIsNotNull()
         {
             var config = new ConfigurationContainer();
-            config.Emit(EmitBehaviors.Assigned); //no matter what we put here
+            config.Emit(EmitBehaviors.Assigned);
             var serializer = config.Create();
 
             string xml = serializer.Serialize(new ClassWithDefautString() { Name = null, SubNode = null });
@@ -43,11 +43,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
         public void ShouldPreserveNullAttributeValueIfDefaultIsNotNull()
         {
             var config = new ConfigurationContainer();
-            config.Emit(EmitBehaviors.Assigned); //no matter what we put here
+            config.Emit(EmitBehaviors.Assigned);
             config.ConfigureType<ClassWithDefautString>().Member(x => x.Attribute).Attribute();
             var serializer = config.Create();
 
-            string xml = serializer.Serialize(new ClassWithDefautString() { Name = null, SubNode = null });
+            string xml = serializer.Serialize(new ClassWithDefautString() { Attribute = null, SubNode = null });
             var deserialized = serializer.Deserialize<ClassWithDefautString>(xml);
 
             deserialized.Attribute.Should().BeNull();    //fail
@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
         public void ShouldPreserveNullObjectValueIfEmitWhenReturnsTrue()
         {
             var config = new ConfigurationContainer();
-            config.Emit(EmitBehaviors.Assigned); //no matter what we put here
+            config.Emit(EmitBehaviors.Assigned);
             config.ConfigureType<ClassWithDefautString>().Member(x => x.SubNode).EmitWhen(x => true);
             var serializer = config.Create();
 
