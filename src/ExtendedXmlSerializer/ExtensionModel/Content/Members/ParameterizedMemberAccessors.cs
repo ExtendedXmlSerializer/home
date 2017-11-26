@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
@@ -75,8 +75,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 
 			public void Assign(object instance, object value)
 			{
-				var context = instance as IActivationContext;
-				if (context != null)
+				if (instance is IActivationContext context)
 				{
 					context.Assign(_name, value);
 				}

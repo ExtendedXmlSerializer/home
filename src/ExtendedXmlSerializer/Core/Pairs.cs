@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.Core
 {
-	sealed class ActivationContextActivator : IActivator
+	static class Pairs
 	{
-		readonly IActivationContexts _contexts;
-		readonly ImmutableArray<KeyValuePair<string, object>> _defaults;
-
-		public ActivationContextActivator(IActivationContexts contexts, ImmutableArray<KeyValuePair<string, object>> defaults)
-		{
-			_contexts = contexts;
-			_defaults = defaults;
-		}
-
-		public object Get() => _contexts.Get(new Dictionary<string, object>(_defaults.ToDictionary(), StringComparer.OrdinalIgnoreCase));
+		public static KeyValuePair<TKey, TValue> Create<TKey, TValue>(TKey key, TValue value) =>
+			new KeyValuePair<TKey, TValue>(key, value);
 	}
 }

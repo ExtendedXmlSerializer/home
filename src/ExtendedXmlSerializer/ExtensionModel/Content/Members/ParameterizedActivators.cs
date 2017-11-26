@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -60,16 +61,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		}
 
 		ActivationContextActivator Activator(ConstructorInfo constructor, ImmutableArray<IMember> members)
-			=> new ActivationContextActivator(new ActivationContexts(_accessors, members, new Source(constructor).Get));
+		{
+			var activator = new Source(constructor).ToDelegate();
+			var contexts = new ActivationContexts(_accessors, members, activator);
+			var defaults = constructor.GetParameters()
+			                          .Where(x => x.IsOptional)
+			                          .Select(x => Pairs.Create(x.Name, x.DefaultValue))
+			                          .ToImmutableArray();
+			var result = new ActivationContextActivator(contexts, defaults);
+			return result;
+		}
 
 		sealed class Source : IParameterizedSource<Func<string, object>, IActivator>
 		{
 			readonly ConstructorInfo _constructor;
 
-			public Source(ConstructorInfo constructor)
-			{
-				_constructor = constructor;
-			}
+			public Source(ConstructorInfo constructor) => _constructor = constructor;
 
 			public IActivator Get(Func<string, object> parameter)
 			{
