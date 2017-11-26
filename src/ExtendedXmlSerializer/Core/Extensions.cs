@@ -173,6 +173,9 @@ namespace ExtendedXmlSerializer.Core
 
 		public static ISpecification<T> Inverse<T>(this ISpecification<T> @this) => new InverseSpecification<T>(@this);
 
+		public static ISpecification<object> AdaptForNull<T>(this ISpecification<T> @this)
+			=> new NullAwareSpecificationAdapter<T>(@this);
+
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);
 

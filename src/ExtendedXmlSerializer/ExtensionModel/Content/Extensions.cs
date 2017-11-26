@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		{
 			@this.Root.Find<AllowedMemberValuesExtension>()
 			     .Specifications[((ISource<MemberInfo>)@this).Get()] =
-				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).Adapt());
+				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).AdaptForNull());
 			return @this;
 		}
 

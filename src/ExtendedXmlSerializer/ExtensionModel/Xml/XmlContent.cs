@@ -38,7 +38,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			var attributes = _attributes;
 			var content = _elements;
-			return (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
+			var moveNext = (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
+			return moveNext;
 		}
 
 		public object Current => null;

@@ -29,27 +29,35 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	abstract class ElementBase : IWriter
 	{
-		readonly IIdentity _identity, _null;
+		readonly IIdentity _identity;
 
-		protected ElementBase(IIdentity identity) : this(identity, NullIdentity.Default) {}
+		protected ElementBase(IIdentity identity) => _identity = identity;
 
-		protected ElementBase(IIdentity identity, IIdentity @null)
-		{
-			_identity = identity;
-			_null = @null;
-		}
-
-		public virtual void Write(IFormatWriter writer, object instance) => writer.Start(instance != null ? _identity : _null);
+		public virtual void Write(IFormatWriter writer, object instance) => writer.Start(_identity);
 	}
 
-	sealed class NullIdentity : IIdentity
+	sealed class NullElementIdentity : IIdentity
 	{
-		public static NullIdentity Default { get; } = new NullIdentity();
-		NullIdentity() : this(new FrameworkIdentity("Null")) {}
+		public static NullElementIdentity Default { get; } = new NullElementIdentity();
+		NullElementIdentity() : this(new FrameworkIdentity("Null")) {}
 
 		readonly IIdentity _identity;
 
-		public NullIdentity(IIdentity identity) => _identity = identity;
+		public NullElementIdentity(IIdentity identity) => _identity = identity;
+
+		public string Identifier => _identity.Identifier;
+
+		public string Name => _identity.Name;
+	}
+
+	sealed class NullValueIdentity : IIdentity
+	{
+		public static NullValueIdentity Default { get; } = new NullValueIdentity();
+		NullValueIdentity() : this(new Identity("nil", "http://www.w3.org/2001/XMLSchema-instance")) { }
+
+		readonly IIdentity _identity;
+
+		public NullValueIdentity(IIdentity identity) => _identity = identity;
 
 		public string Identifier => _identity.Identifier;
 

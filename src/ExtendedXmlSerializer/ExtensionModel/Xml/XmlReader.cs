@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using System.Reflection;
@@ -66,9 +67,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				case XmlNodeType.Attribute:
 					return _reader.Value;
 				default:
-					_reader.Read();
-					var result = _reader.Value;
-					if (result != string.Empty)
+					var isNull = IsSatisfiedBy(NullValueIdentity.Default);
+
+					if (!isNull)
+					{
+						_reader.Read();
+					}
+
+					var result = isNull ? null : _reader.Value;
+
+					if (!string.IsNullOrEmpty(result))
 					{
 						_reader.Read();
 						Set();

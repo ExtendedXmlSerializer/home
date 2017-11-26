@@ -105,7 +105,7 @@ namespace ExtendedXmlSerialization.Cache
 				castedParams.Add(Expression.Convert(value, argument));
 			}
 
-			var method = type.GetMethod("Add");
+			var method = type.GetMethod("Add") ?? throw new InvalidOperationException($"Could not find the add method for type {type.FullName}.");
 
 			Expression conversion = Expression.Call(itemCasted, method, castedParams);
 
