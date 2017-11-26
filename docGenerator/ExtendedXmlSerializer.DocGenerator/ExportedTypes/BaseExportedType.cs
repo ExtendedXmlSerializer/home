@@ -1,3 +1,5 @@
+using System;
+
 namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 {
 	using System.Collections.Generic;
@@ -6,7 +8,7 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 
 	public abstract class BaseExportedType : IExportedType
 	{
-		protected StringBuilder _builder = new StringBuilder();
+		protected readonly StringBuilder Builder = new StringBuilder();
 
 		public abstract ExportedType ExportedType { get; }
 
@@ -22,7 +24,7 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 
 		public void Save(ExportedType type, string path)
 		{
-			var result = this.ToString();
+			var result = ToString();
 
 			File.WriteAllText(path, result);
 		}
@@ -32,9 +34,9 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 			var currentIndent = GetIndent(line) - minIndent + 4;
 			for (int i = 0; i < currentIndent; i++)
 			{
-				this._builder.Append(' ');
+				Builder.Append(' ');
 			}
-			this._builder.AppendLine(line.Trim());
+			Builder.AppendLine(line.Trim());
 		}
 
 
@@ -66,8 +68,8 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 			bool exit = false;
 			while (!exit)
 			{
-				indexStart = text.IndexOf(startString) + 1 + 1;
-				indexEnd = text.IndexOf(endString) - 1;
+				indexStart = text.IndexOf(startString, StringComparison.Ordinal) + 1 + 1;
+				indexEnd = text.IndexOf(endString, StringComparison.Ordinal) - 1;
 				if (indexStart >= 0 && indexEnd >= 0)
 				{
 					matched.Add(text.Substring(indexStart + startString.Length,

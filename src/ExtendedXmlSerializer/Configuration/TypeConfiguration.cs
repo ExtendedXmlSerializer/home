@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
 
-		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
+		public new IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public TypeInfo Get() => Support<T>.Key;

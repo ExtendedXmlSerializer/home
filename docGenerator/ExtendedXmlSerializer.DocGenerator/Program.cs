@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
+using ExtendedXmlSerializer.DocGenerator.ExportedTypes;
 
 namespace ExtendedXmlSerializer.DocGenerator
 {
 	using System.Collections.Generic;
-
-	using ExtendedXmlSerializer.DocGenerator.ExportedTypes;
 
 	class Program
 	{

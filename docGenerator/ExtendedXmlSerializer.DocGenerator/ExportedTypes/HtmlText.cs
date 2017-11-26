@@ -10,26 +10,26 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 
 		public override void AddHeader(string header)
 		{
-			this._builder.AppendLine($"<h2>{header}</h2>");
+			Builder.AppendLine($"<h2>{header}</h2>");
 
-			this._builder.AppendLine();
+			Builder.AppendLine();
 		}
 
 		public override void Add(string line)
 		{
-			this._builder.AppendLine($"<p>{this.ReplaceCode(line)}</p>");
+			Builder.AppendLine($"<p>{ReplaceCode(line)}</p>");
 		}
 
 		public override void AddList(params string[] list)
 		{
-			this._builder.AppendLine();
-			this._builder.AppendLine("<ul>");
+			Builder.AppendLine();
+			Builder.AppendLine("<ul>");
 			foreach (var item in list)
 			{
-				this._builder.AppendLine($"<li>{this.ReplaceCode(item)}</li>");
+				Builder.AppendLine($"<li>{ReplaceCode(item)}</li>");
 			}
-			this._builder.AppendLine("</ul>");
-			this._builder.AppendLine();
+			Builder.AppendLine("</ul>");
+			Builder.AppendLine();
 		}
 
 		public override void AddCode(string file, string section, CodeFormat format = CodeFormat.Cs)
@@ -37,17 +37,17 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 			string fileContend = File.ReadAllText(file);
 			var code = ExtractFromString(fileContend, "// " + section, "// End" + section).SelectMany(p => p.Split('\n')).ToList();
 
-			this._builder.AppendLine();
-			this._builder.AppendLine(format == CodeFormat.Cs ? "<pre lang=\"cs\">" : "<pre lang=\"xml\">");
+			Builder.AppendLine();
+			Builder.AppendLine(format == CodeFormat.Cs ? "<pre lang=\"cs\">" : "<pre lang=\"xml\">");
 
 			var minIndent = code.Min(GetIndent);
 
 			foreach (var item in code.Skip(code.First() == "\r" ? 1 : 0))
 			{
-				this.NormalizeIndent(System.Net.WebUtility.HtmlEncode(item), minIndent);
+				NormalizeIndent(System.Net.WebUtility.HtmlEncode(item), minIndent);
 			}
-			this._builder.AppendLine("</pre>");
-			this._builder.AppendLine();
+			Builder.AppendLine("</pre>");
+			Builder.AppendLine();
 		}
 
 		public override void AddCode(string file, CodeFormat format = CodeFormat.Cs)
@@ -55,22 +55,22 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 			string fileContend = File.ReadAllText(file);
 			var code = fileContend.Split('\n').ToList();
 
-			this._builder.AppendLine();
-			this._builder.AppendLine(format == CodeFormat.Cs ? "<pre lang=\"cs\">" : "<pre lang=\"xml\">");
+			Builder.AppendLine();
+			Builder.AppendLine(format == CodeFormat.Cs ? "<pre lang=\"cs\">" : "<pre lang=\"xml\">");
 
 			var minIndent = code.Min(GetIndent);
 
 			foreach (var item in code.Skip(code.First() == "\r" ? 1 : 0))
 			{
-				this.NormalizeIndent(System.Net.WebUtility.HtmlEncode(item), minIndent);
+				NormalizeIndent(System.Net.WebUtility.HtmlEncode(item), minIndent);
 			}
-			this._builder.AppendLine("</pre>");
-			this._builder.AppendLine();
+			Builder.AppendLine("</pre>");
+			Builder.AppendLine();
 		}
 
 		public override string ToString()
 		{
-			return this._builder.ToString();
+			return Builder.ToString();
 		}
 
 		string ReplaceCode(string line)

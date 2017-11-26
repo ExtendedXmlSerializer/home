@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ExtendedXmlSerializer.Samples.FluentApi
 {
+	using Configuration;
+	using CustomSerializator;
+	using Encrypt;
+	using ExtensionModel.Encryption;
+	using ExtensionModel.Xml;
 	using System.Linq;
-
-	using ExtendedXmlSerializer.Configuration;
-	using ExtendedXmlSerializer.ExtensionModel.Encryption;
-	using ExtendedXmlSerializer.ExtensionModel.Xml;
-	using ExtendedXmlSerializer.Samples.CustomSerializator;
-	using ExtendedXmlSerializer.Samples.Encrypt;
 
 	public class FluentApiSamples
     {

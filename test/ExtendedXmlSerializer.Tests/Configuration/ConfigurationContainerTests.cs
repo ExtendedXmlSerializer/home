@@ -38,7 +38,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {
-	using ExtendedXmlSerializer.Core.Sources;
+	using Core.Sources;
 
 	[SuppressMessage("ReSharper", "TestFileNameWarning")]
 	public class ConfigurationContainerTests

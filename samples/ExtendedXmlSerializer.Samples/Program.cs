@@ -33,14 +33,7 @@ using ExtendedXmlSerializer.Samples.Upgrade;
 
 namespace ExtendedXmlSerializer.Samples
 {
-	using System.Collections.Generic;
-
-	using ExtendedXmlSerializer.Configuration;
-	using ExtendedXmlSerializer.ExtensionModel.Encryption;
-	using ExtendedXmlSerializer.ExtensionModel.Xml;
-	using ExtendedXmlSerializer.Samples.FluentApi;
-
-	using Person = ExtendedXmlSerializer.Samples.Encrypt.Person;
+	using FluentApi;
 
 	public class Program
 	{

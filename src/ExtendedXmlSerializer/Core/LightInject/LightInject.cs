@@ -50,7 +50,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 #if NET45 || NETSTANDARD11 || NETSTANDARD13 || NETSTANDARD16 || NET46
 using System.IO;
 #endif

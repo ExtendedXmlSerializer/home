@@ -65,6 +65,6 @@ namespace ExtendedXmlSerializer.Configuration
 			return this;
 		}
 
-		public MemberInfo Get() => _member;
+		public new MemberInfo Get() => _member;
 	}
 }
