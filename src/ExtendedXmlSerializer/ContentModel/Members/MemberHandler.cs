@@ -29,10 +29,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly IMemberAssignment _assignment;
 
-		public MemberHandler(IMemberAssignment assignment)
-		{
-			_assignment = assignment;
-		}
+		public MemberHandler(IMemberAssignment assignment) => _assignment = assignment;
 
 		public void Handle(IInnerContent contents, IMemberSerializer member)
 		{

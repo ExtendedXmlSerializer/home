@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,35 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
-using System.Collections;
-using System.Reflection;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.Core
 {
-	sealed class Lists : ReferenceCacheBase<object, IList>, ILists
+	public class CompositeCommand<T> : ICommand<T>
 	{
-		public static Lists Default { get; } = new Lists();
-		Lists() : this(AddDelegates.Default) {}
+		readonly ImmutableArray<ICommand<T>> _items;
+		public CompositeCommand(params ICommand<T>[] items) : this(items.ToImmutableArray()) {}
 
-		readonly IAddDelegates _add;
+		public CompositeCommand(ImmutableArray<ICommand<T>> items) => _items = items;
 
-		public Lists(IAddDelegates add) => _add = add;
-
-		protected override IList Create(object parameter) => parameter as IList ?? CreateAdapter(parameter);
-
-		IList CreateAdapter(object parameter)
+		public void Execute(T parameter)
 		{
-			var generic = new Generic<object, Action<object, object>, IList>(typeof(ListAdapter<>));
-			var typeInfo = parameter.GetType().GetTypeInfo();
-			var type = CollectionItemTypeLocator.Default.Get(typeInfo);
-			var action = _add.Get(typeInfo);
-			var result = generic.Get(type)
-			                    .Invoke(parameter, action);
-			return result;
+			foreach (var command in _items)
+			{
+				command.Execute(parameter);
+			}
 		}
 	}
 }

@@ -21,35 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
 using System.Collections;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class Lists : ReferenceCacheBase<object, IList>, ILists
+	sealed class AddItemsCommand : ICommand<object>
 	{
-		public static Lists Default { get; } = new Lists();
-		Lists() : this(AddDelegates.Default) {}
+		readonly IList<object> _list;
 
-		readonly IAddDelegates _add;
+		public AddItemsCommand(IList<object> list) => _list = list;
 
-		public Lists(IAddDelegates add) => _add = add;
-
-		protected override IList Create(object parameter) => parameter as IList ?? CreateAdapter(parameter);
-
-		IList CreateAdapter(object parameter)
+		public void Execute(object parameter)
 		{
-			var generic = new Generic<object, Action<object, object>, IList>(typeof(ListAdapter<>));
-			var typeInfo = parameter.GetType().GetTypeInfo();
-			var type = CollectionItemTypeLocator.Default.Get(typeInfo);
-			var action = _add.Get(typeInfo);
-			var result = generic.Get(type)
-			                    .Invoke(parameter, action);
-			return result;
+			if (parameter is IDictionary dictionary)
+			{
+				foreach (var entry in _list.OfType<DictionaryEntry>())
+				{
+					dictionary.Add(entry.Key, entry.Value);
+				}
+			}
+			else if (IsCollectionTypeSpecification.Default.IsSatisfiedBy(parameter.GetType()))
+			{
+				var list = Lists.Default.Get(parameter);
+				foreach (var item in _list)
+				{
+					list.Add(item);
+				}
+			}
 		}
 	}
 }

@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public TypeInfo Get(TypeInfo parameter)
 		{
 			// Type is Array
-			// short-circuit if you expect lots of arrays 
+			// short-circuit if you expect lots of arrays
 			if (ArrayInfo.IsAssignableFrom(parameter))
 				return parameter.GetElementType().GetTypeInfo();
 
@@ -49,9 +49,11 @@ namespace ExtendedXmlSerializer.ReflectionModel
 				return parameter.GetGenericArguments()[0].GetTypeInfo();
 
 			// type implements/extends IEnumerable<T>;
-			var result = parameter.GetInterfaces()
+			var info = parameter.GetInterfaces()
 			                      .Where(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == Type)
 			                      .Select(t => t.GenericTypeArguments[0]).FirstOrDefault()?.GetTypeInfo();
+
+			var result = info == null & parameter.BaseType != null ? Get(parameter.BaseType.GetTypeInfo()) : info;
 			return result;
 		}
 	}

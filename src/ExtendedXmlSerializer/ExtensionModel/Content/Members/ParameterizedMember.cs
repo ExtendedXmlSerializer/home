@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
@@ -30,10 +30,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 	{
 		readonly IMember _member;
 
-		public ParameterizedMember(IMember member)
-		{
-			_member = member;
-		}
+		public ParameterizedMember(IMember member) => _member = member;
 
 		public string Identifier => _member.Identifier;
 
