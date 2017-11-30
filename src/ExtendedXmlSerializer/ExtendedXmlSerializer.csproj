@@ -9,8 +9,7 @@
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <VersionPrefix>2.0.0</VersionPrefix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
-    <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer</PackageTags>
@@ -57,11 +56,4 @@
     <PackageReference Include="System.ComponentModel" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != '$(ClassicFrameworkVersion)' ">
-    <!--<PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />-->
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.3" />
-  </ItemGroup>
-
 </Project>

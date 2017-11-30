@@ -21,15 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-#if CORE
-using Microsoft.DotNet.PlatformAbstractions;
-using System.Linq;
-using Microsoft.Extensions.DependencyModel;
-#else
-using System;
-#endif
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -38,17 +32,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static AssemblyProvider Default { get; } = new AssemblyProvider();
 		AssemblyProvider() {}
 
-		public IEnumerable<Assembly> Get()
-		{
-#if CORE
-			return DependencyContext
-				.Default
-				.GetRuntimeAssemblyNames(RuntimeEnvironment.GetRuntimeIdentifier())
-				.Select(x => new AssemblyName(x.Name))
-				.Select(Assembly.Load);
-#else
-			return AppDomain.CurrentDomain.GetAssemblies();
-#endif
-		}
+		public IEnumerable<Assembly> Get() => AppDomain.CurrentDomain.GetAssemblies();
 	}
 }
