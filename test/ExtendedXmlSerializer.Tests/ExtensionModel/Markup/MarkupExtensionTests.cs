@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
@@ -104,6 +105,23 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 			var subject = serializer.Deserialize<DatedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DatedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  Date=""{exs:Static sys:dateTime.Now}"" DateNullable=""{exs:Static sys:dateTime.Now}"" />");
 			subject.Date.Should().NotBe(default(DateTime)).And.BeAfter(DateTime.Today);
 			subject.DateNullable.Should().NotBeNull().And.BeAfter(DateTime.Today);
+		}
+
+		[Fact]
+		public void VerifyNull()
+		{
+			new ConfigurationContainer().EnableMarkupExtensions()
+			                            .Emit(EmitBehaviors.Assigned)
+			                            .ForTesting()
+			                            .Deserialize<DefaultAssignedSubject>(@"<?xml version=""1.0"" encoding=""utf-8""?><MarkupExtensionTests-DefaultAssignedSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Markup;assembly=ExtendedXmlSerializer.Tests"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" xmlns:sys=""https://extendedxmlserializer.github.io/system""  AssignedMessage=""{exs:Null}"" />")
+			                            .AssignedMessage
+										.Should()
+			                            .BeNull();
+		}
+
+		sealed class DefaultAssignedSubject
+		{
+			public string AssignedMessage { get; set; } = "Hello World!";
 		}
 
 		sealed class Subject
