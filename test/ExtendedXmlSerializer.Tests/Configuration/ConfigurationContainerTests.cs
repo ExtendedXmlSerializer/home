@@ -101,7 +101,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var configuration = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>().AddMigration(xml => { }));
 			var type = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.Equal(configuration.Root.With<MigrationsExtension>().Get(type.Get()).Count(), 1);
+			Assert.Single(configuration.Root.With<MigrationsExtension>().Get(type.Get()));
 		}
 
 		[Fact]
@@ -206,7 +206,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			Assert.NotNull(extension);
 			var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
 			Assert.NotNull(type);
-			
+
 			var member = type.Member(nameof(TestClassWithEncryptedData.Salary));
 			var property = ((ISource<MemberInfo>)member).Get();
 			Assert.NotNull(property);
