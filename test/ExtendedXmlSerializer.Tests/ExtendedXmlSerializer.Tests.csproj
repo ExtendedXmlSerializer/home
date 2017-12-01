@@ -4,7 +4,7 @@
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
     <VersionPrefix>2.0.0</VersionPrefix>
     <ClassicFrameworkVersion>net462</ClassicFrameworkVersion>
-    <TargetFrameworks>netcoreapp1.1;$(ClassicFrameworkVersion)</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -16,7 +16,7 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp1.1|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp2.0|AnyCPU'">
     <DefineConstants>DEBUG;TRACE;NETCOREAPP1_1</DefineConstants>
   </PropertyGroup>
 
@@ -36,9 +36,9 @@
   <ItemGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
 
     <Reference Include="WindowsBase" />
-    <Reference Include="System.ServiceModel">
+    <!--<Reference Include="System.ServiceModel">
       <HintPath>..\..\..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.ServiceModel.dll</HintPath>
-    </Reference>
+    </Reference>-->
   </ItemGroup>
 
 

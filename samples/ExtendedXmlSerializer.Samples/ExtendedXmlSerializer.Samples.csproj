@@ -2,19 +2,22 @@
 
   <PropertyGroup>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <VersionSuffix>alpha7</VersionSuffix>
-    <TargetFrameworks>netcoreapp1.1;net462</TargetFrameworks>
+    <VersionSuffix></VersionSuffix>
+    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Samples</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ExtendedXmlSerializer.Samples</PackageId>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>2.0.0-alpha7</Version>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj" />
+    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
   </ItemGroup>
 

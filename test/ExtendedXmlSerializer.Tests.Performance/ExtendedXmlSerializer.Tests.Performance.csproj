@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net462;netcoreapp2.0</TargetFrameworks>
     <VersionPrefix>2.0.0</VersionPrefix>
     <AssemblyName>ExtendedXmlSerializer.Tests.Performance</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -16,11 +16,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
-    <ProjectReference Include="..\..\src\ExtendedXmlSerializer.Legacy\ExtendedXmlSerializer.Legacy.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.10.8" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.10.8" />
+    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
