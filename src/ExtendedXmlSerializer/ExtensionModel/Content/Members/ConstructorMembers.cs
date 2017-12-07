@@ -35,9 +35,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class ConstructorMembers : CacheBase<ConstructorInfo, ImmutableArray<IMember>?>, IConstructorMembers
 	{
+		readonly IMetadataSpecification _specification;
 		readonly IMembers _source;
 
-		public ConstructorMembers(IMembers source) => _source = source;
+		public ConstructorMembers(IMetadataSpecification specification, IMembers source)
+		{
+			_specification = specification;
+			_source = source;
+		}
 
 		protected override ImmutableArray<IMember>? Create(ConstructorInfo parameter)
 		{
@@ -65,10 +70,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			{
 				var reflected = Members(type, parameters[i].Name).Only();
 				var member = reflected != null ? _source.Get(reflected) : null;
-				if (member != null && !member.IsWritable)
+				if (member != null && !member.IsWritable && Allowed(reflected))
 				{
 					yield return new ParameterizedMember(member);
 				}
+			}
+		}
+
+		bool Allowed(MemberInfo reflected)
+		{
+			switch (reflected)
+			{
+				case FieldInfo field:
+					return _specification.IsSatisfiedBy(field);
+				case PropertyInfo property:
+					return _specification.IsSatisfiedBy(property);
+				default:
+					return false;
 			}
 		}
 

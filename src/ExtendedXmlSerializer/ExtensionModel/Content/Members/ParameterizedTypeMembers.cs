@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			var items = members?.AddRange(typed) ?? typed;
 
 			var result = items.GroupBy(IdentityFormatter.Default.Get)
-			                  .Select(x => x.First())
+			                  .Select(x => x.OfType<ParameterizedMember>().FirstOrDefault() ?? x.First())
 			                  .ToImmutableArray();
 			return result;
 		}
