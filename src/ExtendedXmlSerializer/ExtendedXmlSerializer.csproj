@@ -12,7 +12,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
-    <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer</PackageTags>
+    <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
     <PackageProjectUrl>https://github.com/wojtpl2/ExtendedXmlSerializer</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/wojtpl2/ExtendedXmlSerializer/blob/master/Licence</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
