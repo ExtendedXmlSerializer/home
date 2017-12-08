@@ -7,7 +7,7 @@ ExtendedXmlSerializer
     :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer
 
 
-..raw:: html
+.. raw:: html
 
     <img src="https://extendedxmlserializer.github.io/img/logoBig.png" height="200px">
 

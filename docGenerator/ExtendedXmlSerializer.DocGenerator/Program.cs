@@ -238,7 +238,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			         + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine
 			         + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
 			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine
-			         + Environment.NewLine + "..raw:: html" + Environment.NewLine + Environment.NewLine
+			         + Environment.NewLine + ".. raw:: html" + Environment.NewLine + Environment.NewLine
 			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">"
 			         + Environment.NewLine + Environment.NewLine + result;
 
