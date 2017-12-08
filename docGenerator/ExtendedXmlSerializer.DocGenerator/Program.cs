@@ -232,10 +232,15 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 
 			var result = doc.ToString(ExportedType.ReStructuredText);
-			result =
-				".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg" + Environment.NewLine + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine +
-				".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine + Environment.NewLine +
-			   result;
+
+			result = "ExtendedXmlSerializer" + Environment.NewLine + "=====================" + Environment.NewLine + Environment.NewLine
+					 + ".. image:: https://img.shields.io/nuget/v/ExtendedXmlSerializer.svg" + Environment.NewLine
+			         + "    :target: https://www.nuget.org/packages/ExtendedXmlSerializer/" + Environment.NewLine
+			         + ".. image:: https://ci.appveyor.com/api/projects/status/9u1w8cyyr22kbcwi?svg=true" + Environment.NewLine
+			         + "    :target: https://ci.appveyor.com/project/wojtpl2/extendedxmlserializer\n" + Environment.NewLine
+			         + Environment.NewLine + "..raw:: html" + Environment.NewLine + Environment.NewLine
+			         + "    <img src=\"https://extendedxmlserializer.github.io/img/logoBig.png\" height=\"200px\">"
+			         + Environment.NewLine + Environment.NewLine + result;
 
 			File.WriteAllText("..\\..\\..\\..\\readme.rst", result);
 		}
