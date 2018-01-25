@@ -18,8 +18,8 @@
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.10" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.10.10" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.12" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.10.12" />
     <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
   </ItemGroup>
 
