@@ -38,5 +38,7 @@ namespace ExtendedXmlSerializer.ContentModel.Format
 		void Content(IIdentity property, string content);
 
 		void Content(string content);
+
+		void Verbatim(string content);
 	}
 }

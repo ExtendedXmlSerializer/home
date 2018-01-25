@@ -25,5 +25,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	interface IMemberTable<T> : IMetadataTable<MemberInfo, T> {}
+	public interface IMemberTable<T> : IMetadataTable<MemberInfo, T> {}
 }

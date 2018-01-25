@@ -29,10 +29,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly IMemberSerializer _serializer;
 
-		public PropertyMemberSerializer(IMemberSerializer serializer)
-		{
-			_serializer = serializer;
-		}
+		public PropertyMemberSerializer(IMemberSerializer serializer) => _serializer = serializer;
 
 		public object Get(IFormatReader parameter) => _serializer.Get(parameter);
 

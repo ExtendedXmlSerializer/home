@@ -21,17 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
 	sealed class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
 	{
-		[UsedImplicitly]
-		public MemberTable() {}
+		public MemberTable() : this(new ConcurrentDictionary<MemberInfo, T>(MemberComparer.Default)) {}
 
 		public MemberTable(IDictionary<MemberInfo, T> store) : base(store) {}
 	}

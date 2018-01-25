@@ -35,6 +35,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -56,6 +58,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<MemberFormatExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
+			return @this;
+		}
+
+		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
+			@this.Register(VerbatimContentSerializer.Default);
+
+		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISerializer<TMember> serializer)
+		{
+			@this.Root.With<MemberFormatExtension>().Serializers.Assign(((ISource<MemberInfo>)@this).Get(), serializer.Adapt());
+			return @this;
+		}
+
+		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		{
+			@this.Root.With<MemberFormatExtension>().Serializers.Remove(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 

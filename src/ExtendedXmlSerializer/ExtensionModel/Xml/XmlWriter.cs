@@ -100,6 +100,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			}
 		}
 
+		public void Verbatim(string content)
+		{
+			_writer.WriteCData(content);
+		}
+
 		public void Content(IIdentity property, string content)
 		{
 			var identifier = property.Identifier.NullIfEmpty();

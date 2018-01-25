@@ -25,5 +25,5 @@ namespace ExtendedXmlSerializer.ContentModel
 {
 	public interface ISerializer : IReader, IWriter {}
 
-	interface ISerializer<T> : IReader<T>, IWriter<T> {}
+	public interface ISerializer<T> : IReader<T>, IWriter<T> {}
 }

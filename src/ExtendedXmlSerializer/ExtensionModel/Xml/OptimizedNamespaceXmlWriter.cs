@@ -54,6 +54,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public void Content(IIdentity property, string content) => _writer.Content(property, content);
 		public void Content(string content) => _writer.Content(content);
+		public void Verbatim(string content)
+		{
+			_writer.Verbatim(content);
+		}
 
 		public string Get(MemberInfo parameter) => _writer.Get(parameter);
 		public void Dispose() => _writer.Dispose();

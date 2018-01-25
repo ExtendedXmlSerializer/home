@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	interface IMetadataTable<in TMetadata, TValue> : ITableSource<TMetadata, TValue> where TMetadata : MemberInfo {}
+	public interface IMetadataTable<in TMetadata, TValue> : ITableSource<TMetadata, TValue> where TMetadata : MemberInfo {}
 }

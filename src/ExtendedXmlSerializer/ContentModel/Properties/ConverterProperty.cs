@@ -31,13 +31,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	{
 		readonly IProperty<T> _property;
 
-		public ConverterProperty(IConverter<T> converter, IIdentity identity)
+		public ConverterProperty(IConvert<T> converter, IIdentity identity)
 			: this(new DelegatedProperty<T>(converter.Parse, converter.Format, identity)) {}
 
-		public ConverterProperty(IProperty<T> property)
-		{
-			_property = property;
-		}
+		public ConverterProperty(IProperty<T> property) => _property = property;
 
 		public T Get(IFormatReader parameter) => _property.Get(parameter);
 
