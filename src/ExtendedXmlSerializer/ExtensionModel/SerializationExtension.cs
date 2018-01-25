@@ -30,23 +30,19 @@ using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class SerializationExtension : ISerializerExtension
+	public sealed class SerializationExtension : ISerializerExtension
 	{
 		public static SerializationExtension Default { get; } = new SerializationExtension();
 		SerializationExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-		{
-			var result = parameter
-				.Register<ISerializer, RuntimeSerializer>()
-				.Register<ISerializers, Serializers>()
-				.Decorate<ISerializers, ReferenceAwareSerializers>()
-				.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
-				.Register<IContents, Contents>()
-				.Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents))
-				.Register<IExtendedXmlSerializer, Xml.ExtendedXmlSerializer>();
-			return result;
-		}
+			=> parameter.Register<ISerializer, RuntimeSerializer>()
+			            .Register<ISerializers, Serializers>()
+			            .Decorate<ISerializers, ReferenceAwareSerializers>()
+			            .RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+			            .Register<IContents, Contents>()
+			            .Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents))
+			            .Register<IExtendedXmlSerializer, Xml.ExtendedXmlSerializer>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

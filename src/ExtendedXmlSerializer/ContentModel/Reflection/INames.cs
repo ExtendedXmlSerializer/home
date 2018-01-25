@@ -28,5 +28,5 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
 	interface INames : INames<TypeInfo> {}
 
-	interface INames<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
+	public interface INames<in T> : IParameterizedSource<T, string> where T : MemberInfo {}
 }

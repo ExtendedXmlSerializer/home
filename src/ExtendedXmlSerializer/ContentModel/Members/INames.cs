@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	interface INames : INames<MemberInfo> {}
+	public interface INames : INames<MemberInfo> {}
 }

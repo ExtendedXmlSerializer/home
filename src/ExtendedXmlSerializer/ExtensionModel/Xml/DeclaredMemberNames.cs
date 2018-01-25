@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class DeclaredMemberNames : INames
+	public sealed class DeclaredMemberNames : INames
 	{
 		public static DeclaredMemberNames Default { get; } = new DeclaredMemberNames();
 		DeclaredMemberNames() {}

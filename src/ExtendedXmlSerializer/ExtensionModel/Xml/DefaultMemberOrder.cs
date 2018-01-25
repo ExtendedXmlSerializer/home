@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class DefaultMemberOrder : IParameterizedSource<MemberInfo, int>
+	public sealed class DefaultMemberOrder : IParameterizedSource<MemberInfo, int>
 	{
 		public static DefaultMemberOrder Default { get; } = new DefaultMemberOrder();
 		DefaultMemberOrder() {}

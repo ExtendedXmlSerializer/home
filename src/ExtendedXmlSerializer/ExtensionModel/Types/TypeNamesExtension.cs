@@ -33,7 +33,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class TypeNamesExtension : ISerializerExtension
+	public sealed class TypeNamesExtension : ISerializerExtension
 	{
 		readonly static IDictionary<TypeInfo, string> Defaults = DefaultNames.Default;
 

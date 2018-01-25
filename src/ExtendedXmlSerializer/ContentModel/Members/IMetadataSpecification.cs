@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	interface IMetadataSpecification : ISpecification<PropertyInfo>, ISpecification<FieldInfo> {}
+	public interface IMetadataSpecification : ISpecification<PropertyInfo>, ISpecification<FieldInfo> {}
 }

@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	interface IAllowedMemberValues : IParameterizedSource<MemberInfo, IAllowedValueSpecification> {}
+	public interface IAllowedMemberValues : IParameterizedSource<MemberInfo, IAllowedValueSpecification> {}
 }

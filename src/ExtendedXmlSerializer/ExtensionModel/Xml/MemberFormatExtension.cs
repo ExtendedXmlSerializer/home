@@ -31,7 +31,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class MemberFormatExtension : ISerializerExtension
+	public sealed class MemberFormatExtension : ISerializerExtension
 	{
 		public MemberFormatExtension()
 			: this(new Dictionary<MemberInfo, IAttributeSpecification>(MemberComparer.Default), new HashSet<MemberInfo>(MemberComparer.Default)) {}

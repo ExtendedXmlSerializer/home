@@ -30,7 +30,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class MemberPropertiesExtension : ISerializerExtension
+	public sealed class MemberPropertiesExtension : ISerializerExtension
 	{
 		readonly INames _defaultNames;
 		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;

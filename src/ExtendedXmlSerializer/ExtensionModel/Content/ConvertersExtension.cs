@@ -30,7 +30,7 @@ using Serializers = ExtendedXmlSerializer.ContentModel.Conversion.Serializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ConvertersExtension : ISerializerExtension
+	public sealed class ConvertersExtension : ISerializerExtension
 	{
 		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
 

@@ -27,5 +27,5 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	interface IConverterSource : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, IConverter> {}
+	public interface IConverterSource : ISpecification<TypeInfo>, IParameterizedSource<TypeInfo, IConverter> {}
 }

@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class DefaultMetadataSpecification : MetadataSpecification
+	public sealed class DefaultMetadataSpecification : MetadataSpecification
 	{
 		readonly static MemberSpecification<PropertyInfo> Property =
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);

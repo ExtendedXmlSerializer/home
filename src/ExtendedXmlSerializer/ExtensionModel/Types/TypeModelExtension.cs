@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class TypeModelExtension : ISerializerExtension
+	public sealed class TypeModelExtension : ISerializerExtension
 	{
 		public static TypeModelExtension Default { get; } = new TypeModelExtension();
 		TypeModelExtension() {}

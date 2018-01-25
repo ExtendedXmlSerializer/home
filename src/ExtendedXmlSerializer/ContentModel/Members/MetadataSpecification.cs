@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class MetadataSpecification : IMetadataSpecification
+	public class MetadataSpecification : IMetadataSpecification
 	{
 		readonly ISpecification<PropertyInfo> _property;
 		readonly ISpecification<FieldInfo> _field;

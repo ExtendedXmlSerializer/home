@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ImmutableArrayExtension : ISerializerExtension
+	public sealed class ImmutableArrayExtension : ISerializerExtension
 	{
 		public static ImmutableArrayExtension Default { get; } = new ImmutableArrayExtension();
 		ImmutableArrayExtension() {}

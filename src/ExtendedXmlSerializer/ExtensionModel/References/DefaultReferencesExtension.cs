@@ -29,7 +29,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DefaultReferencesExtension : ISerializerExtension
+	public sealed class DefaultReferencesExtension : ISerializerExtension
 	{
 		public DefaultReferencesExtension() : this(new HashSet<TypeInfo> {Support<string>.Key}, new HashSet<TypeInfo>()) {}
 

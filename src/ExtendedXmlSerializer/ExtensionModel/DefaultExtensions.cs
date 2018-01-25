@@ -33,7 +33,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	public sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
 	{
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
 

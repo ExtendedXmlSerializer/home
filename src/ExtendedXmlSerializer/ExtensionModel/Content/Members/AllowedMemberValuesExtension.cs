@@ -31,7 +31,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class AllowedMemberValuesExtension : Collection<IAllowedMemberValues>, ISerializerExtension
+	public sealed class AllowedMemberValuesExtension : Collection<IAllowedMemberValues>, ISerializerExtension
 	{
 		readonly static AllowAssignedValues AllowAssignedValues = AllowAssignedValues.Default;
 

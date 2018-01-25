@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class MemberModelExtension : ISerializerExtension
+	public sealed class MemberModelExtension : ISerializerExtension
 	{
 		public static MemberModelExtension Default { get; } = new MemberModelExtension();
 		MemberModelExtension() {}

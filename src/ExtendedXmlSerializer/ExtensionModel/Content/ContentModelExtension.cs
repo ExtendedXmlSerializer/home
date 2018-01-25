@@ -32,7 +32,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ContentModelExtension : ISerializerExtension
+	public sealed class ContentModelExtension : ISerializerExtension
 	{
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
 		ContentModelExtension() : this(ContentReaders.Default, ContentWriters.Default) {}

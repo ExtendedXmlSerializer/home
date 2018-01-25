@@ -32,7 +32,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class XmlSerializationExtension : ISerializerExtension
+	public sealed class XmlSerializationExtension : ISerializerExtension
 	{
 		readonly XmlReaderSettings _reader;
 		readonly XmlWriterSettings _writer;
