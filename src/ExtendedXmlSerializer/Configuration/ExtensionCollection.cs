@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Linq;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -32,8 +33,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public ExtensionCollection(params ISerializerExtension[] extensions) : base(extensions) {}
 
 		public bool Contains<T>() where T : ISerializerExtension => Contains(Support<T>.Key.AsType());
-
 		
-		public new T Find<T>() where T : ISerializerExtension => base.Find<T>();
+		public T Find<T>() where T : ISerializerExtension => this.OfType<T>().FirstOrDefault();
 	}
 }

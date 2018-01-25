@@ -24,34 +24,31 @@
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using System.Collections.Generic;
+using System.Linq;
+using ISerializers = ExtendedXmlSerializer.ContentModel.Conversion.ISerializers;
+using Serializers = ExtendedXmlSerializer.ContentModel.Conversion.Serializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ContentsExtension : ISerializerExtension
+	sealed class ConvertersExtension : ISerializerExtension
 	{
 		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
 
 		readonly IEnumerable<IConverterSource> _sources;
-		readonly IContentWriters _writers;
-		readonly IContentReaders _readers;
 
-		public ContentsExtension() : this(new HashSet<IConverter>(WellKnownConverters.Default), Sources, ContentReaders.Default, ContentWriters.Default) {}
+		public ConvertersExtension() : this(WellKnownConverters.Default.KeyedByType(), Sources) {}
 
-		public ContentsExtension(ICollection<IConverter> converters, IEnumerable<IConverterSource> sources, IContentReaders readers, IContentWriters writers)
+		public ConvertersExtension(ICollection<IConverter> converters, IEnumerable<IConverterSource> sources)
 		{
 			Converters = converters;
 			_sources = sources;
-			_writers = writers;
-			_readers = readers;
 		}
 
 		public ICollection<IConverter> Converters { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<IEnumerable<IConverter>>(Converters)
+			=> parameter.RegisterInstance(Converters.ToArray().Hide())
 			            .RegisterInstance(_sources)
-			            .RegisterInstance(_writers)
-			            .RegisterInstance(_readers)
 			            .Register<IConverters, Converters>()
 			            .Register<ISerializers, Serializers>()
 			            .Register<ConverterContentOption>();

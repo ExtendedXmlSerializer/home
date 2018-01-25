@@ -23,13 +23,13 @@
 
 using System;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ContentWriters : IContentWriters
+	sealed class ContentReaders : IContentReaders
 	{
-		public static ContentWriters Default { get; } = new ContentWriters();
-		ContentWriters() {}
+		public static ContentReaders Default { get; } = new ContentReaders();
+		ContentReaders() {}
 
-		public IWriter Get(Func<object, string> parameter) => new ContentWriter(parameter);
+		public IReader Get(Func<string, object> parameter) => new ContentReader(parameter);
 	}
 }

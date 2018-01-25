@@ -120,6 +120,37 @@ namespace ExtendedXmlSerializer.Core
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
+		public static KeyedByTypeCollection<T> KeyedByType<T>(this IEnumerable<T> @this) =>
+			@this as KeyedByTypeCollection<T> ?? new KeyedByTypeCollection<T>(@this);
+
+		public static ICollection<T> AddOrReplace<T, TItem>(this ICollection<T> @this, TItem item)
+		{
+			var source = @this.KeyedByType().AddOrReplace(item);
+			@this.SynchronizeFrom(source);
+			return @this;
+		}
+
+		public static bool Removing<T, TItem>(this ICollection<T> @this, TItem item)
+		{
+			var source = @this.KeyedByType();
+			var result = source.Remove(item);
+			@this.SynchronizeFrom(source);
+			return result;
+		}
+
+		public static ICollection<T> SynchronizeFrom<T>(this ICollection<T> @this, IEnumerable<T> source)
+		{
+			if (!ReferenceEquals(@this, source))
+			{
+				@this.Clear();
+				foreach (var item in source)
+				{
+					@this.Add(item);
+				}
+			}
+			return @this;
+		}
+
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> Nullable.GetUnderlyingType(@this.AsType())
 			           ?.GetTypeInfo() ?? @this;
@@ -139,11 +170,7 @@ namespace ExtendedXmlSerializer.Core
 		public static IEnumerable<TValue> Get<TKey, TValue>(this ILookup<TKey, TValue> target, TKey key) => target[key];
 
 		public static TValue? GetStructure<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
-			where TValue : struct
-		{
-			TValue result;
-			return target.TryGetValue(key, out result) ? result : (TValue?) null;
-		}
+			where TValue : struct => target.TryGetValue(key, out var result) ? result : (TValue?) null;
 
 		public static IEnumerable<T> Appending<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 
@@ -193,6 +220,14 @@ namespace ExtendedXmlSerializer.Core
 				   : @this.GetService(typeof(T))
 				          .AsValid<T>($"Could not located service '{typeof(T)}'");
 
+
+		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
+		{
+			foreach (var @in in @this)
+			{
+				select(@in);
+			}
+		}
 
 		public static T AsValid<T>(this object @this, string message = null)
 		{

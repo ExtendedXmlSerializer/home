@@ -24,7 +24,7 @@
 using System;
 using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class ContentReader : IReader
 	{

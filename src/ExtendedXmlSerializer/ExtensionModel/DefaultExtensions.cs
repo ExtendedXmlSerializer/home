@@ -59,7 +59,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return ContentModelExtension.Default;
 			yield return TypeModelExtension.Default;
 			yield return new XmlSerializationExtension();
-			yield return new ContentsExtension();
+			yield return new ConvertersExtension();
 			yield return MemberModelExtension.Default;
 			yield return new TypeNamesExtension();
 			yield return new MemberPropertiesExtension(_defaultNames, _defaultMemberOrder);

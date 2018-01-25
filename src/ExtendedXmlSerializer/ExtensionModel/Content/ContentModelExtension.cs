@@ -35,7 +35,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	sealed class ContentModelExtension : ISerializerExtension
 	{
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
-		ContentModelExtension() {}
+		ContentModelExtension() : this(ContentReaders.Default, ContentWriters.Default) {}
+
+		readonly IContentReaders _readers;
+		readonly IContentWriters _writers;
+
+		public ContentModelExtension(IContentReaders readers, IContentWriters writers)
+		{
+			_readers = readers;
+			_writers = writers;
+		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IComparer<IContentOption>, TypedSortComparer<IContentOption>>()
@@ -51,6 +60,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Register<IInnerContentServices, InnerContentServices>()
 			            .Register<IMemberHandler, MemberHandler>()
 			            .Register<ICollectionContentsHandler, CollectionContentsHandler>()
+			            .RegisterInstance(_writers)
+			            .RegisterInstance(_readers)
 			            .RegisterInstance<IAlteration<IInnerContentHandler>>(Self<IInnerContentHandler>.Default)
 			            .RegisterInstance<IInnerContentResult>(InnerContentResult.Default)
 			            .RegisterInstance<IMemberAssignment>(MemberAssignment.Default)

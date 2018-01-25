@@ -113,16 +113,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this, IConverter<T> converter)
 		{
-			@this.Root.Find<ContentsExtension>()
-			     .Converters.Add(Converters<T>.Default.Get(converter));
+			var item = converter as Converter<T> ?? Converters<T>.Default.Get(converter);
+			@this.Root.Find<ConvertersExtension>()
+			     .Converters
+			     .AddOrReplace(item);
 			return @this;
 		}
 
 		public static bool Unregister<T>(this IConfigurationContainer @this, IConverter<T> converter)
-			=> @this.Root.Find<ContentsExtension>()
-			        .Converters.Remove(Converters<T>.Default.Get(converter));
+			=> @this.Root.Find<ConvertersExtension>()
+			        .Converters.Removing(converter);
 
-		sealed class Converters<T> : ReferenceCache<IConverter<T>, IConverter>
+		sealed class Converters<T> : ReferenceCache<IConverter<T>, IConverter<T>>
 		{
 			public static Converters<T> Default { get; } = new Converters<T>();
 			Converters() : base(key => new Converter<T>(key, key.Parse, key.Format)) {}

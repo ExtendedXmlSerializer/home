@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	class WellKnownConverters : Items<IConverter>
+	sealed class WellKnownConverters : Items<IConverter>
 	{
 		public static WellKnownConverters Default { get; } = new WellKnownConverters();
 

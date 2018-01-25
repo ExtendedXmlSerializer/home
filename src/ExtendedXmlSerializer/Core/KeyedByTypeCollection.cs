@@ -24,6 +24,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 #pragma warning disable 1584,1711,1572,1581,1580
 
@@ -51,67 +52,50 @@ namespace ExtendedXmlSerializer.Core
 				Add(obj);
 		}
 
-		/// <summary>Returns the first item in the collection of a specified type.</summary>
+		/*/// <summary>Returns the first item in the collection of a specified type.</summary>
 		/// <returns>The object of type <paramref name="T" /> if it is a reference type and the value of type <paramref name="T" /> if it is a value type. The default value of the type is returned if no object of type <paramref name="T" /> is contained in the collection: null if it is a reference type and 0 if it is a value type.</returns>
 		/// <typeparam name="T">The type of item in the collection to find.</typeparam>
-		public T Find<T>()
-		{
-			return Find<T>(false);
-		}
+		public T Find<T>() => Find<T>(false);*/
 
 		/// <summary>Removes an object of a specified type from the collection.</summary>
 		/// <returns>The object removed from the collection.</returns>
 		/// <typeparam name="T">The type of item in the collection to remove.</typeparam>
-		public T Remove<T>()
-		{
-			return Find<T>(true);
-		}
-
-		T Find<T>(bool remove)
+		public bool Remove<T>(T item)
 		{
 			for (var index = 0; index < Count; ++index)
 			{
 				var obj = this[index];
-				if ((object) obj is T)
+				var o = obj as object;
+				if (o is T || ReferenceEquals(item, o))
 				{
-					if (remove)
-						base.Remove(obj);
-					return (T) (object) obj;
+					base.Remove(obj);
+					return true;
 				}
 			}
-			return default(T);
+
+			return false;
 		}
 
-		/// <summary>Returns a collection of objects of type <paramref name="T" /> that are contained in the <see cref="T:System.Collections.Generic.KeyedByTypeCollection`1" />.</summary>
-		/// <returns>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <paramref name="T" /> that contains the objects of type <paramref name="T" /> from the original collection.</returns>
-		/// <typeparam name="T">The type of item in the collection to find.</typeparam>
-		public Collection<T> FindAll<T>()
+		public KeyedByTypeCollection<TItem> AddOrReplace<T>(T item)
 		{
-			return FindAll<T>(false);
+			if (item is TItem)
+			{
+				RemoveAll<T>();
+				Add((TItem)(object)item);
+			}
+			return this;
 		}
 
 		/// <summary>Removes all of the elements of a specified type from the collection.</summary>
 		/// <returns>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains the objects of type <paramref name="T" /> from the original collection.</returns>
 		/// <typeparam name="T">The type of item in the collection to remove.</typeparam>
-		public Collection<T> RemoveAll<T>()
+		public KeyedByTypeCollection<TItem> RemoveAll<T>()
 		{
-			return FindAll<T>(true);
-		}
-
-		Collection<T> FindAll<T>(bool remove)
-		{
-			var collection = new Collection<T>();
-			foreach (var obj in this)
-			{
-				if ((object) obj is T)
-					collection.Add((T) (object) obj);
-			}
-			if (remove)
-			{
-				foreach (var obj in collection)
-					base.Remove((TItem) (object) obj);
-			}
-			return collection;
+			this.OfType<T>()
+			    .OfType<TItem>()
+			    .ToArray()
+			    .ForEach(base.Remove);
+			return this;
 		}
 
 		/// <summary>Gets the type of an item contained in the collection.</summary>
