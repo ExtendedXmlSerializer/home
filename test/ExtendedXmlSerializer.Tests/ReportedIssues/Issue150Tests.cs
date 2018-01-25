@@ -46,6 +46,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			          .ShouldBeEquivalentTo(subject);
 		}
 
+		[Fact]
+		public void VerifyVerbatimRaw()
+		{
+			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			                                             .Member(x => x.Message)
+			                                             .Verbatim()
+			                                             .Create()
+			                                             .ForTesting();
+
+			var subject = new Subject {Message = @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil Segoe UI;}}\r{\colortbl ;\red0\green0\blue0;}\r{*\generator Riched20 10.0.16299}\viewkind4\uc1\r\pard\tx720\cf1\f0\fs23 Sample Text\par\r}"};
+			serializer.Cycle(subject).ShouldBeEquivalentTo(subject);
+		}
+
 		sealed class Subject
 		{
 			public string Message { get; set; }
