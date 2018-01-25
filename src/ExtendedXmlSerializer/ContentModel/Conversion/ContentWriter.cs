@@ -21,22 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	abstract class ConverterBase<T> : DecoratedSpecification<TypeInfo>, IConverter<T>
+	sealed class ContentWriter : IWriter
 	{
-		protected readonly static TypeEqualitySpecification<T> Specification = TypeEqualitySpecification<T>.Default;
+		readonly Func<object, string> _formatter;
+		public ContentWriter(Func<object, string> formatter) => _formatter = formatter;
 
-		protected ConverterBase() : this(Specification) {}
-
-		protected ConverterBase(ISpecification<TypeInfo> specification) : base(specification) {}
-
-		public abstract T Parse(string data);
-
-		public abstract string Format(T instance);
+		public void Write(IFormatWriter writer, object instance) => writer.Content(_formatter(instance));
 	}
 }
