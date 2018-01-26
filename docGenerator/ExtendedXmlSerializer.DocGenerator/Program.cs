@@ -176,6 +176,13 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add("Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.AutoFormatting.Enabled.xml", CodeFormat.Xml);
 
+			doc.AddHeader("Verbatim Content (CDATA)");
+			doc.Add("If you have an element with a member that can hold lots of data, or data that has illegal characters, you configure it to be a verbatim field and it will emit a CDATA section around it:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\VerbatimContent.cs", "Example");
+
+			doc.Add("You can also denote these fields with an attribute and get the same functionality:");
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\VerbatimContent.cs", "Subject");
+			
 			doc.AddHeader("Private Constructors");
 			doc.Add("One of the limitations of the classic `XmlSerializer` is that it does not support private constructors, but `ExtendedXmlSerializer` does via its `EnableAllConstructors` call:");
 
