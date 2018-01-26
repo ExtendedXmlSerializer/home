@@ -20,7 +20,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new Subject();
 			instance.AddChild(new Subject());
-			serializer.Cycle(instance).ShouldAllBeEquivalentTo(instance);
+			var subject = serializer.Cycle(instance);
+			subject.ShouldAllBeEquivalentTo(instance);
 		}
 
 		
