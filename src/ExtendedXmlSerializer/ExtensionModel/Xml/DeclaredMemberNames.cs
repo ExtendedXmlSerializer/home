@@ -35,6 +35,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public string Get(MemberInfo parameter)
 			=> parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
-			   parameter.GetCustomAttribute<XmlElementAttribute>(false)?.ElementName.NullIfEmpty();
+			   DefaultXmlElementAttribute.Default.Get(parameter)?.ElementName.NullIfEmpty();
 	}
 }
