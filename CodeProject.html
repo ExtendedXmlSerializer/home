@@ -622,7 +622,7 @@
     &lt;SubjectWithThreeProperties xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Number&gt;123&lt;/Number&gt;
       &lt;Message&gt;Hello World!&lt;/Message&gt;
-      &lt;Time&gt;2018-01-26T10:18:16.7813081-05:00&lt;/Time&gt;
+      &lt;Time&gt;2018-01-26T10:25:47.6507293-05:00&lt;/Time&gt;
     &lt;/SubjectWithThreeProperties&gt;
 </pre>
 
@@ -630,7 +630,7 @@
 
 <pre lang="xml">
     &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-    &lt;SubjectWithThreeProperties Number=&quot;123&quot; Message=&quot;Hello World!&quot; Time=&quot;2018-01-26T10:18:16.7813081-05:00&quot; xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot; /&gt;
+    &lt;SubjectWithThreeProperties Number=&quot;123&quot; Message=&quot;Hello World!&quot; Time=&quot;2018-01-26T10:25:47.6507293-05:00&quot; xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot; /&gt;
 </pre>
 
 <h2>Verbatim Content (CDATA)</h2>
@@ -645,6 +645,14 @@
                 var subject = new Subject {Message = @&quot;&lt;{&quot;&quot;Ilegal characters and such&quot;&quot;}&gt;&quot;};
                 var contents = serializer.Serialize(subject);
     // ...
+</pre>
+
+
+<pre lang="xml">
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;Subject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
+      &lt;Message&gt;&amp;lt;{&quot;Ilegal characters and such&quot;}&amp;gt;&lt;/Message&gt;
+    &lt;/Subject&gt;
 </pre>
 
 <p>You can also denote these fields with an attribute and get the same functionality:</p>
@@ -726,7 +734,7 @@
     &lt;ParameterizedSubject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Message&gt;Hello World!&lt;/Message&gt;
       &lt;Number&gt;123&lt;/Number&gt;
-      &lt;Time&gt;2018-01-26T10:18:16.9318559-05:00&lt;/Time&gt;
+      &lt;Time&gt;2018-01-26T10:25:47.8844816-05:00&lt;/Time&gt;
     &lt;/ParameterizedSubject&gt;
 </pre>
 

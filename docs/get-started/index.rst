@@ -633,7 +633,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2018-01-26T10:18:16.7813081-05:00</Time>
+      <Time>2018-01-26T10:25:47.6507293-05:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -641,7 +641,7 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2018-01-26T10:18:16.7813081-05:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2018-01-26T10:25:47.6507293-05:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Verbatim Content (CDATA)
 ========================
@@ -657,6 +657,14 @@ If you have an element with a member that can hold lots of data, or data that ha
                 var subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
                 var contents = serializer.Serialize(subject);
     // ...
+
+
+.. sourcecode:: xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <Subject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
+      <Message>&lt;{"Ilegal characters and such"}&gt;</Message>
+    </Subject>
 
 You can also denote these fields with an attribute and get the same functionality:
 
@@ -740,7 +748,7 @@ Taking this concept bit further leads to a favorite feature of ours in `Extended
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2018-01-26T10:18:16.9318559-05:00</Time>
+      <Time>2018-01-26T10:25:47.8844816-05:00</Time>
     </ParameterizedSubject>
 
 Tuples

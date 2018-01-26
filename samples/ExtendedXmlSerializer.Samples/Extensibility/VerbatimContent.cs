@@ -4,6 +4,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+// ReSharper disable UnusedVariable
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
 {
@@ -27,7 +28,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 
 			var @default = new ConfigurationContainer().Create()
 			                                           .Serialize(new XmlWriterSettings {Indent = true}, subject);
-			File.WriteAllText(@"bin\Extensibility.VerbatimContent.Default.xml", @default);
+			File.WriteAllText(@"bin\Extensibility.VerbatimContent.xml", @default);
 		}
 	}
 

@@ -180,6 +180,8 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add("If you have an element with a member that can hold lots of data, or data that has illegal characters, you configure it to be a verbatim field and it will emit a CDATA section around it:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\VerbatimContent.cs", "Example");
 
+			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\bin\Extensibility.VerbatimContent.xml", CodeFormat.Xml);
+
 			doc.Add("You can also denote these fields with an attribute and get the same functionality:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\VerbatimContent.cs", "Subject");
 			

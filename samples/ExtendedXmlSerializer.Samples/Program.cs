@@ -59,6 +59,7 @@ namespace ExtendedXmlSerializer.Samples
 			AttachedProperties.Default.Execute(null);
 			MarkupExtensions.Default.Execute(null);
 			Example.Default.Execute(null);
+			VerbatimContent.Default.Execute(null);
 
 			SimpleSamples.Run();
 			DictianarySamples.Run();
