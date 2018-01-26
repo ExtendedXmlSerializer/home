@@ -26,8 +26,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 // ...
 // EndExample
 
-			var @default = new ConfigurationContainer().Create()
-			                                           .Serialize(new XmlWriterSettings {Indent = true}, subject);
+			var @default = serializer.Serialize(new XmlWriterSettings {Indent = true}, subject);
 			File.WriteAllText(@"bin\Extensibility.VerbatimContent.xml", @default);
 		}
 	}
