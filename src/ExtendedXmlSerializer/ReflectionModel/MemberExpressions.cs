@@ -31,18 +31,19 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static MemberExpression PropertyOrField(this UnaryExpression expression, Type type, string name)
 		{
-			try
+			var property = type.GetProperty(name) ?? type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (property != null)
 			{
-				return Expression.PropertyOrField(expression, name);
+				return Expression.Property(expression, property);
 			}
-			catch (AmbiguousMatchException)
+
+			var field = type.GetField(name) ?? type.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			if (field != null)
 			{
-				var property = type.GetRuntimeProperty(name);
-				var result = property != null
-					             ? Expression.Property(expression, property)
-					             : Expression.Field(expression, type.GetRuntimeField(name));
-				return result;
+				return Expression.Field(expression, field);
 			}
+
+			throw new InvalidOperationException($"Could not find the member '{name}' on type '{type}'.");
 		}
 	}
 }
