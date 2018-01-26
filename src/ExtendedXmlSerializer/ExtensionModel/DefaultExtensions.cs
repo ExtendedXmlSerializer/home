@@ -58,6 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new DefaultReferencesExtension();
 			yield return ContentModelExtension.Default;
 			yield return TypeModelExtension.Default;
+			yield return SingletonActivationExtension.Default;
 			yield return new XmlSerializationExtension();
 			yield return new ConvertersExtension();
 			yield return MemberModelExtension.Default;

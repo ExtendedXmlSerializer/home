@@ -1,9 +1,11 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using JetBrains.Annotations;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -59,9 +61,31 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Cycle(subject).ShouldBeEquivalentTo(subject);
 		}
 
+		[Fact]
+		public void VerifyVerbatimAttribute()
+		{
+			var serializer = new ConfigurationContainer().ConfigureType<SubjectWithAttribute>()
+			                                             .Create()
+			                                             .ForTesting();
+
+			var subject = new SubjectWithAttribute {Message = @"Hello??? (<, &, ', and "")"};
+			var serialize = serializer.Serialize(subject);
+			serialize.Should()
+			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-SubjectWithAttribute xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[Hello??? (<, &, ', and "")]]></Message></Issue150Tests-SubjectWithAttribute>");
+
+			serializer.Deserialize<SubjectWithAttribute>(serialize)
+			          .ShouldBeEquivalentTo(subject);
+		}
+
 		sealed class Subject
 		{
 			public string Message { get; set; }
+		}
+
+		sealed class SubjectWithAttribute
+		{
+			[Verbatim]
+			public string Message { [UsedImplicitly] get; set; }
 		}
 
 		sealed class Serializer : ISerializer<string>

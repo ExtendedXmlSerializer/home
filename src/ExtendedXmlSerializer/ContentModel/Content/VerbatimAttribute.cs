@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,52 +22,19 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class SingletonAwareActivators : IActivators
+	public sealed class VerbatimAttribute : ContentSerializerAttribute
 	{
-		readonly IActivators _activators;
-		readonly ISingletonLocator _locator;
+		public VerbatimAttribute() : base(typeof(VerbatimContentSerializer)) {}
+	}
 
-		public SingletonAwareActivators(IActivators activators, ISingletonLocator locator)
-		{
-			_activators = activators;
-			_locator = locator;
-		}
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+	public class ContentSerializerAttribute : Attribute
+	{
+		public ContentSerializerAttribute(Type serializerType) => SerializerType = serializerType;
 
-		public IActivator Get(Type parameter)
-		{
-			var singleton = _locator.Get(parameter);
-			var activator = _activators.Build(parameter);
-			var result = singleton != null ? new Activator(_activators.Build(parameter), singleton) : activator();
-			return result;
-		}
-
-		sealed class Activator : IActivator
-		{
-			readonly Func<IActivator> _activator;
-			readonly object _singleton;
-
-			public Activator(Func<IActivator> activator, object singleton)
-			{
-				_activator = activator;
-				_singleton = singleton;
-			}
-
-			public object Get()
-			{
-				try
-				{
-					return _activator().Get();
-				}
-				catch (Exception)
-				{
-					return _singleton;
-				}
-			}
-		}
+		public Type SerializerType { get; }
 	}
 }

@@ -21,53 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class SingletonAwareActivators : IActivators
+	sealed class GenericSerializers : Generic<object, ISerializer>
 	{
-		readonly IActivators _activators;
-		readonly ISingletonLocator _locator;
-
-		public SingletonAwareActivators(IActivators activators, ISingletonLocator locator)
-		{
-			_activators = activators;
-			_locator = locator;
-		}
-
-		public IActivator Get(Type parameter)
-		{
-			var singleton = _locator.Get(parameter);
-			var activator = _activators.Build(parameter);
-			var result = singleton != null ? new Activator(_activators.Build(parameter), singleton) : activator();
-			return result;
-		}
-
-		sealed class Activator : IActivator
-		{
-			readonly Func<IActivator> _activator;
-			readonly object _singleton;
-
-			public Activator(Func<IActivator> activator, object singleton)
-			{
-				_activator = activator;
-				_singleton = singleton;
-			}
-
-			public object Get()
-			{
-				try
-				{
-					return _activator().Get();
-				}
-				catch (Exception)
-				{
-					return _singleton;
-				}
-			}
-		}
+		public static GenericSerializers Default { get; } = new GenericSerializers();
+		GenericSerializers() : base(typeof(GenericSerializerAdapter<>)) {}
 	}
 }

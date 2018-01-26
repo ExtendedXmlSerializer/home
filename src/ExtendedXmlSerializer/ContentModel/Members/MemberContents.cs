@@ -25,21 +25,9 @@ using System;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class RegisteredMemberContents : IMemberContents, ISpecification<IMember>
-	{
-		readonly IMemberTable<ISerializer> _serializers;
-
-		public RegisteredMemberContents(IMemberTable<ISerializer> serializers) => _serializers = serializers;
-
-		public bool IsSatisfiedBy(IMember parameter) => _serializers.IsSatisfiedBy(parameter.Metadata);
-
-		public ISerializer Get(IMember parameter) => _serializers.Get(parameter.Metadata);
-	}
-
 	sealed class MemberContents : Selector<IMember, ISerializer>, IMemberContents
 	{
 		readonly static DelegatedAssignedSpecification<IMember, IVariableTypeSpecification> Specification = new DelegatedAssignedSpecification<IMember, IVariableTypeSpecification>(VariableTypeMemberSpecifications.Default.Get);
