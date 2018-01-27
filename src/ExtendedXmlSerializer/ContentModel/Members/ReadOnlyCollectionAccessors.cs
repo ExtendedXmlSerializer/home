@@ -21,41 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class ReadOnlyCollectionAccessors : OptionBase<IMember, IMemberAccess>
 	{
-		readonly IAllowedMemberValues _emit;
+		readonly IAllowedMemberValues _allowed;
 		readonly IGetterFactory _getter;
 		readonly IAddDelegates _add;
 
 		[UsedImplicitly]
-		public ReadOnlyCollectionAccessors(IAllowedMemberValues emit)
-			: this(emit, GetterFactory.Default, AddDelegates.Default) {}
+		public ReadOnlyCollectionAccessors(IAllowedMemberValues allowed)
+			: this(allowed, GetterFactory.Default, AddDelegates.Default) {}
 
-		public ReadOnlyCollectionAccessors(IAllowedMemberValues emit, IGetterFactory getter, IAddDelegates add)
+		public ReadOnlyCollectionAccessors(IAllowedMemberValues allowed, IGetterFactory getter, IAddDelegates add)
 			: base(
 				new MemberTypeSpecification(
 					IsCollectionTypeSpecification.Default.And(
 						new DelegatedAssignedSpecification<TypeInfo, Action<object, object>>(add.Get)))
 			)
 		{
-			_emit = emit;
+			_allowed = allowed;
 			_getter = getter;
 			_add = add;
 		}
 
 		public override IMemberAccess Get(IMember parameter)
 			=>
-				new ReadOnlyCollectionMemberAccess(new MemberAccess(_emit.Get(parameter.Metadata),
+				new ReadOnlyCollectionMemberAccess(new MemberAccess(_allowed.Get(parameter.Metadata),
 				                                                    _getter.Get(parameter.Metadata),
 				                                                    _add.Get(parameter.MemberType)));
 	}

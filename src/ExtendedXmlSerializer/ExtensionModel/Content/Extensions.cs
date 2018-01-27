@@ -46,6 +46,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
+		public static ITypeConfiguration<T> EmitWhen<T>(this ITypeConfiguration<T> @this,
+		                                                Func<T, bool> specification)
+		{
+			@this.Root.With<AllowedInstancesExtension>()
+			     .Assign(@this.Get(),
+			             new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()));
+			return @this;
+		}
+
 		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                Func<TMember, bool> specification)
 		{

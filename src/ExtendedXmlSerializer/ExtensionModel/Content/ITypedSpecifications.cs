@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,17 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
-using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Specifications;
 using System.Reflection;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public class TypedTable<T> : TableSource<TypeInfo, T>, ITypedTable<T>
-	{
-		[UsedImplicitly]
-		public TypedTable() {}
-
-		public TypedTable(IDictionary<TypeInfo, T> store) : base(store) {}
-	}
+	public interface ITypedSpecifications : IParameterizedSource<TypeInfo, ISpecification<object>> {}
 }
