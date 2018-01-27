@@ -23,19 +23,17 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Reflection;
+using System.Linq;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class GenericTypeAlteration : IParameterizedSource<ImmutableArray<Type>, Type>
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		readonly Type _definition;
+
+		public GenericTypeAlteration(Type definition) => _definition = definition;
+
+		public Type Get(ImmutableArray<Type> parameter) => _definition.MakeGenericType(parameter.ToArray());
 	}
 }

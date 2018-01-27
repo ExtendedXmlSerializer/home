@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class CustomSerializers : Metadata<TypeInfo, ISerializer>, ICustomSerializers
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public CustomSerializers() : base(ReflectionModel.Defaults.TypeComparer) {}
 	}
 }

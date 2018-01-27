@@ -21,21 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
+using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class GenericSingleton : IGenericActivation
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public static GenericSingleton Default { get; } = new GenericSingleton();
+		GenericSingleton() : this(SingletonLocator.Default) {}
+
+		readonly ISingletonLocator _singletons;
+
+		public GenericSingleton(ISingletonLocator singletons) => _singletons = singletons;
+
+		public Expression Get(TypeInfo parameter) => Expression.Constant(_singletons.Get(parameter), parameter.AsType());
 	}
 }

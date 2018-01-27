@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,20 +22,25 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class ActivatedSerializer : Activated<ISerializer>, ISerializer
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public ActivatedSerializer(Type objectType, TypeInfo targetType) : base(objectType, targetType,
+		                                                                        typeof(GenericSerializerAdapter<>)) {}
+
+		static object Throw() =>
+			throw new NotSupportedException("This serializer is used as a marker to activate another serializer at runtime.");
+
+		public object Get(IFormatReader parameter) => Throw();
+
+		public void Write(IFormatWriter writer, object instance)
+		{
+			Throw();
+		}
 	}
 }

@@ -21,20 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	public sealed class VerbatimAttribute : ContentSerializerAttribute
 	{
 		public VerbatimAttribute() : base(typeof(VerbatimContentSerializer)) {}
-	}
-
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-	public class ContentSerializerAttribute : Attribute
-	{
-		public ContentSerializerAttribute(Type serializerType) => SerializerType = serializerType;
-
-		public Type SerializerType { get; }
 	}
 }

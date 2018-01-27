@@ -22,20 +22,16 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class TypeCoercer : IParameterizedSource<TypeInfo, Type>
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public static TypeCoercer Default { get; } = new TypeCoercer();
+		TypeCoercer() {}
+
+		public Type Get(TypeInfo parameter) => parameter.AsType();
 	}
 }

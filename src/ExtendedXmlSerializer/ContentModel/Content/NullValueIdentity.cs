@@ -21,21 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class NullValueIdentity : IIdentity
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public static NullValueIdentity Default { get; } = new NullValueIdentity();
+		NullValueIdentity() : this(new Identity("nil", "http://www.w3.org/2001/XMLSchema-instance")) {}
+
+		readonly IIdentity _identity;
+
+		public NullValueIdentity(IIdentity identity) => _identity = identity;
+
+		public string Identifier => _identity.Identifier;
+
+		public string Name => _identity.Name;
 	}
 }

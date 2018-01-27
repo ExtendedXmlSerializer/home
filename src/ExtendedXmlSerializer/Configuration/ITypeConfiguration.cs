@@ -21,33 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-
 namespace ExtendedXmlSerializer.Configuration
 {
 	// ReSharper disable once UnusedTypeParameter
-	public interface ITypeConfiguration<T> : ITypeConfiguration
-	{
-	}
+	public interface ITypeConfiguration<T> : ITypeConfiguration {}
 
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
-	public interface ITypeConfiguration : IConfigurationContainer, ITypeConfigurationContext, IMemberConfigurations
-	{
-		
-	}
-
-	interface IInternalTypeConfiguration
-	{
-		ITypeConfiguration Name(string name);
-
-		IMemberConfiguration Member(MemberInfo member);
-	}
-
-	static class TypeConfigurationExtensions
-	{
-		public static IInternalTypeConfiguration AsInternal(this ITypeConfiguration @this)
-		{
-			return (IInternalTypeConfiguration)@this;
-		}
-	}
+	public interface ITypeConfiguration : IConfigurationContainer, ITypeConfigurationContext, IMemberConfigurations {}
 }

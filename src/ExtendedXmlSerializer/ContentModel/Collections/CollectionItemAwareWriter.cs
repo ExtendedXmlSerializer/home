@@ -21,21 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class CollectionItemAwareWriter : IWriter
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		readonly IWriter _writer;
+		readonly IIdentity _null;
+
+		public CollectionItemAwareWriter(IWriter writer) : this(writer, NullElementIdentity.Default) {}
+
+		public CollectionItemAwareWriter(IWriter writer, IIdentity @null)
+		{
+			_writer = writer;
+			_null = @null;
+		}
+
+		public void Write(IFormatWriter writer, object instance)
+		{
+			if (instance == null)
+			{
+				writer.Start(_null);
+				writer.EndCurrent();
+			}
+			else
+			{
+				_writer.Write(writer, instance);
+			}
+		}
 	}
 }

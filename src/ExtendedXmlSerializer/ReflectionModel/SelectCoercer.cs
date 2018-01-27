@@ -23,19 +23,18 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Reflection;
+using System.Linq;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class SelectCoercer<TFrom, TTo> : IParameterizedSource<ImmutableArray<TFrom>, ImmutableArray<TTo>>
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		readonly Func<TFrom, TTo> _select;
+
+		public SelectCoercer(Func<TFrom, TTo> select) => _select = select;
+
+		public ImmutableArray<TTo> Get(ImmutableArray<TFrom> parameter) => parameter.Select(_select)
+		                                                                            .ToImmutableArray();
 	}
 }

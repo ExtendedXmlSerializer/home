@@ -21,21 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class Enumerators : IEnumerators
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		public static Enumerators Default { get; } = new Enumerators();
+		Enumerators() {}
+
+		public IEnumerator Get(IEnumerable parameter) => parameter.GetEnumerator();
 	}
 }

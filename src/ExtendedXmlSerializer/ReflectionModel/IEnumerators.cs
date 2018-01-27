@@ -27,12 +27,4 @@ using ExtendedXmlSerializer.Core.Sources;
 namespace ExtendedXmlSerializer.ReflectionModel
 {
 	interface IEnumerators : IParameterizedSource<IEnumerable, IEnumerator> {}
-
-	sealed class Enumerators : IEnumerators
-	{
-		public static Enumerators Default { get; } = new Enumerators();
-		Enumerators() {}
-
-		public IEnumerator Get(IEnumerable parameter) => parameter.GetEnumerator();
-	}
 }

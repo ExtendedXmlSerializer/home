@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.Core.Specifications
 {
-	abstract class GenericAdapterBase<T> : DecoratedSource<ImmutableArray<TypeInfo>, T>
+	sealed class NullAwareSpecificationAdapter<T> : ISpecification<object>
 	{
-		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
-			: base(
-			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
-			      ) {}
+		readonly ISpecification<T> _specification;
+
+		public NullAwareSpecificationAdapter(ISpecification<T> specification) => _specification = specification;
+
+		public bool IsSatisfiedBy(object parameter) => parameter == null
+			                                               ? _specification.IsSatisfiedBy(default(T))
+			                                               : parameter is T && _specification.IsSatisfiedBy((T) parameter);
 	}
 }
