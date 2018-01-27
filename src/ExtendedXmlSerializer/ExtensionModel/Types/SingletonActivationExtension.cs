@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance<ISingletonCandidates>(SingletonCandidates.Default)
 			            .RegisterInstance<ISingletonLocator>(SingletonLocator.Default)
-			            .Decorate<IActivators, SingletonAwareActivators>();
+			            .Decorate<IActivators, Activators>();
 
 		public void Execute(IServices parameter) {}
 	}

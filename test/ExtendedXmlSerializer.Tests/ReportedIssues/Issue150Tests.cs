@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
@@ -28,6 +29,43 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			serializer.Deserialize<Subject>(serialize)
 			          .Message.Should()
 			          .Be("Hello World!!");
+		}
+
+		[Fact]
+		public void VerifyActivated()
+		{
+			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			                                             .Member(x => x.Message)
+			                                             .Register(typeof(Serializer))
+			                                             .Create()
+			                                             .ForTesting();
+
+			var serialize = serializer.Serialize(new Subject {Message = "Hello???"});
+			serialize.Should()
+			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></Issue150Tests-Subject>");
+
+			serializer.Deserialize<Subject>(serialize)
+			          .Message.Should()
+			          .Be("Hello World!!");
+		}
+
+		[Fact]
+		public void VerifyActivatedDependency()
+		{
+			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
+			                                             .Member(x => x.Message)
+			                                             .Register(typeof(ActivatedSerializer))
+			                                             .Create()
+			                                             .ForTesting();
+
+			var serialize = serializer.Serialize(new Subject {Message = "Hello???"});
+			serialize.Should()
+			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><string xmlns=""https://extendedxmlserializer.github.io/system"">Hello world! Hello???</string></Message></Issue150Tests-Subject>");
+
+			serializer.Deserialize<Subject>(serialize)
+			          .Message.Should()
+			          .Be("Hello World from ActivatedSerializer");
+
 		}
 
 		[Fact]
@@ -98,6 +136,20 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public void Write(IFormatWriter writer, string instance)
 			{
 				writer.Content("Hello World!");
+			}
+		}
+
+		sealed class ActivatedSerializer : ISerializer<string>
+		{
+			readonly ISerializers _serializers;
+
+			public ActivatedSerializer(ISerializers serializers) => _serializers = serializers;
+
+			public string Get(IFormatReader parameter) => "Hello World from ActivatedSerializer";
+
+			public void Write(IFormatWriter writer, string instance)
+			{
+				_serializers.Get(typeof(string)).Write(writer, $"Hello world! {instance}");
 			}
 		}
 	}

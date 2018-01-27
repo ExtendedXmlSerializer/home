@@ -25,5 +25,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	interface ITypedTable<T> : IMetadataTable<TypeInfo, T> {}
+	public interface ITypedTable<T> : IMetadataTable<TypeInfo, T> {}
 }

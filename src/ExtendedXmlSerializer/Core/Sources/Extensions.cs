@@ -28,12 +28,26 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	static class Extensions
 	{
+		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
+			=> @this.Get(new MemoryStream(Encoding.UTF8.GetBytes(parameter)));
+
+		public static T Get<T>(this IParameterizedSource<TypeInfo, T> @this, Type parameter)
+			=> @this.Get(parameter.GetTypeInfo());
+
+		public static T Get<T>(this IParameterizedSource<Type, T> @this, TypeInfo parameter)
+			=> @this.Get(parameter.AsType());
+
+		/*public static T For<T>(this IParameterizedSource<TypeInfo, T> @this, Type parameter)
+			=> @this.Get(parameter.GetTypeInfo());
+
+		public static T For<T>(this IParameterizedSource<Type, T> @this, TypeInfo parameter)
+			=> @this.Get(parameter.AsType());*/
+
 		public static IParameterizedSource<TParameter, TTo> To<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
 			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer);
@@ -41,22 +55,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
 			=> new CoercedParameter<TFrom, TTo, TResult>(coercer, @this);
-
-		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)
-		{
-			if (parser == null) throw new ArgumentNullException(nameof(parser));
-			return i =>
-			       {
-				       var result = parser(i);
-				       if (result.WasSuccessful)
-					       return Result.Success(new Some<T>(result.Value), result.Remainder);
-
-				       if (result.Remainder.Equals(i))
-					       return Result.Success(new None<T>(), i);
-
-				       return Result.Failure<IOption<T>>(result.Remainder, result.Message, result.Expectations);
-			       };
-		}
 
 		public static ImmutableArray<TItem>? GetAny<T, TItem>(this IParameterizedSource<T, ImmutableArray<TItem>> @this,
 		                                                      T parameter)
@@ -66,39 +64,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 			return result;
 		}
 
-		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)
-			=> parser.SelectMany(instance.Accept, Tuple.Create);
-
-		public static Parser<T> Get<T>(this IParsing<T> @this) => @this.Get;
-
-		public static T ParseAsOptional<T>(this Parser<T> @this, string data)
-			=> @this.XOptional()
-			        .Invoke(Inputs.Default.Get(data))
-			        .Value.GetOrDefault();
-
-		public static T Get<T>(this IParsing<T> @this, string parameter) => @this.Get(Inputs.Default.Get(parameter))
-		                                                                         .Value;
-
-		public static Func<IInput, IResult<T>> ToDelegate<T>(this Parser<T> @this)
-			=> new Func<IInput, IResult<T>>(@this);
-
-		public static Parser<T> ToParser<T>(this Func<IInput, IResult<T>> @this) => new Parser<T>(@this);
-
-		public static T TryOrDefault<T>(this Parser<T> @this, string data)
-		{
-			var parse = @this.TryParse(data);
-			var result = parse.WasSuccessful ? parse.Value : default(T);
-			return result;
-		}
-
-		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
-			=> @this.Get(new MemoryStream(Encoding.UTF8.GetBytes(parameter)));
-
-		public static T Get<T>(this IParameterizedSource<TypeInfo, T> @this, Type parameter)
-			=> @this.Get(parameter.GetTypeInfo());
-
-		public static T Get<T>(this IParameterizedSource<Type, T> @this, TypeInfo parameter)
-			=> @this.Get(parameter.AsType());
+		
 
 		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)

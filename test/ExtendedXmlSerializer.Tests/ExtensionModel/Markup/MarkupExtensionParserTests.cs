@@ -27,7 +27,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 using ExtendedXmlSerializer.ExtensionModel.Markup;
@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 		public void VerifySpaced()
 		{
 			const string text = "{x:Testing }";
-			var parts = MarkupExtensionParser.Default.Get().Parse(text);
+			var parts = MarkupExtensionParser.Default.ToParser().Parse(text);
 			parts.Type.ShouldBeEquivalentTo(new TypeParts("Testing", "x"));
 			parts.Arguments.Should().BeEmpty();
 		}

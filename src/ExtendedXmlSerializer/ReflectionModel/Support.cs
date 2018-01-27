@@ -30,6 +30,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
 
-		public static Func<T> New { get; } = Activators.Default.New<T>;
+		public static Func<T> New { get; } = DefaultActivators.Default.New<T>;
 	}
 }

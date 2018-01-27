@@ -21,21 +21,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sprache;
+using System;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class CharacterParser : Parsing<char>
+	sealed class Activators : IActivators
 	{
-		public static implicit operator CharacterParser(char instance) => new CharacterParser(instance);
+		public static Activators Default { get; } = new Activators();
+		Activators() : this(DefaultActivators.Default, SingletonLocator.Default) {}
 
-		public CharacterParser(char character) : this(character, Parse.Char(character)) {}
+		readonly IActivators _activators;
+		readonly ISingletonLocator _locator;
 
-		public CharacterParser(char character, Parser<char> parser) : base(parser)
+		public Activators(IActivators activators, ISingletonLocator locator)
 		{
-			Character = character;
+			_activators = activators;
+			_locator = locator;
 		}
 
-		public char Character { get; }
+		public IActivator Get(Type parameter)
+		{
+			var singleton = _locator.Get(parameter);
+			var activator = _activators.Build(parameter);
+			var result = singleton != null ? new Activator(_activators.Build(parameter), singleton) : activator();
+			return result;
+		}
+
+		sealed class Activator : IActivator
+		{
+			readonly Func<IActivator> _activator;
+			readonly object _singleton;
+
+			public Activator(Func<IActivator> activator, object singleton)
+			{
+				_activator = activator;
+				_singleton = singleton;
+			}
+
+			public object Get()
+			{
+				try
+				{
+					return _activator().Get();
+				}
+				catch (Exception)
+				{
+					return _singleton;
+				}
+			}
+		}
 	}
 }

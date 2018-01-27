@@ -231,13 +231,17 @@ namespace ExtendedXmlSerializer.Core
 
 		public static T AsValid<T>(this object @this, string message = null)
 		{
-			if (@this is T)
+			if (@this != null)
 			{
-				return (T) @this;
-			}
+				if (@this is T)
+				{
+					return (T) @this;
+				}
 
-			throw new InvalidOperationException(message ??
-			                                    $"'{@this.GetType() .FullName}' is not of type {typeof(T).FullName}.");
+				throw new InvalidOperationException(message ??
+				                                    $"'{@this.GetType() .FullName}' is not of type {typeof(T).FullName}.");
+			}
+			return default(T);
 		}
 	}
 }

@@ -21,13 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sprache;
-
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Parsing
 {
-	sealed class Inputs : ReferenceCache<string, IInput>
+	sealed class CodeIdentifier : Identifier
 	{
-		public static Inputs Default { get; } = new Inputs();
-		Inputs() : base(x => new Input(x)) {}
+		public static CodeIdentifier Default { get; } = new CodeIdentifier();
+		CodeIdentifier() : base("_") {}
 	}
 }

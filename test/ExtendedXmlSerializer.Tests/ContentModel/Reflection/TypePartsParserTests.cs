@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 using Xunit;
 
@@ -93,7 +93,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 		[Fact]
 		public void List()
 		{
-			var actual = TypePartsList.Default.Get().Parse("sys:string, int, ns4:SomeOtherType");
+			var actual = TypePartsList.Default.ToParser().Parse("sys:string, int, ns4:SomeOtherType");
 			Assert.True(new[]
 			            {
 				            new TypeParts("string", "sys"),
@@ -105,7 +105,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 		[Fact]
 		public void InvalidList()
 		{
-			var actual = TypePartsList.Default.Get().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
+			var actual = TypePartsList.Default.ToParser().TryParse("[sys:string, int, ns4:SomeOtherType]").WasSuccessful;
 			Assert.False(actual);
 		}
 
@@ -113,7 +113,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 		public void AssemblyPathParser()
 		{
 			const string input = "clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests";
-			var path = ExtendedXmlSerializer.ContentModel.Reflection.AssemblyPathParser.Default.Get().Parse(input);
+			var path = ExtendedXmlSerializer.ContentModel.Reflection.AssemblyPathParser.Default.ToParser().Parse(input);
 			Assert.Equal("ExtendedXmlSerializer.Tests.TestObject", path.Namespace);
 			Assert.Equal("ExtendedXmlSerializer.Tests", path.Path);
 		}
@@ -122,7 +122,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 		public void GenericName()
 		{
 			var name = typeof(Dictionary<,>).Name;
-			var result = GenericNameParser.Default.Get().Parse(name);
+			var result = GenericNameParser.Default.ToParser().Parse(name);
 			Assert.Equal("Dictionary", result);
 		}
 

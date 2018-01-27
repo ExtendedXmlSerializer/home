@@ -30,16 +30,16 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class Activators : ReferenceCacheBase<Type, IActivator>, IActivators
+	sealed class DefaultActivators : ReferenceCacheBase<Type, IActivator>, IActivators
 	{
 		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
 
-		public static Activators Default { get; } = new Activators();
-		Activators() : this(ConstructorLocator.Default) {}
+		public static DefaultActivators Default { get; } = new DefaultActivators();
+		DefaultActivators() : this(ConstructorLocator.Default) {}
 
 		readonly IConstructorLocator _locator;
 
-		public Activators(IConstructorLocator locator) => _locator = locator;
+		public DefaultActivators(IConstructorLocator locator) => _locator = locator;
 
 		protected override IActivator Create(Type parameter)
 		{

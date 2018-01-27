@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Parsing
 {
-	sealed class DelegatedParser<T> : IParser<T>
-	{
-		readonly Func<string, T> _source;
-
-		public DelegatedParser(Func<string, T> source) => _source = source;
-
-		public T Get(string parameter) => _source(parameter);
-	}
+	public interface IParser<out T> : IParameterizedSource<string, T> {}
 }

@@ -22,43 +22,41 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class RegisteredMemberContents : IMemberContents, ISpecification<IMember>
+	sealed class RegisteredContentsOption : IContentOption
 	{
 		readonly IActivators _activators;
-		readonly ISpecification<MemberInfo> _specification;
-		readonly IParameterizedSource<MemberInfo, ISerializer> _serializers;
+		readonly ISpecification<TypeInfo> _specification;
+		readonly ITypedTable<ISerializer> _serializers;
 
-		public RegisteredMemberContents(IActivators activators, ICustomMemberSerializers serializers)
-			: this(activators, serializers.Or(IsDefinedSpecification<ContentSerializerAttribute>.Default), serializers) {}
+		public RegisteredContentsOption(IActivators activators, ICustomSerializers serializers)
+			: this(activators, IsDefinedSpecification<ContentSerializerAttribute>.Default.Or(serializers), serializers) {}
 
-		public RegisteredMemberContents(IActivators activators, ISpecification<MemberInfo> specification,
-		                                IParameterizedSource<MemberInfo, ISerializer> serializers)
+		public RegisteredContentsOption(IActivators activators, ISpecification<TypeInfo> specification,
+		                                ITypedTable<ISerializer> serializers)
 		{
 			_activators = activators;
 			_specification = specification;
 			_serializers = serializers;
 		}
 
-		public bool IsSatisfiedBy(IMember parameter) => _specification.IsSatisfiedBy(parameter.Metadata);
+		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
 
-		public ISerializer Get(IMember parameter) => _serializers.Get(parameter.Metadata) ?? Activate(parameter);
+		public ISerializer Get(TypeInfo parameter) => _serializers.Get(parameter) ?? Activate(parameter);
 
-		ISerializer Activate(IMember parameter)
+		ISerializer Activate(TypeInfo parameter)
 		{
-			var typeInfo = parameter.Metadata.GetCustomAttribute<ContentSerializerAttribute>()
+			var typeInfo = parameter.GetCustomAttribute<ContentSerializerAttribute>()
 			                        .SerializerType.GetTypeInfo();
 			var instance = _activators.Get(typeInfo)
 			                          .Get();
-			var result = instance as ISerializer ?? GenericSerializers.Default.Get(parameter.MemberType)
+			var result = instance as ISerializer ?? GenericSerializers.Default.Get(parameter)
 			                                                          .Invoke(instance);
 			return result;
 		}

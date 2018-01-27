@@ -24,7 +24,6 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Serialization;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
@@ -35,19 +34,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	public sealed class MemberFormatExtension : ISerializerExtension
 	{
 		public MemberFormatExtension()
-			: this(new Dictionary<MemberInfo, IAttributeSpecification>(MemberComparer.Default), new HashSet<MemberInfo>(MemberComparer.Default), new MemberTable<ISerializer>()) {}
+			: this(new Dictionary<MemberInfo, IAttributeSpecification>(MemberComparer.Default), new HashSet<MemberInfo>(MemberComparer.Default)) {}
 
 		public MemberFormatExtension(IDictionary<MemberInfo, IAttributeSpecification> specifications,
-		                             ICollection<MemberInfo> registered, IMemberTable<ISerializer> serializers)
+		                             ICollection<MemberInfo> registered)
 		{
 			Specifications = specifications;
 			Registered = registered;
-			Serializers = serializers;
 		}
 
 		public IDictionary<MemberInfo, IAttributeSpecification> Specifications { get; }
-
-		public IMemberTable<ISerializer> Serializers { get; }
 
 		public ICollection<MemberInfo> Registered { get; }
 
@@ -59,8 +55,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			var specifications = new ContentModel.Members.AttributeSpecifications(Specifications);
 			return parameter.RegisterInstance<IAttributeSpecifications>(specifications)
 			                .RegisterInstance<IMemberConverterSpecification>(specification)
-			                .RegisterInstance(Serializers)
-			                .Register<RegisteredMemberContents>()
 			                .Register<IMemberConverters, MemberConverters>();
 		}
 

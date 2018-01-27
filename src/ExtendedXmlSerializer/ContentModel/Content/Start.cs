@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class Start : Items<IContentOption>, IStart<IContentOption>
 	{
-		public Start(ConverterContentOption converters, NullableContentOption nullable, ReflectionContentOption reflection)
-			: base(converters, nullable, reflection) {}
+		public Start(RegisteredContentsOption registered, ConverterContentOption converters, NullableContentOption nullable, ReflectionContentOption reflection)
+			: base(registered, converters, nullable, reflection) {}
 	}
 }

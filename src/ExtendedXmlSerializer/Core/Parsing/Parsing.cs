@@ -21,9 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Parsing
 {
 	class Parsing<T> : DelegatedSource<IInput, IResult<T>>, IParsing<T>
 	{

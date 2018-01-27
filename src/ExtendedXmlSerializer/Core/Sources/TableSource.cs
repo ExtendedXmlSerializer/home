@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
+	public class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
 	{
 		readonly IDictionary<TKey, TValue> _store;
 

@@ -21,16 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Parsing
 {
-	class Identifier : Parsing<string>
-	{
-		public Identifier(IEnumerable<char> allowed) : this(allowed.Fixed()) {}
-
-		public Identifier(params char[] allowed)
-			: base(Parse.Identifier(Parse.Letter, Parse.LetterOrDigit.XOr(Parse.Chars(allowed)))) {}
-	}
+	interface IParsing<out T> : IParameterizedSource<IInput, IResult<T>> {}
 }

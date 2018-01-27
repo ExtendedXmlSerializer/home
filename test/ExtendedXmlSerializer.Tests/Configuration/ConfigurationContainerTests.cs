@@ -109,11 +109,11 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var config = Configure(cfg =>
 								   {
 									   var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
-									   Assert.Null(cfg.Root.With<CustomXmlExtension>().Get(t.Get()));
+									   Assert.Null(cfg.Root.With<CustomSerializationExtension>().XmlSerializers.Get(t.Get()));
 									   t.CustomSerializer((writer, types) => { }, element => null);
 								   });
 			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.NotNull(config.Root.With<CustomXmlExtension>().Get(type.Get()));
+			Assert.NotNull(config.Root.With<CustomSerializationExtension>().XmlSerializers.Get(type.Get()));
 		}
 
 		[Fact]

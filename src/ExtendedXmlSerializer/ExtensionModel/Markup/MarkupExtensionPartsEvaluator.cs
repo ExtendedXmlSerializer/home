@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Parsing;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {

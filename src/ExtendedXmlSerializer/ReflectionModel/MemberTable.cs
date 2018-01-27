@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
+	public class MemberTable<T> : TableSource<MemberInfo, T>, IMemberTable<T>
 	{
 		public MemberTable() : this(new ConcurrentDictionary<MemberInfo, T>(MemberComparer.Default)) {}
 

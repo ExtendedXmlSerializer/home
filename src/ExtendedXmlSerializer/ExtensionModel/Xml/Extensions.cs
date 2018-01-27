@@ -64,33 +64,69 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
 			@this.Register(VerbatimContentSerializer.Default);
 
-		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISerializer<TMember> serializer)
+		public static ITypeConfiguration<T> Register<T, TSerializer>(this IConfigurationContainer @this)
+			where TSerializer : ISerializer<T> => @this.Type<T>().Register(typeof(TSerializer));
+
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
+			=> @this.Type<T>().Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer<T> serializer) => Register(@this, serializer.Adapt());
+
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)
 		{
-			@this.Root.With<MemberFormatExtension>().Serializers.Assign(((ISource<MemberInfo>)@this).Get(), serializer.Adapt());
+			@this.Root.With<CustomSerializationExtension>().Types.Assign(@this.Get(), serializer);
+			return @this;
+		}
+
+		public static ITypeConfiguration<T> Unregister<T>(this ITypeConfiguration<T> @this)
+		{
+			@this.Root.With<CustomSerializationExtension>().Types.Remove(@this.Get());
+			return @this;
+		}
+
+		public static ITypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationContainer @this)
+			where TSerializer : IExtendedXmlCustomSerializer<T>
+			=> @this.CustomSerializer<T>(typeof(TSerializer));
+
+		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
+			=> @this.Type<T>().CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
+
+		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		                                                        Action<System.Xml.XmlWriter, T> serializer,
+		                                                        Func<XElement, T> deserialize)
+			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
+
+		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		                                                        IExtendedXmlCustomSerializer<T> serializer)
+			=> @this.CustomSerializer(new Adapter<T>(serializer));
+
+		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		                                                        IExtendedXmlCustomSerializer serializer)
+		{
+			@this.Root.With<CustomSerializationExtension>().XmlSerializers.Assign(@this.Get(), serializer);
+			return @this;
+		}
+
+		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this, Type serializerType)
+			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Key));
+
+		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISerializer<TMember> serializer) => Register(@this, serializer.Adapt());
+
+		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISerializer serializer)
+		{
+			@this.Root.With<CustomSerializationExtension>().Members.Assign(((ISource<MemberInfo>)@this).Get(), serializer);
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
-			@this.Root.With<MemberFormatExtension>().Serializers.Remove(((ISource<MemberInfo>)@this).Get());
+			@this.Root.With<CustomSerializationExtension>().Members.Remove(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<MemberFormatExtension>().Registered.Remove(((ISource<MemberInfo>)@this).Get());
-			return @this;
-		}
-
-		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
-															   Action<System.Xml.XmlWriter, T> serializer,
-															   Func<XElement, T> deserialize)
-			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
-
-		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
-															   IExtendedXmlCustomSerializer<T> serializer)
-		{
-			@this.Root.With<CustomXmlExtension>().Assign(@this.Get(), new Adapter<T>(serializer));
 			return @this;
 		}
 
@@ -122,7 +158,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Extend(OptimizedNamespaceExtension.Default);
 
 
-		readonly static Func<Stream> New = Activators.Default.New<MemoryStream>;
+		readonly static Func<Stream> New = DefaultActivators.Default.New<MemoryStream>;
 
 		readonly static IXmlWriterFactory WriterFactory
 			= new XmlWriterFactory(CloseSettings.Default.Get(Defaults.WriterSettings));

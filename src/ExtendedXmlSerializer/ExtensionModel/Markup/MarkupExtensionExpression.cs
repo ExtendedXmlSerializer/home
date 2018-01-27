@@ -27,7 +27,7 @@ using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                            ImmutableArray<KeyValuePair<string, IExpression>>.Empty);
 
 		readonly static Parser<IExpression> Expression =
-			Parse.Ref(() => Default.Get()).Select(x => (IExpression) new MarkupExtensionPartsExpression(x))
+			Parse.Ref(() => Default.ToParser()).Select(x => (IExpression) new MarkupExtensionPartsExpression(x))
 			     .XOr(new Expression(Item.Character, Finish.Character));
 
 		public static MarkupExtensionExpression Default { get; } = new MarkupExtensionExpression();

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nagórski
+// Copyright (c) 2016 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core;
+using System.Collections.Immutable;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
 
-namespace ExtendedXmlSerializer.ContentModel.Reflection
+namespace ExtendedXmlSerializer.Core.Parsing
 {
-	static class Extensions
+	class ItemsParser<T> : Parsing<ImmutableArray<T>>
 	{
-		public static TypeInfo GetType(this IParser<MemberInfo> @this, string parameter)
-			=> @this.Get(parameter).AsValid<TypeInfo>();
+		public ItemsParser(Parser<T> source) : this(source, Defaults.ItemDelimiter) {}
+
+		public ItemsParser(Parser<T> source, Parser<char> delimiter)
+			: base(source.DelimitedBy(delimiter).Select(x => x.ToImmutableArray())) {}
 	}
 }

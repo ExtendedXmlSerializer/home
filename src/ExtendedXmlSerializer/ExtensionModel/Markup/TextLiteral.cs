@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
@@ -37,7 +37,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public TextLiteral(CharacterParser containingCharacter) : this(containingCharacter, containingCharacter) {}
 
 		public TextLiteral(CharacterParser containingCharacter, Parser<char> container) : base(
-			new EscapedLiteral(containingCharacter.Character).Get()
+			new EscapedLiteral(containingCharacter.Character).ToParser()
 			                                                 .XOr(
 				                                                 Parse.CharExcept(
 					                                                      $"{containingCharacter.Character}{Slash}")

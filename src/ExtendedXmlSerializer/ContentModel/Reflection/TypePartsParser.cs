@@ -24,7 +24,7 @@
 using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 						                    : new TypeParts(key.Name, key.Identifier)
 				        ).ToDelegate()
 				        .Cache()
-				        .ToParser()
+				        .Get()
 			) {}
 	}
 }

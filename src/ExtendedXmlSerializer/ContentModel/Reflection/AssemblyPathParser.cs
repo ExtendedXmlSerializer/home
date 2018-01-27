@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
@@ -30,8 +30,8 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	sealed class AssemblyPathParser : Parsing<AssemblyPath>
 	{
 		readonly static Parser<string>
-			Namespace = new Core.Sources.Identifier('_', '.'),
-			Assembly = new Core.Sources.Identifier(',', ' ', '_', '.');
+			Namespace = new Core.Parsing.Identifier('_', '.'),
+			Assembly = new Core.Parsing.Identifier(',', ' ', '_', '.');
 
 		public static AssemblyPathParser Default { get; } = new AssemblyPathParser();
 
