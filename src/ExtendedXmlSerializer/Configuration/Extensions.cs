@@ -93,6 +93,9 @@ namespace ExtendedXmlSerializer.Configuration
 
 		/*public static ITypeConfiguration Type(this IConfiguration @this, TypeInfo type) => @this.Get(type);*/
 
+		public static IConfigurationContainer Configured<T>(this IConfigurationContainer @this) where T : class, IConfigurationProfile
+			=> Support<T>.NewOrSingleton().Get(@this);
+
 		public static ITypeConfiguration<T> ConfigureType<T>(this IConfigurationContainer @this) => @this.Type<T>();
 
 		public static ITypeConfiguration<T> Type<T>(this IConfigurationContainer @this) => @this.Root.Types.Get(Support<T>.Key)
