@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
@@ -20,6 +21,19 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			          .ShouldBeEquivalentTo(subject);
 		}
 
+		[Fact]
+		public void VerifyComposite()
+		{
+			var serializer = ConfiguredContainer.New<Combined>()
+			                                    .Create()
+			                                    .ForTesting();
+
+			var subject = new Subject{ Message = "Hello World!" };
+			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />")
+			          .Message.Should()
+			          .BeNull();
+		}
+
 
 		sealed class Subject
 		{
@@ -35,6 +49,24 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
 			                                                                                  .Name("ConfiguredSubject");
+		}
+
+		sealed class Ignore : IConfigurationProfile
+		{
+			[UsedImplicitly]
+			public static Ignore Default { get; } = new Ignore();
+			Ignore() {}
+
+			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
+			                                                                                  .Member(x => x.Message)
+			                                                                                  .Ignore();
+		}
+
+		sealed class Combined : CompositeConfigurationProfile
+		{
+			[UsedImplicitly]
+			public static Combined Default { get; } = new Combined();
+			Combined() : base(Profile.Default, Ignore.Default) {}
 		}
 	}
 }
