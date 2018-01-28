@@ -184,17 +184,16 @@ namespace ExtendedXmlSerializer.Core
 			yield return @this;
 		}
 
-		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this,
-		                                                  Func<TypeInfo, bool> specification = null)
-		{
-			var select = @this.Select(x => x.GetTypeInfo());
-			var result = specification != null ? select.Where(specification) : select;
-			return result;
-		}
+		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this) => @this.Select(x => x.GetTypeInfo());
 
-		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this,
-		                                                  Func<TypeInfo, bool> specification = null)
-			=> @this.YieldMetadata(specification)
+		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this)
+			=> @this.YieldMetadata()
+			        .ToImmutableArray();
+
+		public static IEnumerable<Type> YieldTypes(this IEnumerable<TypeInfo> @this) => @this.Select(x => x.GetTypeInfo());
+
+		public static ImmutableArray<Type> ToTypes(this IEnumerable<TypeInfo> @this)
+			=> @this.YieldTypes()
 			        .ToImmutableArray();
 
 

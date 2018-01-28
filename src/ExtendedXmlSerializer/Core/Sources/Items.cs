@@ -23,14 +23,17 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class Items<T> : ItemsBase<T>
+	public class Items<T> : ItemsBase<T>
 	{
 		readonly ImmutableArray<T> _items;
 
-		public Items(params T[] items) : this(items.ToImmutableArray()) {}
+		public Items(params T[] items) : this(items.AsEnumerable()) {}
+
+		public Items(IEnumerable<T> items) : this(items.ToImmutableArray()) {}
 
 		public Items(ImmutableArray<T> items) => _items = items;
 

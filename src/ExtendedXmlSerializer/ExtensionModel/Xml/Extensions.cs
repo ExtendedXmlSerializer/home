@@ -22,21 +22,23 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -225,10 +227,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Deserialize(factory.Get(reader)).AsValid<T>();
 
 		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, params Type[] types)
-			=> EnableImplicitTyping(@this, new HashSet<Type>(types));
+			=> EnableImplicitTyping(@this, types.AsEnumerable());
 
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, ICollection<Type> types)
-			=> @this.Extend(new ImplicitTypingExtension(types));
+		public static IConfigurationContainer EnableImplicitTypingFromPublicNested<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new PublicNestedTypes<T>());
+
+		public static IConfigurationContainer EnableImplicitTypingFromNested<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new NestedTypes<T>());
+
+		public static IConfigurationContainer EnableImplicitTypingFromAll<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new AllAssemblyTypes<T>());
+
+		public static IConfigurationContainer EnableImplicitTypingFromPublic<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new PublicAssemblyTypes<T>());
+
+		public static IConfigurationContainer EnableImplicitTypingFromNamespace<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new AllTypesInSameNamespace<T>());
+
+		public static IConfigurationContainer EnableImplicitTypingFromNamespacePublic<T>(this IConfigurationContainer @this) =>
+			@this.EnableImplicitTyping(new PublicTypesInSameNamespace<T>());
+
+		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, IEnumerable<Type> types)
+			=> @this.Extend(new ImplicitTypingExtension(types.ToMetadata()));
 
 		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
 		{
