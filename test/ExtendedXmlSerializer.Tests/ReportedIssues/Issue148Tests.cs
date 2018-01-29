@@ -35,11 +35,23 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 
+		[Fact]
+		public void VerifySerializer()
+		{
+			var serializer = new Serializer().ForTesting();
+
+			var subject = new Subject{ Message = "Hello World!" };
+			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
+			          .ShouldBeEquivalentTo(subject);
+		}
+
 		sealed class Subject
 		{
 			public string Message { [UsedImplicitly]get; set; }
 		}
 
+
+		sealed class Serializer : ConfiguredSerializer<Profile> {}
 
 		sealed class Profile : IConfigurationProfile
 		{

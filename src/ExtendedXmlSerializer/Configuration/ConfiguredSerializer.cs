@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016 Wojciech Nag�rski
+// Copyright (c) 2016 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,12 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer
-{
-	public interface ISerializer<in TRead, in TWrite>
-	{
-		object Deserialize(TRead reader);
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using XmlReader = System.Xml.XmlReader;
+using XmlWriter = System.Xml.XmlWriter;
 
-		void Serialize(TWrite writer, object instance);
+namespace ExtendedXmlSerializer.Configuration
+{
+	public class ConfiguredSerializer<T> : DecoratedSerializer<XmlReader, XmlWriter>, IExtendedXmlSerializer
+		where T : class, IConfigurationProfile
+	{
+		public ConfiguredSerializer() : this(ConfiguredContainer.New<T>()
+		                                                        .Create()) {}
+
+		public ConfiguredSerializer(ISerializer<XmlReader, XmlWriter> serializer) : base(serializer) {}
 	}
 }
