@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AE37E1DA-5619-45C0-A086-2F2619503BCA}"
 EndProject
@@ -29,6 +29,8 @@ EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ExtendedXmlSerializer.Documentation", "docGenerator\ExtendedXmlSerializer.Documentation\ExtendedXmlSerializer.Documentation.shfbproj", "{87D0B2DD-15F1-4B62-878E-85A665E2D051}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedXmlSerializer.DocGenerator", "docGenerator\ExtendedXmlSerializer.DocGenerator\ExtendedXmlSerializer.DocGenerator.csproj", "{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedXmlSerializer.Integration", "ExtendedXmlSerializer.Integration\ExtendedXmlSerializer.Integration.csproj", "{6454CAAB-A4BD-4F22-A5B5-590486C09714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +60,10 @@ Global
 		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6454CAAB-A4BD-4F22-A5B5-590486C09714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6454CAAB-A4BD-4F22-A5B5-590486C09714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6454CAAB-A4BD-4F22-A5B5-590486C09714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6454CAAB-A4BD-4F22-A5B5-590486C09714}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{5FF229B9-4E79-4C1B-B8B4-0ED5AD2823D3} = {EBF1CB73-BE8A-4E00-A964-1A3E59503A52}
 		{87D0B2DD-15F1-4B62-878E-85A665E2D051} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
 		{FA14BF96-6303-4F74-8C5F-0C450FEBE72D} = {C90F6D79-DAD5-47F4-9638-23F9941C1C86}
+		{6454CAAB-A4BD-4F22-A5B5-590486C09714} = {AE37E1DA-5619-45C0-A086-2F2619503BCA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0980EF53-85ED-482A-8798-690538C3F7A4}

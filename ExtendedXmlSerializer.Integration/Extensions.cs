@@ -21,24 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using ExtendedXmlSerializer.Configuration;
+using System.Runtime.Serialization;
 
-// General Information about an assembly is controlled through the following
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-
-[assembly: AssemblyTrademark("")]
-[assembly: InternalsVisibleTo("ExtendedXmlSerializer.Tests")]
-[assembly: InternalsVisibleTo("ExtendedXmlSerializer.Integration")]
-
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
-// COM, set the ComVisible attribute to true on that type.
-
-[assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-
-[assembly: Guid("474c8cf3-1fbb-4507-9156-d5dc153f4eb8")]
+namespace ExtendedXmlSerializer.Integration
+{
+	public static class Extensions
+	{
+		public static IConfigurationContainer Register(this IConfigurationContainer @this,
+		                                               ISerializationSurrogateProvider provider)
+			=> @this.Extend(new SurrogatesExtension(provider));
+	}
+}

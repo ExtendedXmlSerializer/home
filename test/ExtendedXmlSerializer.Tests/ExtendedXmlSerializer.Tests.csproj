@@ -58,6 +58,7 @@
   </ItemGroup>-->
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ExtendedXmlSerializer.Integration\ExtendedXmlSerializer.Integration.csproj" />
     <ProjectReference Include="..\..\src\ExtendedXmlSerializer\ExtendedXmlSerializer.csproj" />
   </ItemGroup>
 

@@ -26,11 +26,12 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.Integration
 {
 	public sealed class SurrogatesExtension : ISerializerExtension
 	{

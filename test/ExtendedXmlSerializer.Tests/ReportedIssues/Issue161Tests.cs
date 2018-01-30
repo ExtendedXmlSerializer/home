@@ -1,6 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.Integration;
 using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Runtime.Serialization;

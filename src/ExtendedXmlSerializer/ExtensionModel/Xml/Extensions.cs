@@ -36,7 +36,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -66,9 +65,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
 			@this.Register(VerbatimContentSerializer.Default);
-
-		public static IConfigurationContainer Register(this IConfigurationContainer @this, ISerializationSurrogateProvider provider)
-			=> @this.Extend(new SurrogatesExtension(provider));
 
 		public static ITypeConfiguration<T> Register<T, TSerializer>(this IConfigurationContainer @this)
 			where TSerializer : ISerializer<T> => @this.Type<T>().Register(typeof(TSerializer));

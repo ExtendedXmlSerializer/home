@@ -9,7 +9,8 @@
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
+    <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
@@ -44,7 +45,11 @@
   </PropertyGroup>-->
 
   <PropertyGroup Condition=" '$(TargetFramework)' != '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>$(DefineConstants);CORE;NETSTANDARD16</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CORE;NETSTANDARD16;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
+    <DefineConstants>TRACE;DEBUG;CORE;NET45</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
