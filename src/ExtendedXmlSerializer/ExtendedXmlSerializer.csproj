@@ -10,7 +10,7 @@
     <VersionPrefix>2.0.1</VersionPrefix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
-    <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net471;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer</AssemblyName>
     <PackageId>ExtendedXmlSerializer</PackageId>
     <PackageTags>xmlserializer;xmlserialization;serialization;ExtendedXmlSerializer;xml</PackageTags>
@@ -40,16 +40,16 @@
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 
- <!-- <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>$(DefineConstants);CLASSIC;NET46</DefineConstants>
-  </PropertyGroup>-->
-
-  <PropertyGroup Condition=" '$(TargetFramework)' != '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>TRACE;DEBUG;CORE;NETSTANDARD16;NETSTANDARD2_0</DefineConstants>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD16</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == '$(ClassicFrameworkVersion)' ">
-    <DefineConstants>TRACE;DEBUG;CORE;NET45</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET45</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
+    <DefineConstants>TRACE;DEBUG;CORE; NET46</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

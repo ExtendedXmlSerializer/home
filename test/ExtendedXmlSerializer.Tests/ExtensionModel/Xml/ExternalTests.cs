@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel;
-using System.Numerics;
-using System.Xml.Serialization;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System;
+using System.ComponentModel;
+using System.Numerics;
+using System.Xml.Serialization;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml

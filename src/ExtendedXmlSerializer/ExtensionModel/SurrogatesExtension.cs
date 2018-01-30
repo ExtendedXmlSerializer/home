@@ -21,18 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace ExtendedXmlSerializer.Integration
+#if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
+namespace System.Runtime.Serialization
 {
+	public interface ISerializationSurrogateProvider
+	{
+		object GetDeserializedObject(object obj, Type t);
+		object GetObjectToSerialize(Object obj, Type t);
+		Type GetSurrogateType(Type t);
+	}
+}
+#endif
+
+namespace ExtendedXmlSerializer.ExtensionModel
+{
+	public static class IntegrationExtensions
+	{
+		public static IConfigurationContainer Register(this IConfigurationContainer @this,
+													   ISerializationSurrogateProvider provider)
+			=> @this.Extend(new SurrogatesExtension(provider));
+	}
+
 	public sealed class SurrogatesExtension : ISerializerExtension
 	{
 		readonly ISerializationSurrogateProvider _provider;
@@ -40,7 +59,7 @@ namespace ExtendedXmlSerializer.Integration
 		public SurrogatesExtension(ISerializationSurrogateProvider provider) => _provider = provider;
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.RegisterInstance(_provider)
-		                                                                        .Decorate<IContents, Contents>();
+																				.Decorate<IContents, Contents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -59,9 +78,9 @@ namespace ExtendedXmlSerializer.Integration
 			{
 				var surrogateType = _provider.GetSurrogateType(parameter);
 				var result = surrogateType != null
-					             ? new Serializer(_provider, new Mapping(parameter.AsType(), surrogateType),
-					                              _contents.Get(surrogateType))
-					             : _contents.Get(parameter);
+								 ? new Serializer(_provider, new Mapping(parameter.AsType(), surrogateType),
+												  _contents.Get(surrogateType))
+								 : _contents.Get(parameter);
 				return result;
 			}
 
