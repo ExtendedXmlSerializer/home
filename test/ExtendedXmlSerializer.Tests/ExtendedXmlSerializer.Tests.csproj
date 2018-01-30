@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
     <VersionPrefix>2.0.1</VersionPrefix>
-    <ClassicFrameworkVersion>net462</ClassicFrameworkVersion>
+    <ClassicFrameworkVersion>net471</ClassicFrameworkVersion>
     <TargetFrameworks>netcoreapp2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
