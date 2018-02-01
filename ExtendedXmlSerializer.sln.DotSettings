@@ -16,7 +16,7 @@
 	<s:Boolean x:Key="/Default/CodeStyle/EditorConfig/ShowEditorConfigStatusBarIndicator/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/FileHeader/FileHeaderText/@EntryValue">MIT License&#xD;
 &#xD;
-Copyright (c) 2016 Wojciech Nagórski&#xD;
+Copyright (c) 2016-2018 Wojciech Nagórski&#xD;
                    Michael DeMond&#xD;
 &#xD;
 Permission is hereby granted, free of charge, to any person obtaining a copy&#xD;
