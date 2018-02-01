@@ -7,7 +7,7 @@
     <Company>ExtendedXmlSerializer</Company>
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
-    <VersionPrefix>2.0.1</VersionPrefix>
+    <VersionPrefix>2.1.0</VersionPrefix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
@@ -23,20 +23,8 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;0628</NoWarn>
-    <PackageReleaseNotes>
-* Nullable Structs Cause Exception if Converter is Not Found #157
-* Deserialization issue #156
-* Bad serialization of string in RTF format #150
-* The type initializer for ExtendedXmlSerializer.ContentModel.Reflection.PartitionedTypeCandidates threw an exception. #147
-* Readonly Fields #146
-* Extended Dictionary Not Passed into Parameter Correctly #144
-* Optional Double Parameter Not Passed in Correctly #143
-* Compatibility with the standard XML Serializer attributes #135
-* System.Reflection.AmbiguousMatchException is thrown #155
-* The serializer for type 'System.Collections.ObjectModel.ReadOnlyCollection`1 could not be found. #152
-* Null serialization creates Null node ignoring property name instead of using xsi:nil="true" #141
-    </PackageReleaseNotes>
-    <Version>2.0.1</Version>
+    <PackageReleaseNotes>Release notes and subsequent discussion may be found here: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/162</PackageReleaseNotes>
+    <Version>2.1.0</Version>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 
