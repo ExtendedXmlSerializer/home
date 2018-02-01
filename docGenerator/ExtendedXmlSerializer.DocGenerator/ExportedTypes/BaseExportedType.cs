@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 			bool exit = false;
 			while (!exit)
 			{
-				indexStart = text.IndexOf(startString, StringComparison.Ordinal) + 1 + 1;
+				indexStart = text.IndexOf(startString, StringComparison.Ordinal) + 1;
 				indexEnd = text.IndexOf(endString, StringComparison.Ordinal) - 1;
 				if (indexStart >= 0 && indexEnd >= 0)
 				{

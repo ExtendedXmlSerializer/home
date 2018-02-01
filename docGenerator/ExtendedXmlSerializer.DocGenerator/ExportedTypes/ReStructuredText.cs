@@ -48,7 +48,8 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 
 			var minIndent = code.Min(GetIndent);
 
-			foreach (var item in code.Skip(code.First() == "\r" ? 1 : 0))
+			var enumerable = code.SkipWhile(string.IsNullOrWhiteSpace);
+			foreach (var item in enumerable)
 			{
 				NormalizeIndent(item, minIndent);
 			}
@@ -66,7 +67,8 @@ namespace ExtendedXmlSerializer.DocGenerator.ExportedTypes
 
 			var minIndent = code.Min(GetIndent);
 
-			foreach (var item in code.Skip(code.First() == "\r" ? 1 : 0))
+			var enumerable = code.SkipWhile(string.IsNullOrWhiteSpace);
+			foreach (var item in enumerable)
 			{
 				NormalizeIndent(item, minIndent);
 			}
