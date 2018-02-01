@@ -663,12 +663,12 @@ If you have an element with a member that can hold lots of data, or data that ha
 
 .. sourcecode:: csharp
 
-                var serializer = new ConfigurationContainer().Type<Subject>()
-                                                             .Member(x => x.Message)
-                                                             .Verbatim()
-                                                             .Create();
-                var subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
-                var contents = serializer.Serialize(subject);
+    var serializer = new ConfigurationContainer().Type<Subject>()
+                                                    .Member(x => x.Message)
+                                                    .Verbatim()
+                                                    .Create();
+    var subject = new Subject {Message = @"<{""Ilegal characters and such""}>"};
+    var contents = serializer.Serialize(subject);
     // ...
 
 

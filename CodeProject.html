@@ -679,13 +679,12 @@
 
 <pre lang="cs">
     
-    
-                var serializer = new ConfigurationContainer().Type&lt;Subject&gt;()
-                                                             .Member(x =&gt; x.Message)
-                                                             .Verbatim()
-                                                             .Create();
-                var subject = new Subject {Message = @&quot;&lt;{&quot;&quot;Ilegal characters and such&quot;&quot;}&gt;&quot;};
-                var contents = serializer.Serialize(subject);
+    var serializer = new ConfigurationContainer().Type&lt;Subject&gt;()
+                                                    .Member(x =&gt; x.Message)
+                                                    .Verbatim()
+                                                    .Create();
+    var subject = new Subject {Message = @&quot;&lt;{&quot;&quot;Ilegal characters and such&quot;&quot;}&gt;&quot;};
+    var contents = serializer.Serialize(subject);
     // ...
 </pre>
 
