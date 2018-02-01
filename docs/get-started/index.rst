@@ -4,7 +4,7 @@ Information
 Support platforms:
 
 * .NET 4.5
-* .NET Platform Standard 1.6
+* .NET Standard 2.0
 
 Support features:
 
@@ -285,16 +285,16 @@ If you had a class:
 .. sourcecode:: csharp
 
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Type { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+    }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    ? xml version="1.0" encoding="utf-8"?>
+    <? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Type>Type</Type>
@@ -305,16 +305,16 @@ Then you renamed property:
 .. sourcecode:: csharp
 
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Name { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 
 and generated XML look like:
 
 .. sourcecode:: xml
 
-    ? xml version="1.0" encoding="utf-8"?>
+    <? xml version="1.0" encoding="utf-8"?>
     <TestClass xmlns:exs="https://extendedxmlserializer.github.io/v2" exs:version="1" xmlns="clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples">
       <Id>1</Id>
       <Name>Type</Name>

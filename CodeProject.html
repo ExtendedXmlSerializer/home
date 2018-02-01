@@ -4,7 +4,7 @@
 
 <ul>
 <li>.NET 4.5</li>
-<li>.NET Platform Standard 1.6</li>
+<li>.NET Standard 2.0</li>
 </ul>
 
 <p>Support features:</p>
@@ -281,16 +281,16 @@
 
 <pre lang="cs">
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Type { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+    }
 </pre>
 
 <p>and generated XML look like:</p>
 
 <pre lang="xml">
-    ? xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;? xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
     &lt;TestClass xmlns=&quot;clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Id&gt;1&lt;/Id&gt;
       &lt;Type&gt;Type&lt;/Type&gt;
@@ -301,16 +301,16 @@
 
 <pre lang="cs">
     public class TestClass
-     {
-         public int Id { get; set; }
-         public string Name { get; set; }
-     }
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 </pre>
 
 <p>and generated XML look like:</p>
 
 <pre lang="xml">
-    ? xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+    &lt;? xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
     &lt;TestClass xmlns:exs=&quot;https://extendedxmlserializer.github.io/v2&quot; exs:version=&quot;1&quot; xmlns=&quot;clr-namespace:ExtendedXmlSerialization.Samples.MigrationMap;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Id&gt;1&lt;/Id&gt;
       &lt;Name&gt;Type&lt;/Name&gt;

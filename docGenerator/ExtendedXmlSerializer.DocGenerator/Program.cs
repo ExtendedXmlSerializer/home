@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.DocGenerator.ExportedTypes;
+using System;
 using System.IO;
-using ExtendedXmlSerializer.DocGenerator.ExportedTypes;
 
 namespace ExtendedXmlSerializer.DocGenerator
 {
@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddHeader("Information");
 
 			doc.Add("Support platforms:");
-			doc.AddList(".NET 4.5", ".NET Platform Standard 1.6");
+			doc.AddList(".NET 4.5", ".NET Standard 2.0");
 			doc.Add("Support features:");
 			doc.AddList(
 				"Deserialization xml from standard `XMLSerializer`",
@@ -184,7 +184,7 @@ namespace ExtendedXmlSerializer.DocGenerator
 
 			doc.Add("You can also denote these fields with an attribute and get the same functionality:");
 			doc.AddCode(@"..\..\..\..\samples\ExtendedXmlSerializer.Samples\Extensibility\VerbatimContent.cs", "Subject");
-			
+
 			doc.AddHeader("Private Constructors");
 			doc.Add("One of the limitations of the classic `XmlSerializer` is that it does not support private constructors, but `ExtendedXmlSerializer` does via its `EnableAllConstructors` call:");
 
