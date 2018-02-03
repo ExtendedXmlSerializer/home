@@ -21,28 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel
 {
-	abstract class NamedElementOptionBase : ElementOptionBase
+	class GenericWriterAdapter<T> : IWriter
 	{
-		readonly static AlwaysSpecification<TypeInfo> Always = AlwaysSpecification<TypeInfo>.Default;
+		readonly IWriter<T> _writer;
 
-		readonly IIdentities _identities;
+		public GenericWriterAdapter(IWriter<T> writer) => _writer = writer;
 
-		protected NamedElementOptionBase(IIdentities identities) : this(Always, identities) {}
-
-		protected NamedElementOptionBase(ISpecification<TypeInfo> specification, IIdentities identities)
-			: base(specification)
-		{
-			_identities = identities;
-		}
-
-		public sealed override IWriter Get(TypeInfo parameter) => Create(_identities.Get(parameter), parameter);
-
-		public abstract IWriter Create(IIdentity identity, TypeInfo classification);
+		public void Write(IFormatWriter writer, object instance) => _writer.Write(writer, (T) instance);
 	}
 }

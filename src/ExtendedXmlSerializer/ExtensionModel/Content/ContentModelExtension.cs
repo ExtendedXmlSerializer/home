@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Identification;
@@ -29,6 +28,9 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.VariableTypeSpecification;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -47,7 +49,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<IComparer<IContentOption>, TypedSortComparer<IContentOption>>()
+			=> parameter.Register<Element>()
+			            .Register<IElement, Element>()
+			            .Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
+			            .Decorate<GenericElement>(IsGenericTypeSpecification.Default)
+			            .Decorate<ArrayElement>(IsArraySpecification.Default)
+			            .Register<IComparer<IContentOption>, TypedSortComparer<IContentOption>>()
 			            .RegisterAsSet<IContentOption, ContentOptions>()
 			            .RegisterAsStart<IContentOption, Start>()
 			            .RegisterAsFinish<IContentOption, Finish>()

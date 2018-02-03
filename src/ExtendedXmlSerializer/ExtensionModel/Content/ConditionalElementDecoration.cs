@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,18 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class GenericElementOption : NamedElementOptionBase
+	sealed class ConditionalElementDecoration<T> : DecorateAlteration<IElement, T, TypeInfo, IWriter> where T : IElement
 	{
-		public GenericElementOption(IIdentities identities) : base(IsGenericTypeSpecification.Default, identities) {}
+		public ConditionalElementDecoration(ISpecification<TypeInfo> specification)
+			: base(new Factory(specification).Create) {}
 
-		public override IWriter Create(IIdentity identity, TypeInfo classification)
-			=> new GenericElement(identity, classification.GetGenericArguments().ToImmutableArray());
+		sealed class Factory
+		{
+			readonly ISpecification<TypeInfo> _specification;
+
+			public Factory(ISpecification<TypeInfo> specification) => _specification = specification;
+
+			public IElement Create(IElement element, T arg2) => new ConditionalElement(_specification, arg2, element);
+		}
 	}
 }

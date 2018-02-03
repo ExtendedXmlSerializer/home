@@ -5,6 +5,8 @@ using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Runtime.Serialization;
 using Xunit;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {

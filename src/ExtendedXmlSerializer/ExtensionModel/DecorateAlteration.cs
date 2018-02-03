@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using System;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class DecoratedWriter : IWriter
+	class DecorateAlteration<TFrom, TTo, TParameter, TResult> : IAlteration<IServiceRepository>
+		where TFrom : IParameterizedSource<TParameter, TResult>
+		where TTo : TFrom
 	{
-		readonly IWriter _writer;
+		readonly Func<TFrom, TTo, TFrom> _factory;
 
-		public DecoratedWriter(IWriter writer) => _writer = writer;
+		public DecorateAlteration(Func<TFrom, TTo, TFrom> factory) => _factory = factory;
 
-		public virtual void Write(IFormatWriter writer, object instance) => _writer.Write(writer, instance);
-	}
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<TTo>()
+			            .Decorate<TFrom>(Decorate);
 
-	class DecoratedWriter<T> : IWriter<T>
-	{
-		readonly IWriter<T> _writer;
-
-		public DecoratedWriter(IWriter<T> writer) => _writer = writer;
-
-		public void Write(IFormatWriter writer, T instance) => _writer.Write(writer, instance);
+		TFrom Decorate(IServiceProvider services, TFrom current) => _factory(current, services.Get<TTo>());
 	}
 }

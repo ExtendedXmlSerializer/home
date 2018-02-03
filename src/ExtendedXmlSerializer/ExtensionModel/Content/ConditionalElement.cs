@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	abstract class ElementBase : IWriter
+	sealed class ConditionalElement : ConditionalSource<TypeInfo, IWriter>, IElement
 	{
-		readonly IIdentity _identity;
-
-		protected ElementBase(IIdentity identity) => _identity = identity;
-
-		public virtual void Write(IFormatWriter writer, object instance) => writer.Start(_identity);
+		public ConditionalElement(ISpecification<TypeInfo> specification, IElement source, IElement fallback)
+			: base(specification, source, fallback) {}
 	}
 }

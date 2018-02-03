@@ -50,27 +50,29 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var access = _accessors.Get(parameter);
 			var alteration = new DelegatedAlteration<object>(access.Get);
 			var result = converter != null
-				? Property(alteration, converter, parameter, access)
-				: Content(alteration, parameter, access);
+				             ? Property(alteration, converter, parameter, access)
+				             : Content(alteration, parameter, access);
 			return result;
 		}
 
-		IMemberSerializer Property(IAlteration<object> alteration, IConverter converter, IMember profile, IMemberAccess access)
+		IMemberSerializer Property(IAlteration<object> alteration, IConverter converter, IMember profile,
+		                           IMemberAccess access)
 		{
 			var serializer = new ConverterProperty<object>(converter, profile).Adapt();
 			var member = new MemberSerializer(profile, access, serializer, Wrap(alteration, access, serializer));
 			var runtime = _runtime.Get(profile.Metadata);
 			IMemberSerializer property = new PropertyMemberSerializer(member);
 			return runtime != null
-				? new RuntimeSerializer(new AlteredSpecification<object>(alteration, runtime),
-				                        property, Content(alteration, profile, access))
-				: property;
+				       ? new RuntimeSerializer(new AlteredSpecification<object>(alteration, runtime),
+				                               property, Content(alteration, profile, access))
+				       : property;
 		}
 
 		IMemberSerializer Content(IAlteration<object> alteration, IMember profile, IMemberAccess access)
 		{
 			var body = _content.Get(profile);
-			var writer = Wrap(alteration, access, new Enclosure(new Element(profile), body));
+			var start = new Identity<object>(profile).Adapt();
+			var writer = Wrap(alteration, access, new Enclosure(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}

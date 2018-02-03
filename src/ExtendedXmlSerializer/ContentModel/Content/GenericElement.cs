@@ -21,33 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Properties;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class GenericElement : ElementBase
+	sealed class GenericElement : IElement
 	{
-		readonly IProperty<ImmutableArray<Type>> _property;
-		readonly ImmutableArray<Type> _arguments;
+		readonly IIdentities _identities;
+		readonly IGeneric<IIdentity, ImmutableArray<Type>, IWriter> _adapter;
 
-		public GenericElement(IIdentity identity, ImmutableArray<Type> arguments)
-			: this(ArgumentsTypeProperty.Default, identity, arguments) {}
+		public GenericElement(IIdentities identities) : this(identities, Adapter.Default) {}
 
-		public GenericElement(IProperty<ImmutableArray<Type>> property, IIdentity identity, ImmutableArray<Type> arguments)
-			: base(identity)
+		public GenericElement(IIdentities identities, IGeneric<IIdentity, ImmutableArray<Type>, IWriter> adapter)
 		{
-			_property = property;
-			_arguments = arguments;
+			_identities = identities;
+			_adapter = adapter;
 		}
 
-		public override void Write(IFormatWriter writer, object instance)
+		public IWriter Get(TypeInfo parameter)
+			=> _adapter.Get(parameter)
+			           .Invoke(_identities.Get(parameter), parameter.GetGenericArguments()
+			                                                        .ToImmutableArray());
+
+		sealed class Adapter : Generic<IIdentity, ImmutableArray<Type>, IWriter>
 		{
-			base.Write(writer, instance);
-			_property.Write(writer, _arguments);
+			public static Adapter Default { get; } = new Adapter();
+			Adapter() : base(typeof(Writer<>)) {}
+
+			sealed class Writer<T> : GenericWriterAdapter<T>
+			{
+				public Writer(IIdentity identity, ImmutableArray<Type> arguments)
+					: base(new GenericIdentity<T>(identity, arguments)) {}
+			}
 		}
 	}
 }

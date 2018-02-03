@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using Xunit;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
@@ -15,9 +16,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .Create()
 			                                             .ForTesting();
 
-			var instance = new AnotherSubject { Subject = new Subject { Message = "Hello World!" } };
+			var instance = new AnotherSubject { Inner = new Subject { Message = "Hello World!" } };
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance); ;
+			          .ShouldBeEquivalentTo(instance);
 		}
 
 		interface ISubject {}
@@ -29,7 +30,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		sealed class AnotherSubject
 		{
-			public ISubject Subject { get; set; }
+			public ISubject Inner { get; set; }
 		}
 	}
 }

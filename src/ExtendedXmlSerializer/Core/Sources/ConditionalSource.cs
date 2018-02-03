@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	class VariableTypeElementOption : NamedElementOptionBase
+	public class ConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
-		readonly static ISpecification<TypeInfo> Specification = VariableTypeSpecification.Default;
+		readonly Func<TParameter, bool> _specification;
+		readonly Func<TParameter, TResult> _source, _fallback;
 
-		readonly IIdentities _identities;
+		public ConditionalSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source,
+		                         IParameterizedSource<TParameter, TResult> fallback)
+			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) {}
 
-		public VariableTypeElementOption(IIdentities identities) : base(Specification, identities)
+		public ConditionalSource(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
+			: this(specification, source, x => default(TResult)) {}
+
+		public ConditionalSource(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
+		                         Func<TParameter, TResult> fallback)
 		{
-			_identities = identities;
+			_specification = specification;
+			_source = source;
+			_fallback = fallback;
 		}
 
-		public override IWriter Create(IIdentity identity, TypeInfo classification)
-			=> new VariableTypeElement(classification.AsType(), _identities, identity);
+		public TResult Get(TParameter parameter)
+			=> _specification(parameter) ? _source(parameter) : _fallback(parameter);
 	}
 }

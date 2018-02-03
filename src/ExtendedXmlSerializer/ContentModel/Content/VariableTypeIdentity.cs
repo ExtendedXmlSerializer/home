@@ -21,25 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	class DecoratedWriter : IWriter
+	sealed class VariableTypeIdentity : IWriter
 	{
-		readonly IWriter _writer;
+		readonly ISpecification<Type> _specification;
+		readonly IWriter<object> _start;
+		readonly IIdentities _identities;
 
-		public DecoratedWriter(IWriter writer) => _writer = writer;
+		public VariableTypeIdentity(Type definition, IIdentity identity, IIdentities identities)
+			: this(new VariableTypeSpecification(definition), new Identity<object>(identity), identities) {}
 
-		public virtual void Write(IFormatWriter writer, object instance) => _writer.Write(writer, instance);
-	}
+		public VariableTypeIdentity(ISpecification<Type> specification, IWriter<object> start, IIdentities identities)
+		{
+			_specification = specification;
+			_start = start;
+			_identities = identities;
+		}
 
-	class DecoratedWriter<T> : IWriter<T>
-	{
-		readonly IWriter<T> _writer;
-
-		public DecoratedWriter(IWriter<T> writer) => _writer = writer;
-
-		public void Write(IFormatWriter writer, T instance) => _writer.Write(writer, instance);
+		public void Write(IFormatWriter writer, object instance)
+		{
+			var type = instance.GetType();
+			if (_specification.IsSatisfiedBy(type))
+			{
+				writer.Start(_identities.Get(type.GetTypeInfo()));
+			}
+			else
+			{
+				_start.Write(writer, instance);
+			}
+		}
 	}
 }

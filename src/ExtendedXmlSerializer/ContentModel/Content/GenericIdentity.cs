@@ -21,29 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
+using System;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.ContentModel.Properties;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ArrayElementOption : ElementOptionBase
+	sealed class GenericIdentity<T> : IWriter<T>
 	{
-		readonly static IsArraySpecification Specification = IsArraySpecification.Default;
+		readonly IProperty<ImmutableArray<Type>> _property;
+		readonly IWriter<T> _start;
+		readonly ImmutableArray<Type> _arguments;
 
-		readonly IIdentities _identities;
-		readonly ICollectionItemTypeLocator _locator;
+		public GenericIdentity(IIdentity identity, ImmutableArray<Type> arguments) : this(new Identity<T>(identity),
+		                                                                                  arguments) {}
 
-		public ArrayElementOption(IIdentities identities) : this(identities, CollectionItemTypeLocator.Default) {}
+		public GenericIdentity(IWriter<T> start, ImmutableArray<Type> arguments)
+			: this(start, ArgumentsTypeProperty.Default, arguments) {}
 
-		public ArrayElementOption(IIdentities identities, ICollectionItemTypeLocator locator)
-			: base(Specification)
+		public GenericIdentity(IWriter<T> start, IProperty<ImmutableArray<Type>> property, ImmutableArray<Type> arguments)
 		{
-			_identities = identities;
-			_locator = locator;
+			_start = start;
+			_property = property;
+			_arguments = arguments;
 		}
 
-		public override IWriter Get(TypeInfo parameter) => new ArrayElement(_identities, _locator.Get(parameter));
+		public void Write(IFormatWriter writer, T instance)
+		{
+			_start.Write(writer, instance);
+			_property.Write(writer, _arguments);
+		}
 	}
 }

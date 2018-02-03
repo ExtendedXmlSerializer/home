@@ -30,10 +30,7 @@ namespace ExtendedXmlSerializer.ContentModel
 	{
 		readonly IReader<T> _serializer;
 
-		public GenericReaderAdapter(IReader<T> serializer)
-		{
-			_serializer = serializer;
-		}
+		public GenericReaderAdapter(IReader<T> serializer) => _serializer = serializer;
 
 		object IParameterizedSource<IFormatReader, object>.Get(IFormatReader parameter) => _serializer.Get(parameter);
 	}

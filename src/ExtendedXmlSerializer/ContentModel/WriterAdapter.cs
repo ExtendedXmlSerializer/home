@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel
 {
-	abstract class ElementOptionBase : OptionBase<TypeInfo, IWriter>
+	sealed class WriterAdapter<T> : IWriter<T>
 	{
-		protected ElementOptionBase(ISpecification<TypeInfo> specification) : base(specification) {}
+		readonly IWriter _writer;
+
+		public WriterAdapter(IWriter writer) => _writer = writer;
+
+		public void Write(IFormatWriter writer, T instance) => _writer.Write(writer, instance);
 	}
 }

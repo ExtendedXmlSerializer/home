@@ -21,26 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	[UsedImplicitly]
 	sealed class Serializers : ISerializers
 	{
-		readonly IElements _elements;
+		readonly IElement _element;
 		readonly IContents _contents;
 
-		public Serializers(IElements elements, IContents contents)
+		public Serializers(IElement element, IContents contents)
 		{
-			_elements = elements;
+			_element = element;
 			_contents = contents;
 		}
 
 		public ISerializer Get(TypeInfo parameter) => Create(parameter.AccountForNullable());
 
-		ISerializer Create(TypeInfo parameter) => new Container(_elements.Get(parameter), _contents.Get(parameter));
+		ISerializer Create(TypeInfo parameter) => new Container(_element.Get(parameter), _contents.Get(parameter));
 	}
 }
