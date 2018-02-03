@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public Selector(ImmutableArray<IOption<TParameter, TResult>> options) => _options = options;
 
-		public virtual TResult Get(TParameter parameter)
+		public TResult Get(TParameter parameter)
 		{
 			var length = _options.Length;
 			for (var i = 0; i < length; i++)
