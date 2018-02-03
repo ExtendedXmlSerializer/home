@@ -21,26 +21,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer
 {
-	public sealed class SerializationExtension : ISerializerExtension
+	sealed class Serializer<TRead, TWrite> : ISerializer<TRead, TWrite>
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
-		SerializationExtension() {}
+		readonly IFormatReaders<TRead> _readers;
+		readonly IFormatWriters<TWrite> _writers;
+		readonly IClassification _classification;
+		readonly ISerializers _serializers;
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ISerializer, RuntimeSerializer>()
-			            .Register<ISerializers, Serializers>()
-			            .Decorate<ISerializers, ReferenceAwareSerializers>()
-			            .RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
-			            .Register<IContents, Contents>()
-			            .Decorate<IContents>((factory, contents) => new RecursionAwareContents(contents));
+		public Serializer(IFormatReaders<TRead> readers, IFormatWriters<TWrite> writers, IClassification classification,
+		                  ISerializers serializers)
+		{
+			_readers = readers;
+			_writers = writers;
+			_classification = classification;
+			_serializers = serializers;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public void Serialize(TWrite writer, object instance)
+			=> _serializers.Get(instance.GetType()
+			                            .GetTypeInfo())
+			               .Write(_writers.Get(new Writing<TWrite>(writer, instance)), instance);
+
+		public object Deserialize(TRead reader)
+		{
+			using (var content = _readers.Get(reader))
+			{
+				var classification = _classification.GetClassification(content);
+				var result = _serializers.Get(classification)
+				                         .Get(content);
+				return result;
+			}
+		}
 	}
 }

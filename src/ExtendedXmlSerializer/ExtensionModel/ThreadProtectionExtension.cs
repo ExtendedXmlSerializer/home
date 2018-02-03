@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nagórski
+// Copyright (c) 2016-2018 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using JetBrains.Annotations;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	/// <summary>
-	/// Extended Xml Serializer
-	/// </summary>
-	[UsedImplicitly]
-	sealed class ExtendedXmlSerializer : IExtendedXmlSerializer
+	sealed class ThreadProtectionExtension : ISerializerExtension
 	{
-		readonly ISerializer<System.Xml.XmlReader, System.Xml.XmlWriter> _serializer;
+		public static ThreadProtectionExtension Default { get; } = new ThreadProtectionExtension();
+		ThreadProtectionExtension() {}
 
-		public ExtendedXmlSerializer(ISerializer<System.Xml.XmlReader, System.Xml.XmlWriter> serializer) =>
-			_serializer = serializer;
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Decorate(typeof(ISerializer<,>), typeof(Serializer<,>));
 
-		public void Serialize(System.Xml.XmlWriter writer, object instance)
-			=> _serializer.Serialize(writer, instance);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		public object Deserialize(System.Xml.XmlReader reader) => _serializer.Deserialize(reader);
+		sealed class Serializer<TRead, TWrite> : ISerializer<TRead, TWrite>
+		{
+			readonly ISerializer<TRead, TWrite> _serializer;
+
+			public Serializer(ISerializer<TRead, TWrite> serializer) => _serializer = serializer;
+
+			public object Deserialize(TRead reader)
+			{
+				lock (_serializer)
+				{
+					return _serializer.Deserialize(reader);
+				}
+			}
+
+			public void Serialize(TWrite writer, object instance)
+			{
+				lock (_serializer)
+				{
+					_serializer.Serialize(writer, instance);
+				}
+			}
+		}
 	}
 }
