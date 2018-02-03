@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberAccessors : DelegatedSource<IMember, IMemberAccess>, IMemberAccessors
+	sealed class MemberAccessors : Selector<IMember, IMemberAccess>, IMemberAccessors
 	{
 		public MemberAccessors(WritableMemberAccessors accessors, ReadOnlyCollectionAccessors @readonly)
-			: base(new Selector<IMember, IMemberAccess>(new Option(x => x.IsWritable, accessors), @readonly).Get) {}
+			: base(new Option(x => x.IsWritable, accessors), @readonly) {}
 
 		sealed class Option : DecoratedOption<IMember, IMemberAccess>
 		{

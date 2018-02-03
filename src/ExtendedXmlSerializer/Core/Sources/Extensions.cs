@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -31,7 +32,7 @@ using System.Text;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	static class Extensions
+	public static class Extensions
 	{
 		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
 			=> @this.Get(new MemoryStream(Encoding.UTF8.GetBytes(parameter)));
@@ -64,7 +65,24 @@ namespace ExtendedXmlSerializer.Core.Sources
 			return result;
 		}
 
-		
+		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult>(
+			this TResult @this, ISpecification<TParameter> specification)
+			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(@this), new FixedInstanceSource<TParameter, TResult>(default(TResult)));
+
+		public static IParameterizedSource<TParameter, TResult> Let<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
+			IParameterizedSource<TParameter, TResult> other)
+			=> new ConditionalSource<TParameter, TResult>(specification, other, @this);
+
+		public static IParameterizedSource<TParameter, TResult> Let<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
+			TResult other)
+			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(other), @this);
+
+		public static IParameterizedSource<TSpecification, TInstance> Let<TSpecification, TInstance>(
+			this TInstance @this, ISpecification<TSpecification> specification,
+			TInstance other)
+			=> new ConditionalSource<TSpecification, TInstance>(specification, new FixedInstanceSource<TSpecification, TInstance>(other), new FixedInstanceSource<TSpecification, TInstance>(@this));
 
 		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)

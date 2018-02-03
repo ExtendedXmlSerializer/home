@@ -46,7 +46,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 			_fallback = fallback;
 		}
 
-		public TResult Get(TParameter parameter)
-			=> _specification(parameter) ? _source(parameter) : _fallback(parameter);
+		public TResult Get(TParameter parameter) => _specification(parameter) ? _source(parameter) : _fallback(parameter);
 	}
 }

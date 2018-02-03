@@ -27,11 +27,9 @@ namespace ExtendedXmlSerializer.Core
 {
 	class SelectedCommand<T> : ICommand<T>
 	{
-		readonly ICommandSelector<T> _selector;
+		readonly IParameterizedSource<T, ICommand<T>> _selector;
 
-		public SelectedCommand(params IOption<T, ICommand<T>>[] options) : this(new CommandSelector<T>(options)) {}
-
-		public SelectedCommand(ICommandSelector<T> selector) => _selector = selector;
+		public SelectedCommand(IParameterizedSource<T, ICommand<T>> selector) => _selector = selector;
 
 		public void Execute(T parameter) => _selector.Get(parameter)?.Execute(parameter);
 	}

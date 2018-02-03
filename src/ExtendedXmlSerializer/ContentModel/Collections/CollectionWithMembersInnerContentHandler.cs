@@ -30,13 +30,10 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	sealed class CollectionWithMembersInnerContentHandler : SelectedCommand<IInnerContent>, IInnerContentHandler
 	{
-		readonly static EmptyCommand<IInnerContent> Empty = EmptyCommand<IInnerContent>.Default;
+		readonly static ICommand<IInnerContent> Empty = EmptyCommand<IInnerContent>.Default;
 
 		public CollectionWithMembersInnerContentHandler(IListContentsSpecification specification, MemberInnerContentHandler members,
 		                                  CollectionInnerContentHandler collection)
-			: base(
-				new FixedOption<IInnerContent, ICommand<IInnerContent>>(members, Empty),
-				new FixedOption<IInnerContent, ICommand<IInnerContent>>(specification, collection)
-			) {}
+			: base(collection.If(specification).Let(members, Empty)) {}
 	}
 }
