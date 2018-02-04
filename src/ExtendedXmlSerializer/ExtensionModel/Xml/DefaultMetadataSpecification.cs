@@ -24,7 +24,7 @@
 using System.Reflection;
 using System.Xml.Serialization;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -36,9 +36,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		readonly static MemberSpecification<FieldInfo> Field =
 			new MemberSpecification<FieldInfo>(new FieldMemberSpecification(
-				                                   IsDefinedSpecification<XmlElementAttribute>.Default.Or(
-					                                   IsDefinedSpecification
-						                                   <XmlAttributeAttribute>.Default)));
+			                                                                IsDefinedSpecification<XmlElementAttribute>
+				                                                                .Default.Or(
+				                                                                            IsDefinedSpecification
+					                                                                            <XmlAttributeAttribute>.Default)));
 
 		public static DefaultMetadataSpecification Default { get; } = new DefaultMetadataSpecification();
 		DefaultMetadataSpecification() : base(Property, Field) {}

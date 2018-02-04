@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
@@ -34,14 +33,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 	{
 		readonly IEnumerable<ICoercer> _coercers;
 
-		public Coercers(IEnumerable<ICoercer> coercers)
-		{
-			_coercers = coercers;
-		}
+		public Coercers(IEnumerable<ICoercer> coercers) => _coercers = coercers;
 
 		public ICoercion Get(object parameter)
 		{
-			var candidates = Yield(parameter).ToImmutableArray();
+			var candidates = Yield(parameter)
+				.ToImmutableArray();
 			var result = candidates.Any() ? new Context(parameter, candidates) : null;
 			return result;
 		}
@@ -57,19 +54,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 			}
 		}
 
-		sealed class Context : OptionBase<TypeInfo, object>, ICoercion
+		sealed class Context : AnySpecification<TypeInfo>, ICoercion
 		{
 			readonly object _instance;
 			readonly ImmutableArray<ICoercer> _candidates;
 
 			public Context(object instance, ImmutableArray<ICoercer> candidates)
-				: base(new AnySpecification<TypeInfo>(candidates.ToArray<ISpecification<TypeInfo>>()))
+				: base(candidates.ToArray<ISpecification<TypeInfo>>())
 			{
 				_instance = instance;
 				_candidates = candidates;
 			}
 
-			public override object Get(TypeInfo parameter)
+			public object Get(TypeInfo parameter)
 			{
 				foreach (var candidate in _candidates)
 				{
@@ -78,6 +75,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 						return candidate.Get(new CoercerParameter(_instance, parameter));
 					}
 				}
+
 				return null;
 			}
 		}

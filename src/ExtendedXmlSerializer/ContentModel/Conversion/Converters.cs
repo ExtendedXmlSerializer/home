@@ -21,53 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	sealed class Converters : DecoratedOption<TypeInfo, IConverter>, IConverters
+	sealed class Converters : IConverters
 	{
-		public Converters(IEnumerable<IConverter> converters, IEnumerable<IConverterSource> sources)
-			: this(new Implementation(converters.ToImmutableArray(), sources.ToImmutableArray())) {}
+		readonly IEnumerable<IConverter> _converters;
 
-		Converters(IParameterizedSource<TypeInfo, IConverter> source)
-			: base(new DelegatedAssignedSpecification<TypeInfo, IConverter>(source.Get), source) {}
+		public Converters(IEnumerable<IConverter> converters) => _converters = converters;
 
-		sealed class Implementation : CacheBase<TypeInfo, IConverter>
+		public IConverter Get(TypeInfo parameter)
 		{
-			readonly ImmutableArray<IConverter> _converters;
-			readonly ImmutableArray<IConverterSource> _sources;
-
-			public Implementation(ImmutableArray<IConverter> converters, ImmutableArray<IConverterSource> sources)
+			foreach (var converter in _converters)
 			{
-				_converters = converters;
-				_sources = sources;
+				if (converter.IsSatisfiedBy(parameter))
+				{
+					return converter;
+				}
 			}
 
-			protected override IConverter Create(TypeInfo parameter)
-			{
-				foreach (var converter in _converters)
-				{
-					if (converter.IsSatisfiedBy(parameter))
-					{
-						return converter;
-					}
-				}
-
-				foreach (var source in _sources)
-				{
-					if (source.IsSatisfiedBy(parameter))
-					{
-						return source.Get(parameter);
-					}
-				}
-
-				return null;
-			}
+			return null;
 		}
 	}
 }

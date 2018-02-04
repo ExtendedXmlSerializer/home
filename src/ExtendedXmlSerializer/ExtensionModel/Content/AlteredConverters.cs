@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -39,8 +40,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		}
 
 
-		public bool IsSatisfiedBy(TypeInfo parameter) => _converters.IsSatisfiedBy(parameter);
-
-		public IConverter Get(TypeInfo parameter) => _alteration.Get(_converters.Get(parameter));
+		public IConverter Get(TypeInfo parameter) => _converters.Get(parameter)
+		                                                        .Alter(_alteration.Get);
 	}
 }

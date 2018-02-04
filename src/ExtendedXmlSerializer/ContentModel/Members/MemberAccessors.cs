@@ -23,19 +23,18 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
-using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberAccessors : Selector<IMember, IMemberAccess>, IMemberAccessors
+	sealed class MemberAccessors : DecoratedSource<IMember, IMemberAccess>, IMemberAccessors
 	{
 		public MemberAccessors(WritableMemberAccessors accessors, ReadOnlyCollectionAccessors @readonly)
-			: base(new Option(x => x.IsWritable, accessors), @readonly) {}
+			: this((IParameterizedSource<IMember, IMemberAccess>) accessors, @readonly) {}
 
-		sealed class Option : DecoratedOption<IMember, IMemberAccess>
-		{
-			public Option(Func<IMember, bool> specification, IMemberAccessors source)
-				: base(new DelegatedSpecification<IMember>(specification), source) {}
-		}
+		MemberAccessors(IParameterizedSource<IMember, IMemberAccess> accessors,
+		                IParameterizedSource<IMember, IMemberAccess> @readonly)
+			: base(@readonly.If(ReadOnlyCollectionSpecification.Default)
+			                .Let(new DelegatedSpecification<IMember>(x => x.IsWritable),
+			                     AlteredValueSpecification<IMemberAccess>.Default, accessors)) {}
 	}
 }

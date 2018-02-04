@@ -30,10 +30,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		readonly ISpecification<TypeInfo> _specification;
 
-		public MemberTypeSpecification(ISpecification<TypeInfo> specification)
-		{
-			_specification = specification;
-		}
+		public MemberTypeSpecification(ISpecification<TypeInfo> specification) => _specification = specification;
 
 		public bool IsSatisfiedBy(IMember parameter) => _specification.IsSatisfiedBy(parameter.MemberType);
 	}

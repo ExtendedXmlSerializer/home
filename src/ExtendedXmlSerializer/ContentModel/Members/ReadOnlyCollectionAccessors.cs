@@ -21,17 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
-using System;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class ReadOnlyCollectionAccessors : OptionBase<IMember, IMemberAccess>
+	sealed class ReadOnlyCollectionAccessors : IParameterizedSource<IMember, IMemberAccess>
 	{
 		readonly IAllowedMemberValues _allowed;
 		readonly IGetterFactory _getter;
@@ -42,18 +38,13 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			: this(allowed, GetterFactory.Default, AddDelegates.Default) {}
 
 		public ReadOnlyCollectionAccessors(IAllowedMemberValues allowed, IGetterFactory getter, IAddDelegates add)
-			: base(
-				new MemberTypeSpecification(
-					IsCollectionTypeSpecification.Default.And(
-						new DelegatedAssignedSpecification<TypeInfo, Action<object, object>>(add.Get)))
-			)
 		{
 			_allowed = allowed;
 			_getter = getter;
 			_add = add;
 		}
 
-		public override IMemberAccess Get(IMember parameter)
+		public IMemberAccess Get(IMember parameter)
 			=>
 				new ReadOnlyCollectionMemberAccess(new MemberAccess(_allowed.Get(parameter.Metadata),
 				                                                    _getter.Get(parameter.Metadata),

@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,25 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class FixedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
+	public class SpecificationSource<TParameter, TResult> : ISpecificationSource<TParameter, TResult>
 	{
-		readonly TResult _instance;
+		readonly ISpecification<TParameter> _specification;
+		readonly IParameterizedSource<TParameter, TResult> _source;
 
-		public FixedOption(TResult instance) : this(x => true, instance) {}
+		public SpecificationSource(IParameterizedSource<TParameter, TResult> source) : this(source.IfAssigned(), source) {}
 
-		public FixedOption(Func<TParameter, bool> specification, TResult instance)
-			: this(new DelegatedSpecification<TParameter>(specification), instance) {}
-
-		public FixedOption(ISpecification<TParameter> specification, TResult instance) : base(specification)
+		public SpecificationSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
 		{
-			_instance = instance;
+			_specification = specification;
+			_source = source;
 		}
 
-		public sealed override TResult Get(TParameter parameter) => _instance;
+		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
+		public TResult Get(TParameter parameter) => _source.Get(parameter);
 	}
 }

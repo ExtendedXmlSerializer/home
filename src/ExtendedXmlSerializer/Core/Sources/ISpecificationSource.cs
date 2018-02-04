@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nagórski
+// Copyright (c) 2016-2018 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class DelegatedOption<TParameter, TResult> : OptionBase<TParameter, TResult>
-	{
-		readonly Func<TParameter, TResult> _source;
-
-		public DelegatedOption(Func<TParameter, bool> specification, Func<TParameter, TResult> source)
-			: this(new DelegatedSpecification<TParameter>(specification), source) {}
-
-		public DelegatedOption(ISpecification<TParameter> specification, Func<TParameter, TResult> source)
-			: base(specification)
-		{
-			_source = source;
-		}
-
-		public sealed override TResult Get(TParameter parameter) => _source(parameter);
-	}
+	public interface ISpecificationSource<in TParameter, out TResult>
+		: ISpecification<TParameter>, IParameterizedSource<TParameter, TResult> {}
 }

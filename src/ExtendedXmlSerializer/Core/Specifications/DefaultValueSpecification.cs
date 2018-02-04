@@ -21,25 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
-
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Specifications
 {
-	class DecoratedOption<TParameter, TResult> : IOption<TParameter, TResult>
+	sealed class DefaultValueSpecification<T> : ISpecification<T>
 	{
-		readonly ISpecification<TParameter> _specification;
-		readonly IParameterizedSource<TParameter, TResult> _source;
+		public static DefaultValueSpecification<T> Default { get; } = new DefaultValueSpecification<T>();
+		DefaultValueSpecification() : this(default(T)) {}
 
-		public DecoratedOption(IOption<TParameter, TResult> option) : this(option, option) {}
+		readonly T _default;
 
-		public DecoratedOption(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
-		{
-			_specification = specification;
-			_source = source;
-		}
+		public DefaultValueSpecification(T @default) => _default = @default;
 
-		public virtual bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
-
-		public virtual TResult Get(TParameter parameter) => _source.Get(parameter);
+		public bool IsSatisfiedBy(T parameter) => Equals(_default, parameter);
 	}
 }

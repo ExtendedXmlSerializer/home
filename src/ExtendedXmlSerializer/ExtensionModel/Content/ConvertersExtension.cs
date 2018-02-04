@@ -30,25 +30,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
 	public sealed class ConvertersExtension : ISerializerExtension
 	{
-		readonly static IEnumerable<EnumerationConverters> Sources = EnumerationConverters.Default.Yield();
+		public ConvertersExtension() : this(WellKnownConverters.Default.KeyedByType()) {}
 
-		readonly IEnumerable<IConverterSource> _sources;
-
-		public ConvertersExtension() : this(WellKnownConverters.Default.KeyedByType(), Sources) {}
-
-		public ConvertersExtension(ICollection<IConverter> converters, IEnumerable<IConverterSource> sources)
-		{
-			Converters = converters;
-			_sources = sources;
-		}
+		public ConvertersExtension(ICollection<IConverter> converters) => Converters = converters;
 
 		public ICollection<IConverter> Converters { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance(Converters.ToArray()
 			                                        .Hide())
-			            .RegisterInstance(_sources)
 			            .Register<IConverters, Converters>()
+			            .Decorate<IConverters, EnumerationConverters>()
 			            .Register<ISerializers, Serializers>()
 			            .Register<ConverterContents>();
 

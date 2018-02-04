@@ -22,21 +22,26 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ConditionalInnerContentHandler : FixedOption<IInnerContent, ICommand<IInnerContent>>, IInnerContentHandler
+	sealed class ConditionalInnerContentHandler : IInnerContentHandler
 	{
+		readonly ISpecification<IInnerContent> _specification;
+		readonly ICommand<IInnerContent> _instance;
+
 		public ConditionalInnerContentHandler(ISpecification<IInnerContent> specification, ICommand<IInnerContent> instance)
-			: base(specification, instance) {}
+		{
+			_specification = specification;
+			_instance = instance;
+		}
 
 		public void Execute(IInnerContent parameter)
 		{
-			if (IsSatisfiedBy(parameter))
+			if (_specification.IsSatisfiedBy(parameter))
 			{
-				Get(parameter).Execute(parameter);
+				_instance.Execute(parameter);
 			}
 		}
 	}

@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nagórski
+// Copyright (c) 2016-2018 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,21 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	public abstract class OptionBase<TParameter, TResult> : IOption<TParameter, TResult>
+	sealed class CachedConverters : Cache<TypeInfo, IConverter>, IConverters
 	{
-		readonly ISpecification<TParameter> _specification;
-
-		protected OptionBase(ISpecification<TParameter> specification)
-		{
-			_specification = specification;
-		}
-
-		public bool IsSatisfiedBy(TParameter parameter) => _specification.IsSatisfiedBy(parameter);
-
-		public abstract TResult Get(TParameter parameter);
+		public CachedConverters(IConverters converters) : base(converters.Get) {}
 	}
 }

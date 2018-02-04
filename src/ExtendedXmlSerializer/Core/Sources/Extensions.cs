@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -29,6 +28,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
@@ -66,23 +66,38 @@ namespace ExtendedXmlSerializer.Core.Sources
 		}
 
 		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification)
+			=> new ConditionalSource<TParameter, TResult>(specification, @this,
+			                                              new FixedInstanceSource<TParameter, TResult>(default(TResult)));
+
+		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult>(
 			this TResult @this, ISpecification<TParameter> specification)
-			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(@this), new FixedInstanceSource<TParameter, TResult>(default(TResult)));
+			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(@this),
+			                                              new FixedInstanceSource<TParameter, TResult>(default(TResult)));
 
 		public static IParameterizedSource<TParameter, TResult> Let<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
+			IParameterizedSource<TParameter, TResult> other) =>
+			Let(@this, specification, AlwaysSpecification<TResult>.Default, other);
+
+		public static IParameterizedSource<TParameter, TResult> Let<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
+			ISpecification<TResult> result,
 			IParameterizedSource<TParameter, TResult> other)
-			=> new ConditionalSource<TParameter, TResult>(specification, other, @this);
+			=> new ConditionalSource<TParameter, TResult>(specification, result, other, @this);
 
 		public static IParameterizedSource<TParameter, TResult> Let<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
 			TResult other)
-			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(other), @this);
+			=> new ConditionalSource<TParameter, TResult>(specification, new FixedInstanceSource<TParameter, TResult>(other),
+			                                              @this);
 
 		public static IParameterizedSource<TSpecification, TInstance> Let<TSpecification, TInstance>(
 			this TInstance @this, ISpecification<TSpecification> specification,
 			TInstance other)
-			=> new ConditionalSource<TSpecification, TInstance>(specification, new FixedInstanceSource<TSpecification, TInstance>(other), new FixedInstanceSource<TSpecification, TInstance>(@this));
+			=> new ConditionalSource<TSpecification, TInstance>(specification,
+			                                                    new FixedInstanceSource<TSpecification, TInstance>(other),
+			                                                    new FixedInstanceSource<TSpecification, TInstance>(@this));
 
 		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)

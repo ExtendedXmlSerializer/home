@@ -24,12 +24,11 @@
 using System;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Coercion;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
-	sealed class Evaluation : DecoratedOption<TypeInfo, object>, IEvaluation
+	sealed class Evaluation : SpecificationSource<TypeInfo, object>, IEvaluation
 	{
 		readonly ISource<Exception> _exception;
 
@@ -42,14 +41,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 		Evaluation(Implementation implementation) : this(implementation, implementation) {}
 
 		Evaluation(ISource<Exception> exception, IParameterizedSource<TypeInfo, object> implementation)
-			: base(new DelegatedAssignedSpecification<TypeInfo, object>(implementation.Get), implementation)
-		{
-			_exception = exception;
-		}
+			: base(implementation) => _exception = exception;
 
 
-		sealed class Implementation : CacheBase<TypeInfo, Implementation.Result?>,
-		                              IParameterizedSource<TypeInfo, object>, ISource<Exception>
+		sealed class Implementation
+			: CacheBase<TypeInfo, Implementation.Result?>,
+			  IParameterizedSource<TypeInfo, object>, ISource<Exception>
 		{
 			readonly ICoercers _coercers;
 			readonly string _expression;
@@ -82,11 +79,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 				var result =
 					(coercer?.IsSatisfiedBy(parameter) ?? false)
 						? new Result(coercer.Get(parameter))
-						: parameter.IsInstanceOfType(_expression) ? new Result(_expression) : (Result?) null;
+						: parameter.IsInstanceOfType(_expression)
+							? new Result(_expression)
+							: (Result?) null;
 				return result;
 			}
 
-			object IParameterizedSource<TypeInfo, object>.Get(TypeInfo parameter) => Get(parameter)?.Instance;
+			object IParameterizedSource<TypeInfo, object>.Get(TypeInfo parameter) => Get(parameter)
+				?.Instance;
+
 			public Exception Get() => _error;
 
 			public struct Result

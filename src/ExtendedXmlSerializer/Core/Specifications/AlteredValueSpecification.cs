@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core.Specifications
 {
-	class Selector<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	sealed class AlteredValueSpecification<T> : InverseSpecification<T>
 	{
-		readonly static TResult Default = default(TResult);
-
-		readonly ImmutableArray<IOption<TParameter, TResult>> _options;
-
-		public Selector(params IOption<TParameter, TResult>[] options) : this(options.ToImmutableArray()) {}
-
-		public Selector(ImmutableArray<IOption<TParameter, TResult>> options) => _options = options;
-
-		public TResult Get(TParameter parameter)
-		{
-			var length = _options.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var option = _options[i];
-				if (option.IsSatisfiedBy(parameter))
-				{
-					var result = option.Get(parameter);
-					if (!Equals(result, Default))
-					{
-						return result;
-					}
-				}
-			}
-
-			return Default;
-		}
+		public static AlteredValueSpecification<T> Default { get; } = new AlteredValueSpecification<T>();
+		AlteredValueSpecification() : base(DefaultValueSpecification<T>.Default) {}
 	}
 }
