@@ -21,23 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ReflectionContentOption : FixedContentOption
+	sealed class ReflectionContents : FixedInstanceSource<TypeInfo, ISerializer>, IContents
 	{
-		readonly static AnySpecification<TypeInfo> Specification =
-			new AnySpecification<TypeInfo>(new[] {typeof(TypeInfo), typeof(Type)}
-				                               .YieldMetadata()
-				                               .Select(IsAssignableSpecification.Defaults.Get)
-				                               .ToArray());
-
-		public ReflectionContentOption(ReflectionSerializer serializer) : base(Specification, serializer.Adapt()) {}
+		public ReflectionContents(ReflectionSerializer serializer) : base(serializer.Adapt()) {}
 	}
 }

@@ -21,7 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core.Sources
+using ExtendedXmlSerializer.ReflectionModel;
+
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	public interface ISelector<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult> {}
+	sealed class DefaultCollectionSpecification : CollectionSpecification
+	{
+		public DefaultCollectionSpecification(IActivatingTypeSpecification specification) : base(specification) {}
+	}
 }

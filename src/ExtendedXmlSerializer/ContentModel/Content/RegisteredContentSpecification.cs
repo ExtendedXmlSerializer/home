@@ -21,20 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	class DelegatedContentOption : DelegatedOption<TypeInfo, ISerializer>, IContentOption
+	sealed class RegisteredContentSpecification : DecoratedSpecification<TypeInfo>
 	{
-		public DelegatedContentOption(Func<TypeInfo, bool> specification, Func<TypeInfo, ISerializer> source)
-			: base(specification, source) {}
-
-		public DelegatedContentOption(ISpecification<TypeInfo> specification, Func<TypeInfo, ISerializer> source)
-			: base(specification, source) {}
+		public RegisteredContentSpecification(ICustomSerializers serializers) :
+			base(IsDefinedSpecification<ContentSerializerAttribute>.Default.Or(serializers)) {}
 	}
 }

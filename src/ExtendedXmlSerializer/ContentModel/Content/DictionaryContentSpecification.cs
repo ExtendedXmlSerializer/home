@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	class FixedContentOption : FixedOption<TypeInfo, ISerializer>, IContentOption
+	sealed class DictionaryContentSpecification : DecoratedSpecification<TypeInfo>
 	{
-		public FixedContentOption(ISpecification<TypeInfo> specification, ISerializer context) : base(specification, context) {}
+		public DictionaryContentSpecification(IActivatingTypeSpecification specification) :
+			base(specification.And(IsDictionaryTypeSpecification.Default)) {}
 	}
 }

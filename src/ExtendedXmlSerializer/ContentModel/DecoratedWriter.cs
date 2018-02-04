@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public DecoratedWriter(IWriter writer) => _writer = writer;
 
-		public virtual void Write(IFormatWriter writer, object instance) => _writer.Write(writer, instance);
+		public void Write(IFormatWriter writer, object instance) => _writer.Write(writer, instance);
 	}
 
 	class DecoratedWriter<T> : IWriter<T>

@@ -21,15 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ClassicContentOptions : Bracket<IContentOption>
+	public struct CollectionContentInput
 	{
-		public ClassicContentOptions(IStart<IContentOption> start, ClassicContentBody body,
-		                             IFinish<IContentOption> finish)
-			: base(start, body, finish) {}
+		public CollectionContentInput(ISerializer item, TypeInfo classification, TypeInfo itemType)
+		{
+			Item = item;
+			Classification = classification;
+			ItemType = itemType;
+		}
+
+		public ISerializer Item { get; }
+
+		public TypeInfo Classification { get; }
+
+		public TypeInfo ItemType { get; }
 	}
 }

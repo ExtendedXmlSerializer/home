@@ -23,15 +23,12 @@
 
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	sealed class ClassicContentBody : Items<IContentOption>
+	sealed class ClassicCollections : Collections
 	{
-		public ClassicContentBody(
-			ArrayContentOption array,
-			ClassicDictionaryContentOption dictionary,
-			ClassicCollectionContentOption collection) : base(array, dictionary, collection) {}
+		public ClassicCollections(ISerializers serializers, ClassicCollectionContents contents) :
+			base(serializers, contents) {}
 	}
 }

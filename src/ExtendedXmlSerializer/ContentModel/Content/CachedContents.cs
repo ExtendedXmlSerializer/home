@@ -21,32 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ClassicCollectionContentOption : CollectionContentOptionBase
+	sealed class CachedContents : Cache<TypeInfo, ISerializer>, IContents
 	{
-		readonly IInnerContentServices _contents;
-		readonly IEnumerators _enumerators;
-
-		public ClassicCollectionContentOption(IActivatingTypeSpecification specification, IInnerContentServices contents,
-		                                      IEnumerators enumerators, ISerializers serializers)
-			: base(specification, serializers)
-		{
-			_contents = contents;
-			_enumerators = enumerators;
-		}
-
-		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
-			=>
-				new Serializer(
-					_contents.Create(classification,
-					                 new ConditionalInnerContentHandler(_contents, new CollectionInnerContentHandler(item, _contents))),
-					new EnumerableWriter(_enumerators, item));
+		public CachedContents(IContents content) : base(content.Get) {}
 	}
 }

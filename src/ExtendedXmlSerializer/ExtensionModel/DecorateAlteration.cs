@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public DecorateAlteration(Func<TFrom, TTo, TFrom> factory) => _factory = factory;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<TTo>()
+			=> parameter.RegisterWithDependencies<TTo>()
 			            .Decorate<TFrom>(Decorate);
 
 		TFrom Decorate(IServiceProvider services, TFrom current) => _factory(current, services.Get<TTo>());

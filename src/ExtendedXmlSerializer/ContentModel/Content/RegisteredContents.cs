@@ -21,32 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class RegisteredContentsOption : IContentOption
+	sealed class RegisteredContents : IContents
 	{
 		readonly IActivators _activators;
-		readonly ISpecification<TypeInfo> _specification;
 		readonly ITypedTable<ISerializer> _serializers;
 
-		public RegisteredContentsOption(IActivators activators, ICustomSerializers serializers)
-			: this(activators, IsDefinedSpecification<ContentSerializerAttribute>.Default.Or(serializers), serializers) {}
-
-		public RegisteredContentsOption(IActivators activators, ISpecification<TypeInfo> specification,
-		                                ITypedTable<ISerializer> serializers)
+		public RegisteredContents(IActivators activators, ICustomSerializers serializers)
 		{
 			_activators = activators;
-			_specification = specification;
 			_serializers = serializers;
 		}
-
-		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
 
 		public ISerializer Get(TypeInfo parameter) => _serializers.Get(parameter) ?? Activate(parameter);
 

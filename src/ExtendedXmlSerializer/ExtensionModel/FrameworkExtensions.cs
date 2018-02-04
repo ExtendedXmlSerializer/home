@@ -24,41 +24,26 @@
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	static class FrameworkExtensions
 	{
-		readonly static Func<Type, bool>
-			IsSatisfiedBy = new ActivatingTypeSpecification(PublicConstructorLocator.Default).IsSatisfiedBy;
-
-		public static IServiceRepository RegisterAsStart<TItem, TStart>(this IServiceRepository @this)
-			where TStart : IStart<TItem> => @this.RegisterWithDependencies<IStart<TItem>, TStart>();
-
-		public static IServiceRepository RegisterAsFinish<TItem, TFinish>(this IServiceRepository @this)
-			where TFinish : IFinish<TItem> => @this.RegisterWithDependencies<IFinish<TItem>, TFinish>();
-
 		public static IServiceRepository RegisterWithDependencies<T>(this IServiceRepository @this)
 			=> @this.Register<T>()
-			        .WithDependencies(typeof(T));
+			        .RegisterDependencies(typeof(T));
 
 		public static IServiceRepository RegisterWithDependencies<TFrom, TTo>(this IServiceRepository @this) where TTo : TFrom
 			=> @this.Register<TFrom, TTo>()
-			        .WithDependencies(typeof(TTo));
+			        .RegisterDependencies(typeof(TTo));
 
-		static IServiceRepository WithDependencies(this IServiceRepository @this, Type type)
+		static IServiceRepository RegisterDependencies(this IServiceRepository @this, Type type)
 			=> Constructors.Default.Get(type)
 			               .SelectMany(x => x.GetParameters()
 			                                 .Select(y => y.ParameterType))
-			               .Where(IsSatisfiedBy)
-			               .Aggregate(@this, (repository, t) => repository.Register(t));
-
-		public static IServiceRepository RegisterAsSet<TItem, TTo>(this IServiceRepository @this)
-			where TTo : IEnumerable<TItem>
-			=> @this.Register<TTo>()
-			        .Register(provider => provider.GetInstance<TTo>()
-			                                      .ToArray());
+			               .Where(x => x.IsClass && !@this.AvailableServices.Contains(x))
+			               .Aggregate(@this, (repository, t) => repository.Register(t)
+			                                                              .RegisterDependencies(t));
 	}
 }

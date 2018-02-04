@@ -21,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class Activators : IActivators
+	sealed class Activators : ReferenceCacheBase<Type, IActivator>, IActivators
 	{
 		public static Activators Default { get; } = new Activators();
 		Activators() : this(DefaultActivators.Default, SingletonLocator.Default) {}
@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			_locator = locator;
 		}
 
-		public IActivator Get(Type parameter)
+		protected override IActivator Create(Type parameter)
 		{
 			var singleton = _locator.Get(parameter);
 			var activator = _activators.Build(parameter);
@@ -64,7 +64,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			{
 				try
 				{
-					return _activator().Get();
+					return _activator()
+						.Get();
 				}
 				catch (Exception)
 				{

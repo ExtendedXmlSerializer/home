@@ -21,37 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ClassicDictionaryContentOption : ContentOptionBase
+	sealed class ArrayContents : ICollectionContents
 	{
 		readonly IInnerContentServices _contents;
-		readonly IDictionaryEnumerators _enumerators;
-		readonly IDictionaryEntries _entries;
+		readonly IEnumerators _enumerators;
+		readonly IClassification _classification;
 
-		public ClassicDictionaryContentOption(IActivatingTypeSpecification specification, IInnerContentServices contents,
-		                                      IDictionaryEnumerators enumerators, IDictionaryEntries entries)
-			: base(specification.And(IsDictionaryTypeSpecification.Default))
+		public ArrayContents(IInnerContentServices contents, IEnumerators enumerators, IClassification classification)
 		{
 			_contents = contents;
 			_enumerators = enumerators;
-			_entries = entries;
+			_classification = classification;
 		}
 
-		public override ISerializer Get(TypeInfo parameter)
-		{
-			var entry = _entries.Get(parameter);
-			var reader = _contents.Create(parameter,
-			                              new ConditionalInnerContentHandler(_contents, new CollectionInnerContentHandler(entry, _contents)));
-			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
-			return result;
-		}
+		public ISerializer Get(CollectionContentInput parameter)
+			=> new Serializer(new ArrayReader(_contents, _classification, parameter.Classification, parameter.Item),
+			                  new EnumerableWriter(_enumerators, parameter.Item));
 	}
 }

@@ -21,33 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	sealed class NullableContentOption : DelegatedContentOption
+	sealed class ClassicDictionaryContents : IContents
 	{
-		readonly static Func<TypeInfo, bool> Specification = IsNullableTypeSpecification.Default.IsSatisfiedBy;
+		readonly IInnerContentServices _contents;
+		readonly IDictionaryEnumerators _enumerators;
+		readonly IDictionaryEntries _entries;
 
-		[UsedImplicitly]
-		public NullableContentOption(ConverterContentOption converters) : this(Specification, converters) {}
-
-		public NullableContentOption(Func<TypeInfo, bool> specification, ConverterContentOption converters)
-			: base(specification, converters.In(Alteration.Default)
-			                                .Get) {}
-
-		sealed class Alteration : IAlteration<TypeInfo>
+		public ClassicDictionaryContents(IInnerContentServices contents, IDictionaryEnumerators enumerators,
+		                                 IDictionaryEntries entries)
 		{
-			public static Alteration Default { get; } = new Alteration();
-			Alteration() {}
+			_contents = contents;
+			_enumerators = enumerators;
+			_entries = entries;
+		}
 
-			public TypeInfo Get(TypeInfo parameter) => parameter.AccountForNullable();
+		public ISerializer Get(TypeInfo parameter)
+		{
+			var entry = _entries.Get(parameter);
+			var reader = _contents.Create(parameter,
+			                              new ConditionalInnerContentHandler(_contents,
+			                                                                 new CollectionInnerContentHandler(entry,
+			                                                                                                   _contents)));
+			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
+			return result;
 		}
 	}
 }

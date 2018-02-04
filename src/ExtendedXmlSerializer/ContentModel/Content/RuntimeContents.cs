@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class Start : Items<IContentOption>, IStart<IContentOption>
+	sealed class RuntimeContents : FixedInstanceSource<TypeInfo, ISerializer>, IContents
 	{
-		public Start(RegisteredContentsOption registered, ConverterContentOption converters, NullableContentOption nullable, ReflectionContentOption reflection)
-			: base(registered, converters, nullable, reflection) {}
+		public RuntimeContents(ISerializer instance) : base(instance) {}
 	}
 }

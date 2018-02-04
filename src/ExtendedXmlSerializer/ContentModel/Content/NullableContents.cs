@@ -21,15 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using JetBrains.Annotations;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class RuntimeContentOption : FixedContentOption
+	sealed class NullableContents : DelegatedSource<TypeInfo, ISerializer>, IContents
 	{
-		readonly static AlwaysSpecification<TypeInfo> Specification = AlwaysSpecification<TypeInfo>.Default;
+		[UsedImplicitly]
+		public NullableContents(ConverterContents converters) : base(converters.In(Alteration.Default)
+		                                                                       .Get) {}
 
-		public RuntimeContentOption(ISerializer runtime) : base(Specification, runtime) {}
+		sealed class Alteration : IAlteration<TypeInfo>
+		{
+			public static Alteration Default { get; } = new Alteration();
+			Alteration() {}
+
+			public TypeInfo Get(TypeInfo parameter) => parameter.AccountForNullable();
+		}
 	}
 }

@@ -21,21 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class TypedSortComparer<T> : IComparer<T> where T : class
-	{
-		readonly ITypedSortOrder _order;
-
-		public TypedSortComparer(ITypedSortOrder order) => _order = order;
-
-		public int Compare(T x, T y) => GetSort(x)
-			.CompareTo(GetSort(y));
-
-		int GetSort(T parameter) => (parameter as ISortAware)?.Sort ?? _order.Get(parameter.GetType()
-		                                                                                   .GetTypeInfo());
-	}
+	public interface ICollectionContents : IParameterizedSource<CollectionContentInput, ISerializer> {}
 }

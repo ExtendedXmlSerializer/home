@@ -21,36 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class CollectionContentOption : CollectionContentOptionBase
+	sealed class CollectionContents : ICollectionContents
 	{
 		readonly IMemberSerializations _serializations;
 		readonly IEnumerators _enumerators;
 		readonly IInnerContentServices _contents;
 
-		public CollectionContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
-		                               IEnumerators enumerators, ISerializers serializers, IInnerContentServices contents)
-			: base(specification, serializers)
+		public CollectionContents(IMemberSerializations serializations, IEnumerators enumerators,
+		                          IInnerContentServices contents)
 		{
 			_serializations = serializations;
 			_enumerators = enumerators;
 			_contents = contents;
 		}
 
-		protected override ISerializer Create(ISerializer item, TypeInfo classification, TypeInfo itemType)
+		public ISerializer Get(CollectionContentInput parameter)
 		{
-			var members = _serializations.Get(classification);
+			var members = _serializations.Get(parameter.Classification);
 			var handler = new CollectionWithMembersInnerContentHandler(_contents,
-			                                                      new MemberInnerContentHandler(members, _contents, _contents),
-			                                                      new CollectionInnerContentHandler(item, _contents));
-			var reader = _contents.Create(classification, handler);
-			var writer = new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, item));
+			                                                           new MemberInnerContentHandler(members, _contents,
+			                                                                                         _contents),
+			                                                           new CollectionInnerContentHandler(parameter.Item,
+			                                                                                             _contents));
+			var reader = _contents.Create(parameter.Classification, handler);
+			var writer =
+				new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, parameter.Item));
 			var result = new Serializer(reader, writer);
 			return result;
 		}

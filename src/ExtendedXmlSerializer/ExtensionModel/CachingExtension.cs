@@ -21,24 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	class Bracket<T> : Items<T> where T : class
+	sealed class CachingExtension : ISerializerExtension, ISortAware
 	{
-		readonly static TypeComparer<T> Typed = TypeComparer<T>.Default;
-		readonly static IComparer<T> Comparer = new TypedSortComparer<T>(new TypedSortOrder());
+		public static CachingExtension Default { get; } = new CachingExtension();
+		CachingExtension() : this(10) {}
 
-		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish) : this(start, body, finish, Comparer) {}
+		public CachingExtension(int sort) => Sort = sort;
 
-		public Bracket(IStart<T> start, IEnumerable<T> body, IFinish<T> finish, IComparer<T> comparer)
-			: base(
-			       start.Concat(body.Except(start.Union(finish, Typed), Typed)
-			                        .OrderBy(x => x, comparer))
-			            .Concat(finish)
-			            .ToImmutableArray()) {}
+		public int Sort { get; }
+
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents, CachedContents>()
+		                                                                        .Decorate<ISerializers, CachedSerializers>();
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

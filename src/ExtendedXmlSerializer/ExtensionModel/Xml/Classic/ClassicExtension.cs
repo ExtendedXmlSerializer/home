@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
@@ -32,8 +34,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 		ClassicExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterAsSet<IContentOption, ClassicContentOptions>()
-			            .RegisterWithDependencies<ClassicContentBody>();
+			=> parameter.DecorateContent<DefaultCollectionSpecification, ClassicCollections>()
+			            .DecorateContent<DictionaryContentSpecification, ClassicDictionaryContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

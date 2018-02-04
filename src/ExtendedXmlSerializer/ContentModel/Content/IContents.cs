@@ -26,5 +26,5 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public interface IContents : ISelector<TypeInfo, ISerializer> {}
+	public interface IContents : IParameterizedSource<TypeInfo, ISerializer> {}
 }

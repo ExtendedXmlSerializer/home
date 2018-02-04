@@ -21,14 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core.Specifications
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using System.Reflection;
+
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public class DecoratedSpecification<T> : ISpecification<T>
+	sealed class ConditionalContents : ConditionalSource<TypeInfo, ISerializer>, IContents
 	{
-		readonly ISpecification<T> _specification;
-
-		public DecoratedSpecification(ISpecification<T> specification) => _specification = specification;
-
-		public virtual bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+		public ConditionalContents(ISpecification<TypeInfo> specification, IContents source, IContents fallback)
+			: base(specification, source, fallback) {}
 	}
 }

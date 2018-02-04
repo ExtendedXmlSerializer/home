@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,26 +25,31 @@ using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Members
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class MemberedContentOption : ContentOptionBase
+	public class Collections : IContents
 	{
-		readonly IMemberSerializations _serializations;
-		readonly IInnerContentServices _services;
+		readonly ISerializers _serializers;
+		readonly ICollectionItemTypeLocator _locator;
+		readonly ICollectionContents _contents;
 
-		public MemberedContentOption(IActivatingTypeSpecification specification, IMemberSerializations serializations,
-		                             IInnerContentServices services)
-			: base(specification)
+		public Collections(ISerializers serializers, ICollectionContents contents) : this(serializers,
+		                                                                                  CollectionItemTypeLocator.Default,
+		                                                                                  contents) {}
+
+		public Collections(ISerializers serializers, ICollectionItemTypeLocator locator, ICollectionContents contents)
 		{
-			_serializations = serializations;
-			_services = services;
+			_serializers = serializers;
+			_locator = locator;
+			_contents = contents;
 		}
 
-		public override ISerializer Get(TypeInfo parameter)
+		public ISerializer Get(TypeInfo parameter)
 		{
-			var members = _serializations.Get(parameter);
-			var reader = _services.Create(parameter, new MemberInnerContentHandler(members, _services, _services));
-			var result = new Serializer(reader, new MemberListWriter(members));
+			var itemType = _locator.Get(parameter);
+			var serializer = _serializers.Get(itemType);
+			var item = new Serializer(serializer, new CollectionItemAwareWriter(serializer));
+			var result = _contents.Get(new CollectionContentInput(item, parameter, itemType));
 			return result;
 		}
 	}

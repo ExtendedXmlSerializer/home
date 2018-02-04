@@ -41,6 +41,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			where T : IElement
 			=> new ConditionalElementDecoration<T>(specification).Get(@this);
 
+		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
+			where TSpecification : ISpecification<TypeInfo>
+			where T : IContents
+			=> ConditionalContentDecoration<TSpecification, T>.Default.Get(@this);
+
+		public static IServiceRepository DecorateContent<T>(this IServiceRepository @this,
+		                                                    ISpecification<TypeInfo> specification) where T : IContents
+			=> new ConditionalContentDecoration<T>(specification).Get(@this);
+
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
 			=> @this.Extend(ParameterizedMembersExtension.Default);
 

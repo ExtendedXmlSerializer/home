@@ -21,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class RecursionAwareContents : CacheBase<TypeInfo, ISerializer>, IContents
+	sealed class RecursionAwareContents : IContents
 	{
 		readonly IContents _contents;
 		readonly ISet<TypeInfo> _types;
@@ -40,11 +40,11 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_types = types;
 		}
 
-		protected override ISerializer Create(TypeInfo parameter)
+		public ISerializer Get(TypeInfo parameter)
 		{
 			var result = _types.Add(parameter)
-				? _contents.Get(parameter)
-				: new DeferredSerializer(_contents.Build(parameter));
+				             ? _contents.Get(parameter)
+				             : new DeferredSerializer(_contents.Build(parameter));
 			_types.Remove(parameter);
 			return result;
 		}

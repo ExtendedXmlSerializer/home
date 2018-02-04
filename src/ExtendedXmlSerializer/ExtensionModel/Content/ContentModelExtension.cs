@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,7 +29,6 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Generic;
 using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.VariableTypeSpecification;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -54,14 +53,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
 			            .Decorate<GenericElement>(IsGenericTypeSpecification.Default)
 			            .Decorate<ArrayElement>(IsArraySpecification.Default)
-			            .Register<IComparer<IContentOption>, TypedSortComparer<IContentOption>>()
-			            .RegisterAsSet<IContentOption, ContentOptions>()
-			            .RegisterAsStart<IContentOption, Start>()
-			            .RegisterAsFinish<IContentOption, Finish>()
-			            .Register<IDictionaryEntries, DictionaryEntries>()
-			            .Register<ArrayContentOption>()
-			            .Register<DictionaryContentOption>()
-			            .Register<CollectionContentOption>()
 			            .Register<IClassification, Classification>()
 			            .Register<IIdentityStore, IdentityStore>()
 			            .Register<IInnerContentServices, InnerContentServices>()
@@ -73,12 +64,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .RegisterInstance<IInnerContentResult>(InnerContentResult.Default)
 			            .RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
 			            .RegisterInstance<ICollectionAssignment>(CollectionAssignment.Default)
-			            .RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default)
-			            .RegisterInstance(ReflectionSerializer.Default);
+			            .RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default);
 
-		public void Execute(IServices parameter) => parameter.Get<ITypedSortOrder>()
-		                                                     .Sort<ArrayContentOption>(0)
-		                                                     .Sort<DictionaryContentOption>(1)
-		                                                     .Sort<CollectionContentOption>(2);
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

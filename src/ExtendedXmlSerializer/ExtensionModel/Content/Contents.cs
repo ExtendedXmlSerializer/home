@@ -21,23 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class SerializationExtension : ISerializerExtension
+	public sealed class Contents : ISerializerExtension
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
-		SerializationExtension() {}
+		public static Contents Default { get; } = new Contents();
+		Contents() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ISerializer, RuntimeSerializer>()
-			            .Register<ISerializers, Serializers>()
-			            .Decorate<ISerializers, ReferenceAwareSerializers>()
-			            .Decorate<IContents, RecursionAwareContents>();
+			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+			            .Register<IContents, RuntimeContents>()
+			            .DecorateContent<IActivatingTypeSpecification, MemberedContents>()
+			            .DecorateContent<DefaultCollectionSpecification, DefaultCollections>()
+			            .Register<IDictionaryEntries, DictionaryEntries>()
+			            .DecorateContent<DictionaryContentSpecification, DictionaryContents>()
+			            .DecorateContent<Arrays>(ArraySpecification.Default)
+			            .RegisterInstance(ReflectionSerializer.Default)
+			            .DecorateContent<ReflectionContents>(ReflectionContentSpecification.Default)
+			            .DecorateContent<NullableContents>(IsNullableTypeSpecification.Default)
+			            .DecorateContent<ConverterSpecification, ConverterContents>()
+			            .DecorateContent<RegisteredContentSpecification, RegisteredContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

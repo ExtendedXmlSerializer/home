@@ -21,14 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core.Specifications
+using System;
+using System.Linq;
+using System.Reflection;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public class DecoratedSpecification<T> : ISpecification<T>
+	sealed class ReflectionContentSpecification : AnySpecification<TypeInfo>
 	{
-		readonly ISpecification<T> _specification;
+		public static ReflectionContentSpecification Default { get; } = new ReflectionContentSpecification();
 
-		public DecoratedSpecification(ISpecification<T> specification) => _specification = specification;
-
-		public virtual bool IsSatisfiedBy(T parameter) => _specification.IsSatisfiedBy(parameter);
+		ReflectionContentSpecification() : base(new[] {typeof(TypeInfo), typeof(Type)}
+		                                        .YieldMetadata()
+		                                        .Select(IsAssignableSpecification.Defaults.Get)
+		                                        .ToArray()) {}
 	}
 }

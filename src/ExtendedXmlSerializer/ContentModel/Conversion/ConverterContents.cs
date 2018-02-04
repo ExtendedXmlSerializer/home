@@ -21,10 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	interface IContentOption : IOption<TypeInfo, ISerializer> {}
+	sealed class ConverterContents : DelegatedSource<TypeInfo, ISerializer>, IContents
+	{
+		public ConverterContents(ISerializers serializers) : base(serializers.Get) {}
+	}
 }

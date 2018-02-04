@@ -21,15 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	sealed class ContentOptions : Bracket<IContentOption>
+	sealed class ImmutableArrays : Collections
 	{
-		public ContentOptions(IStart<IContentOption> start, IEnumerable<IContentOption> body, IFinish<IContentOption> finish,
-		                      IComparer<IContentOption> comparer)
-			: base(start, body, finish, comparer) {}
+		public ImmutableArrays(ISerializers serializers, ImmutableArrayContents contents) : base(serializers, contents) {}
 	}
 }
