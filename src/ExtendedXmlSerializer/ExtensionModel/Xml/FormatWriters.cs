@@ -21,25 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class IdentityStore : Cache<string, Func<string, IIdentity>>, IIdentityStore
+	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
 	{
-		public IdentityStore() : base(i => new Names(i).Get) {}
+		readonly static Aliases Aliases = Aliases.Default;
 
-		public IIdentity Get(string name, string identifier) => Get(identifier)
-			.Invoke(name);
+		readonly IAliases _table;
+		readonly IIdentifierFormatter _formatter;
+		readonly IIdentityStore _store;
+		readonly ITypePartResolver _parts;
 
-		sealed class Names : CacheBase<string, IIdentity>
+		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts)
+			: this(Aliases, formatter, store, parts) {}
+
+		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
+		                     ITypePartResolver parts)
 		{
-			readonly string _identifier;
-
-			public Names(string identifier) => _identifier = identifier;
-
-			protected override IIdentity Create(string parameter) => new Identity(parameter, _identifier);
+			_table = table;
+			_formatter = formatter;
+			_store = store;
+			_parts = parts;
 		}
+
+		public IFormatWriter Get(Writing<System.Xml.XmlWriter> parameter)
+			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
 	}
 }

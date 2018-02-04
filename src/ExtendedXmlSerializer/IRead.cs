@@ -21,14 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer
 {
-	abstract class WriterBase<T> : IWriter
-	{
-		void IWriter.Write(IFormatWriter writer, object instance) => Write(writer, (T) instance);
-
-		public abstract void Write(IFormatWriter writer, T instance);
-	}
+	interface IRead<in T> : IParameterizedSource<T, object> {}
 }

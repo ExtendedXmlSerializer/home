@@ -42,6 +42,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		public ISerializer Get(CollectionContentInput parameter)
 			=> new Serializer(new ArrayReader(_contents, _classification, parameter.Classification, parameter.Item),
-			                  new EnumerableWriter(_enumerators, parameter.Item));
+			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 	}
 }

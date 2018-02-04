@@ -46,7 +46,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		public ISerializer Get(CollectionContentInput parameter) => new Serializer(Readers.Default.Get(parameter.ItemType)
 		                                                                                  .Invoke(_contents, parameter.Item),
 		                                                                           new EnumerableWriter(_enumerators,
-		                                                                                                parameter.Item));
+		                                                                                                parameter.Item)
+			                                                                           .Adapt());
 
 		sealed class Readers : Generic<IInnerContentServices, IReader, IReader>
 		{

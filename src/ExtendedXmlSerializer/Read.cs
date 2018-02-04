@@ -21,34 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Xml
+namespace ExtendedXmlSerializer
 {
-	sealed class FormatWriterContext : IFormatWriters<System.Xml.XmlWriter>
+	sealed class Read<T> : IRead<T>
 	{
-		readonly static Aliases Aliases = Aliases.Default;
+		readonly ISerializers _serializers;
+		readonly IFormatReaders<T> _readers;
+		readonly IClassification _classification;
 
-		readonly IAliases _table;
-		readonly IIdentifierFormatter _formatter;
-		readonly IIdentityStore _store;
-		readonly ITypePartResolver _parts;
-
-		public FormatWriterContext(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts)
-			: this(Aliases, formatter, store, parts) {}
-
-		public FormatWriterContext(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
-		                           ITypePartResolver parts)
+		public Read(ISerializers serializers, IFormatReaders<T> readers, IClassification classification)
 		{
-			_table = table;
-			_formatter = formatter;
-			_store = store;
-			_parts = parts;
+			_serializers = serializers;
+			_readers = readers;
+			_classification = classification;
 		}
 
-		public IFormatWriter Get(Writing<System.Xml.XmlWriter> parameter)
-			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
+		public object Get(T parameter)
+		{
+			using (var content = _readers.Get(parameter))
+			{
+				var classification = _classification.GetClassification(content);
+				var result = _serializers.Get(classification)
+				                         .Get(content);
+				return result;
+			}
+		}
 	}
 }

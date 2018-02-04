@@ -34,7 +34,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		SerializationExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ISerializer, RuntimeSerializer>()
+			=> parameter.Register(typeof(IRead<>), typeof(Read<>))
+			            .Register(typeof(IWrite<>), typeof(Write<>))
+			            .Register(typeof(ISerializer<,>), typeof(Serializer<,>))
+			            .Register<ISerializer, RuntimeSerializer>()
 			            .Register<ISerializers, Serializers>()
 			            .Decorate<ISerializers, ReferenceAwareSerializers>()
 			            .Decorate<IContents, RecursionAwareContents>();

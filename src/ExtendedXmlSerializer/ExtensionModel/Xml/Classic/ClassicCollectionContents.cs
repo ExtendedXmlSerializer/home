@@ -39,14 +39,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			_enumerators = enumerators;
 		}
 
-		public ISerializer Get(CollectionContentInput parameter) => new Serializer(
-		                                                                           _contents.Create(parameter.Classification,
-		                                                                                            new
-			                                                                                            ConditionalInnerContentHandler(_contents,
-			                                                                                                                           new
-				                                                                                                                           CollectionInnerContentHandler(parameter.Item,
-				                                                                                                                                                         _contents))),
-		                                                                           new EnumerableWriter(_enumerators,
-		                                                                                                parameter.Item));
+		public ISerializer Get(CollectionContentInput parameter)
+			=> new Serializer(_contents.Create(parameter.Classification,
+			                                   new ConditionalInnerContentHandler(_contents,
+			                                                                      new
+				                                                                      CollectionInnerContentHandler(parameter.Item,
+				                                                                                                    _contents))),
+			                  new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 	}
 }

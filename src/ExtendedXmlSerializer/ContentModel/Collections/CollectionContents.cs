@@ -51,7 +51,8 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 			                                                                                             _contents));
 			var reader = _contents.Create(parameter.Classification, handler);
 			var writer =
-				new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, parameter.Item));
+				new MemberedCollectionWriter(new MemberListWriter(members),
+				                             new EnumerableWriter(_enumerators, parameter.Item).Adapt());
 			var result = new Serializer(reader, writer);
 			return result;
 		}

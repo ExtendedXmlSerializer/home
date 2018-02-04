@@ -21,44 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer
 {
 	sealed class Serializer<TRead, TWrite> : ISerializer<TRead, TWrite>
 	{
-		readonly IFormatReaders<TRead> _readers;
-		readonly IFormatWriters<TWrite> _writers;
-		readonly IClassification _classification;
-		readonly ISerializers _serializers;
+		readonly IRead<TRead> _read;
+		readonly IWrite<TWrite> _write;
 
-		public Serializer(IFormatReaders<TRead> readers, IFormatWriters<TWrite> writers, IClassification classification,
-		                  ISerializers serializers)
+		public Serializer(IRead<TRead> read, IWrite<TWrite> write)
 		{
-			_readers = readers;
-			_writers = writers;
-			_classification = classification;
-			_serializers = serializers;
+			_read = read;
+			_write = write;
 		}
 
 		public void Serialize(TWrite writer, object instance)
-			=> _serializers.Get(instance.GetType()
-			                            .GetTypeInfo())
-			               .Write(_writers.Get(new Writing<TWrite>(writer, instance)), instance);
-
-		public object Deserialize(TRead reader)
 		{
-			using (var content = _readers.Get(reader))
-			{
-				var classification = _classification.GetClassification(content);
-				var result = _serializers.Get(classification)
-				                         .Get(content);
-				return result;
-			}
+			_write.Execute(new Writing<TWrite>(writer, instance));
 		}
+
+		public object Deserialize(TRead reader) => _read.Get(reader);
 	}
 }

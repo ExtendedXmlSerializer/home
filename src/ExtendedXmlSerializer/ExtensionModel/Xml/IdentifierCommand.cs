@@ -31,16 +31,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	{
 		readonly ImmutableArray<string> _identifiers;
 
-		public IdentifierCommand(ImmutableArray<string> identifiers)
-		{
-			_identifiers = identifiers;
-		}
+		public IdentifierCommand(ImmutableArray<string> identifiers) => _identifiers = identifiers;
 
 		public void Execute(IIdentityStore parameter)
 		{
-			foreach (var identifier in _identifiers)
+			for (int i = 0; i < _identifiers.Length; i++)
 			{
-				parameter.Get(string.Empty, identifier);
+				parameter.Get(string.Empty, _identifiers[i]);
 			}
 		}
 	}

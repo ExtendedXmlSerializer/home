@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
@@ -50,7 +50,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 			                              new ConditionalInnerContentHandler(_contents,
 			                                                                 new CollectionInnerContentHandler(entry,
 			                                                                                                   _contents)));
-			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry));
+			var result = new Serializer(reader, new EnumerableWriter(_enumerators, entry).Adapt());
 			return result;
 		}
 	}

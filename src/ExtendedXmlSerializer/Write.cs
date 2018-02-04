@@ -21,25 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer
 {
-	sealed class IdentityStore : Cache<string, Func<string, IIdentity>>, IIdentityStore
+	sealed class Write<T> : IWrite<T>
 	{
-		public IdentityStore() : base(i => new Names(i).Get) {}
+		readonly ISerializers _serializers;
+		readonly IFormatWriters<T> _writers;
 
-		public IIdentity Get(string name, string identifier) => Get(identifier)
-			.Invoke(name);
-
-		sealed class Names : CacheBase<string, IIdentity>
+		public Write(ISerializers serializers, IFormatWriters<T> writers)
 		{
-			readonly string _identifier;
+			_serializers = serializers;
+			_writers = writers;
+		}
 
-			public Names(string identifier) => _identifier = identifier;
-
-			protected override IIdentity Create(string parameter) => new Identity(parameter, _identifier);
+		public void Execute(Writing<T> parameter)
+		{
+			_serializers.Get(parameter.Instance.GetType()
+			                          .GetTypeInfo())
+			            .Write(_writers.Get(parameter), parameter.Instance);
 		}
 	}
 }
