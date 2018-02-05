@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../dir.props" />
+
   <PropertyGroup>
-    <VersionPrefix>2.1.1</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
     <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Samples</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -10,7 +10,6 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>2.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

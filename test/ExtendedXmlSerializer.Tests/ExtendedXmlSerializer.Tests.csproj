@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../dir.props" />
+
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
-    <VersionPrefix>2.1.1</VersionPrefix>
     <TargetFrameworks>netcoreapp2.0;net471;net45</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <Version>2.1.1</Version>
     <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.6.1</NetStandardImplicitPackageVersion>
     <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.0.4</RuntimeFrameworkVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -24,6 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />

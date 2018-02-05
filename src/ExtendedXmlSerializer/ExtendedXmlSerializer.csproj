@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-
+  <Import Project="../dir.props" />
 
   <PropertyGroup>
     <Product>ExtendedXmlSerializer</Product>
     <Company>ExtendedXmlSerializer</Company>
     <Description>Extended Xml Serializer for .NET</Description>
     <AssemblyTitle>ExtendedXmlSerializer</AssemblyTitle>
-    <VersionPrefix>2.1.1</VersionPrefix>
     <Authors>Wojciech Nagórski;Michael DeMond</Authors>
     <ClassicFrameworkVersion>net45</ClassicFrameworkVersion>
     <TargetFrameworks>netstandard2.0;$(ClassicFrameworkVersion)</TargetFrameworks>
@@ -24,7 +23,6 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;0628</NoWarn>
     <PackageReleaseNotes>Release notes and subsequent discussion may be found here: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/162</PackageReleaseNotes>
-    <Version>2.1.1</Version>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 
@@ -47,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
     <PackageReference Include="LightInject.Source" Version="5.1.2" PrivateAssets="All" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="System.Interactive" Version="3.1.1" />
