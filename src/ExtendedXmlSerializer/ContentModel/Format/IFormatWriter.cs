@@ -29,8 +29,6 @@ namespace ExtendedXmlSerializer.ContentModel.Format
 {
 	public interface IFormatWriter : IFormat, IFormatter<MemberInfo>
 	{
-		object Instance { get; }
-
 		void Start(IIdentity identity);
 
 		void EndCurrent();

@@ -41,8 +41,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public object Get() => _writer.Get();
 
-		public object Instance => _writer.Instance;
-
 		public void Start(IIdentity identity)
 		{
 			_writer.Start(identity);
@@ -54,6 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public void Content(IIdentity property, string content) => _writer.Content(property, content);
 		public void Content(string content) => _writer.Content(content);
+
 		public void Verbatim(string content)
 		{
 			_writer.Verbatim(content);

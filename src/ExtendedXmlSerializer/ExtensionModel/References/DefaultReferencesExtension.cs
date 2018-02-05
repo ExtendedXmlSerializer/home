@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
 
@@ -50,9 +51,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				             : new BlacklistReferencesPolicy(Blacklist.ToArray());
 
 			return parameter.RegisterInstance(policy)
-			                 .Register<ContainsStaticReferenceSpecification>()
-			                 .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
-			                 .Register<IRootReferences, RootReferences>();
+			                .Register<ContainsStaticReferenceSpecification>()
+			                .Register<IStaticReferenceSpecification, ContainsStaticReferenceSpecification>()
+			                .Register<IRootReferences, RootReferences>()
+			                .RegisterInstance<IRootInstances>(RootInstances.Default)
+			                .Register<IReferences, References>()
+			                .Decorate(typeof(IFormatWriters<>), typeof(FormatWriters<>));
 		}
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

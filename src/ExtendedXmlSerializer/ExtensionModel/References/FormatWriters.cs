@@ -21,28 +21,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ContentModel
+namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class Serializer : Serializer<object>, ISerializer
+	sealed class FormatWriters<T> : IFormatWriters<T>
 	{
-		public Serializer(IReader reader, IWriter writer) : base(reader, writer) {}
-	}
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IFormatWriters<T> _writers;
+		readonly IRootInstances _instances;
 
-	class Serializer<T> : ISerializer<T>
-	{
-		readonly IReader<T> _reader;
-		readonly IWriter<T> _writer;
+		public FormatWriters(IFormatWriters<T> writers, IRootInstances instances)
+			: this(IsReferenceSpecification.Default, writers, instances) {}
 
-		public Serializer(IReader<T> reader, IWriter<T> writer)
+		public FormatWriters(ISpecification<TypeInfo> specification, IFormatWriters<T> writers, IRootInstances instances)
 		{
-			_reader = reader;
-			_writer = writer;
+			_specification = specification;
+			_writers = writers;
+			_instances = instances;
 		}
 
-		public T Get(IFormatReader parameter) => _reader.Get(parameter);
+		public IFormatWriter Get(Writing<T> parameter)
+		{
+			var result = _writers.Get(parameter);
+			var typeInfo = parameter.Instance.GetType()
+			                        .GetTypeInfo();
+			var isSatisfiedBy = _specification.IsSatisfiedBy(typeInfo);
+			if (isSatisfiedBy)
+			{
+				_instances.Assign(result.Get(), parameter.Instance);
+			}
 
-		public void Write(IFormatWriter writer, T instance) => _writer.Write(writer, instance);
+			return result;
+		}
 	}
 }

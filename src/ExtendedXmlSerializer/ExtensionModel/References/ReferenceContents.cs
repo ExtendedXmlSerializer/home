@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
@@ -28,7 +29,6 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
 using JetBrains.Annotations;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -47,8 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		[UsedImplicitly]
 		public ReferenceContents(IReferenceEncounters identifiers, IReferenceMaps maps, IEntities entities, IContents option,
 		                         IClassification classification, IConverters converters)
-			: this(Specification, new DelegatedAssignedSpecification<TypeInfo, IConverter>(converters.Get),
-			       identifiers, maps, entities, option, classification) {}
+			: this(Specification, converters.IfAssigned(), identifiers, maps, entities, option, classification) {}
 
 		public ReferenceContents(ISpecification<TypeInfo> specification, ISpecification<TypeInfo> convertible,
 		                         IReferenceEncounters identifiers, IReferenceMaps maps, IEntities entities,

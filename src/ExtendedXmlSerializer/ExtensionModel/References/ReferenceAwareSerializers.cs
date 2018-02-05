@@ -21,23 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
-using System;
-using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class ReferenceAwareSerializers : ISerializers
 	{
 		readonly IStaticReferenceSpecification _specification;
-		readonly IRootReferences _references;
+		readonly IReferences _references;
 		readonly ISerializers _serializers;
 
-		public ReferenceAwareSerializers(IStaticReferenceSpecification specification, IRootReferences references,
+		public ReferenceAwareSerializers(IStaticReferenceSpecification specification, IReferences references,
 		                                 ISerializers serializers)
 		{
 			_specification = specification;
@@ -54,10 +54,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		sealed class Serializer : ISerializer
 		{
-			readonly IRootReferences _references;
+			readonly IReferences _references;
 			readonly ISerializer _container;
 
-			public Serializer(IRootReferences references, ISerializer container)
+			public Serializer(IReferences references, ISerializer container)
 			{
 				_references = references;
 				_container = container;
@@ -67,7 +67,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 			public void Write(IFormatWriter writer, object instance)
 			{
-				var references = _references.Get(writer);
+				var references = _references.Get(instance);
 				if (references.Any() && Conditions.Default.Get(writer)
 				                                  .Apply()
 				) // TODO: Might find a better way of handling this: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/129

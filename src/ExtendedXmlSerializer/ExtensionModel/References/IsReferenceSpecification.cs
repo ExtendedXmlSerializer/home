@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class IsReferenceSpecification : InverseSpecification<TypeInfo>
+	sealed class IsReferenceSpecification : InverseSpecification<TypeInfo>
 	{
 		public static IsReferenceSpecification Default { get; } = new IsReferenceSpecification();
 		IsReferenceSpecification() : base(IsValueTypeSpecification.Default) {}
