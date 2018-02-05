@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -37,7 +37,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		public ReferencesExtension(IDictionary<TypeInfo, MemberInfo> store) : base(store) {}
 
 		public IServiceRepository Get(IServiceRepository parameter) =>
-			parameter.RegisterInstance<IEntityMembers>(this)
+			parameter.Register<IRootReferences, RootReferences>()
+			         .RegisterInstance<IEntityMembers>(this)
 			         .RegisterInstance<IReferenceMaps>(ReferenceMaps.Default)
 			         .Register<IReferenceEncounters, ReferenceEncounters>()
 			         .Register<IEntities, Entities>()

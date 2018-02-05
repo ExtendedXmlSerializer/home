@@ -40,8 +40,11 @@
 
   <ItemGroup>
     <Compile Remove="ConfigurationOld\**" />
+    <Compile Remove="Generics\**" />
     <EmbeddedResource Remove="ConfigurationOld\**" />
+    <EmbeddedResource Remove="Generics\**" />
     <None Remove="ConfigurationOld\**" />
+    <None Remove="Generics\**" />
   </ItemGroup>
 
   <ItemGroup>

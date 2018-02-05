@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			return result;
 		}
 
-		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter writer)
+		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter<object> writer)
 			=> new AlteringWriter(alteration, new ConditionalWriter(access, writer));
 	}
 }

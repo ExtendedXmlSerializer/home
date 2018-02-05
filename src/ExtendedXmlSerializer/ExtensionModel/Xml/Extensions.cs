@@ -157,7 +157,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Emit(EmitBehaviors.Classic).Extend(ClassicExtension.Default);
 
 		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
-			=> @this.Extend(OptimizedNamespaceExtension.Default);
+			=> @this.Extend(RootInstanceExtension.Default)
+			        .Extend(OptimizedNamespaceExtension.Default);
 
 
 		readonly static Func<Stream> New = DefaultActivators.Default.New<MemoryStream>;

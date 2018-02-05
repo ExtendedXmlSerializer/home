@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_parts = parts;
 		}
 
-		public IFormatWriter Get(Writing<System.Xml.XmlWriter> parameter)
+		public IFormatWriter Get(System.Xml.XmlWriter parameter)
 			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
 	}
 }

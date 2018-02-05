@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.ContentModel.Format
 		public object Instance { get; }
 	}
 
-	struct Writing<TWriter, TInstance>
+	public struct Writing<TWriter, TInstance>
 	{
 		public Writing(TWriter writer, TInstance instance)
 		{

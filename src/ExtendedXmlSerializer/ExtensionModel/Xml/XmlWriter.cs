@@ -53,12 +53,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly Func<TypeParts, TypeParts> _selector;
 
 		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-		                 Writing<System.Xml.XmlWriter> parameter)
-			: this(aliases, formatter, store, parts, parameter.Writer, parameter.Instance, DefaultSeparator) {}
+		                 System.Xml.XmlWriter writer)
+			: this(aliases, formatter, store, parts, writer, DefaultSeparator) {}
 
 		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-		                 System.Xml.XmlWriter writer, object instance,
-		                 Delimiter separator)
+		                 System.Xml.XmlWriter writer, Delimiter separator)
 		{
 			_aliases = aliases;
 			_formatter = formatter;
@@ -66,11 +65,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			_parts = parts;
 			_writer = writer;
 			_separator = separator;
-			Instance = instance;
 			_selector = Get;
 		}
 
-		public object Instance { get; }
 		public object Get() => _writer;
 
 		public void Start(IIdentity identity)

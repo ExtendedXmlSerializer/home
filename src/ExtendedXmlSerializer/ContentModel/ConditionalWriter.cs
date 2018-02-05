@@ -29,9 +29,9 @@ namespace ExtendedXmlSerializer.ContentModel
 	class ConditionalWriter : IWriter
 	{
 		readonly ISpecification<object> _specification;
-		readonly IWriter _writer;
+		readonly IWriter<object> _writer;
 
-		public ConditionalWriter(ISpecification<object> specification, IWriter writer)
+		public ConditionalWriter(ISpecification<object> specification, IWriter<object> writer)
 		{
 			_specification = specification;
 			_writer = writer;

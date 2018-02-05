@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.ContentModel
 	static class Extensions
 	{
 		public static ISerializer Adapt<T>(this ISerializer<T> @this) => new GenericSerializerAdapter<T>(@this);
-		public static ISerializer<T> Adapt<T>(this ISerializer @this) => new SerializerAdapter<T>(@this);
+		//public static ISerializer<T> Adapt<T>(this ISerializer @this) => new SerializerAdapter<T>(@this);
 
 		public static IWriter Adapt<T>(this IWriter<T> @this) => new GenericWriterAdapter<T>(@this);
 		public static IWriter<T> Adapt<T>(this IWriter @this) => new WriterAdapter<T>(@this);
