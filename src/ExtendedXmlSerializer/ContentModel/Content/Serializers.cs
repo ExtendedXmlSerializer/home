@@ -29,10 +29,10 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	[UsedImplicitly]
 	sealed class Serializers : ISerializers
 	{
-		readonly IElement _element;
+		readonly IElements _element;
 		readonly IContents _contents;
 
-		public Serializers(IElement element, IContents contents)
+		public Serializers(IElements element, IContents contents)
 		{
 			_element = element;
 			_contents = contents;

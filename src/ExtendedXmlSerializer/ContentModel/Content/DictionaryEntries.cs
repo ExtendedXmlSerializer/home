@@ -49,9 +49,9 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IInnerContentServices contents, Element element, IMembers members,
+		public DictionaryEntries(IInnerContentServices contents, Elements elements, IMembers members,
 		                         IMemberSerializers serializers)
-			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, element.Get(Type), Pairs) {}
+			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, elements.Get(Type), Pairs) {}
 
 		public DictionaryEntries(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder,
 		                         IInnerContentServices contents, IMemberSerializers serializers, IMembers members,

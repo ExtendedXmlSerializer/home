@@ -21,8 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
@@ -67,6 +69,54 @@ namespace ExtendedXmlSerializer.Core.Sources
 			}
 
 			return _fallback(parameter);
+		}
+	}
+
+	public class ConditionalSource<T> : ISource<T>
+	{
+		readonly Func<bool> _specification;
+		readonly Func<T, bool> _result;
+		readonly Func<T> _source, _fallback;
+
+		public ConditionalSource(ISpecification<TypeInfo> specification, ISource<T> source,
+		                         ISource<T> fallback)
+			: this(specification, Support<T>.Key, source, fallback) {}
+
+		public ConditionalSource(ISpecification<TypeInfo> specification, TypeInfo type, ISource<T> source,
+		                         ISource<T> fallback)
+			: this(specification, type, AlwaysSpecification<T>.Default, source, fallback) {}
+
+		public ConditionalSource(ISpecification<TypeInfo> specification, TypeInfo type, ISpecification<T> result,
+		                         ISource<T> source,
+		                         ISource<T> fallback)
+			: this(specification.Fix(type), result.IsSatisfiedBy, source.Get, fallback.Get) {}
+
+		public ConditionalSource(Func<bool> specification, Func<T, bool> result,
+		                         Func<T> source)
+			: this(specification, result, source, () => default(T)) {}
+
+		public ConditionalSource(Func<bool> specification, Func<T, bool> result,
+		                         Func<T> source,
+		                         Func<T> fallback)
+		{
+			_specification = specification;
+			_result = result;
+			_source = source;
+			_fallback = fallback;
+		}
+
+		public T Get()
+		{
+			if (_specification())
+			{
+				var result = _source();
+				if (_result(result))
+				{
+					return result;
+				}
+			}
+
+			return _fallback();
 		}
 	}
 }

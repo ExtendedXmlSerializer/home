@@ -10,15 +10,21 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void Verify()
 		{
-			var serializers = new ConfigurationContainer().ToSupport();
-			serializers.Cycle(6776);
+			new ConfigurationContainer().ToSupport().Cycle(6776);
 		}
 
 		[Fact]
 		public void VerifyClass()
 		{
-			var serializers = new ConfigurationContainer().ToSupport();
-			serializers.Cycle(new Subject{ Message = "Hello World!"});
+			new ConfigurationContainer().ToSupport()
+			                            .Cycle(new Subject {Message = "Hello World!"});
+		}
+
+		[Fact]
+		public void VerifyArray()
+		{
+			new ConfigurationContainer().ToSupport()
+			                            .Cycle(new[]{1, 2, 3});
 		}
 
 

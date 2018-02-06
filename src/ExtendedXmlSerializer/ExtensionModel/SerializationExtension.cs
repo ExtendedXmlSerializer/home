@@ -45,7 +45,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			            .Register(typeof(IWriters<>), typeof(Writers<>))
 			            .Register(typeof(IContentReaders<>), typeof(ContentReaders<>))
 			            .Register(typeof(IContentWriters<>), typeof(ContentWriters<>))
-			            .Register(typeof(IElements<>), typeof(Elements<>))
 			            .Register(typeof(IContents<>), typeof(Contents<>))
 			            .Register<ContentModel.Content.ISerializers, Serializers>()
 			            .Decorate<ContentModel.Content.ISerializers, NullableAwareSerializers>()

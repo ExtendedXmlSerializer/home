@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using System;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class GenericIdentity<T> : IWriter<T>
+	sealed class GenericIdentity<T> : IWriter<T>, IContentWriter<T>
 	{
 		readonly IProperty<ImmutableArray<Type>> _property;
 		readonly IWriter<T> _start;
@@ -52,6 +52,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		{
 			_start.Write(writer, instance);
 			_property.Write(writer, _arguments);
+		}
+
+		public void Execute(Writing<T> parameter)
+		{
+			_start.Write(parameter.Writer, parameter.Instance);
+			_property.Write(parameter.Writer, _arguments);
 		}
 	}
 }

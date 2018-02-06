@@ -21,22 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class Identity<T> : IWriter<T>, IContentWriter<T>
+	sealed class VariableTypeElementsRegistration<T> : ConditionalElements<T>
 	{
-		readonly IIdentity _identity;
-
-		public Identity(IIdentity identity) => _identity = identity;
-
-		public void Write(IFormatWriter writer, T _) => writer.Start(_identity);
-
-		public void Execute(Writing<T> parameter)
-		{
-			parameter.Writer.Start(_identity);
-		}
+		public VariableTypeElementsRegistration(VariableTypeElements<T> source, IElements<T> fallback)
+			: base(VariableTypeSpecification.Default, source, fallback) {}
 	}
 }

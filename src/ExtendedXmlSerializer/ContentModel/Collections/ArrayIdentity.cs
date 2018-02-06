@@ -21,14 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArrayIdentity : IWriter<Array>
+	sealed class ArrayIdentity<T> : IContentWriter<T>
+	{
+		readonly IWriter<T> _identity;
+		readonly IProperty<TypeInfo> _property;
+		readonly TypeInfo _element;
+
+		public ArrayIdentity(IWriter<T> identity, TypeInfo element) : this(identity, ItemTypeProperty.Default, element) {}
+
+		public ArrayIdentity(IWriter<T> identity, IProperty<TypeInfo> property, TypeInfo element)
+		{
+			_identity = identity;
+			_property = property;
+			_element = element;
+		}
+
+
+		public void Execute(Writing<T> parameter)
+		{
+			_identity.Write(parameter.Writer, parameter.Instance);
+			_property.Write(parameter.Writer, _element);
+		}
+	}
+
+
+	sealed class ArrayIdentity : IWriter<Array>, IContentWriter<Array>
 	{
 		readonly IWriter<Array> _identity;
 		readonly IProperty<TypeInfo> _property;
@@ -47,6 +71,12 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		{
 			_identity.Write(writer, instance);
 			_property.Write(writer, _element);
+		}
+
+		public void Execute(Writing<Array> parameter)
+		{
+			_identity.Write(parameter.Writer, parameter.Instance);
+			_property.Write(parameter.Writer, _element);
 		}
 	}
 }

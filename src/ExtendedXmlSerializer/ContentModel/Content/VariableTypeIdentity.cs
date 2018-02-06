@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class VariableTypeIdentity : IWriter
+	sealed class VariableTypeIdentity<T> : IWriter<T>, IContentWriter<T>
 	{
 		readonly ISpecification<Type> _specification;
 		readonly IWriter<object> _start;
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_identities = identities;
 		}
 
-		public void Write(IFormatWriter writer, object instance)
+		public void Write(IFormatWriter writer, T instance)
 		{
 			var type = instance.GetType();
 			if (_specification.IsSatisfiedBy(type))
@@ -56,6 +56,19 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			else
 			{
 				_start.Write(writer, instance);
+			}
+		}
+
+		public void Execute(Writing<T> parameter)
+		{
+			var type = parameter.Instance.GetType();
+			if (_specification.IsSatisfiedBy(type))
+			{
+				parameter.Writer.Start(_identities.Get(type.GetTypeInfo()));
+			}
+			else
+			{
+				_start.Write(parameter.Writer, parameter.Instance);
 			}
 		}
 	}

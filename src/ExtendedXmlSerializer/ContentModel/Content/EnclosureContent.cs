@@ -21,10 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	public interface IElement : IParameterizedSource<TypeInfo, IWriter> {}
+	class EnclosureContent<T> : IContentWriter<T>
+	{
+		readonly IContentWriter<T> _start;
+		readonly IWriter<T> _body;
+		readonly IWriter<T> _finish;
+
+		public EnclosureContent(IContentWriter<T> start, IWriter<T> body) : this(start, body, EndCurrentElement<T>.Default) {}
+
+		public EnclosureContent(IContentWriter<T> start, IWriter<T> body, IWriter<T> finish)
+		{
+			_start = start;
+			_body = body;
+			_finish = finish;
+		}
+
+		public void Execute(Writing<T> parameter)
+		{
+			_start.Execute(parameter);
+			_body.Write(parameter.Writer, parameter.Instance);
+			_finish.Write(parameter.Writer, parameter.Instance);
+		}
+	}
 }

@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			=> @this.Register<TFrom, TTo>()
 			        .RegisterDependencies(typeof(TTo));
 
-		static IServiceRepository RegisterDependencies(this IServiceRepository @this, Type type)
+		public static IServiceRepository RegisterDependencies(this IServiceRepository @this, Type type)
 			=> Constructors.Default.Get(type)
 			               .SelectMany(x => x.GetParameters()
 			                                 .Select(y => y.ParameterType))

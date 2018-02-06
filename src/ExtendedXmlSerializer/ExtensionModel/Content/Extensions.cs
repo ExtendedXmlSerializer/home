@@ -38,8 +38,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	public static class Extensions
 	{
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this, ISpecification<TypeInfo> specification)
-			where T : IElement
+			where T : IElements
 			=> new ConditionalElementDecoration<T>(specification).Get(@this);
+
+
+		public static IServiceRepository Decorate(this IServiceRepository @this, Type from, Type to, Type other)
+			=> @this.Register(other)
+			        .Decorate(from, to);
 
 		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
 			where TSpecification : ISpecification<TypeInfo>

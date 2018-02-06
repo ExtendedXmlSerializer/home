@@ -21,22 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class Identity<T> : IWriter<T>, IContentWriter<T>
+	sealed class GenericElements<T> : IElements<T>
 	{
 		readonly IIdentity _identity;
+		readonly ImmutableArray<Type> _arguments;
 
-		public Identity(IIdentity identity) => _identity = identity;
+		public GenericElements(IIdentities identities)
+			: this(identities.Get(Support<T>.Key), Support<T>.Key.GetGenericArguments()
+			                                                 .ToImmutableArray()) {}
 
-		public void Write(IFormatWriter writer, T _) => writer.Start(_identity);
-
-		public void Execute(Writing<T> parameter)
+		public GenericElements(IIdentity identity, ImmutableArray<Type> arguments)
 		{
-			parameter.Writer.Start(_identity);
+			_identity = identity;
+			_arguments = arguments;
 		}
+
+		public IContentWriter<T> Get() => new GenericIdentity<T>(_identity, _arguments);
 	}
 }

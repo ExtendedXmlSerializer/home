@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,13 +30,13 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		public Enclosure(IWriter<object> start, IWriter<object> body) : base(start, body) {}
 	}
 
-	class Enclosure<T> : IWriter<T>
+	class Enclosure<T> : IContentWriter<T>, IWriter<T>
 	{
 		readonly IWriter<T> _start;
 		readonly IWriter<T> _body;
 		readonly IWriter<T> _finish;
 
-		public Enclosure(IWriter<T> start, IWriter<T> body) : this(start, body, EndCurrentElement<T>.Default) { }
+		public Enclosure(IWriter<T> start, IWriter<T> body) : this(start, body, EndCurrentElement<T>.Default) {}
 
 		public Enclosure(IWriter<T> start, IWriter<T> body, IWriter<T> finish)
 		{
@@ -50,6 +50,13 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			_start.Write(writer, instance);
 			_body.Write(writer, instance);
 			_finish.Write(writer, instance);
+		}
+
+		public void Execute(Writing<T> parameter)
+		{
+			_start.Write(parameter.Writer, parameter.Instance);
+			_body.Write(parameter.Writer, parameter.Instance);
+			_finish.Write(parameter.Writer, parameter.Instance);
 		}
 	}
 }
