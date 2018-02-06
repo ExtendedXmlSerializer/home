@@ -21,9 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Format
 {
 	interface IFormatReaders<in T> : IParameterizedSource<T, IFormatReader> {}
+
+	interface IFormatReaders : IParameterizedSource<Stream, IFormatReader> {}
 }

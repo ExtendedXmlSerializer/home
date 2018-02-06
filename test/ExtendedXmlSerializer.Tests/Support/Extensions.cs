@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using FluentAssertions;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
@@ -31,9 +32,18 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public static T Cycle<T>(this IExtendedXmlSerializer @this, T instance)
 			=> @this.Deserialize<T>(@this.Serialize(instance));
 
-		/*public static SerializationSupport ForTesting(this IConfigurationItem @this) => new SerializationSupport(@this.Configuration);*/
+		public static T Cycle<T>(this ISerializers @this, T instance)
+		{
+			var serializer = @this.Get<T>();
+			var serialize = @this.Serialize(instance);
+			var result = serializer.Deserialize(serialize);
+			result.ShouldBeEquivalentTo(instance);
+			return result;
+		}
 
 		public static SerializationSupport ForTesting(this IConfigurationContainer @this) => new SerializationSupport(@this);
 		public static SerializationSupport ForTesting(this IExtendedXmlSerializer @this) => new SerializationSupport(@this);
+
+		public static SerializersSupport ToSupport(this IConfiguration @this) => new SerializersSupport(@this);
 	}
 }

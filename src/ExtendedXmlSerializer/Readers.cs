@@ -21,21 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.IO;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer
 {
-	class SerializerMarker : ISerializer<object>
+	sealed class Readers<T> : IReaders<T>
 	{
-		void ICommand<Input<object>>.Execute(Input<object> parameter)
+		readonly IFormatReaders _readers;
+		readonly IContentReaders<T> _contents;
+
+		public Readers(IFormatReaders readers, IContentReaders<T> contents)
 		{
-			throw new InvalidOperationException("This exists for static type-checking purposes only.");
+			_readers = readers;
+			_contents = contents;
 		}
 
-		object IParameterizedSource<Stream, object>.Get(Stream parameter) =>
-			throw new InvalidOperationException("This exists for static type-checking purposes only.");
+		public IReader<T> Get() => new Reader<T>(_readers, _contents.Get());
 	}
 }

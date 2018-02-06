@@ -21,19 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Format;
+
 namespace ExtendedXmlSerializer
 {
-	sealed class Serializers<T> : ISerializers<T>
+	sealed class Reader<T> : IReader<T>
 	{
-		readonly IReaders<T> _readers;
-		readonly IWriters<T> _writers;
+		readonly IFormatReaders _readers;
+		readonly IContentReader<T> _reader;
 
-		public Serializers(IReaders<T> readers, IWriters<T> writers)
+		public Reader(IFormatReaders readers, IContentReader<T> reader)
 		{
 			_readers = readers;
-			_writers = writers;
+			_reader = reader;
 		}
 
-		public ISerializer<T> Get() => new Serializer<T>(_readers.Get(), _writers.Get());
+		public T Get(Stream parameter)
+		{
+			using (var reader = _readers.Get(parameter))
+			{
+				return _reader.Get(reader);
+			}
+		}
 	}
 }

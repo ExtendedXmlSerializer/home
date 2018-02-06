@@ -1,7 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ReflectionModel;
-using System.IO;
+using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {
@@ -10,18 +10,21 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void Verify()
 		{
-			var temp = new ConfigurationContainer().Get();
-			var serializer = temp.Get<int>();
+			var serializers = new ConfigurationContainer().ToSupport();
+			serializers.Cycle(6776);
+		}
 
-			using (var stream = DefaultActivators.Default.New<MemoryStream>())
-			{
-				serializer.Execute(new Input<int>(stream, 6776));
+		[Fact]
+		public void VerifyClass()
+		{
+			var serializers = new ConfigurationContainer().ToSupport();
+			serializers.Cycle(new Subject{ Message = "Hello World!"});
+		}
 
 
-				stream.Seek(0, SeekOrigin.Begin);
-				//var result = new StreamReader(stream).ReadToEnd();
-				//throw new InvalidOperationException(result);
-			}
+		sealed class Subject
+		{
+			public string Message { get; set; }
 		}
 	}
 }

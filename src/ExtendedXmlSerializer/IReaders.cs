@@ -21,19 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer
 {
-	sealed class Serializers<T> : ISerializers<T>
-	{
-		readonly IReaders<T> _readers;
-		readonly IWriters<T> _writers;
-
-		public Serializers(IReaders<T> readers, IWriters<T> writers)
-		{
-			_readers = readers;
-			_writers = writers;
-		}
-
-		public ISerializer<T> Get() => new Serializer<T>(_readers.Get(), _writers.Get());
-	}
+	interface IReaders<out T> : ISource<IReader<T>> {}
 }

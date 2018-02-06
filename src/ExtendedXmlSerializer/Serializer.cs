@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer
 		public object Deserialize(TRead reader) => _read.Get(reader);
 	}
 
-	class Serializer<T> : SerializerMarker, ISerializer<T>
+	class Serializer<T> : ISerializer<T>
 	{
 		readonly IReader<T> _reader;
 		readonly IWriter<T> _writer;

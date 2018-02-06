@@ -51,31 +51,4 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IFormatWriter Get(Stream parameter) => Get(_factory.Get(parameter));
 	}
-
-/*
-	sealed class FormatWriters : IFormatWriters
-	{
-		readonly static Aliases Aliases = Aliases.Default;
-
-		readonly IAliases _table;
-		readonly IIdentifierFormatter _formatter;
-		readonly IIdentityStore _store;
-		readonly ITypePartResolver _parts;
-
-		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts)
-			: this(Aliases, formatter, store, parts) { }
-
-		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
-		                     ITypePartResolver parts)
-		{
-			_table = table;
-			_formatter = formatter;
-			_store = store;
-			_parts = parts;
-		}
-
-		public IFormatWriter Get(System.Xml.XmlWriter parameter)
-			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
-	}
-*/
 }

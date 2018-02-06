@@ -38,20 +38,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly XmlReaderSettings _reader;
 		readonly XmlWriterSettings _writer;
 		readonly XmlNameTable _names;
+		readonly IXmlReaderFactory _readerFactory;
 		readonly IXmlWriterFactory _writerFactory;
 
 		public XmlSerializationExtension()
 			: this(Defaults.ReaderSettings, Defaults.WriterSettings, new NameTable()) {}
 
 		public XmlSerializationExtension(XmlReaderSettings reader, XmlWriterSettings writer, XmlNameTable names)
-			: this(reader, writer, names, new XmlWriterFactory(writer)) {}
+			: this(reader, writer, names, new XmlReaderFactory(reader, reader.NameTable.Context()),
+			       new XmlWriterFactory(writer)) {}
 
 		public XmlSerializationExtension(XmlReaderSettings reader, XmlWriterSettings writer, XmlNameTable names,
+		                                 IXmlReaderFactory readerFactory,
 		                                 IXmlWriterFactory writerFactory)
 		{
 			_reader = reader;
 			_writer = writer;
 			_names = names;
+			_readerFactory = readerFactory;
 			_writerFactory = writerFactory;
 		}
 
@@ -60,6 +64,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance(_names)
 			            .RegisterInstance(_reader.Clone())
 			            .RegisterInstance(_writer.Clone())
+			            .RegisterInstance(_readerFactory)
 			            .RegisterInstance(_writerFactory)
 			            .RegisterInstance<IIdentifierFormatter>(IdentifierFormatter.Default)
 			            .RegisterInstance<IReaderFormatter>(ReaderFormatter.Default)
@@ -75,7 +80,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .Register<IFormatReaderContexts<XmlNameTable>, FormatReaderContexts>()
 			            .Register<IFormatWriters<System.Xml.XmlWriter>, FormatWriters>()
 			            .Register<IFormatWriters, FormatWriters>()
-			            .Register<IXmlReaderFactory, XmlReaderFactory>()
+			            //.Register<IXmlReaderFactory, XmlReaderFactory>()
+			            .Register<IFormatReaders, FormatReaders>()
 			            .Register<IFormatReaders<System.Xml.XmlReader>, FormatReaders>()
 			            .Register<IExtendedXmlSerializer, ExtendedXmlSerializer>();
 

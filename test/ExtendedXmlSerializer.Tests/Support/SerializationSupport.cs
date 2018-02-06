@@ -25,9 +25,45 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
 using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
+	public interface ISerializersSupport : ISerializers
+	{
+		T Assert<T>(T instance, string expected);
+	}
+
+
+	sealed class SerializersSupport : ISerializersSupport
+	{
+		readonly ISerializers _serializer;
+
+		public SerializersSupport() : this(new ConfigurationContainer()) { }
+
+		public SerializersSupport(IConfiguration configuration) : this(configuration.Get()) { }
+
+		public SerializersSupport(ISerializers serializer) => _serializer = serializer;
+
+		public T Assert<T>(T instance, string expected)
+		{
+			var data = _serializer.Serialize(instance);
+			data?.Replace("\r\n", string.Empty)
+			    .Replace("\n", string.Empty)
+			    .Should()
+			    .Be(expected?.Replace("\r\n", string.Empty)
+			                .Replace("\n", string.Empty));
+			var result = _serializer.Deserialize<T>(data);
+			return result;
+		}
+
+
+		// Used for a simple way to emit instances as text in tests:
+		public void WriteLine<T>(T instance) => throw new InvalidOperationException(_serializer.Serialize(instance));
+		public ISerializer<object> Get(TypeInfo parameter) => _serializer.Get(parameter);
+	}
+
+
 	sealed class SerializationSupport : ISerializationSupport
 	{
 		readonly IExtendedXmlSerializer _serializer;

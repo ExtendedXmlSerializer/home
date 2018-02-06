@@ -21,19 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+
 namespace ExtendedXmlSerializer
 {
-	sealed class Serializers<T> : ISerializers<T>
+	sealed class GeneralizedSerializers<T> : ISource<ISerializer<object>>
 	{
-		readonly IReaders<T> _readers;
-		readonly IWriters<T> _writers;
+		readonly ISerializers<T> _serializers;
 
-		public Serializers(IReaders<T> readers, IWriters<T> writers)
-		{
-			_readers = readers;
-			_writers = writers;
-		}
+		public GeneralizedSerializers(ISerializers<T> serializers) => _serializers = serializers;
 
-		public ISerializer<T> Get() => new Serializer<T>(_readers.Get(), _writers.Get());
+		public ISerializer<object> Get() => new GeneralizedSerializer<T>(_serializers.Get());
+	}
+
+	sealed class GeneralizedSerializers : GenericSource<ISerializer<object>>, ISerializers
+	{
+		public GeneralizedSerializers(IServiceProvider provider) : base(provider, typeof(GeneralizedSerializers<>)) {}
 	}
 }
