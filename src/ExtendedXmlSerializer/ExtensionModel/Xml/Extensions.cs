@@ -72,7 +72,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			                                           .Register(typeof(TSerializer));
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+			=> @this.Type<T>().Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+			        .Register(new ActivatedSerializer(serializerType, Support<T>.Key));
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
@@ -157,7 +158,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Key));
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ISerializer<TMember> serializer) =>
+		                                                                    ContentModel.ISerializer<TMember> serializer) =>
 			Register(@this, serializer.Adapt());
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
@@ -315,25 +316,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
 		                                                           IEnumerable<Type> types)
 			=> @this.Extend(new ImplicitTypingExtension(types.ToMetadata()));
-
-		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
-		{
-			public static CloseSettings Default { get; } = new CloseSettings();
-			CloseSettings() {}
-
-			public XmlWriterSettings Get(XmlWriterSettings parameter)
-			{
-				var result = parameter.Clone();
-				result.CloseOutput = true;
-				return result;
-			}
-
-			public XmlReaderSettings Get(XmlReaderSettings parameter)
-			{
-				var result = parameter.Clone();
-				result.CloseInput = true;
-				return result;
-			}
-		}
 	}
 }

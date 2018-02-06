@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicCollections : Collections
 	{
-		public ClassicCollections(ISerializers serializers, ClassicCollectionContents contents) :
+		public ClassicCollections(ContentModel.Content.ISerializers serializers, ClassicCollectionContents contents) :
 			base(serializers, contents) {}
 	}
 }

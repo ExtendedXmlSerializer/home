@@ -21,13 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
+	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>, IFormatWriters
+	{
+		readonly IAliases _table;
+		readonly IIdentifierFormatter _formatter;
+		readonly IIdentityStore _store;
+		readonly ITypePartResolver _parts;
+		readonly IXmlWriterFactory _factory;
+
+		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
+		                     ITypePartResolver parts, IXmlWriterFactory factory)
+		{
+			_table = table;
+			_formatter = formatter;
+			_store = store;
+			_parts = parts;
+			_factory = factory;
+		}
+
+		public IFormatWriter Get(System.Xml.XmlWriter parameter)
+			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
+
+		public IFormatWriter Get(Stream parameter) => Get(_factory.Get(parameter));
+	}
+
+/*
+	sealed class FormatWriters : IFormatWriters
 	{
 		readonly static Aliases Aliases = Aliases.Default;
 
@@ -37,7 +63,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly ITypePartResolver _parts;
 
 		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts)
-			: this(Aliases, formatter, store, parts) {}
+			: this(Aliases, formatter, store, parts) { }
 
 		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
 		                     ITypePartResolver parts)
@@ -51,4 +77,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public IFormatWriter Get(System.Xml.XmlWriter parameter)
 			=> new XmlWriter(_table, _formatter, _store, _parts, parameter);
 	}
+*/
 }

@@ -23,16 +23,15 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredReferenceSerializers : CacheBase<TypeInfo, ISerializer>, ISerializers
+	sealed class DeferredReferenceSerializers : CacheBase<TypeInfo, ISerializer>, ContentModel.Content.ISerializers
 	{
-		readonly ISerializers _serializers;
+		readonly ContentModel.Content.ISerializers _serializers;
 
-		public DeferredReferenceSerializers(ISerializers serializers)
+		public DeferredReferenceSerializers(ContentModel.Content.ISerializers serializers)
 		{
 			_serializers = serializers;
 		}

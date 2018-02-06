@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Linq;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
-using System;
-using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			            .Decorate<IMemberHandler, Handler>()
 			            .Decorate<IReferenceMaps, DeferredReferenceMaps>()
 			            .Decorate<IContents, DeferredReferenceContents>()
-			            .Decorate<ISerializers, DeferredReferenceSerializers>()
+			            .Decorate<ContentModel.Content.ISerializers, DeferredReferenceSerializers>()
 			            .Decorate<IReferenceEncounters, DeferredReferenceEncounters>()
 			            .Decorate(typeof(IFormatReaders<>), typeof(Factory<>));
 
@@ -114,6 +114,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 					throw new InvalidOperationException(
 					                                    "Deferred references were applied to this reader to track, but they were not applied and executed as expected. This is considered an unexpected, invalid, and corrupt state.");
 				}
+
 				_reader.Dispose();
 			}
 

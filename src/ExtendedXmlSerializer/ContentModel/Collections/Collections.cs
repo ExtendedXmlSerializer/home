@@ -29,15 +29,16 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 {
 	public class Collections : IContents
 	{
-		readonly ISerializers _serializers;
+		readonly Content.ISerializers _serializers;
 		readonly ICollectionItemTypeLocator _locator;
 		readonly ICollectionContents _contents;
 
-		public Collections(ISerializers serializers, ICollectionContents contents) : this(serializers,
-		                                                                                  CollectionItemTypeLocator.Default,
-		                                                                                  contents) {}
+		public Collections(Content.ISerializers serializers, ICollectionContents contents) : this(serializers,
+		                                                                                          CollectionItemTypeLocator
+			                                                                                          .Default,
+		                                                                                          contents) {}
 
-		public Collections(ISerializers serializers, ICollectionItemTypeLocator locator, ICollectionContents contents)
+		public Collections(Content.ISerializers serializers, ICollectionItemTypeLocator locator, ICollectionContents contents)
 		{
 			_serializers = serializers;
 			_locator = locator;

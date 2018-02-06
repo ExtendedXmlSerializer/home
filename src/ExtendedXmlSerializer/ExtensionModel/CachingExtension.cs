@@ -24,7 +24,6 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
-using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -38,7 +37,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public int Sort { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents, CachedContents>()
-		                                                                        .Decorate<ISerializers, CachedSerializers>()
+		                                                                        .Decorate<ContentModel.Content.ISerializers,
+			                                                                        CachedSerializers>()
 		                                                                        .Decorate<IConverters, CachedConverters>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

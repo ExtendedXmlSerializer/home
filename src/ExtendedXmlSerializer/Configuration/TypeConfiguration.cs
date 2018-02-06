@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IMemberConfigurations _members;
 
 		public TypeConfiguration(IRootContext root, IProperty<string> name)
-			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) { }
+			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
 
 		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
 			: base(context)
@@ -42,6 +42,7 @@ namespace ExtendedXmlSerializer.Configuration
 			_name = name;
 			_members = members;
 		}
+
 		public TypeConfiguration(ITypeConfigurationContext context, IProperty<string> name, IMemberConfigurations members)
 			: base(context)
 		{
@@ -50,12 +51,8 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		public TypeConfiguration(ITypeConfigurationContext parent, IProperty<string> name)
-			: this(parent, name, new MemberConfigurations<T>(new TypeConfigurationContext(parent.Root, Support<T>.Key))) 
-		{
-			
-		}
+			: this(parent, name, new MemberConfigurations<T>(new TypeConfigurationContext(parent.Root, Support<T>.Key))) {}
 
-		
 
 		ITypeConfiguration IInternalTypeConfiguration.Name(string name)
 		{
@@ -68,7 +65,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public new IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public TypeInfo Get() => Support<T>.Key;
+		public new TypeInfo Get() => Support<T>.Key;
 		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
 	}
 }

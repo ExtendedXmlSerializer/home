@@ -1,5 +1,4 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
@@ -126,7 +125,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public string Message { [UsedImplicitly] get; set; }
 		}
 
-		sealed class Serializer : ISerializer<string>
+		sealed class Serializer : ExtendedXmlSerializer.ContentModel.ISerializer<string>
 		{
 			public static Serializer Default { get; } = new Serializer();
 			Serializer() {}
@@ -139,11 +138,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			}
 		}
 
-		sealed class ActivatedSerializer : ISerializer<string>
+		sealed class ActivatedSerializer : ExtendedXmlSerializer.ContentModel.ISerializer<string>
 		{
-			readonly ISerializers _serializers;
+			readonly ExtendedXmlSerializer.ContentModel.Content.ISerializers _serializers;
 
-			public ActivatedSerializer(ISerializers serializers) => _serializers = serializers;
+			public ActivatedSerializer(ExtendedXmlSerializer.ContentModel.Content.ISerializers serializers) => _serializers = serializers;
 
 			public string Get(IFormatReader parameter) => "Hello World from ActivatedSerializer";
 

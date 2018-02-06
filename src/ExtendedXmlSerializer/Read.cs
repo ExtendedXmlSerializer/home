@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 
@@ -30,11 +29,11 @@ namespace ExtendedXmlSerializer
 {
 	sealed class Read<T> : IRead<T>
 	{
-		readonly ISerializers _serializers;
+		readonly ContentModel.Content.ISerializers _serializers;
 		readonly IFormatReaders<T> _readers;
 		readonly IClassification _classification;
 
-		public Read(ISerializers serializers, IFormatReaders<T> readers, IClassification classification)
+		public Read(ContentModel.Content.ISerializers serializers, IFormatReaders<T> readers, IClassification classification)
 		{
 			_serializers = serializers;
 			_readers = readers;

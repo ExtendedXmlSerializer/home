@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.IO;
 using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer
@@ -42,5 +43,24 @@ namespace ExtendedXmlSerializer
 		}
 
 		public object Deserialize(TRead reader) => _read.Get(reader);
+	}
+
+	class Serializer<T> : SerializerMarker, ISerializer<T>
+	{
+		readonly IReader<T> _reader;
+		readonly IWriter<T> _writer;
+
+		public Serializer(IReader<T> reader, IWriter<T> writer)
+		{
+			_reader = reader;
+			_writer = writer;
+		}
+
+		public T Get(Stream parameter) => _reader.Get(parameter);
+
+		public void Execute(Input<T> parameter)
+		{
+			_writer.Execute(parameter);
+		}
 	}
 }

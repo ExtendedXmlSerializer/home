@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			         .Register<IReferenceEncounters, ReferenceEncounters>()
 			         .Register<IEntities, Entities>()
 			         .Decorate<IActivation, ReferenceActivation>()
-			         .Decorate<ISerializers, CircularReferenceEnabledSerialization>()
+			         .Decorate<ContentModel.Content.ISerializers, CircularReferenceEnabledSerialization>()
 			         .Decorate<IContents, ReferenceContents>()
 			         .Decorate<IContents, RecursionAwareContents>();
 

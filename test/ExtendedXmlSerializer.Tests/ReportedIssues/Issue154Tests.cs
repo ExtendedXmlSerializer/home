@@ -1,14 +1,13 @@
-﻿using System.Reflection;
-using System.Text;
-using System.Xml.Linq;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using JetBrains.Annotations;
+using System.Reflection;
+using System.Text;
+using System.Xml.Linq;
 using Xunit;
 using XmlWriter = System.Xml.XmlWriter;
 
@@ -115,7 +114,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 		}
 
-	    sealed class BasicSerializer : ISerializer<string>
+	    sealed class BasicSerializer : ExtendedXmlSerializer.ContentModel.ISerializer<string>
 	    {
 		    public static BasicSerializer Default { get; } = new BasicSerializer();
 		    BasicSerializer() {}
@@ -128,7 +127,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		    }
 	    }
 
-	    sealed class ActivatedSerializer : ISerializer<string>
+	    sealed class ActivatedSerializer : ExtendedXmlSerializer.ContentModel.ISerializer<string>
 	    {
 		    readonly Encoding _encoding;
 		    

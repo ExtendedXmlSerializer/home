@@ -22,12 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	sealed class ImmutableArrays : Collections
 	{
-		public ImmutableArrays(ISerializers serializers, ImmutableArrayContents contents) : base(serializers, contents) {}
+		public ImmutableArrays(ContentModel.Content.ISerializers serializers, ImmutableArrayContents contents) :
+			base(serializers, contents) {}
 	}
 }

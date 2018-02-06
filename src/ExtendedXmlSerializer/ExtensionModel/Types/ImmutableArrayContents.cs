@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		sealed class Reader<T> : IReader
 		{
-			readonly IReader<Collection<T>> _reader;
+			readonly ContentModel.IReader<Collection<T>> _reader;
 
 			[UsedImplicitly]
 			public Reader(IInnerContentServices services, IReader item)
@@ -66,7 +66,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 					                                                                                 CollectionInnerContentHandler(item,
 					                                                                                                               services)))) {}
 
-			Reader(IReader<Collection<T>> reader) => _reader = reader;
+			Reader(ContentModel.IReader<Collection<T>> reader) => _reader = reader;
 
 			public object Get(IFormatReader parameter) => _reader.Get(parameter)
 			                                                     .ToImmutableArray();

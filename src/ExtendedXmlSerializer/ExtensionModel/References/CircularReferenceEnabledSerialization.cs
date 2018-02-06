@@ -23,16 +23,15 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	class CircularReferenceEnabledSerialization : ISerializers
+	class CircularReferenceEnabledSerialization : ContentModel.Content.ISerializers
 	{
-		readonly ISerializers _context;
+		readonly ContentModel.Content.ISerializers _context;
 
-		public CircularReferenceEnabledSerialization(ISerializers context) => _context = context;
+		public CircularReferenceEnabledSerialization(ContentModel.Content.ISerializers context) => _context = context;
 
 		public ISerializer Get(TypeInfo parameter) => new Container(_context.Get(parameter));
 
