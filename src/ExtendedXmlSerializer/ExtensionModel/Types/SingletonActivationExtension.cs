@@ -31,9 +31,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		SingletonActivationExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<ISingletonCandidates>(SingletonCandidates.Default)
-			            .RegisterInstance<ISingletonLocator>(SingletonLocator.Default)
-			            .Decorate<IActivators, Activators>();
+			=>
+				parameter /*.RegisterFallback(ContainsSingletonSpecification.Default.IsSatisfiedBy, Activators.Default.New<object>)*/
+					.RegisterInstance<ISingletonCandidates>(SingletonCandidates.Default)
+					.RegisterInstance<ISingletonLocator>(SingletonLocator.Default)
+					.Decorate<IActivators, Activators>();
 
 		public void Execute(IServices parameter) {}
 	}

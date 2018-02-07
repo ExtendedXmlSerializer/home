@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ContentModel
 		readonly IContents _contents;
 		readonly IClassification _classification;
 
-		public RuntimeSerializer(IContents contents, IClassification classification)
+		public RuntimeSerializer(DeferredContents contents, IClassification classification)
 		{
 			_contents = contents;
 			_classification = classification;

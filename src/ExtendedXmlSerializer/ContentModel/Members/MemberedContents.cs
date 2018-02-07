@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			var members = _serializations.Get(Support<T>.Key);
 			var reader = _services.Create(Support<T>.Key, new MemberInnerContentHandler(members, _services, _services));
-			var result = new ContentSerializer<T>(new Serializer(reader, new MemberListWriter(members)).Adapt<T>());
+			var result = new ContentSerializerAdapter<T>(new Serializer(reader, new MemberListWriter(members)).Adapt<T>());
 			return result;
 		}
 	}

@@ -30,8 +30,8 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	{
 		public Arrays(Content.ISerializers serializers, ArrayContents contents) : base(serializers, contents) {}
 
-		public IContentSerializer<T> Get() => new ContentSerializer<T>(Get(Support<T>.Key)
-			                                                               .Adapt<T>());
+		public IContentSerializer<T> Get() => new ContentSerializerAdapter<T>(Get(Support<T>.Key)
+			                                                                      .Adapt<T>());
 	}
 
 	sealed class Arrays : Collections

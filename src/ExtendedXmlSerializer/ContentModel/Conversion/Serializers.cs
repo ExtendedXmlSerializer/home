@@ -24,7 +24,6 @@
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
@@ -56,13 +55,13 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 
 	sealed class Serializers<T> : ISerializers<T>
 	{
-		readonly IConverters _converters;
-		readonly IContentReaders _readers;
-		readonly IContentWriters _writers;
-		readonly Content.ISerializers _fallback;
+		readonly IConverters<T> _converters;
+		readonly Content.IContentReaders<T> _readers;
+		readonly Content.IContentWriters<T> _writers;
+		readonly IContents<T> _fallback;
 
-		public Serializers(IConverters converters, IContentReaders readers, IContentWriters writers,
-		                   Content.ISerializers fallback)
+		public Serializers(IConverters<T> converters, Content.IContentReaders<T> readers, Content.IContentWriters<T> writers,
+		                   DeferredContents<T> fallback)
 		{
 			_converters = converters;
 			_readers = readers;
@@ -72,11 +71,10 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 
 		public IContentSerializer<T> Get()
 		{
-			var converter = _converters.Get(Support<T>.Key);
-			var serializer = converter != null
-				                 ? new Serializer(_readers.Get(converter.Parse), _writers.Get(converter.Format))
-				                 : _fallback.Get(Support<T>.Key);
-			var result = new ContentSerializer<T>(serializer.Adapt<T>());
+			var converter = _converters.Get();
+			var result = converter != null
+				             ? new ContentSerializer<T>(_readers.Get(converter.Parse), _writers.Get(converter.Format))
+				             : _fallback.Get();
 			return result;
 		}
 	}

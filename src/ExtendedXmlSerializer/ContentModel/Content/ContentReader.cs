@@ -39,4 +39,13 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			return result;
 		}
 	}
+
+	sealed class ContentReader<T> : IContentReader<T>
+	{
+		readonly Func<string, T> _parser;
+
+		public ContentReader(Func<string, T> parser) => _parser = parser;
+
+		public T Get(IFormatReader parameter) => _parser(parameter.Content());
+	}
 }

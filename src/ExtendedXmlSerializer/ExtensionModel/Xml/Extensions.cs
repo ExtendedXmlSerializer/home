@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,14 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
@@ -40,6 +32,14 @@ using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -72,8 +72,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			                                           .Register(typeof(TSerializer));
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Type<T>().Register(new ActivatedSerializer(serializerType, Support<T>.Key));
-			        .Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
@@ -111,7 +110,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static MemberInfo GetMember(this IMemberConfiguration @this) => @this.To<ISource<MemberInfo>>()
 		                                                                            .Get();
 
-		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer<T> serializer) =>
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ContentModel.ISerializer<T> serializer) =>
 			Register(@this, serializer.Adapt());
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)

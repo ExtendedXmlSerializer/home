@@ -32,4 +32,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public IWriter Get(Func<object, string> parameter) => new ContentWriter(parameter);
 	}
+
+	sealed class ContentWriters<T> : IContentWriters<T>
+	{
+		public static ContentWriters<T> Default { get; } = new ContentWriters<T>();
+
+
+		public IContentWriter<T> Get(Func<T, string> parameter) => new ContentWriter<T>(parameter);
+	}
 }

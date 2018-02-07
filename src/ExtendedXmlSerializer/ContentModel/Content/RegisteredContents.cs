@@ -54,7 +54,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		{
 			var parameter = Support<T>.Key;
 			var serializer = _serializers.Get(parameter) ?? Activate(parameter);
-			var result = new ContentSerializer<T>(serializer.Adapt<T>());
+			var result = new ContentSerializerAdapter<T>(serializer.Adapt<T>());
 			return result;
 		}
 	}

@@ -32,4 +32,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public IReader Get(Func<string, object> parameter) => new ContentReader(parameter);
 	}
+
+	sealed class ContentReaders<T> : IContentReaders<T>
+	{
+		public static ContentReaders<T> Default { get; } = new ContentReaders<T>();
+
+
+		public IContentReader<T> Get(Func<string, T> parameter) => new ContentReader<T>(parameter);
+	}
 }

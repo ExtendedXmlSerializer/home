@@ -46,10 +46,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			            .RegisterDefinition<ISerializers<object>, Serializers<object>>()
 			            .RegisterDefinition<IReaders<object>, Readers<object>>()
 			            .RegisterDefinition<IWriters<object>, Writers<object>>()
-			            .RegisterDefinition<IContentReaders<object>, ContentReaders<object>>()
-			            .RegisterDefinition<IContentWriters<object>, ContentWriters<object>>()
+			            .RegisterDefinition<ContentModel.IContentReaders<object>, ContentModel.ContentReaders<object>>()
+			            .RegisterDefinition<ContentModel.IContentWriters<object>, ContentModel.ContentWriters<object>>()
 			            .Register<ContentModel.Content.ISerializers, Serializers>()
-			            //.Decorate<ContentModel.Content.ISerializers, NullableAwareSerializers>()
 			            .Decorate<ContentModel.Content.ISerializers, ReferenceAwareSerializers>()
 			            .Decorate<IContents, RecursionAwareContents>();
 

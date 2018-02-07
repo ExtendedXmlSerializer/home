@@ -21,24 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel
 {
-	sealed class DefaultCollections<T> : Collections, IContents<T>
+	sealed class ContentSerializerAdapter<T> : IContentSerializer<T>
 	{
-		public DefaultCollections(Content.ISerializers serializers, CollectionContents contents) :
-			base(serializers, contents) {}
+		readonly ISerializer<T> _serializer;
 
-		public IContentSerializer<T> Get() => new ContentSerializerAdapter<T>(Get(Support<T>.Key)
-			                                                                      .Adapt<T>());
-	}
+		public ContentSerializerAdapter(ISerializer<T> serializer) => _serializer = serializer;
 
+		public T Get(IFormatReader parameter) => _serializer.Get(parameter);
 
-	sealed class DefaultCollections : Collections
-	{
-		public DefaultCollections(Content.ISerializers serializers, CollectionContents contents) :
-			base(serializers, contents) {}
+		public void Execute(Writing<T> parameter)
+		{
+			_serializer.Write(parameter.Writer, parameter.Instance);
+		}
 	}
 }

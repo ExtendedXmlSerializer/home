@@ -26,7 +26,6 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -37,8 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		Contents() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
-			            .Register<IDictionaryEntries, DictionaryEntries>()
+			=> parameter.Register<IDictionaryEntries, DictionaryEntries>()
 			            .Register<IContents, RuntimeContents>()
 			            .DecorateContent<IActivatingTypeSpecification, MemberedContents>()
 			            .DecorateContent<DefaultCollectionSpecification, DefaultCollections>()
@@ -49,6 +47,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .DecorateContent<NullableContents>(IsNullableTypeSpecification.Default)
 			            .DecorateContent<ConverterSpecification, ConverterContents>()
 			            .DecorateContent<RegisteredContentSpecification, RegisteredContents>()
+			            .Register(provider => new DeferredContents(provider.Get<IContents>))
+			            //.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+			            .RegisterDefinition<DeferredContents<object>>()
 			            .RegisterDefinition<IContents<object>, RuntimeContents<object>>()
 			            .RegisterDefinition<AlteredContentSerializers<object, object>>()
 			            .RegisterDefinition<IAlteredContents<object>, AlteredContents<object>>()

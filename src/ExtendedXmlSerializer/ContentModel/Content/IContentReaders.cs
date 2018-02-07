@@ -27,4 +27,6 @@ using ExtendedXmlSerializer.Core.Sources;
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	public interface IContentReaders : IParameterizedSource<Func<string, object>, IReader> {}
+
+	public interface IContentReaders<T> : IParameterizedSource<Func<string, T>, IContentReader<T>> {}
 }

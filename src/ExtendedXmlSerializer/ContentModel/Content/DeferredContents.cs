@@ -23,10 +23,8 @@
 
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ExtensionModel.References
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DeferredContents : IContents
 	{
@@ -40,11 +38,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 	sealed class DeferredContents<T> : IContents<T>
 	{
-		readonly Func<IContents<T>> _contents;
+		readonly Lazy<IContents<T>> _contents;
 
-		public DeferredContents(Func<IContents<T>> contents) => _contents = contents;
+		public DeferredContents(Lazy<IContents<T>> contents) => _contents = contents;
 
-		public IContentSerializer<T> Get() => _contents.Invoke()
+		public IContentSerializer<T> Get() => _contents.Value
 		                                               .Get();
 	}
 }

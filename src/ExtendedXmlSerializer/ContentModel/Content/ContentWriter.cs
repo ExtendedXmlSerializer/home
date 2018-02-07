@@ -33,4 +33,15 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public void Write(IFormatWriter writer, object instance) => writer.Content(_formatter(instance));
 	}
+
+	sealed class ContentWriter<T> : IContentWriter<T>
+	{
+		readonly Func<T, string> _formatter;
+		public ContentWriter(Func<T, string> formatter) => _formatter = formatter;
+
+		public void Execute(Writing<T> parameter)
+		{
+			parameter.Writer.Content(_formatter(parameter.Instance));
+		}
+	}
 }
