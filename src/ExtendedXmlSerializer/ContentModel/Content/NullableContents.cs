@@ -21,26 +21,58 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
+using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
+	sealed class NullableContents<T> : IContents<T>
+	{
+		readonly ISource<IContentSerializer<T>> _source;
+
+		public NullableContents(IAlteredContents<T> contents) : this(AccountForNullableAlteration.Default, contents) {}
+
+		public NullableContents(IAlteration<TypeInfo> alteration, IAlteredContents<T> contents)
+			: this(contents.Fix(ImmutableArray.Create(typeof(T).GetTypeInfo(), alteration.Get(Support<T>.Key)))) {}
+
+		public NullableContents(ISource<IContentSerializer<T>> source) => _source = source;
+
+		public IContentSerializer<T> Get() => new Serializer(_source.Get());
+
+
+		sealed class Serializer : IContentSerializer<T>
+		{
+			readonly IContentSerializer<T> _serializer;
+
+			public Serializer(IContentSerializer<T> serializer) => _serializer = serializer;
+
+			public T Get(IFormatReader parameter) =>
+				parameter.IsSatisfiedBy(NullValueIdentity.Default) ? default(T) : _serializer.Get(parameter);
+
+			public void Execute(Writing<T> parameter)
+			{
+				if (parameter.Instance == null)
+				{
+					parameter.Writer.Content(null);
+				}
+				else
+				{
+					_serializer.Execute(parameter);
+				}
+			}
+		}
+	}
+
+
 	sealed class NullableContents : DelegatedSource<TypeInfo, ISerializer>, IContents
 	{
 		[UsedImplicitly]
-		public NullableContents(ConverterContents converters) : base(converters.In(Alteration.Default)
+		public NullableContents(ConverterContents converters) : base(converters.In(AccountForNullableAlteration.Default)
 		                                                                       .Get) {}
-
-		sealed class Alteration : IAlteration<TypeInfo>
-		{
-			public static Alteration Default { get; } = new Alteration();
-			Alteration() {}
-
-			public TypeInfo Get(TypeInfo parameter) => parameter.AccountForNullable();
-		}
 	}
 }

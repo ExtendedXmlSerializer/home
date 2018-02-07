@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,12 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
+	sealed class ContentWriterAdapter<T> : IWriter<T>
+	{
+		readonly IContentWriter<T> _writer;
 
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+		public ContentWriterAdapter(IContentWriter<T> writer) => _writer = writer;
+
+		public void Write(IFormatWriter writer, T instance)
+		{
+			_writer.Execute(new Writing<T>(writer, instance));
+		}
+	}
 }

@@ -36,6 +36,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			_contents = contents;
 		}
 
-		public IContentWriter<T> Get() => new EnclosureContent<T>(_elements.Get(), _contents.Get());
+		public IContentWriter<T> Get() => new Enclosure<T>(_elements.Get(), _contents.Get());
 	}
 }

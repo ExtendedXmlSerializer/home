@@ -28,6 +28,41 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
+	sealed class DictionaryContents<T> : IContents<T>
+	{
+		readonly IMemberSerializations _serializations;
+		readonly IDictionaryEnumerators _enumerators;
+		readonly IDictionaryEntries _entries;
+		readonly IInnerContentServices _contents;
+
+		public DictionaryContents(IMemberSerializations serializations, IDictionaryEnumerators enumerators,
+		                          IDictionaryEntries entries, IInnerContentServices contents)
+		{
+			_serializations = serializations;
+			_enumerators = enumerators;
+			_entries = entries;
+			_contents = contents;
+		}
+
+		public IContentSerializer<T> Get()
+		{
+			var typeInfo = Support<T>.Key;
+			var members = _serializations.Get(typeInfo);
+			var entry = _entries.Get(typeInfo);
+
+			var handler = new CollectionWithMembersInnerContentHandler(_contents,
+			                                                           new MemberInnerContentHandler(members, _contents,
+			                                                                                         _contents),
+			                                                           new CollectionInnerContentHandler(entry, _contents));
+			var reader = _contents.Create(typeInfo, handler);
+			var writer =
+				new MemberedCollectionWriter(new MemberListWriter(members), new EnumerableWriter(_enumerators, entry).Adapt());
+			var result = new ContentSerializer<T>(new Serializer(reader, writer).Adapt<T>());
+			return result;
+		}
+	}
+
+
 	sealed class DictionaryContents : IContents
 	{
 		readonly IMemberSerializations _serializations;

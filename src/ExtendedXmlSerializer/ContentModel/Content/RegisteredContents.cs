@@ -21,12 +21,45 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
+	sealed class RegisteredContents<T> : IContents<T>
+	{
+		readonly IActivators _activators;
+		readonly ITypedTable<ISerializer> _serializers;
+
+		public RegisteredContents(IActivators activators, ICustomSerializers serializers)
+		{
+			_activators = activators;
+			_serializers = serializers;
+		}
+
+
+		ISerializer Activate(TypeInfo parameter)
+		{
+			var typeInfo = parameter.GetCustomAttribute<ContentSerializerAttribute>()
+			                        .SerializerType.GetTypeInfo();
+			var instance = _activators.Get(typeInfo)
+			                          .Get();
+			var result = instance as ISerializer ?? GenericSerializers.Default.Get(parameter)
+			                                                          .Invoke(instance);
+			return result;
+		}
+
+		public IContentSerializer<T> Get()
+		{
+			var parameter = Support<T>.Key;
+			var serializer = _serializers.Get(parameter) ?? Activate(parameter);
+			var result = new ContentSerializer<T>(serializer.Adapt<T>());
+			return result;
+		}
+	}
+
+
 	sealed class RegisteredContents : IContents
 	{
 		readonly IActivators _activators;

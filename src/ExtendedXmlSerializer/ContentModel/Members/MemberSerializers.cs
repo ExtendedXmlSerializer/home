@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		{
 			var body = _content.Get(profile);
 			var start = new Identity<object>(profile).Adapt();
-			var writer = Wrap(alteration, access, new Enclosure(start, body));
+			var writer = Wrap(alteration, access, new Body(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}

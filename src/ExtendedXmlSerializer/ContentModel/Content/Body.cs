@@ -21,12 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Format;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
+	sealed class Body : Body<object>
+	{
+		public Body(IWriter<object> start, IWriter<object> body) : base(start, body) {}
+	}
 
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+	class Body<T> : IWriter<T>
+	{
+		readonly IWriter<T> _start;
+		readonly IWriter<T> _body;
+		readonly IWriter<T> _finish;
+
+		public Body(IWriter<T> start, IWriter<T> body) : this(start, body, EndCurrentElement<T>.Default) {}
+
+		public Body(IWriter<T> start, IWriter<T> body, IWriter<T> finish)
+		{
+			_start = start;
+			_body = body;
+			_finish = finish;
+		}
+
+		public void Write(IFormatWriter writer, T instance)
+		{
+			_start.Write(writer, instance);
+			_body.Write(writer, instance);
+			_finish.Write(writer, instance);
+		}
+	}
 }

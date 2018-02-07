@@ -22,11 +22,13 @@
 // SOFTWARE.
 
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
-
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+	sealed class ReflectionRegistration<T> : ConditionalContents<T>
+	{
+		public ReflectionRegistration(ReflectionSerializers source, IContents<T> fallback)
+			: base(ReflectionContentSpecification.Default, source.Adapt<MemberInfo, T>(), fallback) {}
+	}
 }

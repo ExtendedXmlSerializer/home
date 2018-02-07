@@ -45,17 +45,17 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly IInnerContentServices _contents;
 		readonly IMembers _members;
 		readonly IMemberSerializers _serializers;
-		readonly IWriter _element;
+		readonly IContentWriter<DictionaryEntry> _element;
 		readonly IDictionaryPairTypesLocator _locator;
 
 		[UsedImplicitly]
-		public DictionaryEntries(IInnerContentServices contents, Elements elements, IMembers members,
+		public DictionaryEntries(IInnerContentServices contents, Elements<DictionaryEntry> elements, IMembers members,
 		                         IMemberSerializers serializers)
-			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, elements.Get(Type), Pairs) {}
+			: this(MemberSerializationBuilder.Default.Get, contents, serializers, members, elements.Get(), Pairs) {}
 
 		public DictionaryEntries(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder,
 		                         IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
-		                         IWriter element, IDictionaryPairTypesLocator locator)
+		                         IContentWriter<DictionaryEntry> element, IDictionaryPairTypesLocator locator)
 		{
 			_builder = builder;
 			_contents = contents;
@@ -77,7 +77,8 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
-			var result = new Container(_element, converter);
+			var result = new Container<DictionaryEntry>(new ContentWriterAdapter<DictionaryEntry>(_element),
+			                                            converter.Adapt<DictionaryEntry>()).Adapt();
 			return result;
 		}
 	}

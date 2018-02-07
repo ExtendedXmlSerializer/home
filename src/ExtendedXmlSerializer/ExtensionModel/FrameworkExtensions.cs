@@ -21,15 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	static class FrameworkExtensions
 	{
+		public static IServiceRepository RegisterDefinition<T>(this IServiceRepository @this)
+		{
+			var to = typeof(T).GetGenericTypeDefinition();
+			return @this.Register(to)
+			            .RegisterDependencies(to);
+		}
+
+		public static IServiceRepository RegisterDefinition<TFrom, TTo>(this IServiceRepository @this) where TTo : TFrom
+		{
+			var to = typeof(TTo).GetGenericTypeDefinition();
+			return @this.Register(to)
+			            .Register(typeof(TFrom).GetGenericTypeDefinition(), to)
+			            .RegisterDependencies(to);
+		}
+
+		public static IServiceRepository DecorateDefinition<TFrom, TTo>(this IServiceRepository @this) where TTo : TFrom
+		{
+			var to = typeof(TTo).GetGenericTypeDefinition();
+			return @this.Register(to)
+			            .Decorate(typeof(TFrom).GetGenericTypeDefinition(), to)
+			            .RegisterDependencies(to);
+		}
+
 		public static IServiceRepository RegisterWithDependencies<T>(this IServiceRepository @this)
 			=> @this.Register<T>()
 			        .RegisterDependencies(typeof(T));
@@ -41,7 +64,11 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static IServiceRepository RegisterDependencies(this IServiceRepository @this, Type type)
 			=> Constructors.Default.Get(type)
 			               .SelectMany(x => x.GetParameters()
-			                                 .Select(y => y.ParameterType))
+			                                 .Select(y => y.ParameterType)
+			                                 .Select(y => type.IsGenericTypeDefinition && y.IsConstructedGenericType &&
+			                                              !y.IsGenericTypeDefinition
+				                                              ? y.GetGenericTypeDefinition()
+				                                              : y))
 			               .Where(x => x.IsClass && !@this.AvailableServices.Contains(x))
 			               .Aggregate(@this, (repository, t) => repository.Register(t)
 			                                                              .RegisterDependencies(t));

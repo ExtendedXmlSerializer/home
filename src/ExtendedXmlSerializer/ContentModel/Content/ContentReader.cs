@@ -32,6 +32,11 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public ContentReader(Func<string, object> parser) => _parser = parser;
 
-		public object Get(IFormatReader parameter) => _parser(parameter.Content());
+		public object Get(IFormatReader parameter)
+		{
+			var content = parameter.Content();
+			var result = content != null ? _parser(content) : null;
+			return result;
+		}
 	}
 }

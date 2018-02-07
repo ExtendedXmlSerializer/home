@@ -21,42 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class Enclosure : Enclosure<object>
+	sealed class Enclosure<T> : IContentWriter<T>
 	{
-		public Enclosure(IWriter<object> start, IWriter<object> body) : base(start, body) {}
-	}
+		readonly IContentWriter<T> _start;
+		readonly IContentWriter<T> _body;
+		readonly IContentWriter<T> _finish;
 
-	class Enclosure<T> : IContentWriter<T>, IWriter<T>
-	{
-		readonly IWriter<T> _start;
-		readonly IWriter<T> _body;
-		readonly IWriter<T> _finish;
+		public Enclosure(IContentWriter<T> start, IContentWriter<T> body) : this(start, body,
+		                                                                         EndCurrentElement<T>.Default) {}
 
-		public Enclosure(IWriter<T> start, IWriter<T> body) : this(start, body, EndCurrentElement<T>.Default) {}
-
-		public Enclosure(IWriter<T> start, IWriter<T> body, IWriter<T> finish)
+		public Enclosure(IContentWriter<T> start, IContentWriter<T> body, IContentWriter<T> finish)
 		{
 			_start = start;
 			_body = body;
 			_finish = finish;
 		}
 
-		public void Write(IFormatWriter writer, T instance)
-		{
-			_start.Write(writer, instance);
-			_body.Write(writer, instance);
-			_finish.Write(writer, instance);
-		}
-
 		public void Execute(Writing<T> parameter)
 		{
-			_start.Write(parameter.Writer, parameter.Instance);
-			_body.Write(parameter.Writer, parameter.Instance);
-			_finish.Write(parameter.Writer, parameter.Instance);
+			_start.Execute(parameter);
+			_body.Execute(parameter);
+			_finish.Execute(parameter);
 		}
 	}
 }

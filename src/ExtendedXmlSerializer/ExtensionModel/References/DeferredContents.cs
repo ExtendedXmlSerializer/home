@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
 using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -36,5 +36,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		public ISerializer Get(TypeInfo parameter) => _contents()
 			.Get(parameter);
+	}
+
+	sealed class DeferredContents<T> : IContents<T>
+	{
+		readonly Func<IContents<T>> _contents;
+
+		public DeferredContents(Func<IContents<T>> contents) => _contents = contents;
+
+		public IContentSerializer<T> Get() => _contents.Invoke()
+		                                               .Get();
 	}
 }

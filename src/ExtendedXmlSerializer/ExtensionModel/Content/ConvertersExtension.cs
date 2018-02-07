@@ -42,6 +42,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Register<IConverters, Converters>()
 			            .Decorate<IConverters, EnumerationConverters>()
 			            .Register<ContentModel.Conversion.ISerializers, Serializers>()
+			            .RegisterDefinition<ContentModel.Conversion.ISerializers<object>,
+				            ContentModel.Conversion.Serializers<object>>()
 			            .Register<ConverterContents>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

@@ -22,25 +22,12 @@
 // SOFTWARE.
 
 using System;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class Contents<T> : IContents<T>
+	sealed class AlteredContents<T> : GenericSource<IContentSerializer<T>>, IAlteredContents<T>
 	{
-		readonly Func<ISerializer> _source;
-
-		public Contents(IContents element) : this(element.Fix(Support<T>.Key)
-		                                                 .ToDelegate()) {}
-
-		public Contents(Func<ISerializer> source) => _source = source;
-
-		public ISerializer<T> Get()
-		{
-			var writer = _source();
-			var result = writer as ISerializer<T> ?? writer.Adapt<T>();
-			return result;
-		}
+		public AlteredContents(IServiceProvider provider) : base(provider, typeof(AlteredContentSerializers<,>)) {}
 	}
 }

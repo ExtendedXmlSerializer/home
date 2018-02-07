@@ -31,4 +31,12 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public TResult Get(TParameter parameter) => _source.Get(parameter);
 	}
+
+	class DecoratedSource<T> : ISource<T>
+	{
+		readonly ISource<T> _source;
+		public DecoratedSource(ISource<T> source) => _source = source;
+
+		public T Get() => _source.Get();
+	}
 }

@@ -38,17 +38,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterConstructorDependency<IContents>((provider, info) => provider.Get<DeferredContents>())
+			            .Register<IDictionaryEntries, DictionaryEntries>()
 			            .Register<IContents, RuntimeContents>()
 			            .DecorateContent<IActivatingTypeSpecification, MemberedContents>()
 			            .DecorateContent<DefaultCollectionSpecification, DefaultCollections>()
-			            .Register<IDictionaryEntries, DictionaryEntries>()
 			            .DecorateContent<DictionaryContentSpecification, DictionaryContents>()
 			            .DecorateContent<Arrays>(ArraySpecification.Default)
 			            .RegisterInstance(ReflectionSerializer.Default)
 			            .DecorateContent<ReflectionContents>(ReflectionContentSpecification.Default)
 			            .DecorateContent<NullableContents>(IsNullableTypeSpecification.Default)
 			            .DecorateContent<ConverterSpecification, ConverterContents>()
-			            .DecorateContent<RegisteredContentSpecification, RegisteredContents>();
+			            .DecorateContent<RegisteredContentSpecification, RegisteredContents>()
+			            .RegisterDefinition<IContents<object>, RuntimeContents<object>>()
+			            .RegisterDefinition<AlteredContentSerializers<object, object>>()
+			            .RegisterDefinition<IAlteredContents<object>, AlteredContents<object>>()
+			            .Decorate<MemberedContentsRegistration<object>>()
+			            .Decorate<CollectionsRegistration<object>>()
+			            .Decorate<DictionaryRegistration<object>>()
+			            .Decorate<ArrayContentsRegistration<object>>()
+			            .Decorate<ReflectionRegistration<object>>()
+			            .Decorate<NullableRegistration<object>>()
+			            .Decorate<ConverterContentsRegistration<object>>()
+			            .Decorate<RegisteredRegistration<object>>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

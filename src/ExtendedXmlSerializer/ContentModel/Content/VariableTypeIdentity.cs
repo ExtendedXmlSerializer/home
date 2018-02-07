@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using VariableTypeSpecification = ExtendedXmlSerializer.ContentModel.Reflection.VariableTypeSpecification;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
@@ -48,7 +49,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public void Write(IFormatWriter writer, T instance)
 		{
-			var type = instance.GetType();
+			var type = instance?.GetType() ?? Support<T>.Key;
 			if (_specification.IsSatisfiedBy(type))
 			{
 				writer.Start(_identities.Get(type.GetTypeInfo()));

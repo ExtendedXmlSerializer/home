@@ -31,6 +31,6 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public ContentReaders(IContents<T> contents) => _contents = contents;
 
-		public IContentReader<T> Get() => new ContentReader<T>(_contents.Get());
+		public IContentReader<T> Get() => _contents.Get();
 	}
 }

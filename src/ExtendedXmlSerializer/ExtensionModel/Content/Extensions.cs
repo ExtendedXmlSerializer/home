@@ -21,6 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
@@ -29,9 +32,6 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -45,6 +45,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IServiceRepository Decorate(this IServiceRepository @this, Type from, Type to, Type other)
 			=> @this.Register(other)
 			        .Decorate(from, to);
+
+		public static IServiceRepository Decorate<T>(this IServiceRepository @this) where T : IContents<object>
+		{
+			var to = typeof(T).GetGenericTypeDefinition();
+			return @this.Register(to)
+			            .Decorate(typeof(IContents<>), to)
+			            .RegisterDependencies(to);
+		}
 
 		public static IServiceRepository DecorateContent<TSpecification, T>(this IServiceRepository @this)
 			where TSpecification : ISpecification<TypeInfo>

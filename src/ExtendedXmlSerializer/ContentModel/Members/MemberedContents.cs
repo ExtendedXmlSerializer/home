@@ -21,11 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Content;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
+	sealed class MemberedContents<T> : IContents<T>
+	{
+		readonly IMemberSerializations _serializations;
+		readonly IInnerContentServices _services;
+
+		public MemberedContents(IMemberSerializations serializations, IInnerContentServices services)
+		{
+			_serializations = serializations;
+			_services = services;
+		}
+
+		public IContentSerializer<T> Get()
+		{
+			var members = _serializations.Get(Support<T>.Key);
+			var reader = _services.Create(Support<T>.Key, new MemberInnerContentHandler(members, _services, _services));
+			var result = new ContentSerializer<T>(new Serializer(reader, new MemberListWriter(members)).Adapt<T>());
+			return result;
+		}
+	}
+
+
 	sealed class MemberedContents : IContents
 	{
 		readonly IMemberSerializations _serializations;

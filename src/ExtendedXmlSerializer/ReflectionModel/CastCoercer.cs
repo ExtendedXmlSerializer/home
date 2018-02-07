@@ -21,12 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
+	sealed class CastCoercer<TFrom, TTo> : IParameterizedSource<TFrom, TTo>
+	{
+		public static CastCoercer<TFrom, TTo> Default { get; } = new CastCoercer<TFrom, TTo>();
+		CastCoercer() {}
 
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+		public TTo Get(TFrom parameter) => parameter.To<TTo>();
+	}
 }

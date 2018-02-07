@@ -22,12 +22,13 @@
 // SOFTWARE.
 
 using System;
+using System.Collections.Immutable;
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	class GenericSource<T> : IParameterizedSource<TypeInfo, T>
+	class GenericSource<T> : IParameterizedSource<ImmutableArray<TypeInfo>, T>
 	{
 		readonly IGeneric<ISource<T>> _generic;
 
@@ -36,8 +37,10 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public GenericSource(IGeneric<ISource<T>> generic) => _generic = generic;
 
-		public T Get(TypeInfo parameter) => _generic.Get(parameter)
-		                                            .Invoke()
-		                                            .Get();
+		public T Get(ImmutableArray<TypeInfo> parameter) => _generic.Get(parameter)
+		                                                            .Invoke()
+		                                                            .Get();
+
+		public T Get(TypeInfo parameter) => Get(ImmutableArray.Create(parameter));
 	}
 }

@@ -23,6 +23,7 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer
 {
@@ -39,8 +40,8 @@ namespace ExtendedXmlSerializer
 
 		public void Execute(Writing<T> parameter)
 		{
-			_serializers.Get(parameter.Instance.GetType()
-			                          .GetTypeInfo())
+			_serializers.Get(parameter.Instance?.GetType()
+			                          .GetTypeInfo() ?? Support<T>.Key)
 			            .Write(_writers.Get(parameter.Writer), parameter.Instance);
 		}
 	}

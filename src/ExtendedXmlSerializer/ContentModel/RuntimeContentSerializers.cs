@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using System;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
-
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+	sealed class RuntimeContentSerializers<T> : GenericSource<IContentSerializer<T>>, IRuntimeContentSerializers<T>
+	{
+		public RuntimeContentSerializers(IServiceProvider provider) :
+			base(provider, typeof(RuntimeContentSerializerSource<>)) {}
+	}
 }

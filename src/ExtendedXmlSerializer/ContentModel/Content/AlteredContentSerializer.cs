@@ -21,12 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
+	sealed class AlteredContentSerializer<TFrom, TTo> : IContentSerializer<TFrom>
+	{
+		readonly IContentSerializer<TTo> _serializer;
+		readonly IParameterizedSource<TTo, TFrom> _from;
+		readonly IParameterizedSource<TFrom, TTo> _to;
 
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+		public AlteredContentSerializer(IContentSerializer<TTo> serializer, IParameterizedSource<TTo, TFrom> from,
+		                                IParameterizedSource<TFrom, TTo> to)
+		{
+			_serializer = serializer;
+			_from = from;
+			_to = to;
+		}
+
+		public TFrom Get(IFormatReader parameter) => _from.Get(_serializer.Get(parameter));
+
+		public void Execute(Writing<TFrom> parameter)
+		{
+			_serializer.Execute(new Writing<TTo>(parameter.Writer, _to.Get(parameter.Instance)));
+		}
+	}
 }

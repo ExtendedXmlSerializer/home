@@ -24,9 +24,10 @@
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
-
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+	sealed class ReflectionSerializers : FixedInstanceSource<IContentSerializer<MemberInfo>>, IContents<MemberInfo>
+	{
+		public ReflectionSerializers(ReflectionSerializer serializer) : base(serializer) {}
+	}
 }

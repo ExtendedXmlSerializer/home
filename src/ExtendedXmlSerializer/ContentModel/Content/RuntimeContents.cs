@@ -21,11 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
 using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
+	sealed class RuntimeContents<T> : FixedInstanceSource<IContentSerializer<T>>, IContents<T>
+	{
+		public RuntimeContents(IContentSerializer<T> instance) : base(instance) {}
+	}
+
+	[UsedImplicitly]
 	sealed class RuntimeContents : FixedInstanceSource<TypeInfo, ISerializer>, IContents
 	{
 		public RuntimeContents(ISerializer instance) : base(instance) {}

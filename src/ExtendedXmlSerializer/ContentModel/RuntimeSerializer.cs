@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
-using System;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
@@ -64,5 +64,29 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		public object Get(IFormatReader reader) => Serializer(_classification.Get(reader))
 			.Get(reader);
+	}
+
+	[UsedImplicitly]
+	sealed class RuntimeSerializer<T> : IContentSerializer<T>
+	{
+		readonly IRuntimeContentSerializers<T> _contents;
+		readonly IClassification _classification;
+
+		public RuntimeSerializer(IRuntimeContentSerializers<T> contents, IClassification classification)
+		{
+			_contents = contents;
+			_classification = classification;
+		}
+
+		public T Get(IFormatReader parameter) => _contents.Get(_classification.Get(parameter))
+		                                                  .Get(parameter);
+
+		public void Execute(Writing<T> parameter)
+		{
+			var typeInfo = parameter.Instance.GetType()
+			                        .GetTypeInfo();
+			var serializer = _contents.Get(typeInfo);
+			serializer.Execute(parameter);
+		}
 	}
 }

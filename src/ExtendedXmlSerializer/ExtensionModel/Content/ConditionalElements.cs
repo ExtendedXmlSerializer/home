@@ -21,18 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
 	class ConditionalElements<T> : ConditionalSource<IContentWriter<T>>, IElements<T>
 	{
 		public ConditionalElements(ISpecification<TypeInfo> specification, IElements<T> source, IElements<T> fallback)
+			: base(specification, Support<T>.Key, source, fallback) {}
+	}
+
+	class ConditionalContents<T> : ConditionalSource<IContentSerializer<T>>, IContents<T>
+	{
+		public ConditionalContents(ISpecification<TypeInfo> specification, IContents<T> source, IContents<T> fallback)
 			: base(specification, Support<T>.Key, source, fallback) {}
 	}
 }

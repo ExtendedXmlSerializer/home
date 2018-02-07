@@ -21,12 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.ContentModel.Content;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
-
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+	sealed class CollectionsRegistration<T> : ConditionalContents<T>
+	{
+		public CollectionsRegistration(DefaultCollectionSpecification specification, DefaultCollections<T> source,
+		                               IContents<T> fallback)
+			: base(specification, source, fallback) {}
+	}
 }

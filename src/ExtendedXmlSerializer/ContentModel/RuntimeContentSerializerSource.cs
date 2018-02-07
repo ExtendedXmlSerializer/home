@@ -21,12 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+using System;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel
 {
-	interface ISerializers : IParameterizedSource<TypeInfo, ISerializer> {}
+	sealed class RuntimeContentSerializerSource<T> : ISource<IContentSerializer<T>>
+	{
+		readonly IContents<T> _contents;
 
-	interface ISerializers<T> : ISource<IContentSerializer<T>> {}
+		public RuntimeContentSerializerSource(IContents<T> contents) => _contents = contents;
+
+		public IContentSerializer<T> Get()
+		{
+			var serializer = _contents.Get();
+			if (serializer is RuntimeSerializer<T>)
+			{
+				throw new InvalidOperationException(
+				                                    $"The serializer for type '{typeof(T)}' could not be found.  Please ensure that the type is a valid type can be activated.  The default behavior requires an empty public constructor on the (non-abstract) class to activate.");
+			}
+
+			return serializer;
+		}
+	}
 }

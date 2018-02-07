@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class ReflectionSerializer : ISerializer<MemberInfo>
+	sealed class ReflectionSerializer : ISerializer<MemberInfo>, IContentSerializer<MemberInfo>
 	{
 		public static ReflectionSerializer Default { get; } = new ReflectionSerializer();
 		ReflectionSerializer() {}
@@ -34,5 +34,10 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		public MemberInfo Get(IFormatReader parameter) => parameter.Get(parameter.Content());
 
 		public void Write(IFormatWriter writer, MemberInfo instance) => writer.Content(writer.Get(instance));
+
+		public void Execute(Writing<MemberInfo> parameter)
+		{
+			parameter.Writer.Content(parameter.Writer.Get(parameter.Instance));
+		}
 	}
 }
