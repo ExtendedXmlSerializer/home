@@ -21,32 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
+	public sealed class AlterationAdapter<T> : IAlteration<object>
 	{
-		readonly IDictionary<TKey, TValue> _store;
+		readonly IAlteration<T> _alteration;
 
-		public TableSource() : this(new Dictionary<TKey, TValue>()) {}
-
-		public TableSource(IEqualityComparer<TKey> comparer) : this(new Dictionary<TKey, TValue>(comparer)) {}
-
-		public TableSource(IDictionary<TKey, TValue> store)
+		public AlterationAdapter(IAlteration<T> alteration)
 		{
-			_store = store;
+			_alteration = alteration;
 		}
 
-		public bool IsSatisfiedBy(TKey parameter) => _store.ContainsKey(parameter);
-
-		public virtual TValue Get(TKey parameter)
-		{
-			TValue result;
-			return _store.TryGetValue(parameter, out result) ? result : default(TValue);
-		}
-
-		public void Assign(TKey key, TValue value) => _store[key] = value;
-		public bool Remove(TKey key) => _store.Remove(key);
+		public object Get(object parameter) => _alteration.Get(parameter.To<T>());
 	}
 }

@@ -21,32 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	public class TableSource<TKey, TValue> : ITableSource<TKey, TValue>
+	// ATTRIBUTION: https://stackoverflow.com/a/961504/3602057
+	public sealed class ValidContentCharacters : IAlteration<string>
 	{
-		readonly IDictionary<TKey, TValue> _store;
+		public static ValidContentCharacters Default { get; } = new ValidContentCharacters();
 
-		public TableSource() : this(new Dictionary<TKey, TValue>()) {}
+		ValidContentCharacters()
+			: this(new
+				       Regex(@"(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\uFEFF\uFFFE\uFFFF]",
+				             RegexOptions.Compiled)) {}
 
-		public TableSource(IEqualityComparer<TKey> comparer) : this(new Dictionary<TKey, TValue>(comparer)) {}
+		readonly Regex _expression;
 
-		public TableSource(IDictionary<TKey, TValue> store)
-		{
-			_store = store;
-		}
+		public ValidContentCharacters(Regex expression) => _expression = expression;
 
-		public bool IsSatisfiedBy(TKey parameter) => _store.ContainsKey(parameter);
-
-		public virtual TValue Get(TKey parameter)
-		{
-			TValue result;
-			return _store.TryGetValue(parameter, out result) ? result : default(TValue);
-		}
-
-		public void Assign(TKey key, TValue value) => _store[key] = value;
-		public bool Remove(TKey key) => _store.Remove(key);
+		public string Get(string parameter) =>
+			string.IsNullOrEmpty(parameter) ? string.Empty : _expression.Replace(parameter, string.Empty);
 	}
 }
