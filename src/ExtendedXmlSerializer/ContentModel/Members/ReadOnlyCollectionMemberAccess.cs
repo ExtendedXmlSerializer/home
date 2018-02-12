@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.Core.Specifications;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -50,4 +51,36 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			}
 		}
 	}
+
+	class ReadOnlyCollectionMemberAccess<T, TMember> : DecoratedSpecification<TMember>, IMemberAccess<T, TMember>
+	{
+		readonly IMemberAccess<T, TMember> _access;
+
+		public ReadOnlyCollectionMemberAccess(IMemberAccess<T, TMember> access) : base(access) => _access = access;
+
+		public TMember Get(T instance)
+		{
+			var current = _access.Get(instance);
+			var list = Lists.Default.Get(current);
+			var result = list.Count > 0 ? current : default(TMember);
+			return result;
+		}
+
+		public void Assign(T instance, TMember value)
+		{
+/*
+			var collection = _access.Get(instance);
+			foreach (var element in value)
+			{
+				_access.Assign(collection, element);
+			}
+*/
+		}
+
+		public void Execute(KeyValuePair<T, TMember> parameter)
+		{
+			throw new System.NotImplementedException();
+		}
+	}
+
 }

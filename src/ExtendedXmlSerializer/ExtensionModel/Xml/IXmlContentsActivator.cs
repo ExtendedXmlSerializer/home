@@ -30,4 +30,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	{
 		IInnerContent Create(IFormatReader reader, object instance, XmlContent content);
 	}
+
+	/*interface IXmlContentsActivator<out T> : IContentReader<IInnerContent<T>>
+	{
+		//IInnerContent<T> Create(IFormatReader reader, T instance, XmlContent content);
+	}*/
+
 }

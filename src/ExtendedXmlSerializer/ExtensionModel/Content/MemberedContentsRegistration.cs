@@ -27,7 +27,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class MemberedContentsRegistration<T> : ConditionalContents<T>
+	sealed class MemberedContentsRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public MemberedContentsRegistration(IActivatingTypeSpecification specification, MemberedContents<T> source,
 		                                    IContents<T> fallback)

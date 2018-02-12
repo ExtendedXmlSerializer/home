@@ -25,6 +25,7 @@ using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {

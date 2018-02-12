@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -30,4 +30,10 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public Activator(Func<object> source) : base(source) {}
 	}
+
+	sealed class Activator<T> : DelegatedSource<T>, IActivator<T>
+	{
+		public Activator(Func<T> source) : base(source) { }
+	}
+
 }

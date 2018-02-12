@@ -45,5 +45,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		public T Get(IFormatReader parameter) => _serializer.Get(parameter);
 
 		public void Write(IFormatWriter writer, T instance) => _serializer.Write(writer, instance);
+		
+		public void Execute(Writing<T> parameter)
+		{
+			_serializer.Write(parameter.Writer, parameter.Instance);
+		}
 	}
 }

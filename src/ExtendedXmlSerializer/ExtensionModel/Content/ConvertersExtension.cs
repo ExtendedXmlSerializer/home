@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -49,4 +51,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
+
+sealed class Singleton<T> : ISource<T>
+{
+	public static Singleton<T> Default { get; } = new Singleton<T>();
+	Singleton() {}
+
+	public T Get() => default(T);
+}
 }

@@ -30,6 +30,7 @@ using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 #if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
 namespace System.Runtime.Serialization

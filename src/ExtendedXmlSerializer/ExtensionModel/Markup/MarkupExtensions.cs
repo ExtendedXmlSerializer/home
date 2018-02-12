@@ -33,12 +33,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 	                                IMarkupExtensions
 	{
 		readonly IEvaluator _evaluator;
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
 		readonly System.IServiceProvider _provider;
 
-		public MarkupExtensions(IEvaluator evaluator, ITypeMembers members, IMemberAccessors accessors,
+		public MarkupExtensions(IEvaluator evaluator, IContentMembers members, IMemberAccessors accessors,
 		                        IConstructors constructors, System.IServiceProvider provider)
 		{
 			_evaluator = evaluator;

@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
 using ExtendedXmlSerializer.ExtensionModel.Expressions;
@@ -36,7 +37,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Parsing;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
@@ -48,21 +48,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 
 		readonly IParser<MemberInfo> _parser;
 		readonly IEvaluator _evaluator;
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly IMemberAccessors _accessors;
 		readonly IConstructors _constructors;
-		readonly System.IServiceProvider _provider;
+		readonly IServiceProvider _provider;
 		readonly IFormatter<TypeParts> _formatter;
 		readonly object[] _services;
 
-		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
+		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, IContentMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
-		                                     System.IServiceProvider provider, params object[] services)
+		                                     IServiceProvider provider, params object[] services)
 			: this(parser, evaluator, members, accessors, constructors, provider, TypePartsFormatter.Default, services) {}
 
-		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
+		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, IContentMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
-		                                     System.IServiceProvider provider, IFormatter<TypeParts> formatter,
+		                                     IServiceProvider provider, IFormatter<TypeParts> formatter,
 		                                     params object[] services)
 		{
 			_parser = parser;
@@ -213,14 +213,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			}
 		}
 
-		sealed class Provider : System.IServiceProvider
+		sealed class Provider : IServiceProvider
 		{
-			readonly System.IServiceProvider _provider, _services;
+			readonly IServiceProvider _provider, _services;
 
-			public Provider(System.IServiceProvider provider, params object[] services)
+			public Provider(IServiceProvider provider, params object[] services)
 				: this(provider, new ServiceProvider(services)) {}
 
-			public Provider(System.IServiceProvider provider, System.IServiceProvider services)
+			public Provider(IServiceProvider provider, IServiceProvider services)
 			{
 				_provider = provider;
 				_services = services;

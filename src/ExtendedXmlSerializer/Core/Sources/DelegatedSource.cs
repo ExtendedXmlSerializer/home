@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public T Get() => _source();
 	}
 
-	class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public class DelegatedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly Func<TParameter, TResult> _source;
 

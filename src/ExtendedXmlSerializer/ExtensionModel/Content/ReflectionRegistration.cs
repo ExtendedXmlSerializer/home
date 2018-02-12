@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ReflectionRegistration<T> : ConditionalContents<T>
+	sealed class ReflectionRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public ReflectionRegistration(ReflectionSerializers source, IContents<T> fallback)
 			: base(ReflectionContentSpecification.Default, source.Adapt<MemberInfo, T>(), fallback) {}

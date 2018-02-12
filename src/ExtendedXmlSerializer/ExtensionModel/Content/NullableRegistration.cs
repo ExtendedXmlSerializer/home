@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class NullableRegistration<T> : ConditionalContents<T>
+	sealed class NullableRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public NullableRegistration(NullableContents<T> source, IContents<T> fallback)
 			: base(IsNullableTypeSpecification.Default, source, fallback) {}

@@ -29,4 +29,20 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		void Handle(IInnerContent contents, IMemberSerializer member);
 	}
+
+	/*interface IMemberHandler<T> : ICommand<MemberContent<T>> {}
+
+	struct MemberContent<T>
+	{
+		public MemberContent(IInnerContent<T> contents, IMemberSerializer<T> member)
+		{
+			Contents = contents;
+			Member = member;
+		}
+
+		public IInnerContent<T> Contents { get; }
+
+		public IMemberSerializer<T> Member { get; }
+	}*/
+
 }

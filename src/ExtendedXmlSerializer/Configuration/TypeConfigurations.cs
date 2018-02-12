@@ -34,24 +34,21 @@ namespace ExtendedXmlSerializer.Configuration
 	sealed class TypeConfigurations : CacheBase<TypeInfo, ITypeConfiguration>, ITypeConfigurations
 	{
 		readonly IExtensionCollection _extensions;
-		readonly IDictionary<TypeInfo, string> _names;
 		readonly ConcurrentDictionary<TypeInfo, ITypeConfiguration> _store;
 
 		public TypeConfigurations(IExtensionCollection extensions)
-			: this(extensions, extensions.Find<TypeNamesExtension>()
-			                             .Names, new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
+			: this(extensions, new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
 
-		public TypeConfigurations(IExtensionCollection extensions, IDictionary<TypeInfo, string> names,
-		                          ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(store)
+		public TypeConfigurations(IExtensionCollection extensions, ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(store)
 		{
 			_extensions = extensions;
-			_names = names;
 			_store = store;
 		}
 
 		protected override ITypeConfiguration Create(TypeInfo parameter)
 		{
-			var property = new TypeProperty<string>(_names, parameter);
+			var property = new TypeProperty<string>(_extensions.Find<TypeNamesExtension>()
+			                                                   .Names, parameter);
 			var root = _extensions.Find<RootContextExtension>()
 			                      .Root;
 			var result = Source.Default

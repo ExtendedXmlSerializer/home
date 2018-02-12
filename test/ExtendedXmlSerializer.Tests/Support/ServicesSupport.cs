@@ -27,7 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using IServiceProvider = ExtendedXmlSerializer.ExtensionModel.IServiceProvider;
+using ExtendedXmlSerializer.ExtensionModel.Services;
+using IServiceProvider = ExtendedXmlSerializer.ExtensionModel.Services.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {

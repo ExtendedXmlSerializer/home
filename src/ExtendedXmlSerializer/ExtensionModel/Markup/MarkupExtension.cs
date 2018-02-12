@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {

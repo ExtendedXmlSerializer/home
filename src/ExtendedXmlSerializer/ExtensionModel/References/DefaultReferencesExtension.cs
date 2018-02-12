@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {

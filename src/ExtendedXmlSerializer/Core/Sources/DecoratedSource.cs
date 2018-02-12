@@ -23,6 +23,11 @@
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
+	class DecoratedAlteration<T> : DecoratedSource<T, T>, IAlteration<T>
+	{
+		public DecoratedAlteration(IParameterizedSource<T, T> source) : base(source) {}
+	}
+
 	class DecoratedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly IParameterizedSource<TParameter, TResult> _source;

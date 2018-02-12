@@ -25,7 +25,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class DictionaryRegistration<T> : ConditionalContents<T>
+	sealed class DictionaryRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public DictionaryRegistration(DictionaryContentSpecification specification, DictionaryContents<T> source,
 		                              IContents<T> fallback)

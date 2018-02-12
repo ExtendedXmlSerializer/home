@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			_accessors = accessors;
 		}
 
-		public IActivator Get(Type parameter)
+		public IActivator<object> Get(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
 			var constructor = _constructors.Get(typeInfo);

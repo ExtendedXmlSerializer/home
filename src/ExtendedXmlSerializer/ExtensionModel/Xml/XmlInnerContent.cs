@@ -21,12 +21,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using System;
+using System.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
+	sealed class XmlInnerContent<T> : IInnerContent<T>
+	{
+		readonly XmlAttributes? _attributes;
+		readonly XmlElements? _elements;
+
+		public XmlInnerContent(T current, XmlAttributes? attributes, XmlElements? elements)
+		{
+			_attributes = attributes;
+			_elements = elements;
+			Current = current;
+		}
+
+		public T Current { get; }
+
+		public bool MoveNext()
+		{
+			var attributes = _attributes;
+			var content = _elements;
+			var moveNext = (attributes?.MoveNext() ?? false) || (content?.MoveNext() ?? false);
+			return moveNext;
+		}
+
+		public void Reset()
+		{
+			throw new NotSupportedException();
+		}
+
+		object IEnumerator.Current => Current;
+
+		public void Dispose()
+		{
+			Reset();
+		}
+	}
+
+
 	sealed class XmlInnerContent : IInnerContent
 	{
 		readonly IFormatReader _reader;

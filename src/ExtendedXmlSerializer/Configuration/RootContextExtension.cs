@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.Configuration
 {

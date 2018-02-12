@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,12 +22,79 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 using System;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
+	public struct Decoration<TParameter, TResult>
+	{
+		public Decoration(TParameter parameter, TResult result)
+		{
+			Parameter = parameter;
+			Result = result;
+		}
+
+		public TParameter Parameter { get; }
+
+		public TResult Result { get; }
+	}
+
+	public interface IDecoration<TParameter, TResult> : IParameterizedSource<Decoration<TParameter, TResult>, TResult> {}
+
+	public class DecoratedConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	{
+		readonly Func<TParameter, bool> _specification;
+		readonly Func<Decoration<TParameter, TResult>, TResult> _source;
+		readonly Func<TParameter, TResult> _original;
+
+		public DecoratedConditionalSource(ISpecification<TParameter> specification,
+		                                  IParameterizedSource<Decoration<TParameter, TResult>, TResult> source,
+		                         IParameterizedSource<TParameter, TResult> fallback)
+			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) { }
+
+		public DecoratedConditionalSource(Func<TParameter, bool> specification, Func<Decoration<TParameter, TResult>, TResult> source)
+			: this(specification, source, _ => default(TResult)) { }
+
+		public DecoratedConditionalSource(Func<TParameter, bool> specification,
+		                         Func<Decoration<TParameter, TResult>, TResult> source,
+		                         Func<TParameter, TResult> original)
+		{
+			_specification = specification;
+			_source = source;
+			_original = original;
+		}
+
+		public TResult Get(TParameter parameter)
+		{
+			var original = _original(parameter);
+
+			var result = _specification(parameter)
+				             ? _source(new Decoration<TParameter, TResult>(parameter, original))
+				             : original;
+			return result;
+		}
+	}
+
+	public class ConditionalInstanceSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	{
+		readonly Func<TParameter, bool> _specification;
+		readonly TResult _true;
+		readonly TResult _false;
+
+		public ConditionalInstanceSource(ISpecification<TParameter> specification, TResult @true, TResult @false)
+			: this(specification.IsSatisfiedBy, @true, @false) {}
+
+		public ConditionalInstanceSource(Func<TParameter, bool> specification, TResult @true, TResult @false)
+		{
+			_specification = specification;
+			_true = @true;
+			_false = @false;
+		}
+
+		public TResult Get(TParameter parameter) => _specification(parameter) ? _true : _false;
+	}
+
+
 	public class ConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly Func<TParameter, bool> _specification;
@@ -78,22 +145,19 @@ namespace ExtendedXmlSerializer.Core.Sources
 		readonly Func<T, bool> _result;
 		readonly Func<T> _source, _fallback;
 
-		public ConditionalSource(ISpecification<TypeInfo> specification, ISource<T> source,
-		                         ISource<T> fallback)
-			: this(specification, Support<T>.Key, source, fallback) {}
-
-		public ConditionalSource(ISpecification<TypeInfo> specification, TypeInfo type, ISource<T> source,
-		                         ISource<T> fallback)
-			: this(specification, type, AlwaysSpecification<T>.Default, source, fallback) {}
-
-		public ConditionalSource(ISpecification<TypeInfo> specification, TypeInfo type, ISpecification<T> result,
+		public ConditionalSource(Func<bool> specification,
 		                         ISource<T> source,
 		                         ISource<T> fallback)
-			: this(specification.Fix(type), result.IsSatisfiedBy, source.Get, fallback.Get) {}
+			: this(specification, AlwaysSpecification<T>.Default, source, fallback) {}
 
-		public ConditionalSource(Func<bool> specification, Func<T, bool> result,
+		public ConditionalSource(Func<bool> specification, ISpecification<T> result,
+		                         ISource<T> source,
+		                         ISource<T> fallback)
+			: this(specification, result.IsSatisfiedBy, source.Get, fallback.Get) {}
+
+		/*public ConditionalSource(Func<bool> specification, Func<T, bool> result,
 		                         Func<T> source)
-			: this(specification, result, source, () => default(T)) {}
+			: this(specification, result, source, () => default(T)) {}*/
 
 		public ConditionalSource(Func<bool> specification, Func<T, bool> result,
 		                         Func<T> source,

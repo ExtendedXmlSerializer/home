@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
@@ -33,4 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	{
 		IReader Create(TypeInfo classification, IInnerContentHandler handler);
 	}
+
+	/*interface IInnerContentServices<T>
+		: IListContentsSpecification, IMemberHandler<T>, ICollectionContentsHandler,
+		  IReaderFormatter
+	{
+		IContentReader<T> Create(IInnerContentHandler handler);
+	}*/
+
 }

@@ -27,6 +27,12 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
+	sealed class MemberMetadataCoercer : DelegatedSource<IMember, MemberInfo>
+	{
+		public static MemberMetadataCoercer Default { get; } = new MemberMetadataCoercer();
+		MemberMetadataCoercer() : base(x => x.Metadata) {}
+	}
+
 	sealed class MemberDescriptors : StructureCacheBase<MemberInfo, MemberDescriptor>
 	{
 		public static MemberDescriptors Default { get; } = new MemberDescriptors();

@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
@@ -46,7 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			=> Registrations.Alter(parameter)
 			                .Register(x => x.GetAllInstances<IProperty>().ToImmutableArray())
 			                .Decorate<IMemberAccessors, MemberAccessors>()
-			                .Decorate<ITypeMembers, TypeMembers>()
+			                .Decorate<IContentMembers, ContentMembers>()
 			                .Decorate<IReaderFormatter, ReaderFormatter>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

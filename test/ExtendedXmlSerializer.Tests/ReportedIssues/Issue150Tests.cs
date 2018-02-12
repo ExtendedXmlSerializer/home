@@ -1,5 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -17,7 +17,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var serializer = new ConfigurationContainer().ConfigureType<Subject>()
 			                                             .Member(x => x.Message)
-			                                             .Register(Serializer.Default)
+			                                             .Register(new ContentSerializerAdapter<string>(Serializer.Default))
 			                                             .Create()
 			                                             .ForTesting();
 

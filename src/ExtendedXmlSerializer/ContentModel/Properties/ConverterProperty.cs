@@ -43,5 +43,9 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		public string Identifier => _property.Identifier;
 
 		public string Name => _property.Name;
+		public void Execute(Writing<T> parameter)
+		{
+			_property.Execute(parameter);
+		}
 	}
 }

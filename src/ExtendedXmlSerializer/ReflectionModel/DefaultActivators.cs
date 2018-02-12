@@ -30,7 +30,63 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class DefaultActivators : ReferenceCacheBase<Type, IActivator>, IActivators
+	sealed class DefaultActivators<T> : IActivators<T>
+	{
+		public static DefaultActivators<T> Default { get; } = new DefaultActivators<T>();
+		DefaultActivators() : this(ConstructorLocator.Default, DefaultParameters.Instance.Get) { }
+
+		readonly IConstructorLocator _locator;
+		readonly Func<ParameterInfo, Expression> _selector;
+
+		public DefaultActivators(IConstructorLocator locator, Func<ParameterInfo, Expression> selector)
+		{
+			_locator = locator;
+			_selector = selector;
+		}
+
+		public IActivator<T> Get(Type parameter)
+		{
+			var typeInfo = parameter.GetTypeInfo();
+			var expression = parameter == typeof(string)
+				                 ? (Expression)Expression.Default(parameter)
+				                 : typeInfo.IsValueType
+					                 ? Expression.New(parameter)
+					                 : Reference(parameter, typeInfo);
+			//var convert = Expression.Convert(expression, typeof(object));
+			var lambda = Expression.Lambda<Func<T>>(expression);
+			var result = new Activator<T>(lambda.Compile());
+			return result;
+		}
+
+		NewExpression Reference(Type parameter, TypeInfo typeInfo)
+		{
+			var constructor = _locator.Get(typeInfo);
+			var parameters = constructor.GetParameters();
+			var result = parameters.Length > 0
+				             ? Expression.New(constructor, parameters.Select(_selector))
+				             : Expression.New(parameter);
+			return result;
+		}
+
+		sealed class DefaultParameters : IParameterizedSource<ParameterInfo, Expression>
+		{
+			readonly IEnumerable<Expression> _expressions;
+
+			public static DefaultParameters Instance { get; } = new DefaultParameters();
+			DefaultParameters() : this(Enumerable.Empty<Expression>()) { }
+
+			public DefaultParameters(IEnumerable<Expression> expressions) => _expressions = expressions;
+
+			public Expression Get(ParameterInfo parameter)
+				=> parameter.IsDefined(typeof(ParamArrayAttribute))
+					   ? (Expression)Expression.NewArrayInit(
+					                                         parameter.ParameterType.GetElementType() ?? throw new InvalidOperationException("Element Type not found."), _expressions)
+					   : Expression.Default(parameter.ParameterType);
+		}
+	}
+
+
+	sealed class DefaultActivators : ReferenceCacheBase<Type, IActivator<object>>, IActivators
 	{
 		readonly static Func<ParameterInfo, Expression> Selector = DefaultParameters.Instance.Get;
 
@@ -41,7 +97,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public DefaultActivators(IConstructorLocator locator) => _locator = locator;
 
-		protected override IActivator Create(Type parameter)
+		protected override IActivator<object> Create(Type parameter)
 		{
 			var typeInfo = parameter.GetTypeInfo();
 			var expression = parameter == typeof(string)

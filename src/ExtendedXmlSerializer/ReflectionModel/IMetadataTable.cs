@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	public interface IMetadataTable<in TMetadata, TValue> : ITableSource<TMetadata, TValue> where TMetadata : MemberInfo {}
+	public interface IMetadataTable<TMetadata, TValue> : ITableSource<TMetadata, TValue> where TMetadata : MemberInfo {}
 }

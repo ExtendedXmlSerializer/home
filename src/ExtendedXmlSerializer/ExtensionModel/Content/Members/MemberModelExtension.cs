@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
@@ -34,8 +35,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		public IServiceRepository Get(IServiceRepository parameter) =>
 			parameter.Register<IMetadataSpecification, MetadataSpecification>()
 			         .Register<IValidMemberSpecification, ValidMemberSpecification>()
-			         .Register<ITypeMemberSource, TypeMemberSource>()
 			         .Register<ITypeMembers, TypeMembers>()
+			         .Register<IContentMembers, ContentMembers>()
 			         .Register<IMembers, ContentModel.Members.Members>()
 			         .Register<IMemberAccessors, MemberAccessors>()
 			         .Register<WritableMemberAccessors>()

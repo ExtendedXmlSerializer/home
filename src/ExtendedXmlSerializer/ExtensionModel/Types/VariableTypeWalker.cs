@@ -38,9 +38,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		readonly ISpecification<TypeInfo> _specification;
 
-		public VariableTypeWalker(ITypeMembers members, TypeInfo root) : this(Specification, members, root) {}
+		public VariableTypeWalker(IContentMembers members, TypeInfo root) : this(Specification, members, root) {}
 
-		public VariableTypeWalker(ISpecification<TypeInfo> specification, ITypeMembers members, TypeInfo root)
+		public VariableTypeWalker(ISpecification<TypeInfo> specification, IContentMembers members, TypeInfo root)
 			: base(members, root)
 		{
 			_specification = specification;

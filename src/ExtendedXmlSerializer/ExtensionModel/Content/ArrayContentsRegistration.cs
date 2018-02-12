@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ArrayContentsRegistration<T> : ConditionalContents<T>
+	sealed class ArrayContentsRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public ArrayContentsRegistration(Arrays<T> source, IContents<T> fallback)
 			: base(ArraySpecification.Default, source, fallback) {}

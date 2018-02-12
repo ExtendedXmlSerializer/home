@@ -22,18 +22,13 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Coercion;
+using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
 	public static class Extensions
 	{
 		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
-		{
-			@this.Root
-			     .Apply<CoercionExtension>()
-			     .Extend(ExpressionsExtension.Default);
-			return @this;
-		}
+			=> Extend<ExpressionsExtension>.Default.Get(@this).Return(@this);
 	}
 }

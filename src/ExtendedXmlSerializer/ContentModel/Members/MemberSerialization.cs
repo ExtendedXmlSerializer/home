@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Linq;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -44,4 +46,47 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public ImmutableArray<IMemberSerializer> Get() => _all;
 	}
+
+
+
+
+	sealed class MemberAssignment<T, TValue> : IMemberAssignment<T>
+	{
+		readonly IParameterizedSource<string, MemberProfile<T, TValue>?> _members;
+		readonly IReaderFormatter _formatter;
+
+		/*new TableSource<string, MemberProfile<T>?>(all.ToDictionary(x => IdentityFormatter.Default.Get(x.Member), x => new MemberProfile<T>?(x))), formatter*/
+
+		public MemberAssignment(IParameterizedSource<string, MemberProfile<T, TValue>?> members, IReaderFormatter formatter)
+		{
+			_members = members;
+			_formatter = formatter;
+		}
+
+		public void Execute(InnerContent<T> parameter)
+		{
+			var key = _formatter.Get(parameter.Reader);
+			var member = _members.Get(key);
+			member?.Access.Assign(parameter.Content.Current, member.Value.Serializer.Get(parameter.Reader));
+		}
+	}
+
+/*
+	sealed class MemberSerialization<T> : IMemberSerialization<T>
+	{
+		readonly IRuntimeMemberList<T> _runtime;
+		readonly ImmutableArray<MemberProfile<T>> _all;
+
+		public MemberSerialization(IRuntimeMemberList<T> runtime, ImmutableArray<MemberProfile<T>> all)
+		{
+			_runtime = runtime;
+			_all = all;
+		}
+
+		ImmutableArray<MemberProfile<T>> ISource<ImmutableArray<MemberProfile<T>>>.Get() => _all;
+
+		public ImmutableArray<MemberProfile<T>> Get(T parameter) => _runtime.Get(parameter);
+	}
+*/
+
 }

@@ -22,8 +22,16 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public interface IRegistration : IAlteration<IServiceRepository> {}
+
+	class DecoratedRegistration : IRegistration {
+		readonly IRegistration _registration;
+		public DecoratedRegistration(IRegistration registration) => _registration = registration;
+
+		public IServiceRepository Get(IServiceRepository parameter) => _registration.Get(parameter);
+	}
 }

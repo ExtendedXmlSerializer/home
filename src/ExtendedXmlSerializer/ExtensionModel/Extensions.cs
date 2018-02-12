@@ -22,19 +22,202 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
+	public interface IExtend<out T> : IParameterizedSource<IRootContext, T> where T : class, ISerializerExtension { }
+
+	interface IExtensions<out T> : IParameterizedSource<IRootContext, T> where T : ISerializerExtension {}
+
+	sealed class Extensions<T> : IExtensions<T> where T : ISerializerExtension
+	{
+		public static Extensions<T> Default { get; } = new Extensions<T>();
+		Extensions() : this(Support<T>.NewOrSingleton) {}
+
+		readonly Func<T> _create;
+
+		public Extensions(Func<T> create) => _create = create;
+
+		public T Get(IRootContext parameter)
+		{
+			var existing = parameter.Find<T>();
+			if (existing == null)
+			{
+				var result = _create();
+				parameter.Add(result);
+				return result;
+			}
+
+			return existing;
+		}
+	}
+
+	public class TypeContainerAttribute : Attribute, ISource<Type>
+	{
+		readonly Type _serializerType;
+
+		public TypeContainerAttribute(Type serializerType) => _serializerType = serializerType;
+
+		public Type Get() => _serializerType;
+	}
+
+
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+	public class DependencyAttribute : TypeContainerAttribute
+	{
+		public DependencyAttribute(Type serializerType) : base(serializerType) {}
+	}
+
+
+	sealed class ExtensionsWithDependencies<T> : IExtensions<T> where T : ISerializerExtension
+	{
+		public static ExtensionsWithDependencies<T> Default { get; } = new ExtensionsWithDependencies<T>();
+		ExtensionsWithDependencies() : this(Extensions<T>.Default.Get,
+											DeclaredDependencies<T>.Default
+											                       .YieldMetadata()
+											                       .Select(Initialize.Default.Get)
+											                       .Select(x => x.ToInstanceCommand())
+											                       .Fold()) {}
+
+		readonly Func<IRootContext, T> _extensions;
+		readonly ICommand<IRootContext> _initializers;
+
+		public ExtensionsWithDependencies(Func<IRootContext, T> extensions, ICommand<IRootContext> initializers)
+		{
+			_extensions = extensions;
+			_initializers = initializers;
+		}
+
+		public T Get(IRootContext parameter)
+		{
+			_initializers.Execute(parameter);
+			var result = _extensions(parameter);
+			return result;
+		}
+	}
+
+	sealed class Initialize : Generic<ICommand<IRootContext>>
+	{
+		public static Initialize Default { get; } = new Initialize();
+		Initialize() : base(typeof(Initialize<>)) {}
+	}
+
+	sealed class Initialize<T> : ICommand<IRootContext> where T : class, ISerializerExtension
+	{
+		[UsedImplicitly]
+		public static Initialize<T> Default { get; } = new Initialize<T>();
+		Initialize() : this(new ConditionalSpecification<IRootContext>(), Extend<T>.Default) { }
+
+		readonly ISpecification<IRootContext> _specification;
+		readonly IExtend<T> _extend;
+
+		public Initialize(ISpecification<IRootContext> specification, IExtend<T> extend)
+		{
+			_specification = specification;
+			_extend = extend;
+		}
+
+		public void Execute(IRootContext parameter)
+		{
+			if (_specification.IsSatisfiedBy(parameter))
+			{
+				_extend.Get(parameter);
+			}
+		}
+	}
+
+	sealed class DeclaredDependencies<T> : Items<Type> where T : ISerializerExtension
+	{
+		public static DeclaredDependencies<T> Default { get; } = new DeclaredDependencies<T>();
+		DeclaredDependencies() : base(/*new DeclaredDependencies(typeof(T))*/TypesFrom<DependencyAttribute>.Default.Get(typeof(T))) {}
+	}
+
+	sealed class TypesFrom<T> : IParameterizedSource<MemberInfo, IEnumerable<Type>> where T : Attribute, ISource<Type>
+	{
+		public static TypesFrom<T> Default { get; } = new TypesFrom<T>();
+		TypesFrom() {}
+
+		public IEnumerable<Type> Get(MemberInfo parameter) => parameter.GetCustomAttributes<T>()
+		                                                               .Select(x => x.Get());
+	}
+
+	sealed class DeclaredDependencies : ItemsBase<Type>
+	{
+		readonly Type _root;
+		readonly Func<MemberInfo, IEnumerable<Type>> _select;
+
+		public DeclaredDependencies(Type root) : this(root, TypesFrom<DependencyAttribute>.Default.Get) {}
+
+		public DeclaredDependencies(Type root, Func<MemberInfo, IEnumerable<Type>> select)
+		{
+			_root = root;
+			_select = @select;
+		}
+
+		public override IEnumerator<Type> GetEnumerator() => Select(_select(_root), _ => true).GetEnumerator();
+
+		IEnumerable<Type> Select(IEnumerable<Type> parameter, Func<Type, bool> specification)
+		{
+			var current = parameter.Fixed();
+			var associated = current.SelectMany(_select)
+			                        .Where(specification)
+			                        .Fixed();
+			var updated = current.Union(associated)
+			                     .Fixed();
+			var others = associated.Any()
+				             ? Select(associated, new DelegatedSpecification<Type>(specification).And(new ContainsSpecification<Type>(updated).Inverse())
+				                                                                                 .IsSatisfiedBy)
+				             : Enumerable.Empty<Type>();
+			var result = updated.Union(others);
+			return result;
+		}
+	}
+
+
+	sealed class Extend<T> : ReferenceCache<IRootContext, T>, IExtend<T> where T : class, ISerializerExtension
+	{
+		public static Extend<T> Default { get; } = new Extend<T>();
+		Extend() : this(ExtensionsWithDependencies<T>.Default.Get) { }
+
+		public Extend(ConditionalWeakTable<IRootContext, T>.CreateValueCallback callback) : base(callback) { }
+	}
+
 	public static class Extensions
 	{
+		public static T Get<T>(this IExtend<T> @this, IConfigurationContainer container) where T : class, ISerializerExtension => @this.Get(container.Root);
+
+		public static IConfigurationContainer DiscoverDeclaredContentSerializers<T>(this IConfigurationContainer @this)
+			=> @this.DiscoverDeclaredContentSerializers(new PublicTypesInSameNamespace<T>());
+
+		public static IConfigurationContainer DiscoverDeclaredContentSerializers(this IConfigurationContainer @this, IEnumerable<TypeInfo> candidates)
+			=> DiscoverDeclaredContentSerializers(@this, new Metadata(candidates));
+
+		public static IConfigurationContainer DiscoverDeclaredContentSerializers(this IConfigurationContainer @this, IEnumerable<MemberInfo> candidates)
+			=> ExtensionModel.Extend<DeclaredMetadataContentExtension>.Default.Get(@this.Root)
+			                                              .Executed(candidates)
+			                                              .Return(@this);
+
+		public static IConfigurationContainer Extend<T>(this IConfigurationContainer @this, IExtend<T> extend, Action<T> configure)
+			where T : class, ISerializerExtension
+		{
+			configure(extend.Get(@this.Root));
+			return @this;
+		}
+
 		public static IConfigurationContainer EnableThreadProtection(this IConfigurationContainer @this)
 			=> @this.Extend(ThreadProtectionExtension.Default);
-
-		/*public static IConfigurationContainer EnableRootInstances(this IConfigurationContainer @this)
-		{
-			@this.Root.With<RootInstanceExtension>();
-			return @this;
-		}*/
 
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 		{

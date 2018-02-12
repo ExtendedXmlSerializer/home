@@ -41,7 +41,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
 
-		public static IRootContext Apply<T>(this IRootContext @this)
+		/*public static IRootContext Apply<T>(this IRootContext @this)
 			where T : class, ISerializerExtension => Apply(@this, Support<T>.NewOrSingleton);
 
 		public static IRootContext Apply<T>(this IRootContext @this, Func<T> create)
@@ -52,9 +52,9 @@ namespace ExtendedXmlSerializer.Configuration
 				@this.Add(create);
 			}
 			return @this;
-		}
+		}*/
 
-		public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
+		/*public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
 			=> Add(@this, Support<T>.NewOrSingleton);
 
 		public static T Add<T>(this IRootContext @this, Func<T> create) where T : ISerializerExtension
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.Configuration
 			var result = create();
 			@this.Add(result);
 			return result;
-		}
+		}*/
 
 		public static IRootContext With<T>(this IRootContext @this, Action<T> configure)
 			where T : class, ISerializerExtension
@@ -73,7 +73,7 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		public static T With<T>(this IRootContext @this) where T : class, ISerializerExtension
-			=> @this.Find<T>() ?? @this.Add<T>();
+			=> @this.Find<T>() ?? Extensions<T>.Default.Get(@this);
 
 
 		public static IRootContext Extend(this IRootContext @this,

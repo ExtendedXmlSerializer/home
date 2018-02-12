@@ -73,7 +73,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				new DeferredMemberAssignmentCommand(current.Current, ContentsContext.Default.Get(current).AsValid<IMemberAccess>(),
 				                                    source);
 
-		public void Assign(ReferenceIdentity key, object value) => _map.Assign(key, value);
 		public bool Remove(ReferenceIdentity key) => _map.Remove(key);
+		public void Execute(KeyValuePair<ReferenceIdentity, object> parameter)
+		{
+			_map.Execute(parameter);
+		}
 	}
 }

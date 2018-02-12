@@ -32,13 +32,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
 	{
-		public ContainsStaticReferenceSpecification(ITypeMembers members) : base(new Cache(members).Get) {}
+		public ContainsStaticReferenceSpecification(IContentMembers members) : base(new Cache(members).Get) {}
 
 		sealed class Cache : CacheBase<TypeInfo, bool>
 		{
-			readonly ITypeMembers _members;
+			readonly IContentMembers _members;
 
-			public Cache(ITypeMembers members)
+			public Cache(IContentMembers members)
 			{
 				_members = members;
 			}

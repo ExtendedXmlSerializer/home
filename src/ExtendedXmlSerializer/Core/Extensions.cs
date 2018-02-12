@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -34,6 +35,22 @@ namespace ExtendedXmlSerializer.Core
 {
 	static class Extensions
 	{
+		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
+		{
+			@this.Execute(parameter);
+			return @this;
+		}
+
+		public static ICommand<T> Fold<T>(this IEnumerable<ICommand<T>> @this)
+			=> new CompositeCommand<T>(@this.ToImmutableArray());
+
+		public static ICommand<T> ToCommand<T>(this Func<ICommand<T>> @this)
+			=> new DeferredCommand<T>(@this);
+
+
+		public static ICommand<T> ToInstanceCommand<T>(this Func<ICommand<T>> @this)
+			=> new DeferredInstanceCommand<T>(@this);
+
 		public static IParameterizedSource<TParameter, TResult>
 			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
 			where TParameter : class where TResult : class
@@ -81,6 +98,8 @@ namespace ExtendedXmlSerializer.Core
 				.Member;
 			return result;
 		}
+
+		public static TResult Return<T, TResult>(this T _, TResult result) => result;
 
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
 		                                             Func<TResult> resolve = null)

@@ -23,6 +23,7 @@
 
 using System.Collections.Generic;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {

@@ -25,6 +25,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -44,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> parameter.Decorate<IIdentities>(Register)
 			            .Decorate<ITypeIdentities>(Register);
 
-		ITypeIdentities Register(IServiceProvider services, ITypeIdentities identities)
+		ITypeIdentities Register(Services.IServiceProvider services, ITypeIdentities identities)
 		{
 			var formatter = services.Get<ITypeFormatter>();
 			var entries = new Types(formatter).Get(_registered);
@@ -52,7 +53,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return result;
 		}
 
-		IIdentities Register(IServiceProvider services, IIdentities identities)
+		IIdentities Register(Services.IServiceProvider services, IIdentities identities)
 			=> new ImplicitIdentities(_registered, identities);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}

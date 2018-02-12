@@ -25,7 +25,6 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
@@ -153,7 +152,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public string Get(MemberInfo parameter)
 			=> parameter is TypeInfo
 				? GetType((TypeInfo) parameter)
-				: string.Concat(GetType(parameter.GetReflectedType()), _separator, parameter.Name);
+				: string.Concat(GetType(parameter.ReflectedType.GetTypeInfo()), _separator, parameter.Name);
 
 		string GetType(TypeInfo parameter)
 		{

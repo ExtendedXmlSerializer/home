@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
@@ -60,7 +60,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 			{
 				if (converter.IsSatisfiedBy(Support<T>.Key))
 				{
-					return converter.AsValid<Converter<T>>();
+					return converter.AsValid<IConverter<T>>();
 				}
 			}
 

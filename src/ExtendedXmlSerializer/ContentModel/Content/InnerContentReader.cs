@@ -22,16 +22,66 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
+	interface IContentsActivator<out T> : IContentReader<IInnerContent<T>> { }
+
+	sealed class ContentsActivator<T> : IContentsActivator<T>
+	{
+		readonly IContentActivator<T> _activator;
+
+		public ContentsActivator(IContentActivator<T> activator) => _activator = activator;
+
+		public IInnerContent<T> Get(IFormatReader parameter)
+			=> IdentityComparer.Default.Equals(parameter, NullElementIdentity.Default) ||
+			   parameter.IsSatisfiedBy(NullValueIdentity.Default)
+				   ? null
+				   : _activator.Get(parameter);
+	}
+
+	interface IInnerContentReader<out T> : IContentReader<T> {}
+
+	sealed class InnerContentReader<T> : IInnerContentReader<T>
+	{
+		readonly IContentsActivator<T> _activator;
+		readonly IContentHandler<T> _handler;
+		readonly IContentInstance<T> _instance;
+
+		public InnerContentReader(IContentsActivator<T> activator, IContentHandler<T> handler, IContentInstance<T> instance)
+		{
+			_activator = activator;
+			_handler = handler;
+			_instance = instance;
+		}
+
+		public T Get(IFormatReader parameter)
+		{
+			var content = _activator.Get(parameter);
+			if (content != null)
+			{
+				var input = new InnerContent<T>(parameter, content);
+				while (content.MoveNext())
+				{
+					_handler.Execute(input);
+				}
+
+				return _instance.Get(content);
+			}
+
+			return default(T);
+		}
+	}
+
+
 	sealed class InnerContentReader : IReader
 	{
-		readonly IInnerContentActivator _activator;
+		readonly IInnerContents _activator;
 		readonly IInnerContentHandler _content;
 		readonly IInnerContentResult _result;
 
-		public InnerContentReader(IInnerContentActivator activator, IInnerContentHandler content, IInnerContentResult result)
+		public InnerContentReader(IInnerContents activator, IInnerContentHandler content, IInnerContentResult result)
 		{
 			_activator = activator;
 			_content = content;

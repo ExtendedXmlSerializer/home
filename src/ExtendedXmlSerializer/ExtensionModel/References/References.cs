@@ -31,11 +31,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 	sealed class References : StructureCacheBase<object, ImmutableArray<object>>, IReferences
 	{
 		readonly IReferencesPolicy _policy;
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly IEnumeratorStore _enumerators;
 		readonly IMemberAccessors _accessors;
 
-		public References(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
+		public References(IReferencesPolicy policy, IContentMembers members, IEnumeratorStore enumerators,
 		                  IMemberAccessors accessors)
 		{
 			_policy = policy;

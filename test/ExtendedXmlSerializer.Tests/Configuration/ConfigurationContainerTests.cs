@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -106,14 +107,15 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void ConfigureCustomSerializerForType()
 		{
+			var serializers = new RegisteredSerializers();
 			var config = Configure(cfg =>
 								   {
 									   var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
-									   Assert.Null(cfg.Root.With<CustomSerializationExtension>().XmlSerializers.Get(t.Get()));
+									   Assert.False(serializers.IsSatisfiedBy(t.Get()));
 									   t.CustomSerializer((writer, types) => { }, element => null);
 								   });
 			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.NotNull(config.Root.With<CustomSerializationExtension>().XmlSerializers.Get(type.Get()));
+			Assert.True(serializers.IsSatisfiedBy(type.Get()));
 		}
 
 		[Fact]

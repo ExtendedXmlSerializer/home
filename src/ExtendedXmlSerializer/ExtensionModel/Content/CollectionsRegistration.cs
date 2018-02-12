@@ -26,7 +26,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class CollectionsRegistration<T> : ConditionalContents<T>
+	sealed class CollectionsRegistration<T> : ConditionalContents<T>, IContents<T>
 	{
 		public CollectionsRegistration(DefaultCollectionSpecification specification, DefaultCollections<T> source,
 		                               IContents<T> fallback)

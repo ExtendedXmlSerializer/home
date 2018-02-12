@@ -21,15 +21,81 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
+	sealed class Activation<T> : IActivation<T>
+	{
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IClassification _classification;
+		readonly IActivators<T> _activators;
+
+		public Activation(IClassification classification, IActivators<T> activators)
+			: this(ReflectionModel.VariableTypeSpecification.Default, classification, activators) { }
+
+		public Activation(ISpecification<TypeInfo> specification, IClassification classification, IActivators<T> activators)
+		{
+			_specification = specification;
+			_classification = classification;
+			_activators = activators;
+		}
+
+		public IContentReader<T> Get()
+		{
+			var activate = new DelegatedActivator(_activators.Get(typeof(T))
+															 .Get);
+			var result = _specification.IsSatisfiedBy(Support<T>.Key)
+							 ? (IContentReader<T>)new RuntimeActivator(_activators, _classification, activate)
+							 : activate;
+			return result;
+		}
+
+		sealed class RuntimeActivator : IContentReader<T>
+		{
+			readonly IActivators<T> _activators;
+			readonly IClassification _classification;
+			readonly IContentReader<T> _activator;
+
+			public RuntimeActivator(IActivators<T> activators, IClassification classification, IContentReader<T> activator)
+			{
+				_activators = activators;
+				_classification = classification;
+				_activator = activator;
+			}
+
+			public T Get(IFormatReader parameter)
+			{
+				if (parameter.IsSatisfiedBy(ExplicitTypeProperty.Default))
+				{
+					var classification = _classification.Get(parameter);
+					if (classification != null)
+					{
+						return _activators.Get(classification.AsType())
+										  .Get();
+					}
+				}
+				var result = _activator.Get(parameter);
+				return result;
+			}
+		}
+
+		sealed class DelegatedActivator : IContentReader<T>
+		{
+			readonly Func<T> _activate;
+
+			public DelegatedActivator(Func<T> activate) => _activate = activate;
+
+			public T Get(IFormatReader _) => _activate();
+		}
+	}
+
+
 	sealed class Activation : IActivation
 	{
 		readonly ISpecification<TypeInfo> _specification;

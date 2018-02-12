@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface IAssignable<in TKey, in TValue>
-	{
-		void Assign(TKey key, TValue value);
-	}
+	public interface IAssignable<TKey, TValue> : ICommand<KeyValuePair<TKey, TValue>> {}
 }

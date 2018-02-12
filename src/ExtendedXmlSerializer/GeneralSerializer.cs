@@ -26,7 +26,7 @@ using System.IO;
 
 namespace ExtendedXmlSerializer
 {
-	sealed class GeneralizedSerializer<T> : GeneralSerializer<T>, ISerializer<T>
+	class GeneralizedSerializer<T> : GeneralSerializer<T>, ISerializer<T>
 	{
 		readonly ISerializer<T> _serializer;
 

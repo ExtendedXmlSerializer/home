@@ -38,11 +38,11 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IMemberAccessors _accessors;
 
-		public ObjectTypeWalker(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
+		public ObjectTypeWalker(IContentMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
 			: this(Specifications, accessors, members, enumerators, root) {}
 
 		public ObjectTypeWalker(IVariableTypeMemberSpecifications specifications, IMemberAccessors accessors,
-		                        ITypeMembers members, IEnumeratorStore enumerators, object root)
+		                        IContentMembers members, IEnumeratorStore enumerators, object root)
 			: base(members, enumerators, root)
 		{
 			_specifications = specifications;

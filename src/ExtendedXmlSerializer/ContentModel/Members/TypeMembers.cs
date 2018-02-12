@@ -21,37 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using JetBrains.Annotations;
-using System;
-using System.Collections.Immutable;
+using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class TypeMembers : CacheBase<TypeInfo, ImmutableArray<IMember>>, ITypeMembers
+	sealed class TypeMembers : ITypeMembers
 	{
-		readonly Func<IMember, bool> _specification;
-		readonly ITypeMemberSource _source;
+		readonly IMetadataSpecification _specification;
+		readonly IProperties _properties;
+		readonly IFields _fields;
+		readonly IMembers _members;
 
-		[UsedImplicitly]
-		public TypeMembers(IValidMemberSpecification specification, ITypeMemberSource source)
-			: this(specification.IsSatisfiedBy, source) {}
-
-		public TypeMembers(Func<IMember, bool> specification, ITypeMemberSource source)
+		public TypeMembers(IMetadataSpecification specification, IProperties properties, IFields fields, IMembers members)
 		{
 			_specification = specification;
-			_source = source;
+			_properties = properties;
+			_fields = fields;
+			_members = members;
 		}
 
-		protected override ImmutableArray<IMember> Create(TypeInfo parameter)
+		public IEnumerable<IMember> Get(TypeInfo parameter)
 		{
-			var result = _source.Get(parameter)
-			                    .Where(_specification)
-			                    .OrderBy(x => x.Order)
-			                    .ToImmutableArray();
-			return result;
+			var properties = _properties.Get(parameter).ToArray();
+			var length = properties.Length;
+			for (var i = 0; i < length; i++)
+			{
+				var property = properties[i];
+				if (_specification.IsSatisfiedBy(property))
+				{
+					yield return _members.Get(property);
+				}
+			}
+
+			var fields = _fields.Get(parameter).ToArray();
+			var l = fields.Length;
+			for (var i = 0; i < l; i++)
+			{
+				var field = fields[i];
+				if (_specification.IsSatisfiedBy(field))
+				{
+					yield return _members.Get(field);
+				}
+			}
 		}
 	}
 }

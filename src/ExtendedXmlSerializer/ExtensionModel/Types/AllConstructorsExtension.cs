@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types

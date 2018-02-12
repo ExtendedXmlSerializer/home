@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,14 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using JetBrains.Annotations;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -37,13 +39,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static RootInstanceExtension Default { get; } = new RootInstanceExtension();
 		RootInstanceExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter) => parameter
-		                                                               .RegisterInstance<IRootInstances
-		                                                               >(RootInstances.Default)
-		                                                               .Decorate<ContentModel.Content.ISerializers,
-			                                                               Serializers>()
-		                                                               .Decorate(typeof(IContentWriters<>),
-		                                                                         typeof(ContentWriters<>));
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance<IRootInstances>(RootInstances.Default)
+			            .Decorate<ContentModel.Content.ISerializers, Serializers>()
+			            .DecorateDefinition<IContentWriters<object>, ContentWriters<object>>();
 
 		sealed class ContentWriter<T> : IContentWriter<T>
 		{

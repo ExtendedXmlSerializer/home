@@ -33,14 +33,14 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	sealed class MemberSerializations : CacheBase<TypeInfo, IMemberSerialization>, IMemberSerializations
 	{
 		readonly Func<IEnumerable<IMemberSerializer>, IMemberSerialization> _builder;
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly Func<IMember, IMemberSerializer> _serializers;
 
 		[UsedImplicitly]
-		public MemberSerializations(ITypeMembers members, IMemberSerializers serializers)
+		public MemberSerializations(IContentMembers members, IMemberSerializers serializers)
 			: this(MemberSerializationBuilder.Default.Get, members, serializers.Get) {}
 
-		public MemberSerializations(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder, ITypeMembers members,
+		public MemberSerializations(Func<IEnumerable<IMemberSerializer>, IMemberSerialization> builder, IContentMembers members,
 		                            Func<IMember, IMemberSerializer> serializers)
 		{
 			_builder = builder;

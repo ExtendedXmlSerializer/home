@@ -28,6 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ReflectionModel;
 using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.VariableTypeSpecification;
 
@@ -59,7 +60,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .DecorateDefinition<IElements<object>, GenericElementsRegistration<object>>()
 			            .DecorateDefinition<IElements<object>, ArrayElementsRegistration<object>>()
 			            .RegisterDefinition<IContentReaders<object>, ContentReaders<object>>()
-			            .RegisterDefinition<IContentWriters<object>, ContentWriters<object>>()
+			            .RegisterDefinition<ContentModel.Content.IContentWriters<object>, ContentModel.Content.ContentWriters<object>>()
 			            .Register<IClassification, Classification>()
 			            .Register<IIdentityStore, IdentityStore>()
 			            .Register<IInnerContentServices, InnerContentServices>()

@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,13 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
@@ -42,30 +41,7 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public NullableContents(ISource<IContentSerializer<T>> source) => _source = source;
 
-		public IContentSerializer<T> Get() => new Serializer(_source.Get());
-
-
-		sealed class Serializer : IContentSerializer<T>
-		{
-			readonly IContentSerializer<T> _serializer;
-
-			public Serializer(IContentSerializer<T> serializer) => _serializer = serializer;
-
-			public T Get(IFormatReader parameter) =>
-				parameter.IsSatisfiedBy(NullValueIdentity.Default) ? default(T) : _serializer.Get(parameter);
-
-			public void Execute(Writing<T> parameter)
-			{
-				if (parameter.Instance == null)
-				{
-					parameter.Writer.Content(null);
-				}
-				else
-				{
-					_serializer.Execute(parameter);
-				}
-			}
-		}
+		public IContentSerializer<T> Get() => _source.Get();
 	}
 
 

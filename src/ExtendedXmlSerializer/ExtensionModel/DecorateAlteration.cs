@@ -21,9 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using System;
+using ExtendedXmlSerializer.ExtensionModel.Services;
+using IServiceProvider = ExtendedXmlSerializer.ExtensionModel.Services.IServiceProvider;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -57,6 +58,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			=> parameter.RegisterWithDependencies<TTo>()
 			            .Decorate<TFrom>(Decorate);
 
-		TFrom Decorate(IServiceProvider services, TFrom current) => _factory(current, services.Get<TTo>());
+		TFrom Decorate(IServiceProvider services, TFrom current) => _factory(current, Core.Extensions.Get<TTo>(services));
 	}
 }

@@ -21,11 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	interface IInnerContent : ISource<IFormatReader>, IEnumerator {}
+
+	interface IInnerContent<out T> : IEnumerator<T> { }
 }

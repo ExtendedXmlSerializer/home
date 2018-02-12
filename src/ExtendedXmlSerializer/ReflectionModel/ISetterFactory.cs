@@ -21,11 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
 	interface ISetterFactory : IParameterizedSource<MemberInfo, Action<object, object>> {}
+
+	interface ISetterFactory<in T, in TMember> : IParameterizedSource<MemberInfo, Action<T, TMember>> { }
+
 }

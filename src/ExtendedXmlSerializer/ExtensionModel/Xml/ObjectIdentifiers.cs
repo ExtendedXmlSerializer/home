@@ -35,17 +35,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	sealed class ObjectIdentifiers : IObjectIdentifiers
 	{
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly IEnumeratorStore _enumerators;
 		readonly IMemberAccessors _accessors;
 		readonly Func<TypeInfo, string> _names;
 
 		[UsedImplicitly]
-		public ObjectIdentifiers(IIdentifiers identifiers, ITypeMembers members, IEnumeratorStore enumerators,
+		public ObjectIdentifiers(IIdentifiers identifiers, IContentMembers members, IEnumeratorStore enumerators,
 		                         IMemberAccessors accessors)
 			: this(members, enumerators, accessors, identifiers.Get) {}
 
-		ObjectIdentifiers(ITypeMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors,
+		ObjectIdentifiers(IContentMembers members, IEnumeratorStore enumerators, IMemberAccessors accessors,
 		                  Func<TypeInfo, string> names)
 		{
 			_members = members;

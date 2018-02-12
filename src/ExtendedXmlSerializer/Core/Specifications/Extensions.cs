@@ -22,10 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
@@ -67,5 +67,19 @@ namespace ExtendedXmlSerializer.Core.Specifications
 
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);
+
+		public static ISpecification<TTo> To<TTo, TFrom>(this ISpecification<TFrom> @this, IParameterizedSource<TTo, TFrom> coercer)
+			=> @this.To(coercer.ToDelegate());
+
+		public static ISpecification<TTo> To<TTo, TFrom>(
+			this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
+			=> new DelegatedSpecification<TTo>(new CoercedParameter<TTo, TFrom, bool>(@this.IsSatisfiedBy, coercer).Get);
+
+		/*public static ISpecification<TTo> To<TFrom, TTo>(
+			this ISpecification<TFrom> @this, IParameterizedSource<TTo, TFrom> coercer) => To<TFrom, TTo>(@this, coercer.Get);
+
+		public static ISpecification<TTo> To<TFrom, TTo>(
+			this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
+			=> new DelegatedSpecification<TTo>(new CoercedSource<TFrom, TTo, bool>(@this.IsSatisfiedBy, coercer).Get);*/
 	}
 }

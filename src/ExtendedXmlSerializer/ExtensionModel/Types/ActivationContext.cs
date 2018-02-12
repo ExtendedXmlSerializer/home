@@ -25,6 +25,7 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -82,6 +83,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		{
 			get => _list[index];
 			set => _list[index] = value;
+		}
+
+		public void Execute(KeyValuePair<string, object> parameter)
+		{
+			_source.Execute(parameter);
 		}
 	}
 }

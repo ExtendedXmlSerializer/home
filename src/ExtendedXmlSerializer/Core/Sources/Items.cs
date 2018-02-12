@@ -21,12 +21,36 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
+	public interface IEnumerableAlteration<T> : IAlteration<IEnumerable<T>> {}
+
+	class OrderByAlteration<T, TMember> : IEnumerableAlteration<T>
+	{
+		readonly Func<T, TMember> _select;
+
+		public OrderByAlteration(Func<T, TMember> select) => _select = @select;
+
+		public IEnumerable<T> Get(IEnumerable<T> parameter) => parameter is IOrderedEnumerable<T> ordered ? ordered.ThenBy(_select) : parameter.OrderBy(_select);
+	}
+
+	public class EnumerableAlterations<T> : IEnumerableAlteration<T>
+	{
+		readonly ImmutableArray<IAlteration<IEnumerable<T>>> _alterations;
+
+		public EnumerableAlterations(params IAlteration<IEnumerable<T>>[] alterations) : this(alterations.ToImmutableArray()) {}
+
+		public EnumerableAlterations(ImmutableArray<IAlteration<IEnumerable<T>>> alterations) => _alterations = alterations;
+
+		public IEnumerable<T> Get(IEnumerable<T> parameter) => _alterations.Aggregate(parameter, (enumerable, alteration) => alteration.Get(enumerable));
+	}
+
+
 	public class Items<T> : ItemsBase<T>
 	{
 		readonly ImmutableArray<T> _items;

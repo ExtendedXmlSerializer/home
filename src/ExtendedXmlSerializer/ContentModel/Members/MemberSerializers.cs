@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,10 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -80,4 +84,133 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter<object> writer)
 			=> new AlteringWriter(alteration, new ConditionalWriter(access, writer));
 	}
+
+	/*interface IMemberContentWriters<T> : IParameterizedSource<IMember, IContentWriter<T>> {}*/
+
+	interface IMemberWriters<T> : IParameterizedSource<IMember, IContentWriter<T>> { }
+
+	class DecoratedMemberWriters<T> : DecoratedSource<IMember, IContentWriter<T>>, IMemberWriters<T>
+	{
+		public DecoratedMemberWriters(IParameterizedSource<IMember, IContentWriter<T>> source) : base(source) {}
+	}
+
+	/*class ConditionalMemberWriters<T, TDefinition> : ConditionalMemberWriters<T>
+	{
+		public ConditionalMemberWriters(ISpecification<IMember> specification, IServiceProvider services, IMemberWriters<T> fallback)
+			: base(specification, new GenericMemberWriters<T,TDefinition>(services), fallback) {}
+	}
+
+	class ConditionalMemberWriters<T> : ConditionalSource<IMember, IContentWriter<T>>, IMemberWriters<T>
+	{
+		public ConditionalMemberWriters(ISpecification<IMember> specification,
+		                                IParameterizedSource<IMember, IContentWriter<T>> source,
+		                                IParameterizedSource<IMember, IContentWriter<T>> fallback) :
+			base(specification, source, fallback) {}
+	}*/
+
+	/*class DecoratedMemberWriters<T, TDefinition> : DecoratedMemberWriters<T> where TDefinition : IDecoration<IMember, IContentWriter<T>>
+	{
+		public DecoratedMemberWriters(ISpecification<IMember> specification, IServiceProvider services, IMemberWriters<T> fallback)
+			: base(specification, new MemberWritersDecoration<T, TDefinition>(services), fallback) { }
+	}
+
+	class DecoratedMemberWriters<T> : DecoratedConditionalSource<IMember, IContentWriter<T>>, IMemberWriters<T>
+	{
+		public DecoratedMemberWriters(ISpecification<IMember> specification,
+		                              IParameterizedSource<Decoration<IMember, IContentWriter<T>>, IContentWriter<T>> source,
+		                              IParameterizedSource<IMember, IContentWriter<T>> fallback) : base(specification, source,
+		                                                                                                fallback) {}
+	}*/
+
+	sealed class MemberWriters<T> : LocatedMemberWriters<T, MemberWriters<object, object>>, IMemberWriters<T>
+	{
+		public MemberWriters(IServiceProvider provider) : base(provider) {}
+	}
+
+	class LocatedMemberWriters<T, TDefinition> : GenericSource<IMember, IContentWriter<T>, TDefinition>
+	{
+		public LocatedMemberWriters(IServiceProvider provider) : base(provider, MemberTypes<T>.Default) { }
+	}
+
+	/*class MemberWritersDecoration<T, TDefinition> : GenericDecoration<IMember, IContentWriter<T>, TDefinition>
+	{
+		public MemberWritersDecoration(IServiceProvider provider) : base(provider, MemberTypes<T>.Default) { }
+	}*/
+
+	sealed class MemberTypes<T> : IInstanceTypes<IMember>
+	{
+		public static MemberTypes<T> Default { get; } = new MemberTypes<T>();
+		MemberTypes() {}
+
+		public IEnumerable<TypeInfo> Get(IMember parameter)
+		{
+			yield return typeof(T).GetTypeInfo();
+			yield return parameter.MemberType;
+		}
+	}
+
+	/*class GenericMemberWriters<T> : IMemberWriters<T>
+	{
+		readonly IGenericSource<IMember, IContentWriter<T>> _source;
+
+		public GenericMemberWriters(IServiceProvider provider, Type type)
+			: this(new GenericSource<IMember, IContentWriter<T>>(type, provider)) {}
+
+		public GenericMemberWriters(IGenericSource<IMember, IContentWriter<T>> source) => _source = source;
+
+		public IContentWriter<T> Get(IMember parameter) => _source.Get(Support<T>.Key, parameter.MemberType)
+		                                                          .Get(parameter);
+	}*/
+
+	/*class MemberWritersDecoration<T> : IDecoration<IMember, IContentWriter<T>>
+	{
+		readonly IGenericDecoration<IMember, IContentWriter<T>> _source;
+
+		public GenericMemberWriters(IServiceProvider provider, Type type)
+			: this(new GenericSource<IMember, IContentWriter<T>>(provider, type)) { }
+
+		public GenericMemberWriters(IGenericSource<IMember, IContentWriter<T>> source) => _source = source;
+
+		public IContentWriter<T> Get(IMember parameter) => _source.Get(Support<T>.Key, parameter.MemberType)
+		                                                          .Get(parameter);
+
+		public IContentWriter<T> Get(Decoration<IMember, IContentWriter<T>> parameter)
+		{
+			throw new NotImplementedException();
+		}
+	}*/
+
+	interface IMemberWriterContent<T> : IParameterizedSource<IMember, IContentWriter<T>> {}
+
+	sealed class MemberWriterContent<T> : IMemberWriterContent<T>
+	{
+		readonly IMemberContents<T> _contents;
+
+		public MemberWriterContent(IMemberContents<T> contents) => _contents = contents;
+
+		public IContentWriter<T> Get(IMember parameter) => new Enclosure<T>(new Identity<T>(parameter),
+		                                                                    _contents.Get(parameter));
+	}
+
+	sealed class MemberWriters<T, TMember> : IMemberWriters<T>
+	{
+		readonly IMemberAccessors<T, TMember> _accessors;
+		readonly IMemberWriterContent<TMember> _content;
+
+		public MemberWriters(IMemberAccessors<T, TMember> accessors, IMemberWriterContent<TMember> content)
+		{
+			_accessors = accessors;
+			_content = content;
+		}
+
+		public IContentWriter<T> Get(IMember parameter)
+		{
+			var access = _accessors.Get(parameter);
+			var content = _content.Get(parameter);
+			var writer = new SpecificationContentWriter<TMember>(access, content);
+			var result = new CoercingContentWriter<T, TMember>(access.Get, writer);
+			return result;
+		}
+	}
+
 }

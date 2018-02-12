@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -34,7 +34,23 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		MemberAccessors(IParameterizedSource<IMember, IMemberAccess> accessors,
 		                IParameterizedSource<IMember, IMemberAccess> @readonly)
 			: base(@readonly.If(ReadOnlyCollectionSpecification.Default)
-			                .Let(new DelegatedSpecification<IMember>(x => x.IsWritable),
+			                .Unless(new DelegatedSpecification<IMember>(x => x.IsWritable),
 			                     AlteredValueSpecification<IMemberAccess>.Default, accessors)) {}
 	}
+
+/*
+	sealed class MemberAccessors<T, TMember> : DecoratedSource<IMember, IMemberAccess<T, TMember>>, IMemberAccessors<T, TMember>
+	{
+		public MemberAccessors(WritableMemberAccessors<T, TMember> accessors, ReadOnlyCollectionAccessors<T, TMember> @readonly)
+			: this((IParameterizedSource<IMember, IMemberAccess<T, TMember>>)accessors, @readonly) { }
+
+		MemberAccessors(IParameterizedSource<IMember, IMemberAccess<T, TMember>> accessors,
+		                IParameterizedSource<IMember, IMemberAccess<T, TMember>> @readonly)
+			: base(@readonly.If(ReadOnlyCollectionSpecification.Default)
+			                .Unless(new DelegatedSpecification<IMember>(x => x.IsWritable),
+			                        AlteredValueSpecification<IMemberAccess<T, TMember>>.Default, accessors))
+		{ }
+	}
+*/
+
 }

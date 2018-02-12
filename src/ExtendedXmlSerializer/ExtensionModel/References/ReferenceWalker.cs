@@ -40,12 +40,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly IVariableTypeMemberSpecifications _specifications;
 		readonly IMemberAccessors _accessors;
 
-		public ReferenceWalker(IReferencesPolicy policy, ITypeMembers members, IEnumeratorStore enumerators,
+		public ReferenceWalker(IReferencesPolicy policy, IContentMembers members, IEnumeratorStore enumerators,
 		                       IMemberAccessors accessors, object root)
 			: this(policy, Specifications, members, enumerators, accessors, root) {}
 
 		public ReferenceWalker(IReferencesPolicy policy, IVariableTypeMemberSpecifications specifications,
-		                       ITypeMembers members,
+		                       IContentMembers members,
 		                       IEnumeratorStore enumerators, IMemberAccessors accessors, object root)
 			: base(members, enumerators, root)
 		{

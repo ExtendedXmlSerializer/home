@@ -26,4 +26,6 @@ using ExtendedXmlSerializer.Core.Specifications;
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	public interface IAllowedValueSpecification : ISpecification<object> {}
+
+	public interface IAllowedValueSpecification<in T> : ISpecification<T> { }
 }

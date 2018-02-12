@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
 
@@ -35,13 +36,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		ParameterizedMembersExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<TypeMembers>()
+			=> parameter.Register<ContentMembers>()
 			            .Register<IConstructorMembers, ConstructorMembers>()
 			            .Register<IQueriedConstructors, QueriedConstructors>()
 			            .Register<IParameterizedMembers, ParameterizedMembers>()
 			            .Decorate<IMemberAccessors, ParameterizedMemberAccessors>()
 			            .Decorate<IValidConstructorSpecification, ParameterizedConstructorSpecification>()
-			            .Decorate<ITypeMembers, ParameterizedTypeMembers>()
+			            .Decorate<IContentMembers, ParameterizedContentMembers>()
 			            .Decorate<IActivators, ParameterizedActivators>()
 			            .Decorate<IInnerContentResult, ParameterizedResultHandler>();
 

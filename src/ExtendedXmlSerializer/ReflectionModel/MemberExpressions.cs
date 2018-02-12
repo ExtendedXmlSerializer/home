@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 {
 	public static class MemberExpressions
 	{
-		public static MemberExpression PropertyOrField(this UnaryExpression expression, Type type, string name)
+		public static MemberExpression PropertyOrField(this Expression expression, Type type, string name)
 		{
 			var property = type.GetProperty(name) ?? type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance);
 			if (property != null)

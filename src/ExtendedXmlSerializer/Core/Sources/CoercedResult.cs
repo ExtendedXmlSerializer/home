@@ -21,19 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	sealed class CoercedResult<TParameter, TResult, TTo> : IParameterizedSource<TParameter, TTo>
 	{
-		readonly IParameterizedSource<TResult, TTo> _coercer;
-		readonly IParameterizedSource<TParameter, TResult> _source;
+		readonly Func<TResult, TTo> _coercer;
+		readonly Func<TParameter, TResult> _source;
 
 		public CoercedResult(IParameterizedSource<TParameter, TResult> source, IParameterizedSource<TResult, TTo> coercer)
+			: this(source.Get, coercer.Get) {}
+
+		public CoercedResult(Func<TParameter, TResult> source, Func<TResult, TTo> coercer)
 		{
 			_coercer = coercer;
 			_source = source;
 		}
 
-		public TTo Get(TParameter parameter) => _coercer.Get(_source.Get(parameter));
+		public TTo Get(TParameter parameter) => _coercer(_source(parameter));
 	}
 }

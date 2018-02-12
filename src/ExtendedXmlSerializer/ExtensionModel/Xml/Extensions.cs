@@ -29,6 +29,8 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -65,14 +67,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		}
 
 		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
-			@this.Register(VerbatimContentSerializer.Default);
+			@this.Register(new ContentSerializerAdapter<string>(VerbatimContentSerializer.Default));
 
 		public static ITypeConfiguration<T> Register<T, TSerializer>(this IConfigurationContainer @this)
 			where TSerializer : ISerializer<T> => @this.Type<T>()
 			                                           .Register(typeof(TSerializer));
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+		{
+			// TODO: return @this.Register(new ActivatedSerializer(serializerType, Support<T>.Key));
+			return null;
+		}
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
@@ -114,18 +119,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			Register(@this, serializer.Adapt());
 
 		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, ISerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Types.Assign(@this.Get(), serializer);
-			return @this;
-		}
+			=> @this.Register(new ContentSerializerAdapter<T>(serializer.Adapt<T>()));
+
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this, IContentSerializer<T> serializer)
+			=> @this.Register(new InstanceService<IContentSerializer<object>>(new GenerializedContentSerializer<T>(serializer)));
+
+		public static ITypeConfiguration<T> Register<T>(this ITypeConfiguration<T> @this,
+		                                                IService<IContentSerializer<object>> service)
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Assign(@this.Get(), service)
+			                                         .Return(@this);
 
 		public static ITypeConfiguration<T> Unregister<T>(this ITypeConfiguration<T> @this)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Types.Remove(@this.Get());
-			return @this;
-		}
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Executed(@this.Get())
+			                                         .Return(@this);
 
 		public static ITypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationContainer @this)
 			where TSerializer : IExtendedXmlCustomSerializer<T>
@@ -133,7 +141,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
 			=> @this.Type<T>()
-			        .CustomSerializer(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
+			        .Register(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        Action<System.Xml.XmlWriter, T> serializer,
@@ -142,38 +150,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
-			=> @this.CustomSerializer(new Adapter<T>(serializer));
+			=> @this.Register(new GenericCustomXmlSerializer<T>(serializer));
 
 		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .XmlSerializers.Assign(@this.Get(), serializer);
-			return @this;
-		}
+			=> @this.Register(new CustomXmlSerializer<T>(serializer));
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Type serializerType)
-			=> @this.Register(new ActivatedSerializer(serializerType, Support<TMember>.Key));
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Assign(@this.GetMember(), serializerType)
+			                                         .Return(@this);
+
+		public static IMemberConfiguration<T, TMember> Register<T, TMember, TSerializer>(this IMemberConfiguration<T, TMember> @this, A<TSerializer> _)
+			where TSerializer : IContentSerializer<TMember>
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Assign(@this.GetMember(),
+			                                                 A<ActivatedContentSerializer<TMember, TSerializer>>.Default)
+			                                         .Return(@this);
 
 		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ContentModel.ISerializer<TMember> serializer) =>
-			Register(@this, serializer.Adapt());
-
-		public static IMemberConfiguration<T, TMember> Register<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                    ISerializer serializer)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Assign(((ISource<MemberInfo>) @this).Get(), serializer);
-			return @this;
-		}
+		                                                                    IContentSerializer<TMember> serializer)
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Assign(@this.GetMember(),
+			                                                 new GenerializedContentSerializer<TMember>(serializer))
+			                                         .Return(@this);
 
 		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<CustomSerializationExtension>()
-			     .Members.Remove(((ISource<MemberInfo>) @this).Get());
-			return @this;
-		}
+			=> Extend<RegisteredSerializersExtension>.Default.Get(@this)
+			                                         .Executed(@this.GetMember())
+			                                         .Return(@this);
 
 		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{

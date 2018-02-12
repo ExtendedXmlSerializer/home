@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,9 +22,25 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
+	class DecoratedContentSerializer<T> : IContentSerializer<T>
+	{
+		readonly IContentSerializer<T> _serializer;
+
+		public DecoratedContentSerializer(IContentSerializer<T> serializer) => _serializer = serializer;
+
+		public T Get(IFormatReader parameter) => _serializer.Get(parameter);
+
+		public void Execute(Writing<T> parameter)
+		{
+			_serializer.Execute(parameter);
+		}
+	}
+
 	sealed class ContentSerializer<T> : IContentSerializer<T>
 	{
 		readonly IContentReader<T> _reader;
@@ -41,6 +57,18 @@ namespace ExtendedXmlSerializer.ContentModel
 		public void Execute(Writing<T> parameter)
 		{
 			_writer.Execute(parameter);
+		}
+	}
+
+	class GenerializedContentSerializer<T> : DecoratedContentSerializer<T>, IContentSerializer<object>
+	{
+		public GenerializedContentSerializer(IContentSerializer<T> serializer) : base(serializer) {}
+
+		object IParameterizedSource<IFormatReader, object>.Get(IFormatReader parameter) => Get(parameter);
+
+		void ICommand<Writing<object>>.Execute(Writing<object> parameter)
+		{
+			Execute(new Writing<T>(parameter.Writer, parameter.Instance.AsValid<T>()));
 		}
 	}
 }

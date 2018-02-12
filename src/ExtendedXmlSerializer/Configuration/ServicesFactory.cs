@@ -28,6 +28,8 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using System;
 using System.Linq;
+using ExtendedXmlSerializer.Core.Collections;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -48,7 +50,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public IServices Get(IExtensionCollection parameter)
 		{
-			var result = new Services(new ServiceContainer(_options) {ConstructorSelector = _selector});
+			var result = new DefaultServices(new ServiceContainer(_options) {ConstructorSelector = _selector});
 
 			var services = result.RegisterInstance(parameter)
 			                     .RegisterInstance<IServiceProvider>(new Provider(result.GetService));

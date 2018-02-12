@@ -26,4 +26,6 @@ using ExtendedXmlSerializer.Core.Sources;
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	interface IRuntimeSerializer : IParameterizedSource<object, IMemberSerializer>, IMemberSerializer {}
+
+	/*interface IRuntimeContentWriter<T> : IParameterizedSource<T, IContentWriter<T>>, IContentWriter<T> { }*/
 }

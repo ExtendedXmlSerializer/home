@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
@@ -53,4 +53,31 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		protected override Func<object, object> Create(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
 	}
+
+	sealed class GetterFactory<T, TMember> : ReferenceCacheBase<MemberInfo, Func<T, TMember>>, IGetterFactory<T, TMember>
+	{
+		public static GetterFactory<T, TMember> Default { get; } = new GetterFactory<T, TMember>();
+		GetterFactory() { }
+
+		static Func<T, TMember> Get(Type type, string name)
+		{
+			// Object (type object) from witch the data are retrieved
+			var parameter = Expression.Parameter(typeof(T), "item");
+
+			/*// Object casted to specific type using the operator "as".
+			var itemCasted = Expression.Convert(itemObject, type);*/
+
+			// Property from casted object
+			var property = parameter.PropertyOrField(type, name);
+
+			// Because we use this function also for value type we need to add conversion to object
+			/*var conversion = Expression.Convert(property, typeof(object));*/
+			var lambda = Expression.Lambda<Func<T, TMember>>(property, parameter);
+			var result = lambda.Compile();
+			return result;
+		}
+
+		protected override Func<T, TMember> Create(MemberInfo parameter) => Get(parameter.DeclaringType, parameter.Name);
+	}
+
 }

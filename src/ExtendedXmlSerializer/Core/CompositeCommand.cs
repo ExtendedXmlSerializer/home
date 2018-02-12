@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core
@@ -28,16 +29,47 @@ namespace ExtendedXmlSerializer.Core
 	public class CompositeCommand<T> : ICommand<T>
 	{
 		readonly ImmutableArray<ICommand<T>> _items;
+		readonly int _length;
 		public CompositeCommand(params ICommand<T>[] items) : this(items.ToImmutableArray()) {}
 
-		public CompositeCommand(ImmutableArray<ICommand<T>> items) => _items = items;
+		public CompositeCommand(ImmutableArray<ICommand<T>> items) : this(items, items.Length) {}
+
+		public CompositeCommand(ImmutableArray<ICommand<T>> items, int length)
+		{
+			_items = items;
+			_length = length;
+		}
 
 		public void Execute(T parameter)
 		{
-			foreach (var command in _items)
+			for (var i = 0; i < _length; i++)
 			{
-				command.Execute(parameter);
+				_items[i].Execute(parameter);
 			}
+		}
+	}
+
+	public class DeferredInstanceCommand<T> : ICommand<T>
+	{
+		readonly Lazy<ICommand<T>> _command;
+		public DeferredInstanceCommand(Func<ICommand<T>> command) : this(new Lazy<ICommand<T>>(command)) {}
+		public DeferredInstanceCommand(Lazy<ICommand<T>> command) => _command = command;
+
+		public void Execute(T parameter)
+		{
+			_command.Value.Execute(parameter);
+		}
+	}
+
+
+	public class DeferredCommand<T> : ICommand<T>
+	{
+		readonly Func<ICommand<T>> _command;
+		public DeferredCommand(Func<ICommand<T>> command) => _command = command;
+
+		public void Execute(T parameter)
+		{
+			_command().Execute(parameter);
 		}
 	}
 }

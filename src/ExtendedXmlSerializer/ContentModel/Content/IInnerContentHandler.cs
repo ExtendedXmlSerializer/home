@@ -21,9 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	interface IInnerContentHandler : ICommand<IInnerContent> {}
+
+	interface IContentHandler<T> : ICommand<InnerContent<T>> { }
+
+	struct InnerContent<T>
+	{
+		public InnerContent(IFormatReader reader, IInnerContent<T> content)
+		{
+			Reader = reader;
+			Content = content;
+		}
+
+		public IFormatReader Reader { get; }
+
+		public IInnerContent<T> Content { get; }
+	}
 }

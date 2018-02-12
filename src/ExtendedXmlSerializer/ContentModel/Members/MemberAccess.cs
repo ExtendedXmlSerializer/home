@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Core.Specifications;
 using System;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
@@ -47,4 +48,27 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			}
 		}
 	}
+
+	sealed class MemberAccess<T, TMember> : DecoratedSpecification<TMember>, IMemberAccess<T, TMember>
+	{
+		readonly Func<T, TMember> _get;
+		readonly Action<T, TMember> _set;
+
+		public MemberAccess(ISpecification<TMember> emit, Func<T, TMember> get, Action<T, TMember> set) : base(emit)
+		{
+			_get = get;
+			_set = set;
+		}
+
+		public TMember Get(T instance) => instance != null ? _get(instance) : default(TMember);
+
+		public void Execute(KeyValuePair<T, TMember> parameter)
+		{
+			if (IsSatisfiedBy(parameter.Value))
+			{
+				_set(parameter.Key, parameter.Value);
+			}
+		}
+	}
+
 }

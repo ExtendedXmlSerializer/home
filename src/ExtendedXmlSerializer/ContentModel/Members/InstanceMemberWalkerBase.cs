@@ -32,11 +32,11 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	abstract class InstanceMemberWalkerBase<T> : ObjectWalkerBase<object, IEnumerable<T>>
 	{
-		readonly ITypeMembers _members;
+		readonly IContentMembers _members;
 		readonly IEnumeratorStore _enumerators;
 		readonly Func<object, IEnumerable<T>> _selector;
 
-		protected InstanceMemberWalkerBase(ITypeMembers members, IEnumeratorStore enumerators, object root) : base(root)
+		protected InstanceMemberWalkerBase(IContentMembers members, IEnumeratorStore enumerators, object root) : base(root)
 		{
 			_members = members;
 			_enumerators = enumerators;
