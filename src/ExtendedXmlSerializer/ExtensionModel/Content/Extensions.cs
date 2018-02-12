@@ -78,14 +78,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		                                                                    Func<TMember, bool> specification)
 		{
 			@this.Root.Find<AllowedMemberValuesExtension>()
-			     .Specifications[((ISource<MemberInfo>) @this).Get()] =
+			     .Specifications[@this.Member()] =
 				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).AdaptForNull());
 			return @this;
 		}
 
 		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 			=> @this.Extend<AllowedMembersExtension>()
-			        .Blacklist.Adding(((ISource<MemberInfo>) @this).Get())
+			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
 
 		public static T Include<T>(this T @this) where T : IMemberConfiguration

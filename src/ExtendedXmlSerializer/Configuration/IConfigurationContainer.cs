@@ -27,6 +27,5 @@ namespace ExtendedXmlSerializer.Configuration
 	public interface IConfigurationContainer
 	{
 		IRootContext Root { get; }
-		/*IConfigurationContainer Extend(ISerializerExtension extension);*/
 	}
 }

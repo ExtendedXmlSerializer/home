@@ -36,7 +36,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -51,14 +50,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
 			this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Extend<MemberFormatExtension>().Specifications[((ISource<MemberInfo>) @this).Get()] =
+			@this.Extend<MemberFormatExtension>().Specifications[@this.Member()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
 		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 			=> @this.Extend<MemberFormatExtension>()
-			        .Registered.Adding(((ISource<MemberInfo>) @this).Get())
+			        .Registered.Adding(@this.Member())
 			        .Return(@this);
 
 		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
