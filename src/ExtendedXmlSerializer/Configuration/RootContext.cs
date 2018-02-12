@@ -49,7 +49,6 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		public IRootContext Root => this;
-		public IContext Parent => null;
 
 		public ITypeConfigurations Types { get; }
 
@@ -74,7 +73,5 @@ namespace ExtendedXmlSerializer.Configuration
 		bool ICollection<ISerializerExtension>.Remove(ISerializerExtension item) => _extensions.Remove(item);
 		int ICollection<ISerializerExtension>.Count => _extensions.Count;
 		bool ICollection<ISerializerExtension>.IsReadOnly => _extensions.IsReadOnly;
-		bool IExtensionCollection.Contains<T>() => _extensions.Contains<T>();
-		T IExtensionCollection.Find<T>() => _extensions.Find<T>();
 	}
 }

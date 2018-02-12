@@ -28,6 +28,7 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using JetBrains.Annotations;
 using System;
@@ -36,6 +37,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
+	[Dependency(typeof(ReaderContextExtension))]
 	sealed class DeferredReferencesExtension : ISerializerExtension, ISortAware
 	{
 		public static DeferredReferencesExtension Default { get; } = new DeferredReferencesExtension();

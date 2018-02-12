@@ -27,10 +27,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public static class Extensions
 	{
-		/*public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this)
-			=> @this.Extend(SingletonActivationExtension.Default);*/
-
 		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
-			=> @this.Extend(AllConstructorsExtension.Default);
+			=> @this.Extended<AllConstructorsExtension>();
 	}
 }

@@ -23,21 +23,14 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class TypeConfigurationContext : DelegatedSource<TypeInfo>, ITypeConfigurationContext
 	{
-		public TypeConfigurationContext(IRootContext root, TypeInfo type) : base(type.Self)
-		{
-			Root = root;
-		}
+		public TypeConfigurationContext(IRootContext root, TypeInfo type) : base(type.Self) => Root = root;
 
 		public IRootContext Root { get; }
-		public IContext Parent => Root;
-
-		public IExtendedXmlSerializer Create() => Root.Create();
 	}
 }

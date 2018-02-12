@@ -32,6 +32,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
 			=> @this.EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)
-			        .Extend(MarkupExtension.Default);
+			        .Extended<MarkupExtension>();
 	}
 }

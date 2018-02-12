@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
+	[Dependency(typeof(RootInstanceExtension))]
 	sealed class OptimizedNamespaceExtension : ISerializerExtension
 	{
 		public static OptimizedNamespaceExtension Default { get; } = new OptimizedNamespaceExtension();

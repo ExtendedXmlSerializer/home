@@ -24,9 +24,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
-#pragma warning disable 1584,1711,1572,1581,1580
+#pragma warning disable 1584, 1711, 1572, 1581, 1580
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
@@ -76,27 +75,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			return false;
 		}
 
-		public KeyedByTypeCollection<TItem> AddOrReplace<T>(T item)
-		{
-			if (item is TItem)
-			{
-				RemoveAll<T>();
-				Add((TItem)(object)item);
-			}
-			return this;
-		}
 
-		/// <summary>Removes all of the elements of a specified type from the collection.</summary>
-		/// <returns>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains the objects of type <paramref name="T" /> from the original collection.</returns>
-		/// <typeparam name="T">The type of item in the collection to remove.</typeparam>
-		public KeyedByTypeCollection<TItem> RemoveAll<T>()
-		{
-			this.OfType<T>()
-			    .OfType<TItem>()
-			    .ToArray()
-			    .ForEach(base.Remove);
-			return this;
-		}
 
 		/// <summary>Gets the type of an item contained in the collection.</summary>
 		/// <returns>The type of the specified <paramref name="item" /> in the collection.</returns>

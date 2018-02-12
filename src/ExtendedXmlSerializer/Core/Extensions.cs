@@ -41,6 +41,12 @@ namespace ExtendedXmlSerializer.Core
 			return @this;
 		}
 
+		public static IAssignable<TKey, TValue> Assigned<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
+		{
+			@this.Assign(key, value);
+			return @this;
+		}
+
 		public static ICommand<T> Fold<T>(this IEnumerable<ICommand<T>> @this)
 			=> new CompositeCommand<T>(@this.ToImmutableArray());
 
@@ -109,54 +115,33 @@ namespace ExtendedXmlSerializer.Core
 			return result;
 		}
 
-		public static IEnumerable<T> TypeZip<T>(this IEnumerable<T> @this, IEnumerable<T> other)
-		{
-			var items = other.ToDictionary(x => x.GetType(), x => x);
-			foreach (var item in @this)
-			{
-				T found;
-				var key = item.GetType();
-				yield return items.TryGetValue(key, out found) && items.Remove(key) ? found : item;
-			}
-
-			foreach (var item in items.Values)
-			{
-				yield return item;
-			}
-		}
-
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
-		public static KeyedByTypeCollection<T> KeyedByType<T>(this IEnumerable<T> @this) =>
-			@this as KeyedByTypeCollection<T> ?? new KeyedByTypeCollection<T>(@this);
-
-		public static ICollection<T> AddOrReplace<T, TItem>(this ICollection<T> @this, TItem item)
+		public static ICollection<T> Adding<T>(this ICollection<T> @this, T item)
 		{
-			var source = @this.KeyedByType()
-			                  .AddOrReplace(item);
-			@this.SynchronizeFrom(source);
+			@this.Add(item);
 			return @this;
 		}
 
-		public static bool Removing<T, TItem>(this ICollection<T> @this, TItem item)
+		public static ICollection<T> Removing<T>(this ICollection<T> @this, T item)
 		{
-			var source = @this.KeyedByType();
-			var result = source.Remove(item);
-			@this.SynchronizeFrom(source);
-			return result;
+			@this.Remove(item);
+			return @this;
 		}
 
-		public static ICollection<T> SynchronizeFrom<T>(this ICollection<T> @this, IEnumerable<T> source)
+		public static ICollection<TItem> AddOrReplace<T, TItem>(this ICollection<TItem> @this, T item) where T : TItem
 		{
-			if (!ReferenceEquals(@this, source))
-			{
-				@this.Clear();
-				foreach (var item in source)
-				{
-					@this.Add(item);
-				}
-			}
+			@this.RemoveAll(A<T>.Default);
+			@this.Add(item);
+			return @this;
+		}
 
+		public static ICollection<TItem> RemoveAll<T, TItem>(this ICollection<TItem> @this, A<T> _) where T : TItem
+		{
+			@this.OfType<T>()
+			     .OfType<TItem>()
+			     .ToArray()
+			     .ForEach(@this.Remove);
 			return @this;
 		}
 

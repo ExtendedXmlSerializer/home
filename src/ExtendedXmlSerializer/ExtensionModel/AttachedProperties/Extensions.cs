@@ -23,11 +23,11 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
@@ -44,7 +44,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
 		                                                               ICollection<IProperty> properties,
 		                                                               ICollection<Type> types)
-			=> @this.Extend(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)));
+			=> @this.Root.AddOrReplace(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
+			        .Return(@this);
 
 		public static TValue Get<TType, TValue>(this TType @this, Property<TType, TValue> property) => property.Get(@this);
 
@@ -57,13 +58,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		{
 			var instance = property.Compile()
 			                       .Invoke();
-			@this.Root.With<AttachedPropertiesExtension>()
+			@this.Extend<AttachedPropertiesExtension>()
 			     .Registrations.Instances.Add(instance);
 			var subject = property.GetMemberInfo()
 			                      .AsValid<PropertyInfo>();
 
 
-			var type = @this.GetTypeConfiguration(subject.DeclaringType);
+			var type = @this.Root.GetTypeConfiguration(subject.DeclaringType);
 			var current = type.AsInternal().Member(subject);
 
 			var result = new AttachedPropertyConfiguration<TType, TValue>(current);

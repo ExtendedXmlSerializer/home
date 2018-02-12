@@ -6,7 +6,6 @@ using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Services;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
@@ -69,14 +68,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 			=> OnlyEmitWhen(@this, new DelegatedSpecification<TMember>(specification));
 
 		public static IMemberConfiguration<T, TMember> OnlyEmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISpecification<TMember> specification)
-			=> Extend<RuntimeMembersExtension>.Default.Get(@this)
-			                          .Assign(@this, WellKnownPipelinePhases.Validation,
-			                                  new EmitRuntimePipelineComposer<TMember>(specification))
-			                          .Return(@this);
+			=> @this.Extend<RuntimeMembersExtension>()
+			        .Assign(@this, WellKnownPipelinePhases.Validation,
+			                new EmitRuntimePipelineComposer<TMember>(specification))
+			        .Return(@this);
 
 		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IMemberConfiguration member,
 		                                                RuntimePhase name, IRuntimePipelineComposer<T> selection)
-			=> @this.Assign(member.GetMember(), new Registration(name, selection.Generalized())).Return(@this);
+			=> @this.Assign(member.Member(), new Registration(name, selection.Generalized())).Return(@this);
 
 		public static IRuntimePipelineComposer<object> Generalized<T>(this IRuntimePipelineComposer<T> @this)
 			=> new GenerializedRuntimePipelineComposer<T>(@this);

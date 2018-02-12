@@ -31,7 +31,6 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -60,22 +59,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> new ConditionalContentDecoration<T>(specification).Get(@this);
 
 		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
-			=> @this.Extend(ParameterizedMembersExtension.Default);
+			=> @this.Extended<ParameterizedMembersExtension>();
 
 		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
-			=> @this.Extend(ReaderContextExtension.Default);
+			=> @this.Extended<ReaderContextExtension>();
 
 		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
 		public static ITypeConfiguration<T> EmitWhen<T>(this ITypeConfiguration<T> @this,
 		                                                Func<T, bool> specification)
-		{
-			@this.Root.With<AllowedInstancesExtension>()
-			     .Assign(@this.Get(),
-			             new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()));
-			return @this;
-		}
+			=> @this.Extend<AllowedInstancesExtension>()
+			        .Assigned(@this.Get(),
+			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
+			        .Return(@this);
 
 		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
 		                                                                    Func<TMember, bool> specification)
@@ -87,29 +84,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		}
 
 		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Blacklist.Add(((ISource<MemberInfo>) @this).Get());
-			return @this;
-		}
+			=> @this.Extend<AllowedMembersExtension>()
+			        .Blacklist.Adding(((ISource<MemberInfo>) @this).Get())
+			        .Return(@this);
 
-		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(((ISource<MemberInfo>) @this).Get());
-			return @this;
-		}
-
-		internal static IMemberConfiguration Include(this IMemberConfiguration @this)
-		{
-			@this.Root.With<AllowedMembersExtension>()
-			     .Whitelist.Add(((ISource<MemberInfo>) @this).Get());
-			return @this;
-		}
+		public static T Include<T>(this T @this) where T : IMemberConfiguration
+			=> @this.Extend<AllowedMembersExtension>()
+			        .Whitelist.Adding(@this.Member())
+			        .Return(@this);
 
 		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
 		{
-			foreach (var type in @this)
+			foreach (var type in @this.Root.Types)
 			{
 				type.OnlyConfiguredProperties();
 			}
@@ -119,7 +105,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
 		{
-			foreach (var member in (IEnumerable<IMemberConfiguration>) @this)
+			foreach (var member in @this)
 			{
 				member.Include();
 			}
@@ -129,7 +115,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
 		{
-			@this.Root.With<ConverterAlterationsExtension>()
+			@this.Extend<ConverterAlterationsExtension>()
 			     .Alterations.Add(alteration);
 			return @this;
 		}
@@ -145,19 +131,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> @this.Alter(optimizations);
 
 		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this, IConverter<T> converter)
-		{
-			var item = converter as Converter<T> ?? Converters<T>.Default.Get(converter);
-			@this.Root.Find<ConvertersExtension>()
-			     .Converters
-			     .AddOrReplace(item);
-			return @this;
-		}
+			=> @this.Extend<ConvertersExtension>()
+			        .Converters
+			        .AddOrReplace(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
+			        .Return(@this);
 
 		public static bool Unregister<T>(this IConfigurationContainer @this, IConverter<T> converter)
-			=> @this.Root.Find<ConvertersExtension>()
-			        .Converters.Removing(converter);
+			=> @this.Extend<ConvertersExtension>()
+			        .Converters.Remove(converter as Converter<T> ?? Converters<T>.Default.Get(converter));
 
-		sealed class Converters<T> : ReferenceCache<IConverter<T>, IConverter<T>>
+		sealed class Converters<T> : ReferenceCache<IConverter<T>, Converter<T>>
 		{
 			public static Converters<T> Default { get; } = new Converters<T>();
 			Converters() : base(key => new Converter<T>(key, key.Parse, key.Format)) {}

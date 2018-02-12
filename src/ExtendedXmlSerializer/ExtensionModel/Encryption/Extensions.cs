@@ -23,19 +23,17 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
-	using System.Reflection;
-
 	public static class Extensions
 	{
 		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Root.With<EncryptionExtension>().Registered.Add(((ISource<MemberInfo>)@this).Get());
-			return @this;
-		}
+			=> @this.Extend<EncryptionExtension>()
+			        .Registered.Adding(@this.Member())
+			        .Return(@this);
 
 		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this)
 			=> UseEncryptionAlgorithm(@this, EncryptionConverterAlteration.Default);
@@ -43,11 +41,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IEncryption encryption)
 			=> UseEncryptionAlgorithm(@this, new EncryptionConverterAlteration(encryption));
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IAlteration<IConverter> parameter)
-			=> @this.Root
-			        .With<EncryptionExtension>()
+		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this,
+		                                                             IAlteration<IConverter> parameter)
+			=> @this.Extend<EncryptionExtension>()
 			        .IsSatisfiedBy(parameter)
 				   ? @this
-				   : @this.Extend(new EncryptionExtension(parameter));
+				   : @this.Root.AddOrReplace(new EncryptionExtension(parameter))
+				          .Return(@this);
 	}
 }

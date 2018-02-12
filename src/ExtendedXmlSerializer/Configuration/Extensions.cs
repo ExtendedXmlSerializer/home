@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -35,48 +34,21 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	using Core.Sources;
-
 	public static class Extensions
 	{
-		public static IExtendedXmlSerializer Create(this IContext @this) => @this.Root.Create();
+		public static IExtendedXmlSerializer Create(this IConfigurationContainer @this) => @this.Root.Create();
 
-		/*public static IRootContext Apply<T>(this IRootContext @this)
-			where T : class, ISerializerExtension => Apply(@this, Support<T>.NewOrSingleton);
+		public static bool Contains<T>(this IExtensionCollection @this) where T : ISerializerExtension
+			=> @this.Any(IsTypeSpecification<T>.Default.IsSatisfiedBy);
 
-		public static IRootContext Apply<T>(this IRootContext @this, Func<T> create)
-			where T : class, ISerializerExtension
-		{
-			if (!@this.Contains<T>())
-			{
-				@this.Add(create);
-			}
-			return @this;
-		}*/
+		public static T Find<T>(this IExtensionCollection @this) where T : ISerializerExtension => @this.OfType<T>()
+		                                                                                                .FirstOrDefault();
 
-		/*public static T Add<T>(this IRootContext @this) where T : ISerializerExtension
-			=> Add(@this, Support<T>.NewOrSingleton);
-
-		public static T Add<T>(this IRootContext @this, Func<T> create) where T : ISerializerExtension
-		{
-			var result = create();
-			@this.Add(result);
-			return result;
-		}*/
-
-		public static IRootContext With<T>(this IRootContext @this, Action<T> configure)
-			where T : class, ISerializerExtension
-		{
-			var extension = @this.With<T>();
-			configure(extension);
-			return @this;
-		}
-
-		public static T With<T>(this IRootContext @this) where T : class, ISerializerExtension
-			=> @this.Find<T>() ?? Extensions<T>.Default.Get(@this);
+		/*public static T With<T>(this IRootContext @this) where T : class, ISerializerExtension
+			=> @this.Find<T>() ?? Extend<T>.Default.Get(@this);*/
 
 
-		public static IRootContext Extend(this IRootContext @this,
+		/*public static IRootContext Extend(this IRootContext @this,
 		                                  params ISerializerExtension[] extensions)
 		{
 			var items = With(@this, extensions)
@@ -89,7 +61,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public static ISerializerExtension[] With(this IEnumerable<ISerializerExtension> @this,
 		                                          params ISerializerExtension[] extensions)
 			=> @this.TypeZip(extensions)
-			        .ToArray();
+			        .ToArray();*/
 
 		/*public static ITypeConfiguration Type(this IConfiguration @this, TypeInfo type) => @this.Get(type);*/
 
@@ -108,10 +80,10 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static ITypeConfiguration GetTypeConfiguration(this IContext @this, Type type)
+		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationContainer @this, Type type)
 			=> @this.GetTypeConfiguration(type.GetTypeInfo());
 
-		public static ITypeConfiguration GetTypeConfiguration(this IContext @this, TypeInfo type) =>
+		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationContainer @this, TypeInfo type) =>
 			@this.Root.Types.Get(type);
 
 		public static IMemberConfiguration<T, TMember> Member<T, TMember>(this ITypeConfiguration<T> @this,
@@ -161,50 +133,28 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		public static IConfigurationContainer EnableReferences(this IConfigurationContainer @this)
-		{
-			@this.Root.EnableReferences();
-			return @this;
-		}
-
-		public static IRootContext EnableReferences(this IRootContext @this)
-		{
-			@this.EnableRootInstances().With<ReferencesExtension>();
-			return @this;
-		}
+			=> @this.Extended<ReferencesExtension>();
 
 		public static IConfigurationContainer EnableDeferredReferences(this IConfigurationContainer @this)
-		{
-			@this.Root.Extend(ReaderContextExtension.Default, DeferredReferencesExtension.Default);
-			return @this;
-		}
+			=> @this.Extended<DeferredReferencesExtension>();
 
 		public static ITypeConfiguration<T> EnableReferences<T, TMember>(this ITypeConfiguration<T> @this,
 		                                                                Expression<Func<T, TMember>> member)
-		{
-			@this.Member(member)
-			     .Identity();
-			return @this;
-		}
+			=> @this.Member(member)
+			        .Identity()
+			        .Return(@this);
 
 		public static IMemberConfiguration<T, TMember> Identity<T, TMember>(this IMemberConfiguration<T, TMember> @this)
-		{
-			@this.Attribute().Root
-			     .EnableReferences()
-			     .With<ReferencesExtension>()
-			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
-			                  .Get(), ((ISource<MemberInfo>)@this).Get());
-			return @this;
-		}
+			=> @this.Extend<ReferencesExtension>()
+			        .Assigned(@this.Type(), @this.Member())
+			        .Return(@this);
 
 		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationContainer @this)
-			=> @this.Root.With<DefaultReferencesExtension>()
+			=> @this.Extend<DefaultReferencesExtension>()
 			        .Whitelist;
 
 		public static ICollection<TypeInfo> IgnoredReferenceTypes(this IConfigurationContainer @this)
-			=> @this.Root.With<DefaultReferencesExtension>()
+			=> @this.Extend<DefaultReferencesExtension>()
 			        .Blacklist;
-
-		/*public static IConfigurationContainer EnableSingletons(this IConfigurationContainer @this) =>
-			@this.Extend(SingletonActivationExtension.Default);*/
 	}
 }

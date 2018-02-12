@@ -22,13 +22,12 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Expressions
 {
 	public static class Extensions
 	{
 		public static IConfigurationContainer EnableExpressions(this IConfigurationContainer @this)
-			=> Extend<ExpressionsExtension>.Default.Get(@this).Return(@this);
+			=> @this.Extended<ExpressionsExtension>();
 	}
 }

@@ -27,10 +27,10 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
-using ExtendedXmlSerializer.ExtensionModel.Services;
 
 #if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
 namespace System.Runtime.Serialization
@@ -50,7 +50,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	{
 		public static IConfigurationContainer Register(this IConfigurationContainer @this,
 													   ISerializationSurrogateProvider provider)
-			=> @this.Extend(new SurrogatesExtension(provider));
+			=> @this.Root.AddOrReplace(new SurrogatesExtension(provider))
+			        .Return(@this);
 	}
 
 	public sealed class SurrogatesExtension : ISerializerExtension

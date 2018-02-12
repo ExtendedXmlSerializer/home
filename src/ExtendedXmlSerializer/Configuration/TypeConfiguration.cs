@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
 
-		public new IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
+		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 		public new TypeInfo Get() => Support<T>.Key;

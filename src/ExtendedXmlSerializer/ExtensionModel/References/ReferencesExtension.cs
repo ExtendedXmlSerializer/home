@@ -21,16 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
+	[Dependency(typeof(RootInstanceExtension))]
 	sealed class ReferencesExtension : TypedTable<MemberInfo>, IEntityMembers, ISerializerExtension
 	{
 		public ReferencesExtension() : this(new Dictionary<TypeInfo, MemberInfo>()) {}

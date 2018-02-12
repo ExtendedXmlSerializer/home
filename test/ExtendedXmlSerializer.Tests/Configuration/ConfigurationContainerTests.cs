@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.Encryption;
@@ -101,7 +102,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var configuration = Configure(cfg => cfg.ConfigureType<TestClassPrimitiveTypes>().AddMigration(xml => { }));
 			var type = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.Single(configuration.Root.With<MigrationsExtension>().Get(type.Get()));
+			Assert.Single(configuration.Extend<MigrationsExtension>().Get(type.Get()));
 		}
 
 		[Fact]
@@ -185,7 +186,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Attribute(); });
 			var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
 				.Member(nameof(SimpleTestSubject.BasicProperty));
-			Assert.True(configuration.Root.With<MemberFormatExtension>().Registered.Contains(((ISource<MemberInfo>)member).Get()));
+			Assert.True(configuration.Extend<MemberFormatExtension>().Registered.Contains(((ISource<MemberInfo>)member).Get()));
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,

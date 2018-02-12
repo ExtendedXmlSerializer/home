@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 			var container = new ConfigurationContainer(new ExtensionCollection());
 			container.Root.Should().ContainSingle();
 
-			Extend<Extension>.Default.Get(container);
+			container.Extend<Extension>();
 			container.Root.ElementAt(1).Should().BeOfType<AnotherDependency>();
 			container.Root.ElementAt(2).Should().BeOfType<Dependency2>();
 			container.Root.ElementAt(3).Should().BeOfType<Dependency1>();

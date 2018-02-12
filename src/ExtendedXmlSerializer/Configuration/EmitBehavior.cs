@@ -21,7 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -29,10 +31,18 @@ namespace ExtendedXmlSerializer.Configuration
 	sealed class EmitBehavior : IEmitBehavior
 	{
 		readonly IAlteration<AllowedMemberValuesExtension> _alteration;
+		readonly IExtend<AllowedMemberValuesExtension> _extend;
 
-		public EmitBehavior(IAlteration<AllowedMemberValuesExtension> alteration) => _alteration = alteration;
+		public EmitBehavior(IAlteration<AllowedMemberValuesExtension> alteration) : this(alteration, Extend<AllowedMemberValuesExtension>.Default) {}
+
+		public EmitBehavior(IAlteration<AllowedMemberValuesExtension> alteration, IExtend<AllowedMemberValuesExtension> extend)
+		{
+			_alteration = alteration;
+			_extend = extend;
+		}
 
 		public IConfigurationContainer Get(IConfigurationContainer parameter)
-			=> parameter.Extend(_alteration.Get(parameter.Root.Find<AllowedMemberValuesExtension>()));
+			=> parameter.Root.AddOrReplace(_alteration.Get(_extend.Get(parameter)))
+			            .Return(parameter);
 	}
 }
