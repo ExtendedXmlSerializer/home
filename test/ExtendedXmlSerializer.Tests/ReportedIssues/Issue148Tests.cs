@@ -59,7 +59,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public static Profile Default { get; } = new Profile();
 			Profile() {}
 
-			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
+			public IConfigurationElement Get(IConfigurationElement parameter) => parameter.Type<Subject>()
 			                                                                                  .Name("ConfiguredSubject");
 		}
 
@@ -69,7 +69,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public static Ignore Default { get; } = new Ignore();
 			Ignore() {}
 
-			public IConfigurationContainer Get(IConfigurationContainer parameter) => parameter.Type<Subject>()
+			public IConfigurationElement Get(IConfigurationElement parameter) => parameter.Type<Subject>()
 			                                                                                  .Member(x => x.Message)
 			                                                                                  .Ignore();
 		}

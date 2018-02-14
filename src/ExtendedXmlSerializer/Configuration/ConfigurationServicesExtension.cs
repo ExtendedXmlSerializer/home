@@ -21,9 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Services;
+using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IConfiguration : ISource<ISerializers> {}
+	sealed class ConfigurationServicesExtension : ISerializerExtension, IServiceProvider, ICommand<object>
+	{
+		readonly ICollection<object> _services;
+		readonly IServiceProvider _provider;
+
+		public ConfigurationServicesExtension(params object[] services) : this(services.ToList()) {}
+
+		public ConfigurationServicesExtension(IList<object> services) : this(services, new ServiceProvider(services)) {}
+
+		public ConfigurationServicesExtension(ICollection<object> services, IServiceProvider provider)
+		{
+			_services = services;
+			_provider = provider;
+		}
+
+		IServiceRepository IParameterizedSource<IServiceRepository, IServiceRepository>.Get(IServiceRepository parameter) =>
+			parameter;
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
+
+		public object GetService(Type serviceType) => _provider.GetService(serviceType);
+		public void Execute(object parameter) => _services.Add(parameter);
+	}
 }

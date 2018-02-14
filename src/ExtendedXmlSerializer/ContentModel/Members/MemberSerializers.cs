@@ -94,34 +94,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public DecoratedMemberWriters(IParameterizedSource<IMember, IContentWriter<T>> source) : base(source) {}
 	}
 
-	/*class ConditionalMemberWriters<T, TDefinition> : ConditionalMemberWriters<T>
-	{
-		public ConditionalMemberWriters(ISpecification<IMember> specification, IServiceProvider services, IMemberWriters<T> fallback)
-			: base(specification, new GenericMemberWriters<T,TDefinition>(services), fallback) {}
-	}
-
-	class ConditionalMemberWriters<T> : ConditionalSource<IMember, IContentWriter<T>>, IMemberWriters<T>
-	{
-		public ConditionalMemberWriters(ISpecification<IMember> specification,
-		                                IParameterizedSource<IMember, IContentWriter<T>> source,
-		                                IParameterizedSource<IMember, IContentWriter<T>> fallback) :
-			base(specification, source, fallback) {}
-	}*/
-
-	/*class DecoratedMemberWriters<T, TDefinition> : DecoratedMemberWriters<T> where TDefinition : IDecoration<IMember, IContentWriter<T>>
-	{
-		public DecoratedMemberWriters(ISpecification<IMember> specification, IServiceProvider services, IMemberWriters<T> fallback)
-			: base(specification, new MemberWritersDecoration<T, TDefinition>(services), fallback) { }
-	}
-
-	class DecoratedMemberWriters<T> : DecoratedConditionalSource<IMember, IContentWriter<T>>, IMemberWriters<T>
-	{
-		public DecoratedMemberWriters(ISpecification<IMember> specification,
-		                              IParameterizedSource<Decoration<IMember, IContentWriter<T>>, IContentWriter<T>> source,
-		                              IParameterizedSource<IMember, IContentWriter<T>> fallback) : base(specification, source,
-		                                                                                                fallback) {}
-	}*/
-
 	sealed class MemberWriters<T> : LocatedMemberWriters<T, MemberWriters<object, object>>, IMemberWriters<T>
 	{
 		public MemberWriters(IServiceProvider provider) : base(provider) {}
@@ -131,11 +103,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	{
 		public LocatedMemberWriters(IServiceProvider provider) : base(provider, MemberTypes<T>.Default) { }
 	}
-
-	/*class MemberWritersDecoration<T, TDefinition> : GenericDecoration<IMember, IContentWriter<T>, TDefinition>
-	{
-		public MemberWritersDecoration(IServiceProvider provider) : base(provider, MemberTypes<T>.Default) { }
-	}*/
 
 	sealed class MemberTypes<T> : IInstanceTypes<IMember>
 	{
@@ -148,37 +115,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			yield return parameter.MemberType;
 		}
 	}
-
-	/*class GenericMemberWriters<T> : IMemberWriters<T>
-	{
-		readonly IGenericSource<IMember, IContentWriter<T>> _source;
-
-		public GenericMemberWriters(IServiceProvider provider, Type type)
-			: this(new GenericSource<IMember, IContentWriter<T>>(type, provider)) {}
-
-		public GenericMemberWriters(IGenericSource<IMember, IContentWriter<T>> source) => _source = source;
-
-		public IContentWriter<T> Get(IMember parameter) => _source.Get(Support<T>.Key, parameter.MemberType)
-		                                                          .Get(parameter);
-	}*/
-
-	/*class MemberWritersDecoration<T> : IDecoration<IMember, IContentWriter<T>>
-	{
-		readonly IGenericDecoration<IMember, IContentWriter<T>> _source;
-
-		public GenericMemberWriters(IServiceProvider provider, Type type)
-			: this(new GenericSource<IMember, IContentWriter<T>>(provider, type)) { }
-
-		public GenericMemberWriters(IGenericSource<IMember, IContentWriter<T>> source) => _source = source;
-
-		public IContentWriter<T> Get(IMember parameter) => _source.Get(Support<T>.Key, parameter.MemberType)
-		                                                          .Get(parameter);
-
-		public IContentWriter<T> Get(Decoration<IMember, IContentWriter<T>> parameter)
-		{
-			throw new NotImplementedException();
-		}
-	}*/
 
 	interface IMemberWriterContent<T> : IParameterizedSource<IMember, IContentWriter<T>> {}
 

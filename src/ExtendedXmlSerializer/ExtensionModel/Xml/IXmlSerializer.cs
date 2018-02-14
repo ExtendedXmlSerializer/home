@@ -26,5 +26,5 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	interface IXmlSerializer<T> : ISerializer<T>, ICommand<XmlInput<T>>, IParameterizedSource<System.Xml.XmlReader, T> {}
+	public interface IXmlSerializer<T> : ISerializer<T>, ICommand<XmlInput<T>>, IParameterizedSource<System.Xml.XmlReader, T> {}
 }

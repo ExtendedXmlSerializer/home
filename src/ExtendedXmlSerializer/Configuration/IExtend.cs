@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,21 +23,9 @@
 
 using System.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.ExtensionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	abstract class MemberPropertyBase<TMember, T> : FixedSource<TMember, T>, IProperty<T> where TMember : MemberInfo
-	{
-		readonly IMetadataTable<TMember, T> _table;
-		readonly TMember _member;
-
-		protected MemberPropertyBase(IMetadataTable<TMember, T> table, TMember member) : base(table, member)
-		{
-			_table = table;
-			_member = member;
-		}
-
-		public void Assign(T value) => _table.Assign(_member, value);
-	}
+	public interface IExtend : IParameterizedSource<TypeInfo, ISerializerExtension> {}
 }

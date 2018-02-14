@@ -23,14 +23,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		[Fact]
 		public void VerifyLoadedExtensions()
 		{
-			var container = new ConfigurationContainer(new ExtensionCollection());
-			container.Root.Should().ContainSingle();
+			var container = new ConfigurationContainer(new ISerializerExtension[]{});
+			container.Should().ContainSingle();
 
 			container.Extend<Extension>();
-			container.Root.ElementAt(1).Should().BeOfType<AnotherDependency>();
-			container.Root.ElementAt(2).Should().BeOfType<Dependency2>();
-			container.Root.ElementAt(3).Should().BeOfType<Dependency1>();
-			container.Root.Last().Should().BeOfType<Extension>();
+			container.ElementAt(1).Should().BeOfType<AnotherDependency>();
+			container.ElementAt(2).Should().BeOfType<Dependency2>();
+			container.ElementAt(3).Should().BeOfType<Dependency1>();
+			container.Last().Should().BeOfType<Extension>();
 		}
 
 

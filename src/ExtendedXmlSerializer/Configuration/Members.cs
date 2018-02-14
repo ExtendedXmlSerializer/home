@@ -21,25 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ExtensionModel.Content.Members;
-using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public static class EmitBehaviors
+	sealed class Members : IParameterizedSource<MemberInfo, IMemberConfiguration>
 	{
-		public static IEmitBehavior Always { get; } =
-			new EmitBehavior(new AllowedSpecificationAlteration(AlwaysSpecification<object>.Default));
+		readonly ITypeConfiguration _type;
+		readonly IGeneric<ITypeConfiguration, MemberInfo, IMemberConfiguration> _generic;
+		readonly Func<MemberInfo, MemberDescriptor> _descriptor;
 
-		public static IEmitBehavior NotDefault { get; } =
-			new EmitBehavior(new AllowedSpecificationAlteration(AllowAssignedValues.Default));
+		public Members(ITypeConfiguration type) : this(type, Generic.Default, MemberDescriptors.Default.Get) {}
 
-		public static IEmitBehavior Classic { get; } =
-			new EmitBehavior(new AddAlteration(ClassicAllowedMemberValues.Default));
+		public Members(ITypeConfiguration type, IGeneric<ITypeConfiguration, MemberInfo, IMemberConfiguration> generic,
+		               Func<MemberInfo, MemberDescriptor> descriptor)
+		{
+			_type = type;
+			_generic = generic;
+			_descriptor = descriptor;
+		}
 
-		public static IEmitBehavior Assigned { get; } =
-			new EmitBehavior(new AddAlteration(AllowedAssignedInstanceValues.Default));
+		public IMemberConfiguration Get(MemberInfo parameter) => _generic.Get(_type.Get(), _descriptor(parameter)
+			                                                                      .MemberType)
+		                                                                 .Invoke(_type, parameter);
+
+		sealed class Generic : Generic<IConfigurationElement, MemberInfo, IMemberConfiguration>
+		{
+			public static Generic Default { get; } = new Generic();
+			Generic() : base(typeof(ConfigurationElement<,>)) {}
+		}
 	}
 }

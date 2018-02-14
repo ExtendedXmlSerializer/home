@@ -43,20 +43,6 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public IMemberContentWriter<T> Get(IMember parameter) => new MemberContentWriter<T>(_contents.Get(parameter), parameter);
 	}
 
-	/*interface IRuntimeMemberContentsAlteration<T> : IEnumerableAlteration<IRuntimeContentWriter<T>> { }
-
-	sealed class RuntimeMemberContentsAlteration<T> : IRuntimeMemberContentsAlteration<T>
-	{
-		readonly IMemberContentsAlteration<T> _alteration;
-
-		public RuntimeMemberContentsAlteration(IMemberContentsAlteration<T> alteration)
-		{
-			_alteration = alteration;
-		}
-
-		public IEnumerable<IRuntimeContentWriter<T>> Get(IEnumerable<IRuntimeContentWriter<T>> parameter) => _alteration.Get(parameter.Cast<IMemberContentWriter<T>>());
-	}*/
-
 	// ReSharper disable once PossibleInfiniteInheritance
 	interface IContentWriters<T> : ISource<ImmutableArray<IMemberContentWriter<T>>> { }
 

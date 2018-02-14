@@ -25,6 +25,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using FluentAssertions;
 using System;
+using System.Collections.Immutable;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Tests.Support
@@ -41,7 +42,8 @@ namespace ExtendedXmlSerializer.Tests.Support
 
 		public SerializersSupport() : this(new ConfigurationContainer()) { }
 
-		public SerializersSupport(IConfiguration configuration) : this(configuration.Get()) { }
+		public SerializersSupport(ConfigurationContainer configuration)
+			: this(Activator<ISerializers>.Default.Get(configuration.ToImmutableArray())) { }
 
 		public SerializersSupport(ISerializers serializer) => _serializer = serializer;
 
@@ -70,7 +72,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 
 		public SerializationSupport() : this(new ConfigurationContainer()) {}
 
-		public SerializationSupport(IConfigurationContainer configuration) : this(configuration.Create()) {}
+		public SerializationSupport(IConfigurationElement configuration) : this(configuration.Create()) {}
 
 		public SerializationSupport(IExtendedXmlSerializer serializer)
 		{

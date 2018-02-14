@@ -21,13 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer.Configuration
 {
-	static class MemberConfigurationExtensions
-	{
-		public static IInternalMemberConfiguration AsInternal(this IMemberConfiguration @this)
-		{
-			return (IInternalMemberConfiguration) @this;
-		}
-	}
+	public interface IMetadataConfigurations
+		: IValueSource<TypeRequest, ITypeConfiguration>, IParameterizedSource<ITypeConfiguration, IMemberConfigurations> {}
 }

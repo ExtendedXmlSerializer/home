@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
@@ -32,5 +33,24 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public Enumerable(IEnumerable<T> enumerable) => _enumerable = enumerable;
 
 		public override IEnumerator<T> GetEnumerator() => _enumerable.GetEnumerator();
+	}
+
+	sealed class Values<TKey, TValue> : ItemsBase<TValue>
+	{
+		readonly IDictionary<TKey, TValue> _dictionary;
+
+		public Values(IDictionary<TKey, TValue> dictionary) => _dictionary = dictionary;
+		public override IEnumerator<TValue> GetEnumerator()
+			=> _dictionary.Values.GetEnumerator();
+	}
+
+	class DeferredEnumerable<T> : ItemsBase<T>
+	{
+		readonly Func<IEnumerable<T>> _enumerable;
+
+		public DeferredEnumerable(Func<IEnumerable<T>> enumerable) => _enumerable = enumerable;
+
+		public override IEnumerator<T> GetEnumerator() => _enumerable.Invoke()
+		                                                             .GetEnumerator();
 	}
 }

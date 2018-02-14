@@ -27,7 +27,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public static class Extensions
 	{
-		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableAllConstructors(this IConfigurationElement @this)
 			=> @this.Extended<AllConstructorsExtension>();
 	}
 }

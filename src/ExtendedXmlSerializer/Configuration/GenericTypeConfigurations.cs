@@ -21,15 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	class TypeProperty<T> : MemberPropertyBase<TypeInfo, T>
+	sealed class GenericTypeConfigurations : IParameterizedSource<TypeRequest, ITypeConfiguration>
 	{
-		public TypeProperty(IDictionary<TypeInfo, T> store, TypeInfo type) : this(new TypedTable<T>(store), type) {}
-		public TypeProperty(ITypedTable<T> table, TypeInfo type) : base(table, type) {}
+		readonly IConfigurationElement _element;
+		readonly IGeneric<IConfigurationElement, ITypeConfiguration> _generic;
+
+		public GenericTypeConfigurations(IConfigurationElement element) : this(element, Generic.Default) {}
+
+		public GenericTypeConfigurations(IConfigurationElement element,
+		                                 IGeneric<IConfigurationElement, ITypeConfiguration> generic)
+		{
+			_element = element;
+			_generic = generic;
+		}
+
+		public ITypeConfiguration Get(TypeRequest parameter) => _generic.Get(parameter.Type)
+		                                                                .Invoke(_element);
+
+		sealed class Generic : Generic<IConfigurationElement, ITypeConfiguration>
+		{
+			public static Generic Default { get; } = new Generic();
+			Generic() : base(typeof(ConfigurationElement<>)) {}
+		}
 	}
 }

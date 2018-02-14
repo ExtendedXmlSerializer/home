@@ -33,18 +33,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 {
 	public static class Extensions
 	{
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		public static IConfigurationElement EnableAttachedProperties(this IConfigurationElement @this,
 		                                                               params IProperty[] properties)
 			=> @this.EnableAttachedProperties(new HashSet<IProperty>(properties));
 
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		public static IConfigurationElement EnableAttachedProperties(this IConfigurationElement @this,
 		                                                               ICollection<IProperty> properties)
 			=> EnableAttachedProperties(@this, properties, new HashSet<Type>());
 
-		public static IConfigurationContainer EnableAttachedProperties(this IConfigurationContainer @this,
+		public static IConfigurationElement EnableAttachedProperties(this IConfigurationElement @this,
 		                                                               ICollection<IProperty> properties,
 		                                                               ICollection<Type> types)
-			=> @this.Root.AddOrReplace(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
+			=> @this.Executed(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
 			        .Return(@this);
 
 		public static TValue Get<TType, TValue>(this TType @this, Property<TType, TValue> property) => property.Get(@this);
@@ -52,8 +52,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static IMemberConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
-			this IConfigurationContainer @this,
+		public static ConfigurationElement<TType, TValue> AttachedProperty<TType, TValue>(
+			this IConfigurationElement @this,
 			Expression<Func<Property<TType, TValue>>> property)
 		{
 			var instance = property.Compile()
@@ -64,17 +64,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			                      .AsValid<PropertyInfo>();
 
 
-			var type = @this.Root.GetTypeConfiguration(subject.DeclaringType);
-			var current = type.AsInternal().Member(subject);
-
-			var result = new AttachedPropertyConfiguration<TType, TValue>(current);
+			var type = @this.GetTypeConfiguration(subject.DeclaringType);
+			var result = type.Member(subject).AsValid<ConfigurationElement<TType, TValue>>();
 			return result;
 		}
 
-		public static IConfigurationContainer AttachedProperty<TType, TValue>(
-			this IConfigurationContainer @this,
+		public static IConfigurationElement AttachedProperty<TType, TValue>(
+			this IConfigurationElement @this,
 				Expression<Func<Property<TType, TValue>>> property,
-				Action<IMemberConfiguration<TType, TValue>> configure)
+				Action<ConfigurationElement<TType, TValue>> configure)
 		{
 			configure(@this.AttachedProperty(property));
 			return @this;

@@ -1,9 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -19,27 +16,40 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		}
 
 		[Fact]
-		public void Member()
+		public void VerifyTypes()
 		{
-			new ConfigurationContainer().Type<Subject>()
-			                            .Member(x => x.Message)
-			                            .Register(A<Serializer>.Default)
-			                            .Create();
+			var container = new ConfigurationContainer();
+			container.Types()
+			         .Should()
+			         .BeEmpty();
+
+			container.Type<Subject>()
+			         .Should()
+			         .BeSameAs(container.Type<Subject>());
+
+			container.Types()
+			         .Should()
+			         .ContainSingle();
 		}
 
-		sealed class Serializer : IContentSerializer<string>
+		[Fact]
+		public void VerifyMembers()
 		{
-			public string Get(IFormatReader parameter)
-			{
-				throw new System.NotImplementedException();
-			}
+			var container = new ConfigurationContainer();
+			var type = container.Type<Subject>();
 
-			public void Execute(ExtendedXmlSerializer.ContentModel.Writing<string> parameter)
-			{
-				throw new System.NotImplementedException();
-			}
+			type.Members()
+			    .Should()
+			    .BeEmpty();
+
+			var member = type.Member(x => x.Message);
+			member.Should()
+			      .BeSameAs(type.Member(x => x.Message));
+
+			type.Members()
+			    .Should()
+			    .ContainSingle();
 		}
-
 
 		[Fact]
 		public void VerifyClass()

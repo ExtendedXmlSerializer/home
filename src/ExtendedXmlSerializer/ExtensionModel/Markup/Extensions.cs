@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public static class Extensions
 	{
-		public static IConfigurationContainer EnableMarkupExtensions(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableMarkupExtensions(this IConfigurationElement @this)
 			=> @this.EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)
 			        .Extended<MarkupExtension>();

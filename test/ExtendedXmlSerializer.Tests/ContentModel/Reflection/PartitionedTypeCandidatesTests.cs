@@ -21,12 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 using Identity = ExtendedXmlSerializer.ContentModel.Identification.Identity;
 
@@ -39,7 +40,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 		{
 			var expected = typeof(Subject).GetTypeInfo();
 			var @namespace = NamespaceFormatter.Default.Get(expected);
-			var aliases = new Names(new TypedTable<string>(DefaultNames.Default));
+			var aliases = new Names(new MemberTable<string>(DefaultNames.Default.ToDictionary(x => (MemberInfo)x.Key, x => x.Value)));
 			var formatter = new TypeFormatter(aliases);
 			var partitions = new AssemblyTypePartitions(PartitionedTypeSpecification.Default, formatter);
 			var type = new PartitionedTypeCandidates(TypeLoader.Default, partitions).Get(new Identity(formatter.Get(expected), @namespace)).Only();

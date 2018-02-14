@@ -64,10 +64,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 
 	static class RuntimeExtensions
 	{
-		public static IMemberConfiguration<T, TMember> OnlyEmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> specification)
+		public static ConfigurationElement<T, TMember> OnlyEmitWhen<T, TMember>(this ConfigurationElement<T, TMember> @this, Func<TMember, bool> specification)
 			=> OnlyEmitWhen(@this, new DelegatedSpecification<TMember>(specification));
 
-		public static IMemberConfiguration<T, TMember> OnlyEmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this, ISpecification<TMember> specification)
+		public static ConfigurationElement<T, TMember> OnlyEmitWhen<T, TMember>(this ConfigurationElement<T, TMember> @this, ISpecification<TMember> specification)
 			=> @this.Extend<RuntimeMembersExtension>()
 			        .Assign(@this, WellKnownPipelinePhases.Validation,
 			                new EmitRuntimePipelineComposer<TMember>(specification))

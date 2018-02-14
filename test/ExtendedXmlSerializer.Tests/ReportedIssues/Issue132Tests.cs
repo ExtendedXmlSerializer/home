@@ -9,8 +9,6 @@ using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
-	using System;
-
 	public sealed class Issue132Tests
 	{
 		public void Examples()
@@ -23,10 +21,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 
 			new ConfigurationContainer().Type<Section>()
-				.Name("person")
-				.Member(p => p.IsSelected).Name("Selected").Identity().Order(2)
-														.Member(p => p.IsEmpty).Name("Empty")
-
+			                            .Name("person")
+			                            .Member(p => p.IsSelected)
+			                            .Name("Selected")
+			                            .Identity()
+			                            .Order(2)
+			                            .Member(p => p.IsEmpty)
+			                            .Name("Empty")
 			                            .Create();
 
 

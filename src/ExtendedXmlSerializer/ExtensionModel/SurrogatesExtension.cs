@@ -48,9 +48,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public static class IntegrationExtensions
 	{
-		public static IConfigurationContainer Register(this IConfigurationContainer @this,
+		public static IConfigurationElement Register(this IConfigurationElement @this,
 													   ISerializationSurrogateProvider provider)
-			=> @this.Root.AddOrReplace(new SurrogatesExtension(provider))
+			=> @this.Executed(new SurrogatesExtension(provider))
 			        .Return(@this);
 	}
 

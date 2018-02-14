@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using System.Reflection;
+using System.Xml.Serialization;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -33,8 +33,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static DeclaredNames Default { get; } = new DeclaredNames();
 		DeclaredNames() {}
 
-		public string Get(TypeInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()?
-		                                                  .ElementName
-		                                                  .NullIfEmpty();
+		public string Get(MemberInfo parameter) => parameter.GetCustomAttribute<XmlRootAttribute>()?
+		                                                    .ElementName
+		                                                    .NullIfEmpty();
 	}
 }

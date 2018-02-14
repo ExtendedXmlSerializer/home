@@ -21,18 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ExtensionModel.Services;
-using IServiceProvider = ExtendedXmlSerializer.ExtensionModel.Services.IServiceProvider;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
-	class ServicesSupport : IServices
+	sealed class ServicesSupport<T> : FixedSource<ImmutableArray<ISerializerExtension>, T>
+	{
+		public static ServicesSupport<T> Default { get; } = new ServicesSupport<T>();
+		ServicesSupport() : this(Activator<T>.Default, DefaultExtensions.Default.ToImmutableArray()) {}
+
+		public ServicesSupport(IParameterizedSource<ImmutableArray<ISerializerExtension>, T> source, ImmutableArray<ISerializerExtension> parameter) : base(source, parameter) {}
+	}
+
+	/*class ServicesSupport : IServices
 	{
 		readonly IServices _services;
 
@@ -144,5 +149,5 @@ namespace ExtendedXmlSerializer.Tests.Support
 
 		public object Create(Type serviceType) => _services.Create(serviceType);
 		public object GetService(Type serviceType) => _services.GetService(serviceType);
-	}
+	}*/
 }

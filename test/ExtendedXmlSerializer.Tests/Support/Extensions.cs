@@ -41,9 +41,9 @@ namespace ExtendedXmlSerializer.Tests.Support
 			return result;
 		}
 
-		public static SerializationSupport ForTesting(this IConfigurationContainer @this) => new SerializationSupport(@this);
+		public static SerializationSupport ForTesting(this IConfigurationElement @this) => new SerializationSupport(@this);
 		public static SerializationSupport ForTesting(this IExtendedXmlSerializer @this) => new SerializationSupport(@this);
 
-		public static SerializersSupport ToSupport(this IConfiguration @this) => new SerializersSupport(@this);
+		public static SerializersSupport ToSupport(this ConfigurationContainer @this) => new SerializersSupport(@this);
 	}
 }

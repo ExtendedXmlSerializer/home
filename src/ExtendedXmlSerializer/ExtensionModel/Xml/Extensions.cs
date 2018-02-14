@@ -47,29 +47,29 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static XElement Member(this XElement @this, string name)
 			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
 
-		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
-			this IMemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
+		public static ConfigurationElement<T, TMember> Attribute<T, TMember>(
+			this ConfigurationElement<T, TMember> @this, Func<TMember, bool> when)
 		{
 			@this.Extend<MemberFormatExtension>().Specifications[@this.Member()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
-		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static ConfigurationElement<T, TMember> Attribute<T, TMember>(this ConfigurationElement<T, TMember> @this)
 			=> @this.Extend<MemberFormatExtension>()
 			        .Registered.Adding(@this.Member())
 			        .Return(@this);
 
-		public static IMemberConfiguration<T, string> Verbatim<T>(this IMemberConfiguration<T, string> @this) =>
+		public static ConfigurationElement<T, string> Verbatim<T>(this ConfigurationElement<T, string> @this) =>
 			@this.Register(new ContentSerializerAdapter<string>(VerbatimContentSerializer.Default));
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
+		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read, Func<T, T> write)
+		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, Func<T, T> read, Func<T, T> write)
 			=> @this.Alter(new DelegatedAlteration<T>(read), new DelegatedAlteration<T>(write));
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, IAlteration<T> read,
+		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, IAlteration<T> read,
 		                                             IAlteration<T> write)
 			=> @this.Extend<AlteredContentExtension>()
 			        .Types.Assigned(Support<T>.Key,
@@ -77,85 +77,84 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			        .Return(@this);
 
 
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
+		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
 		                                                                 Func<TMember, TMember> write)
 			=> Alter(@this, Self<TMember>.Default.Get, write);
 
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
+		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
 		                                                                 Func<TMember, TMember> read,
 		                                                                 Func<TMember, TMember> write)
 			=> @this.Alter(new DelegatedAlteration<TMember>(read), new DelegatedAlteration<TMember>(write));
 
-		public static IMemberConfiguration<T, TMember> Alter<T, TMember>(this IMemberConfiguration<T, TMember> @this,
-		                                                                 IAlteration<TMember> read,
-		                                                                 IAlteration<TMember> write)
+		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		                                                                IAlteration<TMember> read,
+		                                                                IAlteration<TMember> write)
 			=> @this.Extend<AlteredContentExtension>()
 			        .Members.Assigned(@this.Member(),
 			                          new ContentAlteration(read.Adapt(), write.Adapt()))
 			        .Return(@this);
 
-		public static ITypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationContainer @this)
+		public static ConfigurationElement<T> CustomSerializer<T, TSerializer>(this IConfigurationElement @this)
 			where TSerializer : IExtendedXmlCustomSerializer<T>
 			=> @this.CustomSerializer<T>(typeof(TSerializer));
 
-		public static ITypeConfiguration<T> CustomSerializer<T>(this IConfigurationContainer @this, Type serializerType)
+		public static ConfigurationElement<T> CustomSerializer<T>(this IConfigurationElement @this, Type serializerType)
 			=> @this.Type<T>()
 			        .Register(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
 
-		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
 		                                                        Action<System.Xml.XmlWriter, T> serializer,
 		                                                        Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
-		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
 			=> @this.Register(new GenericCustomXmlSerializer<T>(serializer));
 
-		public static ITypeConfiguration<T> CustomSerializer<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
 			=> @this.Register(new CustomXmlSerializer<T>(serializer));
 
-		public static IMemberConfiguration<T, TMember> Content<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static ConfigurationElement<T, TMember> Content<T, TMember>(this ConfigurationElement<T, TMember> @this)
 			=> @this.Extend<MemberFormatExtension>()
 			        .Registered.Removing(@this.Member())
 			        .Return(@this);
 
-		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
 		                                                    ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
-		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
 		                                                    Action<XElement> migration)
 			=> @this.AddMigration(migration.Yield());
 
-		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
+		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
 		{
-			@this.Extend<MigrationsExtension>().Add(@this.Get(), migrations.Fixed());
+			@this.Extend<MigrationsExtension>().Add(@this.Type(), migrations.Fixed());
 			return @this;
 		}
 
-		public static IConfigurationContainer WithValidCharacters(this IConfigurationContainer @this)
+		public static IConfigurationElement WithValidCharacters(this IConfigurationElement @this)
 			=> @this.Type<string>()
 			        .Alter(ValidContentCharacters.Default.Get);
 
-		public static IMemberConfiguration<T, string> WithValidCharacters<T>(this IMemberConfiguration<T, string> @this)
+		public static ConfigurationElement<T, string> WithValidCharacters<T>(this ConfigurationElement<T, string> @this)
 			=> @this.Alter(ValidContentCharacters.Default.Get);
 
-		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this)
-			=> @this.Root.AddOrReplace(AutoMemberFormatExtension.Default)
+		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this)
+			=> @this.Extended<AutoMemberFormatExtension>();
+
+		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this, int maxTextLength)
+			=> @this.Executed(new AutoMemberFormatExtension(maxTextLength))
 			        .Return(@this);
 
-		public static IConfigurationContainer UseAutoFormatting(this IConfigurationContainer @this, int maxTextLength)
-			=> @this.Root.AddOrReplace(new AutoMemberFormatExtension(maxTextLength))
-			        .Return(@this);
-
-		public static IConfigurationContainer EnableClassicMode(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableClassicMode(this IConfigurationElement @this)
 			=> @this.Emit(EmitBehaviors.Classic)
-			        .Root.AddOrReplace(ClassicExtension.Default)
+			        .Executed(ClassicExtension.Default)
 			        .Return(@this);
 
-		public static IConfigurationContainer UseOptimizedNamespaces(this IConfigurationContainer @this)
+		public static IConfigurationElement UseOptimizedNamespaces(this IConfigurationElement @this)
 			=> @this.Extended<OptimizedNamespaceExtension>();
 
 
@@ -166,8 +165,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		readonly static XmlReaderSettings CloseRead = CloseSettings.Default.Get(Defaults.ReaderSettings);
 
-		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationContainer> configure)
-			where T : IConfigurationContainer => configure(@this)
+		public static IExtendedXmlSerializer Create<T>(this T @this, Func<T, IConfigurationElement> configure)
+			where T : IConfigurationElement => configure(@this)
 			.Create();
 
 
@@ -229,31 +228,31 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Deserialize(factory.Get(reader))
 			        .AsValid<T>();
 
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, params Type[] types)
+		public static IConfigurationElement EnableImplicitTyping(this IConfigurationElement @this, params Type[] types)
 			=> EnableImplicitTyping(@this, types.AsEnumerable());
 
-		public static IConfigurationContainer EnableImplicitTypingFromPublicNested<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement EnableImplicitTypingFromPublicNested<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new PublicNestedTypes<T>());
 
-		public static IConfigurationContainer EnableImplicitTypingFromNested<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement EnableImplicitTypingFromNested<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new NestedTypes<T>());
 
-		public static IConfigurationContainer EnableImplicitTypingFromAll<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement EnableImplicitTypingFromAll<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new AllAssemblyTypes<T>());
 
-		public static IConfigurationContainer EnableImplicitTypingFromPublic<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement EnableImplicitTypingFromPublic<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new PublicAssemblyTypes<T>());
 
-		public static IConfigurationContainer EnableImplicitTypingFromNamespace<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement EnableImplicitTypingFromNamespace<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new AllTypesInSameNamespace<T>());
 
-		public static IConfigurationContainer
-			EnableImplicitTypingFromNamespacePublic<T>(this IConfigurationContainer @this) =>
+		public static IConfigurationElement
+			EnableImplicitTypingFromNamespacePublic<T>(this IConfigurationElement @this) =>
 			@this.EnableImplicitTyping(new PublicTypesInSameNamespace<T>());
 
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
+		public static IConfigurationElement EnableImplicitTyping(this IConfigurationElement @this,
 		                                                           IEnumerable<Type> types)
-			=> @this.Root.AddOrReplace(new ImplicitTypingExtension(types.ToMetadata()))
+			=> @this.Executed(new ImplicitTypingExtension(types.ToMetadata()))
 			        .Return(@this);
 	}
 }

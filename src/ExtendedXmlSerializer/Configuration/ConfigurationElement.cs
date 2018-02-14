@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,41 +21,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IParameterizedSource<in TParameter, out TResult>
+	public class ConfigurationElement : IConfigurationElement
 	{
-		TResult Get(TParameter parameter);
-	}
+		readonly IExtensions _extensions;
+		readonly IExtend _extend;
+		readonly IActivator<IExtendedXmlSerializer> _activator;
 
-	public interface IValueSource<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult>, IEnumerable<TResult> {}
+		public ConfigurationElement(IConfigurationElement element) : this(element, element) {}
 
-	class TableValueSource<TParameter, TResult> : ValueSource<TParameter, TResult>
-	{
-		public TableValueSource(Func<TParameter, TResult> select, ConcurrentDictionary<TParameter, TResult> store)
-			: base(new Cache<TParameter, TResult>(select, store), new Values<TParameter, TResult>(store)) {}
-	}
+		public ConfigurationElement(IExtensions extensions, IExtend extend)
+			: this(extensions, extend, Activator<IExtendedXmlSerializer>.Default) {}
 
-	class ValueSource<TParameter, TResult> : IValueSource<TParameter, TResult>
-	{
-		readonly IParameterizedSource<TParameter, TResult> _source;
-		readonly IEnumerable<TResult> _items;
-
-		public ValueSource(IParameterizedSource<TParameter, TResult> source, IEnumerable<TResult> items)
+		public ConfigurationElement(IExtensions extensions, IExtend extend, IActivator<IExtendedXmlSerializer> activator)
 		{
-			_source = source;
-			_items = items;
+			_extensions = extensions;
+			_extend = extend;
+			_activator = activator;
 		}
 
-		public TResult Get(TParameter parameter) => _source.Get(parameter);
+		public IExtendedXmlSerializer Create() => _activator.Get(_extensions.ToImmutableArray());
 
-		public IEnumerator<TResult> GetEnumerator() => _items.GetEnumerator();
+		public void Execute(ISerializerExtension parameter)
+		{
+			_extensions.Execute(parameter);
+		}
+
+		public void Execute(TypeInfo parameter)
+		{
+			_extensions.Execute(parameter);
+		}
+
+		public IEnumerator<ISerializerExtension> GetEnumerator() => _extensions.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public ISerializerExtension Get(TypeInfo parameter) => _extend.Get(parameter);
 	}
 }

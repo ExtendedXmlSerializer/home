@@ -22,34 +22,24 @@
 // SOFTWARE.
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core
 {
-	sealed class ServiceProvider : ISpecification<Type>, IServiceProvider
+	sealed class ServiceProvider : IServiceProvider
 	{
-		readonly ImmutableArray<object> _services;
-		readonly ImmutableArray<TypeInfo> _types;
+		readonly IList<object> _services;
 
-		public ServiceProvider(params object[] services) : this(services.ToImmutableArray()) {}
+		public ServiceProvider(params object[] services) : this(services.ToList()) {}
 
-		public ServiceProvider(ImmutableArray<object> services)
-			: this(services, services.Select(x => x.GetType().GetTypeInfo()).ToImmutableArray()) {}
-
-		public ServiceProvider(ImmutableArray<object> services, ImmutableArray<TypeInfo> types)
-		{
-			_services = services;
-			_types = types;
-		}
+		public ServiceProvider(IList<object> services) => _services = services;
 
 		public object GetService(Type serviceType)
 		{
 			var info = serviceType.GetTypeInfo();
-			var length = _services.Length;
+			var length = _services.Count;
 
 			for (var i = 0; i < length; i++)
 			{
@@ -62,8 +52,5 @@ namespace ExtendedXmlSerializer.Core
 
 			return null;
 		}
-
-		public bool IsSatisfiedBy(Type parameter)
-			=> _types.Any(IsAssignableSpecification.Delegates.Get(parameter.GetTypeInfo()));
 	}
 }

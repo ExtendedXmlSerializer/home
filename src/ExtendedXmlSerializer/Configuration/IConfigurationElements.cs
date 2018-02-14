@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Configuration;
+using System.Collections.Generic;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Services
+namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IServicesFactory : IParameterizedSource<IConfigurationContainer, IServices> {}
+	public interface IConfigurationElements
+		: IParameterizedSource<IEnumerable<ISerializerExtension>, IConfigurationElement> {}
 }

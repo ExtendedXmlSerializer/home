@@ -21,15 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class MemberProperty<T> : MemberPropertyBase<MemberInfo, T>
+	sealed class MetadataConfigurations : IMetadataConfigurations
 	{
-		public MemberProperty(IDictionary<MemberInfo, T> store, MemberInfo type) : this(new MemberTable<T>(store), type) {}
-		public MemberProperty(IMetadataTable<MemberInfo, T> table, MemberInfo type) : base(table, type) {}
+		readonly IValueSource<TypeRequest, ITypeConfiguration> _types;
+		readonly IParameterizedSource<ITypeConfiguration, IMemberConfigurations> _members;
+
+		public MetadataConfigurations(IConfigurationElement element) : this(new TypeConfigurations(element)) {}
+
+		public MetadataConfigurations(IValueSource<TypeRequest, ITypeConfiguration> types) :
+			this(types, TypeMemberConfigurations.Default) {}
+
+		public MetadataConfigurations(IValueSource<TypeRequest, ITypeConfiguration> types,
+		                              IParameterizedSource<ITypeConfiguration, IMemberConfigurations> members)
+		{
+			_types = types;
+			_members = members;
+		}
+
+		public ITypeConfiguration Get(TypeRequest parameter) => _types.Get(parameter);
+
+		public IEnumerator<ITypeConfiguration> GetEnumerator() => _types.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		public IMemberConfigurations Get(ITypeConfiguration parameter) => _members.Get(parameter);
 	}
 }

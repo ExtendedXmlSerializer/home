@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
@@ -33,24 +34,27 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public sealed class TypeNamesExtension : ISerializerExtension
+	public interface IMetadataNames : IMemberTable<string> {}
+
+	class MetadataNames : ReflectionModel.MetadataTable<string>, IMetadataNames
 	{
-		readonly static IDictionary<TypeInfo, string> Defaults = DefaultNames.Default;
+		public MetadataNames(IDictionary<TypeInfo, string> types)
+			: this(types, new Dictionary<MemberInfo, string>()) {}
 
-		readonly IDictionary<TypeInfo, string> _defaults;
+		public MetadataNames(IDictionary<TypeInfo, string> types, IDictionary<MemberInfo, string> members)
+			: base(new TypedTable<string>(types), new MemberTable<string>(members)) { }
+	}
 
-		public TypeNamesExtension() : this(new Dictionary<TypeInfo, string>(), Defaults) {}
+	public sealed class MemberNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
+	{
+		readonly IMetadataNames _names;
 
-		public TypeNamesExtension(IDictionary<TypeInfo, string> names, IDictionary<TypeInfo, string> defaults)
-		{
-			Names = names;
-			_defaults = defaults;
-		}
+		public MemberNamesExtension() : this(new MetadataNames(DefaultNames.Default)) {}
 
-		public IDictionary<TypeInfo, string> Names { get; }
+		public MemberNamesExtension(IMetadataNames names) => _names = names;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance(_defaults)
+			=> parameter.RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)))
 			            .Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
 			            .Register<ITypeFormatter, TypeFormatter>()
 			            .Register<ITypePartResolver, TypePartResolver>()
@@ -61,13 +65,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<ITypeIdentities, TypeIdentities>()
 			            .Register<ContentModel.Reflection.ITypes, ContentModel.Reflection.Types>()
 			            .Register<IGenericTypes, GenericTypes>()
-			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default)
-			            .Register(Register);
+			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default);
 
-		INames Register(IServiceProvider provider) => new Names(new TypedTable<string>(Names)
-		                                                        .Or(DeclaredNames.Default)
-		                                                        .Or(new TypedTable<string>(_defaults)));
+		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		public void Execute(IServices parameter) {}
+		public void Execute(KeyValuePair<MemberInfo, string> parameter)
+		{
+			_names.Execute(parameter);
+		}
+
+		public string Get(MemberInfo parameter) => _names.Get(parameter);
 	}
 }

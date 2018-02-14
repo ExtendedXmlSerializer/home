@@ -21,51 +21,68 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	class TypeConfiguration<T> : ConfigurationContainer, ITypeConfiguration<T>, IInternalTypeConfiguration
+	/*class TypeConfiguration : TypeMetadataConfiguration, ITypeConfiguration
 	{
-		readonly IProperty<string> _name;
-		readonly IMemberConfigurations _members;
+		readonly IValueSource<MemberInfo, IMemberConfiguration> _members;
 
-		public TypeConfiguration(IRootContext root, IProperty<string> name)
-			: this(root, name, new MemberConfigurations<T>(new TypeConfigurationContext(root, Support<T>.Key))) {}
-
-		public TypeConfiguration(IRootContext context, IProperty<string> name, IMemberConfigurations members)
-			: base(context)
+		public TypeConfiguration(ITypeMetadataConfiguration metadata, IValueSource<MemberInfo, IMemberConfiguration> members)
+			: base(metadata, metadata.Metadata)
 		{
-			_name = name;
 			_members = members;
 		}
 
-		public TypeConfiguration(ITypeConfigurationContext context, IProperty<string> name, IMemberConfigurations members)
-			: base(context)
-		{
-			_name = name;
-			_members = members;
-		}
 
-		public TypeConfiguration(ITypeConfigurationContext parent, IProperty<string> name)
-			: this(parent, name, new MemberConfigurations<T>(new TypeConfigurationContext(parent.Root, Support<T>.Key))) {}
-
-
-		ITypeConfiguration IInternalTypeConfiguration.Name(string name)
-		{
-			_name.Assign(name);
-			return this;
-		}
-
-		IMemberConfiguration IInternalTypeConfiguration.Member(MemberInfo member) => _members.Get(member);
-
-		public IEnumerator<IMemberConfiguration> GetEnumerator() => _members.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public new TypeInfo Get() => Support<T>.Key;
+		public IEnumerable<IMemberConfiguration> Members => _members;
 		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
+	}*/
+
+	public class ConfigurationElement<T> : ConfigurationElement, ITypeConfiguration
+	{
+		readonly TypeInfo _metadata;
+
+		public ConfigurationElement(IConfigurationElement element) : this(element, Support<T>.Key) {}
+
+		public ConfigurationElement(IConfigurationElement element, TypeInfo metadata) : base(element)
+			=> _metadata = metadata;
+
+		public TypeInfo Get() => _metadata;
 	}
+
+	public class ConfigurationElement<T, TMember> : ConfigurationElement<T>, IMemberConfiguration
+	{
+		readonly MemberInfo _member;
+
+		public ConfigurationElement(ConfigurationElement<T> element, Expression<Func<T, TMember>> member)
+			: this(element, member.GetMemberInfo()) {}
+
+		public ConfigurationElement(IConfigurationElement element, MemberInfo member) : base(element)
+			=> _member = member;
+
+		public new MemberInfo Get() => _member;
+	}
+
+	/*public class TypeConfiguration<T> : ConfigurationElement, ITypeConfiguration
+	{
+		readonly ITypeConfiguration _element;
+
+		public TypeConfiguration(ITypeConfiguration element) : base(element) => _element = element;
+
+		public MemberConfiguration<T, TMember> Member<TMember>(Expression<Func<T, TMember>> member)
+			=> _element.Get(member.GetMemberInfo())
+			           .AsValid<MemberConfiguration<T, TMember>>();
+
+		IMemberConfiguration IParameterizedSource<MemberInfo, IMemberConfiguration>.Get(MemberInfo parameter) => _element.Get(parameter);
+
+		public IEnumerable<IMemberConfiguration> Members => _element.Members;
+
+		public TypeInfo Metadata => _element.Metadata;
+	}*/
 }

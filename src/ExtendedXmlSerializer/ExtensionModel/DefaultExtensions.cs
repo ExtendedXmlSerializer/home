@@ -38,18 +38,16 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
 
 		DefaultExtensions()
-			: this(DefaultMetadataSpecification.Default, DeclaredMemberNames.Default, DefaultMemberOrder.Default) {}
+			: this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) {}
 
 		readonly IMetadataSpecification _metadata;
-		readonly INames _defaultNames;
 		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
 
 
-		public DefaultExtensions(IMetadataSpecification metadata, INames defaultNames,
+		public DefaultExtensions(IMetadataSpecification metadata,
 		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder)
 		{
 			_metadata = metadata;
-			_defaultNames = defaultNames;
 			_defaultMemberOrder = defaultMemberOrder;
 		}
 
@@ -63,8 +61,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new XmlSerializationExtension();
 			yield return new ConvertersExtension();
 			yield return MemberModelExtension.Default;
-			yield return new TypeNamesExtension();
-			yield return new MemberPropertiesExtension(_defaultNames, _defaultMemberOrder);
+			yield return new MemberNamesExtension();
+			yield return new MemberOrderingExtension(_defaultMemberOrder);
 			yield return new AllowedMembersExtension(_metadata);
 			yield return new AllowedMemberValuesExtension();
 			yield return new MemberFormatExtension();

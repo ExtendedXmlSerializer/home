@@ -21,14 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.Tests.Support;
 using JetBrains.Annotations;
+using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
@@ -38,51 +37,36 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.References
 		[Fact]
 		public void VerifyFixed()
 		{
-			using (var services = new ServicesSupport())
-			{
-				var sut = services.Get<ContainsStaticReferenceSpecification>();
-				Assert.False(sut.IsSatisfiedBy(typeof(Fixed).GetTypeInfo()));
-			}
+			var sut = ServicesSupport<ContainsStaticReferenceSpecification>.Default.Get();
+			Assert.False(sut.IsSatisfiedBy(typeof(Fixed).GetTypeInfo()));
 		}
 
 		[Fact]
 		public void VerifyNonReferencingVariable()
 		{
-			using (var services = new ServicesSupport())
-			{
-				var sut = services.Get<ContainsStaticReferenceSpecification>();
-				Assert.False(sut.IsSatisfiedBy(typeof(NonReferencingVariable).GetTypeInfo()));
-			}
+			var sut = ServicesSupport<ContainsStaticReferenceSpecification>.Default.Get();
+			Assert.False(sut.IsSatisfiedBy(typeof(NonReferencingVariable).GetTypeInfo()));
 		}
 
 		[Fact]
 		public void VerifyReferencingVariable()
 		{
-			using (var services = new ServicesSupport())
-			{
-				var sut = services.Get<ContainsStaticReferenceSpecification>();
-				Assert.True(sut.IsSatisfiedBy(typeof(ReferencingVariable).GetTypeInfo()));
-			}
+			var sut = ServicesSupport<ContainsStaticReferenceSpecification>.Default.Get();
+			Assert.True(sut.IsSatisfiedBy(typeof(ReferencingVariable).GetTypeInfo()));
 		}
 
 		[Fact]
 		public void VerifyReferencingVariableWithInterface()
 		{
-			using (var services = new ServicesSupport())
-			{
-				var sut = services.Get<ContainsStaticReferenceSpecification>();
-				Assert.True(sut.IsSatisfiedBy(typeof(ReferencingVariableWithInterface).GetTypeInfo()));
-			}
+			var sut = ServicesSupport<ContainsStaticReferenceSpecification>.Default.Get();
+			Assert.True(sut.IsSatisfiedBy(typeof(ReferencingVariableWithInterface).GetTypeInfo()));
 		}
 
 		[Fact]
 		public void VerifyIndirectReferencingVariable()
 		{
-			using (var services = new ServicesSupport())
-			{
-				var sut = services.Get<ContainsStaticReferenceSpecification>();
-				Assert.True(sut.IsSatisfiedBy(typeof(IndirectReferencingVariable).GetTypeInfo()));
-			}
+			var sut = ServicesSupport<ContainsStaticReferenceSpecification>.Default.Get();
+			Assert.True(sut.IsSatisfiedBy(typeof(IndirectReferencingVariable).GetTypeInfo()));
 		}
 
 		class ReferencingVariableWithInterface : NonReferencingVariable

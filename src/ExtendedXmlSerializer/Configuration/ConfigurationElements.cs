@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ExtensionModel;
 using System.Collections.Generic;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IExtensionCollection : ICollection<ISerializerExtension>
+	sealed class ConfigurationElements : IConfigurationElements
 	{
-		/*bool Contains<T>() where T : ISerializerExtension;
+		readonly IActivator<IExtendedXmlSerializer> _activator;
+		public static ConfigurationElements Default { get; } = new ConfigurationElements();
+		ConfigurationElements() : this(Activator<IExtendedXmlSerializer>.Default) {}
 
-		T Find<T>() where T : ISerializerExtension;*/
+		public ConfigurationElements(IActivator<IExtendedXmlSerializer> activator) => _activator = activator;
+
+		public IConfigurationElement Get(IEnumerable<ISerializerExtension> parameter)
+		{
+			var extensions = new Extensions(new List<ISerializerExtension>(parameter));
+			var extend = new Extend(extensions);
+			var result = new ConfigurationElement(extensions, extend, _activator);
+			result.Execute(new ConfigurationServicesExtension(new MetadataConfigurations(result)));
+			return result;
+		}
 	}
 }

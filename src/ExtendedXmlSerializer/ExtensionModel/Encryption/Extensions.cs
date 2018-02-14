@@ -30,23 +30,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
 	public static class Extensions
 	{
-		public static IMemberConfiguration<T, TMember> Encrypt<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static ConfigurationElement<T, TMember> Encrypt<T, TMember>(this ConfigurationElement<T, TMember> @this)
 			=> @this.Extend<EncryptionExtension>()
 			        .Registered.Adding(@this.Member())
 			        .Return(@this);
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this)
+		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this)
 			=> UseEncryptionAlgorithm(@this, EncryptionConverterAlteration.Default);
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this, IEncryption encryption)
+		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this, IEncryption encryption)
 			=> UseEncryptionAlgorithm(@this, new EncryptionConverterAlteration(encryption));
 
-		public static IConfigurationContainer UseEncryptionAlgorithm(this IConfigurationContainer @this,
+		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this,
 		                                                             IAlteration<IConverter> parameter)
 			=> @this.Extend<EncryptionExtension>()
 			        .IsSatisfiedBy(parameter)
 				   ? @this
-				   : @this.Root.AddOrReplace(new EncryptionExtension(parameter))
+				   : @this.Executed(new EncryptionExtension(parameter))
 				          .Return(@this);
 	}
 }

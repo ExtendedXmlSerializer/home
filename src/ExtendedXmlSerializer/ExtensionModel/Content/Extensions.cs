@@ -35,7 +35,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public static class Extensions
+	public static class ExtensionMethods
 	{
 		public static IServiceRepository Decorate<T>(this IServiceRepository @this, ISpecification<TypeInfo> specification)
 			where T : IElements
@@ -58,32 +58,32 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		                                                    ISpecification<TypeInfo> specification) where T : IContents
 			=> new ConditionalContentDecoration<T>(specification).Get(@this);
 
-		public static IConfigurationContainer EnableParameterizedContent(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableParameterizedContent(this IConfigurationElement @this)
 			=> @this.Extended<ParameterizedMembersExtension>();
 
-		public static IConfigurationContainer EnableReaderContext(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableReaderContext(this IConfigurationElement @this)
 			=> @this.Extended<ReaderContextExtension>();
 
-		public static IConfigurationContainer Emit(this IConfigurationContainer @this, IEmitBehavior behavior) =>
+		public static IConfigurationElement Emit(this IConfigurationElement @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
-		public static ITypeConfiguration<T> EmitWhen<T>(this ITypeConfiguration<T> @this,
-		                                                Func<T, bool> specification)
+		public static ConfigurationElement<T> EmitWhen<T>(this ConfigurationElement<T> @this,
+		                                                  Func<T, bool> specification)
 			=> @this.Extend<AllowedInstancesExtension>()
 			        .Assigned(@this.Get(),
 			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
 			        .Return(@this);
 
-		public static IMemberConfiguration<T, TMember> EmitWhen<T, TMember>(this IMemberConfiguration<T, TMember> @this,
+		public static ConfigurationElement<T, TMember> EmitWhen<T, TMember>(this ConfigurationElement<T, TMember> @this,
 		                                                                    Func<TMember, bool> specification)
 		{
-			@this.Root.Find<AllowedMemberValuesExtension>()
+			@this.Extend<AllowedMemberValuesExtension>()
 			     .Specifications[@this.Member()] =
 				new AllowedValueSpecification(new DelegatedSpecification<TMember>(specification).AdaptForNull());
 			return @this;
 		}
 
-		public static IMemberConfiguration<T, TMember> Ignore<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static ConfigurationElement<T, TMember> Ignore<T, TMember>(this ConfigurationElement<T, TMember> @this)
 			=> @this.Extend<AllowedMembersExtension>()
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
@@ -93,9 +93,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			        .Whitelist.Adding(@this.Member())
 			        .Return(@this);
 
-		public static IConfigurationContainer OnlyConfiguredProperties(this IConfigurationContainer @this)
+		public static IConfigurationElement OnlyConfiguredProperties(this IConfigurationElement @this)
 		{
-			foreach (var type in @this.Root.Types)
+			foreach (var type in @this.Service<IMetadataConfigurations>())
 			{
 				type.OnlyConfiguredProperties();
 			}
@@ -103,9 +103,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static ITypeConfiguration<T> OnlyConfiguredProperties<T>(this ITypeConfiguration<T> @this)
+		public static ConfigurationElement<T> OnlyConfiguredProperties<T>(this ConfigurationElement<T> @this)
 		{
-			foreach (var member in @this)
+			foreach (var member in @this.Members())
 			{
 				member.Include();
 			}
@@ -113,30 +113,30 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfigurationContainer Alter(this IConfigurationContainer @this, IAlteration<IConverter> alteration)
+		public static IConfigurationElement Alter(this IConfigurationElement @this, IAlteration<IConverter> alteration)
 		{
 			@this.Extend<ConverterAlterationsExtension>()
 			     .Alterations.Add(alteration);
 			return @this;
 		}
 
-		public static IConfigurationContainer EnableImplicitlyDefinedDefaultValues(this IConfigurationContainer @this)
+		public static IConfigurationElement EnableImplicitlyDefinedDefaultValues(this IConfigurationElement @this)
 			=> @this.Alter(ImplicitlyDefinedDefaultValueAlteration.Default);
 
-		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this)
+		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this)
 			=> OptimizeConverters(@this, new Optimizations());
 
-		public static IConfigurationContainer OptimizeConverters(this IConfigurationContainer @this,
+		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this,
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 
-		public static IConfigurationContainer Register<T>(this IConfigurationContainer @this, IConverter<T> converter)
+		public static IConfigurationElement Register<T>(this IConfigurationElement @this, IConverter<T> converter)
 			=> @this.Extend<ConvertersExtension>()
 			        .Converters
 			        .AddOrReplace(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
 			        .Return(@this);
 
-		public static bool Unregister<T>(this IConfigurationContainer @this, IConverter<T> converter)
+		public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)
 			=> @this.Extend<ConvertersExtension>()
 			        .Converters.Remove(converter as Converter<T> ?? Converters<T>.Default.Get(converter));
 

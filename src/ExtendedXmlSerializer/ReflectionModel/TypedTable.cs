@@ -35,6 +35,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		public TypedTable(IEqualityComparer<TypeInfo> comparer) : base(comparer) {}
 
-		public TypedTable(IDictionary<TypeInfo, T> store) : base(store) {}
+		public TypedTable(IDictionary<TypeInfo, T> store) : base(new Dictionary<TypeInfo, T>(store, Defaults.TypeComparer)) {}
 	}
 }

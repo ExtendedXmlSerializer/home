@@ -31,7 +31,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public MemberTable() : base(MemberComparer.Default) {}
 
-		public MemberTable(IDictionary<MemberInfo, T> store) : base(store) {}
+		public MemberTable(IDictionary<MemberInfo, T> store) : base(new Dictionary<MemberInfo, T>(store, MemberComparer.Default)) {}
 	}
 
 	public class MetadataTable<T> : IMemberTable<T>

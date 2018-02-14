@@ -25,5 +25,5 @@ using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Services
 {
-	public interface IServices : IServiceRepository, IServiceProvider, IDisposable {}
+	public interface IServices : IServiceRepository, IServiceProvider, IDisposable { }
 }
