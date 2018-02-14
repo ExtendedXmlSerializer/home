@@ -1,24 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
 	/// <summary>
 	/// ATTRIBUTION: https://github.com/mattmc3/dotmore
 	/// </summary>
-	public class KeyedCollection2<TKey, TItem> : KeyedCollection<TKey, TItem>
+	public class KeyedCollection<TKey, TItem> : System.Collections.ObjectModel.KeyedCollection<TKey, TItem>
 	{
 		private const string DelegateNullExceptionMessage = "Delegate passed cannot be null";
 		private Func<TItem, TKey> _getKeyForItemFunction;
 
-		public KeyedCollection2(Func<TItem, TKey> getKeyForItemFunction)
+		public KeyedCollection(Func<TItem, TKey> getKeyForItemFunction)
 		{
 			if (getKeyForItemFunction == null) throw new ArgumentNullException(DelegateNullExceptionMessage);
 			_getKeyForItemFunction = getKeyForItemFunction;
 		}
 
-		public KeyedCollection2(Func<TItem, TKey> getKeyForItemDelegate, IEqualityComparer<TKey> comparer) : base(comparer)
+		public KeyedCollection(Func<TItem, TKey> getKeyForItemDelegate, IEqualityComparer<TKey> comparer) : base(comparer)
 		{
 			if (getKeyForItemDelegate == null) throw new ArgumentNullException(DelegateNullExceptionMessage);
 			_getKeyForItemFunction = getKeyForItemDelegate;

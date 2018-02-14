@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 
 		#region Fields/Properties
 
-		private KeyedCollection2<TKey, KeyValuePair<TKey, TValue>> _keyedCollection;
+		private KeyedCollection<TKey, KeyValuePair<TKey, TValue>> _keyedCollection;
 
 		/// <summary>
 		/// Gets or sets the value associated with the specified key.
@@ -133,8 +133,8 @@ namespace ExtendedXmlSerializer.Core.Collections
 		{
 			Comparer = comparer;
 			_keyedCollection = comparer != null
-				                   ? new KeyedCollection2<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer)
-				                   : new KeyedCollection2<TKey, KeyValuePair<TKey, TValue>>(x => x.Key);
+				                   ? new KeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer)
+				                   : new KeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key);
 		}
 
 		/// <summary>

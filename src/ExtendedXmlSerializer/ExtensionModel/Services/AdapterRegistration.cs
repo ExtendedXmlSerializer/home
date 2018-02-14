@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -28,7 +29,6 @@ using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 
@@ -118,11 +118,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 
 	public interface IService<out T> : IParameterizedSource<System.IServiceProvider, T> {}
 
-	public interface IServiceCollection<T> : ICollection<IService<T>>, IRegistration {}
+	public interface IServiceGroupContainer<T> : IGroupContainer<IService<T>> {}
 
-	class ServiceCollection<T> : Collection<IService<T>>, IServiceCollection<T>
+	public class ServiceGroupContainer<T> : GroupContainer<IService<T>>, IRegistration
 	{
-		public IServiceRepository Get(IServiceRepository parameter) => this.OfType<IRegistration>().Alter(parameter);
+		public ServiceGroupContainer(IEnumerable<IGroup<IService<T>>> groups) : base(groups) {}
+
+		public IServiceRepository Get(IServiceRepository parameter) => this.OfType<IRegistration>()
+		                                                                   .ToArray()
+		                                                                   .Alter(parameter);
+	}
+
+	// ReSharper disable once PossibleInfiniteInheritance
+	class ServiceGroups<T> : Groups<IService<T>>
+	{
+		public ServiceGroups(IEnumerable<GroupName> phases) : base(phases) { }
 	}
 
 
@@ -140,11 +150,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 		public TValue Get(TKey parameter) => _table.Get(parameter).Get(_provider);
 	}
 
-	sealed class ServiceAlteration<T> : IParameterizedSource<IService<T>, T>
+	sealed class ServiceActivator<T> : IParameterizedSource<IService<T>, T>
 	{
 		readonly System.IServiceProvider _provider;
 
-		public ServiceAlteration(System.IServiceProvider provider) => _provider = provider;
+		public ServiceActivator(System.IServiceProvider provider) => _provider = provider;
 
 		public T Get(IService<T> parameter) => parameter.Get(_provider);
 	}

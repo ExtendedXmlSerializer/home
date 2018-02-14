@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
@@ -33,43 +34,67 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public sealed class DefaultExtensions : ItemsBase<ISerializerExtension>
+	sealed class DefaultGroups : ItemsBase<IGroup<ISerializerExtension>>
 	{
-		public static DefaultExtensions Default { get; } = new DefaultExtensions();
+		public static GroupName Start = new GroupName("Start"),
+		                        TypeSystem = new GroupName("Type System"),
+		                        Framework = new GroupName("Framework"),
+		                        Elements = new GroupName("Elements"),
+		                        Content = new GroupName("Content"),
+		                        Format = new GroupName("Format"),
+		                        Caching = new GroupName("Caching"),
+		                        Finish = new GroupName("Finish");
 
-		DefaultExtensions()
-			: this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) {}
+		public static DefaultGroups Default { get; } = new DefaultGroups();
+		DefaultGroups() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) {}
 
 		readonly IMetadataSpecification _metadata;
 		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
 
-
-		public DefaultExtensions(IMetadataSpecification metadata,
-		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+		public DefaultGroups(IMetadataSpecification metadata,
+		                     IParameterizedSource<MemberInfo, int> defaultMemberOrder)
 		{
 			_metadata = metadata;
 			_defaultMemberOrder = defaultMemberOrder;
 		}
 
-		public override IEnumerator<ISerializerExtension> GetEnumerator()
+		public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
 		{
-			yield return new DefaultReferencesExtension();
-			yield return Contents.Default;
-			yield return ContentModelExtension.Default;
-			yield return TypeModelExtension.Default;
-			yield return SingletonActivationExtension.Default;
-			yield return new XmlSerializationExtension();
-			yield return new ConvertersExtension();
-			yield return MemberModelExtension.Default;
-			yield return new MemberNamesExtension();
-			yield return new MemberOrderingExtension(_defaultMemberOrder);
-			yield return new AllowedMembersExtension(_metadata);
-			yield return new AllowedMemberValuesExtension();
-			yield return new MemberFormatExtension();
-			yield return ImmutableArrayExtension.Default;
-			yield return SerializationExtension.Default;
-			//yield return new RegisteredSerializersExtension();
-			yield return CachingExtension.Default;
+			yield return new Group<ISerializerExtension>(Start,
+														 new DefaultReferencesExtension()
+			                                             );
+
+			yield return new Group<ISerializerExtension>(TypeSystem,
+			                                             TypeModelExtension.Default,
+			                                             SingletonActivationExtension.Default,
+														 new MemberNamesExtension(),
+			                                             new MemberOrderingExtension(_defaultMemberOrder),
+			                                             ImmutableArrayExtension.Default,
+			                                             MemberModelExtension.Default
+														 );
+			yield return new Group<ISerializerExtension>(Framework,
+			                                             SerializationExtension.Default);
+			yield return new Group<ISerializerExtension>(Elements);
+			yield return new Group<ISerializerExtension>(Content,
+														 Contents.Default,
+			                                             ContentModelExtension.Default,
+			                                             new AllowedMembersExtension(_metadata),
+			                                             new AllowedMemberValuesExtension(),
+			                                             new ConvertersExtension()
+														 //new RegisteredSerializersExtension(),
+														 );
+			yield return new Group<ISerializerExtension>(Format,
+			                                             new XmlSerializationExtension(),
+														 new MemberFormatExtension()
+														 );
+			yield return new Group<ISerializerExtension>(Caching, CachingExtension.Default);
+			yield return new Group<ISerializerExtension>(Finish);
 		}
+	}
+
+	public sealed class DefaultExtensions : GroupContainer<ISerializerExtension>
+	{
+		public static DefaultExtensions Default { get; } = new DefaultExtensions();
+		DefaultExtensions() : base(DefaultGroups.Default) {}
 	}
 }

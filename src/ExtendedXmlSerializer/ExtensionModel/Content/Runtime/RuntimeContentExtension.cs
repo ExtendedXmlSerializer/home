@@ -9,7 +9,6 @@ using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -20,16 +19,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 {
 	struct Registration
 	{
-		public Registration(RuntimePhase name, IRuntimePipelineComposer<object> instance)
+		public Registration(GroupName name, IRuntimePipelineComposer<object> instance)
 			: this(name, new InstanceService<IRuntimePipelineComposer<object>>(instance)) {}
 
-		public Registration(RuntimePhase name, IService<IRuntimePipelineComposer<object>> selection)
+		public Registration(GroupName name, IService<IRuntimePipelineComposer<object>> selection)
 		{
 			Name = name;
 			Selection = selection;
 		}
 
-		public RuntimePhase Name { get; }
+		public GroupName Name { get; }
 
 		public IService<IRuntimePipelineComposer<object>> Selection { get; }
 	}
@@ -69,12 +68,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 
 		public static MemberConfiguration<T, TMember> OnlyEmitWhen<T, TMember>(this MemberConfiguration<T, TMember> @this, ISpecification<TMember> specification)
 			=> @this.Extend<RuntimeMembersExtension>()
-			        .Assign(@this, WellKnownPipelinePhases.Validation,
+			        .Assign(@this, PipelinePhases.Validation,
 			                new EmitRuntimePipelineComposer<TMember>(specification))
 			        .Return(@this);
 
 		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IMemberConfiguration member,
-		                                                RuntimePhase name, IRuntimePipelineComposer<T> selection)
+		                                                GroupName name, IRuntimePipelineComposer<T> selection)
 			=> @this.Assign(member.Member(), new Registration(name, selection.Generalized())).Return(@this);
 
 		public static IRuntimePipelineComposer<object> Generalized<T>(this IRuntimePipelineComposer<T> @this)
@@ -145,8 +144,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		public RuntimeStoreTable(IEqualityComparer<T> comparer) : this(new ConcurrentDictionary<T, IRuntimeRegistryStore>(comparer)) {}
 
 		public RuntimeStoreTable(ConcurrentDictionary<T, IRuntimeRegistryStore> store)
-			: this(store, new ItemRegistration<IRuntimeRegistryStore>(store.Values))
-		{}
+			: this(store, new ItemRegistration<IRuntimeRegistryStore>(store.Values)) {}
 
 		public RuntimeStoreTable(ConcurrentDictionary<T, IRuntimeRegistryStore> store, IRegistration registration)
 			: base(_ => new RuntimeRegistryStore(), store) => _registration = registration;
@@ -185,7 +183,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		readonly Func<IService<IRuntimePipelineComposer<T>>, IRuntimePipelineComposer<T>> _services;
 		readonly IMemberRuntimeRegistry<T> _members;
 
-		public RuntimeRegistry(System.IServiceProvider services, IMemberRuntimeRegistry<T> members) : this(new ServiceAlteration<IRuntimePipelineComposer<T>>(services).Get, members) {}
+		public RuntimeRegistry(System.IServiceProvider services, IMemberRuntimeRegistry<T> members)
+			: this(new ServiceActivator<IRuntimePipelineComposer<T>>(services).Get, members) {}
 
 		public RuntimeRegistry(Func<IService<IRuntimePipelineComposer<T>>, IRuntimePipelineComposer<T>> services, IMemberRuntimeRegistry<T> members)
 		{
@@ -201,64 +200,33 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 				   : ImmutableArray<IRuntimePipelineComposer<T>>.Empty;
 	}
 
-	public class WellKnownPipelinePhases : Items<RuntimePhase>
+	public class PipelinePhases : Items<GroupName>
 	{
-		public static RuntimePhase Start = new RuntimePhase("Start"), Validation = new RuntimePhase("Validation"),
-			Input = new RuntimePhase("Input"), Content = new RuntimePhase("Content"), Finish = new RuntimePhase("Finish");
+		public static GroupName Start = new GroupName("Start"),
+		                        Validation = new GroupName("Validation"),
+		                        Input = new GroupName("Input"),
+		                        Content = new GroupName("Content"),
+		                        Finish = new GroupName("Finish");
 
 
-		public static WellKnownPipelinePhases Default { get; } = new WellKnownPipelinePhases();
-		WellKnownPipelinePhases() : base(Finish, Content, Input, Validation, Start) {}
+		public static PipelinePhases Default { get; } = new PipelinePhases();
+		PipelinePhases() : base(Finish, Content, Input, Validation, Start) {}
 	}
 
-	public struct RuntimePhase
+	sealed class RuntimePipelineGroups : ServiceGroups<IRuntimePipelineComposer<object>>
 	{
-		public RuntimePhase(string name) => Name = name;
+		public static RuntimePipelineGroups Default { get; } = new RuntimePipelineGroups();
 
-		public string Name { get; }
+		RuntimePipelineGroups() : this(PipelinePhases.Default) {}
 
-		public bool Equals(RuntimePhase other) => string.Equals(Name, other.Name);
-
-		public override bool Equals(object obj) => !ReferenceEquals(null, obj) && (obj is RuntimePhase phase && Equals(phase));
-
-		public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
+		public RuntimePipelineGroups(IEnumerable<GroupName> phases) : base(phases) {}
 	}
 
-	interface IRuntimeRegistryStore : ITableSource<RuntimePhase, IRuntimePipleline>, IRegistration, IEnumerable<IService<IRuntimePipelineComposer<object>>> { }
+	interface IRuntimeRegistryStore : IServiceGroupContainer<IRuntimePipelineComposer<object>>, IRegistration { }
 
-	sealed class RegistryStores : ISource<IOrderedDictionary<RuntimePhase, IRuntimePipleline>>
+	sealed class RuntimeRegistryStore : ServiceGroupContainer<IRuntimePipelineComposer<object>>, IRuntimeRegistryStore
 	{
-		public static RegistryStores Default { get; } = new RegistryStores();
-
-		RegistryStores() : this(WellKnownPipelinePhases.Default.Get()) {}
-
-		readonly ImmutableArray<RuntimePhase> _phases;
-
-		public RegistryStores(ImmutableArray<RuntimePhase> phases) => _phases = phases;
-
-		public IOrderedDictionary<RuntimePhase, IRuntimePipleline> Get()
-			=> new OrderedDictionary<RuntimePhase, IRuntimePipleline>(_phases.Select(x => Pairs.Create(x, Create())));
-
-		static IRuntimePipleline Create() => new RuntimePipeline();
-	}
-
-	interface IRuntimePipleline : IServiceCollection<IRuntimePipelineComposer<object>> {}
-
-	sealed class RuntimePipeline : ServiceCollection<IRuntimePipelineComposer<object>>, IRuntimePipleline { }
-
-	sealed class RuntimeRegistryStore : TableSource<RuntimePhase, IRuntimePipleline>, IRuntimeRegistryStore
-	{
-		readonly IDictionary<RuntimePhase, IRuntimePipleline> _store;
-
-		public RuntimeRegistryStore() : this(RegistryStores.Default.Get()) {}
-
-		public RuntimeRegistryStore(IDictionary<RuntimePhase, IRuntimePipleline> store) : base(store) => _store = store;
-
-		public IEnumerator<IService<IRuntimePipelineComposer<object>>> GetEnumerator() => _store.Values.SelectMany(x => x).GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		public IServiceRepository Get(IServiceRepository parameter) => this.OfType<IRegistration>().Alter(parameter);
+		public RuntimeRegistryStore() : base(RuntimePipelineGroups.Default) {}
 	}
 
 	sealed class RuntimeContentComposer<T> : IRuntimeContentComposer<T>

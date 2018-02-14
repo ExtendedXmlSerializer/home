@@ -23,28 +23,69 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
 	interface ITypedSortOrder : ITypedTable<int> {}
 
-	public interface IGrouping<T> : ICollection<T>
+	public interface IGroup<T> : ICollection<T>
 	{
-		string Name { get; }
+		GroupName Name { get; }
 	}
 
-	public interface IGroup<T> : IEnumerable<T>, IParameterizedSource<string, ICollection<T>> {}
-
-	class Group<T> : DelegatedSource<string, ICollection<T>>, IGroup<T>
+	public class Group<T> : List<T>, IGroup<T>
 	{
-		readonly IOrderedDictionary<string, ICollection<T>> _store;
+		public Group(GroupName name) : this(name, Enumerable.Empty<T>()) {}
 
-		public Group() : this(new OrderedDictionary<string, ICollection<T>>()) {}
+		public Group(GroupName name, params T[] items) : this(name, items.AsEnumerable()) {}
+		public Group(GroupName name, IEnumerable<T> collection) : base(collection) => Name = name;
 
-		public Group(IOrderedDictionary<string, ICollection<T>> store) : base(store.GetValue) => _store = store;
+		public GroupName Name { get; }
+	}
+
+
+	public struct GroupName
+	{
+		public GroupName(string name) => Name = name;
+
+		public string Name { get; }
+
+		public bool Equals(GroupName other) => string.Equals(Name, other.Name);
+
+		public override bool Equals(object obj) => !ReferenceEquals(null, obj) && obj is GroupName phase && Equals(phase);
+
+		public override int GetHashCode() => Name != null ? Name.GetHashCode() : 0;
+	}
+
+	public interface IGroupContainer<T> : IEnumerable<T>, IParameterizedSource<GroupName, ICollection<T>> {}
+
+	public interface IGroupPairing<T> : IParameterizedSource<IGroup<T>, KeyValuePair<GroupName, ICollection<T>>> {}
+
+	sealed class GroupPairs<T> : IGroupPairing<T>
+	{
+		public static GroupPairs<T> Default { get; } = new GroupPairs<T>();
+		GroupPairs() {}
+
+		public KeyValuePair<GroupName, ICollection<T>> Get(IGroup<T> parameter)
+			=> Pairs.Create(parameter.Name, (ICollection<T>)parameter);
+	}
+
+	public class GroupContainer<T> : DelegatedSource<GroupName, ICollection<T>>, IGroupContainer<T>
+	{
+		readonly IOrderedDictionary<GroupName, ICollection<T>> _store;
+
+		public GroupContainer(IEnumerable<IGroup<T>> groups)
+			: this(groups, GroupPairs<T>.Default) {}
+
+		public GroupContainer(IEnumerable<IGroup<T>> groups, IGroupPairing<T> pairing)
+			: this(new OrderedDictionary<GroupName, ICollection<T>>(groups.Select(pairing.Get))) {}
+
+		public GroupContainer(IOrderedDictionary<GroupName, ICollection<T>> store) : base(store.GetValue) => _store = store;
 
 
 		public IEnumerator<T> GetEnumerator() => _store.SelectMany(x => x.Value)
@@ -53,15 +94,24 @@ namespace ExtendedXmlSerializer.Core.Collections
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
-	public class Grouping<T> : List<T>, IGrouping<T>
+	// ReSharper disable once PossibleInfiniteInheritance
+	class Groups<T> : ItemsBase<IGroup<T>>
 	{
-		public Grouping(string name) : this(name, Enumerable.Empty<T>()) {}
+		readonly ImmutableArray<GroupName> _phases;
+		readonly Func<GroupName, IGroup<T>> _factory;
 
-		public Grouping(string name, IEnumerable<T> collection) : base(collection)
+		public Groups(IEnumerable<GroupName> phases) : this(phases, x => new Group<T>(x)) {}
+
+		public Groups(IEnumerable<GroupName> phases, Func<GroupName, IGroup<T>> factory)
+			: this(phases.ToImmutableArray(), factory) {}
+
+		public Groups(ImmutableArray<GroupName> phases, Func<GroupName, IGroup<T>> factory)
 		{
-			Name = name;
+			_phases = phases;
+			_factory = factory;
 		}
 
-		public string Name { get; }
+		public override IEnumerator<IGroup<T>> GetEnumerator() => _phases.Select(_factory)
+		                                                                 .GetEnumerator();
 	}
 }

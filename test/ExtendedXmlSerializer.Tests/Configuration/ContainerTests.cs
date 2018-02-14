@@ -1,7 +1,18 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Collections;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -88,11 +99,94 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			support.Cycle((int?)null);
 		}
 
+		[Fact]
+		public void VerifyGroups()
+		{
+			var container = new GroupContainer<ISerializerExtension>(Groups.Default);
+
+			var all = container.ToArray();
+			all.Should()
+			   .HaveCount(16);
+
+			all.First()
+			   .Should()
+			   .BeOfType<DefaultReferencesExtension>();
+			all.Last()
+			   .Should()
+			   .BeSameAs(CachingExtension.Default);
+
+			var types = container.Get(Groups.TypeSystem);
+			types.Should()
+			     .HaveCount(6);
+			types.First()
+			     .Should()
+			     .BeOfType<TypeModelExtension>();
+			types.Last()
+			     .Should()
+			     .BeOfType<MemberModelExtension>();
+		}
 
 
 		sealed class Subject
 		{
 			public string Message { get; set; }
+		}
+
+		sealed class Groups : ItemsBase<IGroup<ISerializerExtension>>
+		{
+			public static GroupName Start = new GroupName("Start"),
+									TypeSystem = new GroupName("Type System"),
+									Framework = new GroupName("Framework"),
+									Elements = new GroupName("Elements"),
+									Content = new GroupName("Content"),
+									Format = new GroupName("Format"),
+									Caching = new GroupName("Caching"),
+									Finish = new GroupName("Finish");
+
+			public static Groups Default { get; } = new Groups();
+			Groups() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) { }
+
+			readonly IMetadataSpecification _metadata;
+			readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
+
+			public Groups(IMetadataSpecification metadata,
+			              IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+			{
+				_metadata = metadata;
+				_defaultMemberOrder = defaultMemberOrder;
+			}
+
+			public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
+			{
+				yield return new Group<ISerializerExtension>(Start,
+															 new DefaultReferencesExtension()
+															 );
+
+				yield return new Group<ISerializerExtension>(TypeSystem,
+															 TypeModelExtension.Default,
+															 SingletonActivationExtension.Default,
+															 new MemberNamesExtension(),
+															 new MemberOrderingExtension(_defaultMemberOrder),
+															 ImmutableArrayExtension.Default,
+															 MemberModelExtension.Default
+															 );
+				yield return new Group<ISerializerExtension>(Framework,
+															 SerializationExtension.Default);
+				yield return new Group<ISerializerExtension>(Elements);
+				yield return new Group<ISerializerExtension>(Content,
+															 Contents.Default,
+															 ContentModelExtension.Default,
+															 new AllowedMembersExtension(_metadata),
+															 new AllowedMemberValuesExtension(),
+															 new ConvertersExtension()
+															 );
+				yield return new Group<ISerializerExtension>(Format,
+															 new XmlSerializationExtension(),
+															 new MemberFormatExtension()
+															 );
+				yield return new Group<ISerializerExtension>(Caching, CachingExtension.Default);
+				yield return new Group<ISerializerExtension>(Finish);
+			}
 		}
 	}
 }
