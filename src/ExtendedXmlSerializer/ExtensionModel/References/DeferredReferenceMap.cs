@@ -61,8 +61,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		static IDeferredCommand Command(IInnerContent current, ISource<object> source)
 		{
-			var list = current as IListInnerContent;
-			var result = list != null
+			var result = current is IListInnerContent list
 				? new DeferredCollectionAssignmentCommand(list.List, source)
 				: Member(current, source);
 			return result;
@@ -70,7 +69,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 
 		static IDeferredCommand Member(IInnerContent current, ISource<object> source)
 			=>
-				new DeferredMemberAssignmentCommand(current.Current, ContentsContext.Default.Get(current).AsValid<IMemberAccess>(),
+				new DeferredMemberAssignmentCommand(current.Current, ContentsContext.Default.Get(current).To<IMemberAccess>(),
 				                                    source);
 
 		public bool Remove(ReferenceIdentity key) => _map.Remove(key);

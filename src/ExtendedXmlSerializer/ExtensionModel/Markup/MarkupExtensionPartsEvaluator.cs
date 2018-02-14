@@ -101,7 +101,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var activator = new ConstructedActivator(constructor, arguments);
 			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
 			                                                                            .Get()
-			                                                                            .AsValid<IMarkupExtension>();
+			                                                                            .To<IMarkupExtension>();
 			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
 			                                                                     .ToArray()));
 			return result;

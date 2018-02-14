@@ -1,13 +1,13 @@
-﻿using System;
+﻿using ExtendedXmlSerializer.Core.Sprache;
+using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sprache;
 
 namespace ExtendedXmlSerializer.Core.Parsing
 {
-    static class Extensions
+	static class ExtensionMethods
     {
 		public static TypeInfo GetType(this IParser<MemberInfo> @this, string parameter)
-			=> @this.Get(parameter).AsValid<TypeInfo>();
+			=> @this.Get(parameter).To<TypeInfo>();
 
 
 		public static Parser<IOption<T>> XOptional<T>(this Parser<T> parser)

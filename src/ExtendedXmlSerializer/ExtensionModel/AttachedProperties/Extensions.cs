@@ -61,11 +61,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 			@this.Extend<AttachedPropertiesExtension>()
 			     .Registrations.Instances.Add(instance);
 			var subject = property.GetMemberInfo()
-			                      .AsValid<PropertyInfo>();
+			                      .To<PropertyInfo>();
 
 
 			var type = @this.GetTypeConfiguration(subject.DeclaringType);
-			var result = type.Member(subject).AsValid<MemberConfiguration<TType, TValue>>();
+			var result = type.Member(subject).To<MemberConfiguration<TType, TValue>>();
 			return result;
 		}
 

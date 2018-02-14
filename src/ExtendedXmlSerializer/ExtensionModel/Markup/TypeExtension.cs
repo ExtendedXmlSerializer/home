@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
@@ -41,6 +41,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public object ProvideValue(System.IServiceProvider serviceProvider)
 			=> serviceProvider.GetValid<IReflectionParser>()
 			                  .Get(_typeName)
-			                  .AsValid<TypeInfo>();
+			                  .To<TypeInfo>();
 	}
 }

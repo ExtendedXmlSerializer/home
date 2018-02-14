@@ -216,7 +216,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, Stream stream)
 			=> @this.Deserialize(factory.Get(stream))
-			        .AsValid<T>();
+			        .To<T>();
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, TextReader reader)
 			=> Deserialize<T>(@this, Defaults.ReaderSettings, reader);
@@ -226,7 +226,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		static T Deserialize<T>(this IExtendedXmlSerializer @this, IXmlReaderFactory factory, TextReader reader)
 			=> @this.Deserialize(factory.Get(reader))
-			        .AsValid<T>();
+			        .To<T>();
 
 		public static IConfigurationElement EnableImplicitTyping(this IConfigurationElement @this, params Type[] types)
 			=> EnableImplicitTyping(@this, types.AsEnumerable());

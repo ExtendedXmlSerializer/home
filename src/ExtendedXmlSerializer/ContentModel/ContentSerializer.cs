@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 		void ICommand<Writing<object>>.Execute(Writing<object> parameter)
 		{
-			Execute(new Writing<T>(parameter.Writer, parameter.Instance.AsValid<T>()));
+			Execute(new Writing<T>(parameter.Writer, parameter.Instance.To<T>()));
 		}
 	}
 }

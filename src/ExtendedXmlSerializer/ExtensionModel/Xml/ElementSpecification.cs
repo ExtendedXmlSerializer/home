@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using System.Xml;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public bool IsSatisfiedBy(IInnerContent parameter)
 			=> parameter.Get()
 			            .Get()
-			            .AsValid<System.Xml.XmlReader>()
+			            .To<System.Xml.XmlReader>()
 			            .NodeType == XmlNodeType.Element;
 	}
 }

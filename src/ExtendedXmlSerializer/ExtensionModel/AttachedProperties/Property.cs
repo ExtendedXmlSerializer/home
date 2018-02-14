@@ -48,13 +48,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		{
 			_specification = specification;
 			_store = store;
-			Metadata = source.GetMemberInfo().AsValid<PropertyInfo>();
+			Metadata = source.GetMemberInfo().To<PropertyInfo>();
 		}
 
 		public PropertyInfo Metadata { get; }
 
 		bool ISpecification<object>.IsSatisfiedBy(object parameter) => parameter is TType && IsSatisfiedBy((TType) parameter);
-		object IParameterizedSource<object, object>.Get(object parameter) => Get(parameter.AsValid<TType>());
+		object IParameterizedSource<object, object>.Get(object parameter) => Get(parameter.To<TType>());
 
 		public bool IsSatisfiedBy(TType parameter) => _store.IsSatisfiedBy(parameter);
 		public TValue Get(TType parameter) => _store.Get(parameter);
@@ -63,12 +63,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public TypeInfo Get() => TypeInfo;
 
 		public bool IsSatisfiedBy(TypeInfo parameter) => _specification.IsSatisfiedBy(parameter);
-		bool ITableSource<object, object>.Remove(object key) => Remove(key.AsValid<TType>());
+		bool ITableSource<object, object>.Remove(object key) => Remove(key.To<TType>());
 
 		public bool Remove(TType key) => _store.Remove(key);
 		public void Execute(KeyValuePair<object, object> parameter)
 		{
-			_store.Assign(parameter.Key.AsValid<TType>(), parameter.Value.AsValid<TValue>());
+			_store.Assign(parameter.Key.To<TType>(), parameter.Value.To<TValue>());
 		}
 	}
 }

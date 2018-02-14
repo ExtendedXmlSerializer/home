@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using JetBrains.Annotations;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
@@ -49,6 +49,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		public object ProvideValue(System.IServiceProvider serviceProvider)
 			=> _singletons.Get(serviceProvider.GetValid<IReflectionParser>()
 			                                  .Get(_memberPath)
-			                                  .AsValid<PropertyInfo>());
+			                                  .To<PropertyInfo>());
 	}
 }

@@ -19,17 +19,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public T Get(IFormatReader parameter)
 		{
 			var reader = parameter.Get()
-			                      .AsValid<System.Xml.XmlReader>();
+			                      .To<System.Xml.XmlReader>();
 			var subtree = reader.ReadSubtree();
 			var element = XElement.Load(subtree);
-			var result = _custom.Deserialize(element).AsValid<T>();
+			var result = _custom.Deserialize(element).To<T>();
 			return result;
 		}
 
 		public void Execute(ContentModel.Writing<T> parameter)
 		{
 			_custom.Serializer(parameter.Writer.Get()
-			                            .AsValid<System.Xml.XmlWriter>(), parameter.Instance);
+			                            .To<System.Xml.XmlWriter>(), parameter.Instance);
 		}
 	}
 
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public T Get(IFormatReader parameter)
 		{
 			var reader = parameter.Get()
-			                      .AsValid<System.Xml.XmlReader>();
+			                      .To<System.Xml.XmlReader>();
 			var subtree = reader.ReadSubtree();
 			var element = XElement.Load(subtree);
 			var result = _custom.Deserialize(element);
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public void Execute(ContentModel.Writing<T> parameter)
 		{
 			_custom.Serializer(parameter.Writer.Get()
-			                            .AsValid<System.Xml.XmlWriter>(), parameter.Instance);
+			                            .To<System.Xml.XmlWriter>(), parameter.Instance);
 		}
 	}
 

@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer
 	static class ExtensionMethods
 	{
 		public static ISerializer<T> Get<T>(this ISerializers @this) => @this.Get(Support<T>.Key)
-		                                                                     .AsValid<ISerializer<T>>();
+		                                                                     .To<ISerializer<T>>();
 
 		public static string Serialize<T>(this ISerializers @this, T instance)
 		{
@@ -75,7 +75,7 @@ namespace ExtendedXmlSerializer
 		{
 			@this.Get(instance.GetType()
 			                  .GetTypeInfo())
-			     .AsValid<IXmlSerializer<object>>()
+			     .To<IXmlSerializer<object>>()
 			     .Execute(new XmlInput<object>(writer, instance));
 		}
 	}

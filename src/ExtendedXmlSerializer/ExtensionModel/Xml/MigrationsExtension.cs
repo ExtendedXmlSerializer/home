@@ -130,7 +130,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 						throw new XmlException($"Migrations for type {fullName} is null.");
 					}
 
-					var element = XElement.Load(parameter.Get().AsValid<System.Xml.XmlReader>());
+					var element = XElement.Load(parameter.Get().To<System.Xml.XmlReader>());
 					for (var i = version; i < length; i++)
 					{
 						var index = (int) i;

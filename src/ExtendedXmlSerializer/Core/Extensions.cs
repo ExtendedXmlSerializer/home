@@ -190,7 +190,21 @@ namespace ExtendedXmlSerializer.Core
 			        .ToImmutableArray();
 
 
-		public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
+		public static T To<T>(this object @this, string message = null)
+		{
+			if (@this != null)
+			{
+				if (@this is T result)
+				{
+					return result;
+				}
+
+				throw new InvalidOperationException(message ??
+				                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
+			}
+
+			return default(T);
+		}
 
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T
@@ -202,7 +216,7 @@ namespace ExtendedXmlSerializer.Core
 			=> @this is T
 				   ? (T) @this
 				   : @this.GetService(typeof(T))
-				          .AsValid<T>($"Could not located service '{typeof(T)}'");
+				          .To<T>($"Could not located service '{typeof(T)}'");
 
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
@@ -211,22 +225,6 @@ namespace ExtendedXmlSerializer.Core
 			{
 				select(@in);
 			}
-		}
-
-		public static T AsValid<T>(this object @this, string message = null)
-		{
-			if (@this != null)
-			{
-				if (@this is T)
-				{
-					return (T) @this;
-				}
-
-				throw new InvalidOperationException(message ??
-				                                    $"'{@this.GetType() .FullName}' is not of type {typeof(T).FullName}.");
-			}
-
-			return default(T);
 		}
 	}
 }

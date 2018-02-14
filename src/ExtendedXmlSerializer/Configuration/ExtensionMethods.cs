@@ -40,7 +40,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		public static T Extend<T>(this IExtend @this) where T : class, ISerializerExtension
 			=> @this.Get(typeof(T))
-			        .AsValid<T>();
+			        .To<T>();
 
 		public static IConfigurationElement Extended<T>(this IConfigurationElement @this)
 			where T : class, ISerializerExtension
@@ -68,7 +68,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static TypeConfiguration<T> Type<T>(this IConfigurationElement @this)
 			=> @this.GetTypeConfiguration(Support<T>.Key)
-			        .AsValid<TypeConfiguration<T>>();
+			        .To<TypeConfiguration<T>>();
 
 		public static IConfigurationElement Type<T>(this IConfigurationElement @this,
 		                                            Action<TypeConfiguration<T>> configure)
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                  Expression<Func<T, TMember>> member)
 			=> @this.Member(member.GetMemberInfo())
-			        .AsValid<MemberConfiguration<T, TMember>>();
+			        .To<MemberConfiguration<T, TMember>>();
 
 		public static IMemberConfigurations Members(this ITypeConfiguration @this)
 			=> @this.Service<IMetadataConfigurations>()

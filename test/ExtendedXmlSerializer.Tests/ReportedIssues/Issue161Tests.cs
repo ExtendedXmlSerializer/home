@@ -38,7 +38,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public object GetDeserializedObject(object obj, Type targetType)
 			{
-				var message = obj.AsValid<Surrogate>()
+				var message = obj.To<Surrogate>()
 				                 .Message;
 				var result = new Subject{ Message =  message};
 				return result;
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public object GetObjectToSerialize(object obj, Type targetType)
 			{
-				var message = obj.AsValid<Subject>()
+				var message = obj.To<Subject>()
 				   .Message;
 				var result = new Surrogate { Message = $"Hello world from Surrogate: {message}"};
 				return result;

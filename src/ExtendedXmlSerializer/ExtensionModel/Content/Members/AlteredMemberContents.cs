@@ -78,7 +78,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 				_converter = converter;
 			}
 
-			public object Get(IFormatReader parameter) => _converter.Parse(_serializer.Get(parameter).AsValid<string>());
+			public object Get(IFormatReader parameter) => _converter.Parse(_serializer.Get(parameter).To<string>());
 
 			public void Write(IFormatWriter writer, object instance) => _serializer.Write(writer, _converter.Format(instance));
 		}
