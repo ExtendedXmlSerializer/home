@@ -224,63 +224,63 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		public static TypeInfo Type(this ISource<TypeInfo> @this) => @this.Get();
 
-		public static ConfigurationElement<T> Register<T>(this ConfigurationElement<T> @this, ContentModel.ISerializer<T> serializer) =>
+		public static TypeConfiguration<T> Register<T>(this TypeConfiguration<T> @this, ContentModel.ISerializer<T> serializer) =>
 			Register(@this, serializer.Adapt());
 
-		public static ConfigurationElement<T> Register<T>(this ConfigurationElement<T> @this, ISerializer serializer)
+		public static TypeConfiguration<T> Register<T>(this TypeConfiguration<T> @this, ISerializer serializer)
 			=> @this.Register(new ContentSerializerAdapter<T>(serializer.Adapt<T>()));
 
-		public static ConfigurationElement<T> Register<T>(this ConfigurationElement<T> @this, IContentSerializer<T> serializer)
+		public static TypeConfiguration<T> Register<T>(this TypeConfiguration<T> @this, IContentSerializer<T> serializer)
 			=> @this.Register(new InstanceService<IContentSerializer<object>>(new GenerializedContentSerializer<T>(serializer)));
 
-		public static ConfigurationElement<T> Register<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> Register<T>(this TypeConfiguration<T> @this,
 		                                                IService<IContentSerializer<object>> service)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Type(), service)
 			        .Return(@this);
 
-		public static ConfigurationElement<T> Unregister<T>(this ConfigurationElement<T> @this)
+		public static TypeConfiguration<T> Unregister<T>(this TypeConfiguration<T> @this)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Executed(@this.Type())
 			        .Return(@this);
 
-		public static ConfigurationElement<T> Register<T, TSerializer>(this IConfigurationElement @this)
+		public static TypeConfiguration<T> Register<T, TSerializer>(this IConfigurationElement @this)
 			where TSerializer : ISerializer<T> => @this.Type<T>()
 			                                           .Register(typeof(TSerializer));
 
-		public static ConfigurationElement<T> Register<T>(this ConfigurationElement<T> @this, Type serializerType)
+		public static TypeConfiguration<T> Register<T>(this TypeConfiguration<T> @this, Type serializerType)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Type(), serializerType)
 			        .Return(@this);
 
-		public static ConfigurationElement<T> Register<T, TSerializer>(this ConfigurationElement<T> @this, A<TSerializer> _)
+		public static TypeConfiguration<T> Register<T, TSerializer>(this TypeConfiguration<T> @this, A<TSerializer> _)
 			where TSerializer : IContentSerializer<T>
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Type(),
 			                A<ActivatedContentSerializer<T, TSerializer>>.Default)
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Register<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Register<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                    Type serializerType)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Member(), serializerType)
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Register<T, TMember, TSerializer>(this ConfigurationElement<T, TMember> @this, A<TSerializer> _)
+		public static MemberConfiguration<T, TMember> Register<T, TMember, TSerializer>(this MemberConfiguration<T, TMember> @this, A<TSerializer> _)
 			where TSerializer : IContentSerializer<TMember>
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Member(),
 			                A<ActivatedContentSerializer<TMember, TSerializer>>.Default)
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Register<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Register<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                    IContentSerializer<TMember> serializer)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Assign(@this.Member(),
 			                new GenerializedContentSerializer<TMember>(serializer))
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Unregister<T, TMember>(this ConfigurationElement<T, TMember> @this)
+		public static MemberConfiguration<T, TMember> Unregister<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<RegisteredSerializersExtension>()
 			        .Executed(@this.Member())
 			        .Return(@this);

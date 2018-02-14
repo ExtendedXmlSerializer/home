@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -64,14 +64,14 @@ namespace ExtendedXmlSerializer.Configuration
 		public static IEnumerable<ITypeConfiguration> Types(this IConfigurationElement @this)
 			=> @this.Service<IMetadataConfigurations>();
 
-		public static ConfigurationElement<T> ConfigureType<T>(this IConfigurationElement @this) => @this.Type<T>();
+		public static TypeConfiguration<T> ConfigureType<T>(this IConfigurationElement @this) => @this.Type<T>();
 
-		public static ConfigurationElement<T> Type<T>(this IConfigurationElement @this)
+		public static TypeConfiguration<T> Type<T>(this IConfigurationElement @this)
 			=> @this.GetTypeConfiguration(Support<T>.Key)
-			        .AsValid<ConfigurationElement<T>>();
+			        .AsValid<TypeConfiguration<T>>();
 
 		public static IConfigurationElement Type<T>(this IConfigurationElement @this,
-		                                            Action<ConfigurationElement<T>> configure)
+		                                            Action<TypeConfiguration<T>> configure)
 		{
 			var result = @this.Type<T>();
 			configure(result);
@@ -83,21 +83,21 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static ITypeConfiguration GetTypeConfiguration(this IConfigurationElement @this, TypeInfo type) =>
 			@this.Service<IMetadataConfigurations>()
-			     .Get(new TypeRequest(type));
+			     .Get(type);
 
-		public static ConfigurationElement<T, TMember> Name<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Name<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                string name)
 			=> @this.Extend<MemberNamesExtension>()
 			        .Assigned(@this.Member(), name)
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Order<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Order<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                 int order)
 			=> @this.Extend<MemberOrderingExtension>()
 			        .Assigned(@this.Member(), order)
 			        .Return(@this);
 
-		public static ConfigurationElement<T> Name<T>(this ConfigurationElement<T> @this, string name)
+		public static TypeConfiguration<T> Name<T>(this TypeConfiguration<T> @this, string name)
 			=> @this.Extend<MemberNamesExtension>()
 			        .Assigned(@this.Type(), name)
 			        .Return(@this);
@@ -117,18 +117,18 @@ namespace ExtendedXmlSerializer.Configuration
 			=> @this.Members()
 			        .Get(member);
 
-		public static ConfigurationElement<T, TMember> Member<T, TMember>(this ConfigurationElement<T> @this,
+		public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                  Expression<Func<T, TMember>> member)
 			=> @this.Member(member.GetMemberInfo())
-			        .AsValid<ConfigurationElement<T, TMember>>();
+			        .AsValid<MemberConfiguration<T, TMember>>();
 
 		public static IMemberConfigurations Members(this ITypeConfiguration @this)
 			=> @this.Service<IMetadataConfigurations>()
 			        .Get(@this);
 
-		public static ConfigurationElement<T> Member<T, TMember>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> Member<T, TMember>(this TypeConfiguration<T> @this,
 		                                                         Expression<Func<T, TMember>> member,
-		                                                         Action<ConfigurationElement<T, TMember>> configure)
+		                                                         Action<MemberConfiguration<T, TMember>> configure)
 		{
 			configure(@this.Member(member));
 			return @this;
@@ -140,13 +140,13 @@ namespace ExtendedXmlSerializer.Configuration
 		public static IConfigurationElement EnableDeferredReferences(this IConfigurationElement @this)
 			=> @this.Extended<DeferredReferencesExtension>();
 
-		public static ConfigurationElement<T> EnableReferences<T, TMember>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> EnableReferences<T, TMember>(this TypeConfiguration<T> @this,
 		                                                                   Expression<Func<T, TMember>> member)
 			=> @this.Member(member)
 			        .Identity()
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> Identity<T, TMember>(this ConfigurationElement<T, TMember> @this)
+		public static MemberConfiguration<T, TMember> Identity<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<ReferencesExtension>()
 			        .Assigned(@this.Type(), @this.Member())
 			        .Return(@this);

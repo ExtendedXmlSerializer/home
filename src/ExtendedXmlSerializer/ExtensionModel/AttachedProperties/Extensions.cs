@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static void Set<TType, TValue>(this TType @this, Property<TType, TValue> property, TValue value)
 			=> property.Assign(@this, value);
 
-		public static ConfigurationElement<TType, TValue> AttachedProperty<TType, TValue>(
+		public static MemberConfiguration<TType, TValue> AttachedProperty<TType, TValue>(
 			this IConfigurationElement @this,
 			Expression<Func<Property<TType, TValue>>> property)
 		{
@@ -65,14 +65,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 
 
 			var type = @this.GetTypeConfiguration(subject.DeclaringType);
-			var result = type.Member(subject).AsValid<ConfigurationElement<TType, TValue>>();
+			var result = type.Member(subject).AsValid<MemberConfiguration<TType, TValue>>();
 			return result;
 		}
 
 		public static IConfigurationElement AttachedProperty<TType, TValue>(
 			this IConfigurationElement @this,
 				Expression<Func<Property<TType, TValue>>> property,
-				Action<ConfigurationElement<TType, TValue>> configure)
+				Action<MemberConfiguration<TType, TValue>> configure)
 		{
 			configure(@this.AttachedProperty(property));
 			return @this;

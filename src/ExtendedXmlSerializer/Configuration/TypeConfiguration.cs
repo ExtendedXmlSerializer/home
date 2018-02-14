@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,68 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ReflectionModel;
-using System;
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	/*class TypeConfiguration : TypeMetadataConfiguration, ITypeConfiguration
-	{
-		readonly IValueSource<MemberInfo, IMemberConfiguration> _members;
-
-		public TypeConfiguration(ITypeMetadataConfiguration metadata, IValueSource<MemberInfo, IMemberConfiguration> members)
-			: base(metadata, metadata.Metadata)
-		{
-			_members = members;
-		}
-
-
-		public IEnumerable<IMemberConfiguration> Members => _members;
-		public IMemberConfiguration Get(MemberInfo parameter) => _members.Get(parameter);
-	}*/
-
-	public class ConfigurationElement<T> : ConfigurationElement, ITypeConfiguration
+	public class TypeConfiguration<T> : ConfigurationElement, ITypeConfiguration
 	{
 		readonly TypeInfo _metadata;
 
-		public ConfigurationElement(IConfigurationElement element) : this(element, Support<T>.Key) {}
+		public TypeConfiguration(IConfigurationElement element) : this(element, Support<T>.Key) {}
 
-		public ConfigurationElement(IConfigurationElement element, TypeInfo metadata) : base(element)
+		public TypeConfiguration(IConfigurationElement element, TypeInfo metadata) : base(element)
 			=> _metadata = metadata;
 
 		public TypeInfo Get() => _metadata;
 	}
-
-	public class ConfigurationElement<T, TMember> : ConfigurationElement<T>, IMemberConfiguration
-	{
-		readonly MemberInfo _member;
-
-		public ConfigurationElement(ConfigurationElement<T> element, Expression<Func<T, TMember>> member)
-			: this(element, member.GetMemberInfo()) {}
-
-		public ConfigurationElement(IConfigurationElement element, MemberInfo member) : base(element)
-			=> _member = member;
-
-		public new MemberInfo Get() => _member;
-	}
-
-	/*public class TypeConfiguration<T> : ConfigurationElement, ITypeConfiguration
-	{
-		readonly ITypeConfiguration _element;
-
-		public TypeConfiguration(ITypeConfiguration element) : base(element) => _element = element;
-
-		public MemberConfiguration<T, TMember> Member<TMember>(Expression<Func<T, TMember>> member)
-			=> _element.Get(member.GetMemberInfo())
-			           .AsValid<MemberConfiguration<T, TMember>>();
-
-		IMemberConfiguration IParameterizedSource<MemberInfo, IMemberConfiguration>.Get(MemberInfo parameter) => _element.Get(parameter);
-
-		public IEnumerable<IMemberConfiguration> Members => _element.Members;
-
-		public TypeInfo Metadata => _element.Metadata;
-	}*/
 }

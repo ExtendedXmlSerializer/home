@@ -47,29 +47,29 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static XElement Member(this XElement @this, string name)
 			=> @this.Element(XName.Get(name, @this.Name.NamespaceName));
 
-		public static ConfigurationElement<T, TMember> Attribute<T, TMember>(
-			this ConfigurationElement<T, TMember> @this, Func<TMember, bool> when)
+		public static MemberConfiguration<T, TMember> Attribute<T, TMember>(
+			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
 			@this.Extend<MemberFormatExtension>().Specifications[@this.Member()] =
 				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
 			return @this.Attribute();
 		}
 
-		public static ConfigurationElement<T, TMember> Attribute<T, TMember>(this ConfigurationElement<T, TMember> @this)
+		public static MemberConfiguration<T, TMember> Attribute<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<MemberFormatExtension>()
 			        .Registered.Adding(@this.Member())
 			        .Return(@this);
 
-		public static ConfigurationElement<T, string> Verbatim<T>(this ConfigurationElement<T, string> @this) =>
+		public static MemberConfiguration<T, string> Verbatim<T>(this MemberConfiguration<T, string> @this) =>
 			@this.Register(new ContentSerializerAdapter<string>(VerbatimContentSerializer.Default));
 
-		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, Func<T, T> write) =>
+		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
 
-		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, Func<T, T> read, Func<T, T> write)
+		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, Func<T, T> read, Func<T, T> write)
 			=> @this.Alter(new DelegatedAlteration<T>(read), new DelegatedAlteration<T>(write));
 
-		public static ConfigurationElement<T> Alter<T>(this ConfigurationElement<T> @this, IAlteration<T> read,
+		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, IAlteration<T> read,
 		                                             IAlteration<T> write)
 			=> @this.Extend<AlteredContentExtension>()
 			        .Types.Assigned(Support<T>.Key,
@@ -77,16 +77,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			        .Return(@this);
 
 
-		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Alter<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                 Func<TMember, TMember> write)
 			=> Alter(@this, Self<TMember>.Default.Get, write);
 
-		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Alter<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                 Func<TMember, TMember> read,
 		                                                                 Func<TMember, TMember> write)
 			=> @this.Alter(new DelegatedAlteration<TMember>(read), new DelegatedAlteration<TMember>(write));
 
-		public static ConfigurationElement<T, TMember> Alter<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> Alter<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                IAlteration<TMember> read,
 		                                                                IAlteration<TMember> write)
 			=> @this.Extend<AlteredContentExtension>()
@@ -94,41 +94,41 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			                          new ContentAlteration(read.Adapt(), write.Adapt()))
 			        .Return(@this);
 
-		public static ConfigurationElement<T> CustomSerializer<T, TSerializer>(this IConfigurationElement @this)
+		public static TypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationElement @this)
 			where TSerializer : IExtendedXmlCustomSerializer<T>
 			=> @this.CustomSerializer<T>(typeof(TSerializer));
 
-		public static ConfigurationElement<T> CustomSerializer<T>(this IConfigurationElement @this, Type serializerType)
+		public static TypeConfiguration<T> CustomSerializer<T>(this IConfigurationElement @this, Type serializerType)
 			=> @this.Type<T>()
 			        .Register(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
 
-		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
 		                                                        Action<System.Xml.XmlWriter, T> serializer,
 		                                                        Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
-		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
 			=> @this.Register(new GenericCustomXmlSerializer<T>(serializer));
 
-		public static ConfigurationElement<T> CustomSerializer<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
 			=> @this.Register(new CustomXmlSerializer<T>(serializer));
 
-		public static ConfigurationElement<T, TMember> Content<T, TMember>(this ConfigurationElement<T, TMember> @this)
+		public static MemberConfiguration<T, TMember> Content<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<MemberFormatExtension>()
 			        .Registered.Removing(@this.Member())
 			        .Return(@this);
 
-		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
 		                                                    ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
-		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
 		                                                    Action<XElement> migration)
 			=> @this.AddMigration(migration.Yield());
 
-		public static ConfigurationElement<T> AddMigration<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
 		{
 			@this.Extend<MigrationsExtension>().Add(@this.Type(), migrations.Fixed());
@@ -139,7 +139,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Type<string>()
 			        .Alter(ValidContentCharacters.Default.Get);
 
-		public static ConfigurationElement<T, string> WithValidCharacters<T>(this ConfigurationElement<T, string> @this)
+		public static MemberConfiguration<T, string> WithValidCharacters<T>(this MemberConfiguration<T, string> @this)
 			=> @this.Alter(ValidContentCharacters.Default.Get);
 
 		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this)

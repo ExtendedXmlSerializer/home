@@ -23,16 +23,17 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class TypeConfigurations : TableValueSource<TypeRequest, ITypeConfiguration>
+	sealed class TypeConfigurations : TableValueSource<TypeInfo, ITypeConfiguration>
 	{
 		public TypeConfigurations(IConfigurationElement element)
-			: this(new GenericTypeConfigurations(element), new ConcurrentDictionary<TypeRequest, ITypeConfiguration>()) {}
+			: this(new GenericTypeConfigurations(element), new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
 
-		public TypeConfigurations(IParameterizedSource<TypeRequest, ITypeConfiguration> types,
-		                          ConcurrentDictionary<TypeRequest, ITypeConfiguration> store)
+		public TypeConfigurations(IParameterizedSource<TypeInfo, ITypeConfiguration> types,
+		                          ConcurrentDictionary<TypeInfo, ITypeConfiguration> store)
 			: base(types.Get, store) {}
 	}
 }

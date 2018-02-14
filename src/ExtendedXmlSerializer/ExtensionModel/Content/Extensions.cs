@@ -67,14 +67,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationElement Emit(this IConfigurationElement @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
-		public static ConfigurationElement<T> EmitWhen<T>(this ConfigurationElement<T> @this,
+		public static TypeConfiguration<T> EmitWhen<T>(this TypeConfiguration<T> @this,
 		                                                  Func<T, bool> specification)
 			=> @this.Extend<AllowedInstancesExtension>()
 			        .Assigned(@this.Get(),
 			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
 			        .Return(@this);
 
-		public static ConfigurationElement<T, TMember> EmitWhen<T, TMember>(this ConfigurationElement<T, TMember> @this,
+		public static MemberConfiguration<T, TMember> EmitWhen<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                    Func<TMember, bool> specification)
 		{
 			@this.Extend<AllowedMemberValuesExtension>()
@@ -83,7 +83,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static ConfigurationElement<T, TMember> Ignore<T, TMember>(this ConfigurationElement<T, TMember> @this)
+		public static MemberConfiguration<T, TMember> Ignore<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<AllowedMembersExtension>()
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static ConfigurationElement<T> OnlyConfiguredProperties<T>(this ConfigurationElement<T> @this)
+		public static TypeConfiguration<T> OnlyConfiguredProperties<T>(this TypeConfiguration<T> @this)
 		{
 			foreach (var member in @this.Members())
 			{

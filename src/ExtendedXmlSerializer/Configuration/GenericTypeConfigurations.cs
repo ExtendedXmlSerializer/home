@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,10 +23,11 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class GenericTypeConfigurations : IParameterizedSource<TypeRequest, ITypeConfiguration>
+	sealed class GenericTypeConfigurations : IParameterizedSource<TypeInfo, ITypeConfiguration>
 	{
 		readonly IConfigurationElement _element;
 		readonly IGeneric<IConfigurationElement, ITypeConfiguration> _generic;
@@ -40,13 +41,13 @@ namespace ExtendedXmlSerializer.Configuration
 			_generic = generic;
 		}
 
-		public ITypeConfiguration Get(TypeRequest parameter) => _generic.Get(parameter.Type)
+		public ITypeConfiguration Get(TypeInfo parameter) => _generic.Get(parameter)
 		                                                                .Invoke(_element);
 
 		sealed class Generic : Generic<IConfigurationElement, ITypeConfiguration>
 		{
 			public static Generic Default { get; } = new Generic();
-			Generic() : base(typeof(ConfigurationElement<>)) {}
+			Generic() : base(typeof(TypeConfiguration<>)) {}
 		}
 	}
 }

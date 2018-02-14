@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Configuration
 		sealed class Generic : Generic<IConfigurationElement, MemberInfo, IMemberConfiguration>
 		{
 			public static Generic Default { get; } = new Generic();
-			Generic() : base(typeof(ConfigurationElement<,>)) {}
+			Generic() : base(typeof(MemberConfiguration<,>)) {}
 		}
 	}
 }
