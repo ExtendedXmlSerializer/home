@@ -35,6 +35,8 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static Func<T> New { get; } = DefaultActivators.Default.New<T>;
 
 		public static Func<T> NewOrSingleton { get; } = Activators.Default.New<T>;
+
+		public static T[] Empty { get; } = new T[]{};
 	}
 
 	static class StaticTypeChecingExtensions

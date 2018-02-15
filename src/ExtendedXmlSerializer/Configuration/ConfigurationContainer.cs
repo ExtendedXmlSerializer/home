@@ -22,18 +22,21 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ExtensionModel;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Configuration
 {
 	public class ConfigurationContainer : ConfigurationElement
 	{
-		public ConfigurationContainer() : this(DefaultExtensions.Default.ToArray()) {}
+		public ConfigurationContainer() : this(new ExtensionCollection()) {}
 
-		public ConfigurationContainer(params ISerializerExtension[] extensions) : this(ConfigurationElements.Default,
-		                                                                               extensions) {}
+		public ConfigurationContainer(params ISerializerExtension[] extensions)
+			: this(ExtensionCollections.Default.Get(extensions.ToImmutableArray())) {}
 
-		public ConfigurationContainer(IConfigurationElements configuration, params ISerializerExtension[] extensions)
-			: base(configuration.Get(extensions)) {}
+		public ConfigurationContainer(IExtensionCollection extensions)
+			: this(ConfigurationElements.Default.Get(extensions)) {}
+
+
+		public ConfigurationContainer(IConfigurationElement element) : base(element) {}
 	}
 }

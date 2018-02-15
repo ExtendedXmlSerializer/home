@@ -131,9 +131,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> @this.Alter(optimizations);
 
 		public static IConfigurationElement Register<T>(this IConfigurationElement @this, IConverter<T> converter)
-			=> @this.Extend<ConvertersExtension>()
+			=> @this.Unregister(converter).Return(@this).Extend<ConvertersExtension>()
 			        .Converters
-			        .AddOrReplace(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
+			        .Adding(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
 			        .Return(@this);
 
 		public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)

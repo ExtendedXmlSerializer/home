@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -35,13 +36,26 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 	public interface IValueSource<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult>, IEnumerable<TResult> {}
 
-	class TableValueSource<TParameter, TResult> : ValueSource<TParameter, TResult>
+	public class TableValueSource<TParameter, TResult> : ValueSource<TParameter, TResult>, ISpecificationSource<TParameter, TResult>
 	{
+		readonly ISpecification<TParameter> _source;
+
+		public TableValueSource()
+			: this(new Dictionary<TParameter, TResult>()) {}
+
+		public TableValueSource(IDictionary<TParameter, TResult> store)
+			: this(new TableSource<TParameter, TResult>(store), new Values<TParameter, TResult>(store)) { }
+
 		public TableValueSource(Func<TParameter, TResult> select, ConcurrentDictionary<TParameter, TResult> store)
-			: base(new Cache<TParameter, TResult>(select, store), new Values<TParameter, TResult>(store)) {}
+			: this(new Cache<TParameter, TResult>(select, store), new Values<TParameter, TResult>(store)) {}
+
+		public TableValueSource(ISpecificationSource<TParameter, TResult> source, IEnumerable<TResult> items)
+			: base(source, items) => _source = source;
+
+		public bool IsSatisfiedBy(TParameter parameter) => _source.IsSatisfiedBy(parameter);
 	}
 
-	class ValueSource<TParameter, TResult> : IValueSource<TParameter, TResult>
+	public class ValueSource<TParameter, TResult> : IValueSource<TParameter, TResult>
 	{
 		readonly IParameterizedSource<TParameter, TResult> _source;
 		readonly IEnumerable<TResult> _items;

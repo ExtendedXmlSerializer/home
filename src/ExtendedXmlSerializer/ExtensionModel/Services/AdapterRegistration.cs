@@ -118,11 +118,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 
 	public interface IService<out T> : IParameterizedSource<System.IServiceProvider, T> {}
 
-	public interface IServiceGroupContainer<T> : IGroupContainer<IService<T>> {}
+	public interface IServiceGroupCollection<T> : IGroupCollection<IService<T>> {}
 
-	public class ServiceGroupContainer<T> : GroupContainer<IService<T>>, IRegistration
+	public class ServiceGroupCollection<T> : GroupCollection<IService<T>>, IRegistration
 	{
-		public ServiceGroupContainer(IEnumerable<IGroup<IService<T>>> groups) : base(groups) {}
+		public ServiceGroupCollection(IEnumerable<IGroup<IService<T>>> groups) : base(groups) {}
 
 		public IServiceRepository Get(IServiceRepository parameter) => this.OfType<IRegistration>()
 		                                                                   .ToArray()

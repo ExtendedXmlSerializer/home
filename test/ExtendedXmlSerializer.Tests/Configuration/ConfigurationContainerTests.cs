@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
@@ -88,10 +89,10 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var configuration = new ConfigurationContainer();
 
-			Assert.Null(configuration.Find<ReferencesExtension>());
+			Assert.Null(configuration.FirstOfType<ReferencesExtension>());
 			configuration.EnableReferences();
 			var configType = configuration.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			var extension = configuration.Find<ReferencesExtension>();
+			var extension = configuration.FirstOfType<ReferencesExtension>();
 			Assert.NotNull(extension);
 			Assert.Null(extension.Get(configType.Type()));
 		}
@@ -136,7 +137,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var property = configType.Member("PropChar");
 			Assert.NotNull(property);
 
-			var extension = configuration.Find<ReferencesExtension>();
+			var extension = configuration.FirstOfType<ReferencesExtension>();
 			Assert.NotNull(extension);
 			Assert.Same(property.Member(), extension.Get(configType.Type()));
 		}
@@ -150,7 +151,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(configuration.Find<MemberNamesExtension>().Get(member.Member()), MemberName);
+			Assert.Equal(configuration.FirstOfType<MemberNamesExtension>().Get(member.Member()), MemberName);
 
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};
@@ -167,7 +168,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleOrderedTestSubject))
 							 .Member(nameof(SimpleOrderedTestSubject.Property2));
-			Assert.Equal(configuration.Find<MemberOrderingExtension>().Get(member.Member()), order);
+			Assert.Equal(configuration.FirstOfType<MemberOrderingExtension>().Get(member.Member()), order);
 
 			var instance = new SimpleOrderedTestSubject {Property2 = "World!", Property1 = "Hello"};
 
@@ -196,14 +197,14 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigureEncrypt()
 		{
 			var configuration = new ConfigurationContainer();
-			Assert.Null(configuration.Find<EncryptionExtension>());
+			Assert.Null(configuration.FirstOfType<EncryptionExtension>());
 			configuration.UseEncryptionAlgorithm()
 			             .ConfigureType<TestClassWithEncryptedData>()
 			             .Member(p => p.Password, x => x.Encrypt())
 			             .Member(p => p.Salary)
 			             .Encrypt();
 
-			var extension = configuration.Find<EncryptionExtension>();
+			var extension = configuration.FirstOfType<EncryptionExtension>();
 			Assert.NotNull(extension);
 			var type = configuration.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
 			Assert.NotNull(type);
@@ -227,7 +228,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			container.UseAutoFormatting();
 
 
-			Assert.Null(container.Find<EncryptionExtension>());
+			Assert.Null(container.FirstOfType<EncryptionExtension>());
 			container.ConfigureType<TestClassWithEncryptedData>()
 			      .Member(p => p.Password, x => x.Encrypt())
 			      .Member(p => p.Salary)
@@ -235,7 +236,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 			container.UseEncryptionAlgorithm();
 
-			var extension = container.Find<EncryptionExtension>();
+			var extension = container.FirstOfType<EncryptionExtension>();
 			Assert.NotNull(extension);
 			var type = container.GetTypeConfiguration(typeof(TestClassWithEncryptedData));
 			Assert.NotNull(type);

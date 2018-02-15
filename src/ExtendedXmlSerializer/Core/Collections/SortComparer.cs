@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,18 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+using System;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
-	sealed class SortComparer<T> : IComparer<T> where T : class
+	sealed class SortComparer<T> : IComparer<T>
 	{
 		public static SortComparer<T> Default { get; } = new SortComparer<T>();
-		SortComparer() {}
+		SortComparer() : this(SortCoercer<T>.Default.Get) {}
 
-		public int Compare(T x, T y) => GetSort(x)
-			.CompareTo(GetSort(y));
+		readonly Func<T, int> _sort;
 
-		static int GetSort(T parameter) => (parameter as ISortAware)?.Sort ?? -1;
+		public SortComparer(Func<T, int> sort) => _sort = sort;
+
+		public int Compare(T x, T y) => _sort(x).CompareTo(_sort(y));
+	}
+
+	sealed class SortCoercer<T> : IParameterizedSource<T, int>
+	{
+		public static SortCoercer<T> Default { get; } = new SortCoercer<T>();
+		SortCoercer() {}
+
+		public int Get(T parameter) => parameter is ISortAware sort ? sort.Sort : -1;
 	}
 }

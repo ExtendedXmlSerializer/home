@@ -33,7 +33,6 @@ namespace ExtendedXmlSerializer.Configuration
 			: this(new GenericTypeConfigurations(element), new ConcurrentDictionary<TypeInfo, ITypeConfiguration>()) {}
 
 		public TypeConfigurations(IParameterizedSource<TypeInfo, ITypeConfiguration> types,
-		                          ConcurrentDictionary<TypeInfo, ITypeConfiguration> store)
-			: base(types.Get, store) {}
+		                          ConcurrentDictionary<TypeInfo, ITypeConfiguration> store) : base(types.Get, store) {}
 	}
 }

@@ -44,7 +44,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static IConfigurationElement EnableAttachedProperties(this IConfigurationElement @this,
 		                                                               ICollection<IProperty> properties,
 		                                                               ICollection<Type> types)
-			=> @this.Executed(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
+			=> @this.Add.Executed(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
 			        .Return(@this);
 
 		public static TValue Get<TType, TValue>(this TType @this, Property<TType, TValue> property) => property.Get(@this);

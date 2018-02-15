@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 
 		#region Fields/Properties
 
-		private KeyedCollection<TKey, KeyValuePair<TKey, TValue>> _keyedCollection;
+		private DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>> _delegatedKeyedCollection;
 
 		/// <summary>
 		/// Gets or sets the value associated with the specified key.
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <summary>
 		/// Gets the number of items in the dictionary
 		/// </summary>
-		public int Count => _keyedCollection.Count;
+		public int Count => _delegatedKeyedCollection.Count;
 
 		/// <summary>
 		/// Gets all the keys in the ordered dictionary in their proper order.
@@ -51,7 +51,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		{
 			get
 			{
-				return _keyedCollection.Select(x => x.Key).ToList();
+				return _delegatedKeyedCollection.Select(x => x.Key).ToList();
 			}
 		}
 
@@ -62,7 +62,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		{
 			get
 			{
-				return _keyedCollection.Select(x => x.Value).ToList();
+				return _delegatedKeyedCollection.Select(x => x.Value).ToList();
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			Initialize();
 			foreach (KeyValuePair<TKey, TValue> pair in dictionary)
 			{
-				_keyedCollection.Add(pair);
+				_delegatedKeyedCollection.Add(pair);
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			Initialize(comparer);
 			foreach (KeyValuePair<TKey, TValue> pair in dictionary)
 			{
-				_keyedCollection.Add(pair);
+				_delegatedKeyedCollection.Add(pair);
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			Initialize();
 			foreach (KeyValuePair<TKey, TValue> pair in items)
 			{
-				_keyedCollection.Add(pair);
+				_delegatedKeyedCollection.Add(pair);
 			}
 		}
 
@@ -121,7 +121,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			Initialize(comparer);
 			foreach (KeyValuePair<TKey, TValue> pair in items)
 			{
-				_keyedCollection.Add(pair);
+				_delegatedKeyedCollection.Add(pair);
 			}
 		}
 
@@ -132,9 +132,9 @@ namespace ExtendedXmlSerializer.Core.Collections
 		private void Initialize(IEqualityComparer<TKey> comparer = null)
 		{
 			Comparer = comparer;
-			_keyedCollection = comparer != null
-				                   ? new KeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer)
-				                   : new KeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key);
+			_delegatedKeyedCollection = comparer != null
+				                   ? new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key, comparer)
+				                   : new DelegatedKeyedCollection<TKey, KeyValuePair<TKey, TValue>>(x => x.Key);
 		}
 
 		/// <summary>
@@ -144,7 +144,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <param name="value">The value of the element to add.  The value can be null for reference types.</param>
 		public void Add(TKey key, TValue value)
 		{
-			_keyedCollection.Add(new KeyValuePair<TKey, TValue>(key, value));
+			_delegatedKeyedCollection.Add(new KeyValuePair<TKey, TValue>(key, value));
 		}
 
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// </summary>
 		public void Clear()
 		{
-			_keyedCollection.Clear();
+			_delegatedKeyedCollection.Clear();
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <param name="value">The value of the element to add.  Can be null for reference types.</param>
 		public void Insert(int index, TKey key, TValue value)
 		{
-			_keyedCollection.Insert(index, new KeyValuePair<TKey, TValue>(key, value));
+			_delegatedKeyedCollection.Insert(index, new KeyValuePair<TKey, TValue>(key, value));
 		}
 
 		/// <summary>
@@ -173,9 +173,9 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <returns>Returns the index of the key specified if found.  Returns -1 if the key could not be located.</returns>
 		public int IndexOf(TKey key)
 		{
-			if (_keyedCollection.Contains(key))
+			if (_delegatedKeyedCollection.Contains(key))
 			{
-				return _keyedCollection.IndexOf(_keyedCollection[key]);
+				return _delegatedKeyedCollection.IndexOf(_delegatedKeyedCollection[key]);
 			}
 			else
 			{
@@ -203,7 +203,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// </summary>
 		/// <param name="key">The key to locate in this object.</param>
 		/// <returns>True if the key is found.  False otherwise.</returns>
-		public bool ContainsKey(TKey key) => _keyedCollection.Contains(key);
+		public bool ContainsKey(TKey key) => _delegatedKeyedCollection.Contains(key);
 
 		/// <summary>
 		/// Returns the KeyValuePair at the index specified.
@@ -214,11 +214,11 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// </exception>
 		public KeyValuePair<TKey, TValue> GetItem(int index)
 		{
-			if (index < 0 || index >= _keyedCollection.Count)
+			if (index < 0 || index >= _delegatedKeyedCollection.Count)
 			{
 				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}".FormatWith(index));
 			}
-			return _keyedCollection[index];
+			return _delegatedKeyedCollection[index];
 		}
 
 		/// <summary>
@@ -231,25 +231,25 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// </exception>
 		public void SetItem(int index, TValue value)
 		{
-			if (index < 0 || index >= _keyedCollection.Count)
+			if (index < 0 || index >= _delegatedKeyedCollection.Count)
 			{
 				throw new ArgumentException("The index is outside the bounds of the dictionary: {0}".FormatWith(index));
 			}
-			var kvp = new KeyValuePair<TKey, TValue>(_keyedCollection[index].Key, value);
-			_keyedCollection[index] = kvp;
+			var kvp = new KeyValuePair<TKey, TValue>(_delegatedKeyedCollection[index].Key, value);
+			_delegatedKeyedCollection[index] = kvp;
 		}
 
 		/// <summary>
 		/// Returns an enumerator that iterates through all the KeyValuePairs in this object.
 		/// </summary>
-		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _keyedCollection.GetEnumerator();
+		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _delegatedKeyedCollection.GetEnumerator();
 
 		/// <summary>
 		/// Removes the key-value pair for the specified key.
 		/// </summary>
 		/// <param name="key">The key to remove from the dictionary.</param>
 		/// <returns>True if the item specified existed and the removal was successful.  False otherwise.</returns>
-		public bool Remove(TKey key) => _keyedCollection.Remove(key);
+		public bool Remove(TKey key) => _delegatedKeyedCollection.Remove(key);
 
 		/// <summary>
 		/// Removes the key-value pair at the specified index.
@@ -257,11 +257,11 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <param name="index">The index of the key-value pair to remove from the dictionary.</param>
 		public void RemoveAt(int index)
 		{
-			if (index < 0 || index >= _keyedCollection.Count)
+			if (index < 0 || index >= _delegatedKeyedCollection.Count)
 			{
 				throw new ArgumentException("The index was outside the bounds of the dictionary: {0}".FormatWith(index));
 			}
-			_keyedCollection.RemoveAt(index);
+			_delegatedKeyedCollection.RemoveAt(index);
 		}
 
 		/// <summary>
@@ -270,11 +270,11 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <param name="key">The key associated with the value to get.</param>
 		public TValue GetValue(TKey key)
 		{
-			if (_keyedCollection.Contains(key) == false)
+			if (_delegatedKeyedCollection.Contains(key) == false)
 			{
 				throw new ArgumentException("The given key is not present in the dictionary: {0}".FormatWith(key));
 			}
-			var kvp = _keyedCollection[key];
+			var kvp = _delegatedKeyedCollection[key];
 			return kvp.Value;
 		}
 
@@ -289,11 +289,11 @@ namespace ExtendedXmlSerializer.Core.Collections
 			var idx = IndexOf(key);
 			if (idx > -1)
 			{
-				_keyedCollection[idx] = kvp;
+				_delegatedKeyedCollection[idx] = kvp;
 			}
 			else
 			{
-				_keyedCollection.Add(kvp);
+				_delegatedKeyedCollection.Add(kvp);
 			}
 		}
 
@@ -310,9 +310,9 @@ namespace ExtendedXmlSerializer.Core.Collections
 		/// <remarks></remarks>
 		public bool TryGetValue(TKey key, out TValue value)
 		{
-			if (_keyedCollection.Contains(key))
+			if (_delegatedKeyedCollection.Contains(key))
 			{
-				value = _keyedCollection[key].Value;
+				value = _delegatedKeyedCollection[key].Value;
 				return true;
 			}
 			else
@@ -324,38 +324,6 @@ namespace ExtendedXmlSerializer.Core.Collections
 
 		#endregion
 
-		#region Sorting
-		public void SortKeys()
-		{
-			_keyedCollection.SortByKeys();
-		}
-
-		public void SortKeys(IComparer<TKey> comparer)
-		{
-			_keyedCollection.SortByKeys(comparer);
-		}
-
-		public void SortKeys(Comparison<TKey> comparison)
-		{
-			_keyedCollection.SortByKeys(comparison);
-		}
-
-		public void SortValues()
-		{
-			var comparer = Comparer<TValue>.Default;
-			SortValues(comparer);
-		}
-
-		public void SortValues(IComparer<TValue> comparer)
-		{
-			_keyedCollection.Sort((x, y) => comparer.Compare(x.Value, y.Value));
-		}
-
-		public void SortValues(Comparison<TValue> comparison)
-		{
-			_keyedCollection.Sort((x, y) => comparison(x.Value, y.Value));
-		}
-		#endregion
 
 		#region IDictionary<TKey, TValue>
 
@@ -386,26 +354,26 @@ namespace ExtendedXmlSerializer.Core.Collections
 
 		void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
 		{
-			_keyedCollection.Add(item);
+			_delegatedKeyedCollection.Add(item);
 		}
 
 		void ICollection<KeyValuePair<TKey, TValue>>.Clear()
 		{
-			_keyedCollection.Clear();
+			_delegatedKeyedCollection.Clear();
 		}
 
-		bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => _keyedCollection.Contains(item);
+		bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => _delegatedKeyedCollection.Contains(item);
 
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
 		{
-			_keyedCollection.CopyTo(array, arrayIndex);
+			_delegatedKeyedCollection.CopyTo(array, arrayIndex);
 		}
 
-		int ICollection<KeyValuePair<TKey, TValue>>.Count => _keyedCollection.Count;
+		int ICollection<KeyValuePair<TKey, TValue>>.Count => _delegatedKeyedCollection.Count;
 
 		bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => false;
 
-		bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => _keyedCollection.Remove(item);
+		bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => _delegatedKeyedCollection.Remove(item);
 
 		#endregion
 
@@ -455,7 +423,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 			Clear();
 		}
 
-		bool IDictionary.Contains(object key) => _keyedCollection.Contains((TKey)key);
+		bool IDictionary.Contains(object key) => _delegatedKeyedCollection.Contains((TKey)key);
 
 		IDictionaryEnumerator IDictionary.GetEnumerator() => new DictionaryEnumerator<TKey, TValue>(this);
 
@@ -484,14 +452,14 @@ namespace ExtendedXmlSerializer.Core.Collections
 
 		void ICollection.CopyTo(Array array, int index)
 		{
-			((ICollection)_keyedCollection).CopyTo(array, index);
+			((ICollection)_delegatedKeyedCollection).CopyTo(array, index);
 		}
 
-		int ICollection.Count => ((ICollection)_keyedCollection).Count;
+		int ICollection.Count => ((ICollection)_delegatedKeyedCollection).Count;
 
-		bool ICollection.IsSynchronized => ((ICollection)_keyedCollection).IsSynchronized;
+		bool ICollection.IsSynchronized => ((ICollection)_delegatedKeyedCollection).IsSynchronized;
 
-		object ICollection.SyncRoot => ((ICollection)_keyedCollection).SyncRoot;
+		object ICollection.SyncRoot => ((ICollection)_delegatedKeyedCollection).SyncRoot;
 
 		#endregion
 	}

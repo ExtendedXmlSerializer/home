@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 			=> @this.Extend<EncryptionExtension>()
 			        .IsSatisfiedBy(parameter)
 				   ? @this
-				   : @this.Executed(new EncryptionExtension(parameter))
+				   : @this.Add.Executed(new EncryptionExtension(parameter))
 				          .Return(@this);
 	}
 }

@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,11 +25,17 @@ using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class IsTypeSpecification<T> : ISpecification<object>
+	sealed class IsTypeSpecification<TParameter, T> : ISpecification<TParameter>
 	{
-		public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
+		public static IsTypeSpecification<TParameter, T> Default { get; } = new IsTypeSpecification<TParameter, T>();
 		IsTypeSpecification() {}
 
-		public bool IsSatisfiedBy(object parameter) => parameter is T;
+		public bool IsSatisfiedBy(TParameter parameter) => parameter is T;
+	}
+
+	sealed class IsTypeSpecification<T> : DecoratedSpecification<object>
+	{
+		public static IsTypeSpecification<T> Default { get; } = new IsTypeSpecification<T>();
+		IsTypeSpecification() : base(IsTypeSpecification<object, T>.Default) {}
 	}
 }

@@ -59,7 +59,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			if (existing == null)
 			{
 				var result = _create();
-				parameter.Execute(result);
+				parameter.Add.Execute(result);
 				return result;
 			}
 
@@ -145,16 +145,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	sealed class DeclaredDependencies<T> : Items<Type> where T : ISerializerExtension
 	{
 		public static DeclaredDependencies<T> Default { get; } = new DeclaredDependencies<T>();
-		DeclaredDependencies() : base(TypesFrom<DependencyAttribute>.Default.Get(typeof(T))) {}
+		DeclaredDependencies() : base(DependencyAttributes.Default.Get(typeof(T))) {}
 	}
 
-	sealed class TypesFrom<T> : IParameterizedSource<MemberInfo, IEnumerable<Type>> where T : Attribute, ISource<Type>
+	sealed class DependencyAttributes : TypeMetadataValues<DependencyAttribute, Type>
 	{
-		public static TypesFrom<T> Default { get; } = new TypesFrom<T>();
-		TypesFrom() {}
-
-		public IEnumerable<Type> Get(MemberInfo parameter) => parameter.GetCustomAttributes<T>()
-		                                                               .Select(x => x.Get());
+		public static DependencyAttributes Default { get; } = new DependencyAttributes();
+		DependencyAttributes() {}
 	}
 
 /*

@@ -21,9 +21,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core
 {
-	interface IStart<out T> : IEnumerable<T> {}
+	class ConditionalCommand<T> : ICommand<T>
+	{
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _true;
+		readonly ICommand<T> _false;
+
+		public ConditionalCommand(ISpecification<T> specification, ICommand<T> @true, ICommand<T> @false)
+		{
+			_specification = specification;
+			_true = @true;
+			_false = @false;
+		}
+
+		public void Execute(T parameter)
+		{
+			var command = _specification.IsSatisfiedBy(parameter) ? _true : _false;
+			command.Execute(parameter);
+		}
+	}
+
+	class SpecificationCommand<T> : ICommand<T>
+	{
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _command;
+
+		public SpecificationCommand(ICommand<T> command) : this(new ConditionalSpecification<T>(), command) {}
+
+		public SpecificationCommand(ISpecification<T> specification, ICommand<T> command)
+		{
+			_specification = specification;
+			_command = command;
+		}
+
+		public void Execute(T parameter)
+		{
+			if (_specification.IsSatisfiedBy(parameter))
+			{
+				_command.Execute(parameter);
+			}
+		}
+	}
 }

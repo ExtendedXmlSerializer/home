@@ -146,12 +146,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Extended<AutoMemberFormatExtension>();
 
 		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this, int maxTextLength)
-			=> @this.Executed(new AutoMemberFormatExtension(maxTextLength))
+			=> @this.Add.Executed(new AutoMemberFormatExtension(maxTextLength))
 			        .Return(@this);
 
 		public static IConfigurationElement EnableClassicMode(this IConfigurationElement @this)
 			=> @this.Emit(EmitBehaviors.Classic)
-			        .Executed(ClassicExtension.Default)
+			        .Add.Executed(ClassicExtension.Default)
 			        .Return(@this);
 
 		public static IConfigurationElement UseOptimizedNamespaces(this IConfigurationElement @this)
@@ -252,7 +252,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static IConfigurationElement EnableImplicitTyping(this IConfigurationElement @this,
 		                                                           IEnumerable<Type> types)
-			=> @this.Executed(new ImplicitTypingExtension(types.ToMetadata()))
+			=> @this.Add.Executed(new ImplicitTypingExtension(types.ToMetadata()))
 			        .Return(@this);
 	}
 }

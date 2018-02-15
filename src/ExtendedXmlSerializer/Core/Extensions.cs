@@ -35,35 +35,11 @@ namespace ExtendedXmlSerializer.Core
 {
 	static class Extensions
 	{
-		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
-		{
-			@this.Execute(parameter);
-			return @this;
-		}
-
-		public static IAssignable<TKey, TValue> Assigned<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
-		{
-			@this.Assign(key, value);
-			return @this;
-		}
-
-		public static ICommand<T> Fold<T>(this IEnumerable<ICommand<T>> @this)
-			=> new CompositeCommand<T>(@this.ToImmutableArray());
-
-		public static ICommand<T> ToCommand<T>(this Func<ICommand<T>> @this)
-			=> new DeferredCommand<T>(@this);
-
-
-		public static ICommand<T> ToInstanceCommand<T>(this Func<ICommand<T>> @this)
-			=> new DeferredInstanceCommand<T>(@this);
-
 		public static IParameterizedSource<TParameter, TResult>
 			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
 			where TParameter : class where TResult : class
-			=>
-				new DelegatedSource<TParameter, TResult>(
-				                                         ReferenceCachingAlteration<TParameter, TResult>
-					                                         .Default.Get(@this.ToDelegate()));
+			=> new DelegatedSource<TParameter, TResult>(ReferenceCachingAlteration<TParameter, TResult>
+			                                            .Default.Get(@this.ToDelegate()));
 
 		public static T With<T>(this T @this, Action<T> action)
 		{
@@ -123,13 +99,19 @@ namespace ExtendedXmlSerializer.Core
 			return @this;
 		}
 
+		public static ICollection<T> AddingAll<T>(this ICollection<T> @this, params T[] items)
+		{
+			items.ForEach(@this.Add);
+			return @this;
+		}
+
 		public static ICollection<T> Removing<T>(this ICollection<T> @this, T item)
 		{
 			@this.Remove(item);
 			return @this;
 		}
 
-		public static ICollection<TItem> AddOrReplace<T, TItem>(this ICollection<TItem> @this, T item) where T : TItem
+		/*public static ICollection<TItem> AddOrReplace<T, TItem>(this ICollection<TItem> @this, T item) where T : TItem
 		{
 			@this.RemoveAll(A<T>.Default);
 			@this.Add(item);
@@ -143,7 +125,7 @@ namespace ExtendedXmlSerializer.Core
 			     .ToArray()
 			     .ForEach(@this.Remove);
 			return @this;
-		}
+		}*/
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> AccountForNullableAlteration.Default.Get(@this);
@@ -192,32 +174,34 @@ namespace ExtendedXmlSerializer.Core
 
 		public static T To<T>(this object @this, string message = null)
 		{
-			if (@this != null)
+			if (@this is T result)
 			{
-				if (@this is T result)
-				{
-					return result;
-				}
-
-				throw new InvalidOperationException(message ??
-				                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
+				return result;
 			}
 
-			return default(T);
+			throw new InvalidOperationException(message ??
+			                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 		}
 
 		public static T Get<T>(this IServiceProvider @this)
-			=> @this is T
-				   ? (T) @this
-				   : @this.GetService(typeof(T))
-				          .To<T>();
+		{
+			if (@this is T instance)
+			{
+				return instance;
+			}
+
+			var service = @this.GetService(typeof(T));
+			var result  = service != null ? service.To<T>() : default(T);
+			return result;
+		}
 
 		public static T GetValid<T>(this IServiceProvider @this)
-			=> @this is T
-				   ? (T) @this
-				   : @this.GetService(typeof(T))
-				          .To<T>($"Could not located service '{typeof(T)}'");
-
+		{
+			var message = $"Could not locate service '{typeof(T)}'";
+			var service = @this.GetService(typeof(T)) ?? throw new InvalidOperationException(message);
+			var result = service.To<T>(message);
+			return result;
+		}
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{

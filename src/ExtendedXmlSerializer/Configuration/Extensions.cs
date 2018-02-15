@@ -22,33 +22,32 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.ExtensionModel;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class Extensions : Enumerable<ISerializerExtension>, IExtensions
+	sealed class Extensions : IExtensions
 	{
-		readonly ICollection<ISerializerExtension> _extensions;
+		readonly IGroupCollection<ISerializerExtension> _extensions;
 
-		public Extensions(ICollection<ISerializerExtension> extensions) : base(extensions) => _extensions = extensions;
+		public Extensions(IExtensionCollection extensions)
+			: this(extensions, new AddExtensionCommand(extensions), new RemoveExtensionCommand(extensions)) {}
 
-
-		public void Execute(ISerializerExtension parameter)
+		public Extensions(IGroupCollection<ISerializerExtension> extensions, ICommand<ISerializerExtension> add, ICommand<ISerializerExtension> remove)
 		{
-			_extensions.AddOrReplace(parameter);
+			_extensions = extensions;
+			Add = add;
+			Remove = remove;
 		}
 
-		public void Execute(TypeInfo parameter)
-		{
-			var extension = _extensions.FirstOrDefault(parameter.IsInstanceOfType);
-			if (extension != null)
-			{
-				_extensions.Remove(extension);
-			}
-		}
+		public ICommand<ISerializerExtension> Add { get; }
+		public ICommand<ISerializerExtension> Remove { get; }
+
+		public IEnumerator<ISerializerExtension> GetEnumerator() => _extensions.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

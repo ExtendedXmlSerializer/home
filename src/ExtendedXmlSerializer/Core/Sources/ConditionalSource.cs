@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 
 namespace ExtendedXmlSerializer.Core.Sources
@@ -39,29 +40,41 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public TResult Result { get; }
 	}
 
+	sealed class DecorationParameterCoercer<TFrom, TTo, TResult>
+		: IParameterizedSource<Decoration<TFrom, TResult>, Decoration<TTo, TResult>>
+	{
+		public static DecorationParameterCoercer<TFrom, TTo, TResult> Default { get; } = new DecorationParameterCoercer<TFrom, TTo, TResult>();
+		DecorationParameterCoercer() : this(CastCoercer<TFrom, TTo>.Default.Get) {}
+
+		readonly Func<TFrom, TTo> _coercer;
+		public DecorationParameterCoercer(Func<TFrom, TTo> coercer) => _coercer = coercer;
+		public Decoration<TTo, TResult> Get(Decoration<TFrom, TResult> parameter) => new Decoration<TTo, TResult>(_coercer.Invoke(parameter.Parameter), parameter.Result);
+	}
+
 	public interface IDecoration<TParameter, TResult> : IParameterizedSource<Decoration<TParameter, TResult>, TResult> {}
 
 	public class DecoratedConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
-		readonly Func<TParameter, bool> _specification;
+		readonly Func<TParameter, bool>                         _specification;
 		readonly Func<Decoration<TParameter, TResult>, TResult> _source;
-		readonly Func<TParameter, TResult> _original;
+		readonly Func<TParameter, TResult>                      _original;
 
 		public DecoratedConditionalSource(ISpecification<TParameter> specification,
 		                                  IParameterizedSource<Decoration<TParameter, TResult>, TResult> source,
-		                         IParameterizedSource<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) { }
-
-		public DecoratedConditionalSource(Func<TParameter, bool> specification, Func<Decoration<TParameter, TResult>, TResult> source)
-			: this(specification, source, _ => default(TResult)) { }
+		                                  IParameterizedSource<TParameter, TResult> fallback)
+			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) {}
 
 		public DecoratedConditionalSource(Func<TParameter, bool> specification,
-		                         Func<Decoration<TParameter, TResult>, TResult> source,
-		                         Func<TParameter, TResult> original)
+		                                  Func<Decoration<TParameter, TResult>, TResult> source)
+			: this(specification, source, _ => default(TResult)) {}
+
+		public DecoratedConditionalSource(Func<TParameter, bool> specification,
+		                                  Func<Decoration<TParameter, TResult>, TResult> source,
+		                                  Func<TParameter, TResult> original)
 		{
 			_specification = specification;
-			_source = source;
-			_original = original;
+			_source        = source;
+			_original      = original;
 		}
 
 		public TResult Get(TParameter parameter)

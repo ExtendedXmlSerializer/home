@@ -174,6 +174,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		                                                                                                .Select(_alter);
 	}
 
+
+
 	// ReSharper disable once PossibleInfiniteInheritance
 	interface IRuntimeRegistry<T> : IParameterizedSource<MemberInfo, ImmutableArray<IRuntimePipelineComposer<T>>> {}
 
@@ -200,7 +202,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 				   : ImmutableArray<IRuntimePipelineComposer<T>>.Empty;
 	}
 
-	public class PipelinePhases : Items<GroupName>
+	public class PipelinePhases : GroupNames
 	{
 		public static GroupName Start = new GroupName("Start"),
 		                        Validation = new GroupName("Validation"),
@@ -222,9 +224,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		public RuntimePipelineGroups(IEnumerable<GroupName> phases) : base(phases) {}
 	}
 
-	interface IRuntimeRegistryStore : IServiceGroupContainer<IRuntimePipelineComposer<object>>, IRegistration { }
+	interface IRuntimeRegistryStore : IServiceGroupCollection<IRuntimePipelineComposer<object>>, IRegistration { }
 
-	sealed class RuntimeRegistryStore : ServiceGroupContainer<IRuntimePipelineComposer<object>>, IRuntimeRegistryStore
+	sealed class RuntimeRegistryStore : ServiceGroupCollection<IRuntimePipelineComposer<object>>, IRuntimeRegistryStore
 	{
 		public RuntimeRegistryStore() : base(RuntimePipelineGroups.Default) {}
 	}

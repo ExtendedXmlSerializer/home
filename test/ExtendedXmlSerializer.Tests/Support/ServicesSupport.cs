@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 	sealed class ServicesSupport<T> : FixedSource<ImmutableArray<ISerializerExtension>, T>
 	{
 		public static ServicesSupport<T> Default { get; } = new ServicesSupport<T>();
-		ServicesSupport() : this(Activator<T>.Default, DefaultExtensions.Default.ToImmutableArray()) {}
+		ServicesSupport() : this(Activator<T>.Default, new ExtensionCollection().ToImmutableArray()) {}
 
 		public ServicesSupport(IParameterizedSource<ImmutableArray<ISerializerExtension>, T> source, ImmutableArray<ISerializerExtension> parameter) : base(source, parameter) {}
 	}

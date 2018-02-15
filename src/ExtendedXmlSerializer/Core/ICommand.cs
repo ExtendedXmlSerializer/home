@@ -21,10 +21,76 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+
 namespace ExtendedXmlSerializer.Core
 {
 	public interface ICommand<in T>
 	{
 		void Execute(T parameter);
 	}
+
+	public static class CommandExtensioMethods
+	{
+		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
+		{
+			@this.Execute(parameter);
+			return @this;
+		}
+
+		public static IAssignable<TKey, TValue> Assigned<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
+		{
+			@this.Assign(key, value);
+			return @this;
+		}
+
+		public static ICommand<T> Fold<T>(this IEnumerable<ICommand<T>> @this)
+			=> new CompositeCommand<T>(@this.ToImmutableArray());
+
+		public static ICommand<T> ToCommand<T>(this Func<ICommand<T>> @this)
+			=> new DeferredCommand<T>(@this);
+
+		public static ICommand<T> ToInstanceCommand<T>(this Func<ICommand<T>> @this)
+			=> new DeferredInstanceCommand<T>(@this);
+
+		public static ICommand<TTo> To<TTo, TFrom>(this ICommand<TFrom> @this, A<TTo> _) => To(@this, CastCoercer<TTo, TFrom>.Default);
+
+		public static ICommand<TTo> To<TTo, TFrom>(this ICommand<TFrom> @this, IParameterizedSource<TTo, TFrom> coercer)
+			=> @this.To(coercer.ToDelegate());
+
+		public static ICommand<TTo> To<TTo, TFrom>(
+			this ICommand<TFrom> @this, Func<TTo, TFrom> coercer)
+			=> new DelegatedCommand<TTo>(new CoercedCommand<TTo, TFrom>(@this.Execute, coercer).Execute);
+
+		public static ICommand<TParameter> Unless<TParameter, TOther>(this ICommand<TParameter> @this, A<TOther> _,
+		                                                              ICommand<TOther> other)
+			=> @this.Unless(IsTypeSpecification<TParameter, TOther>.Default, other.To(A<TParameter>.Default));
+
+		public static ICommand<T> Unless<T>(this ICommand<T> @this, ISpecification<T> specification,
+		                                    ICommand<T> other)
+			=> new ConditionalCommand<T>(specification, other, @this);
+	}
+
+	sealed class CoercedCommand<TFrom, TTo> : ICommand<TFrom>
+	{
+		readonly Func<TFrom, TTo>   _coercer;
+		readonly Action<TTo> _source;
+
+		public CoercedCommand(ICommand<TTo> source, IParameterizedSource<TFrom, TTo> coercer)
+			: this(source.Execute, coercer.ToDelegate()) { }
+
+		public CoercedCommand(Action<TTo> source, Func<TFrom, TTo> coercer)
+		{
+			_coercer = coercer;
+			_source  = source;
+		}
+
+		public void Execute(TFrom parameter) => _source(_coercer(parameter));
+	}
+
 }

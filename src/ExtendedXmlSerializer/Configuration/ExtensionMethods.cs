@@ -39,27 +39,25 @@ namespace ExtendedXmlSerializer.Configuration
 	public static class ExtensionMethods
 	{
 		public static T Extend<T>(this IExtend @this) where T : class, ISerializerExtension
-			=> @this.Get(typeof(T))
-			        .To<T>();
+			=> @this.Get(typeof(T)).To<T>();
 
 		public static IConfigurationElement Extended<T>(this IConfigurationElement @this)
 			where T : class, ISerializerExtension
-			=> @this.Extend<T>()
-			        .Return(@this);
+			=> @this.Extend<T>().Return(@this);
 
 
 		public static T Service<T>(this IExtend @this) => @this.Extend<ConfigurationServicesExtension>()
 		                                                       .Get<T>();
 
-
-		public static T Find<T>(this IExtensions @this) where T : ISerializerExtension => @this.OfType<T>()
-		                                                                                       .FirstOrDefault();
+		public static T Service<T>(this T @this, object service) where T : IExtend
+			=> @this.Extend<ConfigurationServicesExtension>()
+			        .Executed(service)
+			        .Return(@this);
 
 
 		public static IConfigurationElement Configured<T>(this IConfigurationElement @this)
-			where T : class, IConfigurationProfile
-			=> Support<T>.NewOrSingleton()
-			             .Get(@this);
+			where T : class, IConfigurationProfile => Support<T>.NewOrSingleton()
+			                                                    .Get(@this);
 
 		public static IEnumerable<ITypeConfiguration> Types(this IConfigurationElement @this)
 			=> @this.Service<IMetadataConfigurations>();

@@ -5,16 +5,20 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable All
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {
@@ -102,20 +106,20 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void VerifyGroups()
 		{
-			var container = new GroupContainer<ISerializerExtension>(Groups.Default);
+			var container = new GroupCollection<ISerializerExtension>(Groups.Default);
 
 			var all = container.ToArray();
 			all.Should()
-			   .HaveCount(16);
+			   .HaveCount(18);
 
 			all.First()
 			   .Should()
-			   .BeOfType<DefaultReferencesExtension>();
+			   .BeOfType<ConfigurationServicesExtension>();
 			all.Last()
 			   .Should()
 			   .BeSameAs(CachingExtension.Default);
 
-			var types = container.Get(Groups.TypeSystem);
+			var types = container.Get(Categories.TypeSystem);
 			types.Should()
 			     .HaveCount(6);
 			types.First()
@@ -124,8 +128,205 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			types.Last()
 			     .Should()
 			     .BeOfType<MemberModelExtension>();
+
+			new RemoveExtensionCommand(container).Execute(types.FirstOfType<MemberModelExtension>());
+
+			types.Should()
+			     .HaveCount(5);
+
+			Action add = () => types.Add(TypeModelExtension.Default);
+			add.ShouldThrow<InvalidOperationException>();
 		}
 
+		[Fact]
+		public void VerifyBasicAdd()
+		{
+			var sut = new ExtensionCollection();
+			var container = new ConfigurationContainer(sut);
+			var extension = container.Extend<AddExtension>();
+			extension.Should()
+			         .NotBeNull();
+			sut.Get(Categories.Content)
+			   .Should()
+			   .Contain(extension);
+		}
+
+		[Fact]
+		public void VerifyAddFromMetadata()
+		{
+			var sut       = new ExtensionCollection();
+			var container = new ConfigurationContainer(sut);
+
+			sut.FirstOfType<AddMetadataExtension>().Should().BeNull();
+
+			var extension = container.Extend<AddMetadataExtension>();
+			extension.Should()
+			         .NotBeNull();
+
+			sut.FirstOfType<AddMetadataExtension>().Should().NotBeNull();
+
+			sut.Get(Categories.Content)
+			   .Should()
+			   .NotContain(extension);
+
+			sut.Get(Categories.Format)
+			   .Should()
+			   .Contain(extension);
+
+			sut.Get(Categories.Format)
+			   .Last()
+			   .Should()
+			   .BeSameAs(extension);
+		}
+
+		[Fact]
+		public void VerifyInsertFromMetadata()
+		{
+			var sut       = new ExtensionCollection();
+			var container = new ConfigurationContainer(sut);
+
+			sut.FirstOfType<InsertMetadataExtension>().Should().BeNull();
+
+			var extension = container.Extend<InsertMetadataExtension>();
+			extension.Should()
+			         .NotBeNull();
+
+			sut.FirstOfType<InsertMetadataExtension>().Should().NotBeNull();
+
+			sut.Get(Categories.Content)
+			   .Should()
+			   .NotContain(extension);
+
+			var collection = sut.Get(Categories.Elements);
+			collection
+			   .Should()
+			   .Contain(extension);
+
+			collection
+			   .First()
+			   .Should()
+			   .BeSameAs(extension);
+		}
+
+		[Fact]
+		public void VerifyAware()
+		{
+			var sut       = new ExtensionCollection();
+			var container = new ConfigurationContainer(sut);
+
+			sut.FirstOfType<Aware>().Should().BeNull();
+
+			var extension = container.Extend<Aware>();
+			extension.Should()
+			         .NotBeNull();
+
+			sut.FirstOfType<Aware>().Should().NotBeNull();
+
+			sut.Get(Categories.Content)
+			   .Should()
+			   .NotContain(extension);
+
+			var collection = sut.Get(Categories.ObjectModel);
+			collection
+				.Should()
+				.Contain(extension);
+
+			collection
+				.Last()
+				.Should()
+				.BeSameAs(extension);
+		}
+
+		[Fact]
+		public void VerifyGroupCollectionAware()
+		{
+			var sut       = new ExtensionCollection();
+			var container = new ConfigurationContainer(sut);
+
+			sut.FirstOfType<GroupCollectionAware>().Should().BeNull();
+
+			var extension = container.Extend<GroupCollectionAware>();
+			extension.Should()
+			         .NotBeNull();
+
+			sut.FirstOfType<GroupCollectionAware>().Should().NotBeNull();
+
+			sut.Get(Categories.Content)
+			   .Should()
+			   .NotContain(extension);
+
+			var collection = sut.Get(Categories.Caching);
+			collection
+				.Should()
+				.Contain(extension);
+
+			collection
+				.First()
+				.Should()
+				.BeSameAs(extension);
+		}
+
+
+
+		sealed class AddExtension : ISerializerExtension
+		{
+			public static AddExtension Default { get; } = new AddExtension();
+			AddExtension() {}
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+		}
+
+		sealed class Aware : ISerializerExtension, IGroupNameAware
+		{
+			public static Aware Default { get; } = new Aware();
+			Aware() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+			public GroupName Get() => Categories.ObjectModel;
+		}
+
+
+		sealed class GroupCollectionAware : ISerializerExtension, IGroupCollectionAware<ISerializerExtension>
+		{
+			public static GroupCollectionAware Default { get; } = new GroupCollectionAware();
+			GroupCollectionAware() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+
+			public void Execute(IGroupCollection<ISerializerExtension> parameter)
+			{
+				parameter.Get(Categories.Caching)
+				         .Insert(0, this);
+			}
+		}
+
+		[GroupElement(nameof(Categories.Format))]
+		sealed class AddMetadataExtension : ISerializerExtension
+		{
+			public static AddMetadataExtension Default { get; } = new AddMetadataExtension();
+			AddMetadataExtension() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+		}
+
+		[GroupElement(nameof(Categories.Elements)), InsertGroupElement]
+		sealed class InsertMetadataExtension : ISerializerExtension
+		{
+			public static InsertMetadataExtension Default { get; } = new InsertMetadataExtension();
+			InsertMetadataExtension() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+		}
 
 		sealed class Subject
 		{
@@ -134,15 +335,6 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 		sealed class Groups : ItemsBase<IGroup<ISerializerExtension>>
 		{
-			public static GroupName Start = new GroupName("Start"),
-									TypeSystem = new GroupName("Type System"),
-									Framework = new GroupName("Framework"),
-									Elements = new GroupName("Elements"),
-									Content = new GroupName("Content"),
-									Format = new GroupName("Format"),
-									Caching = new GroupName("Caching"),
-									Finish = new GroupName("Finish");
-
 			public static Groups Default { get; } = new Groups();
 			Groups() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) { }
 
@@ -150,7 +342,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
 
 			public Groups(IMetadataSpecification metadata,
-			              IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+								 IParameterizedSource<MemberInfo, int> defaultMemberOrder)
 			{
 				_metadata = metadata;
 				_defaultMemberOrder = defaultMemberOrder;
@@ -158,34 +350,38 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 			public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
 			{
-				yield return new Group<ISerializerExtension>(Start,
-															 new DefaultReferencesExtension()
-															 );
+				var all = new KeyedByTypeCollection<ISerializerExtension>();
+				yield return new Group(Categories.Start, all,
+									   new ConfigurationServicesExtension()
+									  );
 
-				yield return new Group<ISerializerExtension>(TypeSystem,
-															 TypeModelExtension.Default,
-															 SingletonActivationExtension.Default,
-															 new MemberNamesExtension(),
-															 new MemberOrderingExtension(_defaultMemberOrder),
-															 ImmutableArrayExtension.Default,
-															 MemberModelExtension.Default
-															 );
-				yield return new Group<ISerializerExtension>(Framework,
-															 SerializationExtension.Default);
-				yield return new Group<ISerializerExtension>(Elements);
-				yield return new Group<ISerializerExtension>(Content,
-															 Contents.Default,
-															 ContentModelExtension.Default,
-															 new AllowedMembersExtension(_metadata),
-															 new AllowedMemberValuesExtension(),
-															 new ConvertersExtension()
-															 );
-				yield return new Group<ISerializerExtension>(Format,
-															 new XmlSerializationExtension(),
-															 new MemberFormatExtension()
-															 );
-				yield return new Group<ISerializerExtension>(Caching, CachingExtension.Default);
-				yield return new Group<ISerializerExtension>(Finish);
+				yield return new Group(Categories.TypeSystem, all,
+									   TypeModelExtension.Default,
+									   SingletonActivationExtension.Default,
+									   new MemberNamesExtension(),
+									   new MemberOrderingExtension(_defaultMemberOrder),
+									   ImmutableArrayExtension.Default,
+									   MemberModelExtension.Default
+									  );
+				yield return new Group(Categories.ObjectModel, all,
+									   new DefaultReferencesExtension());
+				yield return new Group(Categories.Framework, all,
+									   SerializationExtension.Default);
+				yield return new Group(Categories.Elements, all);
+				yield return new Group(Categories.Content, all,
+									   ContentModelExtension.Default,
+									   Contents.Default,
+									   new AllowedMembersExtension(_metadata),
+									   new AllowedMemberValuesExtension(),
+									   new ConvertersExtension(),
+									   new RegisteredSerializersExtension()
+									  );
+				yield return new Group(Categories.Format, all,
+									   new XmlSerializationExtension(),
+									   new MemberFormatExtension()
+									  );
+				yield return new Group(Categories.Caching, all, CachingExtension.Default);
+				yield return new Group(Categories.Finish, all);
 			}
 		}
 	}

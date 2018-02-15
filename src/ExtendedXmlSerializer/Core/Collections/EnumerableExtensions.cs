@@ -12,6 +12,8 @@ namespace ExtendedXmlSerializer.Core.Collections
 	/// </summary>
 	public static class EnumerableExtensions
 	{
+		public static T FirstOfType<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
+
 		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) => @this.Where(Delegate<T>.Default.Get());
 
 		sealed class Delegate<T> : FixedInstanceSource<Func<T, bool>>
@@ -77,18 +79,13 @@ namespace ExtendedXmlSerializer.Core.Collections
 		}
 
 		public static OrderedDictionary<TKey, TSource> ToOrderedDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-		{
-			Func<TSource, TSource> elementSelector = (x) => x;
-			return GetOrderedDictionaryImpl(source, keySelector, elementSelector, null);
-		}
+			=> GetOrderedDictionaryImpl(source, keySelector, x => x, null);
 
 		public static OrderedDictionary<TKey, TElement> ToOrderedDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) => GetOrderedDictionaryImpl(source, keySelector, elementSelector, null);
 
-		public static OrderedDictionary<TKey, TSource> ToOrderedDictionary<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
-		{
-			Func<TSource, TSource> elementSelector = (x) => x;
-			return GetOrderedDictionaryImpl(source, keySelector, elementSelector, comparer);
-		}
+		public static OrderedDictionary<TKey, TSource> ToOrderedDictionary<TSource, TKey>(
+			this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+			=> GetOrderedDictionaryImpl(source, keySelector, x => x, comparer);
 
 		public static OrderedDictionary<TKey, TElement> ToOrderedDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer) => GetOrderedDictionaryImpl(source, keySelector, elementSelector, comparer);
 
@@ -96,7 +93,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 		{
 			if (convertToString == null)
 			{
-				convertToString = x => (x == null ? "" : x.ToString());
+				convertToString = x => x?.ToString() ?? string.Empty;
 			}
 
 			var data = (
