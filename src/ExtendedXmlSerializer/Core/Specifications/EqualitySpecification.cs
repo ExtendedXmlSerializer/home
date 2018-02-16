@@ -21,14 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	sealed class EqualitySpecification<T> : ISpecification<T>
+	class EqualitySpecification<T> : ISpecification<T>
 	{
 		readonly T _source;
+		readonly IEqualityComparer<T> _comparer;
 
-		public EqualitySpecification(T source) => _source = source;
+		public EqualitySpecification(T source) : this(source, EqualityComparer<T>.Default) {}
 
-		public bool IsSatisfiedBy(T parameter) => Equals(parameter, _source);
+		public EqualitySpecification(T source, IEqualityComparer<T> comparer)
+		{
+			_source = source;
+			_comparer = comparer;
+		}
+
+		public bool IsSatisfiedBy(T parameter) => _comparer.Equals(_source, parameter);
 	}
 }

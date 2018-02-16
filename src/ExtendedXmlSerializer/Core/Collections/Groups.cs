@@ -88,6 +88,18 @@ namespace ExtendedXmlSerializer.Core.Collections
 		public AddItemCommand(ICollection<T> collection) : base(collection.Add) {}
 	}
 
+	class RemoveItemCommand<T> : ICommand<T>
+	{
+		readonly ICollection<T> _collection;
+
+		public RemoveItemCommand(ICollection<T> collection) => _collection = collection;
+
+		public void Execute(T parameter)
+		{
+			_collection.Remove(parameter);
+		}
+	}
+
 	class InsertItemCommand<T> : ICommand<T>
 	{
 		readonly IList<T> _list;

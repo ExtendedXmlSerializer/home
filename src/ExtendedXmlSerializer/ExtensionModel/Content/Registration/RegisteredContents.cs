@@ -50,16 +50,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 
 	interface IRegisteredSerializers : IMetadata<IContentSerializer<object>> {}
 
-	public interface IRegisteredSerializers<T> : ISpecificationSource<MemberInfo, IContentSerializer<T>> { }
+	sealed class RegisteredSerializers : MetadataTable<IContentSerializer<object>, IRegisteredSerializers>, IRegisteredSerializers { }
 
+	public interface IRegisteredSerializers<T> : ISpecificationSource<MemberInfo, IContentSerializer<T>> { }
 
 	sealed class RegisteredSerializers<T> : ServiceContainer<MemberInfo, IContentSerializer<T>>, IRegisteredSerializers<T>
 	{
 		public RegisteredSerializers(System.IServiceProvider provider, IRegisteredSerializers table)
 			: base(provider, table.To(A<IService<IContentSerializer<T>>>.Default)) { }
 	}
-
-	sealed class RegisteredSerializers : MetadataTable<IContentSerializer<object>, IRegisteredSerializers>, IRegisteredSerializers {}
 
 	sealed class ActivatedContentSerializer<T, TSerializer> : GenerializedContentSerializer<T>
 		where TSerializer : IContentSerializer<T>

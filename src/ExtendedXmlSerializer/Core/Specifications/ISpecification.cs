@@ -27,4 +27,12 @@ namespace ExtendedXmlSerializer.Core.Specifications
 	{
 		bool IsSatisfiedBy(T parameter);
 	}
+
+	class ProxySpecification<T> : ISpecification<ISpecification<T>>
+	{
+		readonly T _token;
+		public ProxySpecification(T token) => _token = token;
+
+		public bool IsSatisfiedBy(ISpecification<T> parameter) => parameter.IsSatisfiedBy(_token);
+	}
 }

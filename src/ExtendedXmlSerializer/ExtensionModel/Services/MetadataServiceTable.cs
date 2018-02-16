@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 			: this(new TableSource<TKey, IService<TValue>>(store), store) {}
 
 		public ServiceTable(ITableSource<TKey, IService<TValue>> table, IDictionary<TKey, IService<TValue>> store)
-			: this(table, new ItemRegistration<IService<TValue>>(store.Values)) {}
+			: this(table, new ItemRegistration<IService<TValue>>(new Values<TKey, IService<TValue>>(store))) {}
 
 		public ServiceTable(ITableSource<TKey, IService<TValue>> table, IRegistration registration)
 			: base(table) => _registration = registration;

@@ -28,6 +28,14 @@ using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
+	class OfTypeCoercer<TFrom, TTo> : IParameterizedSource<IEnumerable<TFrom>, IEnumerable<TTo>> where TTo : TFrom
+	{
+		public static OfTypeCoercer<TFrom, TTo> Default { get; } = new OfTypeCoercer<TFrom, TTo>();
+		OfTypeCoercer() {}
+
+		public IEnumerable<TTo> Get(IEnumerable<TFrom> parameter) => parameter.OfType<TTo>();
+	}
+
 	public interface IEnumerableAlteration<T> : IAlteration<IEnumerable<T>> {}
 
 	class OrderByAlteration<T, TMember> : IEnumerableAlteration<T>

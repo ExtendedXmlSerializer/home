@@ -129,7 +129,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		public MemberRuntimeRegistry(IRuntimeStoreTable<TypeInfo> types, IRuntimeStoreTable<MemberInfo> members)
 			: this(types, members, new CompositeRegistration(types, members)) {}
 
-		public MemberRuntimeRegistry(IRuntimeStoreTable<TypeInfo> types, IRuntimeStoreTable<MemberInfo> members, IRegistration registration)
+		public MemberRuntimeRegistry(IRuntimeStoreTable<TypeInfo> types, IRuntimeStoreTable<MemberInfo> members,
+		                             IRegistration registration)
 			: base(types, members) => _registration = registration;
 
 		public IServiceRepository Get(IServiceRepository parameter) => _registration.Get(parameter);
@@ -144,7 +145,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		public RuntimeStoreTable(IEqualityComparer<T> comparer) : this(new ConcurrentDictionary<T, IRuntimeRegistryStore>(comparer)) {}
 
 		public RuntimeStoreTable(ConcurrentDictionary<T, IRuntimeRegistryStore> store)
-			: this(store, new ItemRegistration<IRuntimeRegistryStore>(store.Values)) {}
+			: this(store, new ItemRegistration<IRuntimeRegistryStore>(new Values<T, IRuntimeRegistryStore>(store))) {}
 
 		public RuntimeStoreTable(ConcurrentDictionary<T, IRuntimeRegistryStore> store, IRegistration registration)
 			: base(_ => new RuntimeRegistryStore(), store) => _registration = registration;
@@ -160,18 +161,28 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		readonly Func<IService<IRuntimePipelineComposer<object>>, IService<IRuntimePipelineComposer<T>>> _alter;
 
 		public MemberRuntimeRegistry(IMemberRuntimeRegistry registry)
-			: this(registry, CastCoercer<IService<IRuntimePipelineComposer<object>>, IService<IRuntimePipelineComposer<T>>>.Default.ToDelegate())
-		{}
+			: this(registry, RuntimePipelineItemCoercer<T>.Default.ToDelegate()) {}
 
-		public MemberRuntimeRegistry(IMemberRuntimeRegistry registry, Func<IService<IRuntimePipelineComposer<object>>, IService<IRuntimePipelineComposer<T>>> alter)
-			: base(registry)
+		public MemberRuntimeRegistry(IMemberRuntimeRegistry registry,
+		                             Func<IService<IRuntimePipelineComposer<object>>,
+			                              IService<IRuntimePipelineComposer<T>>> alter) : base(registry)
 		{
 			_registry = registry;
 			_alter = alter;
 		}
 
 		public IEnumerable<IService<IRuntimePipelineComposer<T>>> Get(MemberInfo parameter) => _registry.Get(parameter)
+		                                                                                                .Reverse()
 		                                                                                                .Select(_alter);
+	}
+
+	sealed class RuntimePipelineItemCoercer<T>
+		: DecoratedSource<IService<IRuntimePipelineComposer<object>>, IService<IRuntimePipelineComposer<T>>>
+	{
+		public static RuntimePipelineItemCoercer<T> Default { get; } = new RuntimePipelineItemCoercer<T>();
+
+		RuntimePipelineItemCoercer() : base(CastCoercer<IService<IRuntimePipelineComposer<object>>,
+			                                        IService<IRuntimePipelineComposer<T>>>.Default) {}
 	}
 
 
@@ -212,7 +223,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 
 
 		public static PipelinePhases Default { get; } = new PipelinePhases();
-		PipelinePhases() : base(Finish, Content, Input, Validation, Start) {}
+		PipelinePhases() : base(Start, Validation, Input, Content, Finish) {}
 	}
 
 	sealed class RuntimePipelineGroups : ServiceGroups<IRuntimePipelineComposer<object>>

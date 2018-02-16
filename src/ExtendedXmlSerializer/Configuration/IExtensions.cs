@@ -27,7 +27,7 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IExtensions : /*ICommand<TypeInfo>,*/ IEnumerable<ISerializerExtension>
+	public interface IExtensions : IEnumerable<ISerializerExtension>
 	{
 		ICommand<ISerializerExtension> Add { get; }
 
