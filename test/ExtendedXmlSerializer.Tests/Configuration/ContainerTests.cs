@@ -1,5 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
@@ -266,7 +267,90 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				.BeSameAs(extension);
 		}
 
+		[Fact]
+		public void VerifySort()
+		{
+			var sut       = new ExtensionCollection(Groups.Default);
+			var container = new ConfigurationContainer(sut);
 
+			sut.FirstOfType<GroupCollectionAware>().Should().BeNull();
+
+			sut.FirstOfType<First>().Should().BeNull();
+			sut.FirstOfType<Second>().Should().BeNull();
+			sut.FirstOfType<Third>().Should().BeNull();
+			sut.FirstOfType<Fourth>().Should().BeNull();
+			sut.FirstOfType<Fifth>().Should().BeNull();
+
+			var group = sut.Get(Categories.Finish);
+			group.Should().BeEmpty();
+
+			group.AddingAll(Fourth.Default, Second.Default, First.Default, Fifth.Default, Third.Default);
+
+			group.Should().ContainInOrder(Fourth.Default, Second.Default, First.Default, Fifth.Default, Third.Default);
+
+			sut.FirstOfType<First>().Should().NotBeNull();
+			sut.FirstOfType<Second>().Should().NotBeNull();
+			sut.FirstOfType<Third>().Should().NotBeNull();
+			sut.FirstOfType<Fourth>().Should().NotBeNull();
+			sut.FirstOfType<Fifth>().Should().NotBeNull();
+
+			EnumerableEx.TakeLast(sut, 5).Should().ContainInOrder(First.Default, Second.Default, Third.Default, Fourth.Default, Fifth.Default);
+		}
+
+		sealed class First : ISerializerExtension
+		{
+			public static First Default { get; } = new First();
+			First() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+		}
+
+		[Sort(2)]
+		sealed class Second : ISerializerExtension
+		{
+			public static Second Default { get; } = new Second();
+			Second() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+		}
+
+		sealed class Third : ISerializerExtension, ISortAware
+		{
+			public static Third Default { get; } = new Third();
+			Third() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+			public int Get() => 3;
+		}
+
+		[Sort(4)]
+		sealed class Fourth : ISerializerExtension
+		{
+			public static Fourth Default { get; } = new Fourth();
+			Fourth() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+
+		}
+
+		sealed class Fifth : ISerializerExtension, ISortAware
+		{
+			public static Fifth Default { get; } = new Fifth();
+			Fifth() { }
+
+			public IServiceRepository Get(IServiceRepository parameter) => throw new NotImplementedException();
+
+			public void Execute(IServices parameter) => throw new NotImplementedException();
+			public int Get() => 5;
+		}
 
 		sealed class AddExtension : ISerializerExtension
 		{

@@ -34,7 +34,7 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly IGroupCollection<ISerializerExtension> _extensions;
 
 		public Extensions(IExtensionCollection extensions)
-			: this(extensions, new AddExtensionCommand(extensions), new RemoveExtensionCommand(extensions)) {}
+			: this(extensions, new DefaultAddExtensionCommand(extensions), new RemoveExtensionCommand(extensions)) {}
 
 		public Extensions(IGroupCollection<ISerializerExtension> extensions, ICommand<ISerializerExtension> add, ICommand<ISerializerExtension> remove)
 		{

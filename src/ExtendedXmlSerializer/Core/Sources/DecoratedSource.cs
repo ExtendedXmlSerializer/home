@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,20 +28,13 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public DecoratedAlteration(IParameterizedSource<T, T> source) : base(source) {}
 	}
 
-	class DecoratedSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	class DecoratedSource<TParameter, TResult> : DelegatedSource<TParameter, TResult>
 	{
-		readonly IParameterizedSource<TParameter, TResult> _source;
-
-		public DecoratedSource(IParameterizedSource<TParameter, TResult> source) => _source = source;
-
-		public TResult Get(TParameter parameter) => _source.Get(parameter);
+		public DecoratedSource(IParameterizedSource<TParameter, TResult> source) : base(source.Get) {}
 	}
 
-	class DecoratedSource<T> : ISource<T>
+	class DecoratedSource<T> : DelegatedSource<T>
 	{
-		readonly ISource<T> _source;
-		public DecoratedSource(ISource<T> source) => _source = source;
-
-		public T Get() => _source.Get();
+		public DecoratedSource(ISource<T> source) : base(source.Get) {}
 	}
 }

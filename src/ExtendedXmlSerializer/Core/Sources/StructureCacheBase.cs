@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public abstract class StructureCacheBase<TKey, TValue> : ITableSource<TKey, TValue> where TKey : class
+	public abstract class StructureCacheBase<TKey, TValue> : ITableSource<TKey, TValue> where TKey : class where TValue : struct
 	{
 		readonly ConditionalWeakTable<TKey, Structure> _cache = new ConditionalWeakTable<TKey, Structure>();
 		readonly ConditionalWeakTable<TKey, Structure>.CreateValueCallback _callback;

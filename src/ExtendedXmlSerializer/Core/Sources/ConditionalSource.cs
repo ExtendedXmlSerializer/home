@@ -48,44 +48,33 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		readonly Func<TFrom, TTo> _coercer;
 		public DecorationParameterCoercer(Func<TFrom, TTo> coercer) => _coercer = coercer;
-		public Decoration<TTo, TResult> Get(Decoration<TFrom, TResult> parameter) => new Decoration<TTo, TResult>(_coercer.Invoke(parameter.Parameter), parameter.Result);
+		public Decoration<TTo, TResult> Get(Decoration<TFrom, TResult> parameter)
+			=> new Decoration<TTo, TResult>(_coercer.Invoke(parameter.Parameter), parameter.Result);
 	}
 
 	public interface IDecoration<TParameter, TResult> : IParameterizedSource<Decoration<TParameter, TResult>, TResult> {}
 
-	public class DecoratedConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	public class Decorator<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
-		readonly Func<TParameter, bool>                         _specification;
-		readonly Func<Decoration<TParameter, TResult>, TResult> _source;
-		readonly Func<TParameter, TResult>                      _original;
+		readonly Func<Decoration<TParameter, TResult>, TResult> _decorator;
+		readonly Func<TParameter, TResult>                      _source;
 
-		public DecoratedConditionalSource(ISpecification<TParameter> specification,
-		                                  IParameterizedSource<Decoration<TParameter, TResult>, TResult> source,
-		                                  IParameterizedSource<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) {}
+		public Decorator(IParameterizedSource<Decoration<TParameter, TResult>, TResult> decorator,
+		                 IParameterizedSource<TParameter, TResult> source)
+			: this(decorator.Get, source.Get) {}
 
-		public DecoratedConditionalSource(Func<TParameter, bool> specification,
-		                                  Func<Decoration<TParameter, TResult>, TResult> source)
-			: this(specification, source, _ => default(TResult)) {}
+		public Decorator(Func<Decoration<TParameter, TResult>, TResult> decorator)
+			: this(decorator, _ => default(TResult)) {}
 
-		public DecoratedConditionalSource(Func<TParameter, bool> specification,
-		                                  Func<Decoration<TParameter, TResult>, TResult> source,
-		                                  Func<TParameter, TResult> original)
+		public Decorator(Func<Decoration<TParameter, TResult>, TResult> decorator,
+		                 Func<TParameter, TResult> source)
 		{
-			_specification = specification;
-			_source        = source;
-			_original      = original;
+			_decorator        = decorator;
+			_source      = source;
 		}
 
 		public TResult Get(TParameter parameter)
-		{
-			var original = _original(parameter);
-
-			var result = _specification(parameter)
-				             ? _source(new Decoration<TParameter, TResult>(parameter, original))
-				             : original;
-			return result;
-		}
+			=> _decorator(new Decoration<TParameter, TResult>(parameter, _source(parameter)));
 	}
 
 	public class ConditionalInstanceSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>

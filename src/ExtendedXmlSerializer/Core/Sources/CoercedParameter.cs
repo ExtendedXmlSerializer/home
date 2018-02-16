@@ -25,7 +25,7 @@ using System;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	sealed class CoercedParameter<TFrom, TTo, TResult> : IParameterizedSource<TFrom, TResult>
+	class CoercedParameter<TFrom, TTo, TResult> : IParameterizedSource<TFrom, TResult>
 	{
 		readonly Func<TFrom, TTo> _coercer;
 		readonly Func<TTo, TResult> _source;
@@ -40,6 +40,14 @@ namespace ExtendedXmlSerializer.Core.Sources
 		}
 
 		public TResult Get(TFrom parameter) => _source(_coercer(parameter));
+	}
+
+	sealed class SourceCoercer<T> : IParameterizedSource<ISource<T>, T>
+	{
+		public static SourceCoercer<T> Default { get; } = new SourceCoercer<T>();
+		SourceCoercer() {}
+
+		public T Get(ISource<T> parameter) => parameter.Get();
 	}
 
 	sealed class CoercedSource<TFrom, TTo, TResult> : IParameterizedSource<TTo, TResult>

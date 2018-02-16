@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using System;
 
 namespace ExtendedXmlSerializer.Core.Parsing
 {
@@ -31,5 +32,7 @@ namespace ExtendedXmlSerializer.Core.Parsing
 		public static implicit operator Parser<T>(Parsing<T> instance) => instance.Get;
 
 		public Parsing(Parser<T> parser) : base(parser.Invoke) {}
+
+		public Parsing(Func<IInput, IResult<T>> source) : base(source) {}
 	}
 }

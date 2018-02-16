@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Immutable;
 using System.Linq;
+using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {

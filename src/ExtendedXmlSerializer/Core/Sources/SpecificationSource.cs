@@ -30,7 +30,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		readonly ISpecification<TParameter> _specification;
 		readonly IParameterizedSource<TParameter, TResult> _source;
 
-		public SpecificationSource(IParameterizedSource<TParameter, TResult> source) : this(source.IfAssigned(), source) {}
+		/*public SpecificationSource(IParameterizedSource<TParameter, TResult> source) : this(source.IfAssigned(), source) {}*/
 
 		public SpecificationSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
 		{

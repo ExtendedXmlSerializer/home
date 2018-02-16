@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 
@@ -39,11 +40,27 @@ namespace ExtendedXmlSerializer.Core.Collections
 		public int Compare(T x, T y) => _sort(x).CompareTo(_sort(y));
 	}
 
-	sealed class SortCoercer<T> : IParameterizedSource<T, int>
+	sealed class SortCoercer<T> : DecoratedSource<T, int>
 	{
 		public static SortCoercer<T> Default { get; } = new SortCoercer<T>();
-		SortCoercer() {}
+		SortCoercer() : base(Assume<T>.Default(-1)
+		                              .Unless(SortMetadata<T>.Default)
+		                              .Unless(A<ISortAware>.Default)) {}
+	}
 
-		public int Get(T parameter) => parameter is ISortAware sort ? sort.Sort : -1;
+	sealed class SortMetadata<T> : InstanceMetadataValue<SortAttribute, T, int>
+	{
+		public static SortMetadata<T> Default { get; } = new SortMetadata<T>();
+		SortMetadata() {}
+	}
+
+	[AttributeUsage(AttributeTargets.Class)]
+	sealed class SortAttribute : Attribute, ISource<int>
+	{
+		readonly int _sort;
+
+		public SortAttribute(int sort) => _sort = sort;
+
+		public int Get() => _sort;
 	}
 }

@@ -24,7 +24,6 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Services;

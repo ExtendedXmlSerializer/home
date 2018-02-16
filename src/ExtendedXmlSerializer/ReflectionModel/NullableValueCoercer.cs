@@ -12,12 +12,12 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public T Get(T? parameter) => parameter.GetValueOrDefault();
 	}
 
-	sealed class InstanceMetadataCoercer<T> : IParameterizedSource<T, TypeInfo>
+	sealed class InstanceMetadataCoercer<T> : CoercedParameter<T, Type, TypeInfo>
 	{
 		public static InstanceMetadataCoercer<T> Default { get; } = new InstanceMetadataCoercer<T>();
-		InstanceMetadataCoercer() {}
+		InstanceMetadataCoercer() : this(x => x.GetTypeInfo(), InstanceTypeCoercer<T>.Default.Get) {}
 
-		public TypeInfo Get(T parameter) => parameter.GetType().GetTypeInfo();
+		public InstanceMetadataCoercer(Func<Type, TypeInfo> source, Func<T, Type> coercer) : base(source, coercer) {}
 	}
 
 	sealed class InstanceTypeCoercer<T> : IParameterizedSource<T, Type>

@@ -38,10 +38,12 @@ using System.Reflection;
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	[Dependency(typeof(ReaderContextExtension))]
-	sealed class DeferredReferencesExtension : ISerializerExtension, ISortAware
+	sealed class DeferredReferencesExtension : FixedInstanceSource<int>, ISerializerExtension, ISortAware
 	{
 		public static DeferredReferencesExtension Default { get; } = new DeferredReferencesExtension();
-		DeferredReferencesExtension() {}
+		DeferredReferencesExtension() : base(2) {}
+
+
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Decorate<IInnerContentResult, InnerContentResult>()
@@ -145,7 +147,5 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				ContentsContext.Default.Remove(contents);
 			}
 		}
-
-		public int Sort => 2;
 	}
 }

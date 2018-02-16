@@ -33,11 +33,74 @@ using System.Text;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
+	public static class Assume<T>
+	{
+		public static IParameterizedSource<T, TResult> Default<TResult>(TResult @this)
+			=> @this.ToSource(A<T>.Default);
+	}
+
 	public static class Extensions
 	{
-		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key,
-		                                                             TValue value) => @this.Executed(Pairs.Create(key, value))
-		                                                                                   .Return(@this);
+		public static ISpecificationSource<TParameter, TResult>
+			Cache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : class
+			=> new SpecificationSource<TParameter, TResult>(@this, @this
+			                                                       .ToDelegate()
+			                                                       .Cache()
+			                                                       .ToSource());
+
+		public static IParameterizedSource<TParameter, TResult>
+			Cache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : class => @this.ToDelegate()
+			                                                       .Cache()
+			                                                       .ToSource();
+
+		public static Func<TParameter, TResult>
+			Cache<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			where TParameter : class where TResult : class
+			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
+
+		public static ISpecificationSource<TParameter, TResult>
+			ReferenceCache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : class
+			=> new SpecificationSource<TParameter, TResult>(@this, @this
+			                                                       .ToDelegate()
+			                                                       .ReferenceCache()
+			                                                       .ToSource());
+
+		public static IParameterizedSource<TParameter, TResult>
+			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : class => @this.ToDelegate()
+			                                                       .ReferenceCache()
+			                                                       .ToSource();
+
+		public static Func<TParameter, TResult>
+			ReferenceCache<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			where TParameter : class where TResult : class
+			=> ReferenceCachingAlteration<TParameter, TResult>.Default.Get(@this);
+
+		public static ISpecificationSource<TParameter, TResult>
+			StructureCache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : struct
+			=> new SpecificationSource<TParameter, TResult>(@this, @this.ToDelegate().StructureCache().ToSource());
+
+		public static IParameterizedSource<TParameter, TResult>
+			StructureCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
+			where TParameter : class where TResult : struct => @this.ToDelegate()
+			                                                       .StructureCache()
+			                                                       .ToSource();
+
+		public static Func<TParameter, TResult>
+			StructureCache<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			where TParameter : class where TResult : struct
+			=> StructureCachingAlteration<TParameter, TResult>.Default.Get(@this);
+
+		public static IParameterizedSource<TParameter, TResult> ToSource<TParameter, TResult>(this TResult @this, A<TParameter> _)
+			=> new FixedInstanceSource<TParameter, TResult>(@this);
+
+		public static IParameterizedSource<TParameter, TResult>
+			ToSource<TParameter, TResult>(this Func<TParameter, TResult> @this)
+			=> @this.Target as IParameterizedSource<TParameter, TResult> ?? new DelegatedSource<TParameter, TResult>(@this);
 
 		public static IAlteration<object> Adapt<T>(this IAlteration<T> @this) => new AlterationAdapter<T>(@this);
 
@@ -57,9 +120,14 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, A<TFrom> _) => In(@this, CastCoercer<TFrom, TTo>.Default);
 
+		public static ISpecificationSource<TFrom, TResult> In<TFrom, TTo, TResult>(
+			this ISpecificationSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
+			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));
+
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
 			=> @this.ToDelegate().In(coercer.ToDelegate());
+
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, Func<TFrom, TTo> coercer) => @this.ToDelegate().In(coercer);
 
@@ -106,14 +174,17 @@ namespace ExtendedXmlSerializer.Core.Sources
 			this TResult @this, ISpecification<TParameter> specification)
 			=> new ConditionalInstanceSource<TParameter, TResult>(specification, @this, default(TResult));
 
-		public static IParameterizedSource<TParameter, TResult> Unless<TParameter, TResult, TOther>(
-			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<Decoration<TOther, TResult>, TResult> other)
-			=> new DecoratedConditionalSource<TParameter, TResult>(IsTypeSpecification<TParameter, TOther>.Default, other.In(A<TParameter>.Default), @this);
+		public static IParameterizedSource<TParameter, TResult> Into<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<Decoration<TParameter, TResult>, TResult> other)
+			=> new Decorator<TParameter, TResult>(other, @this);
 
 		public static IParameterizedSource<TParameter, TResult> Unless<TParameter, TResult, TOther>(
-			this IParameterizedSource<TParameter, TResult> @this, A<TOther> _,
-			IParameterizedSource<TParameter, TResult> other)
-			=> @this.Unless(IsTypeSpecification<TParameter, TOther>.Default, other);
+			this IParameterizedSource<TParameter, TResult> @this, A<TOther> _) where TOther : ISource<TResult>
+			=> @this.Unless(IsTypeSpecification<TParameter, TOther>.Default, SourceCoercer<TResult>.Default.In(A<TParameter>.Default));
+
+		public static IParameterizedSource<TParameter, TResult> Unless<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecificationSource<TParameter, TResult> source)
+			=> Unless(@this, source, source);
 
 		public static IParameterizedSource<TSpecification, TInstance> Unless<TSpecification, TInstance>(
 			this TInstance @this, ISpecification<TSpecification> specification, TInstance other)

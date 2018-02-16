@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
@@ -39,12 +38,16 @@ namespace ExtendedXmlSerializer.Core.Collections
 		public GroupNames(IDictionary<string, GroupName> store) : base(store) {}
 	}
 
+	sealed class DeclaredGroupNames<T> : InstanceMetadata<GroupElementAttribute, T, string>
+	{
+		public static DeclaredGroupNames<T> Default { get; } = new DeclaredGroupNames<T>();
+		DeclaredGroupNames() { }
+	}
+
+
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class GroupElementAttribute : Attribute, ISource<string>
 	{
-		public static IParameterizedSource<TypeInfo, string> Names { get; } =
-			new TypeMetadataValue<GroupElementAttribute, string>().ReferenceCache();
-
 		readonly string _name;
 
 		public GroupElementAttribute(string name) => _name = name;
@@ -52,52 +55,32 @@ namespace ExtendedXmlSerializer.Core.Collections
 		public string Get() => _name;
 	}
 
-	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class InsertGroupElementAttribute : Attribute, ISource<int?>
+	sealed class DeclaredGroupIndexes<T> : InstanceMetadataValue<InsertGroupElementAttribute, T, int>
 	{
-		public static IParameterizedSource<TypeInfo, int?> Indexes { get; } =
-			new StructureCache<TypeInfo, int?>(new TypeMetadataValue<InsertGroupElementAttribute, int?>().Get);
+		public static DeclaredGroupIndexes<T> Default { get; } = new DeclaredGroupIndexes<T>();
+		DeclaredGroupIndexes() { }
+	}
 
 
+	[AttributeUsage(AttributeTargets.Class)]
+	public sealed class InsertGroupElementAttribute : Attribute, ISource<int>
+	{
 		readonly int _index;
 		public InsertGroupElementAttribute() : this(0) {}
 
 		public InsertGroupElementAttribute(int index) => _index = index;
-		public int? Get() => _index;
+		public int Get() => _index;
 	}
 
-	public interface IGroupNameAware : ISource<GroupName> { }
+	public interface IGroupName<in T> : IParameterizedSource<T, GroupName> {}
 
-	public interface IGroupName<in T> : IParameterizedSource<T, GroupName?> {}
-
-	class GroupNameAware<T> : IGroupName<T>
+	class MetadataGroupName<T> : SpecificationSource<T, GroupName>, IGroupName<T>
 	{
-		public static GroupNameAware<T> Default { get; } = new GroupNameAware<T>();
-		GroupNameAware() {}
+		public MetadataGroupName(ISpecificationSource<string, GroupName> names)
+			: this(DeclaredGroupNames<T>.Default, names) {}
 
-		public GroupName? Get(T parameter) => parameter.To<IGroupNameAware>()
-		                                               .Get();
-	}
-
-	class MetadataGroupName<T> : IGroupName<T>
-	{
-		readonly IParameterizedSource<TypeInfo, string> _name;
-		readonly ISpecificationSource<string, GroupName> _names;
-
-		public MetadataGroupName(ISpecificationSource<string, GroupName> names) : this(GroupElementAttribute.Names, names) {}
-
-		public MetadataGroupName(IParameterizedSource<TypeInfo, string> name, ISpecificationSource<string, GroupName> names)
-		{
-			_name = name;
-			_names = names;
-		}
-
-		public GroupName? Get(T parameter)
-		{
-			var name   = _name.Get(parameter.GetType());
-			var result = name != null && _names.IsSatisfiedBy(name) ? (GroupName?)_names.Get(name) : null;
-			return result;
-		}
+		public MetadataGroupName(ISpecificationSource<T, string> name, ISpecificationSource<string, GroupName> names)
+			: base(name.And(names.To(name)), names.In(name)) {}
 	}
 
 	class AddItemCommand<T> : DelegatedCommand<T>
@@ -131,18 +114,16 @@ namespace ExtendedXmlSerializer.Core.Collections
 	sealed class ItemCommands<T> : ReferenceCache<IList<T>, ICommand<T>>
 	{
 		public static ItemCommands<T> Default { get; } = new ItemCommands<T>();
-		ItemCommands() : base(AddItemCommands<T>.Default.Unless(InsertItemCommands<T>.Default).Get) {}
+		ItemCommands() : base(AddItemCommands<T>.Default.Into(InsertItemCommands<T>.Default).Get) {}
 	}
 
 	sealed class InsertItemCommands<T> : IDecoration<IList<T>, ICommand<T>>
 	{
 		public static InsertItemCommands<T> Default { get; } = new InsertItemCommands<T>();
-		InsertItemCommands() : this(InsertGroupElementAttribute.Indexes.In(InstanceMetadataCoercer<T>.Default)) {}
+		InsertItemCommands() : this(DeclaredGroupIndexes<T>.Default, DeclaredGroupIndexes<T>.Default.Get) {}
 
 		readonly ISpecification<T> _specification;
 		readonly Func<T, int>      _index;
-
-		public InsertItemCommands(IParameterizedSource<T, int?> source) : this(source.IfAssigned(), source.To(NullableValueCoercer<int>.Default).ToDelegate()) {}
 
 		public InsertItemCommands(ISpecification<T> specification, Func<T, int> index)
 		{
@@ -168,43 +149,35 @@ namespace ExtendedXmlSerializer.Core.Collections
 		}
 	}
 
-	class AddGroupElementCommand<T> : DecoratedCommand<T>
+	public interface IGroupNameAware : ISource<GroupName> {}
+
+	class DefaultAddGroupElementCommand<T> : DecoratedCommand<T>
 	{
-		public AddGroupElementCommand(GroupName defaultName, ISpecificationSource<string, GroupName> names, IGroupCollection<T> collection)
-			: base(new DefaultAddGroupElementCommand<T>(defaultName, collection, new GroupName<T>(names))
+		public DefaultAddGroupElementCommand(GroupName defaultName, ISpecificationSource<string, GroupName> names,
+		                                     IGroupCollection<T> collection)
+			: base(new AddGroupElementCommand<T>(collection, new GroupName<T>(defaultName, names))
 				       .Unless(A<IGroupCollectionAware<T>>.Default, new GroupingAwareCommand<T>(collection))) {}
 	}
 
-	sealed class GroupName<T> : DecoratedSource<T, GroupName?>, IGroupName<T>
+	sealed class GroupName<T> : DecoratedSource<T, GroupName>, IGroupName<T>
 	{
-		public GroupName(ISpecificationSource<string, GroupName> names)
-			: base(new MetadataGroupName<T>(names).If(A<GroupElementAttribute>.Default)
-			                                      .Unless(A<IGroupNameAware>.Default, GroupNameAware<T>.Default)) {}
+		public GroupName(GroupName defaultName, ISpecificationSource<string, GroupName> names)
+			: base(Assume<T>.Default(defaultName).Unless(new MetadataGroupName<T>(names))) {}
 	}
 
-	sealed class DefaultAddGroupElementCommand<T> : ICommand<T>
+	sealed class AddGroupElementCommand<T> : ICommand<T>
 	{
-		readonly GroupName _defaultName;
-		readonly IGroupCollection<T> _collection;
-		readonly IGroupName<T> _name;
-		readonly IParameterizedSource<IList<T>, ICommand<T>> _commands;
+		readonly IParameterizedSource<T, ICommand<T>> _commands;
 
-		public DefaultAddGroupElementCommand(GroupName defaultName, IGroupCollection<T> collection, IGroupName<T> name)
-			: this(defaultName, collection, name, ItemCommands<T>.Default) {}
+		public AddGroupElementCommand(IGroupCollection<T> collection, IParameterizedSource<T, GroupName> name)
+			: this(ItemCommands<T>.Default.In(collection.In(name))) {}
 
-		public DefaultAddGroupElementCommand(GroupName defaultName, IGroupCollection<T> collection, IGroupName<T> name, IParameterizedSource<IList<T>, ICommand<T>> commands)
-		{
-			_defaultName = defaultName;
-			_collection = collection;
-			_name = name;
-			_commands = commands;
-		}
+		public AddGroupElementCommand(IParameterizedSource<T, ICommand<T>> commands) => _commands = commands;
 
 		public void Execute(T parameter)
 		{
-			var name = _name.Get(parameter) ?? _defaultName;
-			var group = _collection.Get(name) ?? throw new InvalidOperationException($"Group {name.Name} was found, but an associated collection for this name could not be located.");
-			_commands.Get(group)?.Execute(parameter);
+			var command = _commands.Get(parameter) ?? throw new InvalidOperationException($"Could not locate a command from {parameter}.");
+			command.Execute(parameter);
 		}
 	}
 

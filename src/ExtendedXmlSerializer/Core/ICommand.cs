@@ -37,6 +37,10 @@ namespace ExtendedXmlSerializer.Core
 
 	public static class CommandExtensioMethods
 	{
+		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key,
+		                                                             TValue value) => @this.Executed(Pairs.Create(key, value))
+		                                                                                   .Return(@this);
+
 		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
 		{
 			@this.Execute(parameter);

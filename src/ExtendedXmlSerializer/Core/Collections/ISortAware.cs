@@ -21,10 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+
 namespace ExtendedXmlSerializer.Core.Collections
 {
-	public interface ISortAware
-	{
-		int Sort { get; }
-	}
+	public interface ISortAware : ISource<int> {}
 }

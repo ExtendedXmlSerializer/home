@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public IExtensionCollection Get(ImmutableArray<ISerializerExtension> parameter)
 		{
 			var result = new ExtensionCollection();
-			var command = new AddExtensionCommand(result);
+			var command = new DefaultAddExtensionCommand(result);
 			foreach (var extension in parameter)
 			{
 				command.Execute(extension);
@@ -80,11 +80,11 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 	}
 
-	sealed class AddExtensionCommand : AddGroupElementCommand<ISerializerExtension>
+	sealed class DefaultAddExtensionCommand : DefaultAddGroupElementCommand<ISerializerExtension>
 	{
-		public AddExtensionCommand(IExtensionCollection extensions) : this(Categories.Content, Categories.Default, extensions) {}
+		public DefaultAddExtensionCommand(IExtensionCollection extensions) : this(Categories.Content, Categories.Default, extensions) {}
 
-		public AddExtensionCommand(GroupName defaultName, ISpecificationSource<string, GroupName> names, IExtensionCollection extensions)
+		public DefaultAddExtensionCommand(GroupName defaultName, ISpecificationSource<string, GroupName> names, IExtensionCollection extensions)
 			: base(defaultName, names, extensions) {}
 	}
 }

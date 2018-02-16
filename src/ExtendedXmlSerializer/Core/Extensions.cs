@@ -35,12 +35,6 @@ namespace ExtendedXmlSerializer.Core
 {
 	static class Extensions
 	{
-		public static IParameterizedSource<TParameter, TResult>
-			ReferenceCache<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this)
-			where TParameter : class where TResult : class
-			=> new DelegatedSource<TParameter, TResult>(ReferenceCachingAlteration<TParameter, TResult>
-			                                            .Default.Get(@this.ToDelegate()));
-
 		public static T With<T>(this T @this, Action<T> action)
 		{
 			action(@this);
@@ -129,15 +123,6 @@ namespace ExtendedXmlSerializer.Core
 
 		public static TypeInfo AccountForNullable(this TypeInfo @this)
 			=> AccountForNullableAlteration.Default.Get(@this);
-
-		public static Func<TParameter, TResult>
-			ReferenceCache<TParameter, TResult>(this Func<TParameter, TResult> @this)
-			where TParameter : class where TResult : class
-			=> ReferenceCachingAlteration<TParameter, TResult>.Default.Get(@this);
-
-		public static Func<TParameter, TResult> Cache<TParameter, TResult>(
-			this Func<TParameter, TResult> @this)
-			=> CachingAlteration<TParameter, TResult>.Default.Get(@this);
 
 		public static TValue Get<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> target, TKey key)
 			=> target.TryGetValue(key, out var result) ? result : default(TValue);
