@@ -40,10 +40,10 @@ namespace ExtendedXmlSerializer.Tests.Support
 	{
 		readonly ISerializers _serializer;
 
-		public SerializersSupport() : this(new ConfigurationContainer()) { }
+		public SerializersSupport() : this(new ConfigurationRoot()) { }
 
-		public SerializersSupport(ConfigurationContainer configuration)
-			: this(Activator<ISerializers>.Default.Get(configuration.ToImmutableArray())) { }
+		public SerializersSupport(IConfigurationRoot configuration)
+			: this(ServiceActivator<ISerializers>.Default.Get(configuration.ToImmutableArray())) { }
 
 		public SerializersSupport(ISerializers serializer) => _serializer = serializer;
 

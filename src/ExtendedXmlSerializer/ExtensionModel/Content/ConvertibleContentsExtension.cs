@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,23 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Immutable;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.ExtensionModel.Services;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class ImmutableArrayExtension : ISerializerExtension
+	public sealed class ConvertibleContentsExtension : ISerializerExtension
 	{
-		public static ImmutableArrayExtension Default { get; } = new ImmutableArrayExtension();
-		ImmutableArrayExtension() {}
+		public ConvertibleContentsExtension() : this(new KeyedByTypeCollection<IConverter>(WellKnownConverters.Default)) {}
+
+		public ConvertibleContentsExtension(ICollection<IConverter> converters) => Converters = converters;
+
+		public ICollection<IConverter> Converters { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContent<ImmutableArrays>(new IsAssignableGenericSpecification(typeof(ImmutableArray<>)))
-			            .Decorate<IGenericTypes, ImmutableArrayAwareGenericTypes>();
+			=> parameter.RegisterInstance(Converters.ToArray()
+			                                        .Hide())
+			            .Register<IConverters, Converters>()
+			            .Decorate<IConverters, EnumerationConverters>()
+			            .Register<ContentModel.Conversion.ISerializers, Serializers>()
+			            .RegisterDefinition<ContentModel.Conversion.ISerializers<object>,
+				            ContentModel.Conversion.Serializers<object>>()
+			            .RegisterDefinition<IConverters<object>, Converters<object>>()
+			            .Register<ConverterContents>()
+			            .DecorateContent<ConverterSpecification, ConverterContents>()
+			            .Decorate<ConverterContentsRegistration<object>>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

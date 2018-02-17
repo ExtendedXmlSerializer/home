@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
@@ -68,8 +69,9 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration = new ConfigurationContainer();
 			configuration.Type<SimpleTestSubject>().Name(Testclass);
 
-			var names = new MetadataNames(DefaultNames.Default);
-			var extension = new MemberNamesExtension(names);
+			var store = DefaultNames.Default.ToDictionary();
+			var names = new MetadataNames(store);
+			var extension = new MetadataNamesExtension(store, names);
 			configuration.Execute(extension);
 
 			Assert.Equal(names.Get(typeof(SimpleTestSubject).GetTypeInfo()), Testclass);
@@ -149,7 +151,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(configuration.FirstOfType<MemberNamesExtension>().Get(member.Member()), MemberName);
+			Assert.Equal(configuration.FirstOfType<MetadataNamesExtension>().Get(member.Member()), MemberName);
 
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};

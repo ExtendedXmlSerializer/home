@@ -23,10 +23,8 @@
 
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -35,25 +33,18 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly IExtensions _extensions;
 		readonly IExtend _extend;
-		readonly IActivator<IExtendedXmlSerializer> _activator;
 
 		public ConfigurationElement(IConfigurationElement element) : this(element, element) {}
 
 		public ConfigurationElement(IExtensions extensions, IExtend extend)
-			: this(extensions, extend, Activator<IExtendedXmlSerializer>.Default) {}
-
-		public ConfigurationElement(IExtensions extensions, IExtend extend, IActivator<IExtendedXmlSerializer> activator)
 		{
 			_extensions = extensions;
 			_extend = extend;
-			_activator = activator;
 		}
 
 		public ICommand<ISerializerExtension> Add => _extensions.Add;
 
 		public ICommand<ISerializerExtension> Remove => _extensions.Remove;
-
-		public IExtendedXmlSerializer Create() => _activator.Get(_extensions.ToImmutableArray());
 
 		public void Execute(ISerializerExtension parameter)
 		{

@@ -24,16 +24,16 @@
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ExtensionModel.Services;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	public sealed class AllowedMembersExtension : ISerializerExtension
+	public sealed class MemberPolicyExtension : ISerializerExtension
 	{
 		readonly static Collection<MemberInfo> DefaultBlacklist =
 			new Collection<MemberInfo>
@@ -44,10 +44,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 
 		readonly IMetadataSpecification _specification;
 
-		public AllowedMembersExtension(IMetadataSpecification specification)
+		public MemberPolicyExtension(IMetadataSpecification specification)
 			: this(specification, new HashSet<MemberInfo>(DefaultBlacklist), new HashSet<MemberInfo>()) {}
 
-		public AllowedMembersExtension(IMetadataSpecification specification, ICollection<MemberInfo> blacklist,
+		public MemberPolicyExtension(IMetadataSpecification specification, ICollection<MemberInfo> blacklist,
 		                               ICollection<MemberInfo> whitelist)
 		{
 			_specification = specification;

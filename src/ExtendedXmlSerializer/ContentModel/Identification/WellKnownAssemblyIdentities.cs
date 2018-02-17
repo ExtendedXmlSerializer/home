@@ -21,23 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Identification
 {
-	sealed class ContentReaders : IContentReaders
+	sealed class WellKnownAssemblyIdentities : ReadOnlyDictionary<Assembly, IIdentity>
 	{
-		public static ContentReaders Default { get; } = new ContentReaders();
-		ContentReaders() {}
+		public static WellKnownAssemblyIdentities Default { get; } = new WellKnownAssemblyIdentities();
 
-		public IReader Get(Func<string, object> parameter) => new ContentReader(parameter);
-	}
-
-	sealed class ContentReaders<T> : IContentReaders<T>
-	{
-		public static ContentReaders<T> Default { get; } = new ContentReaders<T>();
-
-
-		public IContentReader<T> Get(Func<string, T> parameter) => new ContentReader<T>(parameter);
+		WellKnownAssemblyIdentities() : base(
+			new Dictionary<Assembly, IIdentity>
+			{
+				{
+					typeof(IExtendedXmlSerializer).GetTypeInfo().Assembly,
+					new Identity("exs", Defaults.Identifier)
+				},
+				{
+					typeof(object).GetTypeInfo().Assembly,
+					new Identity("sys", "https://extendedxmlserializer.github.io/system")
+				}
+			}) {}
 	}
 }

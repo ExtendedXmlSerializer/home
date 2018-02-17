@@ -26,13 +26,14 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using System.Collections.Immutable;
+using ExtensionCollection = ExtendedXmlSerializer.Configuration.ExtensionCollection;
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
 	sealed class ServicesSupport<T> : FixedSource<ImmutableArray<ISerializerExtension>, T>
 	{
 		public static ServicesSupport<T> Default { get; } = new ServicesSupport<T>();
-		ServicesSupport() : this(Activator<T>.Default, new ExtensionCollection().ToImmutableArray()) {}
+		ServicesSupport() : this(ServiceActivator<T>.Default, new ExtensionCollection().ToImmutableArray()) {}
 
 		public ServicesSupport(IParameterizedSource<ImmutableArray<ISerializerExtension>, T> source, ImmutableArray<ISerializerExtension> parameter) : base(source, parameter) {}
 	}

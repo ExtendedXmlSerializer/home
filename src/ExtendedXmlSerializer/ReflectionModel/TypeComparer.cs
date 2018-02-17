@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 			_select   = @select;
 		}
 
-		public bool Equals(TypeInfo x, TypeInfo y) => _comparer.Compare(x, y) != 0;
+		public bool Equals(TypeInfo x, TypeInfo y) => _comparer.Compare(x, y) == 0;
 
 		public int GetHashCode(TypeInfo parameter) => _select(parameter);
 	}

@@ -44,6 +44,6 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public static SerializationSupport ForTesting(this IConfigurationElement @this) => new SerializationSupport(@this);
 		public static SerializationSupport ForTesting(this IExtendedXmlSerializer @this) => new SerializationSupport(@this);
 
-		public static SerializersSupport ToSupport(this ConfigurationContainer @this) => new SerializersSupport(@this);
+		public static SerializersSupport ToSupport(this IConfigurationRoot @this) => new SerializersSupport(@this);
 	}
 }

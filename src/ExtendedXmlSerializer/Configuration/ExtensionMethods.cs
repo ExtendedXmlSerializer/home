@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,10 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public static class ExtensionMethods
 	{
+		public static IExtendedXmlSerializer Create(this IExtend @this) => @this.Create<IExtendedXmlSerializer>();
+
+		public static T Create<T>(this IExtend @this) => @this.Service<Func<T>>().Invoke();
+
 		public static T Extend<T>(this IExtend @this) where T : class, ISerializerExtension
 			=> @this.Get(typeof(T)).To<T>();
 
@@ -49,7 +54,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public static T Service<T>(this IExtend @this) => @this.Extend<ConfigurationServicesExtension>()
 		                                                       .Get<T>();
 
-		public static T Service<T>(this T @this, object service) where T : IExtend
+		public static T Service<T>(this T @this, object service) where T : class, IExtend
 			=> @this.Extend<ConfigurationServicesExtension>()
 			        .Executed(service)
 			        .Return(@this);
@@ -85,7 +90,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static MemberConfiguration<T, TMember> Name<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                string name)
-			=> @this.Extend<MemberNamesExtension>()
+			=> @this.Extend<MetadataNamesExtension>()
 			        .Assigned(@this.Member(), name)
 			        .Return(@this);
 
@@ -96,7 +101,7 @@ namespace ExtendedXmlSerializer.Configuration
 			        .Return(@this);
 
 		public static TypeConfiguration<T> Name<T>(this TypeConfiguration<T> @this, string name)
-			=> @this.Extend<MemberNamesExtension>()
+			=> @this.Extend<MetadataNamesExtension>()
 			        .Assigned(@this.Type(), name)
 			        .Return(@this);
 

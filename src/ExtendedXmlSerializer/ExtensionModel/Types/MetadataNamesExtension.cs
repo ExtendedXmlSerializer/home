@@ -54,7 +54,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			=> parameter.Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
 			            .Register<ITypeFormatter, TypeFormatter>()
 			            .Register<ITypePartResolver, TypePartResolver>()
-			            .RegisterInstance<IReadOnlyDictionary<Assembly, IIdentity>>(WellKnownIdentities.Default)
+			            .RegisterInstance<IReadOnlyDictionary<Assembly, IIdentity>>(WellKnownAssemblyIdentities.Default)
 			            .RegisterInstance<INamespaceFormatter>(NamespaceFormatter.Default)
 			            .Register<IIdentities, Identities>()
 			            .Register<IIdentifiers, Identifiers>()
@@ -66,16 +66,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		void ICommand<IServices>.Execute(IServices parameter) { }
 	}
 
-	public sealed class MemberNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
+	public sealed class MetadataNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
 	{
+		readonly IDictionary<TypeInfo, string> _types;
 		readonly IMetadataNames _names;
 
-		public MemberNamesExtension() : this(new MetadataNames(DefaultNames.Default)) {}
+		public MetadataNamesExtension() : this(DefaultNames.Default.ToDictionary()) {}
 
-		public MemberNamesExtension(IMetadataNames names) => _names = names;
+		public MetadataNamesExtension(IDictionary<TypeInfo, string> types) : this(types, new MetadataNames(types)) {}
+
+		public MetadataNamesExtension(IDictionary<TypeInfo, string> types, IMetadataNames names)
+		{
+			_types = types;
+			_names = names;
+		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)));
+			=> parameter.RegisterInstance<IRegisteredTypes>(new RegisteredTypes(_types.Keys))
+			            .RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 

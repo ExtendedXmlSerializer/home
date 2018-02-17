@@ -1,18 +1,18 @@
 ﻿// MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,27 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
+using System;
+using System.Collections.Immutable;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class Activator<T> : IActivator<T>
+	sealed class ServiceActivator<T> : IServiceActivator<T>
 	{
-		public static Activator<T> Default { get; } = new Activator<T>();
-		Activator() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
+		public static ServiceActivator<T> Default { get; } = new ServiceActivator<T>();
+		ServiceActivator() : this(ConstructorSelector.Default, new ContainerOptions {EnablePropertyInjection = false}) {}
 
 		readonly IConstructorSelector _selector;
 		readonly ContainerOptions _options;
 
-		public Activator(IConstructorSelector selector, ContainerOptions options)
+		public ServiceActivator(IConstructorSelector selector, ContainerOptions options)
 		{
 			_selector = selector;
 			_options = options;
@@ -51,7 +52,8 @@ namespace ExtendedXmlSerializer.Configuration
 		{
 			using (var services = new DefaultServices(new ServiceContainer(_options) {ConstructorSelector = _selector}))
 			{
-				var repository = parameter.Alter(services.RegisterInstance<IServiceProvider>(new Provider(services.GetService)))
+				var repository = parameter.AsEnumerable()
+				                          .Alter(services.RegisterInstance<IServiceProvider>(new Provider(services.GetService)))
 				                          .To<IServices>();
 
 				foreach (var extension in parameter)

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,23 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class ContentWriters : IContentWriters
-	{
-		public static ContentWriters Default { get; } = new ContentWriters();
-		ContentWriters() {}
-
-		public IWriter Get(Func<object, string> parameter) => new ContentWriter(parameter);
-	}
-
-	sealed class ContentWriters<T> : IContentWriters<T>
-	{
-		public static ContentWriters<T> Default { get; } = new ContentWriters<T>();
-
-
-		public IContentWriter<T> Get(Func<T, string> parameter) => new ContentWriter<T>(parameter);
-	}
+	public interface IServiceActivator<out T> : IParameterizedSource<ImmutableArray<ISerializerExtension>, T> {}
 }

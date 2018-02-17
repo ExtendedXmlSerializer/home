@@ -22,21 +22,43 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ExtensionModel;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class ConfigurationContainer : ConfigurationElement
+	public interface IConfigurationRoot : IActivator<ISerializers> {}
+
+	public class ConfigurationRoot : ConfigurationContainer<ISerializers>, IConfigurationRoot
 	{
-		public ConfigurationContainer() : this(new ExtensionCollection()) {}
+		public ConfigurationRoot() : base(new ExtensionCollection()) {}
+		public ConfigurationRoot(IExtensionCollection extensions) : base(extensions) {}
+		public ConfigurationRoot(IActivator<ISerializers> activator) : base(activator) {}
+	}
+
+	public interface IConfigurationContainer : IActivator<IExtendedXmlSerializer> {}
+
+	public class ConfigurationContainer : ConfigurationContainer<IExtendedXmlSerializer>, IConfigurationContainer
+	{
+		public ConfigurationContainer() : base(new ExtensionCollection()) {}
 
 		public ConfigurationContainer(params ISerializerExtension[] extensions)
-			: this(ExtensionCollections.Default.Get(extensions.ToImmutableArray())) {}
+			: base(ExtensionCollections.Default.Get(extensions.ToImmutableArray())) {}
 
-		public ConfigurationContainer(IExtensionCollection extensions)
-			: this(ConfigurationElements.Default.Get(extensions)) {}
+		public ConfigurationContainer(IExtensionCollection extensions) : base(extensions) {}
+	}
 
+	public class ConfigurationContainer<T> : ConfigurationElement, IActivator<T>
+	{
+		readonly IActivator<T> _activator;
 
-		public ConfigurationContainer(IConfigurationElement element) : base(element) {}
+		public ConfigurationContainer(IExtensionCollection extensions) : this(ServiceActivator<T>.Default, extensions) {}
+
+		public ConfigurationContainer(IServiceActivator<T> activator, IExtensionCollection extensions)
+			: this(new Activators<T>(activator).Get(extensions)) {}
+
+		public ConfigurationContainer(IActivator<T> activator) : base(activator) => _activator = activator;
+
+		public T Get() => _activator.Get();
 	}
 }

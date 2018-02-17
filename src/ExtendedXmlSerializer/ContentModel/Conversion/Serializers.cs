@@ -21,25 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
 	sealed class Serializers : CacheBase<TypeInfo, ISerializer>, ISerializers
 	{
 		readonly IConverters _converters;
-		readonly IContentReaders _readers;
-		readonly IContentWriters _writers;
 		readonly Content.ISerializers _fallback;
 
-		public Serializers(IConverters converters, IContentReaders readers, IContentWriters writers,
-		                   Content.ISerializers fallback)
+		public Serializers(IConverters converters, Content.ISerializers fallback)
 		{
 			_converters = converters;
-			_readers = readers;
-			_writers = writers;
 			_fallback = fallback;
 		}
 
@@ -47,7 +42,7 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 		{
 			var converter = _converters.Get(parameter);
 			var result = converter != null
-				             ? new Serializer(_readers.Get(converter.Parse), _writers.Get(converter.Format))
+				             ? new Serializer(new ContentReader(converter.Parse), new ContentWriter(converter.Format))
 				             : _fallback.Get(parameter);
 			return result;
 		}
@@ -56,16 +51,11 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 	sealed class Serializers<T> : ISerializers<T>
 	{
 		readonly IConverters<T> _converters;
-		readonly Content.IContentReaders<T> _readers;
-		readonly Content.IContentWriters<T> _writers;
 		readonly IContents<T> _fallback;
 
-		public Serializers(IConverters<T> converters, Content.IContentReaders<T> readers, Content.IContentWriters<T> writers,
-		                   DeferredContents<T> fallback)
+		public Serializers(IConverters<T> converters, DeferredContents<T> fallback)
 		{
 			_converters = converters;
-			_readers = readers;
-			_writers = writers;
 			_fallback = fallback;
 		}
 
@@ -73,7 +63,8 @@ namespace ExtendedXmlSerializer.ContentModel.Conversion
 		{
 			var converter = _converters.Get();
 			var result = converter != null
-				             ? new ContentSerializer<T>(_readers.Get(converter.Parse), _writers.Get(converter.Format))
+				             ? new ContentSerializer<T>(new Content.ContentReader<T>(converter.Parse),
+				                                        new Content.ContentWriter<T>(converter.Format))
 				             : _fallback.Get();
 			return result;
 		}

@@ -84,12 +84,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		}
 
 		public static MemberConfiguration<T, TMember> Ignore<T, TMember>(this MemberConfiguration<T, TMember> @this)
-			=> @this.Extend<AllowedMembersExtension>()
+			=> @this.Extend<MemberPolicyExtension>()
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
 
 		public static T Include<T>(this T @this) where T : IMemberConfiguration
-			=> @this.Extend<AllowedMembersExtension>()
+			=> @this.Extend<MemberPolicyExtension>()
 			        .Whitelist.Adding(@this.Member())
 			        .Return(@this);
 
@@ -131,13 +131,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> @this.Alter(optimizations);
 
 		public static IConfigurationElement Register<T>(this IConfigurationElement @this, IConverter<T> converter)
-			=> @this.Unregister(converter).Return(@this).Extend<ConvertersExtension>()
+			=> @this.Unregister(converter).Return(@this).Extend<ConvertibleContentsExtension>()
 			        .Converters
 			        .Adding(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
 			        .Return(@this);
 
 		public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)
-			=> @this.Extend<ConvertersExtension>()
+			=> @this.Extend<ConvertibleContentsExtension>()
 			        .Converters.Remove(converter as Converter<T> ?? Converters<T>.Default.Get(converter));
 
 		sealed class Converters<T> : ReferenceCache<IConverter<T>, Converter<T>>

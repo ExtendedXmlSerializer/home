@@ -28,7 +28,7 @@ using System.Collections.ObjectModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
-	class WellKnownAliases : ReadOnlyDictionary<Type, string>
+	sealed class WellKnownAliases : ReadOnlyDictionary<Type, string>
 	{
 		public static IReadOnlyDictionary<Type, string> Default { get; } = new WellKnownAliases();
 

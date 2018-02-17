@@ -21,9 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Services;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 {
@@ -32,10 +32,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Coercion
 		public CoercionExtension()
 			: this(new HashSet<ICoercer> {FrameworkCoercer.Default, TypeCoercer.Default, TypeMetadataCoercer.Default}) {}
 
-		public CoercionExtension(ICollection<ICoercer> coercers)
-		{
-			Coercers = coercers;
-		}
+		public CoercionExtension(ICollection<ICoercer> coercers) => Coercers = coercers;
 
 		public ICollection<ICoercer> Coercers { get; }
 

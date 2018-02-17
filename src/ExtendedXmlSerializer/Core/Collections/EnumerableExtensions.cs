@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace ExtendedXmlSerializer.Core.Collections
@@ -13,6 +14,15 @@ namespace ExtendedXmlSerializer.Core.Collections
 	public static class EnumerableExtensions
 	{
 		public static T FirstOfType<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
+
+		public static IEnumerable<T> AsEnumerable<T>(this ImmutableArray<T> @this)
+		{
+			var length = @this.Length;
+			for (var i = 0; i < length; i++)
+			{
+				yield return @this[i];
+			}
+		}
 
 		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) => @this.Where(Delegate<T>.Default.Get());
 

@@ -29,7 +29,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 {
-	public class AllowedMembersExtensionTests
+	public class MemberPolicyExtensionTests
 	{
 		[Fact]
 		public void Ignore()

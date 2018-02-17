@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Xunit;
+using ExtensionCollection = ExtendedXmlSerializer.Configuration.ExtensionCollection;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable All
 
@@ -28,7 +30,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void Verify()
 		{
-			new ConfigurationContainer().ToSupport().Cycle(6776);
+			new ConfigurationRoot().ToSupport().Cycle(6776);
 		}
 
 		[Fact]
@@ -70,28 +72,28 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void VerifyClass()
 		{
-			new ConfigurationContainer().ToSupport()
+			new ConfigurationRoot().ToSupport()
 			                            .Cycle(new Subject {Message = "Hello World!"});
 		}
 
 		[Fact]
 		public void VerifyArray()
 		{
-			new ConfigurationContainer().ToSupport()
+			new ConfigurationRoot().ToSupport()
 			                            .Cycle(new[]{1, 2, 3});
 		}
 
 		[Fact]
 		public void VerifyCollection()
 		{
-			new ConfigurationContainer().ToSupport()
+			new ConfigurationRoot().ToSupport()
 			                            .Cycle(new List<string>{ "Hello", "World"});
 		}
 
 		[Fact]
 		public void VerifyDictionary()
 		{
-			new ConfigurationContainer().ToSupport()
+			new ConfigurationRoot().ToSupport()
 			                            .Cycle(new Dictionary<string, int>{ {"Hello", 1}, {"World!", 2}});
 		}
 
@@ -99,7 +101,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void VerifyNullable()
 		{
-			var support = new ConfigurationContainer().ToSupport();
+			var support = new ConfigurationRoot().ToSupport();
 			support.Cycle(new int?(6776));
 			support.Cycle((int?)null);
 		}
@@ -120,7 +122,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			   .Should()
 			   .BeSameAs(CachingExtension.Default);
 
-			var types = container.Get(Categories.TypeSystem);
+			var types = container.Get(Categories.ReflectionModel);
 			types.Should()
 			     .HaveCount(6);
 			types.First()
@@ -435,37 +437,37 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
 			{
 				var all = new KeyedByTypeCollection<ISerializerExtension>();
-				yield return new Group(Categories.Start, all,
+				yield return new ExtensionGroup(Categories.Start, all,
 									   new ConfigurationServicesExtension()
 									  );
 
-				yield return new Group(Categories.TypeSystem, all,
+				yield return new ExtensionGroup(Categories.ReflectionModel, all,
 									   TypeModelExtension.Default,
 									   SingletonActivationExtension.Default,
-									   new MemberNamesExtension(),
+									   new MetadataNamesExtension(),
 									   new MemberOrderingExtension(_defaultMemberOrder),
-									   ImmutableArrayExtension.Default,
+									   ImmutableArrayContentsExtension.Default,
 									   MemberModelExtension.Default
 									  );
-				yield return new Group(Categories.ObjectModel, all,
+				yield return new ExtensionGroup(Categories.ObjectModel, all,
 									   new DefaultReferencesExtension());
-				yield return new Group(Categories.Framework, all,
+				yield return new ExtensionGroup(Categories.Framework, all,
 									   SerializationExtension.Default);
-				yield return new Group(Categories.Elements, all);
-				yield return new Group(Categories.Content, all,
+				yield return new ExtensionGroup(Categories.Elements, all);
+				yield return new ExtensionGroup(Categories.Content, all,
 									   ContentModelExtension.Default,
-									   CommonContentExtension.Default,
-									   new AllowedMembersExtension(_metadata),
+									   DefaultContentsExtension.Default,
+									   new MemberPolicyExtension(_metadata),
 									   new AllowedMemberValuesExtension(),
-									   new ConvertersExtension(),
-									   new RegisteredSerializersExtension()
+									   new ConvertibleContentsExtension(),
+									   new RegisteredSerializerContentsExtension()
 									  );
-				yield return new Group(Categories.Format, all,
+				yield return new ExtensionGroup(Categories.Format, all,
 									   new XmlSerializationExtension(),
 									   new MemberFormatExtension()
 									  );
-				yield return new Group(Categories.Caching, all, CachingExtension.Default);
-				yield return new Group(Categories.Finish, all);
+				yield return new ExtensionGroup(Categories.Caching, all, CachingExtension.Default);
+				yield return new ExtensionGroup(Categories.Finish, all);
 			}
 		}
 	}

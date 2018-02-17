@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 	sealed class ExtensionCollection : GroupCollection<ISerializerExtension>, IExtensionCollection
 	{
-		public ExtensionCollection() : this(DefaultGroups.Default) {}
+		public ExtensionCollection() : this(DefaultExtensions.Default) {}
 
 		public ExtensionCollection(IEnumerable<IGroup<ISerializerExtension>> groups) : base(groups) {}
 	}

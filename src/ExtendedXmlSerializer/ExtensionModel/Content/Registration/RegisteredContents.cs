@@ -61,19 +61,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 	}
 
 	sealed class ActivatedContentSerializer<T, TSerializer> : GenerializedContentSerializer<T>
-		where TSerializer : IContentSerializer<T>
+		where TSerializer : class, IContentSerializer<T>
 	{
 		public ActivatedContentSerializer(TSerializer serializer) : base(serializer) {}
 	}
 
-	sealed class RegisteredSerializersExtension : ISerializerExtension, IAssignable<MemberInfo, IService<IContentSerializer<object>>>, ICommand<MemberInfo>
+	sealed class RegisteredSerializerContentsExtension : ISerializerExtension, IAssignable<MemberInfo, IService<IContentSerializer<object>>>, ICommand<MemberInfo>
 	{
 		readonly IMetadataTable<IContentSerializer<object>> _serializers;
 
 		[UsedImplicitly]
-		public RegisteredSerializersExtension() : this(new RegisteredSerializers()) { }
+		public RegisteredSerializerContentsExtension() : this(new RegisteredSerializers()) { }
 
-		public RegisteredSerializersExtension(IMetadataTable<IContentSerializer<object>> serializers) => _serializers = serializers;
+		public RegisteredSerializerContentsExtension(IMetadataTable<IContentSerializer<object>> serializers) => _serializers = serializers;
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> _serializers.Get(parameter)

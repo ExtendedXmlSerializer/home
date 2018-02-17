@@ -197,7 +197,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		readonly IMemberRuntimeRegistry<T> _members;
 
 		public RuntimeRegistry(System.IServiceProvider services, IMemberRuntimeRegistry<T> members)
-			: this(new ServiceActivator<IRuntimePipelineComposer<T>>(services).Get, members) {}
+			: this(new Services.ServiceActivator<IRuntimePipelineComposer<T>>(services).Get, members) {}
 
 		public RuntimeRegistry(Func<IService<IRuntimePipelineComposer<T>>, IRuntimePipelineComposer<T>> services, IMemberRuntimeRegistry<T> members)
 		{
