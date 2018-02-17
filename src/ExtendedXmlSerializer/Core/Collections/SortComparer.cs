@@ -28,16 +28,20 @@ using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Collections
 {
-	sealed class SortComparer<T> : IComparer<T>
+	class DelegatedComparer<T> : IComparer<T>
 	{
-		public static SortComparer<T> Default { get; } = new SortComparer<T>();
-		SortComparer() : this(SortCoercer<T>.Default.Get) {}
-
 		readonly Func<T, int> _sort;
 
-		public SortComparer(Func<T, int> sort) => _sort = sort;
+		public DelegatedComparer(Func<T, int> @select) => _sort = @select;
 
 		public int Compare(T x, T y) => _sort(x).CompareTo(_sort(y));
+	}
+
+
+	sealed class SortComparer<T> : DelegatedComparer<T>
+	{
+		public static SortComparer<T> Default { get; } = new SortComparer<T>();
+		SortComparer() : base(SortCoercer<T>.Default.Get) {}
 	}
 
 	sealed class SortCoercer<T> : DecoratedSource<T, int>

@@ -40,8 +40,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 	{
 		readonly ISpecification<TParameter> _source;
 
-		public TableValueSource()
-			: this(new Dictionary<TParameter, TResult>()) {}
+		public TableValueSource() : this(new Dictionary<TParameter, TResult>()) {}
 
 		public TableValueSource(IDictionary<TParameter, TResult> store)
 			: this(new TableSource<TParameter, TResult>(store), new Values<TParameter, TResult>(store)) { }

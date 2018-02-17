@@ -34,6 +34,25 @@ using VariableTypeSpecification = ExtendedXmlSerializer.ReflectionModel.Variable
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
+	public sealed class ElementsExtension : ISerializerExtension
+	{
+		public static ElementsExtension Default { get; } = new ElementsExtension();
+		ElementsExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Register<Elements>()
+			            .Register<IElements, Elements>()
+			            .Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
+			            .Decorate<GenericElement>(IsGenericTypeSpecification.Default)
+			            .Decorate<ArrayElement>(IsArraySpecification.Default)
+			            .RegisterDefinition<IElements<object>, Elements<object>>()
+			            .DecorateDefinition<IElements<object>, VariableTypeElementsRegistration<object>>()
+			            .DecorateDefinition<IElements<object>, GenericElementsRegistration<object>>()
+			            .DecorateDefinition<IElements<object>, ArrayElementsRegistration<object>>();
+
+		void ICommand<IServices>.Execute(IServices parameter) { }
+	}
+
 	public sealed class ContentModelExtension : ISerializerExtension
 	{
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
@@ -50,15 +69,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance<IAliases>(Aliases.Default)
-			            .Register<Elements>()
-			            .Register<IElements, Elements>()
-			            .Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
-			            .Decorate<GenericElement>(IsGenericTypeSpecification.Default)
-			            .Decorate<ArrayElement>(IsArraySpecification.Default)
-			            .RegisterDefinition<IElements<object>, Elements<object>>()
-			            .DecorateDefinition<IElements<object>, VariableTypeElementsRegistration<object>>()
-			            .DecorateDefinition<IElements<object>, GenericElementsRegistration<object>>()
-			            .DecorateDefinition<IElements<object>, ArrayElementsRegistration<object>>()
 			            .RegisterDefinition<IContentReaders<object>, ContentReaders<object>>()
 			            .RegisterDefinition<ContentModel.Content.IContentWriters<object>, ContentModel.Content.ContentWriters<object>>()
 			            .Register<IClassification, Classification>()

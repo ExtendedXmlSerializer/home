@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,15 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
+/*using Xunit;
 
-namespace ExtendedXmlSerializer.ReflectionModel
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 {
-	sealed class TypeIdentityComparer : TypeIdentityComparerBase
+	public class CommonContentExtensionTests
 	{
-		public static TypeIdentityComparer Default { get; } = new TypeIdentityComparer();
-		TypeIdentityComparer() {}
+		[Fact]
+		public void Verify()
+		{
 
-		public override int GetHashCode(TypeInfo obj) => obj.GetHashCode();
+		}
 	}
-}
+}*/

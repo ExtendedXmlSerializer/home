@@ -454,7 +454,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				yield return new Group(Categories.Elements, all);
 				yield return new Group(Categories.Content, all,
 									   ContentModelExtension.Default,
-									   Contents.Default,
+									   CommonContentExtension.Default,
 									   new AllowedMembersExtension(_metadata),
 									   new AllowedMemberValuesExtension(),
 									   new ConvertersExtension(),

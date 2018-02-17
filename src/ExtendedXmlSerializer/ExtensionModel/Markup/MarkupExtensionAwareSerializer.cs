@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Sprache;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
@@ -85,6 +85,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			{
 				if (_error != null)
 				{
+					// ReSharper disable once ThrowingSystemException
+					// ReSharper disable once UnthrowableException
 					throw _error;
 				}
 				return Instance;

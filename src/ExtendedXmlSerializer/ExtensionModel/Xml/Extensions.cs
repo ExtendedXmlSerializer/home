@@ -199,7 +199,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Serialize(factory.Get(writer), instance);
 
 		public static XmlParserContext Context(this XmlNameTable @this)
-			=> XmlParserContexts.Default.Get(@this ?? new NameTable());
+			=> XmlParserContexts.Default.Get(@this);
 
 
 		public static T Deserialize<T>(this IExtendedXmlSerializer @this, string data)

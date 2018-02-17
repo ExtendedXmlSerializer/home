@@ -31,10 +31,10 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	public sealed class Contents : ISerializerExtension
+	public sealed class CommonContentExtension : ISerializerExtension
 	{
-		public static Contents Default { get; } = new Contents();
-		Contents() {}
+		public static CommonContentExtension Default { get; } = new CommonContentExtension();
+		CommonContentExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<IDictionaryEntries, DictionaryEntries>()
@@ -49,6 +49,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .DecorateContent<ConverterSpecification, ConverterContents>()
 			            //.DecorateContent<RegisteredContentSpecification, RegisteredContents>()
 			            .Register(provider => new DeferredContents(provider.Get<IContents>))
+
 			            .RegisterDefinition<DeferredContents<object>>()
 			            .RegisterDefinition<IContents<object>, ContentModel.Content.RuntimeContents<object>>()
 			            .RegisterDefinition<AlteredContentSerializer<object, object>>()

@@ -33,6 +33,7 @@ using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -44,6 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		readonly ICollection<ISerializerExtension> _container;
 		readonly IList<ISerializerExtension> _collection;
 
+		[UsedImplicitly]
 		public ExtensionGroupCollection(ICollection<ISerializerExtension> container, params ISerializerExtension[] items)
 			: this(container.AddingAll(items), new List<ISerializerExtension>(items)) {}
 
@@ -160,19 +162,21 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new Group(Categories.TypeSystem, all,
 								   TypeModelExtension.Default,
 			                       SingletonActivationExtension.Default,
-			                       new MemberNamesExtension(),
-			                       new MemberOrderingExtension(_defaultMemberOrder),
+								   TypeResolutionExtension.Default,
 			                       ImmutableArrayExtension.Default,
-			                       MemberModelExtension.Default
-			                      );
+			                       MemberModelExtension.Default,
+			                       new MemberNamesExtension(),
+			                       new MemberOrderingExtension(_defaultMemberOrder)
+								  );
 			yield return new Group(Categories.ObjectModel, all,
 			                       new DefaultReferencesExtension());
 			yield return new Group(Categories.Framework, all,
 			                       SerializationExtension.Default);
-			yield return new Group(Categories.Elements, all);
+			yield return new Group(Categories.Elements, all,
+			                       ElementsExtension.Default);
 			yield return new Group(Categories.Content, all,
 								   ContentModelExtension.Default,
-								   Contents.Default,
+								   CommonContentExtension.Default,
 			                       new AllowedMembersExtension(_metadata),
 			                       new AllowedMemberValuesExtension(),
 			                       new ConvertersExtension(),

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 {
-	public sealed class ConverterRegistryExtensionTests
+	public sealed class ConvertersExtensionTests
 	{
 		[Fact]
 		public void Boolean()

@@ -79,7 +79,6 @@ namespace ExtendedXmlSerializer.Core
 		/// <returns>The object's identity context, which can be used for serialization. FirstEncounter is set to true if this is the first time the object has been identified; otherwise, it is set to false.</returns>
 		/// <param name="obj">The object you want an ID for. </param>
 		/// <exception cref="T:System.ArgumentNullException">The <paramref name="obj" /> parameter is null. </exception>
-		/// <exception cref="T:System.Runtime.Serialization.SerializationException">The <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> has been asked to keep track of too many objects. </exception>
 		public uint For(object obj)
 		{
 			if (obj == null)

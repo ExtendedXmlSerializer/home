@@ -34,13 +34,11 @@ using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using JetBrains.Annotations;
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {
-	[SuppressMessage("ReSharper", "TestFileNameWarning")]
 	public class ConfigurationContainerTests
 	{
 		const string Testclass = "UpdatedTestClassName", MemberName = "UpdatedMemberName";

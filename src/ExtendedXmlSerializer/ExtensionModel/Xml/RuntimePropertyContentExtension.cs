@@ -84,7 +84,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		PropertyTokenSpecification() : base(RuntimePropertyToken.Default) { }
 	}
 
-	class RuntimePropertyPipelineComposer<T> : IRuntimePipelineComposer<T>
+	sealed class RuntimePropertyPipelineComposer<T> : IRuntimePipelineComposer<T>
 	{
 		readonly ISpecification<object> _specification;
 		readonly ISpecificationSource<IMember, ISpecification<Writing<T>>> _specifications;

@@ -45,17 +45,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			: base(new TypedTable<string>(types), new MemberTable<string>(members)) { }
 	}
 
-	public sealed class MemberNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
+	public sealed class TypeResolutionExtension : ISerializerExtension
 	{
-		readonly IMetadataNames _names;
-
-		public MemberNamesExtension() : this(new MetadataNames(DefaultNames.Default)) {}
-
-		public MemberNamesExtension(IMetadataNames names) => _names = names;
+		public static TypeResolutionExtension Default { get; } = new TypeResolutionExtension();
+		TypeResolutionExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)))
-			            .Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
+			=> parameter.Register<IAssemblyTypePartitions, AssemblyTypePartitions>()
 			            .Register<ITypeFormatter, TypeFormatter>()
 			            .Register<ITypePartResolver, TypePartResolver>()
 			            .RegisterInstance<IReadOnlyDictionary<Assembly, IIdentity>>(WellKnownIdentities.Default)
@@ -66,6 +62,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<ContentModel.Reflection.ITypes, ContentModel.Reflection.Types>()
 			            .Register<IGenericTypes, GenericTypes>()
 			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default);
+
+		void ICommand<IServices>.Execute(IServices parameter) { }
+	}
+
+	public sealed class MemberNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
+	{
+		readonly IMetadataNames _names;
+
+		public MemberNamesExtension() : this(new MetadataNames(DefaultNames.Default)) {}
+
+		public MemberNamesExtension(IMetadataNames names) => _names = names;
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 

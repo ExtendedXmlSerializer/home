@@ -21,16 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Tests.Support;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using ExtendedXmlSerializer.Tests.Support;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Collections
 {
-	public class CollectionContentOptionTests
+	public class CollectionContentsTests
 	{
 		[Fact]
 		public void Field()

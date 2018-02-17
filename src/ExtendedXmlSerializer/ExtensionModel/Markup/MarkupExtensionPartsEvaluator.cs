@@ -123,6 +123,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				var exceptions = primary.Yield()
 				                        .Concat(candidates.Select(x => x.Get())
 				                                          .Where(x => x != null));
+				// ReSharper disable once UnthrowableException
 				throw new AggregateException(exceptions);
 			}
 			return constructor;
@@ -203,6 +204,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 						var primary =
 							new InvalidOperationException(
 							                              $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+						// ReSharper disable once UnthrowableException
 						throw new AggregateException(primary, innerException);
 					}
 					throw new InvalidOperationException(

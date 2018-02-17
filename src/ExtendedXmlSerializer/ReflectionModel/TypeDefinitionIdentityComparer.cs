@@ -21,15 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class TypeDefinitionIdentityComparer : TypeIdentityComparerBase
+	sealed class TypeDefinitionIdentityComparer : TypeComparer
 	{
 		public static TypeDefinitionIdentityComparer Default { get; } = new TypeDefinitionIdentityComparer();
-		TypeDefinitionIdentityComparer() {}
-
-		public override int GetHashCode(TypeInfo obj) => obj.GUID.GetHashCode();
+		TypeDefinitionIdentityComparer() : base(info => info.GUID.GetHashCode()) {}
 	}
 }

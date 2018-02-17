@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Collections;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -43,7 +44,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		readonly Func<T, TMember> _select;
 		readonly IComparer<TMember> _comparer;
 
-		public OrderByAlteration(Func<T, TMember> select) : this(@select, Comparer<TMember>.Default) {}
+		public OrderByAlteration(Func<T, TMember> select) : this(@select, SortComparer<TMember>.Default) {}
 
 		public OrderByAlteration(Func<T, TMember> select, IComparer<TMember> comparer)
 		{

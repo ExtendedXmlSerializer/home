@@ -21,15 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Diagnostics.CodeAnalysis;
+using ExtendedXmlSerializer.Core.Collections;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	[SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-	public abstract class TypeIdentityComparerBase : ITypeComparer
+	public sealed class DefaultTypeComparer : TypeComparer
 	{
-		public virtual bool Equals(TypeInfo x, TypeInfo y) => GetHashCode(x).Equals(GetHashCode(y));
-		public abstract int GetHashCode(TypeInfo obj);
+		public static DefaultTypeComparer Default { get; } = new DefaultTypeComparer();
+		DefaultTypeComparer() : base(x => x.GetHashCode()) {}
+	}
+
+	public class TypeComparer : ITypeComparer
+	{
+		readonly IComparer<TypeInfo> _comparer;
+		readonly Func<TypeInfo, int> _select;
+
+		public TypeComparer(Func<TypeInfo, int> select) : this(new DelegatedComparer<TypeInfo>(@select), @select) {}
+
+		public TypeComparer(IComparer<TypeInfo> comparer, Func<TypeInfo, int> @select)
+		{
+			_comparer = comparer;
+			_select   = @select;
+		}
+
+		public bool Equals(TypeInfo x, TypeInfo y) => _comparer.Compare(x, y) != 0;
+
+		public int GetHashCode(TypeInfo parameter) => _select(parameter);
 	}
 }

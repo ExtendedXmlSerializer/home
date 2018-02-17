@@ -33,7 +33,7 @@ using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 {
-	public class CustomXmlExtensionTests
+	public class ExtendedXmlCustomSerializerTests
 	{
 		[Fact]
 		public void Verify()

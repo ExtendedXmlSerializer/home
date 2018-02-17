@@ -101,15 +101,9 @@ namespace ExtendedXmlSerializer.Configuration
 			        .Return(@this);
 
 		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
-		{
-			var metadata = @this.Type()
-			                    .GetMember(member)
-			                    .SingleOrDefault();
-			var result = metadata != null
-				             ? @this.Member(metadata)
-				             : null;
-			return result;
-		}
+			=> @this.Member(@this.Type()
+			                     .GetMember(member)
+			                     .Single());
 
 		public static IMemberConfiguration Member(this ITypeConfiguration @this, MemberInfo member)
 			=> @this.Members()

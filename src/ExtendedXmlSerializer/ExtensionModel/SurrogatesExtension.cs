@@ -37,9 +37,11 @@ namespace System.Runtime.Serialization
 {
 	public interface ISerializationSurrogateProvider
 	{
+		[JetBrains.Annotations.CanBeNull]
+		Type GetSurrogateType(Type t);
+
 		object GetDeserializedObject(object obj, Type t);
 		object GetObjectToSerialize(Object obj, Type t);
-		Type GetSurrogateType(Type t);
 	}
 }
 #endif

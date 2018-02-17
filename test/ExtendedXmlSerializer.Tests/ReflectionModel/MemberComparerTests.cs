@@ -21,17 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using ExtendedXmlSerializer.ReflectionModel;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReflectionModel
 {
-	[SuppressMessage("ReSharper", "UnusedMember.Local")]
-	[SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
 	public class MemberComparerTests
 	{
 		[Fact]
@@ -87,7 +85,7 @@ namespace ExtendedXmlSerializer.Tests.ReflectionModel
 			const string keys = nameof(IDictionary.Keys), values = nameof(IDictionary.Values);
 			var definition = typeof(Dictionary<string, object>).GetRuntimeProperty(keys);
 
-			var sut = new MemberComparer(TypeIdentityComparer.Default);
+			var sut = new MemberComparer(DefaultTypeComparer.Default);
 
 			var other = typeof(Dictionary<string, int>);
 			Assert.NotEqual(definition, other.GetRuntimeProperty(keys), sut);
@@ -108,8 +106,10 @@ namespace ExtendedXmlSerializer.Tests.ReflectionModel
 
 		class NotDictionary<TKey, TValue>
 		{
+			[UsedImplicitly]
 			public ICollection<TKey> Keys { get; }
 
+			[UsedImplicitly]
 			public ICollection<TValue> Values { get; }
 		}
 	}
