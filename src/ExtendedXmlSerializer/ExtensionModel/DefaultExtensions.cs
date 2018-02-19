@@ -33,6 +33,7 @@ using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections.Generic;
 using System.Reflection;
+using MetadataNamesExtension = ExtendedXmlSerializer.ExtensionModel.Xml.MetadataNamesExtension;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -63,7 +64,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			                                TypeModelExtension.Default,
 			                                SingletonActivationExtension.Default,
 			                                TypeResolutionExtension.Default,
-			                                new MetadataNamesExtension()
+			                                MetadataNamesExtension.Default, // TODO: Provide a union to pass this in first.
+											Types.MetadataNamesExtension.Default
 			                               );
 
 			yield return new ExtensionGroup(Categories.ContentModel, all,

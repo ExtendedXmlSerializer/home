@@ -26,8 +26,8 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class Names : Cache<MemberInfo, string>, INames
+	sealed class Names : DecoratedSource<MemberInfo, string>, INames
 	{
-		public Names(IParameterizedSource<MemberInfo, string> source) : base(source.Get) {}
+		public Names(IParameterizedSource<MemberInfo, string> source) : base(source) {}
 	}
 }

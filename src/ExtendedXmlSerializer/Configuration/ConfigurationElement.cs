@@ -26,13 +26,8 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public class ConfigurationElement : IConfigurationElement
 	{
-		public ConfigurationElement(IReflection reflection, IExtensions extensions)
-		{
-			Reflection = reflection;
-			Extensions = extensions;
-		}
+		public ConfigurationElement(IExtensions extensions) => Extensions = extensions;
 
-		public IReflection Reflection { get; }
 		public IExtensions Extensions { get; }
 	}
 }

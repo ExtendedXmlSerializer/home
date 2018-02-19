@@ -48,9 +48,8 @@ namespace ExtendedXmlSerializer.Configuration
 
 			var factory = _activator.Build(parameter);
 
-			var types = new Reflection();
-			var result = new Activator<T>(factory, types, extensions);
-			result.Services(new ConfiguredTypes(types, extensions), factory);
+			var result = new Activator<T>(factory, extensions);
+			result.Services(new ConfiguredTypes(extensions), factory);
 
 			return result;
 		}
@@ -60,7 +59,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly Func<T> _source;
 
-		public Activator(Func<T> source, IReflection reflection, IExtensions extensions) : base(reflection, extensions) => _source = source;
+		public Activator(Func<T> source, IExtensions extensions) : base(extensions) => _source = source;
 
 		public T Get() => _source();
 	}

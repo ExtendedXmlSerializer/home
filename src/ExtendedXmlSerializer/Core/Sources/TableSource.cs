@@ -77,7 +77,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public TValue Get(TKey parameter) => _store.TryGetValue(parameter, out var result) ? result : default(TValue);
 
-		public void Assign(TKey key, TValue value) => _store[key] = value;
 		public bool Remove(TKey key) => _store.Remove(key);
 		public void Execute(KeyValuePair<TKey, TValue> parameter)
 		{

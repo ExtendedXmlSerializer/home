@@ -22,14 +22,18 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Services;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -52,12 +56,28 @@ namespace ExtendedXmlSerializer.Configuration
 			_provider = provider;
 		}
 
-		IServiceRepository IParameterizedSource<IServiceRepository, IServiceRepository>.Get(IServiceRepository parameter) =>
-			parameter/*.RegisterInstance(_provider.GetValid<IMetadataRegistry>())*/;
+		IServiceRepository IParameterizedSource<IServiceRepository, IServiceRepository>.Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance<IMetadataTable>(new MetadataTable(_provider.GetValid<IConfiguredTypes>()
+			                                                                         .SelectMany(x => x.Prepending(x.Get()))));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
 		public object GetService(Type serviceType) => _provider.GetService(serviceType);
 		public void Execute(object parameter) => _services.Add(parameter);
+	}
+
+	class Property<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, ExtensionModel.IProperty<T>
+	{
+		public Property(IMetadataTable table, ISingletonLocator locator)
+			: this(table, locator.Out(A<TProperty>.Default).Get(typeof(TProperty))) {}
+
+		public Property(IMetadataTable table, TProperty property) : base(property.To(table), property.In(table)) {}
+	}
+
+	public interface IMetadataTable : IValueSource<MemberInfo, IMetadata> {}
+
+	sealed class MetadataTable : TableValueSource<MemberInfo, IMetadata>, IMetadataTable
+	{
+		public MetadataTable(IEnumerable<IMetadata> metadata) : base(metadata.ToDictionary(x => x.Get()))  {}
 	}
 }

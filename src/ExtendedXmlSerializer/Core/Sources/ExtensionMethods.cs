@@ -41,6 +41,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 	public static class ExtensionMethods
 	{
+		public static TResult Get<TKey, TResult>(this IParameterizedSource<TKey, TResult> @this, ISource<TKey> parameter)
+			=> @this.Get(parameter.Get());
+
 		public static ISpecificationSource<TParameter, TResult>
 			Cache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
 			where TParameter : class where TResult : class

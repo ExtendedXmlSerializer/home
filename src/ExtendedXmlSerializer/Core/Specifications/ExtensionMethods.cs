@@ -29,8 +29,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	public static class Extensions
+	public static class ExtensionMethods
 	{
+		public static bool IsSatisfiedBy<T>(this ISpecification<T> @this, ISource<T> parameter)
+			=> @this.IsSatisfiedBy(parameter.Get());
+
 		public static ISpecification<TParameter> IfAssigned<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this)
 			=> @this.ToDelegate()

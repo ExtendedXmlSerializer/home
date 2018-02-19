@@ -32,7 +32,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
 
-		public static Type Definition { get; } = typeof(T).GetGenericTypeDefinition();
+		/*public static Type Definition { get; } = typeof(T).GetGenericTypeDefinition();*/
 
 		public static Func<T> New { get; } = DefaultActivators.Default.New<T>;
 

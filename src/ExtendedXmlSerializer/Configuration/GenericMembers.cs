@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Reflection;
@@ -36,7 +37,7 @@ namespace ExtendedXmlSerializer.Configuration
 		readonly Func<MemberInfo, MemberDescriptor>                                _descriptor;
 		readonly TypeInfo                                                          _type;
 
-		public GenericMembers(ITypeConfiguration element) : this(element, element.Get().Get()) {}
+		public GenericMembers(ITypeConfiguration element) : this(element, element.Type()) {}
 
 		public GenericMembers(ITypeConfiguration element, TypeInfo type)
 			: this(element, Generic.Default, MemberDescriptors.Default.Get, type) {}

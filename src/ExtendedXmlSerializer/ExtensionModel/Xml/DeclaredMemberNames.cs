@@ -21,8 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using System.Reflection;
 using System.Xml.Serialization;
 
@@ -37,4 +40,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> parameter.GetCustomAttribute<XmlAttributeAttribute>(false)?.AttributeName.NullIfEmpty() ??
 			   DefaultXmlElementAttribute.Default.Get(parameter)?.ElementName.NullIfEmpty();
 	}
+
+	public sealed class MetadataNamesExtension : ISerializerExtension
+	{
+		public static MetadataNamesExtension Default { get; } = new MetadataNamesExtension();
+		MetadataNamesExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterInstance<INames>(new Names(DeclaredNames.Default.Or(DeclaredMemberNames.Default)))
+			            .RegisterInstance<IRegisteredTypes>(RegisteredTypes.Default);
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
+	}
+
+	sealed class RegisteredTypes : Items<TypeInfo>, IRegisteredTypes
+	{
+		public static RegisteredTypes Default { get; } = new RegisteredTypes();
+		RegisteredTypes() : base(WellKnownAliases.Default.Keys) {}
+	}
+
 }

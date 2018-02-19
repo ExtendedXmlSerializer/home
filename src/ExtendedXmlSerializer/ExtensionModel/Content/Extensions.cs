@@ -70,7 +70,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IType<T> EmitWhen<T>(this IType<T> @this,
 		                                                  Func<T, bool> specification)
 			=> @this.Extend<AllowedInstancesExtension>()
-			        .Assigned(@this.Type(),
+			        .Assign(@this.Type(),
 			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
 			        .Return(@this);
 

@@ -22,8 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
@@ -35,7 +36,6 @@ using ExtendedXmlSerializer.Tests.Support;
 using ExtendedXmlSerializer.Tests.TestObject;
 using JetBrains.Annotations;
 using System;
-using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
@@ -67,15 +67,10 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		public void ConfigureNameForType()
 		{
 			var configuration = new ConfigurationContainer();
-			configuration.Type<SimpleTestSubject>().Name(Testclass);
+			var name = configuration.Type<SimpleTestSubject>().Name(Testclass);
 
-			var store = DefaultNames.Default.ToDictionary();
-			var names = new MetadataNames(store);
-			var extension = new MetadataNamesExtension(store, names);
-			configuration.Extensions.Execute(extension);
-
-			Assert.Equal(names.Get(typeof(SimpleTestSubject).GetTypeInfo()), Testclass);
-			Assert.False(names.IsSatisfiedBy(typeof(TestClassPrimitiveTypesNullable).GetTypeInfo()));
+			Assert.Equal(MetadataNamesProperty.Default.Get(name), Testclass);
+			Assert.False(MetadataNamesProperty.Default.IsSatisfiedBy(configuration.Type<TestClassPrimitiveTypesNullable>()));
 
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleTestSubject {BasicProperty = "Hello World!"};
@@ -151,7 +146,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(configuration.Extensions.FirstOf<MetadataNamesExtension>().Get(member.Member()), MemberName);
+			Assert.Equal(MetadataNamesProperty.Default.Get(member), MemberName);
 
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};

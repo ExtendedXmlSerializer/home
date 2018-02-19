@@ -27,23 +27,20 @@ using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Services;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
-using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using GenericTypes = ExtendedXmlSerializer.ContentModel.Reflection.GenericTypes;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
-	public interface IMetadataNames : IMemberTable<string> {}
-
-	class MetadataNames : MetadataTable<string>, IMetadataNames
+	/*class MetadataNames : MetadataTable<string>, IMetadataNames
 	{
-		public MetadataNames(IDictionary<TypeInfo, string> types)
-			: this(types, new Dictionary<MemberInfo, string>()) {}
+		public MetadataNames(IDictionary<TypeInfo, string> types) : this(types, new Dictionary<MemberInfo, string>()) {}
 
 		public MetadataNames(IDictionary<TypeInfo, string> types, IDictionary<MemberInfo, string> members)
 			: base(new TypedTable<string>(types), new MemberTable<string>(members)) { }
-	}
+	}*/
 
 	public sealed class TypeResolutionExtension : ISerializerExtension
 	{
@@ -59,45 +56,40 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<IIdentities, Identities>()
 			            .Register<IIdentifiers, Identifiers>()
 			            .Register<ITypeIdentities, TypeIdentities>()
-			            .Register<ContentModel.Reflection.ITypes, ContentModel.Reflection.Types>()
+			            .Register<ITypes, ContentModel.Reflection.Types>()
 			            .Register<IGenericTypes, GenericTypes>()
 			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default);
 
 		void ICommand<IServices>.Execute(IServices parameter) { }
 	}
 
-	public sealed class RegisteredMetadataNames : Property<string>
+	public sealed class MetadataNamesProperty : Property<string>
 	{
-		public static RegisteredMetadataNames Default { get; } = new RegisteredMetadataNames();
-		RegisteredMetadataNames() {}
+		public static MetadataNamesProperty Default { get; } = new MetadataNamesProperty();
+		MetadataNamesProperty() {}
 	}
 
-	public sealed class MetadataNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>
+	sealed class MetadataNames : LinkedDecoratedSource<MemberInfo, string>, INames
 	{
-		readonly IDictionary<TypeInfo, string> _types;
-		readonly IMetadataNames _names;
+		public MetadataNames(IMetadataTable table, ISingletonLocator locator, INames next)
+			: base(new Configuration.Property<MetadataNamesProperty, string>(table, locator), next) {}
+	}
 
-		public MetadataNamesExtension() : this(DefaultNames.Default.ToDictionary()) {}
-
-		public MetadataNamesExtension(IDictionary<TypeInfo, string> types) : this(types, new MetadataNames(types)) {}
-
-		public MetadataNamesExtension(IDictionary<TypeInfo, string> types, IMetadataNames names)
-		{
-			_types = types;
-			_names = names;
-		}
+	public sealed class MetadataNamesExtension : ISerializerExtension
+	{
+		public static MetadataNamesExtension Default { get; } = new MetadataNamesExtension();
+		MetadataNamesExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<IRegisteredTypes>(new RegisteredTypes(_types.Keys))
-			            .RegisterInstance<INames>(new Names(_names.Or(DeclaredNames.Default).Or(DeclaredMemberNames.Default)));
+			=> parameter.DecorateWithDependencies<INames, MetadataNames>()
+			            .Decorate<IRegisteredTypes, RegisteredTypes>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+	}
 
-		public void Execute(KeyValuePair<MemberInfo, string> parameter)
-		{
-			_names.Execute(parameter);
-		}
-
-		public string Get(MemberInfo parameter) => _names.Get(parameter);
+	sealed class RegisteredTypes : Items<TypeInfo>, IRegisteredTypes
+	{
+		public RegisteredTypes(IRegisteredTypes types, IMetadataTable table)
+			: base(types.Union(table.Select(x => x.Get()).OfType<TypeInfo>())) {}
 	}
 }

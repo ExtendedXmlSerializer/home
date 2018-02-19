@@ -26,7 +26,6 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using System.Reflection;
@@ -53,21 +52,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 
 	public interface IRegisteredSerializers<T> : ISpecificationSource<MemberInfo, IContentSerializer<T>> { }
 
-	sealed class RegisteredSerializers<T> : SpecificationSource<MemberInfo, IContentSerializer<T>>,
+	sealed class RegisteredSerializers<T> : ServiceProperty<RegisteredContentSerializers<T>, IContentSerializer<T>>,
 	                                        IRegisteredSerializers<T>
 	{
-		/*[UsedImplicitly]
 		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,
-		                             RegisteredContentSerializers<T> table)
-			: this(coercer, metadata.Get, table) {}
-
-		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,
-		                             Func<MemberInfo, IConfigurationElement> metadata,
-		                             RegisteredContentSerializers<T> table)
-			: base(table.To(metadata), table.In(metadata).Out(coercer)) {}*/
-		public RegisteredSerializers(ISpecification<MemberInfo> specification,
-		                             IParameterizedSource<MemberInfo, IContentSerializer<T>> source)
-			: base(specification, source) {}
+		                             Property<RegisteredContentSerializers<T>, IContentSerializer<T>> property) :
+			base(coercer, property) {}
 	}
 
 	sealed class ActivatedContentSerializer<T, TSerializer> : GenerializedContentSerializer<T>

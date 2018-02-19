@@ -105,20 +105,16 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static MemberConfiguration<T, TMember> Name<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                string name)
-			=> @this.Extend<MetadataNamesExtension>()
-			        .Assigned(@this.Get().Get(), name)
-			        .Return(@this);
+			=> MetadataNamesProperty.Default.Assign(@this, name).Return(@this);
 
 		public static MemberConfiguration<T, TMember> Order<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                 int order)
 			=> @this.Extend<MemberOrderingExtension>()
-			        .Assigned(@this.Get().Get(), order)
+			        .Assign(@this.Member(), order)
 			        .Return(@this);
 
 		public static T Name<T>(this T @this, string name) where T : class, ITypeConfiguration
-			=> @this.Extend<MetadataNamesExtension>()
-			        .Assigned(@this.Get().Get(), name)
-			        .Return(@this);
+			=> MetadataNamesProperty.Default.Assign(@this, name).Return(@this);
 
 		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 			=> @this.Member(@this.Type()
@@ -165,7 +161,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static MemberConfiguration<T, TMember> Identity<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<ReferencesExtension>()
-			        .Assigned(@this.Get().Type.Get(), @this.Get().Get())
+			        .Assign(@this.Type(), @this.Member())
 			        .Return(@this);
 
 		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationElement @this)

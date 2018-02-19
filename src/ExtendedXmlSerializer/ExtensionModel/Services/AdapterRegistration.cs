@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Types;
@@ -134,8 +135,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 		public ServiceGroups(IEnumerable<GroupName> phases) : base(phases) { }
 	}
 
+	sealed class Property<TProperty, T> : Configuration.Property<TProperty, IService<T>>
+		where TProperty : class, ExtensionModel.IProperty<IService<T>>
+	{
+		public Property(IMetadataTable table, ISingletonLocator locator) : base(table, locator) {}
+	}
 
-	class ServiceProperty<T> : Property<IService<T>> {}
+	class ServiceProperty<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IProperty<T>
+	{
+		public ServiceProperty(IServiceCoercer<T> coercer, Property<TProperty, T> property)
+			: base(property, property.Out(coercer)) {}
+	}
+
+	public interface IProperty<T> : ExtensionModel.IProperty<IService<T>> {}
+
+	class ServiceProperty<T> : Property<IService<T>>, IProperty<T> {}
 
 	public sealed class ExtensionServicesExtension : ISerializerExtension
 	{

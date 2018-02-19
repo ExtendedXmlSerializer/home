@@ -47,11 +47,14 @@ namespace ExtendedXmlSerializer.Core
 			return @this;
 		}
 
-		public static IAssignable<TKey, TValue> Assigned<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
+		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, ISource<TKey> key, TValue instance)
+			=> @this.Assign(key.Get(), instance);
+
+		/*public static IAssignable<TKey, TValue> Assigned<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key, TValue value)
 		{
 			@this.Assign(key, value);
 			return @this;
-		}
+		}*/
 
 		public static ICommand<T> Fold<T>(this IEnumerable<ICommand<T>> @this)
 			=> new CompositeCommand<T>(@this.ToImmutableArray());

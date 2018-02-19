@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,22 +45,22 @@ namespace ExtendedXmlSerializer.Configuration
 	}*/
 
 
-	public class TypeConfiguration<T> : MetadataConfiguration<ITypeMetadata, TypeInfo>, IType<T>
+	public class TypeConfiguration<T> : MetadataConfiguration<TypeMetadata>, IType<T>
 	{
-		readonly IValueSource<MemberInfo, IMember> _members;
+		readonly IValueSource<MemberInfo, IMetadata> _members;
 
 		[UsedImplicitly]
-		public TypeConfiguration(IReflection reflection, IExtensions extensions) :
-			this(reflection, extensions, reflection.Get(Support<T>.Key)) {}
+		public TypeConfiguration(IExtensions extensions) : this(extensions, new TypeMetadata<T>()) {}
 
-		public TypeConfiguration(IReflection reflection, IExtensions extensions, ITypeMetadata metadata)
-			: this(reflection, extensions, metadata, new TableValueSource<MemberInfo, IMember>(new MemberInstances(metadata).Get)) {}
-		public TypeConfiguration(IReflection reflection, IExtensions extensions, ITypeMetadata metadata, IValueSource<MemberInfo, IMember> members)
-			: base(reflection, extensions, metadata) => _members = members;
+		public TypeConfiguration(IExtensions extensions, TypeMetadata metadata)
+			: this(extensions, metadata, new TableValueSource<MemberInfo, IMetadata>(new MemberInstances(metadata).Get)) {}
 
-		public IMember Get(MemberInfo parameter) => _members.Get(parameter);
+		public TypeConfiguration(IExtensions extensions, TypeMetadata metadata, IValueSource<MemberInfo, IMetadata> members)
+			: base(extensions, metadata) => _members = members;
 
-		public IEnumerator<IMember> GetEnumerator() => _members.GetEnumerator();
+		public IMetadata Get(MemberInfo parameter) => _members.Get(parameter);
+
+		public IEnumerator<IMetadata> GetEnumerator() => _members.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}

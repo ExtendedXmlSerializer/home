@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IType<T> Alter<T>(this IType<T> @this, IAlteration<T> read,
 		                                             IAlteration<T> write)
 			=> @this.Extend<AlteredContentExtension>()
-			        .Types.Assigned(Support<T>.Key,
+			        .Types.Assign(Support<T>.Key,
 			                        new ContentAlteration(read.Adapt(), write.Adapt()))
 			        .Return(@this);
 
@@ -90,7 +90,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		                                                                IAlteration<TMember> read,
 		                                                                IAlteration<TMember> write)
 			=> @this.Extend<AlteredContentExtension>()
-			        .Members.Assigned(@this.Member(),
+			        .Members.Assign(@this.Member(),
 			                          new ContentAlteration(read.Adapt(), write.Adapt()))
 			        .Return(@this);
 
@@ -131,7 +131,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IType<T> AddMigration<T>(this IType<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
 		{
-			@this.Extend<MigrationsExtension>().Add(@this.Get().Get(), migrations.Fixed());
+			@this.Extend<MigrationsExtension>().Add(@this.Type(), migrations.Fixed());
 			return @this;
 		}
 

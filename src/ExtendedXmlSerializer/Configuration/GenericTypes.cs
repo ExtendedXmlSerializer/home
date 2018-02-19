@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,16 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.ObjectModel;
-using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class DefaultNames : ReadOnlyDictionary<TypeInfo, string>
+	sealed class GenericTypes : IParameterizedSource<TypeInfo, ITypeConfiguration>
 	{
-		public static DefaultNames Default { get; } = new DefaultNames();
-		DefaultNames() : base(WellKnownAliases.Default.ToDictionary(x => x.Key.GetTypeInfo(), x => x.Value)) {}
+		readonly IExtensions _extensions;
+		readonly IGeneric<IExtensions, ITypeConfiguration> _generic;
+
+		public GenericTypes(IExtensions extensions) : this(extensions, Generic.Default) {}
+
+		public GenericTypes(IExtensions extensions, IGeneric<IExtensions, ITypeConfiguration> generic)
+		{
+			_extensions = extensions;
+			_generic    = generic;
+		}
+
+		public ITypeConfiguration Get(TypeInfo parameter) => _generic.Get(parameter)
+		                                                             .Invoke(_extensions);
+
+		sealed class Generic : Generic<IExtensions, ITypeConfiguration>
+		{
+			public static Generic Default { get; } = new Generic();
+			Generic() : base(typeof(TypeConfiguration<>)) {}
+		}
 	}
 }

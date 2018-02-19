@@ -19,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using ExtensionCollection = ExtendedXmlSerializer.Configuration.ExtensionCollection;
+using MetadataNamesExtension = ExtendedXmlSerializer.ExtensionModel.Types.MetadataNamesExtension;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable All
@@ -444,7 +445,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				yield return new ExtensionGroup(Categories.ReflectionModel, all,
 									   TypeModelExtension.Default,
 									   SingletonActivationExtension.Default,
-									   new MetadataNamesExtension(),
+									   ExtendedXmlSerializer.ExtensionModel.Xml.MetadataNamesExtension.Default,
+									   MetadataNamesExtension.Default,
 									   new MemberOrderingExtension(_defaultMemberOrder),
 									   ImmutableArrayContentsExtension.Default,
 									   MemberModelExtension.Default

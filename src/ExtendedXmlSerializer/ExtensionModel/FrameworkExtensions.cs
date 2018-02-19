@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.ExtensionModel.Services;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -49,6 +49,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			            .Register(typeof(TFrom).GetGenericTypeDefinition(), to)
 			            .RegisterDependencies(to);
 		}
+
+		public static IServiceRepository DecorateWithDependencies<TFrom, TTo>(this IServiceRepository @this) where TTo : TFrom
+			=> @this.Decorate<TFrom, TTo>()
+			        .RegisterDependencies(typeof(TTo));
 
 		public static IServiceRepository DecorateDefinition<TFrom, TTo>(this IServiceRepository @this) where TTo : TFrom
 		{

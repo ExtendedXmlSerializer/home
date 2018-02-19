@@ -23,24 +23,53 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface IProperty<T> : ITableSource<IMetadata<MemberInfo>, T> {}
+	public interface IProperty<T> : ITableSource<IMetadata, T> {}
 
-	public class Property<T> : ReferenceCache<IMetadata<MemberInfo>, T>, IProperty<T> where T : class
+	public class Property<T> : ReferenceCache<IMetadata, T>, IProperty<T> where T : class
 
 	{
 		public Property() : this(_ => default(T)) {}
 
-		public Property(ConditionalWeakTable<IMetadata<MemberInfo>, T>.CreateValueCallback callback)
+		public Property(ConditionalWeakTable<IMetadata, T>.CreateValueCallback callback)
 			: base(callback) {}
 	}
 
-	public class StructureProperty<T> : StructureCache<IMetadata<MemberInfo>, T>, IProperty<T> where T : struct
+	public class StructureProperty<T> : StructureCache<IMetadata, T>, IProperty<T> where T : struct
 	{
 		public StructureProperty() : base(_ => default(T)) {}
 	}
+
+
+	/*public class AdaptedProperty<T> :/* DecoratedTable<IMetadata, T>,#1# /*IProperty<T>,#1# ITableSource<ISource<IMetadata>, T> where T : class
+
+	{
+		readonly ITableSource<ISource<IMetadata>, T> _adapter;
+
+		public AdaptedProperty() : this(_ => default(T)) {}
+
+		public AdaptedProperty(ConditionalWeakTable<IMetadata, T>.CreateValueCallback callback)
+			: this(new ReferenceCache<IMetadata, T>(callback)) {}
+
+		public AdaptedProperty(ITableSource<IMetadata, T> table) : this(table.In(SourceCoercer<IMetadata>.Default), table)
+		{}
+
+		public AdaptedProperty(ITableSource<ISource<IMetadata>, T> adapter, ITableSource<IMetadata, T> table)
+			/*: base(table)#1# => _adapter = adapter;
+
+		public bool IsSatisfiedBy(ISource<IMetadata> parameter) => _adapter.IsSatisfiedBy(parameter);
+
+		public T Get(ISource<IMetadata> parameter) => _adapter.Get(parameter);
+
+		public void Execute(KeyValuePair<ISource<IMetadata>, T> parameter)
+		{
+			_adapter.Execute(parameter);
+		}
+
+		public bool Remove(ISource<IMetadata> key) => _adapter.Remove(key);
+	}*/
+
 }

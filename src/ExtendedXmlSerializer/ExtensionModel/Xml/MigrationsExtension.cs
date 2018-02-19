@@ -58,7 +58,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public void Add(TypeInfo key, params Action<XElement>[] items)
 		{
 			var current = Get(key)?.ToArray() ?? Enumerable.Empty<Action<XElement>>();
-			Assign(key, current.Appending(items).Fixed());
+			this.Assign(key, current.Appending(items).Fixed());
 		}
 
 		sealed class Contents : IContents

@@ -25,12 +25,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
-	sealed class WellKnownAliases : ReadOnlyDictionary<Type, string>
+	sealed class WellKnownAliases : ReadOnlyDictionary<TypeInfo, string>
 	{
-		public static IReadOnlyDictionary<Type, string> Default { get; } = new WellKnownAliases();
+		public static IReadOnlyDictionary<TypeInfo, string> Default { get; } = new WellKnownAliases();
 
 		WellKnownAliases() : base(new Dictionary<Type, string>
 		                          {
@@ -53,6 +55,6 @@ namespace ExtendedXmlSerializer.ContentModel.Identification
 			                          {typeof(Guid), "guid"},
 			                          {typeof(TimeSpan), "TimeSpan"},
 			                          {typeof(DictionaryEntry), "Item"}
-		                          }) {}
+		                          }.ToDictionary(x => x.Key.GetTypeInfo(), x => x.Value)) {}
 	}
 }
