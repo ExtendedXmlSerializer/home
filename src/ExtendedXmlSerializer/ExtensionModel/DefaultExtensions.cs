@@ -26,7 +26,9 @@ using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.References;
+using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections.Generic;
@@ -53,7 +55,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		{
 			var all = new KeyedByTypeCollection<ISerializerExtension>();
 			yield return new ExtensionGroup(Categories.Start, all,
-			                                new ConfigurationServicesExtension()
+			                                new ConfigurationServicesExtension(),
+			                                ExtensionServicesExtension.Default
 			                               );
 
 			yield return new ExtensionGroup(Categories.ReflectionModel, all,
@@ -89,9 +92,10 @@ namespace ExtendedXmlSerializer.ExtensionModel
 											CollectionContentsExtension.Default,
 											ArrayContentsExtension.Default,
 											DictionaryContentsExtension.Default,*/
-			                                new ConvertibleContentsExtension()/*,
+			                                RegisteredContentsExtension.Default
+			                                /*new ConvertibleContentsExtension(),
 			                                NullableStructureContentsExtension.Default,
-			                                new RegisteredSerializerContentsExtension(),
+			                                ,
 			                                MetadataContentsExtension.Default,
 			                                ImmutableArrayContentsExtension.Default*/
 			                               );

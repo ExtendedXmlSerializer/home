@@ -33,9 +33,9 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		protected GenericAdapterBase(Type definition, IParameterizedSource<TypeInfo, T> source)
 			: base(
 			       new SelectCoercer<TypeInfo, Type>(TypeCoercer.Default.ToDelegate())
-				       .To(new GenericTypeAlteration(definition))
-				       .To(TypeMetadataCoercer.Default)
-				       .To(source)
+				       .Out(new GenericTypeAlteration(definition))
+				       .Out(TypeMetadataCoercer.Default)
+				       .Out(source)
 			      ) {}
 	}
 }

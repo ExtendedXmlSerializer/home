@@ -22,22 +22,25 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class MemberConfiguration<T, TMember> : TypeConfiguration<T>, IMemberConfiguration
+	public class MemberConfiguration<T, TMember> : MetadataConfiguration<IMember, MemberInfo>, IType<T>
 	{
-		readonly MemberInfo _member;
+		readonly IType _type;
 
-		public MemberConfiguration(TypeConfiguration<T> element, Expression<Func<T, TMember>> member)
-			: this(element, member.GetMemberInfo()) {}
+		public MemberConfiguration(ITypeConfiguration type, Expression<Func<T, TMember>> member)
+			: this(type.Types, type.Extensions, type.Get().Get(member.GetMemberInfo())) {}
 
-		public MemberConfiguration(IConfigurationElement element, MemberInfo member) : base(element)
-			=> _member = member;
+		public MemberConfiguration(ITypes types, IExtensions extensions, IMember member)
+			: this(types, extensions, member, TypeDefinitions.Default.Get(member.Type)) {}
 
-		public new MemberInfo Get() => _member;
+		public MemberConfiguration(ITypes types, IExtensions extensions, IMember member, IType type) : base(types, extensions, member) => _type = type;
+
+		IType ISource<IType>.Get() => _type;
 	}
 }

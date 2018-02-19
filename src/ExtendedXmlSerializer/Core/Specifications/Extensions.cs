@@ -39,13 +39,13 @@ namespace ExtendedXmlSerializer.Core.Specifications
 		public static ISpecification<TParameter> IfAssigned<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> new DelegatedAssignedSpecification<TParameter, TResult>(@this);
 
-		public static Func<T, bool> ToDelegate<T>(this ISpecification<T> @this) => @this.IsSatisfiedBy;
+		public static Func<T, bool> ToSpecificationDelegate<T>(this ISpecification<T> @this) => @this.IsSatisfiedBy;
 
-		public static Func<bool> Build<T>(this ISpecification<TypeInfo> @this) => @this.ToDelegate().Build(Support<T>.Key);
+		public static Func<bool> Build<T>(this ISpecification<TypeInfo> @this) => @this.ToSpecificationDelegate().Build(Support<T>.Key);
 
-		public static Func<bool> Build<T>(this ISpecification<T> @this, T parameter) => @this.ToDelegate().Build(parameter);
+		public static Func<bool> Build<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Build(parameter);
 
-		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToDelegate().Fix(parameter).ToDelegate();
+		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Fix(parameter).ToDelegate();
 
 		public static ISpecification<T> Any<T>(this ISpecification<T> @this, params T[] parameters)
 			=> new AnySpecification<T>();
@@ -73,8 +73,10 @@ namespace ExtendedXmlSerializer.Core.Specifications
 		public static ISpecification<TTo> To<TFrom, TTo>(this ISpecification<TFrom> @this, IParameterizedSource<TTo, TFrom> coercer)
 			=> @this.To(coercer.ToDelegate());
 
-		public static ISpecification<TTo> To<TFrom, TTo>(
-			this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
-			=> new DelegatedSpecification<TTo>(new CoercedParameter<TTo, TFrom, bool>(@this.IsSatisfiedBy, coercer).Get);
+		public static ISpecification<TTo> To<TFrom, TTo>(this ISpecification<TFrom> @this, Func<TTo, TFrom> coercer)
+			=> @this.ToSpecificationDelegate().To(coercer);
+
+		public static ISpecification<TTo> To<TFrom, TTo>(this Func<TFrom, bool> @this, Func<TTo, TFrom> coercer)
+			=> new DelegatedSpecification<TTo>(new CoercedParameter<TTo, TFrom, bool>(@this, coercer).Get);
 	}
 }

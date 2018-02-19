@@ -21,16 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel;
-using System.Collections.Generic;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Sources;
+using System.Runtime.CompilerServices;
 
-namespace ExtendedXmlSerializer.Configuration
+namespace ExtendedXmlSerializer.ExtensionModel
 {
-	public interface IExtensions : IEnumerable<ISerializerExtension>
-	{
-		ICommand<ISerializerExtension> Add { get; }
+	/*public interface IProperties<T> : IParameterizedSource<IMetadataElement, IProperty<T>> {}*/
 
-		ICommand<ISerializerExtension> Remove { get; }
+	public interface IProperty<T> : ITableSource<IConfigurationElement, T> {}
+
+	public class Property<T> : ReferenceCache<IConfigurationElement, T>, IProperty<T> where T : class
+	{
+		public Property() : this(_ => default(T)) {}
+
+		public Property(ConditionalWeakTable<IConfigurationElement, T>.CreateValueCallback callback) : base(callback) {}
+	}
+
+	public class StructureProperty<T> : StructureCache<IConfigurationElement, T>, IProperty<T> where T : struct
+	{
+		public StructureProperty() : base(_ => default(T)) {}
 	}
 }

@@ -32,14 +32,16 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static TypeInfo Key { get; } = typeof(T).GetTypeInfo();
 
+		public static Type Definition { get; } = typeof(T).GetGenericTypeDefinition();
+
 		public static Func<T> New { get; } = DefaultActivators.Default.New<T>;
 
 		public static Func<T> NewOrSingleton { get; } = Activators.Default.New<T>;
 
-		public static T[] Empty { get; } = new T[]{};
+		public static T[] Empty { get; } = {};
 	}
 
-	static class StaticTypeChecingExtensions
+	static class StaticTypeCheckingExtensions
 	{
 		public static IWrap<T1, T2> With<T1, T2>(this T1 @this, A<T2> _) => new Wrap<T1, T2>(@this);
 	}

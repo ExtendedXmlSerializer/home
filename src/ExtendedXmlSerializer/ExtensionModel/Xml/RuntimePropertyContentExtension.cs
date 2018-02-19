@@ -6,18 +6,16 @@ using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Runtime;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
-using System.Collections.Generic;
 using System.Reflection;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class RuntimePropertyContentExtension : ISerializerExtension,
+	sealed class RuntimePropertyContentExtension : ISerializerExtension/*,
 	                                               IAssignable<MemberInfo, IService<ISpecification<object>>>,
-	                                               ICommand<MemberInfo>
+	                                               ICommand<MemberInfo>*/
 	{
-		readonly IMetadataTable<ISpecification<object>> _specifications;
+		/*readonly IMetadataTable<ISpecification<object>> _specifications;
 
 		[UsedImplicitly]
 		public RuntimePropertyContentExtension() : this(new RuntimePropertySpecifications()) { }
@@ -32,27 +30,42 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public void Execute(MemberInfo parameter)
 		{
 			_specifications.Remove(parameter);
-		}
+		}*/
+
+		public static RuntimePropertyContentExtension Default { get; } = new RuntimePropertyContentExtension();
+		RuntimePropertyContentExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> _specifications.Get(parameter)
-			                  .RegisterDefinition<IRuntimePropertySpecifications<object>, RuntimePropertySpecifications<object>>();
+			=> /*_specifications.Get(parameter)*/parameter.RegisterDefinition<IRuntimePropertySpecifications<object>, RuntimePropertySpecifications<object>>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 
+	sealed class RegisteredRuntimePropertySpecifications<T> : ServiceProperty<ISpecification<Writing<T>>>
+	{
+		public static RegisteredRuntimePropertySpecifications<T> Default { get; } = new RegisteredRuntimePropertySpecifications<T>();
+		RegisteredRuntimePropertySpecifications() {}
+	}
 
+	/*interface IRuntimePropertySpecifications : IMetadata<ISpecification<object>> { }
 
-	interface IRuntimePropertySpecifications : IMetadata<ISpecification<object>> { }
-
-	sealed class RuntimePropertySpecifications : MetadataTable<ISpecification<object>, IRuntimePropertySpecifications>, IRuntimePropertySpecifications { }
+	sealed class RuntimePropertySpecifications : MetadataTable<ISpecification<object>, IRuntimePropertySpecifications>, IRuntimePropertySpecifications { }*/
 
 	interface IRuntimePropertySpecifications<T> : ISpecificationSource<MemberInfo, ISpecification<Writing<T>>> { }
 
-	sealed class RuntimePropertySpecifications<T> : ServiceContainer<MemberInfo, ISpecification<Writing<T>>>, IRuntimePropertySpecifications<T>
+	sealed class RuntimePropertySpecifications<T> : SpecificationSource<MemberInfo, ISpecification<Writing<T>>>, IRuntimePropertySpecifications<T>
 	{
-		public RuntimePropertySpecifications(IServiceProvider provider, IRuntimePropertySpecifications table)
-			: base(provider, table.To(A<IService<ISpecification<Writing<T>>>>.Default)) { }
+		/*public RuntimePropertySpecifications(IServiceCoercer<ISpecification<Writing<T>>> coercer,
+		                                     IMetadataRegistry metadata,
+		                                     RegisteredRuntimePropertySpecifications<T> table)
+			: this(coercer, metadata.Get, table) {}
+
+		public RuntimePropertySpecifications(IServiceCoercer<ISpecification<Writing<T>>> coercer,
+		                                     Func<MemberInfo, IConfigurationElement> metadata,
+		                                     RegisteredRuntimePropertySpecifications<T> table)
+			: base(table.To(metadata), table.In(metadata).Out(coercer)) { }*/
+		// TODO:
+		public RuntimePropertySpecifications(ISpecification<MemberInfo> specification, IParameterizedSource<MemberInfo, ISpecification<Writing<T>>> source) : base(specification, source) {}
 	}
 
 

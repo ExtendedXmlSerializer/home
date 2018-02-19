@@ -83,16 +83,16 @@ namespace ExtendedXmlSerializer.Core.Collections
 			: base(name.And(names.To(name)), names.In(name)) {}
 	}
 
-	class AddItemCommand<T> : DelegatedCommand<T>
+	class AddCommand<T> : DelegatedCommand<T>
 	{
-		public AddItemCommand(ICollection<T> collection) : base(collection.Add) {}
+		public AddCommand(ICollection<T> collection) : base(collection.Add) {}
 	}
 
-	class RemoveItemCommand<T> : ICommand<T>
+	class RemoveCommand<T> : ICommand<T>
 	{
 		readonly ICollection<T> _collection;
 
-		public RemoveItemCommand(ICollection<T> collection) => _collection = collection;
+		public RemoveCommand(ICollection<T> collection) => _collection = collection;
 
 		public void Execute(T parameter)
 		{
@@ -120,7 +120,7 @@ namespace ExtendedXmlSerializer.Core.Collections
 	sealed class AddItemCommands<T> : DelegatedSource<IList<T>, ICommand<T>>
 	{
 		public static AddItemCommands<T> Default { get; } = new AddItemCommands<T>();
-		AddItemCommands() : base(key => new AddItemCommand<T>(key)) {}
+		AddItemCommands() : base(key => new AddCommand<T>(key)) {}
 	}
 
 	sealed class ItemCommands<T> : ReferenceCache<IList<T>, ICommand<T>>

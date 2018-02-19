@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public ConfigurationContainer(IServiceActivator<T> activator, IExtensionCollection extensions)
 			: this(new Activators<T>(activator).Get(extensions)) {}
 
-		public ConfigurationContainer(IActivator<T> activator) : base(activator) => _activator = activator;
+		public ConfigurationContainer(IActivator<T> activator) : base(activator.Types, activator.Extensions) => _activator = activator;
 
 		public T Get() => _activator.Get();
 	}

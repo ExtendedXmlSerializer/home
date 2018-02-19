@@ -44,7 +44,8 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		public IConfigurationElement Get(IConfigurationElement parameter)
-			=> parameter.Add.Executed(_alteration.Get(_extend.Get(parameter)))
+			=> parameter.Extensions.Add
+			            .Executed(_alteration.Get(_extend.Get(parameter.Extensions)))
 			            .Return(parameter);
 	}
 }

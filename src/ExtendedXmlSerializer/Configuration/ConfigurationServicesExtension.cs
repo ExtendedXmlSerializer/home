@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.Configuration
 		}
 
 		IServiceRepository IParameterizedSource<IServiceRepository, IServiceRepository>.Get(IServiceRepository parameter) =>
-			parameter;
+			parameter/*.RegisterInstance(_provider.GetValid<IMetadataRegistry>())*/;
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 

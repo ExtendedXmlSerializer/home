@@ -63,13 +63,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static MemberConfiguration<T, string> Verbatim<T>(this MemberConfiguration<T, string> @this) =>
 			@this.Register(new ContentSerializerAdapter<string>(VerbatimContentSerializer.Default));
 
-		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, Func<T, T> write) =>
+		public static IType<T> Alter<T>(this IType<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
 
-		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, Func<T, T> read, Func<T, T> write)
+		public static IType<T> Alter<T>(this IType<T> @this, Func<T, T> read, Func<T, T> write)
 			=> @this.Alter(new DelegatedAlteration<T>(read), new DelegatedAlteration<T>(write));
 
-		public static TypeConfiguration<T> Alter<T>(this TypeConfiguration<T> @this, IAlteration<T> read,
+		public static IType<T> Alter<T>(this IType<T> @this, IAlteration<T> read,
 		                                             IAlteration<T> write)
 			=> @this.Extend<AlteredContentExtension>()
 			        .Types.Assigned(Support<T>.Key,
@@ -94,24 +94,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			                          new ContentAlteration(read.Adapt(), write.Adapt()))
 			        .Return(@this);
 
-		public static TypeConfiguration<T> CustomSerializer<T, TSerializer>(this IConfigurationElement @this)
+		public static IType<T> CustomSerializer<T, TSerializer>(this IConfigurationElement @this)
 			where TSerializer : IExtendedXmlCustomSerializer<T>
 			=> @this.CustomSerializer<T>(typeof(TSerializer));
 
-		public static TypeConfiguration<T> CustomSerializer<T>(this IConfigurationElement @this, Type serializerType)
+		public static IType<T> CustomSerializer<T>(this IConfigurationElement @this, Type serializerType)
 			=> @this.Type<T>()
-			        .Register(new ActivatedXmlSerializer(serializerType, Support<T>.Key));
+			        .Register(new ActivatedXmlSerializer<T>(serializerType, Support<T>.Key));
 
-		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
+		public static IType<T> CustomSerializer<T>(this IType<T> @this,
 		                                                        Action<System.Xml.XmlWriter, T> serializer,
 		                                                        Func<XElement, T> deserialize)
 			=> @this.CustomSerializer(new ExtendedXmlCustomSerializer<T>(deserialize, serializer));
 
-		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
+		public static IType<T> CustomSerializer<T>(this IType<T> @this,
 		                                                        IExtendedXmlCustomSerializer<T> serializer)
 			=> @this.Register(new GenericCustomXmlSerializer<T>(serializer));
 
-		public static TypeConfiguration<T> CustomSerializer<T>(this TypeConfiguration<T> @this,
+		public static IType<T> CustomSerializer<T>(this IType<T> @this,
 		                                                        IExtendedXmlCustomSerializer serializer)
 			=> @this.Register(new CustomXmlSerializer<T>(serializer));
 
@@ -120,18 +120,18 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			        .Registered.Removing(@this.Member())
 			        .Return(@this);
 
-		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
+		public static IType<T> AddMigration<T>(this IType<T> @this,
 		                                                    ICommand<XElement> migration)
 			=> @this.AddMigration(migration.Execute);
 
-		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
+		public static IType<T> AddMigration<T>(this IType<T> @this,
 		                                                    Action<XElement> migration)
 			=> @this.AddMigration(migration.Yield());
 
-		public static TypeConfiguration<T> AddMigration<T>(this TypeConfiguration<T> @this,
+		public static IType<T> AddMigration<T>(this IType<T> @this,
 		                                                    IEnumerable<Action<XElement>> migrations)
 		{
-			@this.Extend<MigrationsExtension>().Add(@this.Type(), migrations.Fixed());
+			@this.Extend<MigrationsExtension>().Add(@this.Get().Get(), migrations.Fixed());
 			return @this;
 		}
 
@@ -146,12 +146,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Extended<AutoMemberFormatExtension>();
 
 		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this, int maxTextLength)
-			=> @this.Add.Executed(new AutoMemberFormatExtension(maxTextLength))
+			=> @this.Extensions.Add
+			        .Executed(new AutoMemberFormatExtension(maxTextLength))
 			        .Return(@this);
 
 		public static IConfigurationElement EnableClassicMode(this IConfigurationElement @this)
 			=> @this.Emit(EmitBehaviors.Classic)
-			        .Add.Executed(ClassicExtension.Default)
+			        .Extensions.Add
+			        .Executed(ClassicExtension.Default)
 			        .Return(@this);
 
 		public static IConfigurationElement UseOptimizedNamespaces(this IConfigurationElement @this)
@@ -252,7 +254,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public static IConfigurationElement EnableImplicitTyping(this IConfigurationElement @this,
 		                                                           IEnumerable<Type> types)
-			=> @this.Add.Executed(new ImplicitTypingExtension(types.ToMetadata()))
+			=> @this.Extensions.Add
+			        .Executed(new ImplicitTypingExtension(types.ToMetadata()))
 			        .Return(@this);
 	}
 }

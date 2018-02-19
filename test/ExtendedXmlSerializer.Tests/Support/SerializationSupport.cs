@@ -43,7 +43,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 		public SerializersSupport() : this(new ConfigurationRoot()) { }
 
 		public SerializersSupport(IConfigurationRoot configuration)
-			: this(ServiceActivator<ISerializers>.Default.Get(configuration.ToImmutableArray())) { }
+			: this(ServiceActivator<ISerializers>.Default.Get(configuration.Extensions.ToImmutableArray())) { }
 
 		public SerializersSupport(ISerializers serializer) => _serializer = serializer;
 

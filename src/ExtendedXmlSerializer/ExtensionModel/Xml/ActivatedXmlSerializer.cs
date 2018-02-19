@@ -27,7 +27,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class ActivatedXmlSerializer : ActivatedAdapter<IContentSerializer<object>, CustomXmlSerializerAdapter<object>>
+	sealed class ActivatedXmlSerializer<T> : ActivatedAdapter<IContentSerializer<T>, CustomXmlSerializerAdapter<object>>
 	{
 		public ActivatedXmlSerializer(Type implementationType, TypeInfo argumentType) : base(implementationType, argumentType) {}
 	}

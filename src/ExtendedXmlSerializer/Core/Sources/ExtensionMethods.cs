@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 			=> @this.ToSource(A<T>.Default);
 	}
 
-	public static class Extensions
+	public static class ExtensionMethods
 	{
 		public static ISpecificationSource<TParameter, TResult>
 			Cache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
@@ -135,17 +135,17 @@ namespace ExtendedXmlSerializer.Core.Sources
 			this Func<TTo, TResult> @this, Func<TFrom, TTo> coercer)
 			=> new CoercedParameter<TFrom, TTo, TResult>(@this, coercer);
 
-		public static ISpecificationSource<TParameter, TTo> To<TParameter, TResult, TTo>(
+		/*public static ISpecificationSource<TParameter, TTo> To<TParameter, TResult, TTo>(
 			this ISpecificationSource<TParameter, TResult> @this, A<TTo> _) => @this.To(CastCoercer<TResult, TTo>.Default);
 
 		public static ISpecificationSource<TParameter, TTo> To<TParameter, TResult, TTo>(
 			this ISpecificationSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
-			=> new SpecificationSource<TParameter, TTo>(@this, To((IParameterizedSource<TParameter, TResult>)@this, coercer));
+			=> new SpecificationSource<TParameter, TTo>(@this, To((IParameterizedSource<TParameter, TResult>)@this, coercer));*/
 
-		public static IParameterizedSource<TParameter, TTo> To<TParameter, TResult, TTo>(
-			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.To(CastCoercer<TResult, TTo>.Default);
+		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
+			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.Out(CastCoercer<TResult, TTo>.Default);
 
-		public static IParameterizedSource<TParameter, TTo> To<TParameter, TResult, TTo>(
+		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
 			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer);
 
@@ -239,7 +239,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static ISource<TResult> Fix<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                        TParameter parameter)
-			=> new FixedSource<TParameter, TResult>(@this, parameter);
+			=> new FixedParameterSource<TParameter, TResult>(@this, parameter);
 
 		public static ISource<T> Singleton<T>(this ISource<T> @this) => new SingletonSource<T>(@this.Get);
 

@@ -45,6 +45,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public TableValueSource(IDictionary<TParameter, TResult> store)
 			: this(new TableSource<TParameter, TResult>(store), new Values<TParameter, TResult>(store)) { }
 
+		public TableValueSource(Func<TParameter, TResult> select)
+			: this(@select, new ConcurrentDictionary<TParameter, TResult>()) {}
+
 		public TableValueSource(Func<TParameter, TResult> select, ConcurrentDictionary<TParameter, TResult> store)
 			: this(new Cache<TParameter, TResult>(select, store), new Values<TParameter, TResult>(store)) {}
 

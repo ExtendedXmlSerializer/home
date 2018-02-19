@@ -96,14 +96,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				readonly IFormatReaders<System.Xml.XmlReader> _factory;
 				readonly IClassification _classification;
 				readonly ImmutableArray<Action<XElement>> _migrations;
-				readonly IProperty<uint> _property;
+				readonly ContentModel.Properties.IProperty<uint> _property;
 
 				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
 				                ImmutableArray<Action<XElement>> migrations)
 					: this(factory, classification, Identity, migrations) {}
 
-				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
-				                IProperty<uint> property,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification, ContentModel.Properties.IProperty<uint> property,
 				                ImmutableArray<Action<XElement>> migrations)
 				{
 					_factory = factory;

@@ -21,35 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class GenericTypeConfigurations : IParameterizedSource<TypeInfo, ITypeConfiguration>
+	sealed class GenericMembers : IParameterizedSource<MemberInfo, IMemberConfiguration>
 	{
-		readonly ITypes _types;
-		readonly IExtensions _extensions;
-		readonly IGeneric<ITypes, IExtensions, ITypeConfiguration> _generic;
+		readonly IConfigurationElement                                             _element;
+		readonly IGeneric<IConfigurationElement, MemberInfo, IMemberConfiguration> _generic;
+		readonly Func<MemberInfo, MemberDescriptor>                                _descriptor;
+		readonly TypeInfo                                                          _type;
 
-		public GenericTypeConfigurations(ITypes types, IExtensions extensions) : this(types, extensions, Generic.Default) {}
+		public GenericMembers(IConfigurationElement element, TypeInfo type)
+			: this(element, Generic.Default, MemberDescriptors.Default.Get, type) {}
 
-		public GenericTypeConfigurations(ITypes types, IExtensions extensions,
-		                                 IGeneric<ITypes, IExtensions, ITypeConfiguration> generic)
+		public GenericMembers(IConfigurationElement element,
+		                      IGeneric<IConfigurationElement, MemberInfo, IMemberConfiguration> generic,
+		                      Func<MemberInfo, MemberDescriptor> descriptor, TypeInfo type)
 		{
-			_types = types;
-			_extensions = extensions;
+			_element    = element;
 			_generic    = generic;
+			_descriptor = descriptor;
+			_type       = type;
 		}
 
-		public ITypeConfiguration Get(TypeInfo parameter) => _generic.Get(parameter)
-		                                                             .Invoke(_types, _extensions);
+		public IMemberConfiguration Get(MemberInfo parameter) => _generic.Get(_type, _descriptor(parameter).MemberType)
+		                                                                 .Invoke(_element, parameter);
 
-		sealed class Generic : Generic<ITypes, IExtensions, ITypeConfiguration>
+		sealed class Generic : Generic<IConfigurationElement, MemberInfo, IMemberConfiguration>
 		{
 			public static Generic Default { get; } = new Generic();
-			Generic() : base(typeof(TypeConfiguration<>)) {}
+			Generic() : base(typeof(MemberConfiguration<,>)) {}
 		}
 	}
 }

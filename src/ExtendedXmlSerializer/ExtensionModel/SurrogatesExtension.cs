@@ -52,7 +52,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	{
 		public static IConfigurationElement Register(this IConfigurationElement @this,
 													   ISerializationSurrogateProvider provider)
-			=> @this.Add.Executed(new SurrogatesExtension(provider))
+			=> @this.Extensions.Add
+			        .Executed(new SurrogatesExtension(provider))
 			        .Return(@this);
 	}
 

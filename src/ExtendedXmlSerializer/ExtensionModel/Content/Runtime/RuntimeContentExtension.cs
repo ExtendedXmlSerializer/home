@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 			                new EmitRuntimePipelineComposer<TMember>(specification))
 			        .Return(@this);
 
-		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IMemberConfiguration member,
+		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IConfigurationElement member,
 		                                                GroupName name, IRuntimePipelineComposer<T> selection)
 			=> @this.Assign(member.Member(), new Registration(name, selection.Generalized())).Return(@this);
 
@@ -119,7 +119,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 
 	interface IMemberRuntimeRegistry : IMemberTable<IRuntimeRegistryStore>, IRegistration {}
 
-	sealed class MemberRuntimeRegistry : ReflectionModel.MetadataTable<IRuntimeRegistryStore>, IMemberRuntimeRegistry
+	sealed class MemberRuntimeRegistry : MetadataTable<IRuntimeRegistryStore>, IMemberRuntimeRegistry
 	{
 		readonly IRegistration _registration;
 
@@ -196,8 +196,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 		readonly Func<IService<IRuntimePipelineComposer<T>>, IRuntimePipelineComposer<T>> _services;
 		readonly IMemberRuntimeRegistry<T> _members;
 
-		public RuntimeRegistry(System.IServiceProvider services, IMemberRuntimeRegistry<T> members)
-			: this(new Services.ServiceActivator<IRuntimePipelineComposer<T>>(services).Get, members) {}
+		public RuntimeRegistry(IServiceCoercer<IRuntimePipelineComposer<T>> coercer, IMemberRuntimeRegistry<T> members)
+			: this(coercer.Get, members) {}
 
 		public RuntimeRegistry(Func<IService<IRuntimePipelineComposer<T>>, IRuntimePipelineComposer<T>> services, IMemberRuntimeRegistry<T> members)
 		{

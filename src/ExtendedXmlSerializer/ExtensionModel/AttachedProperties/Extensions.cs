@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -44,7 +43,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 		public static IConfigurationElement EnableAttachedProperties(this IConfigurationElement @this,
 		                                                               ICollection<IProperty> properties,
 		                                                               ICollection<Type> types)
-			=> @this.Add.Executed(new AttachedPropertiesExtension(new Registrations<IProperty>(properties, types)))
+			=> @this.Extensions.Add
+			        .Executed(new AttachedPropertiesExtension(new Services.Registrations<IProperty>(properties, types)))
 			        .Return(@this);
 
 		public static TValue Get<TType, TValue>(this TType @this, Property<TType, TValue> property) => property.Get(@this);

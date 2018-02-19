@@ -22,16 +22,14 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Services
 {
 	interface IRegisteredService<out T> : IRegistration, IService<T> {}
 
-	interface IServiceTable<TKey, TValue> : ITableSource<TKey, IService<TValue>>, IRegistration {}
+	/*interface IServiceTable<TKey, TValue> : ITableSource<TKey, IService<TValue>>, IRegistration {}
 
 	interface IMetadata<out T> : ISpecificationSource<MemberInfo, IService<T>> {}
 
@@ -83,7 +81,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 			: base(table) => _registration = registration;
 
 		public IServiceRepository Get(IServiceRepository parameter) => _registration.Get(parameter);
-	}
+	}*/
 
 	sealed class ItemRegistration<T> : IRegistration
 	{

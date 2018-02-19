@@ -35,22 +35,23 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly IParameterizedSource<IEnumerable<ISerializerExtension>, T> _activator;
 
-		public Activators(IServiceActivator<T> activator) : this(activator.In(ImmutableArrayCoercer<ISerializerExtension>.Default)) {}
+		public Activators(IServiceActivator<T> activator) : this(activator.In(ImmutableArrayCoercer<ISerializerExtension>
+			                                                                      .Default)) {}
 
 		public Activators(IParameterizedSource<IEnumerable<ISerializerExtension>, T> activator) => _activator = activator;
 
 		public IActivator<T> Get(IExtensionCollection parameter)
 		{
-			var extensions = new Extensions(parameter);
-			var extend     = new Extend(extensions);
-			var element     = new ConfigurationElement(extensions, extend);
+			var elements   = new ExtensionElements(parameter);
+			var extend     = new Extend(elements);
+			var extensions = new Extensions(elements, extend);
 
 			var factory = _activator.Build(parameter);
 
-			element.Service(new MetadataConfigurations(element));
-			element.Service(factory);
+			var types = new Types();
+			var result = new Activator<T>(factory, types, extensions);
+			result.Services(new ConfiguredTypes(types, extensions), factory);
 
-			var result = new Activator<T>(factory, element);
 			return result;
 		}
 	}
@@ -59,7 +60,7 @@ namespace ExtendedXmlSerializer.Configuration
 	{
 		readonly Func<T> _source;
 
-		public Activator(Func<T> source, IConfigurationElement element) : base(element) => _source = source;
+		public Activator(Func<T> source, ITypes types, IExtensions extensions) : base(types, extensions) => _source = source;
 
 		public T Get() => _source();
 	}

@@ -21,17 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
 	public interface ITableSource<TKey, TValue> : ISpecificationSource<TKey, TValue>,
-	                                                 IAssignable<TKey, TValue>
+	                                              IAssignable<TKey, TValue>
 	{
 		bool Remove(TKey key);
 	}
-
 
 	class DecoratedTable<TKey, TValue> : ITableSource<TKey, TValue>
 	{
@@ -45,6 +43,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public TValue Get(TKey parameter) => _table.Get(parameter);
 
 		public bool Remove(TKey key) => _table.Remove(key);
+
 		public void Execute(KeyValuePair<TKey, TValue> parameter)
 		{
 			_table.Execute(parameter);

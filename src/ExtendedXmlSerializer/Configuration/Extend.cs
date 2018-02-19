@@ -30,14 +30,14 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class Extend : IExtend
 	{
-		readonly static Generic<IParameterizedSource<IExtensions, ISerializerExtension>> Generic
-			= new Generic<IParameterizedSource<IExtensions, ISerializerExtension>>(typeof(Extend<>));
+		readonly static Generic<IParameterizedSource<IExtensionElements, ISerializerExtension>> Generic
+			= new Generic<IParameterizedSource<IExtensionElements, ISerializerExtension>>(typeof(Extend<>));
 
-		readonly IExtensions _extensions;
-		readonly IGeneric<IParameterizedSource<IExtensions, ISerializerExtension>> _generic;
-		public Extend(IExtensions extensions) : this(extensions, Generic) {}
+		readonly IExtensionElements _extensions;
+		readonly IGeneric<IParameterizedSource<IExtensionElements, ISerializerExtension>> _generic;
+		public Extend(IExtensionElements extensions) : this(extensions, Generic) {}
 
-		public Extend(IExtensions extensions, IGeneric<IParameterizedSource<IExtensions, ISerializerExtension>> generic)
+		public Extend(IExtensionElements extensions, IGeneric<IParameterizedSource<IExtensionElements, ISerializerExtension>> generic)
 		{
 			_extensions = extensions;
 			_generic = generic;

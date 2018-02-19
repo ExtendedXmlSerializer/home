@@ -30,7 +30,7 @@ using ExtensionCollection = ExtendedXmlSerializer.Configuration.ExtensionCollect
 
 namespace ExtendedXmlSerializer.Tests.Support
 {
-	sealed class ServicesSupport<T> : FixedSource<ImmutableArray<ISerializerExtension>, T>
+	sealed class ServicesSupport<T> : FixedParameterSource<ImmutableArray<ISerializerExtension>, T>
 	{
 		public static ServicesSupport<T> Default { get; } = new ServicesSupport<T>();
 		ServicesSupport() : this(ServiceActivator<T>.Default, new ExtensionCollection().ToImmutableArray()) {}

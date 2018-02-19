@@ -26,11 +26,9 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Services;
-using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
@@ -47,17 +45,29 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 			: base(serializers, contents) { }
 	}
 
-
-	interface IRegisteredSerializers : IMetadata<IContentSerializer<object>> {}
-
-	sealed class RegisteredSerializers : MetadataTable<IContentSerializer<object>, IRegisteredSerializers>, IRegisteredSerializers { }
+	sealed class RegisteredContentSerializers<T> : ServiceProperty<IContentSerializer<T>>
+	{
+		public static RegisteredContentSerializers<T> Default { get; } = new RegisteredContentSerializers<T>();
+		RegisteredContentSerializers() {}
+	}
 
 	public interface IRegisteredSerializers<T> : ISpecificationSource<MemberInfo, IContentSerializer<T>> { }
 
-	sealed class RegisteredSerializers<T> : ServiceContainer<MemberInfo, IContentSerializer<T>>, IRegisteredSerializers<T>
+	sealed class RegisteredSerializers<T> : SpecificationSource<MemberInfo, IContentSerializer<T>>,
+	                                        IRegisteredSerializers<T>
 	{
-		public RegisteredSerializers(System.IServiceProvider provider, IRegisteredSerializers table)
-			: base(provider, table.To(A<IService<IContentSerializer<T>>>.Default)) { }
+		/*[UsedImplicitly]
+		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,
+		                             RegisteredContentSerializers<T> table)
+			: this(coercer, metadata.Get, table) {}
+
+		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,
+		                             Func<MemberInfo, IConfigurationElement> metadata,
+		                             RegisteredContentSerializers<T> table)
+			: base(table.To(metadata), table.In(metadata).Out(coercer)) {}*/
+		public RegisteredSerializers(ISpecification<MemberInfo> specification,
+		                             IParameterizedSource<MemberInfo, IContentSerializer<T>> source)
+			: base(specification, source) {}
 	}
 
 	sealed class ActivatedContentSerializer<T, TSerializer> : GenerializedContentSerializer<T>
@@ -66,31 +76,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 		public ActivatedContentSerializer(TSerializer serializer) : base(serializer) {}
 	}
 
-	sealed class RegisteredSerializerContentsExtension : ISerializerExtension, IAssignable<MemberInfo, IService<IContentSerializer<object>>>, ICommand<MemberInfo>
+	sealed class RegisteredContentsExtension : ISerializerExtension
 	{
-		readonly IMetadataTable<IContentSerializer<object>> _serializers;
-
-		[UsedImplicitly]
-		public RegisteredSerializerContentsExtension() : this(new RegisteredSerializers()) { }
-
-		public RegisteredSerializerContentsExtension(IMetadataTable<IContentSerializer<object>> serializers) => _serializers = serializers;
+		public static RegisteredContentsExtension Default { get; } = new RegisteredContentsExtension();
+		RegisteredContentsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> _serializers.Get(parameter)
-			               .RegisterDefinition<IRegisteredSerializers<object>, RegisteredSerializers<object>>()
-			               .DecorateDefinition<IContents<object>, RegisteredContents<object>>()
-			               .DecorateDefinition<IMemberContents<object>, RegisteredMemberContents<object>>();
+			=> parameter.RegisterDefinition<IRegisteredSerializers<object>, RegisteredSerializers<object>>()
+			            .DecorateDefinition<IContents<object>, RegisteredContents<object>>()
+			            .DecorateDefinition<IMemberContents<object>, RegisteredMemberContents<object>>();
 
-		void ICommand<IServices>.Execute(IServices parameter) { }
-
-		public void Execute(MemberInfo parameter)
-		{
-			_serializers.Remove(parameter);
-		}
-
-		public void Execute(KeyValuePair<MemberInfo, IService<IContentSerializer<object>>> parameter)
-		{
-			_serializers.Execute(parameter);
-		}
+		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 }

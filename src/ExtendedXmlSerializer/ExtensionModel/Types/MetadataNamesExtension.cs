@@ -36,7 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	public interface IMetadataNames : IMemberTable<string> {}
 
-	class MetadataNames : ReflectionModel.MetadataTable<string>, IMetadataNames
+	class MetadataNames : MetadataTable<string>, IMetadataNames
 	{
 		public MetadataNames(IDictionary<TypeInfo, string> types)
 			: this(types, new Dictionary<MemberInfo, string>()) {}
@@ -64,6 +64,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default);
 
 		void ICommand<IServices>.Execute(IServices parameter) { }
+	}
+
+	public sealed class RegisteredMetadataNames : Property<string>
+	{
+		public static RegisteredMetadataNames Default { get; } = new RegisteredMetadataNames();
+		RegisteredMetadataNames() {}
 	}
 
 	public sealed class MetadataNamesExtension : ISerializerExtension, IAssignable<MemberInfo, string>, IParameterizedSource<MemberInfo, string>

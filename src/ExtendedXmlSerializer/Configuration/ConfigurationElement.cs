@@ -21,39 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
 	public class ConfigurationElement : IConfigurationElement
 	{
-		readonly IExtensions _extensions;
-		readonly IExtend _extend;
-
-		public ConfigurationElement(IConfigurationElement element) : this(element, element) {}
-
-		public ConfigurationElement(IExtensions extensions, IExtend extend)
+		public ConfigurationElement(ITypes types, IExtensions extensions)
 		{
-			_extensions = extensions;
-			_extend = extend;
+			Types = types;
+			Extensions = extensions;
 		}
 
-		public ICommand<ISerializerExtension> Add => _extensions.Add;
-
-		public ICommand<ISerializerExtension> Remove => _extensions.Remove;
-
-		public void Execute(ISerializerExtension parameter)
-		{
-			_extensions.Add.Execute(parameter);
-		}
-
-		public IEnumerator<ISerializerExtension> GetEnumerator() => _extensions.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public ISerializerExtension Get(TypeInfo parameter) => _extend.Get(parameter);
+		public ITypes Types { get; }
+		public IExtensions Extensions { get; }
 	}
 }

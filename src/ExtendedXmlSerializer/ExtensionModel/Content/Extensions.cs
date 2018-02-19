@@ -67,10 +67,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IConfigurationElement Emit(this IConfigurationElement @this, IEmitBehavior behavior) =>
 			behavior.Get(@this);
 
-		public static TypeConfiguration<T> EmitWhen<T>(this TypeConfiguration<T> @this,
+		public static IType<T> EmitWhen<T>(this IType<T> @this,
 		                                                  Func<T, bool> specification)
 			=> @this.Extend<AllowedInstancesExtension>()
-			        .Assigned(@this.Get(),
+			        .Assigned(@this.Get().Get(),
 			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
 			        .Return(@this);
 
@@ -88,22 +88,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
 
-		public static T Include<T>(this T @this) where T : IMemberConfiguration
+		public static T Include<T>(this T @this) where T : class, IConfigurationElement
 			=> @this.Extend<MemberPolicyExtension>()
 			        .Whitelist.Adding(@this.Member())
 			        .Return(@this);
 
-		public static IConfigurationElement OnlyConfiguredProperties(this IConfigurationElement @this)
+		public static T OnlyConfiguredProperties<T>(this T @this) where T : class, IConfigurationElement
 		{
-			foreach (var type in @this.Service<IMetadataConfigurations>())
+			foreach (var type in @this.Service<IConfiguredTypes>())
 			{
-				type.OnlyConfiguredProperties();
+				type.OnlyConfiguredMembers();
 			}
 
 			return @this;
 		}
 
-		public static TypeConfiguration<T> OnlyConfiguredProperties<T>(this TypeConfiguration<T> @this)
+		public static T OnlyConfiguredMembers<T>(this T @this) where T : class, ITypeConfiguration
 		{
 			foreach (var member in @this.Members())
 			{

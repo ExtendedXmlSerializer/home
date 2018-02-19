@@ -23,7 +23,6 @@
 
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -113,7 +112,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 		public CompositeRegistration(IEnumerable<IRegistration> registrations) : this(registrations.ToImmutableArray()) {}
 		public CompositeRegistration(ImmutableArray<IRegistration> configurations) => _configurations = configurations;
 
-		public IServiceRepository Get(IServiceRepository parameter) => _configurations.Alter(parameter);
+		public IServiceRepository Get(IServiceRepository parameter) => _configurations.ToArray().Alter(parameter);
 	}
 
 	public interface IService<out T> : IParameterizedSource<System.IServiceProvider, T> {}
@@ -136,25 +135,26 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 	}
 
 
-	class ServiceContainer<TKey, TValue> : DecoratedSpecification<TKey>, ISpecificationSource<TKey, TValue>
+	class ServiceProperty<T> : Property<IService<T>> {}
+
+	public sealed class ExtensionServicesExtension : ISerializerExtension
 	{
-		readonly System.IServiceProvider _provider;
-		readonly IParameterizedSource<TKey, IService<TValue>> _table;
+		public static ExtensionServicesExtension Default { get; } = new ExtensionServicesExtension();
+		ExtensionServicesExtension() {}
 
-		public ServiceContainer(System.IServiceProvider provider, ISpecificationSource<TKey, IService<TValue>> table) : base(table)
-		{
-			_provider = provider;
-			_table = table;
-		}
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterDefinition<IServiceCoercer<object>, ServiceCoercer<object>>();
 
-		public TValue Get(TKey parameter) => _table.Get(parameter).Get(_provider);
+		public void Execute(IServices parameter) {}
 	}
 
-	sealed class ServiceActivator<T> : IParameterizedSource<IService<T>, T>
+	public interface IServiceCoercer<T> :  IParameterizedSource<IService<T>, T> {}
+
+	sealed class ServiceCoercer<T> : IServiceCoercer<T>
 	{
 		readonly System.IServiceProvider _provider;
 
-		public ServiceActivator(System.IServiceProvider provider) => _provider = provider;
+		public ServiceCoercer(System.IServiceProvider provider) => _provider = provider;
 
 		public T Get(IService<T> parameter) => parameter.Get(_provider);
 	}

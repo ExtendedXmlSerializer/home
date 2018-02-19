@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
@@ -30,6 +29,7 @@ using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using IServiceProvider = System.IServiceProvider;
 
 namespace ExtendedXmlSerializer.Configuration
@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Configuration
 		{
 			using (var services = new DefaultServices(new ServiceContainer(_options) {ConstructorSelector = _selector}))
 			{
-				var repository = parameter.AsEnumerable()
+				var repository = parameter.ToArray()
 				                          .Alter(services.RegisterInstance<IServiceProvider>(new Provider(services.GetService)))
 				                          .To<IServices>();
 

@@ -1,7 +1,7 @@
-﻿using ExtendedXmlSerializer.Core.Sources;
+﻿using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Services
 {
@@ -15,6 +15,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 
 		public static IAssignable<TKey, IService<TValue>> Assign<TKey, TValue, T>(this IAssignable<TKey, IService<TValue>> @this, TKey key, A<T> a) where T : TValue
 			=> @this.Assign(key, new Service<TValue>(a.Get()));
+
+		/*public static IAssignable<TKey, IService<TValue>> Assign<TKey, TValue>(this IAssignable<TKey, IService<TValue>> @this, TKey key, TValue instance)
+			=> @this.Assign(key, new InstanceService<TValue>(instance));
+
+		public static IAssignable<TKey, IService<TValue>> Assign<TKey, TValue>(this IAssignable<TKey, IService<TValue>> @this, TKey key, Type type)
+			=> @this.Assign(key, new Service<TValue>(type));
+
+		public static IAssignable<TKey, IService<TValue>> Assign<TKey, TValue, T>(this IAssignable<TKey, IService<TValue>> @this, TKey key, A<T> a) where T : TValue
+			=> @this.Assign(key, new Service<TValue>(a.Get()));*/
 	}
 
 

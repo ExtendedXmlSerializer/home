@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,11 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using System.Reflection;
+using System;
 
-namespace ExtendedXmlSerializer.Configuration
+namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface IMetadataConfigurations : IValueSource<TypeInfo, ITypeConfiguration>,
-	                                           IParameterizedSource<ITypeConfiguration, IMemberConfigurations> {}
+	class FixedDeferredSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	{
+		readonly Func<TResult> _source;
+		public FixedDeferredSource(Func<TResult> source) => _source = source;
+
+		public TResult Get(TParameter parameter) => _source();
+	}
+
+	class FixedParameterSource<TParameter, TResult> : ISource<TResult>
+	{
+		readonly Func<TParameter, TResult> _source;
+		readonly TParameter _parameter;
+
+		public FixedParameterSource(IParameterizedSource<TParameter, TResult> source, TParameter parameter) : this(source.Get, parameter) {}
+
+		public FixedParameterSource(Func<TParameter, TResult> source, TParameter parameter)
+		{
+			_source = source;
+			_parameter = parameter;
+		}
+
+		public TResult Get() => _source(_parameter);
+	}
 }

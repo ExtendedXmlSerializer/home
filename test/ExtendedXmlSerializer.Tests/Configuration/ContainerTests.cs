@@ -132,7 +132,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			     .Should()
 			     .BeOfType<MemberModelExtension>();
 
-			new RemoveExtensionCommand(container).Execute(types.FirstOfType<MemberModelExtension>());
+			new RemoveExtensionCommand(container).Execute(types.FirstOf<MemberModelExtension>());
 
 			types.Should()
 			     .HaveCount(5);
@@ -160,13 +160,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var sut       = new ExtensionCollection();
 			var container = new ConfigurationContainer(sut);
 
-			sut.FirstOfType<AddMetadataExtension>().Should().BeNull();
+			sut.FirstOf<AddMetadataExtension>().Should().BeNull();
 
 			var extension = container.Extend<AddMetadataExtension>();
 			extension.Should()
 			         .NotBeNull();
 
-			sut.FirstOfType<AddMetadataExtension>().Should().NotBeNull();
+			sut.FirstOf<AddMetadataExtension>().Should().NotBeNull();
 
 			sut.Get(Categories.Content)
 			   .Should()
@@ -188,13 +188,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var sut       = new ExtensionCollection();
 			var container = new ConfigurationContainer(sut);
 
-			sut.FirstOfType<InsertMetadataExtension>().Should().BeNull();
+			sut.FirstOf<InsertMetadataExtension>().Should().BeNull();
 
 			var extension = container.Extend<InsertMetadataExtension>();
 			extension.Should()
 			         .NotBeNull();
 
-			sut.FirstOfType<InsertMetadataExtension>().Should().NotBeNull();
+			sut.FirstOf<InsertMetadataExtension>().Should().NotBeNull();
 
 			sut.Get(Categories.Content)
 			   .Should()
@@ -217,13 +217,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var sut       = new ExtensionCollection();
 			var container = new ConfigurationContainer(sut);
 
-			sut.FirstOfType<Aware>().Should().BeNull();
+			sut.FirstOf<Aware>().Should().BeNull();
 
 			var extension = container.Extend<Aware>();
 			extension.Should()
 			         .NotBeNull();
 
-			sut.FirstOfType<Aware>().Should().NotBeNull();
+			sut.FirstOf<Aware>().Should().NotBeNull();
 
 			sut.Get(Categories.Content)
 			   .Should()
@@ -246,13 +246,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var sut       = new ExtensionCollection();
 			var container = new ConfigurationContainer(sut);
 
-			sut.FirstOfType<GroupCollectionAware>().Should().BeNull();
+			sut.FirstOf<GroupCollectionAware>().Should().BeNull();
 
 			var extension = container.Extend<GroupCollectionAware>();
 			extension.Should()
 			         .NotBeNull();
 
-			sut.FirstOfType<GroupCollectionAware>().Should().NotBeNull();
+			sut.FirstOf<GroupCollectionAware>().Should().NotBeNull();
 
 			sut.Get(Categories.Content)
 			   .Should()
@@ -275,13 +275,13 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var sut       = new ExtensionCollection(Groups.Default);
 			var container = new ConfigurationContainer(sut);
 
-			sut.FirstOfType<GroupCollectionAware>().Should().BeNull();
+			sut.FirstOf<GroupCollectionAware>().Should().BeNull();
 
-			sut.FirstOfType<First>().Should().BeNull();
-			sut.FirstOfType<Second>().Should().BeNull();
-			sut.FirstOfType<Third>().Should().BeNull();
-			sut.FirstOfType<Fourth>().Should().BeNull();
-			sut.FirstOfType<Fifth>().Should().BeNull();
+			sut.FirstOf<First>().Should().BeNull();
+			sut.FirstOf<Second>().Should().BeNull();
+			sut.FirstOf<Third>().Should().BeNull();
+			sut.FirstOf<Fourth>().Should().BeNull();
+			sut.FirstOf<Fifth>().Should().BeNull();
 
 			var group = sut.Get(Categories.Finish);
 			group.Should().BeEmpty();
@@ -290,11 +290,11 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 
 			group.Should().ContainInOrder(Fourth.Default, Second.Default, First.Default, Fifth.Default, Third.Default);
 
-			sut.FirstOfType<First>().Should().NotBeNull();
-			sut.FirstOfType<Second>().Should().NotBeNull();
-			sut.FirstOfType<Third>().Should().NotBeNull();
-			sut.FirstOfType<Fourth>().Should().NotBeNull();
-			sut.FirstOfType<Fifth>().Should().NotBeNull();
+			sut.FirstOf<First>().Should().NotBeNull();
+			sut.FirstOf<Second>().Should().NotBeNull();
+			sut.FirstOf<Third>().Should().NotBeNull();
+			sut.FirstOf<Fourth>().Should().NotBeNull();
+			sut.FirstOf<Fifth>().Should().NotBeNull();
 
 			EnumerableEx.TakeLast(sut, 5).Should().ContainInOrder(First.Default, Second.Default, Third.Default, Fourth.Default, Fifth.Default);
 		}
@@ -460,7 +460,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 									   new MemberPolicyExtension(_metadata),
 									   new AllowedMemberValuesExtension(),
 									   new ConvertibleContentsExtension(),
-									   new RegisteredSerializerContentsExtension()
+									   RegisteredContentsExtension.Default
 									  );
 				yield return new ExtensionGroup(Categories.Format, all,
 									   new XmlSerializationExtension(),

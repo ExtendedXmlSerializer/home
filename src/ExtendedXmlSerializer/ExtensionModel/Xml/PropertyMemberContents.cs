@@ -20,7 +20,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public PropertyContentExtension() : this(new HashSet<MemberInfo>(MemberComparer.Default)) {}
 
 		public PropertyContentExtension(ICollection<MemberInfo> members)
-			: this(members, new AddItemCommand<MemberInfo>(members), new RemoveItemCommand<MemberInfo>(members)) {}
+			: this(members, new AddCommand<MemberInfo>(members), new RemoveCommand<MemberInfo>(members)) {}
 
 		public PropertyContentExtension(ICollection<MemberInfo> members, ICommand<MemberInfo> add, ICommand<MemberInfo> remove)
 		{
@@ -47,7 +47,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public PropertyOrderAlteration(IPropertyContentSpecification specification, IMemberContentsAlteration<T> alteration)
 			: base(new OrderByAlteration<IMemberContentWriter<T>, bool>(specification.To(MemberMetadataCoercer.Default
 			                                                                                                  .In(SourceCoercer<IMember>.Default))
-			                                                                         .ToDelegate()),
+			                                                                         .ToSpecificationDelegate()),
 			       alteration) {}
 	}
 

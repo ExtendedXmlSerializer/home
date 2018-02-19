@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,19 +21,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Concurrent;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
+using ExtendedXmlSerializer.ExtensionModel;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	sealed class MemberConfigurations : TableValueSource<MemberInfo, IMemberConfiguration>, IMemberConfigurations
-	{
-		public MemberConfigurations(ITypeConfiguration type)
-			: this(type, new ConcurrentDictionary<MemberInfo, IMemberConfiguration>(MemberComparer.Default)) {}
+	public interface IExtensions : IExtend, IExtensionElements {}
 
-		public MemberConfigurations(ITypeConfiguration type, ConcurrentDictionary<MemberInfo, IMemberConfiguration> store)
-			: base(new Members(type).Get, store) {}
+	sealed class Extensions : IExtensions
+	{
+		readonly IExtensionElements _elements;
+		readonly IExtend _extend;
+
+		public Extensions(IExtensionElements elements, IExtend extend)
+		{
+			_elements = elements;
+			_extend = extend;
+		}
+
+		public ISerializerExtension Get(TypeInfo parameter) => _extend.Get(parameter);
+
+		public ICommand<ISerializerExtension> Add => _elements.Add;
+
+		public ICommand<ISerializerExtension> Remove => _elements.Remove;
+
+		public IEnumerator<ISerializerExtension> GetEnumerator() => _elements.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
+
+	public interface IExtensionElements : IElements<ISerializerExtension> {}
 }
