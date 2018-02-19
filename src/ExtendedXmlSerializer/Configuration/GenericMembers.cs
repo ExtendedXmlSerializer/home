@@ -31,16 +31,18 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class GenericMembers : IParameterizedSource<MemberInfo, IMemberConfiguration>
 	{
-		readonly IConfigurationElement                                             _element;
-		readonly IGeneric<IConfigurationElement, MemberInfo, IMemberConfiguration> _generic;
+		readonly ITypeConfiguration _element;
+		readonly IGeneric<ITypeConfiguration, MemberInfo, IMemberConfiguration> _generic;
 		readonly Func<MemberInfo, MemberDescriptor>                                _descriptor;
 		readonly TypeInfo                                                          _type;
 
-		public GenericMembers(IConfigurationElement element, TypeInfo type)
+		public GenericMembers(ITypeConfiguration element) : this(element, element.Get().Get()) {}
+
+		public GenericMembers(ITypeConfiguration element, TypeInfo type)
 			: this(element, Generic.Default, MemberDescriptors.Default.Get, type) {}
 
-		public GenericMembers(IConfigurationElement element,
-		                      IGeneric<IConfigurationElement, MemberInfo, IMemberConfiguration> generic,
+		public GenericMembers(ITypeConfiguration element,
+		                      IGeneric<ITypeConfiguration, MemberInfo, IMemberConfiguration> generic,
 		                      Func<MemberInfo, MemberDescriptor> descriptor, TypeInfo type)
 		{
 			_element    = element;
@@ -52,7 +54,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public IMemberConfiguration Get(MemberInfo parameter) => _generic.Get(_type, _descriptor(parameter).MemberType)
 		                                                                 .Invoke(_element, parameter);
 
-		sealed class Generic : Generic<IConfigurationElement, MemberInfo, IMemberConfiguration>
+		sealed class Generic : Generic<ITypeConfiguration, MemberInfo, IMemberConfiguration>
 		{
 			public static Generic Default { get; } = new Generic();
 			Generic() : base(typeof(MemberConfiguration<,>)) {}

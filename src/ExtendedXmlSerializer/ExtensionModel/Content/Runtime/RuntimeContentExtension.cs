@@ -72,7 +72,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 			                new EmitRuntimePipelineComposer<TMember>(specification))
 			        .Return(@this);
 
-		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IConfigurationElement member,
+		public static RuntimeMembersExtension Assign<T>(this RuntimeMembersExtension @this, IMemberConfiguration member,
 		                                                GroupName name, IRuntimePipelineComposer<T> selection)
 			=> @this.Assign(member.Member(), new Registration(name, selection.Generalized())).Return(@this);
 

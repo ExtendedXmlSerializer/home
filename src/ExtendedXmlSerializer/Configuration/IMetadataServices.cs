@@ -22,32 +22,35 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMetadataConfiguration<out T, TMetadata> : IConfigurationElement, ISource<T>
-		where T : IMetadata<TMetadata>
-		where TMetadata : MemberInfo {}
+	public interface IMetadataConfiguration<out T> : IConfigurationElement, ISource<IMetadata<T>> where T : MemberInfo {}
 
-	public abstract class MetadataConfiguration<T, TMetadata> : ConfigurationElement, IMetadataConfiguration<T, TMetadata>
-		where T : IMetadata<TMetadata> where TMetadata : MemberInfo
+
+	public abstract class MetadataConfiguration<TMetadata, TMember> : ConfigurationElement, ISource<TMetadata>, IMetadataConfiguration<TMember>
+		where TMetadata : class, IMetadata<TMember>
+		where TMember : MemberInfo
 	{
-		readonly T _metadata;
+		readonly TMetadata _metadata;
 
-		protected MetadataConfiguration(ITypes types, IExtensions extensions, T metadata) : base(types, extensions) => _metadata = metadata;
+		protected MetadataConfiguration(IReflection reflection, IExtensions extensions, TMetadata metadata)
+			: base(reflection, extensions) => _metadata = metadata;
 
-		public T Get() => _metadata;
+		IMetadata<TMember> ISource<IMetadata<TMember>>.Get() => Get();
+
+		public TMetadata Get() => _metadata;
 	}
 
 	// ReSharper disable once UnusedTypeParameter
 	public interface IType<T> : ITypeConfiguration {}
 
-	public interface ITypeConfiguration : IMetadataConfiguration<IType, TypeInfo> {}
+	public interface ITypeConfiguration : IMetadataConfiguration<TypeInfo>, IValueSource<MemberInfo, IMember> {}
 
-	public interface IMemberConfiguration : IMetadataConfiguration<IMember, MemberInfo> {}
+	public interface IMemberConfiguration : IMetadataConfiguration<MemberInfo> {}
+
+	public interface ITypeMetadata : IMetadata<TypeInfo> {}
 
 	public interface IMetadata<out T> : ISource<T> where T : MemberInfo {}
 
@@ -61,47 +64,15 @@ namespace ExtendedXmlSerializer.Configuration
 	}
 
 
-	public interface ITypeMetadata : IMetadata<TypeInfo> {}
 
 	sealed class TypeMetadata : FixedInstanceSource<TypeInfo>, ITypeMetadata
 	{
 		public TypeMetadata(TypeInfo instance) : base(instance) {}
 	}
 
-	public interface IType : ITypeMetadata, IValueSource<MemberInfo, IMember> {}
-
-	sealed class TypeDefinition : IType
-	{
-		readonly IValueSource<MemberInfo, IMember> _members;
-		readonly ITypeMetadata _type;
-
-		public TypeDefinition(IValueSource<MemberInfo, IMember> members, ITypeMetadata type)
-		{
-			_members = members;
-			_type = type;
-		}
-
-		public IMember Get(MemberInfo parameter) => _members.Get(parameter);
-
-		public IEnumerator<IMember> GetEnumerator() => _members.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-		public TypeInfo Get() => _type.Get();
-	}
-
 	public interface IMember : IMetadata<MemberInfo>
 	{
 		ITypeMetadata Type { get; }
-	}
-
-	sealed class TypeDefinitions : ReferenceCacheBase<ITypeMetadata, IType>
-	{
-		public static TypeDefinitions Default { get; } = new TypeDefinitions();
-		TypeDefinitions() {}
-
-		protected override IType Create(ITypeMetadata parameter)
-			=> new TypeDefinition(new TableValueSource<MemberInfo, IMember>(new MemberInstances(parameter).Get), parameter);
 	}
 
 	sealed class Member : FixedInstanceSource<MemberInfo>, IMember
@@ -111,11 +82,11 @@ namespace ExtendedXmlSerializer.Configuration
 		public ITypeMetadata Type { get; }
 	}
 
-	public interface ITypes : IValueSource<TypeInfo, IType> {}
+	public interface IReflection : IValueSource<TypeInfo, ITypeMetadata> {}
 
-	sealed class Types : TableValueSource<TypeInfo, IType>, ITypes
+	sealed class Reflection : TableValueSource<TypeInfo, ITypeMetadata>, IReflection
 	{
-		public Types() : base(TypeDefinitions.Default.In(Coercer.Default).Get) {}
+		public Reflection() : base(Coercer.Default.Get) {}
 
 		sealed class Coercer : IParameterizedSource<TypeInfo, ITypeMetadata>
 		{
@@ -125,7 +96,4 @@ namespace ExtendedXmlSerializer.Configuration
 			public ITypeMetadata Get(TypeInfo parameter) => new TypeMetadata(parameter);
 		}
 	}
-
-	/*public interface IMetadataServices : IValueSource<TypeInfo, IConfigurationElement>,
-	                                     IParameterizedSource<IConfigurationElement, IMembers> {}*/
 }

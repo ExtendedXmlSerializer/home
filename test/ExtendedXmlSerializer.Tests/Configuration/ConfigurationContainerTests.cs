@@ -112,11 +112,11 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var config = Configure(cfg =>
 								   {
 									   var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
-									   Assert.False(serializers.IsSatisfiedBy(t));
+									   Assert.False(serializers.IsSatisfiedBy(t.Get()));
 									   t.CustomSerializer((writer, types) => { }, element => null);
 								   });
 			var type = config.GetTypeConfiguration(typeof(TestClassPrimitiveTypes));
-			Assert.True(serializers.IsSatisfiedBy(type));
+			Assert.True(serializers.IsSatisfiedBy(type.Get()));
 		}
 
 		[Fact]

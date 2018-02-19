@@ -38,6 +38,6 @@ namespace ExtendedXmlSerializer.Configuration
 			: this(element, new ConcurrentDictionary<MemberInfo, IMemberConfiguration>(MemberComparer.Default)) {}
 
 		public Members(ITypeConfiguration element, ConcurrentDictionary<MemberInfo, IMemberConfiguration> store)
-			: base(new GenericMembers(element, element.Get().Get()).Get, store) {}
+			: base(new GenericMembers(element).Get, store) {}
 	}
 }

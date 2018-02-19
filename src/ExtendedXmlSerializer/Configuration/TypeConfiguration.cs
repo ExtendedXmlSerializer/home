@@ -24,41 +24,46 @@
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
 	/*public interface IServiceConfiguration<T> : IConfigurationElement, IEntry<T> {}*/
 
-	sealed class TypeConfigurationMembers<T, TMember> : ReferenceCacheBase<IMember, MemberConfiguration<T, TMember>>
+	/*sealed class TypeConfigurationMembers<T, TMember> : ReferenceCacheBase<IMember, MemberConfiguration<T, TMember>>
 	{
-		public static IParameterizedSource<IConfigurationElement, TypeConfigurationMembers<T, TMember>> Defaults { get; }
-			= new ReferenceCache<IConfigurationElement, TypeConfigurationMembers<T, TMember>>(x => new TypeConfigurationMembers<T
-				                                                                                  , TMember>(x));
+		public static IParameterizedSource<ITypeConfiguration, TypeConfigurationMembers<T, TMember>> Defaults { get; }
+			= new ReferenceCache<ITypeConfiguration, TypeConfigurationMembers<T, TMember>>(x => new TypeConfigurationMembers<T, TMember>(x));
 
-		readonly IExtensions _extensions;
-		readonly ITypes      _types;
+		readonly ITypeConfiguration _element;
 
-		public TypeConfigurationMembers(IConfigurationElement element) : this(element.Types, element.Extensions) {}
-
-		public TypeConfigurationMembers(ITypes types, IExtensions extensions)
-		{
-			_types      = types;
-			_extensions = extensions;
-		}
+		public TypeConfigurationMembers(ITypeConfiguration element) => _element = element;
 
 		protected override MemberConfiguration<T, TMember> Create(IMember parameter)
-			=> new MemberConfiguration<T, TMember>(_types, _extensions, parameter);
-	}
+			=> new MemberConfiguration<T, TMember>(_element, parameter);
+	}*/
 
 
-	public class TypeConfiguration<T> : MetadataConfiguration<IType, TypeInfo>, IType<T>
+	public class TypeConfiguration<T> : MetadataConfiguration<ITypeMetadata, TypeInfo>, IType<T>
 	{
-		[UsedImplicitly]
-		public TypeConfiguration(ITypes types, IExtensions extensions) :
-			this(types, extensions, types.Get(Support<T>.Key)) {}
+		readonly IValueSource<MemberInfo, IMember> _members;
 
-		public TypeConfiguration(ITypes types, IExtensions extensions, IType metadata) : base(types, extensions, metadata) {}
+		[UsedImplicitly]
+		public TypeConfiguration(IReflection reflection, IExtensions extensions) :
+			this(reflection, extensions, reflection.Get(Support<T>.Key)) {}
+
+		public TypeConfiguration(IReflection reflection, IExtensions extensions, ITypeMetadata metadata)
+			: this(reflection, extensions, metadata, new TableValueSource<MemberInfo, IMember>(new MemberInstances(metadata).Get)) {}
+		public TypeConfiguration(IReflection reflection, IExtensions extensions, ITypeMetadata metadata, IValueSource<MemberInfo, IMember> members)
+			: base(reflection, extensions, metadata) => _members = members;
+
+		public IMember Get(MemberInfo parameter) => _members.Get(parameter);
+
+		public IEnumerator<IMember> GetEnumerator() => _members.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 
 	/*public class TypeConfiguration<T> : TypeConfigurationElement<T>

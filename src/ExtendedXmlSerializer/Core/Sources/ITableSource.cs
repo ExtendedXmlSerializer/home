@@ -31,7 +31,30 @@ namespace ExtendedXmlSerializer.Core.Sources
 		bool Remove(TKey key);
 	}
 
-	class DecoratedTable<TKey, TValue> : ITableSource<TKey, TValue>
+	public class CoercedTable<TFrom, TTo, TValue> : ITableSource<TTo, TValue>
+	{
+		readonly ITableSource<TFrom, TValue> _table;
+		readonly IParameterizedSource<TTo, TFrom> _coercer;
+
+		public CoercedTable(ITableSource<TFrom, TValue> table, IParameterizedSource<TTo, TFrom> coercer)
+		{
+			_table = table;
+			_coercer = coercer;
+		}
+
+		public bool IsSatisfiedBy(TTo parameter) => _table.IsSatisfiedBy(_coercer.Get(parameter));
+
+		public TValue Get(TTo parameter) => _table.Get(_coercer.Get(parameter));
+
+		public void Execute(KeyValuePair<TTo, TValue> parameter)
+		{
+			_table.Execute(Pairs.Create(_coercer.Get(parameter.Key), parameter.Value));
+		}
+
+		public bool Remove(TTo key) => _table.Remove(_coercer.Get(key));
+	}
+
+	public class DecoratedTable<TKey, TValue> : ITableSource<TKey, TValue>
 	{
 		readonly ITableSource<TKey, TValue> _table;
 

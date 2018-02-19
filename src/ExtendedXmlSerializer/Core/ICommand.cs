@@ -35,11 +35,11 @@ namespace ExtendedXmlSerializer.Core
 		void Execute(T parameter);
 	}
 
-	public static class CommandExtensioMethods
+	public static class CommandExtensionMethods
 	{
-		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, TKey key,
-		                                                             TValue value) => @this.Executed(Pairs.Create(key, value))
-		                                                                                   .Return(@this);
+		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this,
+		                                                             TKey key, TValue value)
+			=> @this.Executed(Pairs.Create(key, value)).Return(@this);
 
 		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
 		{

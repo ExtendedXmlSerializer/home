@@ -129,10 +129,15 @@ namespace ExtendedXmlSerializer.Configuration
 			=> @this.Members().Get(member);
 
 		public static MemberConfiguration<T, TMember> Member<T, TMember>(this IType<T> @this, Expression<Func<T, TMember>> member)
-			=> TypeConfigurationMembers<T, TMember>.Defaults.Get(@this).Get(@this.Get().Get(member.GetMemberInfo()));
+			=> @this.Member(member.GetMemberInfo()).To<MemberConfiguration<T, TMember>>();
 
 		/*public static MemberConfiguration<T, TMember> Member<T, TMember>(this TypeConfiguration<T> @this, Expression<Func<T, TMember>> member)
 			=> TypeConfigurationMembers<T, TMember>.Defaults.Get(@this).Get(@this.Get().Get(member.GetMemberInfo()));*/
+
+		/*public static IType Definition(this ITypeConfiguration @this) => @this.Get().Definition();
+
+		public static IType Definition(this IMetadata<TypeInfo> @this)
+			=> TypeDefinitions.Default.In(A<IMetadata<TypeInfo>>.Default).Get(@this);*/
 
 		public static IMembers Members(this ITypeConfiguration @this) => Configuration.Members.Default.Get(@this);
 
@@ -160,7 +165,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static MemberConfiguration<T, TMember> Identity<T, TMember>(this MemberConfiguration<T, TMember> @this)
 			=> @this.Extend<ReferencesExtension>()
-			        .Assigned(@this.Get().Type.Get(), @this.Member())
+			        .Assigned(@this.Get().Type.Get(), @this.Get().Get())
 			        .Return(@this);
 
 		public static ICollection<TypeInfo> AllowedReferenceTypes(this IConfigurationElement @this)

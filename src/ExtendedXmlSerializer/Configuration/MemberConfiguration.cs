@@ -24,23 +24,32 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public class MemberConfiguration<T, TMember> : MetadataConfiguration<IMember, MemberInfo>, IType<T>
+	public class MemberConfiguration<T, TMember> : MetadataConfiguration<IMember, MemberInfo>, IMemberConfiguration, IType<T>
 	{
-		readonly IType _type;
+		readonly ITypeConfiguration _type;
 
 		public MemberConfiguration(ITypeConfiguration type, Expression<Func<T, TMember>> member)
-			: this(type.Types, type.Extensions, type.Get().Get(member.GetMemberInfo())) {}
+			: this(type, member.GetMemberInfo()) {}
 
-		public MemberConfiguration(ITypes types, IExtensions extensions, IMember member)
-			: this(types, extensions, member, TypeDefinitions.Default.Get(member.Type)) {}
+		public MemberConfiguration(ITypeConfiguration type, MemberInfo member)
+			: this(type, type.Get(member)) {}
 
-		public MemberConfiguration(ITypes types, IExtensions extensions, IMember member, IType type) : base(types, extensions, member) => _type = type;
+		public MemberConfiguration(ITypeConfiguration type, IMember member)
+			: base(type.Reflection, type.Extensions, member) => _type = type;
 
-		IType ISource<IType>.Get() => _type;
+		IMetadata<TypeInfo> ISource<IMetadata<TypeInfo>>.Get() => _type.Get();
+
+		public IMember Get(MemberInfo parameter) => _type.Get(parameter);
+
+		public IEnumerator<IMember> GetEnumerator() => _type.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_type).GetEnumerator();
 	}
 }

@@ -70,7 +70,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static IType<T> EmitWhen<T>(this IType<T> @this,
 		                                                  Func<T, bool> specification)
 			=> @this.Extend<AllowedInstancesExtension>()
-			        .Assigned(@this.Get().Get(),
+			        .Assigned(@this.Type(),
 			                  new AllowedValueSpecification(new DelegatedSpecification<T>(specification).AdaptForNull()))
 			        .Return(@this);
 
@@ -88,7 +88,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
 
-		public static T Include<T>(this T @this) where T : class, IConfigurationElement
+		public static T Include<T>(this T @this) where T : class, IMemberConfiguration
 			=> @this.Extend<MemberPolicyExtension>()
 			        .Whitelist.Adding(@this.Member())
 			        .Return(@this);

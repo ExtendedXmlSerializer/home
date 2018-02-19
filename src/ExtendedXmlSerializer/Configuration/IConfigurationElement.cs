@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	public interface IConfigurationElement
 	{
-		ITypes Types { get; }
+		IReflection Reflection { get; }
 
 		IExtensions Extensions { get; }
 	}

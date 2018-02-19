@@ -29,7 +29,7 @@ namespace ExtendedXmlSerializer.Configuration
 	public interface IConfiguredTypes : IValueSource<TypeInfo, ITypeConfiguration> {}
 	sealed class ConfiguredTypes : TableValueSource<TypeInfo, ITypeConfiguration>, IConfiguredTypes
 	{
-		public ConfiguredTypes(ITypes types, IExtensions extensions)
-			: base(new GenericTypeConfigurations(types, extensions).Get) {}
+		public ConfiguredTypes(IReflection reflection, IExtensions extensions)
+			: base(new GenericTypeConfigurations(reflection, extensions).Get) {}
 	}
 }

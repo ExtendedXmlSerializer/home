@@ -29,24 +29,24 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class GenericTypeConfigurations : IParameterizedSource<TypeInfo, ITypeConfiguration>
 	{
-		readonly ITypes _types;
+		readonly IReflection _reflection;
 		readonly IExtensions _extensions;
-		readonly IGeneric<ITypes, IExtensions, ITypeConfiguration> _generic;
+		readonly IGeneric<IReflection, IExtensions, ITypeConfiguration> _generic;
 
-		public GenericTypeConfigurations(ITypes types, IExtensions extensions) : this(types, extensions, Generic.Default) {}
+		public GenericTypeConfigurations(IReflection reflection, IExtensions extensions) : this(reflection, extensions, Generic.Default) {}
 
-		public GenericTypeConfigurations(ITypes types, IExtensions extensions,
-		                                 IGeneric<ITypes, IExtensions, ITypeConfiguration> generic)
+		public GenericTypeConfigurations(IReflection reflection, IExtensions extensions,
+		                                 IGeneric<IReflection, IExtensions, ITypeConfiguration> generic)
 		{
-			_types = types;
+			_reflection = reflection;
 			_extensions = extensions;
 			_generic    = generic;
 		}
 
 		public ITypeConfiguration Get(TypeInfo parameter) => _generic.Get(parameter)
-		                                                             .Invoke(_types, _extensions);
+		                                                             .Invoke(_reflection, _extensions);
 
-		sealed class Generic : Generic<ITypes, IExtensions, ITypeConfiguration>
+		sealed class Generic : Generic<IReflection, IExtensions, ITypeConfiguration>
 		{
 			public static Generic Default { get; } = new Generic();
 			Generic() : base(typeof(TypeConfiguration<>)) {}

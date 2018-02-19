@@ -113,16 +113,19 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static T Get<T>(this IParameterizedSource<Type, T> @this, TypeInfo parameter)
 			=> @this.Get(parameter.AsType());
 
+		public static ITableSource<TTo, TResult> In<TFrom, TTo, TResult>(
+			this ITableSource<TFrom, TResult> @this, IParameterizedSource<TTo, TFrom> coercer)
+			=> new CoercedTable<TFrom, TTo, TResult>(@this, coercer);
+
+		public static ISpecificationSource<TFrom, TResult> In<TFrom, TTo, TResult>(
+			this ISpecificationSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
+			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));
 
 		public static IParameterizedSource<Decoration<TFrom, TResult>, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<Decoration<TTo, TResult>, TResult> @this, A<TFrom> _) => In(@this, DecorationParameterCoercer<TFrom, TTo, TResult>.Default);
 
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, A<TFrom> _) => In(@this, CastCoercer<TFrom, TTo>.Default);
-
-		public static ISpecificationSource<TFrom, TResult> In<TFrom, TTo, TResult>(
-			this ISpecificationSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
-			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));
 
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)

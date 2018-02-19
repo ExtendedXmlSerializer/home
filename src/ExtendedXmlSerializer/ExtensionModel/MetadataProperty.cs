@@ -23,22 +23,23 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
-	/*public interface IProperties<T> : IParameterizedSource<IMetadataElement, IProperty<T>> {}*/
+	public interface IProperty<T> : ITableSource<IMetadata<MemberInfo>, T> {}
 
-	public interface IProperty<T> : ITableSource<IConfigurationElement, T> {}
+	public class Property<T> : ReferenceCache<IMetadata<MemberInfo>, T>, IProperty<T> where T : class
 
-	public class Property<T> : ReferenceCache<IConfigurationElement, T>, IProperty<T> where T : class
 	{
 		public Property() : this(_ => default(T)) {}
 
-		public Property(ConditionalWeakTable<IConfigurationElement, T>.CreateValueCallback callback) : base(callback) {}
+		public Property(ConditionalWeakTable<IMetadata<MemberInfo>, T>.CreateValueCallback callback)
+			: base(callback) {}
 	}
 
-	public class StructureProperty<T> : StructureCache<IConfigurationElement, T>, IProperty<T> where T : struct
+	public class StructureProperty<T> : StructureCache<IMetadata<MemberInfo>, T>, IProperty<T> where T : struct
 	{
 		public StructureProperty() : base(_ => default(T)) {}
 	}
