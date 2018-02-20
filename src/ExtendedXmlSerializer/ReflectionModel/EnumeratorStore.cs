@@ -29,6 +29,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	sealed class EnumeratorStore : DecoratedSource<TypeInfo, IEnumerators>, IEnumeratorStore
 	{
 		public EnumeratorStore(IDictionaryEnumerators dictionary, IEnumerators enumerators)
-			: base(enumerators.If(IsCollectionTypeSpecification.Default).Unless(IsDictionaryTypeSpecification.Default, dictionary)) {}
+			: base(enumerators.ToSource(IsCollectionTypeSpecification.Default).Unless(IsDictionaryTypeSpecification.Default, dictionary)) {}
 	}
 }

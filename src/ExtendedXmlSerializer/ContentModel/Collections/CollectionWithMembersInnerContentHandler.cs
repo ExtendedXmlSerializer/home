@@ -34,6 +34,6 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		public CollectionWithMembersInnerContentHandler(IListContentsSpecification specification, MemberInnerContentHandler members,
 		                                  CollectionInnerContentHandler collection)
-			: base(collection.If(specification).Unless(members, Empty)) {}
+			: base(collection.ToSource(specification).Unless(members, Empty)) {}
 	}
 }

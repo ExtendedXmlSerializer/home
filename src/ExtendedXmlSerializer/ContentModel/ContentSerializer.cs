@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
@@ -39,6 +40,16 @@ namespace ExtendedXmlSerializer.ContentModel
 		{
 			_serializer.Execute(parameter);
 		}
+	}
+
+	public static class Serializers
+	{
+		public static IContentSerializer<T> New<T>(IParameterizedSource<string, T> read,
+		                                           IParameterizedSource<T, string> write)
+			=> New(read.Get, write.Get);
+
+		public static IContentSerializer<T> New<T>(Func<string, T> read, Func<T, string> write)
+			=> new ContentSerializer<T>(new Content.ContentReader<T>(read), new Content.ContentWriter<T>(write));
 	}
 
 	sealed class ContentSerializer<T> : IContentSerializer<T>

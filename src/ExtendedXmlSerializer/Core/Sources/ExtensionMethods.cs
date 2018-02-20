@@ -108,6 +108,14 @@ namespace ExtendedXmlSerializer.Core.Sources
 			ToSource<TParameter, TResult>(this Func<TParameter, TResult> @this)
 			=> @this.Target as IParameterizedSource<TParameter, TResult> ?? new DelegatedSource<TParameter, TResult>(@this);
 
+		public static IParameterizedSource<TParameter, TResult> ToSource<TParameter, TResult, TAttribute>(
+			this TResult @this, A<TAttribute> _) where TAttribute : Attribute
+			=> @this.ToSource(IsDefinedSpecification<TAttribute>.Default.To(InstanceMetadataCoercer<TParameter>.Default));
+
+		public static IParameterizedSource<TParameter, TResult> ToSource<TParameter, TResult>(
+			this TResult @this, ISpecification<TParameter> specification)
+			=> new ConditionalInstanceSource<TParameter, TResult>(specification, @this, default(TResult));
+
 		public static IAlteration<object> Adapt<T>(this IAlteration<T> @this) => new AlterationAdapter<T>(@this);
 
 		public static T Get<T>(this IParameterizedSource<Stream, T> @this, string parameter)
@@ -201,14 +209,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification)
 			=> new ConditionalSource<TParameter, TResult>(specification, @this,
 			                                              DefaultValueSource<TParameter, TResult>.Default);
-
-		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult, TAttribute>(
-			this TResult @this, A<TAttribute> _) where TAttribute : Attribute
-			=> If(@this, IsDefinedSpecification<TAttribute>.Default.To(InstanceMetadataCoercer<TParameter>.Default));
-
-		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult>(
-			this TResult @this, ISpecification<TParameter> specification)
-			=> new ConditionalInstanceSource<TParameter, TResult>(specification, @this, default(TResult));
 
 		public static IParameterizedSource<TParameter, TResult> Into<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<Decoration<TParameter, TResult>, TResult> other)

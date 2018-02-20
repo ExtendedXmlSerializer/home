@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Serializers = ExtendedXmlSerializer.ContentModel.Serializers;
 
 namespace ExtendedXmlSerializer.Configuration
 {
@@ -93,12 +94,9 @@ namespace ExtendedXmlSerializer.Configuration
 
 	public static class Register
 	{
-		public static IConfiguration For<T>(Func<string, T> read, Func<T, string> write)
-			=> For(new ContentSerializer<T>(new ContentModel.Content.ContentReader<T>(read),
-			                                new ContentModel.Content.ContentWriter<T>(write)));
+		public static IConfiguration For<T>(Func<string, T> read, Func<T, string> write) => For(Serializers.New(read, write));
 
-		public static IConfiguration For<T>(IContentSerializer<T> instance)
-			=> new RegisterSerializer<T>(instance);
+		public static IConfiguration For<T>(IContentSerializer<T> instance) => new RegisterSerializer<T>(instance);
 	}
 
 	class RegisterSerializer<T> : ServicePropertyAssignment<T, IContentSerializer<T>>

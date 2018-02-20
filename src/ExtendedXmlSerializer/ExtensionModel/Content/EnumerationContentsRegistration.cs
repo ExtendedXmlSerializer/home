@@ -21,15 +21,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Services;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ConverterContentsRegistration<T> : ConditionalContents<T>, IContents<T>
+	sealed class EnumerationContentsExtension : ISerializerExtension
 	{
-		public ConverterContentsRegistration(ConverterSpecification specification, ConverterContents<T> source,
-		                                     IContents<T> fallback)
-			: base(specification, source, fallback) {}
+		public static EnumerationContentsExtension Default { get; } = new EnumerationContentsExtension();
+		EnumerationContentsExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.Decorate<EnumerationContentsRegistration<object>>();
+
+		void ICommand<IServices>.Execute(IServices parameter) {}
+	}
+
+	sealed class EnumerationContentsRegistration<T> : ConditionalContents<T>, IContents<T>
+	{
+		public EnumerationContentsRegistration(IContents<T> fallback)
+			: base(IsAssignableSpecification<Enum>.Default, EnumerationContents<T>.Default, fallback) {}
+	}
+
+	sealed class EnumerationContents<T> : FixedInstanceSource<IContentSerializer<T>>
+	{
+		public static EnumerationContents<T> Default { get; } = new EnumerationContents<T>();
+
+		EnumerationContents() :
+			base(ContentModel.Serializers.New(EnumerationParser<T>.Default.If(AssignedSpecification<string>.Default),
+			                                  StringCoercer<T>.Default)) {}
 	}
 }
