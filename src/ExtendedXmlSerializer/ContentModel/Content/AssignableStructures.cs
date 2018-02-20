@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,14 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Content
+namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class NullableRegistration<T> : ConditionalContents<T>, IContents<T>
+	sealed class AssignableStructures<T> : DecoratedSource<IContentSerializer<T>>
 	{
-		public NullableRegistration(NullableContents<T> source, IContents<T> fallback)
-			: base(IsNullableTypeSpecification.Default, source, fallback) {}
+		public AssignableStructures(IAlteredContents<T> contents) : this(AccountForNullableAlteration.Default, contents) {}
+
+		public AssignableStructures(IAlteration<TypeInfo> alteration, IAlteredContents<T> contents)
+			: base(contents.Fix(ImmutableArray.Create(typeof(T).GetTypeInfo(), alteration.Get(Support<T>.Key)))) {}
+	}
+
+
+	sealed class NullableContents : DelegatedSource<TypeInfo, ISerializer>, IContents
+	{
+		[UsedImplicitly]
+		public NullableContents(ConverterContents converters) : base(converters.In(AccountForNullableAlteration.Default)
+		                                                                       .Get) {}
 	}
 }

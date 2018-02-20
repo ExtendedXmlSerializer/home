@@ -43,6 +43,17 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 		}
 
 		[Fact]
+		public void VerifyEnumeration()
+		{
+			new ConfigurationRoot().ToSupport().Cycle(Testing.Others);
+		}
+
+		enum Testing
+		{
+			Some, Others
+		}
+
+		[Fact]
 		public void VerifyMember()
 		{
 			var member = new ConfigurationRoot().Type<Subject>().Member(x => x.Message);

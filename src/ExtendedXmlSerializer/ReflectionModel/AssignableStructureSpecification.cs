@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using ExtendedXmlSerializer.Core.Specifications;
+using System;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class IsNullableTypeSpecification : DelegatedAssignedSpecification<Type, Type>
+	sealed class AssignableStructureSpecification : DelegatedAssignedSpecification<Type, Type>
 	{
-		public static IsNullableTypeSpecification Default { get; } = new IsNullableTypeSpecification();
-		IsNullableTypeSpecification() : base(Nullable.GetUnderlyingType) {}
+		public static AssignableStructureSpecification Default { get; } = new AssignableStructureSpecification();
+		AssignableStructureSpecification() : base(Nullable.GetUnderlyingType) {}
 	}
 }

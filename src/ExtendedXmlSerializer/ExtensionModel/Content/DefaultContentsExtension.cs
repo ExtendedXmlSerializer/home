@@ -52,13 +52,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		NullableStructureContentsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContent<NullableContents>(IsNullableTypeSpecification.Default)
-			            .Decorate<NullableRegistration<object>>();
+			=> parameter.DecorateContent<NullableContents>(AssignableStructureSpecification.Default)
+			            .Decorate<AssignableStructureContents<object>>();
 
 		public void Execute(IServices parameter) {}
 	}
 
-	public sealed class MetadataContentsExtension : ISerializerExtension
+	/*public sealed class MetadataContentsExtension : ISerializerExtension
 	{
 		public static MetadataContentsExtension Default { get; } = new MetadataContentsExtension();
 		MetadataContentsExtension() {}
@@ -69,7 +69,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .Decorate<ReflectionRegistration<object>>();
 
 		public void Execute(IServices parameter) {}
-	}
+	}*/
 
 	public sealed class MemberedContentsExtension : ISerializerExtension
 	{

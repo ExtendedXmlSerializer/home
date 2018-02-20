@@ -21,34 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
-using System.Collections.Immutable;
-using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Content
+namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class NullableContents<T> : IContents<T>
+	sealed class AssignableStructureContents<T> : ConditionalContents<T>, IContents<T>
 	{
-		readonly ISource<IContentSerializer<T>> _source;
-
-		public NullableContents(IAlteredContents<T> contents) : this(AccountForNullableAlteration.Default, contents) {}
-
-		public NullableContents(IAlteration<TypeInfo> alteration, IAlteredContents<T> contents)
-			: this(contents.Fix(ImmutableArray.Create(typeof(T).GetTypeInfo(), alteration.Get(Support<T>.Key)))) {}
-
-		public NullableContents(ISource<IContentSerializer<T>> source) => _source = source;
-
-		public IContentSerializer<T> Get() => _source.Get();
-	}
-
-
-	sealed class NullableContents : DelegatedSource<TypeInfo, ISerializer>, IContents
-	{
-		[UsedImplicitly]
-		public NullableContents(ConverterContents converters) : base(converters.In(AccountForNullableAlteration.Default)
-		                                                                       .Get) {}
+		public AssignableStructureContents(AssignableStructures<T> source, IContents<T> fallback)
+			: base(AssignableStructureSpecification.Default, source, fallback) {}
 	}
 }
