@@ -103,6 +103,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 		readonly Func<TResult, bool> _result;
 		readonly Func<TParameter, TResult> _source, _fallback;
 
+		public ConditionalSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
+			: this(specification, source, DefaultValueSource<TParameter, TResult>.Default) {}
+
 		public ConditionalSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source,
 		                         IParameterizedSource<TParameter, TResult> fallback)
 			: this(specification, AlwaysSpecification<TResult>.Default, source, fallback) {}

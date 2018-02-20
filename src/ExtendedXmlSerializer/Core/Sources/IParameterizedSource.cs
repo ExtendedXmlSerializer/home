@@ -34,6 +34,64 @@ namespace ExtendedXmlSerializer.Core.Sources
 		TResult Get(TParameter parameter);
 	}
 
+	class ValidatedResult<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
+	{
+		readonly ISpecification<TResult> _specification;
+		readonly IParameterizedSource<TParameter, TResult> _source;
+		readonly IParameterizedSource<TParameter, TResult> _fallback;
+
+		public ValidatedResult(ISpecification<TResult> specification, IParameterizedSource<TParameter, TResult> source,
+		                       IParameterizedSource<TParameter, TResult> fallback)
+		{
+			_specification = specification;
+			_source = source;
+			_fallback = fallback;
+		}
+
+		public TResult Get(TParameter parameter)
+		{
+			var candidate = _source.Get(parameter);
+			var result = _specification.IsSatisfiedBy(candidate) ? candidate : _fallback.Get(parameter);
+			return result;
+		}
+	}
+
+	class GuardedFallback<TParameter, TResult> : ConditionalSource<TParameter, TResult>
+	{
+		public static GuardedFallback<TParameter, TResult> Default { get; } = new GuardedFallback<TParameter, TResult>();
+		GuardedFallback() : this(Message<TParameter, TResult>.Default) {}
+
+		public GuardedFallback(IMessage<TParameter> message)
+			: base(new AssignedInstanceGuard<TParameter>(NeverSpecification<TParameter>.Default, message),
+			       DefaultValueSource<TParameter, TResult>.Default) {}
+	}
+
+	sealed class DefaultValueSource<TParameter, TResult> : FixedInstanceSource<TParameter, TResult>
+	{
+		public static DefaultValueSource<TParameter, TResult> Default { get; } = new DefaultValueSource<TParameter, TResult>();
+		DefaultValueSource() : base(default(TResult)) {}
+	}
+
+	/*sealed class AssignedInstanceGuard<T> : GuardedSpecification<T, InvalidOperationException>
+	{
+		public static IParameterizedSource<string, AssignedInstanceGuard<T>> Defaults { get; }
+			= new ReferenceCache<string, AssignedInstanceGuard<T>>(x => new AssignedInstanceGuard<T>(x));
+
+		public static AssignedInstanceGuard<T> Default { get; } = Defaults.Get($"Expected instance of type {typeof(T)} to be assigned.");
+
+		public AssignedInstanceGuard(string message) : this(AssignedSpecification<T>.Default, message) {}
+		public AssignedInstanceGuard(ISpecification<T> specification, string message) : this(specification, new InvalidOperationException(message)) {}
+		public AssignedInstanceGuard(ISpecification<T> specification, InvalidOperationException exception) : base(specification, exception) {}
+	}*/
+
+	sealed class Message<TParameter, TResult> : DelegatedSource<TParameter, string>, IMessage<TParameter>
+	{
+		public static Message<TParameter, TResult> Default { get; } = new Message<TParameter, TResult>();
+		Message() : this(x => $"Expected instance of type {typeof(TResult)} to be assigned, but an operation using an instance of {x.GetType()} did not produce this.") {}
+
+		public Message(Func<TParameter, string> source) : base(source) {}
+	}
+
 	public interface IValueSource<in TParameter, out TResult> : IParameterizedSource<TParameter, TResult>, IEnumerable<TResult> {}
 
 	public class TableValueSource<TParameter, TResult> : ValueSource<TParameter, TResult>, ISpecificationSource<TParameter, TResult>

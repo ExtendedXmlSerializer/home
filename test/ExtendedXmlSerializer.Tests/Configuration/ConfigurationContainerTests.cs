@@ -69,8 +69,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var configuration = new ConfigurationContainer();
 			var name = configuration.Type<SimpleTestSubject>().Name(Testclass);
 
-			Assert.Equal(MetadataNamesProperty.Default.Get(name), Testclass);
-			Assert.False(MetadataNamesProperty.Default.IsSatisfiedBy(configuration.Type<TestClassPrimitiveTypesNullable>()));
+			Assert.Equal(RegisteredNamesProperty.Default.Get(name), Testclass);
+			Assert.False(RegisteredNamesProperty.Default.IsSatisfiedBy(configuration.Type<TestClassPrimitiveTypesNullable>()));
 
 			var support = new SerializationSupport(configuration);
 			var expected = new SimpleTestSubject {BasicProperty = "Hello World!"};
@@ -146,7 +146,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member =
 				configuration.GetTypeConfiguration(typeof(SimpleTestSubject)).Member(nameof(SimpleTestSubject.BasicProperty));
 
-			Assert.Equal(MetadataNamesProperty.Default.Get(member), MemberName);
+			Assert.Equal(RegisteredNamesProperty.Default.Get(member), MemberName);
 
 			var support = new SerializationSupport(configuration);
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World!  Testing Member."};

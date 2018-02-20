@@ -41,8 +41,11 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 	public static class ExtensionMethods
 	{
-		public static TResult Get<TKey, TResult>(this IParameterizedSource<TKey, TResult> @this, ISource<TKey> parameter)
+		public static TParameter Get<TKey, TParameter>(this IParameterizedSource<TKey, TParameter> @this, ISource<TKey> parameter)
 			=> @this.Get(parameter.Get());
+
+		public static TParameter Return<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this, TParameter parameter)
+			=> @this.Get(parameter).Return(parameter);
 
 		public static ISpecificationSource<TParameter, TResult>
 			Cache<TParameter, TResult>(this ISpecificationSource<TParameter, TResult> @this)
@@ -121,7 +124,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 			=> new CoercedTable<TFrom, TTo, TResult>(@this, coercer);
 
 		public static ITableSource<TKey, TResult> Guarded<TKey, TResult>(this ITableSource<TKey, TResult> @this)
-			=> @this.In(AssignedGuardSpecification<TKey>.Default);
+			=> @this.In(AssignedArgumentGuard<TKey>.Default);
 
 		public static ITableSource<TKey, TResult> Assigned<TKey, TResult>(this ITableSource<TKey, TResult> @this)
 			=> @this.In(AssignedSpecification<TKey>.Default);
@@ -151,19 +154,36 @@ namespace ExtendedXmlSerializer.Core.Sources
 			this Func<TTo, TResult> @this, Func<TFrom, TTo> coercer)
 			=> new CoercedParameter<TFrom, TTo, TResult>(@this, coercer);
 
-		/*public static ISpecificationSource<TParameter, TTo> To<TParameter, TResult, TTo>(
-			this ISpecificationSource<TParameter, TResult> @this, A<TTo> _) => @this.To(CastCoercer<TResult, TTo>.Default);
-
-		public static ISpecificationSource<TParameter, TTo> To<TParameter, TResult, TTo>(
-			this ISpecificationSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
-			=> new SpecificationSource<TParameter, TTo>(@this, To((IParameterizedSource<TParameter, TResult>)@this, coercer));*/
-
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.Out(CastCoercer<TResult, TTo>.Default);
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
 			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer);
+
+		public static IParameterizedSource<TParameter, TResult> Guard<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this) => Guard(@this, GuardedFallback<TParameter, TResult>.Default);
+
+		public static IParameterizedSource<TParameter, TResult> Guard<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, Func<TParameter, string> message)
+			=> Guard(@this, new Message<TParameter,TResult>(message));
+
+		public static IParameterizedSource<TParameter, TResult> Guard<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, IMessage<TParameter> message)
+			=> Guard(@this, new GuardedFallback<TParameter, TResult>(message));
+
+		public static IParameterizedSource<TParameter, TResult> Guard<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> fallback)
+			=> @this.Out(AssignedSpecification<TResult>.Default, fallback);
+
+		public static IParameterizedSource<TParameter, TResult> Out<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TResult> specification)
+			=> @this.Out(specification, DefaultValueSource<TParameter, TResult>.Default);
+
+		public static IParameterizedSource<TParameter, TResult> Out<TParameter, TResult>(
+			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TResult> specification,
+			IParameterizedSource<TParameter, TResult> fallback)
+			=> new ValidatedResult<TParameter, TResult>(specification, @this, fallback);
 
 		public static ImmutableArray<TItem>? GetAny<T, TItem>(this IParameterizedSource<T, ImmutableArray<TItem>> @this,
 		                                                      T parameter)
@@ -180,7 +200,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification)
 			=> new ConditionalSource<TParameter, TResult>(specification, @this,
-			                                              new FixedInstanceSource<TParameter, TResult>(default(TResult)));
+			                                              DefaultValueSource<TParameter, TResult>.Default);
 
 		public static IParameterizedSource<TParameter, TResult> If<TParameter, TResult, TAttribute>(
 			this TResult @this, A<TAttribute> _) where TAttribute : Attribute

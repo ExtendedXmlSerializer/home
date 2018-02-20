@@ -27,9 +27,12 @@ using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Reactive;
 
 namespace ExtendedXmlSerializer.Core
 {
+	public interface ICommand : ICommand<Unit> {}
+
 	public interface ICommand<in T>
 	{
 		void Execute(T parameter);
@@ -45,6 +48,13 @@ namespace ExtendedXmlSerializer.Core
 		{
 			@this.Execute(parameter);
 			return @this;
+		}
+
+		public static ICommand<Unit> Executed(this ICommand<Unit> @this) => @this.Executed(Unit.Default);
+
+		public static void Execute(this ICommand<Unit> @this)
+		{
+			@this.Execute(Unit.Default);
 		}
 
 		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this, ISource<TKey> key, TValue instance)

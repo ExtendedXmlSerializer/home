@@ -22,7 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
 using Xunit;
 
 // ReSharper disable All
@@ -38,6 +40,23 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 			                       .Name("Ninja")
 			                       .ToSupport()
 			                       .Assert(6776, $@"<?xml version=""1.0"" encoding=""utf-8""?><Ninja xmlns=""https://extendedxmlserializer.github.io/system"">6776</Ninja>");
+		}
+
+		[Fact]
+		public void VerifyMember()
+		{
+			var member = new ConfigurationRoot().Type<Subject>().Member(x => x.Message);
+
+			var key = member.Get();
+			RegisteredNamesProperty.Default.Get(key).Should().BeNull();
+			var expected = "Hello World!";
+			member.Set(RegisteredNamesProperty.Default, expected);
+			RegisteredNamesProperty.Default.Get(key).Should().Be(expected);
+		}
+
+		sealed class Subject
+		{
+			public string Message { get; set; }
 		}
 	}
 }

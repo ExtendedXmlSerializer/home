@@ -53,7 +53,10 @@ namespace ExtendedXmlSerializer.Configuration
 	// ReSharper disable once UnusedTypeParameter
 	public interface IType<T> : ITypeConfiguration {}
 
-	public interface ITypeConfiguration : IMetadataConfiguration, IValueSource<MemberInfo, IMetadata> {}
+	public interface ITypeConfiguration : IMetadataConfiguration, IValueSource<MemberInfo, IMetadata>
+	{
+		IMetadata Type { get; }
+	}
 
 	public interface IMemberConfiguration : IMetadataConfiguration {}
 

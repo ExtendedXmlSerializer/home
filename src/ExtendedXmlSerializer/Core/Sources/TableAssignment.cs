@@ -21,33 +21,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	public interface ITableAssignment<TKey, TValue> : IAssignable<TKey, TValue> {}
-
-	sealed class TableAssignment<TKey, TValue> : ITableAssignment<TKey, TValue>
+	sealed class TableEntries<TParameter, TResult> : ReferenceCacheBase<TParameter, IEntry<TResult>>
+		where TParameter : class
 	{
-		readonly ITableSource<TKey, TValue> _source;
+		public static IParameterizedSource<ITableSource<TParameter, TResult>, TableEntries<TParameter, TResult>>
+			Defaults {get;} = new ReferenceCache<ITableSource<TParameter, TResult>, TableEntries<TParameter, TResult>>(x => new TableEntries<TParameter, TResult>(x));
 
-		public TableAssignment(ITableSource<TKey, TValue> source) => _source = source;
+		readonly ITableSource<TParameter, TResult> _table;
 
-		public void Execute(KeyValuePair<TKey, TValue> parameter)
+		public TableEntries(ITableSource<TParameter, TResult> table) => _table = table;
+
+		protected override IEntry<TResult> Create(TParameter parameter)
+			=> new TableEntry<TParameter, TResult>(_table, parameter);
+	}
+
+
+	public interface IEntry<T> : ISource<T>, ICommand<T>
+	{
+		ICommand Remove { get; }
+	}
+
+	sealed class TableEntry<TParameter, TResult> : FixedParameterSource<TParameter, TResult>, IEntry<TResult>
+	{
+		readonly ICommand<TResult> _assign;
+
+		public TableEntry(ITableSource<TParameter, TResult> table, TParameter parameter)
+			: this(table, parameter, new FixedAssignment<TParameter, TResult>(table, parameter),
+			       new Remove<TParameter, TResult>(table, parameter)) {}
+
+		public TableEntry(IParameterizedSource<TParameter, TResult> table, TParameter parameter, ICommand<TResult> assign, ICommand remove) : base(table, parameter)
 		{
-			Assign(parameter.Key, parameter.Value);
+			_assign = assign;
+			Remove = remove;
 		}
 
-		public void Assign(TKey key, TValue value)
+		public void Execute(TResult parameter)
 		{
-			if (value == null)
-			{
-				_source.Remove(key);
-			}
-			else
-			{
-				_source.Assign(key, value);
-			}
+			_assign.Execute(parameter);
 		}
+
+		public ICommand Remove { get; }
 	}
 }

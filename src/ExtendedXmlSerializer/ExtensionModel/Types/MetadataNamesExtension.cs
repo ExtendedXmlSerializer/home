@@ -63,15 +63,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 		void ICommand<IServices>.Execute(IServices parameter) { }
 	}
 
-	public sealed class MetadataNamesProperty : Property<string>
+	[Extension(typeof(MetadataNamesExtension))]
+	public sealed class RegisteredNamesProperty : Property<string>
 	{
-		public static MetadataNamesProperty Default { get; } = new MetadataNamesProperty();
-		MetadataNamesProperty() {}
+		public static RegisteredNamesProperty Default { get; } = new RegisteredNamesProperty();
+		RegisteredNamesProperty() {}
 	}
 
 	sealed class MetadataNames : LinkedDecoratedSource<MemberInfo, string>, INames
 	{
-		public MetadataNames(PropertyReference<MetadataNamesProperty, string> table, INames next) : base(table, next) {}
+		public MetadataNames(PropertyReference<RegisteredNamesProperty, string> table, INames next) : base(table, next) {}
 	}
 
 	public sealed class MetadataNamesExtension : ISerializerExtension

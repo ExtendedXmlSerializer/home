@@ -45,12 +45,14 @@ namespace ExtendedXmlSerializer.Configuration
 		public MemberConfiguration(ITypeConfiguration type, Member member)
 			: base(type.Extensions, member) => _type = type;
 
-		IMetadata ISource<IMetadata>.Get() => _type.Get();
+		// IMetadata ISource<IMetadata>.Get() => _type.Get();
 
 		public IMetadata Get(MemberInfo parameter) => _type.Get(parameter);
 
 		public IEnumerator<IMetadata> GetEnumerator() => _type.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		public IMetadata Type => _type.Type;
 	}
 }

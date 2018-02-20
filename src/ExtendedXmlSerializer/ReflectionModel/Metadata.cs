@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,14 +17,19 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		where TAttribute : Attribute, ISource<T>
 		where TMember : MemberInfo
 	{
-		public MetadataValues() : base(IsDefinedSpecification<TAttribute>.Default, Attributes<TAttribute, T>.Default) {}
+		public MetadataValues() : this(IsDefinedSpecification<TAttribute>.Default) {}
+
+		public MetadataValues(ISpecification<TMember> specification)
+			: base(specification, new SpecificationSource<TMember, ImmutableArray<T>>(specification, Attributes<TAttribute, T>.Default)) {}
 	}
 
 	class InstanceMetadata<TAttribute, TInstance, TValue> : SpecificationSource<TInstance, TValue>
 		where TAttribute : Attribute, ISource<TValue>
-		where TValue : class 
+		where TValue : class
 	{
-		public InstanceMetadata() : this(new TypeMetadataValue<TAttribute, TValue>().ReferenceCache().In(InstanceMetadataCoercer<TInstance>.Default)) {}
+		public InstanceMetadata() : this(new TypeMetadataValue<TAttribute, TValue>()) {}
+
+		public InstanceMetadata(ISpecificationSource<TypeInfo, TValue> metadata) : this(metadata.ReferenceCache().In(InstanceMetadataCoercer<TInstance>.Default)) {}
 
 		public InstanceMetadata(ISpecificationSource<TInstance, TValue> source) : base(source, source) {}
 	}
@@ -47,7 +53,10 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		where TAttribute : Attribute, ISource<T>
 		where TMember : MemberInfo
 	{
-		public MetadataValue() : base(IsDefinedSpecification<TAttribute>.Default, Attribute<TAttribute, T>.Default) {}
+		public MetadataValue() : this(IsDefinedSpecification<TAttribute>.Default) {}
+
+		public MetadataValue(ISpecification<TMember> specification)
+			: base(specification, new ConditionalSource<TMember, T>(specification, Attribute<TAttribute, T>.Default)) {}
 	}
 
 	sealed class Attributes<TAttribute, T> : IParameterizedSource<MemberInfo, ImmutableArray<T>>

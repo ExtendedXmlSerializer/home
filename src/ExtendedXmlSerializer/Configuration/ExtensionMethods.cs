@@ -58,6 +58,14 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static T Service<T>(this IExtensions @this) => @this.Extend<ConfigurationServicesExtension>().Get<T>();
 
+		public static T Set<T, TProperty>(this T @this, IProperty<TProperty> property, TProperty value)
+			where T : class, IMetadataConfiguration
+			=> @this.Get(property).Executed(value).Return(@this);
+
+		public static IEntry<T> Get<T>(this IMetadataConfiguration @this, IProperty<T> property)
+			=> TableEntries<IMetadata, T>.Defaults.Get(Properties<T>.Defaults.Get(@this.Extensions).Get(property))
+			                             .Get(@this.Get());
+
 		public static T Service<T>(this T @this, object service) where T : class, IConfigurationElement
 			=> @this.Extend<ConfigurationServicesExtension>()
 			        .Executed(service)
@@ -103,9 +111,9 @@ namespace ExtendedXmlSerializer.Configuration
 			@this.Service<IConfiguredTypes>()
 			     .Get(type);
 
-		public static MemberConfiguration<T, TMember> Name<T, TMember>(this MemberConfiguration<T, TMember> @this,
-		                                                                string name)
-			=> MetadataNamesProperty.Default.Assign(@this, name).Return(@this);
+		/*public static MemberConfiguration<T, TMember> Name<T, TMember>(this MemberConfiguration<T, TMember> @this,
+		                                                               string name)
+			=> @this.Set(RegisteredNamesProperty.Default, name);*/
 
 		public static MemberConfiguration<T, TMember> Order<T, TMember>(this MemberConfiguration<T, TMember> @this,
 		                                                                 int order)
@@ -113,8 +121,8 @@ namespace ExtendedXmlSerializer.Configuration
 			        .Assign(@this.Member(), order)
 			        .Return(@this);
 
-		public static T Name<T>(this T @this, string name) where T : class, ITypeConfiguration
-			=> MetadataNamesProperty.Default.Assign(@this, name).Return(@this);
+		public static T Name<T>(this T @this, string name) where T : class, IMetadataConfiguration
+			=> @this.Set(RegisteredNamesProperty.Default, name);
 
 		public static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 			=> @this.Member(@this.Type()

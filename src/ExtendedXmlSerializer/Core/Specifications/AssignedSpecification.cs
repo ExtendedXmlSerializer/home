@@ -21,24 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	sealed class AssignedGuardSpecification<T> : GuardedSpecification<T, ArgumentNullException>
+	sealed class AssignedArgumentGuard<T> : GuardedSpecification<T, ArgumentNullException>
 	{
-		public static AssignedGuardSpecification<T> Default { get; } = new AssignedGuardSpecification<T>();
-		AssignedGuardSpecification() : this(AssignedSpecification<T>.Default, new ArgumentNullException($"Argument of type {typeof(T)} was not assigned.")) {}
+		public static AssignedArgumentGuard<T> Default { get; } = new AssignedArgumentGuard<T>();
+		AssignedArgumentGuard() : this(AssignedSpecification<T>.Default, new ArgumentNullException($"Argument of type {typeof(T)} was not assigned.")) {}
 
-		public AssignedGuardSpecification(ISpecification<T> specification, ArgumentNullException exception) : base(specification, exception) {}
+		public AssignedArgumentGuard(ISpecification<T> specification, ArgumentNullException exception)
+			: base(specification, exception.Accept) {}
 	}
+
+	sealed class AssignedInstanceGuard<T> : GuardedSpecification<T, InvalidOperationException>
+	{
+		/*public static IParameterizedSource<IExceptionMessage<T>, AssignedInstanceGuard<T>> Defaults { get; }
+		= new ReferenceCache<IExceptionMessage<T>, AssignedInstanceGuard<T>>(x => new AssignedInstanceGuard<T>(x));*/
+
+		/*public AssignedInstanceGuard(IExceptionMessage<T> message) : this(AssignedSpecification<T>.Default, message) {}*/
+
+		public AssignedInstanceGuard(ISpecification<T> specification, IMessage<T> message)
+			: this(specification, Exceptions.From(x => new InvalidOperationException(x)).In(message).Get) {}
+
+		public AssignedInstanceGuard(ISpecification<T> specification, Func<T, InvalidOperationException> exception) : base(specification, exception) {}
+	}
+
+	public static class Exceptions
+	{
+		public static Exceptions<T> From<T>(Func<string, T> create) where T : Exception => new Exceptions<T>(create);
+	}
+
+	public sealed class Exceptions<T> : DelegatedSource<string, T> where T : Exception
+	{
+		public Exceptions(Func<string, T> source) : base(source) {}
+	}
+
+	public interface IMessage<in T> : IParameterizedSource<T, string>{}
 
 	class GuardedSpecification<T, TException> : ISpecification<T> where TException : Exception
 	{
 		readonly ISpecification<T> _specification;
-		readonly TException _exception;
+		readonly Func<T, TException> _exception;
 
-		public GuardedSpecification(ISpecification<T> specification, TException exception)
+		public GuardedSpecification(ISpecification<T> specification, Func<T, TException> exception)
 		{
 			_specification = specification;
 			_exception = exception;
@@ -48,7 +75,7 @@ namespace ExtendedXmlSerializer.Core.Specifications
 		{
 			if (!_specification.IsSatisfiedBy(parameter))
 			{
-				throw _exception;
+				throw _exception(parameter);
 			}
 			return true;
 		}

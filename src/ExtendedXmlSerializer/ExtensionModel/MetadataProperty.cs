@@ -23,10 +23,47 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
+	public interface IProperties<T> : IAlteration<IProperty<T>> {}
+
+	sealed class DeclaredExtension<T> : DecoratedSource<IProperty<T>, Type>
+	{
+		public static DeclaredExtension<T> Default { get; } = new DeclaredExtension<T>();
+		DeclaredExtension() : this(x => $"Extension could not be located for {x.GetType()}.  Please ensure this type is decorated with the ExtensionAttribute that declares a type of an ISerializerExtension.") {}
+
+		public DeclaredExtension(Func<IProperty<T>, string> message) : base(DeclaredExtensions<T>.Default.Guard(message)) {}
+	}
+
+	sealed class Properties<T> : DelegatedAlteration<IProperty<T>>, IProperties<T>
+	{
+		public static IParameterizedSource<IExtend, IProperties<T>> Defaults { get; }
+			= new ReferenceCache<IExtend, IProperties<T>>(x => new Properties<T>(x));
+
+		public Properties(IExtend extend) : base(extend.In(DeclaredExtension<T>.Default.Out(TypeMetadataCoercer.Default)).Return) {}
+	}
+
+	sealed class DeclaredExtensions<T> : InstanceMetadata<ExtensionAttribute, IProperty<T>, Type>
+	{
+		public static DeclaredExtensions<T> Default { get; } = new DeclaredExtensions<T>();
+		DeclaredExtensions() { }
+	}
+
+
+	[AttributeUsage(AttributeTargets.Class)]
+	public sealed class ExtensionAttribute : Attribute, ISource<Type>
+	{
+		readonly Type _name;
+
+		public ExtensionAttribute(Type name) => _name = name;
+
+		public Type Get() => _name;
+	}
+
 	public interface IProperty<T> : ITableSource<IMetadata, T> {}
 
 	public class Property<T> : ReferenceCache<IMetadata, T>, IProperty<T> where T : class
