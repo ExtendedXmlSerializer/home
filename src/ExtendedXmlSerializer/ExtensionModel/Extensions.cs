@@ -30,6 +30,7 @@ using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Type = System.Type;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {

@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 		[Fact]
 		public void Verify()
 		{
-			var container = new Optimizations();
+			var container = new DelegatedAlteration<IConverter>(Self<IConverter>.Default.Get);
 			var sut = new Alteration(container);
 			var support = new SerializationSupport(new ConfigurationContainer().Alter(sut).Create());
 
@@ -49,7 +49,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 			{
 				Assert.Same(format, converter.Format(number));
 			}
-			container.Clear();
+			//container.Clear();
 			Assert.NotSame(format, converter.Format(number));
 		}
 

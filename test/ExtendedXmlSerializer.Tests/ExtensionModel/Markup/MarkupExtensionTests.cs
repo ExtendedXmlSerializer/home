@@ -30,6 +30,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using System;
 using Xunit;
+using Type = System.Type;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Markup
 {

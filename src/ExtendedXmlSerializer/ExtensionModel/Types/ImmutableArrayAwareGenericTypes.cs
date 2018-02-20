@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -36,10 +36,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		readonly IGenericTypes _types;
 
-		public ImmutableArrayAwareGenericTypes(IGenericTypes types)
-		{
-			_types = types;
-		}
+		public ImmutableArrayAwareGenericTypes(IGenericTypes types) => _types = types;
 
 		public ImmutableArray<TypeInfo> Get(IIdentity parameter)
 		{

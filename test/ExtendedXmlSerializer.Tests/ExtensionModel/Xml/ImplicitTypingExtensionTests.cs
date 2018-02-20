@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Collections.Generic;
 using Xunit;
+using Type = System.Type;
 
 namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 {

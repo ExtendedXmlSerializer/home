@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -29,9 +30,11 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Reflection;
+using Type = System.Type;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -124,26 +127,26 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			=> @this.Alter(ImplicitlyDefinedDefaultValueAlteration.Default);
 
 		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this)
-			=> OptimizeConverters(@this, new Optimizations());
+			=> /*OptimizeConverters(@this, new Optimizations())*/null; // TODO.
 
 		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this,
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 
-		public static IConfigurationElement Register<T>(this IConfigurationElement @this, IConverter<T> converter)
-			=> @this.Unregister(converter).Return(@this).Extend<ConvertibleContentsExtension>()
-			        .Converters
-			        .Adding(converter as Converter<T> ?? Converters<T>.Default.Get(converter))
-			        .Return(@this);
+		public static IMetadataConfiguration Register<T>(this IMetadataConfiguration @this, IConverter<T> converter)
+			=> @this.Set(RegisteredSerializersProperty<T>.Default,
+			             new ContentSerializer<T>(new ContentModel.Content.ContentReader<T>(converter.Parse),
+			                                      new ContentModel.Content.ContentWriter<T>(converter.Format)));
 
-		public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)
-			=> @this.Extend<ConvertibleContentsExtension>()
-			        .Converters.Remove(converter as Converter<T> ?? Converters<T>.Default.Get(converter));
+		/*public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)
+			=> @this.Unregister<T>();*/
 
+/*
 		sealed class Converters<T> : ReferenceCache<IConverter<T>, Converter<T>>
 		{
 			public static Converters<T> Default { get; } = new Converters<T>();
 			Converters() : base(key => new Converter<T>(key, key.Parse, key.Format)) {}
 		}
+*/
 	}
 }

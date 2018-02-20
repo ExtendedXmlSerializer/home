@@ -463,7 +463,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 									   DefaultContentsExtension.Default,
 									   new MemberPolicyExtension(_metadata),
 									   new AllowedMemberValuesExtension(),
-									   new ConvertibleContentsExtension(),
+									   //new ConvertibleContentsExtension(),
 									   RegisteredContentsExtension.Default
 									  );
 				yield return new ExtensionGroup(Categories.Format, all,

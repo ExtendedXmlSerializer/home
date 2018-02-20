@@ -30,7 +30,6 @@ using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -62,7 +61,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
-		public object GetService(Type serviceType) => _provider.GetService(serviceType);
+		public object GetService(System.Type serviceType) => _provider.GetService(serviceType);
 		public void Execute(object parameter) => _services.Add(parameter);
 	}
 

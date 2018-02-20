@@ -2,9 +2,10 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.Tests.Support;
-using System;
 using System.Runtime.Serialization;
 using Xunit;
+using Type = System.Type;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
 

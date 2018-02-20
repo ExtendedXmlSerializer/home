@@ -33,6 +33,9 @@ namespace ExtendedXmlSerializer.Configuration
 
 	sealed class Activators<T> : IActivators<T>
 	{
+		public static Activators<T> Default { get; } = new Activators<T>();
+		Activators() : this(ServiceActivator<T>.Default) {}
+
 		readonly IParameterizedSource<IEnumerable<ISerializerExtension>, T> _activator;
 
 		public Activators(IServiceActivator<T> activator) : this(activator.In(ImmutableArrayCoercer<ISerializerExtension>

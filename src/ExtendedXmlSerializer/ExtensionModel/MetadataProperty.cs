@@ -26,6 +26,7 @@ using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Runtime.CompilerServices;
+using Type = System.Type;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {

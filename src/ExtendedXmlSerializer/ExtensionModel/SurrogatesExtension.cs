@@ -28,9 +28,9 @@ using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Services;
-using System;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Type = System.Type;
 
 #if NET45 // http://www.nooooooooooooooo.com/ ... Hashtags belong on Twitter. ;)
 namespace System.Runtime.Serialization

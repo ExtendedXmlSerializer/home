@@ -95,7 +95,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 											CollectionContentsExtension.Default,
 											ArrayContentsExtension.Default,
 											DictionaryContentsExtension.Default,*/
-			                                new ConvertibleContentsExtension(),
+			                                //new ConvertibleContentsExtension(),
 			                                /*
 			                                NullableStructureContentsExtension.Default,
 			                                ,

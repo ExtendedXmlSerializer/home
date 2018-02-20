@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Samples.Extensibility
 		public void Execute(object parameter)
 		{
 // Converter
-var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
+var serializer = new ConfigurationContainer().Type<CustomStruct>().Register(CustomStructConverter.Default).Create();
 var subject = new CustomStruct(123);
 var contents = serializer.Serialize(subject);
 // ...

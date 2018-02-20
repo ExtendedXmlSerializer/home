@@ -1,10 +1,11 @@
-﻿using System;
-using System.Reflection;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -14,7 +15,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyRegisteredCustomConverterReplacesExistingConverter()
 		{
-			var serializer = new ConfigurationContainer().Register(DateTimeConverter.Default)
+			var serializer = new ConfigurationContainer().Type<DateTime>()
+			                                             .Register(DateTimeConverter.Default)
 			                                             .Create()
 			                                             .ForTesting();
 
@@ -26,9 +28,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		public void VerifyUnregisterReturnsTrueThenFalse()
 		{
-			var container = new ConfigurationContainer();
-			container.Unregister(DateTimeConverter.Default).Should().BeTrue();
-			container.Unregister(DateTimeConverter.Default).Should().BeFalse();
+			var container = new ConfigurationContainer().Type<DateTime>();
+			container.Register(DateTimeConverter.Default);
+
+			var entry = container.Entry(RegisteredSerializersProperty<DateTime>.Default);
+			entry.Get().Should().NotBeNull();
+
+			entry.Remove.Executed();
+
+			entry.Get().Should().BeNull();
 		}
 
 		sealed class Subject
@@ -51,8 +59,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				_dateTime = dateTime;
 				_text = text;
 			}
-
-			public bool IsSatisfiedBy(TypeInfo parameter) => parameter.AsType() == typeof(DateTime);
 
 			public DateTime Parse(string data) => _dateTime;
 

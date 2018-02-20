@@ -103,7 +103,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		[Fact]
 		public void ConfigureCustomSerializerForType()
 		{
-			var serializers = RegisteredContentSerializers<TestClassPrimitiveTypes>.Default;
+			var serializers = RegisteredSerializersProperty<TestClassPrimitiveTypes>.Default;
 			var config = Configure(cfg =>
 								   {
 									   var t = cfg.ConfigureType<TestClassPrimitiveTypes>();
