@@ -21,8 +21,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+
 namespace ExtendedXmlSerializer.Core.Specifications
 {
+	sealed class AssignedGuardSpecification<T> : GuardedSpecification<T, ArgumentNullException>
+	{
+		public static AssignedGuardSpecification<T> Default { get; } = new AssignedGuardSpecification<T>();
+		AssignedGuardSpecification() : this(AssignedSpecification<T>.Default, new ArgumentNullException($"Argument of type {typeof(T)} was not assigned.")) {}
+
+		public AssignedGuardSpecification(ISpecification<T> specification, ArgumentNullException exception) : base(specification, exception) {}
+	}
+
+	class GuardedSpecification<T, TException> : ISpecification<T> where TException : Exception
+	{
+		readonly ISpecification<T> _specification;
+		readonly TException _exception;
+
+		public GuardedSpecification(ISpecification<T> specification, TException exception)
+		{
+			_specification = specification;
+			_exception = exception;
+		}
+
+		public bool IsSatisfiedBy(T parameter)
+		{
+			if (!_specification.IsSatisfiedBy(parameter))
+			{
+				throw _exception;
+			}
+			return true;
+		}
+	}
+
 	sealed class AssignedSpecification<T> : ISpecification<T>
 	{
 		public static AssignedSpecification<T> Default { get; } = new AssignedSpecification<T>();

@@ -48,15 +48,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.RegisterInstance<INames>(new Names(DeclaredNames.Default.Or(DeclaredMemberNames.Default)))
-			            .RegisterInstance<IRegisteredTypes>(RegisteredTypes.Default);
+			            .RegisterInstance<IRegisteredTypes>(new RegisteredTypes(WellKnownAliases.Default.Keys));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
-
-	sealed class RegisteredTypes : Items<TypeInfo>, IRegisteredTypes
-	{
-		public static RegisteredTypes Default { get; } = new RegisteredTypes();
-		RegisteredTypes() : base(WellKnownAliases.Default.Keys) {}
-	}
-
 }

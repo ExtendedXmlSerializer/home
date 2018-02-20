@@ -22,32 +22,22 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
-using FluentAssertions;
+using ExtendedXmlSerializer.Tests.Support;
+using Xunit;
 
-namespace ExtendedXmlSerializer.Tests.Support
+// ReSharper disable All
+
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 {
-	static class Extensions
+	public class MetadataNamesExtensionTests
 	{
-		public static T Cycle<T>(this IExtendedXmlSerializer @this, T instance)
-			=> @this.Deserialize<T>(@this.Serialize(instance));
-
-		public static T Cycle<T>(this ISerializers @this, T instance)
+		[Fact]
+		public void Verify()
 		{
-			var serializer = @this.Get<T>();
-			var serialize = @this.Serialize(instance);
-			var result = serializer.Deserialize(serialize);
-			result.ShouldBeEquivalentTo(instance);
-			return result;
+			new ConfigurationRoot().Type<int>()
+			                       .Name("Ninja")
+			                       .ToSupport()
+			                       .Assert(6776, $@"<?xml version=""1.0"" encoding=""utf-8""?><Ninja xmlns=""https://extendedxmlserializer.github.io/system"">6776</Ninja>");
 		}
-
-		public static SerializationSupport ForTesting(this IConfigurationElement @this) => new SerializationSupport(@this);
-		public static SerializationSupport ForTesting(this IExtendedXmlSerializer @this) => new SerializationSupport(@this);
-
-		public static SerializersSupport ToSupport(this IConfigurationRoot @this) => new SerializersSupport(@this);
-		public static SerializersSupport ToSupport(this ISerializers @this) => new SerializersSupport(@this);
-
-		public static SerializersSupport ToSupport(this IConfigurationElement @this)
-			=> new SerializersSupport(@this.Create<ISerializers>());
 	}
 }

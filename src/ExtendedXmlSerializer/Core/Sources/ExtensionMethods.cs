@@ -120,6 +120,16 @@ namespace ExtendedXmlSerializer.Core.Sources
 			this ITableSource<TFrom, TResult> @this, IParameterizedSource<TTo, TFrom> coercer)
 			=> new CoercedTable<TFrom, TTo, TResult>(@this, coercer);
 
+		public static ITableSource<TKey, TResult> Guarded<TKey, TResult>(this ITableSource<TKey, TResult> @this)
+			=> @this.In(AssignedGuardSpecification<TKey>.Default);
+
+		public static ITableSource<TKey, TResult> Assigned<TKey, TResult>(this ITableSource<TKey, TResult> @this)
+			=> @this.In(AssignedSpecification<TKey>.Default);
+
+		public static ITableSource<TKey, TResult> In<TKey, TResult>(
+			this ITableSource<TKey, TResult> @this, ISpecification<TKey> specification)
+			=> new ValidatedTable<TKey, TResult>(specification, @this);
+
 		public static ISpecificationSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecificationSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
 			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));

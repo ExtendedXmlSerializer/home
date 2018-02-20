@@ -135,21 +135,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 		public ServiceGroups(IEnumerable<GroupName> phases) : base(phases) { }
 	}
 
-	sealed class Property<TProperty, T> : Configuration.Property<TProperty, IService<T>>
-		where TProperty : class, ExtensionModel.IProperty<IService<T>>
+	sealed class ServicePropertyReference<TProperty, T> : PropertyReference<TProperty, IService<T>>
+		where TProperty : class, IProperty<IService<T>>
 	{
-		public Property(IMetadataTable table, ISingletonLocator locator) : base(table, locator) {}
+		public ServicePropertyReference(IMetadataTable table, ISingletonLocator locator) : base(table, locator) {}
 	}
 
-	class ServiceProperty<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IProperty<T>
+	class ServiceProperty<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IServiceProperty<T>
 	{
-		public ServiceProperty(IServiceCoercer<T> coercer, Property<TProperty, T> property)
+		public ServiceProperty(IServiceCoercer<T> coercer, ServicePropertyReference<TProperty, T> property)
 			: base(property, property.Out(coercer)) {}
 	}
 
-	public interface IProperty<T> : ExtensionModel.IProperty<IService<T>> {}
+	public interface IServiceProperty<T> : IProperty<IService<T>> {}
 
-	class ServiceProperty<T> : Property<IService<T>>, IProperty<T> {}
+	class ServiceProperty<T> : Property<IService<T>>, IServiceProperty<T> {}
 
 	public sealed class ExtensionServicesExtension : ISerializerExtension
 	{

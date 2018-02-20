@@ -423,16 +423,19 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		sealed class Groups : ItemsBase<IGroup<ISerializerExtension>>
 		{
 			public static Groups Default { get; } = new Groups();
-			Groups() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) { }
+			Groups() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default,
+			                ExtendedXmlSerializer.ExtensionModel.Xml.MetadataNamesExtension.Default) { }
 
 			readonly IMetadataSpecification _metadata;
 			readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
+			readonly ISerializerExtension _names;
 
 			public Groups(IMetadataSpecification metadata,
-								 IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+			              IParameterizedSource<MemberInfo, int> defaultMemberOrder, ISerializerExtension names)
 			{
-				_metadata = metadata;
+				_metadata           = metadata;
 				_defaultMemberOrder = defaultMemberOrder;
+				_names              = names;
 			}
 
 			public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
@@ -445,8 +448,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 				yield return new ExtensionGroup(Categories.ReflectionModel, all,
 									   TypeModelExtension.Default,
 									   SingletonActivationExtension.Default,
-									   ExtendedXmlSerializer.ExtensionModel.Xml.MetadataNamesExtension.Default,
-									   MetadataNamesExtension.Default,
+									   new MetadataNamesExtension(_names),
 									   new MemberOrderingExtension(_defaultMemberOrder),
 									   ImmutableArrayContentsExtension.Default,
 									   MemberModelExtension.Default

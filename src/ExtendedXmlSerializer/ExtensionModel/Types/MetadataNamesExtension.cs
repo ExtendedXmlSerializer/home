@@ -71,18 +71,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 	sealed class MetadataNames : LinkedDecoratedSource<MemberInfo, string>, INames
 	{
-		public MetadataNames(IMetadataTable table, ISingletonLocator locator, INames next)
-			: base(new Configuration.Property<MetadataNamesProperty, string>(table, locator), next) {}
+		public MetadataNames(PropertyReference<MetadataNamesProperty, string> table, INames next) : base(table, next) {}
 	}
 
 	public sealed class MetadataNamesExtension : ISerializerExtension
 	{
-		public static MetadataNamesExtension Default { get; } = new MetadataNamesExtension();
-		MetadataNamesExtension() {}
+		readonly ISerializerExtension _format;
+
+		public MetadataNamesExtension(ISerializerExtension format) => _format = format;
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateWithDependencies<INames, MetadataNames>()
-			            .Decorate<IRegisteredTypes, RegisteredTypes>();
+			=> _format.Get(parameter)
+			          .DecorateWithDependencies<INames, MetadataNames>()
+			          .Decorate<IRegisteredTypes, RegisteredTypes>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

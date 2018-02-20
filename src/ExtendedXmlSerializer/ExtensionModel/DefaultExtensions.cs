@@ -33,23 +33,25 @@ using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using System.Collections.Generic;
 using System.Reflection;
-using MetadataNamesExtension = ExtendedXmlSerializer.ExtensionModel.Xml.MetadataNamesExtension;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	sealed class DefaultExtensions : ItemsBase<IGroup<ISerializerExtension>>
 	{
 		public static DefaultExtensions Default { get; } = new DefaultExtensions();
-		DefaultExtensions() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default) {}
+		DefaultExtensions() : this(DefaultMetadataSpecification.Default, DefaultMemberOrder.Default,
+		                           Xml.MetadataNamesExtension.Default) {}
 
 		readonly IMetadataSpecification                _metadata;
 		readonly IParameterizedSource<MemberInfo, int> _defaultMemberOrder;
+		readonly ISerializerExtension _names;
 
 		public DefaultExtensions(IMetadataSpecification metadata,
-		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder)
+		                         IParameterizedSource<MemberInfo, int> defaultMemberOrder, ISerializerExtension names)
 		{
 			_metadata           = metadata;
 			_defaultMemberOrder = defaultMemberOrder;
+			_names = names;
 		}
 
 		public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
@@ -64,8 +66,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			                                TypeModelExtension.Default,
 			                                SingletonActivationExtension.Default,
 			                                TypeResolutionExtension.Default,
-			                                MetadataNamesExtension.Default, // TODO: Provide a union to pass this in first.
-											Types.MetadataNamesExtension.Default
+			                                new Types.MetadataNamesExtension(_names)
 			                               );
 
 			yield return new ExtensionGroup(Categories.ContentModel, all,
@@ -94,12 +95,13 @@ namespace ExtendedXmlSerializer.ExtensionModel
 											CollectionContentsExtension.Default,
 											ArrayContentsExtension.Default,
 											DictionaryContentsExtension.Default,*/
-			                                RegisteredContentsExtension.Default
-			                                /*new ConvertibleContentsExtension(),
+			                                new ConvertibleContentsExtension(),
+			                                /*
 			                                NullableStructureContentsExtension.Default,
 			                                ,
 			                                MetadataContentsExtension.Default,
 			                                ImmutableArrayContentsExtension.Default*/
+			                                RegisteredContentsExtension.Default
 			                               );
 			yield return new ExtensionGroup(Categories.Format, all,
 			                                new XmlSerializationExtension()/*,

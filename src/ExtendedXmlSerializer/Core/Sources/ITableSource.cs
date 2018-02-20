@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Specifications;
 using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.Core.Sources
@@ -29,6 +30,32 @@ namespace ExtendedXmlSerializer.Core.Sources
 	                                              IAssignable<TKey, TValue>
 	{
 		bool Remove(TKey key);
+	}
+
+	public sealed class ValidatedTable<TKey, TValue> : ITableSource<TKey, TValue>
+	{
+		readonly ISpecification<TKey> _specification;
+		readonly ITableSource<TKey, TValue> _table;
+
+		public ValidatedTable(ISpecification<TKey> specification, ITableSource<TKey, TValue> table)
+		{
+			_specification = specification;
+			_table = table;
+		}
+
+		public bool IsSatisfiedBy(TKey parameter) => _specification.IsSatisfiedBy(parameter) && _table.IsSatisfiedBy(parameter);
+
+		public TValue Get(TKey parameter) => _specification.IsSatisfiedBy(parameter) ? _table.Get(parameter) : default(TValue);
+
+		public void Execute(KeyValuePair<TKey, TValue> parameter)
+		{
+			if (_specification.IsSatisfiedBy(parameter.Key))
+			{
+				_table.Execute(parameter);
+			}
+		}
+
+		public bool Remove(TKey key) => _specification.IsSatisfiedBy(key) && _table.Remove(key);
 	}
 
 	public class CoercedTable<TFrom, TTo, TValue> : ITableSource<TTo, TValue>
