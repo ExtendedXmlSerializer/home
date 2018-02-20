@@ -21,7 +21,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		[Fact]
 		public void VerifyOrphanedPropertyThrows()
 		{
-			Action action = () => new ConfigurationRoot().Type<int>().Get(OrphanedProperty.Default);
+			Action action = () => new ConfigurationRoot().Type<int>().Entry(OrphanedProperty.Default);
 			action.ShouldThrow<InvalidOperationException>();
 		}
 
@@ -33,7 +33,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 			var root = new ConfigurationRoot(collection);
 			root.Extensions.FirstOf<Extension>().Should().BeNull();
 			root.Extensions.FirstOf<Dependency>().Should().BeNull();
-			root.Type<int>().Get(DeclaredProperty.Default);
+			root.Type<int>().Entry(DeclaredProperty.Default);
 			var first = root.Extensions.FirstOf<Extension>();
 			first.Should().NotBeNull();
 			var second = root.Extensions.FirstOf<Dependency>();

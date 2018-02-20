@@ -60,9 +60,12 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static T Set<T, TProperty>(this T @this, IProperty<TProperty> property, TProperty value)
 			where T : class, IMetadataConfiguration
-			=> @this.Get(property).Executed(value).Return(@this);
+			=> @this.Entry(property).Executed(value).Return(@this);
 
-		public static IEntry<T> Get<T>(this IMetadataConfiguration @this, IProperty<T> property)
+		public static TProperty Get<T, TProperty>(this T @this, IProperty<TProperty> property)
+			where T : class, IMetadataConfiguration => @this.Entry(property).Get();
+
+		public static IEntry<T> Entry<T>(this IMetadataConfiguration @this, IProperty<T> property)
 			=> TableEntries<IMetadata, T>.Defaults.Get(Properties<T>.Defaults.Get(@this.Extensions).Get(property))
 			                             .Get(@this.Get());
 
