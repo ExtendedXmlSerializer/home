@@ -121,7 +121,7 @@ namespace ExtendedXmlSerializer.Configuration
 	class Configuration : CompositeCommand<IConfigurationElement>, IConfiguration
 	{
 		public Configuration(IEnumerable<IConfiguration> items) : base(items.Cast<ICommand<IConfigurationElement>>()
-		                                                                       .ToArray()) {}
+		                                                                    .ToArray()) {}
 	}
 
 	class Configurations : Items<IConfiguration>

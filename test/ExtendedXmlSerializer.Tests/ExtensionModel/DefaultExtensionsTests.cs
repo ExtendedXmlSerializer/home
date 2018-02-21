@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Services;
@@ -21,7 +22,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		[Fact]
 		public void VerifyOrphanedPropertyThrows()
 		{
-			Action action = () => new ConfigurationRoot().Type<int>().Entry(OrphanedProperty.Default);
+			Action action = () => new ConfigurationRoot().Type<int>().To<TypeConfiguration<int>>().Entry(OrphanedProperty.Default);
 			action.ShouldThrow<InvalidOperationException>();
 		}
 

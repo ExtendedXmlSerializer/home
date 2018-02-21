@@ -29,20 +29,19 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class AlteredContentSerializer<TFrom, TTo> : IContentSerializer<TFrom>
 	{
-		readonly IContentSerializer<TTo> _serializer;
+		readonly IContentSerializer<TTo>          _serializer;
 		readonly IParameterizedSource<TTo, TFrom> _from;
 		readonly IParameterizedSource<TFrom, TTo> _to;
 
 		public AlteredContentSerializer(IContents<TTo> contents) : this(contents.Get(), CastCoercer<TTo, TFrom>.Default,
-		                                                                 CastCoercer<TFrom, TTo>.Default)
-		{ }
+		                                                                CastCoercer<TFrom, TTo>.Default) {}
 
 		public AlteredContentSerializer(IContentSerializer<TTo> serializer, IParameterizedSource<TTo, TFrom> from,
 		                                IParameterizedSource<TFrom, TTo> to)
 		{
 			_serializer = serializer;
-			_from = from;
-			_to = to;
+			_from       = from;
+			_to         = to;
 		}
 
 		public TFrom Get(IFormatReader parameter) => _from.Get(_serializer.Get(parameter));

@@ -52,8 +52,9 @@ namespace ExtendedXmlSerializer.Configuration
 			var factory = _activator.Build(parameter);
 
 			var result = new Activator<T>(factory, extensions);
-			result.Services(new ConfiguredTypes(extensions), factory);
-
+			var types = new ConfiguredTypes(extensions);
+			var services = new ConfigurationServicesExtension(result, types, factory, types, result);
+			extensions.Add.Execute(services);
 			return result;
 		}
 	}

@@ -27,46 +27,20 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
+using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
 	public interface IContentWriter<T> : ICommand<Writing<T>> {}
-
-	sealed class AssignedContentAwareWriter<T> : ConditionalInstanceContentWriter<T>
-	{
-		public AssignedContentAwareWriter(IContentWriter<T> @true, IContentWriter<T> @false) :
-			this(AssignedSpecification<T>.Default, @true, @false) {}
-
-		public AssignedContentAwareWriter(ISpecification<T> specification, IContentWriter<T> @true,
-		                                  IContentWriter<T> @false) : base(specification, @true, @false) {}
-	}
-
-	class ConditionalInstanceContentWriter<T> : IContentWriter<T>
-	{
-		readonly ISpecification<T> _specification;
-		readonly IContentWriter<T> _true;
-		readonly IContentWriter<T> _false;
-
-		public ConditionalInstanceContentWriter(ISpecification<T> specification, IContentWriter<T> @true,
-		                                        IContentWriter<T> @false)
-		{
-			_specification = specification;
-			_true          = @true;
-			_false         = @false;
-		}
-
-		public void Execute(Writing<T> parameter)
-		{
-			var writer = _specification.IsSatisfiedBy(parameter.Instance) ? _true : _false;
-			writer.Execute(parameter);
-		}
-	}
 
 	class ConditionalContentWriter<T> : IContentWriter<T>
 	{
 		readonly ISpecification<Writing<T>> _specification;
 		readonly IContentWriter<T>          _true;
 		readonly IContentWriter<T>          _false;
+
+		public ConditionalContentWriter(ISpecification<Writing<T>> specification, IContentWriter<T> @true)
+			: this(specification, @true, EmptyContentWriter<T>.Default) {}
 
 		public ConditionalContentWriter(ISpecification<Writing<T>> specification, IContentWriter<T> @true,
 		                                IContentWriter<T> @false)
@@ -81,12 +55,6 @@ namespace ExtendedXmlSerializer.ContentModel
 			var writer = _specification.IsSatisfiedBy(parameter) ? _true : _false;
 			writer.Execute(parameter);
 		}
-	}
-
-	sealed class AssignedContentAwareReader<T> : ConditionalContentReader<T>
-	{
-		public AssignedContentAwareReader(IContentReader<T> @true, IContentReader<T> @false) :
-			base(ContainsNullContentSpecification.Default, @true, @false) {}
 	}
 
 	class ConditionalContentReader<T> : IContentReader<T>
@@ -111,10 +79,10 @@ namespace ExtendedXmlSerializer.ContentModel
 		}
 	}
 
-	sealed class ContainsNullContentSpecification : ContainsIdentitySpecification
+	sealed class ContainsUnassignedContentSpecification : ContainsIdentitySpecification
 	{
-		public static ContainsNullContentSpecification Default { get; } = new ContainsNullContentSpecification();
-		ContainsNullContentSpecification() : base(NullValueIdentity.Default) {}
+		public static ContainsUnassignedContentSpecification Default { get; } = new ContainsUnassignedContentSpecification();
+		ContainsUnassignedContentSpecification() : base(NullValueIdentity.Default) {}
 	}
 
 	class ContainsIdentitySpecification : ISpecification<IFormatReader>
@@ -125,21 +93,23 @@ namespace ExtendedXmlSerializer.ContentModel
 		public bool IsSatisfiedBy(IFormatReader parameter) => parameter.IsSatisfiedBy(_identity);
 	}
 
-	public interface INullContentWriter<T> : IContentWriter<T> {}
+	public interface IUnassignedContentWriter<T> : IContentWriter<T> {}
 
-	public interface INullContentReader<out T> : IContentReader<T> {}
+	public interface IUnassignedContentReader<out T> : IContentReader<T> {}
 
-	sealed class NullContentWriter<T> : INullContentWriter<T>
+	sealed class UnassignedContentWriter<T> : IUnassignedContentWriter<T>
 	{
-		public static NullContentWriter<T> Default { get; } = new NullContentWriter<T>();
-		NullContentWriter() {}
+		[UsedImplicitly]
+		public static UnassignedContentWriter<T> Default { get; } = new UnassignedContentWriter<T>();
+		UnassignedContentWriter() {}
 
 		public void Execute(Writing<T> parameter) => parameter.Writer.Content(null);
 	}
 
-	sealed class NullContentReader<T> : FixedInstanceSource<IFormatReader, T>, INullContentReader<T>
+	sealed class UnassignedContentReader<T> : FixedInstanceSource<IFormatReader, T>, IUnassignedContentReader<T>
 	{
-		public static NullContentReader<T> Default { get; } = new NullContentReader<T>();
-		NullContentReader() : base(default(T)) {}
+		[UsedImplicitly]
+		public static UnassignedContentReader<T> Default { get; } = new UnassignedContentReader<T>();
+		UnassignedContentReader() : base(default(T)) {}
 	}
 }

@@ -170,7 +170,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.Out(CastCoercer<TResult, TTo>.Default);
 
-		public static IParameterizedSource<TParameter, TResult> Out<TParameter, TResult>(
+		public static IParameterizedSource<TParameter, TResult> Invoke<TParameter, TResult>(
 			this IParameterizedSource<TParameter, Func<TResult>> @this) => @this.Out(DelegateCoercer<TResult>.Default);
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(

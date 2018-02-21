@@ -27,12 +27,9 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
-using System.Reactive;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -52,13 +49,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 
-	[Extension(typeof(AssignableContentsExtension))]
-	public class EmitUnassignedSpecificationProperty : Property<ISpecification<Unit>>
+	/*[Extension(typeof(AssignableContentsExtension))]
+	public class UnassignedContentProperty : Property<ISpecification<MemberInfo>>
 	{
-		[UsedImplicitly]
-		public static EmitUnassignedSpecificationProperty Default { get; } = new EmitUnassignedSpecificationProperty();
-		EmitUnassignedSpecificationProperty() : base(NeverSpecification<object>.Default.To(A<Unit>.Default).Accept) {}
-	}
+		public static IProperty<ISpecification<MemberInfo>> Default { get; } = new UnassignedContentProperty();
+		UnassignedContentProperty() : base(NeverSpecification<MemberInfo>.Default) {}
+	}*/
 
 	public class AssignableContentsExtension : ISerializerExtension
 	{
@@ -66,20 +62,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		AssignableContentsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterDefinition<INullContentReader<object>, NullContentReader<object>>()
-			            .RegisterDefinition<INullContentWriter<object>, NullContentWriter<object>>()
-			            .Decorate<AssignableContents<object>>();
+			=> parameter.RegisterDefinition<IUnassignedContentReader<object>, UnassignedContentReader<object>>()
+			            .RegisterDefinition<IUnassignedContentWriter<object>, UnassignedContentWriter<object>>()
+			            .Decorate<UnassignedContents<object>>();
 
 		public void Execute(IServices parameter) {}
 
-		sealed class NullContentReader<T> : Singleton<ContentModel.NullContentReader<T>, IFormatReader, T>, INullContentReader<T>
+		sealed class UnassignedContentReader<T> : Singleton<ContentModel.UnassignedContentReader<T>, IFormatReader, T>, IUnassignedContentReader<T>
 		{
-			public NullContentReader(ISingletonLocator locator) : base(locator) {}
+			public UnassignedContentReader(ISingletonLocator locator) : base(locator) {}
 		}
 
-		sealed class NullContentWriter<T> : SingletonCommand<ContentModel.NullContentWriter<T>, ContentModel.Writing<T>>, INullContentWriter<T>
+		sealed class UnassignedContentWriter<T> : SingletonCommand<ContentModel.UnassignedContentWriter<T>, ContentModel.Writing<T>>, IUnassignedContentWriter<T>
 		{
-			public NullContentWriter(ISingletonLocator locator) : base(locator) {}
+			public UnassignedContentWriter(ISingletonLocator locator) : base(locator) {}
 		}
 
 	}

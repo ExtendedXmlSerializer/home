@@ -77,7 +77,7 @@ namespace ExtendedXmlSerializer.Core
 			_parameter = parameter;
 		}
 
-		public void Execute(T parameter)
+		public void Execute(T _)
 		{
 			_command.Execute(_parameter);
 		}
@@ -95,14 +95,20 @@ namespace ExtendedXmlSerializer.Core
 		}
 	}
 
-	class DelegatedSourceCommand<T> : ICommand<T>
+	class DelegatedSourceCommand<TParameter, T> : ICommand<TParameter>
 	{
-		readonly Func<T, ICommand<T>> _source;
-		public DelegatedSourceCommand(Func<T, ICommand<T>> source) => _source = source;
+		readonly Func<TParameter, ICommand<T>> _source;
+		readonly Func<TParameter, T> _coercer;
 
-		public void Execute(T parameter)
+		public DelegatedSourceCommand(Func<TParameter, ICommand<T>> source, Func<TParameter, T> coercer)
 		{
-			_source(parameter).Execute(parameter);
+			_source = source;
+			_coercer = coercer;
+		}
+
+		public void Execute(TParameter parameter)
+		{
+			_source(parameter).Execute(_coercer(parameter));
 		}
 	}
 

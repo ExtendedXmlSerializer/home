@@ -29,7 +29,6 @@ using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -39,25 +38,28 @@ namespace ExtendedXmlSerializer.Configuration
 {
 	sealed class ConfigurationServicesExtension : ISerializerExtension, IServiceProvider, ICommand<object>
 	{
+		readonly IConfigurationElement _element;
+		readonly IConfiguredTypes _types;
 		readonly ICollection<object> _services;
 		readonly IServiceProvider _provider;
 
-		[UsedImplicitly]
-		public ConfigurationServicesExtension() : this(Support<object>.Empty) {}
+		public ConfigurationServicesExtension(IConfigurationElement element, IConfiguredTypes types, params object[] services)
+			: this(element, types, services.ToList()) {}
 
-		public ConfigurationServicesExtension(params object[] services) : this(services.ToList()) {}
+		public ConfigurationServicesExtension(IConfigurationElement element, IConfiguredTypes types, IList<object> services)
+			: this(element, types, services, new ServiceProvider(services)) {}
 
-		public ConfigurationServicesExtension(IList<object> services) : this(services, new ServiceProvider(services)) {}
-
-		public ConfigurationServicesExtension(ICollection<object> services, IServiceProvider provider)
+		public ConfigurationServicesExtension(IConfigurationElement element, IConfiguredTypes types, ICollection<object> services, IServiceProvider provider)
 		{
+			_element = element;
+			_types = types;
 			_services = services;
 			_provider = provider;
 		}
 
 		IServiceRepository IParameterizedSource<IServiceRepository, IServiceRepository>.Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance<IMetadataTable>(new MetadataTable(_provider.GetValid<IConfiguredTypes>()
-			                                                                         .SelectMany(x => x.Prepending(x.Get()))));
+			=> parameter.RegisterInstance(_element)
+			            .RegisterInstance<IMetadataTable>(new MetadataTable(_types.SelectMany(x => x.Prepending(x.Get()))));
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 
@@ -65,19 +67,19 @@ namespace ExtendedXmlSerializer.Configuration
 		public void Execute(object parameter) => _services.Add(parameter);
 	}
 
-	class PropertyReference<TProperty, T> : FixedParameterSource<IConfigurationElement, T> where TProperty : class, IProperty<T>
+	class PropertyValue<TProperty, T> : FixedParameterSource<IConfigurationElement, T> where TProperty : class, IProperty<T>
 	{
-		public PropertyReference(ISingletonLocator locator, IConfigurationElement parameter)
+		public PropertyValue(ISingletonLocator locator, IConfigurationElement parameter)
 			: this(locator.Out(A<TProperty>.Default).Get(typeof(TProperty)), parameter) {}
-		public PropertyReference(IParameterizedSource<IConfigurationElement, T> source, IConfigurationElement parameter) : base(source, parameter) {}
+		public PropertyValue(IParameterizedSource<IConfigurationElement, T> source, IConfigurationElement parameter) : base(source, parameter) {}
 	}
 
-	class MetadataPropertyReference<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataProperty<T>
+	class MetadataValue<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataProperty<T>
 	{
-		public MetadataPropertyReference(IMetadataTable table, ISingletonLocator locator)
+		public MetadataValue(IMetadataTable table, ISingletonLocator locator)
 			: this(table, locator.Out(A<TProperty>.Default).Get(typeof(TProperty)).Assigned()) {}
 
-		public MetadataPropertyReference(IMetadataTable table, ISpecificationSource<IMetadata, T> property)
+		public MetadataValue(IMetadataTable table, ISpecificationSource<IMetadata, T> property)
 			: base(property.To(table), property.In(table)) {}
 	}
 

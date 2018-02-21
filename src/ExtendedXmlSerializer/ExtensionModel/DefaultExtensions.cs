@@ -21,7 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
@@ -58,7 +57,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		{
 			var all = new KeyedByTypeCollection<ISerializerExtension>();
 			yield return new ExtensionGroup(Categories.Start, all,
-			                                new ConfigurationServicesExtension(),
 			                                ExtensionServicesExtension.Default
 			                               );
 

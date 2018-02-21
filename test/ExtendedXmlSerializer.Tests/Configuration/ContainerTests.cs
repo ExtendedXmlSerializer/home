@@ -441,9 +441,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			public override IEnumerator<IGroup<ISerializerExtension>> GetEnumerator()
 			{
 				var all = new KeyedByTypeCollection<ISerializerExtension>();
-				yield return new ExtensionGroup(Categories.Start, all,
-									   new ConfigurationServicesExtension()
-									  );
+				yield return new ExtensionGroup(Categories.Start, all);
 
 				yield return new ExtensionGroup(Categories.ReflectionModel, all,
 									   TypeModelExtension.Default,

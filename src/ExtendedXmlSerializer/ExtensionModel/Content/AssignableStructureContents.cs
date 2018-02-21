@@ -21,14 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Reactive;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -40,25 +38,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 
 
-	sealed class AssignableContents<T> : ConditionalContents<T>, IContents<T>
+	sealed class UnassignedContents<T> : ConditionalContents<T>, IContents<T>
 	{
-		public AssignableContents(PropertyReference<EmitUnassignedSpecificationProperty, ISpecification<Unit>> property,
-		                          IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
+		public UnassignedContents(IContents<T> contents, IUnassignedContentReader<T> reader, IUnassignedContentWriter<T> writer)
 			: base(AssignableStructureSpecification.Default.Or(IsReferenceSpecification.Default),
-			       new AssignableAwareContents<T>(contents, reader,
-			                                      new ConditionalContentWriter<T>(property.Get().To(A<Writing<T>>.Default),
-			                                                                      writer,
-																				  EmptyContentWriter<T>.Default)
-			                                      ), contents) {}
+			       new UnassignedSerializers<T>(contents, reader, writer), contents) {}
 	}
 
-	sealed class AssignableAwareContents<T> : ISource<IContentSerializer<T>>
+	sealed class UnassignedSerializers<T> : ISource<IContentSerializer<T>>
 	{
 		readonly IContents<T> _contents;
 		readonly IContentReader<T> _reader;
 		readonly IContentWriter<T> _writer;
 
-		public AssignableAwareContents(IContents<T> contents, IContentReader<T> reader, IContentWriter<T> writer)
+		public UnassignedSerializers(IContents<T> contents, IContentReader<T> reader, IContentWriter<T> writer)
 		{
 			_contents = contents;
 			_reader = reader;
@@ -68,9 +61,35 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public IContentSerializer<T> Get()
 		{
 			var contents = _contents.Get();
-			var result = new ContentSerializer<T>(new AssignedContentAwareReader<T>(contents, _reader),
-			                                      new AssignedContentAwareWriter<T>(contents, _writer));
+			var result = new ContentSerializer<T>(new UnassignedContentAwareReader<T>(_reader, contents),
+			                                      new UnassignedContentAwareWriter<T>(_writer, contents));
 			return result;
 		}
 	}
+
+	sealed class UnassignedContentAwareReader<T> : ConditionalContentReader<T>
+	{
+		public UnassignedContentAwareReader(IContentReader<T> @true, IContentReader<T> @false)
+			: base(ContainsUnassignedContentSpecification.Default, @true, @false) {}
+	}
+
+
+	sealed class UnassignedContentAwareWriter<T> : ConditionalContentWriter<T>
+	{
+		public UnassignedContentAwareWriter(IContentWriter<T> @true, IContentWriter<T> @false) :
+			this(AssignedSpecification<T>.Default.Inverse(), @true, @false) {}
+
+		public UnassignedContentAwareWriter(ISpecification<T> specification, IContentWriter<T> @true,
+		                                  IContentWriter<T> @false)
+			: base(specification.To(InstanceCoercer<T>.Default), @true, @false) {}
+	}
+
+	sealed class InstanceCoercer<T> : IParameterizedSource<Writing<T>, T>
+	{
+		public static InstanceCoercer<T> Default { get; } = new InstanceCoercer<T>();
+		InstanceCoercer() {}
+
+		public T Get(Writing<T> parameter) => parameter.Instance;
+	}
+
 }

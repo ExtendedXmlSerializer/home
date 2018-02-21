@@ -48,6 +48,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 			new ConfigurationRoot().ToSupport().Cycle(Testing.Others);
 		}
 
+		[Fact]
+		public void VerifyUnassignedContent()
+		{
+			new ConfigurationRoot().ToSupport()
+			                       .Assert((int?)null,
+			                               @"<?xml version=""1.0"" encoding=""utf-8""?><Nullable xsi:nil=""true"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""https://extendedxmlserializer.github.io/system"" />");
+		}
+
 		enum Testing
 		{
 			Some, Others

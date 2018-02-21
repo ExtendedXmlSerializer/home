@@ -27,7 +27,6 @@ using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Type = System.Type;
@@ -56,10 +55,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			                                    .Out(TypeMetadataCoercer.Default)
 			                                    .Out(YieldCoercer<TypeInfo>.Default)
 			                                    .Out(ImmutableArrayCoercer<TypeInfo>.Default))
-			               .Out()
-			               .ToCommand()
-			               .Fix(elements)
-			               .To(A<object>.Default)
+			               .Invoke()
+			               .ToCommand(elements)
 			               .ByParameter()
 			    ) {}
 	}
@@ -74,7 +71,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public Type Get() => _name;
 	}
 
-	public class Property<THost, TValue> : ReferenceCache<THost, TValue>, IProperty<THost, TValue>
+	public class Property<THost, TValue> : ReferenceCache<THost, TValue>
 		where THost : class where TValue : class
 
 	{
@@ -94,72 +91,44 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 	public interface IMetadataProperty<T> : IProperty<IMetadata, T> {}
 
-	/*public interface IMetadataConfigurationProperty<T> : IMetadataProperty<T>, IProperty<IMetadataConfiguration, T> {}*/
-
-	public class MetadataTable<T> : DecoratedTable<IMetadata, T>, IProperty<ISource<IMetadata>, T>, IMetadataProperty<T>
+	/*public class MetadataTable<T> : DecoratedTable<IMetadata, T>, IMetadataProperty<T>
 	{
 		readonly ITableSource<ISource<IMetadata>, T> _source;
 
 		public MetadataTable(ITableSource<IMetadata, T> metadata) : this(metadata.In(SourceCoercer<IMetadata>.Default), metadata) {}
 		public MetadataTable(ITableSource<ISource<IMetadata>, T> source, ITableSource<IMetadata, T> metadata) : base(metadata) => _source = source;
 
-		public bool IsSatisfiedBy(ISource<IMetadata> parameter) => _source.IsSatisfiedBy(parameter);
+		public bool IsSatisfiedBy(IMetadataConfiguration parameter) => _source.IsSatisfiedBy(parameter);
 
-		public T Get(ISource<IMetadata> parameter) => _source.Get(parameter);
+		public T Get(IMetadataConfiguration parameter) => _source.Get(parameter);
 
-		public void Execute(KeyValuePair<ISource<IMetadata>, T> parameter)
+		public void Execute(KeyValuePair<IMetadataConfiguration, T> parameter)
 		{
-			_source.Execute(Pairs.Create(parameter.Key, parameter.Value));
+			_source.Execute(Pairs.Create(parameter.Key.To<ISource<IMetadata>>(), parameter.Value));
 		}
 
-		public bool Remove(ISource<IMetadata> key) => _source.Remove(key);
-	}
+		public bool Remove(IMetadataConfiguration key) => _source.Remove(key);
+	}*/
 
-	public class MetadataProperty<T> : MetadataTable<T> where T : class
+	public class MetadataProperty<T> : DecoratedTable<IMetadata, T>, IMetadataProperty<T> where T : class
 	{
 		public MetadataProperty() : base(new Property<IMetadata, T>()) {}
 	}
 
-	public class StructureMetadataProperty<T> : MetadataTable<T> where T : struct
+	public class StructureMetadataProperty<T> : DecoratedTable<IMetadata, T>, IMetadataProperty<T> where T : struct
 	{
 		public StructureMetadataProperty() : base(new StructureProperty<IMetadata, T>()) {}
 	}
 
 	public class Property<T> : Property<IConfigurationElement, T>, IProperty<T> where T : class
 	{
-		public Property() : this(_ => default(T)) {}
+		public Property() : this(default(T)) {}
+
+		public Property(T instance) : this(instance.Accept) {}
 
 		public Property(ConditionalWeakTable<IConfigurationElement, T>.CreateValueCallback callback)
 			: base(callback) {}
 	}
 
 	public class StructureProperty<T> : StructureProperty<IConfigurationElement, T>, IProperty<T> where T : struct {}
-
-	/*public class AdaptedProperty<T> :/* DecoratedTable<IMetadata, T>,#1# /*IProperty<T>,#1# ITableSource<ISource<IMetadata>, T> where T : class
-
-	{
-		readonly ITableSource<ISource<IMetadata>, T> _adapter;
-
-		public AdaptedProperty() : this(_ => default(T)) {}
-
-		public AdaptedProperty(ConditionalWeakTable<IMetadata, T>.CreateValueCallback callback)
-			: this(new ReferenceCache<IMetadata, T>(callback)) {}
-
-		public AdaptedProperty(ITableSource<IMetadata, T> table) : this(table.In(SourceCoercer<IMetadata>.Default), table)
-		{}
-
-		public AdaptedProperty(ITableSource<ISource<IMetadata>, T> adapter, ITableSource<IMetadata, T> table)
-			/*: base(table)#1# => _adapter = adapter;
-
-		public bool IsSatisfiedBy(ISource<IMetadata> parameter) => _adapter.IsSatisfiedBy(parameter);
-
-		public T Get(ISource<IMetadata> parameter) => _adapter.Get(parameter);
-
-		public void Execute(KeyValuePair<ISource<IMetadata>, T> parameter)
-		{
-			_adapter.Execute(parameter);
-		}
-
-		public bool Remove(ISource<IMetadata> key) => _adapter.Remove(key);
-	}*/
 }

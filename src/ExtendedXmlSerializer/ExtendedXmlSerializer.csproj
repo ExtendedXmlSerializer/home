@@ -38,6 +38,10 @@
     <DefineConstants>TRACE;DEBUG;CORE; NET46</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="ConfigurationOld\**" />
     <EmbeddedResource Remove="ConfigurationOld\**" />

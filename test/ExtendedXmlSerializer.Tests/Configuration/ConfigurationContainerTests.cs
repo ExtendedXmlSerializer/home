@@ -23,6 +23,8 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core.Collections;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;

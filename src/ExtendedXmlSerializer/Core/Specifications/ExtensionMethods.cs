@@ -48,6 +48,10 @@ namespace ExtendedXmlSerializer.Core.Specifications
 
 		public static Func<bool> Build<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Build(parameter);
 
+		/*public static ISpecification<T> Fix<T>(this ISpecification<T> @this, T parameter) => new FixedSpecification<T>(@this, parameter);*/
+
+		public static ISpecification<T> To<T>(this Func<bool> @this) => new FixedDelegateSpecification<T>(@this);
+
 		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Fix(parameter).ToDelegate();
 
 		public static ISpecification<T> Any<T>(this ISpecification<T> @this, params T[] parameters)
@@ -70,6 +74,8 @@ namespace ExtendedXmlSerializer.Core.Specifications
 
 		public static ISpecification<object> Adapt<T>(this ISpecification<T> @this)
 			=> new SpecificationAdapter<T>(@this);
+
+		public static ISpecification<TTo> ToOrDefault<TFrom, TTo>(this ISpecification<TFrom> @this, A<TTo> _) => @this.To(CastOrDefaultCoercer<TTo, TFrom>.Default);
 
 		public static ISpecification<TTo> To<TFrom, TTo>(this ISpecification<TFrom> @this, A<TTo> _) => @this.To(CastCoercer<TTo, TFrom>.Default);
 

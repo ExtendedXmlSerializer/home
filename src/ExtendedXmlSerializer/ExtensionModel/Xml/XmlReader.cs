@@ -34,6 +34,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly IFormatReaderContext _context;
 		readonly System.Xml.XmlReader _reader;
 		readonly string _defaultNamespace;
+		readonly static NullValueIdentity Null = NullValueIdentity.Default;
 
 		public XmlReader(IFormatReaderContext context, System.Xml.XmlReader reader)
 			: this(context, reader, reader.LookupNamespace(string.Empty)) {}
@@ -53,10 +54,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public override string ToString() => $"{base.ToString()}: {IdentityFormatter.Default.Get(this)}";
 
 		public bool IsSatisfiedBy(IIdentity parameter)
-			=>
-				_reader.HasAttributes &&
-				_reader.MoveToAttribute(parameter.Name,
-				                        parameter.Identifier == _defaultNamespace ? string.Empty : parameter.Identifier);
+			=> _reader.HasAttributes && _reader.MoveToAttribute(parameter.Name, parameter.Identifier == _defaultNamespace ? string.Empty : parameter.Identifier);
 
 		public object Get() => _reader;
 
@@ -67,7 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				case XmlNodeType.Attribute:
 					return _reader.Value;
 				default:
-					var isNull = IsSatisfiedBy(NullValueIdentity.Default);
+					var isNull = IsSatisfiedBy(Null);
 
 					if (!isNull)
 					{

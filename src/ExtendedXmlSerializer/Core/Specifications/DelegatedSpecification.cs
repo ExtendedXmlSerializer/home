@@ -31,6 +31,15 @@ namespace ExtendedXmlSerializer.Core.Specifications
 
 		public DelegatedSpecification(Func<T, bool> @delegate) => _delegate = @delegate;
 
-		public virtual bool IsSatisfiedBy(T parameter) => _delegate.Invoke(parameter);
+		public bool IsSatisfiedBy(T parameter) => _delegate.Invoke(parameter);
+	}
+
+	class FixedDelegateSpecification<T> : ISpecification<T>
+	{
+		readonly Func<bool> _delegate;
+
+		public FixedDelegateSpecification(Func<bool> @delegate) => _delegate = @delegate;
+
+		public bool IsSatisfiedBy(T parameter) => _delegate.Invoke();
 	}
 }

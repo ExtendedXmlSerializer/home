@@ -23,10 +23,12 @@
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	class InverseSpecification<T> : DelegatedSpecification<T>
+	class InverseSpecification<T> : ISpecification<T>
 	{
-		public InverseSpecification(ISpecification<T> inner) : base(inner.IsSatisfiedBy) {}
+		readonly ISpecification<T> _specification;
 
-		public override bool IsSatisfiedBy(T parameter) => !base.IsSatisfiedBy(parameter);
+		public InverseSpecification(ISpecification<T> inner) => _specification = inner;
+
+		public bool IsSatisfiedBy(T parameter) => !_specification.IsSatisfiedBy(parameter);
 	}
 }

@@ -59,36 +59,26 @@ namespace ExtendedXmlSerializer.Configuration
 
 		public static T Service<T>(this IExtensions @this) => @this.Extend<ConfigurationServicesExtension>().Get<T>();
 
-		public static THost Set<THost, T>(this THost @this, IProperty<THost, T> property, T value)
+		public static T Get<T>(this IConfigurationElement @this, IProperty<T> property) => @this.Entry(property).Get();
+
+		public static THost Set<THost, T>(this THost @this, IProperty<T> property, T value)
 			where THost : class, IConfigurationElement => @this.Entry(property).Executed(value).Return(@this);
 
-		public static T Get<THost, T>(this THost @this, IProperty<THost, T> property)
-			where THost : class, IConfigurationElement => @this.Entry(property).Get();
-
-		public static IEntry<T> Entry<THost, T>(this THost @this, IProperty<THost, T> property)
-			where THost : class, IConfigurationElement
-			=> TableEntries<THost, T>.Defaults
+		public static IEntry<T> Entry<T>(this IConfigurationElement @this, IProperty<T> property)
+			=> TableEntries<IConfigurationElement, T>.Defaults
 			                         .Get(Properties.Defaults.Get(@this.Extensions).ReturnWith(property))
-			                         .Get(@this);
+			                         .Get(@this.Service<IConfigurationElement>());
 
-
-		public static TSource Set<TSource, THost, T>(this TSource @this, IProperty<ISource<THost>, T> property, T value)
-			where TSource : class, IConfigurationElement, ISource<THost>
-			where THost : class
-			=> @this.Entry(property).Executed(value).Return(@this);
-
-		public static T Get<TSource, THost, T>(this TSource @this, IProperty<ISource<THost>, T> property)
-			where TSource : class, IConfigurationElement, ISource<THost>
-			where THost : class
+		public static T Get<T>(this IMetadataConfiguration @this, IMetadataProperty<T> property)
 			=> @this.Entry(property).Get();
 
+		public static TSource Set<TSource, T>(this TSource @this, IMetadataProperty<T> property, T value)
+			where TSource : class, IMetadataConfiguration => @this.Entry(property).Executed(value).Return(@this);
 
-		public static IEntry<T> Entry<TSource, THost, T>(this TSource @this, IProperty<ISource<THost>, T> property)
-			where TSource : class, IConfigurationElement, ISource<THost>
-			where THost : class
-			=> TableEntries<ISource<THost>, T>.Defaults
-			                         .Get(Properties.Defaults.Get(@this.Extensions).ReturnWith(property))
-			                         .Get(@this);
+		public static IEntry<T> Entry<T>(this IMetadataConfiguration @this, IMetadataProperty<T> property)
+			=> TableEntries<IMetadata, T>.Defaults
+			                             .Get(Properties.Defaults.Get(@this.Extensions).ReturnWith(property))
+			                             .Get(@this);
 
 		public static T Service<T>(this T @this, object service) where T : class, IConfigurationElement
 			=> @this.Extend<ConfigurationServicesExtension>()
