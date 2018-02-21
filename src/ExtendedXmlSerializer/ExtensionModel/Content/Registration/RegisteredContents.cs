@@ -57,7 +57,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 	                                        IRegisteredSerializers<T>
 	{
 		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,
-		                             ServicePropertyReference<RegisteredSerializersProperty<T>, IContentSerializer<T>> property) :
+		                             ServiceMetadataPropertyReference<RegisteredSerializersProperty<T>, IContentSerializer<T>> property) :
 			base(coercer, property) {}
 	}
 

@@ -34,11 +34,11 @@ namespace ExtendedXmlSerializer.ContentModel
 
 	sealed class AssignedContentAwareWriter<T> : ConditionalInstanceContentWriter<T>
 	{
-		public AssignedContentAwareWriter(IContentWriter<T> @true, INullContentWriter<T> @false) :
+		public AssignedContentAwareWriter(IContentWriter<T> @true, IContentWriter<T> @false) :
 			this(AssignedSpecification<T>.Default, @true, @false) {}
 
 		public AssignedContentAwareWriter(ISpecification<T> specification, IContentWriter<T> @true,
-		                                     IContentWriter<T> @false) : base(specification, @true, @false) {}
+		                                  IContentWriter<T> @false) : base(specification, @true, @false) {}
 	}
 
 	class ConditionalInstanceContentWriter<T> : IContentWriter<T>
@@ -85,7 +85,7 @@ namespace ExtendedXmlSerializer.ContentModel
 
 	sealed class AssignedContentAwareReader<T> : ConditionalContentReader<T>
 	{
-		public AssignedContentAwareReader(IContentReader<T> @true, INullContentReader<T> @false) :
+		public AssignedContentAwareReader(IContentReader<T> @true, IContentReader<T> @false) :
 			base(ContainsNullContentSpecification.Default, @true, @false) {}
 	}
 

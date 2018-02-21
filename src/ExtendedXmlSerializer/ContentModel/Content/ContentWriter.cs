@@ -45,4 +45,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 			parameter.Writer.Content(_formatter(parameter.Instance));
 		}
 	}
+
+	sealed class EmptyContentWriter<T> : IContentWriter<T>
+	{
+		public static EmptyContentWriter<T> Default { get; } = new EmptyContentWriter<T>();
+		EmptyContentWriter() {}
+
+		public void Execute(Writing<T> parameter) {}
+	}
 }

@@ -65,12 +65,19 @@ namespace ExtendedXmlSerializer.Configuration
 		public void Execute(object parameter) => _services.Add(parameter);
 	}
 
-	class PropertyReference<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataProperty<T>
+	class PropertyReference<TProperty, T> : FixedParameterSource<IConfigurationElement, T> where TProperty : class, IProperty<T>
 	{
-		public PropertyReference(IMetadataTable table, ISingletonLocator locator)
+		public PropertyReference(ISingletonLocator locator, IConfigurationElement parameter)
+			: this(locator.Out(A<TProperty>.Default).Get(typeof(TProperty)), parameter) {}
+		public PropertyReference(IParameterizedSource<IConfigurationElement, T> source, IConfigurationElement parameter) : base(source, parameter) {}
+	}
+
+	class MetadataPropertyReference<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataProperty<T>
+	{
+		public MetadataPropertyReference(IMetadataTable table, ISingletonLocator locator)
 			: this(table, locator.Out(A<TProperty>.Default).Get(typeof(TProperty)).Assigned()) {}
 
-		public PropertyReference(IMetadataTable table, ISpecificationSource<IMetadata, T> property)
+		public MetadataPropertyReference(IMetadataTable table, ISpecificationSource<IMetadata, T> property)
 			: base(property.To(table), property.In(table)) {}
 	}
 

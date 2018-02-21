@@ -92,7 +92,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new ExtensionGroup(Categories.Content, all,
 			                                DefaultContentsExtension.Default,
 											EnumerationContentsExtension.Default,
-			                                AssignableStructureContentsExtension.Default
+			                                AssignableStructureContentsExtension.Default,
+			                                AssignableContentsExtension.Default
 											/*MemberedContentsExtension.Default,
 											CollectionContentsExtension.Default,
 											ArrayContentsExtension.Default,

@@ -21,12 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reactive;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -40,18 +42,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 	sealed class AssignableContents<T> : ConditionalContents<T>, IContents<T>
 	{
-		public AssignableContents(IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
+		public AssignableContents(PropertyReference<EmitUnassignedSpecificationProperty, ISpecification<Unit>> property,
+		                          IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
 			: base(AssignableStructureSpecification.Default.Or(IsReferenceSpecification.Default),
-			       new AssignableAwareContents<T>(contents, reader, writer), contents) {}
+			       new AssignableAwareContents<T>(contents, reader,
+			                                      new ConditionalContentWriter<T>(property.Get().To(A<Writing<T>>.Default),
+			                                                                      writer,
+																				  EmptyContentWriter<T>.Default)
+			                                      ), contents) {}
 	}
 
 	sealed class AssignableAwareContents<T> : ISource<IContentSerializer<T>>
 	{
 		readonly IContents<T> _contents;
-		readonly INullContentReader<T> _reader;
-		readonly INullContentWriter<T> _writer;
+		readonly IContentReader<T> _reader;
+		readonly IContentWriter<T> _writer;
 
-		public AssignableAwareContents(IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
+		public AssignableAwareContents(IContents<T> contents, IContentReader<T> reader, IContentWriter<T> writer)
 		{
 			_contents = contents;
 			_reader = reader;

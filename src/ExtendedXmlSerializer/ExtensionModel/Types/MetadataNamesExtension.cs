@@ -73,7 +73,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 	sealed class MetadataNames : LinkedDecoratedSource<MemberInfo, string>, INames
 	{
-		public MetadataNames(PropertyReference<RegisteredNamesProperty, string> table, INames next) : base(table, next) {}
+		public MetadataNames(MetadataPropertyReference<RegisteredNamesProperty, string> table, INames next) : base(table, next) {}
 	}
 
 	public sealed class MetadataNamesExtension : ISerializerExtension

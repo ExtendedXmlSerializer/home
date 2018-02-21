@@ -27,9 +27,12 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
+using System.Reactive;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -47,6 +50,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			            .RegisterDefinition<IAlteredContents<object>, AlteredContents<object>>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
+	}
+
+	[Extension(typeof(AssignableContentsExtension))]
+	public class EmitUnassignedSpecificationProperty : Property<ISpecification<Unit>>
+	{
+		[UsedImplicitly]
+		public static EmitUnassignedSpecificationProperty Default { get; } = new EmitUnassignedSpecificationProperty();
+		EmitUnassignedSpecificationProperty() : base(NeverSpecification<object>.Default.To(A<Unit>.Default).Accept) {}
 	}
 
 	public class AssignableContentsExtension : ISerializerExtension
