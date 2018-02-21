@@ -136,20 +136,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Services
 	}
 
 	sealed class ServicePropertyReference<TProperty, T> : PropertyReference<TProperty, IService<T>>
-		where TProperty : class, IProperty<IService<T>>
+		where TProperty : class, IMetadataProperty<IService<T>>
 	{
 		public ServicePropertyReference(IMetadataTable table, ISingletonLocator locator) : base(table, locator) {}
 	}
 
-	class ServiceProperty<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IServiceProperty<T>
+	class ServicePropertyValues<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataServiceProperty<T>
 	{
-		public ServiceProperty(IServiceCoercer<T> coercer, ServicePropertyReference<TProperty, T> property)
+		public ServicePropertyValues(IServiceCoercer<T> coercer, ServicePropertyReference<TProperty, T> property)
 			: base(property, property.Out(coercer)) {}
 	}
 
-	public interface IServiceProperty<T> : IProperty<IService<T>> {}
+	public interface IMetadataServiceProperty<T> : IProperty<ISource<IMetadata>, IService<T>>, IMetadataProperty<IService<T>> {}
 
-	class ServiceProperty<T> : Property<IService<T>>, IServiceProperty<T> {}
+	class MetadataServiceProperty<T> : MetadataProperty<IService<T>>, IMetadataServiceProperty<T> {}
 
 	public sealed class ExtensionServicesExtension : ISerializerExtension
 	{

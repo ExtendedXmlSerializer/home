@@ -44,14 +44,14 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		}
 
 
-		sealed class OrphanedProperty : Property<string>
+		sealed class OrphanedProperty : MetadataProperty<string>
 		{
 			public static OrphanedProperty Default { get; } = new OrphanedProperty();
 			OrphanedProperty() {}
 		}
 
 		[Extension(typeof(Extension))]
-		sealed class DeclaredProperty : Property<string>
+		sealed class DeclaredProperty : MetadataProperty<string>
 		{
 			public static DeclaredProperty Default { get; } = new DeclaredProperty();
 			DeclaredProperty() {}

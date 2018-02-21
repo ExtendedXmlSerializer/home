@@ -41,8 +41,13 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 	public static class ExtensionMethods
 	{
-		public static TParameter Get<TKey, TParameter>(this IParameterizedSource<TKey, TParameter> @this, ISource<TKey> parameter)
+		public static TResult Get<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this, ISource<TParameter> parameter)
 			=> @this.Get(parameter.Get());
+
+		public static T Get<T>(this IParameterizedSource<Type, object> @this, A<T> parameter) => @this.Get(parameter.Get()).To<T>();
+		public static T Get<T>(this IParameterizedSource<TypeInfo, object> @this, A<T> parameter) => @this.Get(parameter.Get()).To<T>();
+		public static T Get<T>(this IParameterizedSource<Type, T> @this, A<T> parameter) => @this.Get(parameter.Get());
+		public static T Get<T>(this IParameterizedSource<TypeInfo, T> @this, A<T> parameter) => @this.Get(parameter.Get());
 
 		public static TParameter Return<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this, TParameter parameter)
 			=> @this.Get(parameter).Return(parameter);
@@ -146,7 +151,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));
 
 		public static IParameterizedSource<Decoration<TFrom, TResult>, TResult> In<TFrom, TTo, TResult>(
-			this IParameterizedSource<Decoration<TTo, TResult>, TResult> @this, A<TFrom> _) => In(@this, DecorationParameterCoercer<TFrom, TTo, TResult>.Default);
+			this IParameterizedSource<Decoration<TTo, TResult>, TResult> @this, A<TFrom> _) => @this.In(DecorationParameterCoercer<TFrom, TTo, TResult>.Default);
 
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, A<TFrom> _) => In(@this, CastCoercer<TFrom, TTo>.Default);
@@ -164,6 +169,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.Out(CastCoercer<TResult, TTo>.Default);
+
+		public static IParameterizedSource<TParameter, TResult> Out<TParameter, TResult>(
+			this IParameterizedSource<TParameter, Func<TResult>> @this) => @this.Out(DelegateCoercer<TResult>.Default);
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)

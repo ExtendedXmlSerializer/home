@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,25 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Collections;
 
-namespace ExtendedXmlSerializer.ContentModel.Reflection
+namespace ExtendedXmlSerializer.Core.Collections
 {
-	interface IRegisteredTypes : IItems<TypeInfo> {}
-
-	sealed class RegisteredTypes : Items<TypeInfo>, IRegisteredTypes
+	public class Items<T> : ItemsBase<T>
 	{
-		public RegisteredTypes(IEnumerable<TypeInfo> items) : base(items) {}
-	}
+		readonly ImmutableArray<T> _items;
 
-	sealed class TypeIdentities : TableSource<IIdentity, TypeInfo>, ITypeIdentities
-	{
-		public TypeIdentities(IRegisteredTypes types, IIdentities identities)
-			: base(types.ToDictionary(identities.Get)) {}
+		public Items(params T[] items) : this(items.AsEnumerable()) {}
+
+		public Items(IEnumerable<T> items) : this(items.ToImmutableArray()) {}
+
+		public Items(ImmutableArray<T> items) => _items = items;
+
+		public sealed override IEnumerator<T> GetEnumerator()
+		{
+			var length = _items.Length;
+			for (var i = 0; i < length; i++)
+			{
+				yield return _items[i];
+			}
+		}
 	}
 }

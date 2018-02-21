@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Immutable;
 using System.Linq;

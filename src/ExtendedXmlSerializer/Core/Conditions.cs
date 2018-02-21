@@ -25,9 +25,10 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Core
 {
-	sealed class Conditions : ReferenceCache<object, ConditionMonitor>, IConditions
+	class Conditions<T> : ReferenceCache<T, ConditionMonitor> where T : class
 	{
-		public static Conditions Default { get; } = new Conditions();
+		public static Conditions<T> Default { get; } = new Conditions<T>();
+
 		public Conditions() : base(_ => new ConditionMonitor()) {}
 	}
 }

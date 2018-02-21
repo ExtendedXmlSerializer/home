@@ -119,7 +119,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Runtime
 
 	interface IMemberRuntimeRegistry : IMemberTable<IRuntimeRegistryStore>, IRegistration {}
 
-	sealed class MemberRuntimeRegistry : MetadataTable<IRuntimeRegistryStore>, IMemberRuntimeRegistry
+	sealed class MemberRuntimeRegistry : ReflectionModel.MetadataTable<IRuntimeRegistryStore>, IMemberRuntimeRegistry
 	{
 		readonly IRegistration _registration;
 

@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -116,7 +117,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 	{
 		[UsedImplicitly]
 		public static Initialize<T> Default { get; } = new Initialize<T>();
-		Initialize() : this(new ConditionalSpecification<IExtensionElements>(), Extend<T>.Default) { }
+		Initialize() : this(new FirstInvocationSpecification<IExtensionElements>(), Extend<T>.Default) { }
 
 		readonly ISpecification<IExtensionElements> _specification;
 		readonly IExtend<T> _extend;

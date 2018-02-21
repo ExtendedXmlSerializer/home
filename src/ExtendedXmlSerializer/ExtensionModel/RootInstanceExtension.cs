@@ -46,14 +46,14 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		sealed class ContentWriter<T> : IContentWriter<T>
 		{
 			readonly ISpecification<object> _conditions;
-			readonly IContentWriter<T> _write;
-			readonly IRootInstances _instances;
+			readonly IContentWriter<T>      _write;
+			readonly IRootInstances         _instances;
 
 			public ContentWriter(ISpecification<object> conditions, IContentWriter<T> write, IRootInstances instances)
 			{
 				_conditions = conditions;
-				_write = write;
-				_instances = instances;
+				_write      = write;
+				_instances  = instances;
 			}
 
 			public void Execute(ContentModel.Writing<T> parameter)
@@ -69,27 +69,28 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		sealed class ContentWriters<T> : IContentWriters<T>
 		{
-			readonly Func<bool> _specification;
+			readonly Func<bool>             _specification;
 			readonly ISpecification<object> _conditions;
-			readonly IContentWriters<T> _writers;
-			readonly IRootInstances _instances;
+			readonly IContentWriters<T>     _writers;
+			readonly IRootInstances         _instances;
 
 			[UsedImplicitly]
 			public ContentWriters(IContentWriters<T> writers, IRootInstances instances)
-				: this(IsReferenceSpecification.Default.Build<T>(), new InstanceConditionalSpecification(), writers, instances) {}
+				: this(IsReferenceSpecification.Default.Build<T>(), new FirstInvocationByParameterSpecification<object>(),
+				       writers, instances) {}
 
 			public ContentWriters(Func<bool> specification, ISpecification<object> conditions, IContentWriters<T> writers,
 			                      IRootInstances instances)
 			{
 				_specification = specification;
-				_conditions = conditions;
-				_writers = writers;
-				_instances = instances;
+				_conditions    = conditions;
+				_writers       = writers;
+				_instances     = instances;
 			}
 
 			public IContentWriter<T> Get()
 			{
-				var write = _writers.Get();
+				var write  = _writers.Get();
 				var result = _specification() ? new ContentWriter<T>(_conditions, write, _instances) : write;
 				return result;
 			}
@@ -97,44 +98,44 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 		sealed class Serializers : ContentModel.Content.ISerializers
 		{
-			readonly ISpecification<object> _conditions;
-			readonly ISpecification<TypeInfo> _specification;
+			readonly ISpecification<object>            _conditions;
+			readonly ISpecification<TypeInfo>          _specification;
 			readonly ContentModel.Content.ISerializers _writers;
-			readonly IRootInstances _instances;
+			readonly IRootInstances                    _instances;
 
 			[UsedImplicitly]
 			public Serializers(ContentModel.Content.ISerializers writers, IRootInstances instances)
-				: this(new InstanceConditionalSpecification(), IsReferenceSpecification.Default, writers, instances) {}
+				: this(new FirstInvocationByParameterSpecification<object>(), IsReferenceSpecification.Default, writers,
+				       instances) {}
 
 			public Serializers(ISpecification<object> conditions, ISpecification<TypeInfo> specification,
 			                   ContentModel.Content.ISerializers writers, IRootInstances instances)
 			{
-				_conditions = conditions;
+				_conditions    = conditions;
 				_specification = specification;
-				_writers = writers;
-				_instances = instances;
+				_writers       = writers;
+				_instances     = instances;
 			}
 
 			public ISerializer Get(TypeInfo parameter)
 			{
-				var write = _writers.Get(parameter);
+				var write  = _writers.Get(parameter);
 				var result = _specification.IsSatisfiedBy(parameter) ? new Serializer(_conditions, _instances, write) : write;
 				return result;
 			}
 		}
 
-
 		sealed class Serializer : ISerializer
 		{
 			readonly ISpecification<object> _conditions;
-			readonly IRootInstances _instances;
-			readonly ISerializer _container;
+			readonly IRootInstances         _instances;
+			readonly ISerializer            _container;
 
 			public Serializer(ISpecification<object> conditions, IRootInstances instances, ISerializer container)
 			{
 				_conditions = conditions;
-				_instances = instances;
-				_container = container;
+				_instances  = instances;
+				_container  = container;
 			}
 
 			public object Get(IFormatReader parameter) => _container.Get(parameter);
@@ -150,7 +151,6 @@ namespace ExtendedXmlSerializer.ExtensionModel
 				_container.Write(writer, instance);
 			}
 		}
-
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

@@ -25,6 +25,7 @@ using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	}
 
 	[Extension(typeof(MetadataNamesExtension))]
-	public sealed class RegisteredNamesProperty : Property<string>
+	public sealed class RegisteredNamesProperty : MetadataProperty<string>
 	{
 		public static RegisteredNamesProperty Default { get; } = new RegisteredNamesProperty();
 		RegisteredNamesProperty() {}

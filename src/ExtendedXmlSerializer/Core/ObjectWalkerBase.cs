@@ -35,11 +35,11 @@ namespace ExtendedXmlSerializer.Core
 		readonly static TInput DefaultValue = default(TInput);
 
 		readonly Stack<TInput> _remaining = new Stack<TInput>();
-		readonly Conditions _conditions;
+		readonly Conditions<object> _conditions;
 
-		protected ObjectWalkerBase(TInput root) : this(root, new Conditions()) {}
+		protected ObjectWalkerBase(TInput root) : this(root, new Conditions<object>()) {}
 
-		protected ObjectWalkerBase(TInput root, Conditions conditions)
+		protected ObjectWalkerBase(TInput root, Conditions<object> conditions)
 		{
 			_conditions = conditions;
 			Schedule(root);

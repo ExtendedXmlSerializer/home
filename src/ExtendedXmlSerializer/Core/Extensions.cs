@@ -156,16 +156,17 @@ namespace ExtendedXmlSerializer.Core
 			=> @this.YieldTypes()
 			        .ToImmutableArray();
 
+		public static T To<T>(this object @this)
+			=> To<T>(@this, $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 
-		public static T To<T>(this object @this, string message = null)
+		public static T To<T>(this object @this, string message)
 		{
 			if (@this is T result)
 			{
 				return result;
 			}
 
-			throw new InvalidOperationException(message ??
-			                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
+			throw new InvalidOperationException(message);
 		}
 
 		public static T Get<T>(this IServiceProvider @this)

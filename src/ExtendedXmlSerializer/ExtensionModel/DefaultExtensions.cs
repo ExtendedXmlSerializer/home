@@ -92,15 +92,12 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			yield return new ExtensionGroup(Categories.Content, all,
 			                                DefaultContentsExtension.Default,
 											EnumerationContentsExtension.Default,
-			                                NullableStructureContentsExtension.Default
+			                                AssignableStructureContentsExtension.Default
 											/*MemberedContentsExtension.Default,
 											CollectionContentsExtension.Default,
 											ArrayContentsExtension.Default,
-											DictionaryContentsExtension.Default,*/
-			                                /*
-			                                
-			                                ,
-			                                ImmutableArrayContentsExtension.Default*/
+											ImmutableArrayContentsExtension.Default,
+											DictionaryContentsExtension.Default*/
 			                               );
 
 			yield return new ExtensionGroup(Categories.Registrations, all,

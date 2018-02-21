@@ -32,6 +32,6 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static TypeMetadataCoercer Default { get; } = new TypeMetadataCoercer();
 		TypeMetadataCoercer() {}
 
-		public TypeInfo Get(Type parameter) => parameter?.GetTypeInfo();
+		public TypeInfo Get(Type parameter) => parameter.GetTypeInfo();
 	}
 }

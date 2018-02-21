@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly IRootInstances _instances;
 
 		public OptimizedWriters(IFormatWriters<System.Xml.XmlWriter> factory, IObjectIdentifiers identifiers, IRootInstances instances)
-			: this(new InstanceConditionalSpecification(), factory, identifiers, instances) {}
+			: this(new FirstInvocationByParameterSpecification<object>(), factory, identifiers, instances) {}
 
 		public OptimizedWriters(ISpecification<object> specification, IFormatWriters<System.Xml.XmlWriter> factory, IObjectIdentifiers identifiers, IRootInstances instances)
 		{

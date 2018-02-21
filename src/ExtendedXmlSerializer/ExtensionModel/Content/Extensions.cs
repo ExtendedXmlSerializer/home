@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
@@ -34,6 +33,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.ExtensionModel.Services;
 using System;
 using System.Reflection;
+using Serializers = ExtendedXmlSerializer.ContentModel.Serializers;
 using Type = System.Type;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -133,10 +133,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		                                                         IAlteration<IConverter> optimizations)
 			=> @this.Alter(optimizations);
 
-		public static IMetadataConfiguration Register<T>(this IMetadataConfiguration @this, IConverter<T> converter)
-			=> @this.Set(RegisteredSerializersProperty<T>.Default,
-			             new ContentSerializer<T>(new ContentModel.Content.ContentReader<T>(converter.Parse),
-			                                      new ContentModel.Content.ContentWriter<T>(converter.Format)));
+		public static THost Register<THost, T>(this THost @this, IConverter<T> converter)
+		where THost : class, IMetadataConfiguration
+			=> @this.Set(RegisteredSerializersProperty<T>.Default, Serializers.New(converter.Parse, converter.Format));
 
 		/*public static bool Unregister<T>(this IConfigurationElement @this, IConverter<T> converter)
 			=> @this.Unregister<T>();*/

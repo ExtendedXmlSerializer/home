@@ -40,15 +40,21 @@ namespace ExtendedXmlSerializer.Core
 
 	public static class CommandExtensionMethods
 	{
+
+
 		public static IAssignable<TKey, TValue> Assign<TKey, TValue>(this IAssignable<TKey, TValue> @this,
 		                                                             TKey key, TValue value)
 			=> @this.Executed(Pairs.Create(key, value)).Return(@this);
 
-		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter)
+		public static ICommand<T> Executed<T>(this ICommand<T> @this, T parameter) => @this.Execute(parameter, @this);
+
+		static TReturn Execute<T, TReturn>(this ICommand<T> @this, T parameter, TReturn @return)
 		{
 			@this.Execute(parameter);
-			return @this;
+			return @return;
 		}
+
+		public static T ReturnWith<TCommand, T>(this TCommand @this, T parameter) where TCommand : class, ICommand<T> => @this.Execute(parameter, parameter);
 
 		public static ICommand<Unit> Executed(this ICommand<Unit> @this) => @this.Executed(Unit.Default);
 
@@ -72,10 +78,20 @@ namespace ExtendedXmlSerializer.Core
 		public static ICommand<T> ToCommand<T>(this Func<ICommand<T>> @this)
 			=> new DeferredCommand<T>(@this);
 
+		public static ICommand<T> ToCommand<T>(this IParameterizedSource<T, ICommand<T>> @this) => ToCommand(@this.ToDelegate());
+
+		public static ICommand<T> ToCommand<T>(this Func<T, ICommand<T>> @this)
+			=> new DelegatedSourceCommand<T>(@this);
+
 		public static ICommand<T> ToInstanceCommand<T>(this Func<ICommand<T>> @this)
 			=> new DeferredInstanceCommand<T>(@this);
 
-		public static ICommand<TTo> To<TTo, TFrom>(this ICommand<TFrom> @this, A<TTo> _) => To(@this, CastCoercer<TTo, TFrom>.Default);
+		public static ICommand<T> Fix<T>(this ICommand<T> @this, T parameter) => new FixedCommand<T>(@this, parameter);
+
+		public static ICommand<T> ByParameter<T>(this ICommand<T> @this) where T : class
+			=> new ValidatedCommand<T>(new FirstInvocationByParameterSpecification<T>(), @this);
+
+		public static ICommand<TTo> To<TTo, TFrom>(this ICommand<TFrom> @this, A<TTo> _) => @this.To(CastCoercer<TTo, TFrom>.Default);
 
 		public static ICommand<TTo> To<TTo, TFrom>(this ICommand<TFrom> @this, IParameterizedSource<TTo, TFrom> coercer)
 			=> @this.To(coercer.ToDelegate());

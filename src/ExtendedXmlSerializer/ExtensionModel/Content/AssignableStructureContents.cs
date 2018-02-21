@@ -21,7 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.References;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -30,5 +34,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	{
 		public AssignableStructureContents(AssignableStructures<T> source, IContents<T> fallback)
 			: base(AssignableStructureSpecification.Default, source, fallback) {}
+	}
+
+
+
+	sealed class AssignableContents<T> : ConditionalContents<T>, IContents<T>
+	{
+		public AssignableContents(IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
+			: base(AssignableStructureSpecification.Default.Or(IsReferenceSpecification.Default),
+			       new AssignableAwareContents<T>(contents, reader, writer), contents) {}
+	}
+
+	sealed class AssignableAwareContents<T> : ISource<IContentSerializer<T>>
+	{
+		readonly IContents<T> _contents;
+		readonly INullContentReader<T> _reader;
+		readonly INullContentWriter<T> _writer;
+
+		public AssignableAwareContents(IContents<T> contents, INullContentReader<T> reader, INullContentWriter<T> writer)
+		{
+			_contents = contents;
+			_reader = reader;
+			_writer = writer;
+		}
+
+		public IContentSerializer<T> Get()
+		{
+			var contents = _contents.Get();
+			var result = new ContentSerializer<T>(new AssignedContentAwareReader<T>(contents, _reader),
+			                                      new AssignedContentAwareWriter<T>(contents, _writer));
+			return result;
+		}
 	}
 }

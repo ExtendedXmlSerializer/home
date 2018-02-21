@@ -21,16 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace ExtendedXmlSerializer.Core.Specifications
+using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+
+namespace ExtendedXmlSerializer.Core.Collections
 {
-	sealed class ConditionalSpecification<T> : ISpecification<T>
-	{
-		readonly ConditionMonitor _monitor;
-
-		public ConditionalSpecification() : this(new ConditionMonitor()) {}
-
-		public ConditionalSpecification(ConditionMonitor monitor) => _monitor = monitor;
-
-		public bool IsSatisfiedBy(T parameter) => _monitor.Apply();
-	}
+	public interface IItems<T> : IEnumerable<T>, ISource<ImmutableArray<T>> {}
 }

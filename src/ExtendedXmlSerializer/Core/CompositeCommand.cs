@@ -66,6 +66,23 @@ namespace ExtendedXmlSerializer.Core
 		public DecoratedCommand(ICommand<T> action) : base(action.Execute) {}
 	}
 
+	class FixedCommand<T> : ICommand<T>
+	{
+		readonly ICommand<T> _command;
+		readonly T _parameter;
+
+		public FixedCommand(ICommand<T> command, T parameter)
+		{
+			_command = command;
+			_parameter = parameter;
+		}
+
+		public void Execute(T parameter)
+		{
+			_command.Execute(_parameter);
+		}
+	}
+
 	class DelegatedCommand<T> : ICommand<T>
 	{
 		readonly Action<T> _action;
@@ -75,6 +92,17 @@ namespace ExtendedXmlSerializer.Core
 		public void Execute(T parameter)
 		{
 			_action(parameter);
+		}
+	}
+
+	class DelegatedSourceCommand<T> : ICommand<T>
+	{
+		readonly Func<T, ICommand<T>> _source;
+		public DelegatedSourceCommand(Func<T, ICommand<T>> source) => _source = source;
+
+		public void Execute(T parameter)
+		{
+			_source(parameter).Execute(parameter);
 		}
 	}
 

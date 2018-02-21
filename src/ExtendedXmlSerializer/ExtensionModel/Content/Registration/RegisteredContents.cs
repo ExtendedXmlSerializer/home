@@ -45,7 +45,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 	}
 
 	[Extension(typeof(RegisteredContentsExtension))]
-	sealed class RegisteredSerializersProperty<T> : ServiceProperty<IContentSerializer<T>>
+	sealed class RegisteredSerializersProperty<T> : MetadataServiceProperty<IContentSerializer<T>>
 	{
 		public static RegisteredSerializersProperty<T> Default { get; } = new RegisteredSerializersProperty<T>();
 		RegisteredSerializersProperty() {}
@@ -53,7 +53,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Registration
 
 	public interface IRegisteredSerializers<T> : ISpecificationSource<MemberInfo, IContentSerializer<T>> { }
 
-	sealed class RegisteredSerializers<T> : ServiceProperty<RegisteredSerializersProperty<T>, IContentSerializer<T>>,
+	sealed class RegisteredSerializers<T> : ServicePropertyValues<RegisteredSerializersProperty<T>, IContentSerializer<T>>,
 	                                        IRegisteredSerializers<T>
 	{
 		public RegisteredSerializers(IServiceCoercer<IContentSerializer<T>> coercer,

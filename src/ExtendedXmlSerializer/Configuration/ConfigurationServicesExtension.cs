@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.Configuration
 		public void Execute(object parameter) => _services.Add(parameter);
 	}
 
-	class PropertyReference<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IProperty<T>
+	class PropertyReference<TProperty, T> : SpecificationSource<MemberInfo, T> where TProperty : class, IMetadataProperty<T>
 	{
 		public PropertyReference(IMetadataTable table, ISingletonLocator locator)
 			: this(table, locator.Out(A<TProperty>.Default).Get(typeof(TProperty)).Assigned()) {}

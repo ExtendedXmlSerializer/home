@@ -24,6 +24,7 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
@@ -88,7 +89,7 @@ namespace ExtendedXmlSerializer.Configuration
 
 	class PropertyAssignment<T, TProperty> : PropertyAssignment<TProperty>
 	{
-		public PropertyAssignment(IProperty<TProperty> property, TProperty value)
+		public PropertyAssignment(IMetadataProperty<TProperty> property, TProperty value)
 			: base(Types<T>.Default.Out(SourceCoercer<IMetadata>.Default).Get, property, value) {}
 	}
 
@@ -134,19 +135,19 @@ namespace ExtendedXmlSerializer.Configuration
 
 	class ServicePropertyAssignment<T, TProperty, TType> : ServicePropertyAssignment<T, IService<TProperty>> where TType : TProperty
 	{
-		public ServicePropertyAssignment(IProperty<IService<IService<TProperty>>> property)
+		public ServicePropertyAssignment(IMetadataProperty<IService<IService<TProperty>>> property)
 			: base(property, A<TType>.Default.Get()) {}
 	}
 
 	class ServicePropertyAssignment<T, TProperty> : PropertyAssignment<T, IService<TProperty>>
 	{
-		public ServicePropertyAssignment(IProperty<IService<TProperty>> property, TProperty instance)
+		public ServicePropertyAssignment(IMetadataProperty<IService<TProperty>> property, TProperty instance)
 			: this(property, new InstanceService<TProperty>(instance)) {}
 
-		public ServicePropertyAssignment(IProperty<IService<TProperty>> property, Type serviceType)
+		public ServicePropertyAssignment(IMetadataProperty<IService<TProperty>> property, Type serviceType)
 			: this(property, new Service<TProperty>(serviceType)) {}
 
-		public ServicePropertyAssignment(IProperty<IService<TProperty>> property, IService<TProperty> value) : base(property, value) {}
+		public ServicePropertyAssignment(IMetadataProperty<IService<TProperty>> property, IService<TProperty> value) : base(property, value) {}
 	}
 
 	sealed class Types<T> : Types
@@ -167,10 +168,10 @@ namespace ExtendedXmlSerializer.Configuration
 	class PropertyAssignment<T> : IConfiguration
 	{
 		readonly Func<IConfigurationElement, IMetadata> _metadata;
-		readonly IProperty<T> _property;
+		readonly IMetadataProperty<T> _property;
 		readonly T _value;
 
-		public PropertyAssignment(Func<IConfigurationElement, IMetadata> metadata, IProperty<T> property, T value)
+		public PropertyAssignment(Func<IConfigurationElement, IMetadata> metadata, IMetadataProperty<T> property, T value)
 		{
 			_metadata = metadata;
 			_property = property;

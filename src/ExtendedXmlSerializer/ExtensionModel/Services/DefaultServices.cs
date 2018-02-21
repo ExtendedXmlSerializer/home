@@ -24,6 +24,8 @@
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.LightInject;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,18 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Services
 {
+	class Singleton<T, TParameter, TResult> : DecoratedSource<TParameter, TResult>
+		where T : class, IParameterizedSource<TParameter, TResult>
+	{
+		public Singleton(ISingletonLocator locator) : base(locator.Get(A<T>.Default)) {}
+	}
+
+	class SingletonCommand<T, TParameter> : DecoratedCommand<TParameter>
+		where T : class, ICommand<TParameter>
+	{
+		public SingletonCommand(ISingletonLocator locator) : base(locator.Get(A<T>.Default)) {}
+	}
+
 	class DefaultServices : IServices
 	{
 		readonly IServiceContainer _container;

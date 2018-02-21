@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using ExtendedXmlSerializer.Core.Collections;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {

@@ -1,4 +1,5 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using System;
 using System.Xml;

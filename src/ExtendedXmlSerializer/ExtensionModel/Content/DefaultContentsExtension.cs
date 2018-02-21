@@ -21,11 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Services;
+using ExtendedXmlSerializer.ExtensionModel.Types;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
@@ -46,10 +49,34 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 
-	public sealed class NullableStructureContentsExtension : ISerializerExtension
+	public class AssignableContentsExtension : ISerializerExtension
 	{
-		public static NullableStructureContentsExtension Default { get; } = new NullableStructureContentsExtension();
-		NullableStructureContentsExtension() {}
+		public static AssignableContentsExtension Default { get; } = new AssignableContentsExtension();
+		AssignableContentsExtension() {}
+
+		public IServiceRepository Get(IServiceRepository parameter)
+			=> parameter.RegisterDefinition<INullContentReader<object>, NullContentReader<object>>()
+			            .RegisterDefinition<INullContentWriter<object>, NullContentWriter<object>>()
+			            .Decorate<AssignableContents<object>>();
+
+		public void Execute(IServices parameter) {}
+
+		sealed class NullContentReader<T> : Singleton<ContentModel.NullContentReader<T>, IFormatReader, T>, INullContentReader<T>
+		{
+			public NullContentReader(ISingletonLocator locator) : base(locator) {}
+		}
+
+		sealed class NullContentWriter<T> : SingletonCommand<ContentModel.NullContentWriter<T>, ContentModel.Writing<T>>, INullContentWriter<T>
+		{
+			public NullContentWriter(ISingletonLocator locator) : base(locator) {}
+		}
+
+	}
+
+	public sealed class AssignableStructureContentsExtension : ISerializerExtension
+	{
+		public static AssignableStructureContentsExtension Default { get; } = new AssignableStructureContentsExtension();
+		AssignableStructureContentsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.DecorateContent<NullableContents>(AssignableStructureSpecification.Default)
@@ -57,19 +84,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public void Execute(IServices parameter) {}
 	}
-
-	/*public sealed class MetadataContentsExtension : ISerializerExtension
-	{
-		public static MetadataContentsExtension Default { get; } = new MetadataContentsExtension();
-		MetadataContentsExtension() {}
-
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.RegisterInstance(ReflectionSerializer.Default)
-			            .DecorateContent<ReflectionContents>(ReflectionContentSpecification.Default)
-			            .Decorate<ReflectionRegistration<object>>();
-
-		public void Execute(IServices parameter) {}
-	}*/
 
 	public sealed class MemberedContentsExtension : ISerializerExtension
 	{

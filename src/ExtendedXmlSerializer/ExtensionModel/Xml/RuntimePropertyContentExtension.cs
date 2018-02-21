@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Runtime;
@@ -41,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
 
-	sealed class RegisteredRuntimePropertySpecifications<T> : ServiceProperty<ISpecification<Writing<T>>>
+	sealed class RegisteredRuntimePropertySpecifications<T> : MetadataServiceProperty<ISpecification<Writing<T>>>
 	{
 		public static RegisteredRuntimePropertySpecifications<T> Default { get; } = new RegisteredRuntimePropertySpecifications<T>();
 		RegisteredRuntimePropertySpecifications() {}

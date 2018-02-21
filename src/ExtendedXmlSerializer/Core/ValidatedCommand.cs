@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nagórski
+// Copyright (c) 2016-2018 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,17 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.Core.Sources
+namespace ExtendedXmlSerializer.Core
 {
-	public abstract class ItemsBase<T> : IItems<T>
+	class ConditionalCommand<T> : ICommand<T>
 	{
-		public virtual ImmutableArray<T> Get() => this.ToImmutableArray();
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _true;
+		readonly ICommand<T> _false;
 
-		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-		public abstract IEnumerator<T> GetEnumerator();
+		public ConditionalCommand(ISpecification<T> specification, ICommand<T> @true, ICommand<T> @false)
+		{
+			_specification = specification;
+			_true = @true;
+			_false = @false;
+		}
+
+		public void Execute(T parameter)
+		{
+			var command = _specification.IsSatisfiedBy(parameter) ? _true : _false;
+			command.Execute(parameter);
+		}
+	}
+
+	class ValidatedCommand<T> : ICommand<T>
+	{
+		readonly ISpecification<T> _specification;
+		readonly ICommand<T> _command;
+
+		public ValidatedCommand(ISpecification<T> specification, ICommand<T> command)
+		{
+			_specification = specification;
+			_command = command;
+		}
+
+		public void Execute(T parameter)
+		{
+			if (_specification.IsSatisfiedBy(parameter))
+			{
+				_command.Execute(parameter);
+			}
+		}
 	}
 }

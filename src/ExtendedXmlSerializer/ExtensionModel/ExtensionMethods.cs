@@ -76,8 +76,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static MemberConfiguration<T, TMember> Register<T, TMember, TSerializer>(
 			this MemberConfiguration<T, TMember> @this, A<TSerializer> _)
 			where TSerializer : class, IContentSerializer<TMember>
-			=> @this.Set(RegisteredSerializersProperty<TMember>.Default,
-			             A<ActivatedContentSerializer<TMember, TSerializer>>.Default)
+			=> @this.Set(RegisteredSerializersProperty<TMember>.Default, A<ActivatedContentSerializer<TMember, TSerializer>>.Default)
 			        .Return(@this);
 
 		public static MemberConfiguration<T, TMember> Register<T, TMember>(this MemberConfiguration<T, TMember> @this,
