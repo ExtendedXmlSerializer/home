@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		DimensionMappers() : base(new Dictionary<int, IGeneric<Array, ImmutableArray<int>, ISource<Array>>>
 		{
-			{2, new Generic<Array, ImmutableArray<int>, ISource<Array>>(typeof(DimensionMapper<>))}
+			{2, new Generic<Array, ImmutableArray<int>, ISource<Array>>(typeof(DimensionMapper2D<>))}
 		})
 		{
 		}

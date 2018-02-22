@@ -21,37 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Immutable;
+using System.Linq;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class Mapping<T> : IParameterizedSource<T[], T[,]>
+	sealed class DimensionMapper2D<T> : FixedInstanceSource<Array>
 	{
-		readonly int _width;
-
-		public Mapping(int width)
+		public DimensionMapper2D(T[] instance, ImmutableArray<int> dimensions)
+			: base(new Mapping2D<T>(dimensions.Last()).Get(instance))
 		{
-			_width = width;
-		}
-
-		public T[,] Get(T[] parameter)
-		{
-			var height = parameter.Length / _width;
-			var result = new T[height, _width];
-			var x = 0;
-			var y = 0;
-			for (int i = 0; i < parameter.Length; ++i)
-			{
-				result[y, x] = parameter[i];
-				x++;
-				if (x == _width)
-				{
-					x = 0;
-					y++;
-				}
-			}
-
-			return result;
 		}
 	}
 }
