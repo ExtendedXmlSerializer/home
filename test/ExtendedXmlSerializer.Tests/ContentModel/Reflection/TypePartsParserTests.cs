@@ -21,15 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sprache;
+using FluentAssertions;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
@@ -45,14 +45,24 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 
 		[Fact]
 		public void Local()
-			=> Assert.Equal(new TypeParts("SomeType"), TypePartsParser.Default.Get(Type), ParsedNameEqualityComparer.Default);
+			=> Assert.Equal(new TypeParts("SomeType"), TypePartsParser.Default.Get(Type), TypePartsEqualityComparer.Default);
 
 		[Fact]
 		public void Qualified()
 		{
 			var expected = new TypeParts("SomeType", "ns1");
 			var identity = TypePartsParser.Default.Get(QualifiedType);
-			Assert.Equal(expected, identity, ParsedNameEqualityComparer.Default);
+			Assert.Equal(expected, identity, TypePartsEqualityComparer.Default);
+		}
+
+		[Fact]
+		public void Dimensions()
+		{
+			TypePartsEqualityComparer.Default.Equals(
+					TypePartsParser.Default.Get("testing:int^3,4,2"),
+					new TypeParts("int", "testing", dimensions: ImmutableArray.Create(3, 4, 2)))
+				.Should()
+				.BeTrue();
 		}
 
 		[Fact]
@@ -66,7 +76,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 			                                                      }.ToImmutableArray);
 
 			var actual = TypePartsParser.Default.Get(GenericType);
-			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
+			Assert.Equal(expected, actual, TypePartsEqualityComparer.Default);
 			Assert.Equal(GenericType.Replace(" ", ""), TypePartsFormatter.Default.Get(actual));
 		}
 
@@ -87,7 +97,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 
 			var actual = TypePartsParser.Default.Get(CompoundGenericType);
 			Assert.Equal(CompoundGenericType.Replace(" ", ""), TypePartsFormatter.Default.Get(actual));
-			Assert.Equal(expected, actual, ParsedNameEqualityComparer.Default);
+			Assert.Equal(expected, actual, TypePartsEqualityComparer.Default);
 		}
 
 		[Fact]
@@ -99,7 +109,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 				            new TypeParts("string", "sys"),
 				            new TypeParts("int"),
 				            new TypeParts("SomeOtherType", "ns4")
-			            }.ToImmutableArray().SequenceEqual(actual, ParsedNameEqualityComparer.Default));
+			            }.ToImmutableArray().SequenceEqual(actual, TypePartsEqualityComparer.Default));
 		}
 
 		[Fact]
@@ -124,33 +134,6 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Reflection
 			var name = typeof(Dictionary<,>).Name;
 			var result = GenericNameParser.Default.ToParser().Parse(name);
 			Assert.Equal("Dictionary", result);
-		}
-
-		sealed class ParsedNameEqualityComparer : IEqualityComparer<TypeParts>
-		{
-			readonly static IdentityComparer<TypeParts> Comparer = IdentityComparer<TypeParts>.Default;
-
-			public static ParsedNameEqualityComparer Default { get; } = new ParsedNameEqualityComparer();
-			ParsedNameEqualityComparer() {}
-
-			public bool Equals(TypeParts x, TypeParts y)
-			{
-				var argumentsX = x.GetArguments().GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
-				var argumentsY = y.GetArguments().GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
-
-				var arguments = argumentsX.SequenceEqual(argumentsY, this);
-				var identity = Comparer.Equals(x, y);
-				var result = arguments && identity;
-				return result;
-			}
-
-			public int GetHashCode(TypeParts obj)
-			{
-				unchecked
-				{
-					return ((obj.GetArguments()?.GetHashCode() ?? 0) * 397) ^ Comparer.GetHashCode(obj);
-				}
-			}
 		}
 	}
 }

@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,29 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Identification;
+using System.Collections.Generic;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	struct TypeParts : IIdentity
+	sealed class ArrayDimensions : ItemsBase<int>
 	{
-		readonly Func<ImmutableArray<TypeParts>> _arguments;
+		readonly TypeInfo _type;
 
-		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null,
-			ImmutableArray<int>? dimensions = null)
+		public ArrayDimensions(TypeInfo type)
 		{
-			Name = name;
-			Identifier = identifier;
-			Dimensions = dimensions;
-			_arguments = arguments;
+			_type = type;
 		}
 
-		public string Identifier { get; }
-		public ImmutableArray<int>? Dimensions { get; }
-		public string Name { get; }
-
-		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
+		public override IEnumerator<int> GetEnumerator()
+		{
+			var type = _type;
+			while (type.IsArray)
+			{
+				yield return type.GetArrayRank();
+				type = type.GetElementType()
+					.GetTypeInfo();
+			}
+		}
 	}
 }

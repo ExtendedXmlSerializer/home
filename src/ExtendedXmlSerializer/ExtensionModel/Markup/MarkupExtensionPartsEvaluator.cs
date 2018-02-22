@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,28 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Sprache;
-using ExtendedXmlSerializer.ExtensionModel.Expressions;
-using ExtendedXmlSerializer.ExtensionModel.Types;
-using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Parsing;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Sprache;
+using ExtendedXmlSerializer.ExtensionModel.Expressions;
+using ExtendedXmlSerializer.ExtensionModel.Types;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionPartsEvaluator
 		: ReferenceCacheBase<MarkupExtensionParts, object>, IEvaluator,
-		  IMarkupExtensionPartsEvaluator
+			IMarkupExtensionPartsEvaluator
 	{
 		const string Extension = "Extension";
 
@@ -56,14 +56,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		readonly object[] _services;
 
 		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
-		                                     IMemberAccessors accessors, IConstructors constructors,
-		                                     System.IServiceProvider provider, params object[] services)
-			: this(parser, evaluator, members, accessors, constructors, provider, TypePartsFormatter.Default, services) {}
+			IMemberAccessors accessors, IConstructors constructors,
+			System.IServiceProvider provider, params object[] services)
+			: this(parser, evaluator, members, accessors, constructors, provider, TypePartsFormatter.Default, services)
+		{
+		}
 
 		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, ITypeMembers members,
-		                                     IMemberAccessors accessors, IConstructors constructors,
-		                                     System.IServiceProvider provider, IFormatter<TypeParts> formatter,
-		                                     params object[] services)
+			IMemberAccessors accessors, IConstructors constructors,
+			System.IServiceProvider provider, IFormatter<TypeParts> formatter,
+			params object[] services)
 		{
 			_parser = parser;
 			_evaluator = evaluator;
@@ -88,22 +90,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var type = DetermineType(parameter);
 
 			var candidates = parameter.Arguments.Select(Get)
-			                          .ToArray();
+				.ToArray();
 			var constructor = DetermineConstructor(parameter, candidates, type);
 
 			var members = _members.Get(type);
 			var evaluator = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), this);
 			var dictionary = parameter.Properties.ToDictionary(x => x.Key, evaluator.Get);
 			var arguments = constructor.GetParameters()
-			                           .Select(x => x.ParameterType.GetTypeInfo())
-			                           .Zip(candidates, (info, evaluation) => evaluation.Get(info))
-			                           .ToArray();
+				.Select(x => x.ParameterType.GetTypeInfo())
+				.Zip(candidates, (info, evaluation) => evaluation.Get(info))
+				.ToArray();
 			var activator = new ConstructedActivator(constructor, arguments);
 			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
-			                                                                            .Get()
-			                                                                            .AsValid<IMarkupExtension>();
+				.Get()
+				.AsValid<IMarkupExtension>();
 			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
-			                                                                     .ToArray()));
+				.ToArray()));
 			return result;
 		}
 
@@ -115,16 +117,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			if (constructor == null)
 			{
 				var values = parameter.Arguments.Select(x => x.ToString())
-				                      .ToArray();
+					.ToArray();
 
 				var primary = new InvalidOperationException(
-				                                            $"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+					$"An attempt was made to activate a markup extension of type '{type}' and the constructor parameters values '{string.Join(", ", values)}', but a constructor could not be located that would accept these values. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
 
 				var exceptions = primary.Yield()
-				                        .Concat(candidates.Select(x => x.Get())
-				                                          .Where(x => x != null));
+					.Concat(candidates.Select(x => x.Get())
+						.Where(x => x != null));
 				throw new AggregateException(exceptions);
 			}
+
 			return constructor;
 		}
 
@@ -141,6 +144,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			{
 				throw new InvalidOperationException($"{type} does not implement IMarkupExtension.");
 			}
+
 			return type;
 		}
 
@@ -165,9 +169,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		static TypeParts Copy(TypeParts parameter)
 		{
 			var array = parameter.GetArguments()
-			                     ?.ToArray();
+				?.ToArray();
 			var result = new TypeParts(string.Concat(parameter.Name, Extension), parameter.Identifier,
-			                           array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>) null);
+				array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>) null,
+				parameter.Dimensions);
 			return result;
 		}
 
@@ -191,7 +196,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				if (member == null)
 				{
 					throw new InvalidOperationException(
-					                                    $"The member '{parameter.Key}' was used to define a property of type '{_type}', but this property does not exist, or is not serializable.");
+						$"The member '{parameter.Key}' was used to define a property of type '{_type}', but this property does not exist, or is not serializable.");
 				}
 
 				var evaluation = _evaluator.Get(parameter.Value);
@@ -202,11 +207,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 					{
 						var primary =
 							new InvalidOperationException(
-							                              $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
+								$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'. Please see any associated exceptions for any errors encountered while evaluating these parameter values.");
 						throw new AggregateException(primary, innerException);
 					}
+
 					throw new InvalidOperationException(
-					                                    $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
+						$"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
 				}
 
 				return evaluation.Get(member.MemberType);
@@ -218,7 +224,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			readonly System.IServiceProvider _provider, _services;
 
 			public Provider(System.IServiceProvider provider, params object[] services)
-				: this(provider, new ServiceProvider(services)) {}
+				: this(provider, new ServiceProvider(services))
+			{
+			}
 
 			public Provider(System.IServiceProvider provider, System.IServiceProvider services)
 			{

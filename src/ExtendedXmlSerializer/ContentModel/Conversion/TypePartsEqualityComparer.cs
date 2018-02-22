@@ -21,29 +21,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using ExtendedXmlSerializer.ContentModel.Identification;
 
 namespace ExtendedXmlSerializer.ContentModel.Conversion
 {
-	struct TypeParts : IIdentity
+	sealed class TypePartsEqualityComparer : IEqualityComparer<TypeParts>
 	{
-		readonly Func<ImmutableArray<TypeParts>> _arguments;
+		readonly static IdentityComparer<TypeParts> Comparer = IdentityComparer<TypeParts>.Default;
 
-		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null,
-			ImmutableArray<int>? dimensions = null)
+		public static TypePartsEqualityComparer Default { get; } = new TypePartsEqualityComparer();
+
+		TypePartsEqualityComparer()
 		{
-			Name = name;
-			Identifier = identifier;
-			Dimensions = dimensions;
-			_arguments = arguments;
 		}
 
-		public string Identifier { get; }
-		public ImmutableArray<int>? Dimensions { get; }
-		public string Name { get; }
+		public bool Equals(TypeParts x, TypeParts y)
+		{
+			var argumentsX = x.GetArguments()
+				.GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
+			var argumentsY = y.GetArguments()
+				.GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
 
-		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
+			var arguments = argumentsX.SequenceEqual(argumentsY, this);
+			var identity = Comparer.Equals(x, y);
+
+			var dimensions = x.Dimensions.GetValueOrDefault(ImmutableArray<int>.Empty)
+				.SequenceEqual(y.Dimensions.GetValueOrDefault(ImmutableArray<int>.Empty));
+
+			var result = arguments && identity && dimensions;
+			return result;
+		}
+
+		public int GetHashCode(TypeParts obj)
+		{
+			unchecked
+			{
+				return ((obj.Dimensions?.GetHashCode() ?? 0) * 489) ^
+				       ((obj.GetArguments()
+					         ?.GetHashCode() ?? 0) * 397) ^
+				       Comparer.GetHashCode(obj);
+			}
+		}
 	}
 }

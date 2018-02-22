@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,42 +22,19 @@
 // SOFTWARE.
 
 using System.Collections.Immutable;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Parsing;
-using ExtendedXmlSerializer.Core.Sprache;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Reflection
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class TypePartsParser : Parsing<TypeParts>
+	sealed class ArrayTypeDimensions : IParameterizedSource<TypeInfo, ImmutableArray<int>>
 	{
-		readonly static Parser<char> Start = Parse.Char('[')
-				.Token(),
-			Finish = Parse.Char(']')
-				.Token();
+		public static ArrayTypeDimensions Default { get; } = new ArrayTypeDimensions();
 
-		public static TypePartsParser Default { get; } = new TypePartsParser();
-
-		TypePartsParser() : this(Identity.Default, TypePartsList.Default, DimensionsParser.Default)
+		ArrayTypeDimensions()
 		{
 		}
 
-		public TypePartsParser(Parser<Key> identity, Parser<ImmutableArray<TypeParts>> arguments,
-			Parser<ImmutableArray<int>> dimensions)
-			: base(
-				identity.SelectMany(arguments.Contained(Start, Finish)
-						.Optional())
-					.SelectMany(Parse.Char('^')
-							.Token()
-							.Then(dimensions.Accept)
-							.Optional()
-							.Accept,
-						(key, argument) => new TypeParts(key.Item1.Name, key.Item1.Identifier, key.Item2.Build(), argument.GetAssigned()))
-					.ToDelegate()
-					.Cache()
-					.Get()
-			)
-		{
-		}
+		public ImmutableArray<int> Get(TypeInfo parameter) => new ArrayDimensions(parameter).ToImmutableArray();
 	}
 }
