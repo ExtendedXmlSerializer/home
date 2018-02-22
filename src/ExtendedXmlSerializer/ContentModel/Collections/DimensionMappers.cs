@@ -21,15 +21,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class DimensionMappers : TableSource<int, IGeneric<Array, ImmutableArray<int>, ISource<Array>>>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		public static DimensionMappers Default { get; } = new DimensionMappers();
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		DimensionMappers() : base(new Dictionary<int, IGeneric<Array, ImmutableArray<int>, ISource<Array>>>
+		{
+			{2, new Generic<Array, ImmutableArray<int>, ISource<Array>>(typeof(DimensionMapper2D<>))}
+		})
 		{
 		}
 	}

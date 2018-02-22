@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class RootType : IAlteration<TypeInfo>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		public static RootType Default { get; } = new RootType();
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		RootType()
 		{
+		}
+
+		public TypeInfo Get(TypeInfo parameter)
+		{
+			var result = parameter;
+			while (result.IsArray)
+			{
+				result = result.GetElementType()
+					.GetTypeInfo();
+			}
+
+			return result;
 		}
 	}
 }

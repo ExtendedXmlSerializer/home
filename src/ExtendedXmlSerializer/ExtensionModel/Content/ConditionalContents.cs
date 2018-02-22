@@ -29,9 +29,11 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ConditionalContents : ConditionalSource<TypeInfo, ISerializer>, IContents
+	class ConditionalContents : ConditionalSource<TypeInfo, ISerializer>, IContents
 	{
 		public ConditionalContents(ISpecification<TypeInfo> specification, IContents source, IContents fallback)
-			: base(specification, source, fallback) {}
+			: base(specification, source, fallback)
+		{
+		}
 	}
 }

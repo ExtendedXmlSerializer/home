@@ -38,8 +38,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		public static EnumerationContentsExtension Default { get; } = new EnumerationContentsExtension();
 		EnumerationContentsExtension() {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Decorate<EnumerationContentsRegistration<object>>();
+		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<EnumerationContentsRegistration<object>>();
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

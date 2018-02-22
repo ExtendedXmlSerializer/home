@@ -21,16 +21,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class MappedArraySpecification : ISpecification<TypeInfo>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		public static MappedArraySpecification Default { get; } = new MappedArraySpecification();
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		MappedArraySpecification()
 		{
 		}
+
+		public bool IsSatisfiedBy(TypeInfo parameter) => parameter.GetArrayRank() > 1;
 	}
 }

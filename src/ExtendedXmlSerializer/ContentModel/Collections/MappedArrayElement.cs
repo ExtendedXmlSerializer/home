@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,65 +21,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.ContentModel.Properties;
 using System;
 using System.Collections.Immutable;
 using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Properties
+namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ItemTypeProperty : Property<TypeInfo>
+	sealed class MappedArrayElement : IElements
 	{
-		public static ItemTypeProperty Default { get; } = new ItemTypeProperty();
+		readonly IElements _element;
 
-		ItemTypeProperty() : this(new FrameworkIdentity("item"))
+		public MappedArrayElement(IElements element)
 		{
+			_element = element;
 		}
 
-		public ItemTypeProperty(IIdentity identity)
-			: base(new Reader(new TypedParsingReader(identity)), new TypedFormattingWriter(identity), identity)
+		public IWriter Get(TypeInfo parameter)
 		{
+			var writer = _element.Get(parameter);
+			var result = new Writer(writer, Dimensions.Defaults.Get(parameter)).Adapt();
+			return result;
 		}
 
-		sealed class Reader : IReader<TypeInfo>
+		sealed class Writer : IWriter<Array>
 		{
-			readonly IReader<TypeInfo> _reader;
-			readonly IProperty<ImmutableArray<int>> _maps;
+			readonly IWriter _writer;
+			readonly IProperty<ImmutableArray<int>> _property;
+			readonly Func<Array, ImmutableArray<int>> _dimensions;
 
-			public Reader(IReader<TypeInfo> reader) : this(reader, MapProperty.Default)
+			public Writer(IWriter writer, Func<Array, ImmutableArray<int>> dimensions) : this(writer, MapProperty.Default,
+				dimensions)
 			{
 			}
 
-			public Reader(IReader<TypeInfo> reader, IProperty<ImmutableArray<int>> maps)
+			public Writer(IWriter writer, IProperty<ImmutableArray<int>> property, Func<Array, ImmutableArray<int>> dimensions)
 			{
-				_reader = reader;
-				_maps = maps;
+				_writer = writer;
+				_property = property;
+				_dimensions = dimensions;
 			}
 
-			public TypeInfo Get(IFormatReader parameter)
+			public void Write(IFormatWriter writer, Array instance)
 			{
-				var element = _reader.Get(parameter);
-				var result = element != null
-					? TypeInfo(parameter, element)
-						.GetTypeInfo()
-					: null;
-				return result;
-			}
-
-			Type TypeInfo(IFormatReader parameter, TypeInfo element)
-			{
-				if (parameter.IsSatisfiedBy(_maps))
-				{
-					var maps = _maps.Get(parameter);
-					if (maps.Length > 1)
-					{
-						return element.MakeArrayType(maps.Length);
-					}
-				}
-
-				return element.MakeArrayType();
+				_writer.Write(writer, instance);
+				_property.Write(writer, _dimensions(instance));
 			}
 		}
 	}

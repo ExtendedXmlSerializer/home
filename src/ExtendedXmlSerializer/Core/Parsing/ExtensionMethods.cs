@@ -22,6 +22,10 @@ namespace ExtendedXmlSerializer.Core.Parsing
 				   };
 		}
 
+		public static Func<T> Build<T>(this IOption<T> @this) => @this.IsDefined ? new Func<T>(@this.Get) : null;
+
+		public static T? GetAssigned<T>(this IOption<T> @this) where T : struct => @this.IsDefined ? @this.Get() : (T?) null;
+
 		public static Parser<Tuple<T1, T2>> SelectMany<T1, T2>(this Parser<T1> parser, Parser<T2> instance)
 			=> parser.SelectMany(instance.Accept, Tuple.Create);
 

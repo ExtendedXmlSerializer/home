@@ -1,18 +1,18 @@
-// MIT License
-// 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+﻿// MIT License
+//
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,16 +21,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.Core.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class ArrayDimensions : ItemsBase<int>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		readonly TypeInfo _type;
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		public ArrayDimensions(TypeInfo type)
 		{
+			_type = type;
+		}
+
+		public override IEnumerator<int> GetEnumerator()
+		{
+			var type = _type;
+			while (type.IsArray)
+			{
+				yield return type.GetArrayRank();
+				type = type.GetElementType()
+					.GetTypeInfo();
+			}
 		}
 	}
 }

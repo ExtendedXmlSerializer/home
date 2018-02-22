@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,16 +21,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Immutable;
+using System.Reflection;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class ArrayTypeDimensions : StructureCacheBase<TypeInfo, ImmutableArray<int>>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		public static ArrayTypeDimensions Default { get; } = new ArrayTypeDimensions();
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		ArrayTypeDimensions()
 		{
 		}
+
+		protected override ImmutableArray<int> Create(TypeInfo parameter)
+			=> new ArrayDimensions(parameter).ToImmutableArray();
 	}
 }

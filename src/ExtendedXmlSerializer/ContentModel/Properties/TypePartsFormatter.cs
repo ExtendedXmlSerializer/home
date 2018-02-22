@@ -32,7 +32,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 	sealed class TypePartsFormatter : ITypePartsFormatter
 	{
 		public static TypePartsFormatter Default { get; } = new TypePartsFormatter();
-		TypePartsFormatter() : this(IdentityFormatter<TypeParts>.Default) {}
+
+		TypePartsFormatter() : this(IdentityFormatter<TypeParts>.Default)
+		{
+		}
 
 		readonly IFormatter<TypeParts> _formatter;
 		readonly Func<TypeParts, string> _selector;
@@ -45,9 +48,10 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 
 		public string Get(TypeParts parameter)
 		{
-			var arguments = parameter.GetArguments();
-			var append = arguments.HasValue ? $"[{string.Join(",", arguments.Value.Select(_selector))}]" : null;
-			var result = $"{_formatter.Get(parameter)}{append}";
+			var parts = parameter.GetArguments();
+			var arguments = parts.HasValue ? $"[{string.Join(",", parts.Value.Select(_selector))}]" : null;
+			var dimensions = parameter.Dimensions.HasValue ? $"^{string.Join(",", parameter.Dimensions.Value.ToArray())}" : null;
+			var result = $"{_formatter.Get(parameter)}{arguments}{dimensions}";
 			return result;
 		}
 	}

@@ -41,19 +41,20 @@ using System.Reflection;
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	sealed class MarkupExtensionPartsEvaluator
-		: ReferenceCacheBase<MarkupExtensionParts, object>, IEvaluator,
+		: ReferenceCacheBase<MarkupExtensionParts, object>,
+		  IEvaluator,
 		  IMarkupExtensionPartsEvaluator
 	{
 		const string Extension = "Extension";
 
-		readonly IParser<MemberInfo> _parser;
-		readonly IEvaluator _evaluator;
-		readonly IContentMembers _members;
-		readonly IMemberAccessors _accessors;
-		readonly IConstructors _constructors;
-		readonly IServiceProvider _provider;
+		readonly IParser<MemberInfo>   _parser;
+		readonly IEvaluator            _evaluator;
+		readonly IContentMembers       _members;
+		readonly IMemberAccessors      _accessors;
+		readonly IConstructors         _constructors;
+		readonly IServiceProvider      _provider;
 		readonly IFormatter<TypeParts> _formatter;
-		readonly object[] _services;
+		readonly object[]              _services;
 
 		public MarkupExtensionPartsEvaluator(IParser<MemberInfo> parser, IEvaluator evaluator, IContentMembers members,
 		                                     IMemberAccessors accessors, IConstructors constructors,
@@ -65,21 +66,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		                                     IServiceProvider provider, IFormatter<TypeParts> formatter,
 		                                     params object[] services)
 		{
-			_parser = parser;
-			_evaluator = evaluator;
-			_members = members;
-			_accessors = accessors;
+			_parser       = parser;
+			_evaluator    = evaluator;
+			_members      = members;
+			_accessors    = accessors;
 			_constructors = constructors;
-			_provider = provider;
-			_formatter = formatter;
-			_services = services;
+			_provider     = provider;
+			_formatter    = formatter;
+			_services     = services;
 		}
 
 		public IEvaluation Get(IExpression parameter)
 		{
 			var expression = parameter as MarkupExtensionPartsExpression;
-			var accounted = expression != null ? new FixedExpression<object>(Get(expression.Get())) : parameter;
-			var result = _evaluator.Get(accounted);
+			var accounted  = expression != null ? new FixedExpression<object>(Get(expression.Get())) : parameter;
+			var result     = _evaluator.Get(accounted);
 			return result;
 		}
 
@@ -91,8 +92,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                          .ToArray();
 			var constructor = DetermineConstructor(parameter, candidates, type);
 
-			var members = _members.Get(type);
-			var evaluator = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), this);
+			var members    = _members.Get(type);
+			var evaluator  = new PropertyEvaluator(type, members.ToDictionary(x => x.Name), this);
 			var dictionary = parameter.Properties.ToDictionary(x => x.Key, evaluator.Get);
 			var arguments = constructor.GetParameters()
 			                           .Select(x => x.ParameterType.GetTypeInfo())
@@ -100,8 +101,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			                           .ToArray();
 			var activator = new ConstructedActivator(constructor, arguments);
 			var extension = new ActivationContexts(_accessors, members, activator).Get(dictionary)
-			                                                                            .Get()
-			                                                                            .To<IMarkupExtension>();
+			                                                                      .Get()
+			                                                                      .To<IMarkupExtension>();
 			var result = extension.ProvideValue(new Provider(_provider, _services.Appending(parameter)
 			                                                                     .ToArray()));
 			return result;
@@ -110,8 +111,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		ConstructorInfo DetermineConstructor(MarkupExtensionParts parameter, IEvaluation[] candidates, TypeInfo type)
 		{
 			var specification = new ValidMarkupExtensionConstructor(candidates.ToImmutableArray());
-			var constructors = new QueriedConstructors(specification, _constructors);
-			var constructor = constructors.Get(type);
+			var constructors  = new QueriedConstructors(specification, _constructors);
+			var constructor   = constructors.Get(type);
 			if (constructor == null)
 			{
 				var values = parameter.Arguments.Select(x => x.ToString())
@@ -126,6 +127,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 				// ReSharper disable once UnthrowableException
 				throw new AggregateException(exceptions);
 			}
+
 			return constructor;
 		}
 
@@ -142,6 +144,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			{
 				throw new InvalidOperationException($"{type} does not implement IMarkupExtension.");
 			}
+
 			return type;
 		}
 
@@ -160,7 +163,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 		TypeInfo Parse(TypeParts parameter)
 		{
 			var s = _formatter.Get(parameter);
-			return (TypeInfo) _parser.Get(s);
+			return (TypeInfo)_parser.Get(s);
 		}
 
 		static TypeParts Copy(TypeParts parameter)
@@ -168,20 +171,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 			var array = parameter.GetArguments()
 			                     ?.ToArray();
 			var result = new TypeParts(string.Concat(parameter.Name, Extension), parameter.Identifier,
-			                           array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>) null);
+			                           array != null ? array.ToImmutableArray : (Func<ImmutableArray<TypeParts>>)null,
+			                           parameter.Dimensions);
 			return result;
 		}
 
 		sealed class PropertyEvaluator : IParameterizedSource<KeyValuePair<string, IExpression>, object>
 		{
-			readonly TypeInfo _type;
+			readonly TypeInfo                             _type;
 			readonly IReadOnlyDictionary<string, IMember> _members;
-			readonly IEvaluator _evaluator;
+			readonly IEvaluator                           _evaluator;
 
 			public PropertyEvaluator(TypeInfo type, IReadOnlyDictionary<string, IMember> members, IEvaluator evaluator)
 			{
-				_type = type;
-				_members = members;
+				_type      = type;
+				_members   = members;
 				_evaluator = evaluator;
 			}
 
@@ -207,6 +211,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Markup
 						// ReSharper disable once UnthrowableException
 						throw new AggregateException(primary, innerException);
 					}
+
 					throw new InvalidOperationException(
 					                                    $"An attempt was made to assign the property '{parameter.Key}' of a markup extension of type '{_type}' with the expression value of '{parameter.Value}'.  However, the resulting value of this expression could not be assigned to this property, which has the target type of '{member.MemberType}'.");
 				}

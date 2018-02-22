@@ -69,7 +69,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}
-
 	public sealed class GenericElementsExtension : ISerializerExtension
 	{
 		public static GenericElementsExtension Default { get; } = new GenericElementsExtension();
@@ -95,6 +94,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		                                                                        .Register<IClassification, Classification>()
 		                                                                        .Register<IIdentityStore, IdentityStore>();
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		void ICommand<IServices>.Execute(IServices parameter)
+		{
+		}
 	}
 }
