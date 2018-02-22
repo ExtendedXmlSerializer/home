@@ -21,15 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class DimensionMapper<T> : FixedInstanceSource<Array>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
-
-		ArraySpecification() : base(IsArraySpecification.Default)
+		public DimensionMapper(T[] instance, ImmutableArray<int> dimensions)
+			: base(new Mapping<T>(dimensions.Last()).Get(instance))
 		{
 		}
 	}

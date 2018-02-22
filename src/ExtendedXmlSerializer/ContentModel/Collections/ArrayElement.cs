@@ -35,7 +35,9 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 		readonly IWriter<Array> _identity;
 
 		public ArrayElement(IIdentities identities)
-			: this(new Identity<Array>(identities.Get(Support<Array>.Key)), CollectionItemTypeLocator.Default) {}
+			: this(new Identity<Array>(identities.Get(Support<Array>.Key)), CollectionItemTypeLocator.Default)
+		{
+		}
 
 		public ArrayElement(IWriter<Array> identity, ICollectionItemTypeLocator locator)
 		{

@@ -21,15 +21,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using System.Collections.Immutable;
+using System.Linq;
+using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core.Parsing;
 
-namespace ExtendedXmlSerializer.ContentModel.Collections
+namespace ExtendedXmlSerializer.ContentModel.Properties
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class MapProperty : DelegatedProperty<ImmutableArray<int>>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		public static MapProperty Default { get; } = new MapProperty();
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		MapProperty() : base(DimensionsParser.Default.Get, x => string.Join(",", x.ToArray()), new FrameworkIdentity("map"))
 		{
 		}
 	}

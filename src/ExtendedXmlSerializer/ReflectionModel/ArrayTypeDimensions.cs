@@ -21,13 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
 using System.Collections.Immutable;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ReflectionModel
 {
-	sealed class ArrayTypeDimensions : IParameterizedSource<TypeInfo, ImmutableArray<int>>
+	sealed class ArrayTypeDimensions : StructureCacheBase<TypeInfo, ImmutableArray<int>>
 	{
 		public static ArrayTypeDimensions Default { get; } = new ArrayTypeDimensions();
 
@@ -35,6 +35,7 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		{
 		}
 
-		public ImmutableArray<int> Get(TypeInfo parameter) => new ArrayDimensions(parameter).ToImmutableArray();
+		protected override ImmutableArray<int> Create(TypeInfo parameter)
+			=> new ArrayDimensions(parameter).ToImmutableArray();
 	}
 }

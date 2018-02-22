@@ -21,16 +21,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Immutable;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Properties;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class MappedArrayElement : IElement
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		readonly IElement _element;
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		public MappedArrayElement(IElement element)
 		{
+			_element = element;
+		}
+
+		public IWriter Get(TypeInfo parameter)
+		{
+			var writer = _element.Get(parameter);
+			var result = new Writer(writer, Dimensions.Defaults.Get(parameter)).Adapt();
+			return result;
+		}
+
+		sealed class Writer : IWriter<Array>
+		{
+			readonly IWriter _writer;
+			readonly IProperty<ImmutableArray<int>> _property;
+			readonly Func<Array, ImmutableArray<int>> _dimensions;
+
+			public Writer(IWriter writer, Func<Array, ImmutableArray<int>> dimensions) : this(writer, MapProperty.Default,
+				dimensions)
+			{
+			}
+
+			public Writer(IWriter writer, IProperty<ImmutableArray<int>> property, Func<Array, ImmutableArray<int>> dimensions)
+			{
+				_writer = writer;
+				_property = property;
+				_dimensions = dimensions;
+			}
+
+			public void Write(IFormatWriter writer, Array instance)
+			{
+				_writer.Write(writer, instance);
+				_property.Write(writer, _dimensions(instance));
+			}
 		}
 	}
 }

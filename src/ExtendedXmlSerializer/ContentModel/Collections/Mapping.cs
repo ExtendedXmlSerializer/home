@@ -21,16 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class Mapping<T> : IParameterizedSource<T[], T[,]>
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
+		readonly int _width;
 
-		ArraySpecification() : base(IsArraySpecification.Default)
+		public Mapping(int width)
 		{
+			_width = width;
+		}
+
+		public T[,] Get(T[] parameter)
+		{
+			var height = parameter.Length / _width;
+			var result = new T[height, _width];
+			var x = 0;
+			var y = 0;
+			for (int i = 0; i < parameter.Length; ++i)
+			{
+				result[y, x] = parameter[i];
+				x++;
+				if (x == _width)
+				{
+					x = 0;
+					y++;
+				}
+			}
+
+			return result;
 		}
 	}
 }

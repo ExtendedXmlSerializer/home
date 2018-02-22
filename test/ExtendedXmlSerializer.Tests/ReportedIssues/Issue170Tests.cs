@@ -48,5 +48,24 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.Cycle(complex2D)
 				.ShouldBeEquivalentTo(complex2D);
 		}
+
+		[Fact]
+		public void VerifyMultidimensional()
+		{
+			int[,] subject = new int[2, 4]
+			{
+				{1, 2, 3, 4},
+				{5, 6, 7, 8}
+			};
+
+			var support = new ConfigurationContainer().ForTesting();
+			support
+				.Cycle(subject)
+				.ShouldBeEquivalentTo(subject);
+
+/*
+
+			*/
+		}
 	}
 }

@@ -21,15 +21,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ExtensionModel.Content;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
-	sealed class ArraySpecification : CollectionSpecification
+	sealed class MappedArrayElements : ConditionalElement
 	{
-		public static ArraySpecification Default { get; } = new ArraySpecification();
-
-		ArraySpecification() : base(IsArraySpecification.Default)
+		public MappedArrayElements(IElement source)
+			: base(ArraySpecification.Default.And(MappedArraySpecification.Default), new MappedArrayElement(source), source)
 		{
 		}
 	}

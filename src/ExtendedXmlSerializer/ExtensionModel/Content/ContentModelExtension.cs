@@ -36,7 +36,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	public sealed class ContentModelExtension : ISerializerExtension
 	{
 		public static ContentModelExtension Default { get; } = new ContentModelExtension();
-		ContentModelExtension() : this(ContentReaders.Default, ContentWriters.Default) {}
+
+		ContentModelExtension() : this(ContentReaders.Default, ContentWriters.Default)
+		{
+		}
 
 		readonly IContentReaders _readers;
 		readonly IContentWriters _writers;
@@ -49,23 +52,26 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 
 		public IServiceRepository Get(IServiceRepository parameter)
 			=> parameter.Register<Element>()
-			            .Register<IElement, Element>()
-			            .Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
-			            .Decorate<GenericElement>(IsGenericTypeSpecification.Default)
-			            .Decorate<ArrayElement>(IsArraySpecification.Default)
-			            .Register<IClassification, Classification>()
-			            .Register<IIdentityStore, IdentityStore>()
-			            .Register<IInnerContentServices, InnerContentServices>()
-			            .Register<IMemberHandler, MemberHandler>()
-			            .Register<ICollectionContentsHandler, CollectionContentsHandler>()
-			            .RegisterInstance(_writers)
-			            .RegisterInstance(_readers)
-			            .RegisterInstance<IAlteration<IInnerContentHandler>>(Self<IInnerContentHandler>.Default)
-			            .RegisterInstance<IInnerContentResult>(InnerContentResult.Default)
-			            .RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
-			            .RegisterInstance<ICollectionAssignment>(CollectionAssignment.Default)
-			            .RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default);
+				.Register<IElement, Element>()
+				.Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
+				.Decorate<GenericElement>(IsGenericTypeSpecification.Default)
+				.Decorate<ArrayElement>(IsArraySpecification.Default)
+				.Decorate<IElement, MappedArrayElements>()
+				.Register<IClassification, Classification>()
+				.Register<IIdentityStore, IdentityStore>()
+				.Register<IInnerContentServices, InnerContentServices>()
+				.Register<IMemberHandler, MemberHandler>()
+				.Register<ICollectionContentsHandler, CollectionContentsHandler>()
+				.RegisterInstance(_writers)
+				.RegisterInstance(_readers)
+				.RegisterInstance<IAlteration<IInnerContentHandler>>(Self<IInnerContentHandler>.Default)
+				.RegisterInstance<IInnerContentResult>(InnerContentResult.Default)
+				.RegisterInstance<IMemberAssignment>(MemberAssignment.Default)
+				.RegisterInstance<ICollectionAssignment>(CollectionAssignment.Default)
+				.RegisterInstance<IListContentsSpecification>(ListContentsSpecification.Default);
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		void ICommand<IServices>.Execute(IServices parameter)
+		{
+		}
 	}
 }
