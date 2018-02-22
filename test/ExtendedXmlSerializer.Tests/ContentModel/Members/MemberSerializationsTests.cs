@@ -73,7 +73,7 @@ namespace ExtendedXmlSerializer.Tests.ContentModel.Members
 	        TestClassInheritanceBase expected = new TestClassInheritance();
 	        expected.Init();
 	        var actual = new SerializationSupport().Assert(expected, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassInheritance xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Id>2</Id><Id2>3</Id2></TestClassInheritance>");
-	        actual.ShouldBeEquivalentTo(expected);
+	        actual.Should().BeEquivalentTo(expected);
 	    }
 
         [Fact]

@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new AnotherSubject { Inner = new Subject { Message = "Hello World!" } };
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 		}
 
 		interface ISubject {}

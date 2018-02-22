@@ -18,7 +18,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var subject = new Subject{ Message = "Hello World!" };
 			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var subject = new Subject{ Message = "Hello World!" };
 			serializer.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><ConfiguredSubject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message></ConfiguredSubject>")
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 		}
 
 		sealed class Subject

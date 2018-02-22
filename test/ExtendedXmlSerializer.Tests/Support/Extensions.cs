@@ -30,14 +30,19 @@ namespace ExtendedXmlSerializer.Tests.Support
 	static class Extensions
 	{
 		public static T Cycle<T>(this IExtendedXmlSerializer @this, T instance)
-			=> @this.Deserialize<T>(@this.Serialize(instance));
+		{
+			var serialize  = @this.Serialize(instance);
+			var result     = @this.Deserialize<T>(serialize);
+			result.Should().BeEquivalentTo(instance);
+			return result;
+		}
 
 		public static T Cycle<T>(this ISerializers @this, T instance)
 		{
 			var serializer = @this.Get<T>();
 			var serialize = @this.Serialize(instance);
 			var result = serializer.Deserialize(serialize);
-			result.ShouldBeEquivalentTo(instance);
+			result.Should().BeEquivalentTo(instance);
 			return result;
 		}
 

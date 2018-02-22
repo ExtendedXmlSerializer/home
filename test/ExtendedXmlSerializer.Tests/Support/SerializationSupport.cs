@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.Tests.Support
 			    .Be(expected?.Replace("\r\n", string.Empty)
 			                .Replace("\n", string.Empty));
 			var result = _serializer.Deserialize<T>(data);
-			result.ShouldBeEquivalentTo(instance);
+			result.Should().BeEquivalentTo(instance);
 			return result;
 		}
 

@@ -139,7 +139,7 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			     .HaveCount(5);
 
 			Action add = () => types.Add(TypeModelExtension.Default);
-			add.ShouldThrow<InvalidOperationException>();
+			add.Should().Throw<InvalidOperationException>();
 		}
 
 		[Fact]

@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel
 		public void VerifyOrphanedPropertyThrows()
 		{
 			Action action = () => new ConfigurationRoot().Type<int>().To<TypeConfiguration<int>>().Entry(OrphanedProperty.Default);
-			action.ShouldThrow<InvalidOperationException>();
+			action.Should().Throw<InvalidOperationException>();
 		}
 
 

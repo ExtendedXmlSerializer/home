@@ -83,7 +83,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[Hello??? (<, &, ', and "")]]></Message></Issue150Tests-Subject>");
 
 			serializer.Deserialize<Subject>(serialize)
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -96,7 +96,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                             .ForTesting();
 
 			var subject = new Subject {Message = @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang3082{\fonttbl{\f0\fnil Segoe UI;}}\r{\colortbl ;\red0\green0\blue0;}\r{*\generator Riched20 10.0.16299}\viewkind4\uc1\r\pard\tx720\cf1\f0\fs23 Sample Text\par\r}"};
-			serializer.Cycle(subject).ShouldBeEquivalentTo(subject);
+			serializer.Cycle(subject).Should().BeEquivalentTo(subject);
 		}
 
 		[Fact]
@@ -112,7 +112,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue150Tests-SubjectWithAttribute xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Message><![CDATA[Hello??? (<, &, ', and "")]]></Message></Issue150Tests-SubjectWithAttribute>");
 
 			serializer.Deserialize<SubjectWithAttribute>(serialize)
-			          .ShouldBeEquivalentTo(subject);
+			          .Should().BeEquivalentTo(subject);
 		}
 
 		sealed class Subject

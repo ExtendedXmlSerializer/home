@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests""><Message>Hello World!</Message><AttachedPropertiesExtensionTests-NameProperty.Default>SubjectName</AttachedPropertiesExtensionTests-NameProperty.Default><AttachedPropertiesExtensionTests-NumberProperty.Default>6776</AttachedPropertiesExtensionTests-NumberProperty.Default></AttachedPropertiesExtensionTests-Subject>");
-			actual.ShouldBeEquivalentTo(subject);
+			actual.Should().BeEquivalentTo(subject);
 			actual.Get(NameProperty.Default).Should().Be("SubjectName");
 			actual.Get(NumberProperty.Default).Should().Be(6776);
 		}
@@ -64,7 +64,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 				                                                                               NumberProperty.Default));
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" AttachedPropertiesExtensionTests-NameProperty.Default=""SubjectName"" AttachedPropertiesExtensionTests-NumberProperty.Default=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");
-			actual.ShouldBeEquivalentTo(subject);
+			actual.Should().BeEquivalentTo(subject);
 			actual.Get(NameProperty.Default).Should().Be("SubjectName");
 			actual.Get(NumberProperty.Default).Should().Be(6776);
 		}
@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties
 
 			var actual = serializer.Assert(subject,
 			                               @"<?xml version=""1.0"" encoding=""utf-8""?><AttachedPropertiesExtensionTests-Subject Message=""Hello World!"" ConfiguredAttachedProperty.NewNumberPropertyName=""6776"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.AttachedProperties;assembly=ExtendedXmlSerializer.Tests"" />");
-			actual.ShouldBeEquivalentTo(subject);
+			actual.Should().BeEquivalentTo(subject);
 			actual.Get(NumberProperty.Default).Should().Be(6776);
 		}
 

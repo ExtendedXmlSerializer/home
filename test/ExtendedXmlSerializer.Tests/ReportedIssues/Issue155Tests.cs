@@ -1,7 +1,7 @@
-﻿using System.Xml.Serialization;
-using ExtendedXmlSerializer.Configuration;
+﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System.Xml.Serialization;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -16,7 +16,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var instance = new Subject {Items = new object[] {"Hello", "World", 6776, new URL(), new TranslatableWebFeatures()}};
 			serializer.Cycle(instance)
-			          .ShouldBeEquivalentTo(instance);
+			          .Should().BeEquivalentTo(instance);
 		}
 
 

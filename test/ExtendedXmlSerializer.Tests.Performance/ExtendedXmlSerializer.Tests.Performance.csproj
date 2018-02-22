@@ -21,7 +21,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="BenchmarkDotNet" Version="0.10.12" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Condition="'$(TargetFramework)' == 'net462'" Version="0.10.12" />
-    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.0.0" />
+    <PackageReference Include="ExtendedXmlSerializer.Legacy" Version="2.1.1" />
   </ItemGroup>
 
 </Project>

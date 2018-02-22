@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Types
 			var container = new ConfigurationContainer().EnableAllConstructors().Create();
 			var support = new SerializationSupport(container);
 			var instance = Subject.Create("Hello World from Private Constructor (hopefully)!");
-			support.Cycle(instance).ShouldBeEquivalentTo(instance);
+			support.Cycle(instance).Should().BeEquivalentTo(instance);
 		}
 
 		sealed class Subject

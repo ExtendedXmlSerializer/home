@@ -73,7 +73,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var items = new[] {new Subject(), null, new Subject()};
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items).Should().BeEquivalentTo(items);
 		}
 
 		[Fact]
@@ -82,7 +82,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var items = new[] { new Subject(), null, new Subject() }.ToList();
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items).Should().BeEquivalentTo(items);
 		}
 
 		public sealed class Subject {}
@@ -94,7 +94,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var items = new[] { new SubjectWithProperty { Message =  "Hello"}, null, new SubjectWithProperty { Message = "World" } };
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items).Should().BeEquivalentTo(items);
 		}
 
 		[Fact]
@@ -103,7 +103,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var items = new[] { new SubjectWithProperty { Message = "Hello" }, null, new SubjectWithProperty { Message = "World" } }.ToList();
 			var support = new SerializationSupport(_serializer);
 
-			support.Cycle(items).ShouldBeEquivalentTo(items);
+			support.Cycle(items).Should().BeEquivalentTo(items);
 		}
 
 		public sealed class SubjectWithProperty
@@ -212,7 +212,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		{
 			var expected = new GenericSubject<TypeCode> {PropertyName = TypeCode.SByte};
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -277,7 +277,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var actual =
 				new SerializationSupport(new ConfigurationContainer()).Assert(expected,
 				                                                              $"<?xml version=\"1.0\" encoding=\"utf-8\"?><ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList xmlns=\"clr-namespace:ExtendedXmlSerializer.Tests.ExtensionModel.Xml;assembly=ExtendedXmlSerializer.Tests\"><List xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:List[sys:string]\"><Capacity>4</Capacity><sys:string>Item1</sys:string></List><Dictionary xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"sys:Dictionary[sys:string,sys:string]\"><sys:Item><Key>Key</Key><Value>Value</Value></sys:Item></Dictionary><Set xmlns:ns1=\"clr-namespace:System.Collections.Generic;assembly=System.{ns}\" xmlns:sys=\"https://extendedxmlserializer.github.io/system\" xmlns:exs=\"https://extendedxmlserializer.github.io/v2\" exs:type=\"ns1:HashSet[sys:string]\"><sys:string>Item2</sys:string></Set></ExtendedXmlSerializerTests-ClassWithPropertyInterfaceOfList>");
-			actual.ShouldBeEquivalentTo(expected);
+			actual.Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -287,7 +287,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var actual =
 				new SerializationSupport().Assert(expected,
 				                                  @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassCollection xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><TestClassPrimitiveTypes><PropString>TestString</PropString><PropInt>-1</PropInt><PropuInt>2234</PropuInt><PropDecimal>3.346</PropDecimal><PropDecimalMinValue>-79228162514264337593543950335</PropDecimalMinValue><PropDecimalMaxValue>79228162514264337593543950335</PropDecimalMaxValue><PropFloat>7.4432</PropFloat><PropFloatNaN>NaN</PropFloatNaN><PropFloatPositiveInfinity>INF</PropFloatPositiveInfinity><PropFloatNegativeInfinity>-INF</PropFloatNegativeInfinity><PropFloatMinValue>-3.40282347E+38</PropFloatMinValue><PropFloatMaxValue>3.40282347E+38</PropFloatMaxValue><PropDouble>3.4234</PropDouble><PropDoubleNaN>NaN</PropDoubleNaN><PropDoublePositiveInfinity>INF</PropDoublePositiveInfinity><PropDoubleNegativeInfinity>-INF</PropDoubleNegativeInfinity><PropDoubleMinValue>-1.7976931348623157E+308</PropDoubleMinValue><PropDoubleMaxValue>1.7976931348623157E+308</PropDoubleMaxValue><PropEnum>EnumValue1</PropEnum><PropLong>234234142</PropLong><PropUlong>2345352534</PropUlong><PropShort>23</PropShort><PropUshort>2344</PropUshort><PropDateTime>2014-01-23T00:00:00</PropDateTime><PropByte>23</PropByte><PropSbyte>33</PropSbyte><PropChar>g</PropChar></TestClassPrimitiveTypes></TestClassCollection>");
-			actual.ShouldBeEquivalentTo(expected);
+			actual.Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -296,7 +296,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var expected = new TestClassPropertyType();
 			expected.Init();
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -305,7 +305,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var expected = new TestClassWithHashSet();
 			expected.Init();
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -314,7 +314,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 			var expected = new TestClassTimeSpan();
 			expected.Init();
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -322,7 +322,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 		{
 			var expected = new TestClassWithArray() {ArrayOfInt = new int[] {1, 2, 3}};
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 		[Fact]
@@ -335,7 +335,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 				               new TestClassWithObjectProperty {TestProperty = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2)}
 			               };
 			_serializer.Cycle(expected)
-			           .ShouldBeEquivalentTo(expected);
+			           .Should().BeEquivalentTo(expected);
 		}
 
 #if !CORE
@@ -365,7 +365,7 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Xml
 				                     }
 			              };
 			_serializer.Cycle(request)
-			           .ShouldBeEquivalentTo(request);
+			           .Should().BeEquivalentTo(request);
 		}
 #endif
 

@@ -43,11 +43,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var support = new ConfigurationContainer().ForTesting();
 			support
 				.Cycle(complex3D)
-				.ShouldBeEquivalentTo(complex3D);
+				.Should().BeEquivalentTo(complex3D);
 
 			support
 				.Cycle(complex2D)
-				.ShouldBeEquivalentTo(complex2D);
+				.Should().BeEquivalentTo(complex2D);
 		}
 
 		[Fact]
@@ -62,11 +62,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var support = new ConfigurationContainer().ForTesting();
 			support
 				.Cycle(subject)
-				.ShouldBeEquivalentTo(subject);
-
-/*
-
-			*/
+				.Should().BeEquivalentTo(subject);
 		}
 	}
 }
