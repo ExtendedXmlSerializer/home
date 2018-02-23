@@ -56,7 +56,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 				.Decorate<VariableTypeElement>(VariableTypeSpecification.Default)
 				.Decorate<GenericElement>(IsGenericTypeSpecification.Default)
 				.Decorate<ArrayElement>(IsArraySpecification.Default)
-				.Decorate<IElement, MappedArrayElements>()
 				.Register<IClassification, Classification>()
 				.Register<IIdentityStore, IdentityStore>()
 				.Register<IInnerContentServices, InnerContentServices>()
