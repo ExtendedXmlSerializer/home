@@ -1,7 +1,8 @@
 ﻿using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core.Sources;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Content.Alterations {
+namespace ExtendedXmlSerializer.ExtensionModel.Content.Alterations
+{
 	sealed class PipelineWriter<T> : IContentWriter<T>
 	{
 		readonly IContentWriter<T> _writer;
@@ -13,9 +14,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Alterations {
 			_pipeline = pipeline;
 		}
 
-		public void Execute(ContentModel.Writing<T> parameter)
+		public void Execute(Writing<T> parameter)
 		{
-			_writer.Execute(new ContentModel.Writing<T>(parameter.Writer, _pipeline.Alter(parameter.Instance)));
+			_writer.Execute(new Writing<T>(parameter.Writer, _pipeline.Alter(parameter.Instance)));
 		}
 	}
 }

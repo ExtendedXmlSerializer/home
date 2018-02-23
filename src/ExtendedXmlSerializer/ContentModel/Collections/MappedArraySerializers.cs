@@ -27,6 +27,7 @@ using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -80,6 +81,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		sealed class SizeOf<T> : ISource<int>
 		{
+			[UsedImplicitly]
 			public static SizeOf<T> Default { get; } = new SizeOf<T>();
 
 			SizeOf()
