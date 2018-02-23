@@ -13,13 +13,14 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		                        Content         = new GroupName("Content"),
 		                        Registrations   = new GroupName("Registrations"),
 		                        Format          = new GroupName("Format"),
+		                        Alterations     = new GroupName("Alterations"),
 		                        Caching         = new GroupName("Caching"),
 		                        Finish          = new GroupName("Finish");
 
 		public static Categories Default { get; } = new Categories();
 
 		Categories() : this(Start, ReflectionModel, ContentModel, ObjectModel, Framework, Elements, Content, Registrations,
-		                    Format, Caching, Finish) {}
+		                    Format, Alterations, Caching, Finish) {}
 
 		public Categories(params GroupName[] names) : base(names) {}
 	}

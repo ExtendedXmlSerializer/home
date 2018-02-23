@@ -106,6 +106,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 			                                new XmlSerializationExtension()/*,
 			                                new MemberFormatExtension()*/
 			                               );
+
+			yield return new ExtensionGroup(Categories.Alterations, all);
+
 			yield return new ExtensionGroup(Categories.Caching, all, CachingExtension.Default);
 			yield return new ExtensionGroup(Categories.Finish, all);
 		}

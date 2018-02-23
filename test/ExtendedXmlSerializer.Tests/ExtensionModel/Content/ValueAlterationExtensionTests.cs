@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 //
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,13 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ReflectionModel;
-using System;
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content.Alterations;
+using ExtendedXmlSerializer.Tests.Support;
+using Xunit;
 
-namespace ExtendedXmlSerializer.ContentModel
+// ReSharper disable All
+
+namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content
 {
-	sealed class RuntimeContentSerializers<T> : GenericSource<IContentSerializer<T>>, IRuntimeContentSerializers<T>
+	public class ValueAlterationExtensionTests
 	{
-		public RuntimeContentSerializers(IServiceProvider provider) : base(provider, typeof(RuntimeContentSerializerSource<>)) {}
+		[Fact]
+		public void VerifyInstanceAlteration()
+		{
+			new ConfigurationRoot().Type<int>().AlterInstance(x => x + 1).ToSupport().Cycle(6776, 6777);
+		}
+
+		[Fact]
+		public void VerifyContentAlteration()
+		{
+			new ConfigurationRoot().Type<int>().AlterContent(x => x + 1).ToSupport().Cycle(6776, 67761);
+		}
+
 	}
 }

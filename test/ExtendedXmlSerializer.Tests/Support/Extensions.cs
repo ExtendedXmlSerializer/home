@@ -37,12 +37,14 @@ namespace ExtendedXmlSerializer.Tests.Support
 			return result;
 		}
 
-		public static T Cycle<T>(this ISerializers @this, T instance)
+		public static T Cycle<T>(this ISerializers @this, T instance) => Cycle(@this, instance, instance);
+
+		public static T Cycle<T>(this ISerializers @this, T instance, T compare)
 		{
 			var serializer = @this.Get<T>();
 			var serialize = @this.Serialize(instance);
 			var result = serializer.Deserialize(serialize);
-			result.Should().BeEquivalentTo(instance);
+			result.Should().BeEquivalentTo(compare);
 			return result;
 		}
 

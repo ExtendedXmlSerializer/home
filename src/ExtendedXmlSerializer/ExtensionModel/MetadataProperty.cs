@@ -112,7 +112,9 @@ namespace ExtendedXmlSerializer.ExtensionModel
 
 	public class MetadataProperty<T> : DecoratedTable<IMetadata, T>, IMetadataProperty<T> where T : class
 	{
-		public MetadataProperty() : base(new Property<IMetadata, T>()) {}
+		public MetadataProperty() : this(_ => default(T)) {}
+		public MetadataProperty(ConditionalWeakTable<IMetadata, T>.CreateValueCallback callback) : base(new Property<IMetadata, T>(callback)) {}
+
 	}
 
 	public class StructureMetadataProperty<T> : DecoratedTable<IMetadata, T>, IMetadataProperty<T> where T : struct

@@ -87,7 +87,7 @@ namespace ExtendedXmlSerializer.Core
 
 		public static T[] Fixed<T>(this IEnumerable<T> @this) => @this as T[] ?? @this.ToArray();
 
-		public static ICollection<T> Adding<T>(this ICollection<T> @this, T item)
+		public static THost Adding<THost, T>(this THost @this, T item) where THost : ICollection<T>
 		{
 			@this.Add(item);
 			return @this;

@@ -42,16 +42,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	{
 		public UnassignedContents(IContents<T> contents, IUnassignedContentReader<T> reader, IUnassignedContentWriter<T> writer)
 			: base(AssignableStructureSpecification.Default.Or(IsReferenceSpecification.Default),
-			       new UnassignedSerializers<T>(contents, reader, writer), contents) {}
+			       new UnassignedContentSerializers<T>(contents, reader, writer), contents) {}
 	}
 
-	sealed class UnassignedSerializers<T> : ISource<IContentSerializer<T>>
+	sealed class UnassignedContentSerializers<T> : ISource<IContentSerializer<T>>
 	{
 		readonly IContents<T> _contents;
 		readonly IContentReader<T> _reader;
 		readonly IContentWriter<T> _writer;
 
-		public UnassignedSerializers(IContents<T> contents, IContentReader<T> reader, IContentWriter<T> writer)
+		public UnassignedContentSerializers(IContents<T> contents, IContentReader<T> reader, IContentWriter<T> writer)
 		{
 			_contents = contents;
 			_reader = reader;
