@@ -39,7 +39,7 @@ namespace ExtendedXmlSerializer.ContentModel.Properties
 		}
 
 		public ItemTypeProperty(IIdentity identity)
-			: base(new Reader(new TypedParsingReader(identity)), new TypedFormattingWriter(identity), identity)
+			: base(new Reader(new TypeInfoReader(identity)), new TypedFormattingWriter(identity), identity)
 		{
 		}
 

@@ -86,7 +86,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		AssignableStructureContentsExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.DecorateContent<NullableContents>(AssignableStructureSpecification.Default)
+			=> parameter/*.DecorateContent<NullableContents>(AssignableStructureSpecification.Default)*/
 			            .Decorate<AssignableStructureContents<object>>();
 
 		public void Execute(IServices parameter) {}

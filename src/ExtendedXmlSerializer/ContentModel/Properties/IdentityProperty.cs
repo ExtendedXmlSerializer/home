@@ -21,13 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ReflectionModel;
+using System;
 
 namespace ExtendedXmlSerializer.ContentModel.Properties
 {
 	sealed class IdentityProperty : ConverterProperty<uint?>
 	{
 		public static IdentityProperty Default { get; } = new IdentityProperty();
-		IdentityProperty() : base(UnsignedIntegerConverter.Default.Structured<uint>(), new FrameworkIdentity("identity")) {}
+		IdentityProperty() : base(UnsignedIntegerConverter.Default.To(A<uint?>.Default), new FrameworkIdentity("identity")) {}
+	}
+
+	sealed class UnsignedIntegerConverter : Converter<uint>
+	{
+		public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
+		UnsignedIntegerConverter() : base(Convert.ToUInt32, Convert.ToString) {}
 	}
 }

@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
@@ -37,15 +38,8 @@ namespace ExtendedXmlSerializer.ContentModel
 		public virtual object Get(IFormatReader parameter) => _reader.Get(parameter);
 	}
 
-	class DecoratedReader<T> : IReader<T>
+	class DecoratedReader<T> : DecoratedSource<IFormatReader, T>, IReader<T>
 	{
-		readonly IReader<T> _reader;
-
-		public DecoratedReader(IReader<T> reader)
-		{
-			_reader = reader;
-		}
-
-		public T Get(IFormatReader parameter) => _reader.Get(parameter);
+		public DecoratedReader(IParameterizedSource<IFormatReader, T> source) : base(source) {}
 	}
 }

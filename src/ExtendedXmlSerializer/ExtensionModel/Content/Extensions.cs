@@ -22,11 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
@@ -116,22 +115,22 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
-		public static IConfigurationElement Alter(this IConfigurationElement @this, IAlteration<IConverter> alteration)
+		/*public static IConfigurationElement Alter(this IConfigurationElement @this, IAlteration<IConverter> alteration)
 		{
-			@this.Extend<ConverterAlterationsExtension>()
-			     .Alterations.Add(alteration);
+			/*@this.Extend<ConverterAlterationsExtension>()
+			     .Alterations.Add(alteration);#1# // TODO.
 			return @this;
-		}
+		}*/
 
 		public static IConfigurationElement EnableImplicitlyDefinedDefaultValues(this IConfigurationElement @this)
-			=> @this.Alter(ImplicitlyDefinedDefaultValueAlteration.Default);
+			=> @this/*.Alter(ImplicitlyDefinedDefaultValueAlteration.Default)*/;
 
 		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this)
-			=> /*OptimizeConverters(@this, new Optimizations())*/null; // TODO.
+			=> /*OptimizeConverters(@this, new Optimizations())*/@this; // TODO.
 
-		public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this,
+		/*public static IConfigurationElement OptimizeConverters(this IConfigurationElement @this,
 		                                                         IAlteration<IConverter> optimizations)
-			=> @this.Alter(optimizations);
+			=> @this.Alter(optimizations);*/
 
 		public static THost Register<THost, T>(this THost @this, IConverter<T> converter)
 		where THost : class, IMetadataConfiguration

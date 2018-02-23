@@ -1,7 +1,5 @@
 ﻿using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
@@ -67,12 +65,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 	sealed class PropertyMemberWriterContent<T> : IMemberWriterContent<T>
 	{
-		readonly IParameterizedSource<IMember, IConvert<T>> _converters;
+		/*readonly IParameterizedSource<IMember, IConvert<T>> _converters;
 
-		public PropertyMemberWriterContent(IMemberConverters<T> converters) : this(converters.In(MemberMetadataCoercer.Default)) {}
+		public PropertyMemberWriterContent(IRegisteredSerializers<T> converters) : this(converters.In(MemberMetadataCoercer.Default)) {}
 
 		public PropertyMemberWriterContent(IParameterizedSource<IMember, IConvert<T>> converters) => _converters = converters;
 
-		public IContentWriter<T> Get(IMember parameter) => new ConverterProperty<T>(_converters.Get(parameter), parameter);
+		public IContentWriter<T> Get(IMember parameter) => new ConverterProperty<T>(_converters.Get(parameter), parameter);*/
+		public IContentWriter<T> Get(IMember parameter)
+		{
+			return null;
+		}
 	}
 }

@@ -148,7 +148,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static ISpecificationSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this ISpecificationSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
-			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()));
+			=> new SpecificationSource<TFrom, TResult>(@this.To(coercer.ToDelegate()), @this.ToDelegate().In(coercer.ToDelegate()).Bridge());
 
 		public static IParameterizedSource<Decoration<TFrom, TResult>, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<Decoration<TTo, TResult>, TResult> @this, A<TFrom> _) => @this.In(DecorationParameterCoercer<TFrom, TTo, TResult>.Default);
@@ -158,14 +158,14 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this IParameterizedSource<TTo, TResult> @this, IParameterizedSource<TFrom, TTo> coercer)
-			=> @this.ToDelegate().In(coercer.ToDelegate());
+			=> @this.ToDelegate().In(coercer.ToDelegate()).Bridge();
 
 		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
-			this IParameterizedSource<TTo, TResult> @this, Func<TFrom, TTo> coercer) => @this.ToDelegate().In(coercer);
+			this IParameterizedSource<TTo, TResult> @this, Func<TFrom, TTo> coercer) => @this.ToDelegate().In(coercer).Bridge();
 
-		public static IParameterizedSource<TFrom, TResult> In<TFrom, TTo, TResult>(
+		public static Func<TFrom, TResult> In<TFrom, TTo, TResult>(
 			this Func<TTo, TResult> @this, Func<TFrom, TTo> coercer)
-			=> new CoercedParameter<TFrom, TTo, TResult>(@this, coercer);
+			=> new CoercedParameter<TFrom, TTo, TResult>(@this, coercer).ToDelegate();
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, A<TTo> _) => @this.Out(CastCoercer<TResult, TTo>.Default);
@@ -175,7 +175,15 @@ namespace ExtendedXmlSerializer.Core.Sources
 
 		public static IParameterizedSource<TParameter, TTo> Out<TParameter, TResult, TTo>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TResult, TTo> coercer)
-			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer);
+			=> @this.ToDelegate().Out(coercer.ToDelegate()).Bridge();
+
+		public static IParameterizedSource<TParameter, TResult> Bridge<TParameter, TResult>(
+			this Func<TParameter, TResult> @this)
+			=> @this.Target.To<IParameterizedSource<TParameter, TResult>>();
+
+		public static Func<TParameter, TTo> Out<TParameter, TResult, TTo>(
+			this Func<TParameter, TResult> @this, Func<TResult, TTo> coercer)
+			=> new CoercedResult<TParameter, TResult, TTo>(@this, coercer).ToDelegate();
 
 		public static IParameterizedSource<TParameter, TResult> Guard<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this) => Guard(@this, GuardedFallback<TParameter, TResult>.Default);
@@ -275,11 +283,9 @@ namespace ExtendedXmlSerializer.Core.Sources
 			=> @this.ToDelegate()
 			        .Fix(parameter);
 
-		public static Func<TResult> ToDelegate<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
-		                                                        TParameter parameter)
-			=> @this.ToDelegate()
-			        .Fix(parameter)
-			        .ToDelegate();
+		public static Func<TResult> ToFixDelegate<TParameter, TResult>(this IParameterizedSource<TParameter, TResult> @this,
+		                                                               TParameter parameter)
+			=> @this.Fix(parameter).ToSourceDelegate();
 
 		public static ISource<TResult> Fix<TParameter, TResult>(this Func<TParameter, TResult> @this,
 		                                                        TParameter parameter)
@@ -290,6 +296,6 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static Func<TParameter, TResult> ToDelegate<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this) => @this.Get;
 
-		public static Func<T> ToDelegate<T>(this ISource<T> @this) => @this.Get;
+		public static Func<T> ToSourceDelegate<T>(this ISource<T> @this) => @this.Get;
 	}
 }

@@ -24,10 +24,8 @@
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
@@ -51,15 +49,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static MemberConfiguration<T, TMember> Attribute<T, TMember>(
 			this MemberConfiguration<T, TMember> @this, Func<TMember, bool> when)
 		{
-			@this.Extend<MemberFormatExtension>().Specifications[@this.Member()] =
-				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());
+			/*@this.Extend<MemberFormatExtension>().Specifications[@this.Member()] =
+				new AttributeSpecification(new DelegatedSpecification<TMember>(when).Adapt());*/
 			return @this.Attribute();
 		}
 
 		public static MemberConfiguration<T, TMember> Attribute<T, TMember>(this MemberConfiguration<T, TMember> @this)
-			=> @this.Extend<MemberFormatExtension>()
+			=> @this/*.Extend<MemberFormatExtension>()
 			        .Registered.Adding(@this.Member())
-			        .Return(@this);
+			        .Return(@this)*/;
 
 		public static MemberConfiguration<T, string> Verbatim<T>(this MemberConfiguration<T, string> @this) =>
 			@this.Register(new ContentSerializerAdapter<string>(VerbatimContentSerializer.Default));
@@ -117,9 +115,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Register(new CustomXmlSerializer<T>(serializer));
 
 		public static MemberConfiguration<T, TMember> Content<T, TMember>(this MemberConfiguration<T, TMember> @this)
-			=> @this.Extend<MemberFormatExtension>()
+			=> @this/*.Extend<MemberFormatExtension>()
 			        .Registered.Removing(@this.Member())
-			        .Return(@this);
+			        .Return(@this)*/;
 
 		public static IType<T> AddMigration<T>(this IType<T> @this,
 		                                                    ICommand<XElement> migration)
@@ -147,9 +145,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Extended<AutoMemberFormatExtension>();
 
 		public static IConfigurationElement UseAutoFormatting(this IConfigurationElement @this, int maxTextLength)
-			=> @this.Extensions.Add
+			=> @this/*.Extensions.Add
 			        .Executed(new AutoMemberFormatExtension(maxTextLength))
-			        .Return(@this);
+			        .Return(@this)*/;
 
 		public static IConfigurationElement EnableClassicMode(this IConfigurationElement @this)
 			=> @this.Emit(EmitBehaviors.Classic)

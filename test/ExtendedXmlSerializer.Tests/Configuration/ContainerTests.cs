@@ -465,8 +465,8 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 									   RegisteredContentsExtension.Default
 									  );
 				yield return new ExtensionGroup(Categories.Format, all,
-									   new XmlSerializationExtension(),
-									   new MemberFormatExtension()
+									   new XmlSerializationExtension()/*,
+									   new MemberFormatExtension()*/
 									  );
 				yield return new ExtensionGroup(Categories.Caching, all, CachingExtension.Default);
 				yield return new ExtensionGroup(Categories.Finish, all);

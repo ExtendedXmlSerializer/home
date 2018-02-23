@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
@@ -40,7 +39,7 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public IServiceRepository Get(IServiceRepository parameter) => parameter.Decorate<IContents, CachedContents>()
 		                                                                        .Decorate<ContentModel.Content.ISerializers,
 			                                                                        CachedSerializers>()
-		                                                                        .Decorate<IConverters, CachedConverters>();
+		                                                                        /*.Decorate<IConverters, CachedConverters>()*/;
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

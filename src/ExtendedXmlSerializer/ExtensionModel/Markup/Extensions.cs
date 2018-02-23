@@ -22,16 +22,14 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Content;
-using ExtendedXmlSerializer.ExtensionModel.Expressions;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Markup
 {
 	public static class Extensions
 	{
 		public static IConfigurationElement EnableMarkupExtensions(this IConfigurationElement @this)
-			=> @this.EnableExpressions()
+			=> @this/*.EnableExpressions()
 			        .Alter(MarkupExtensionConverterAlteration.Default)
-			        .Extended<MarkupExtension>();
+			        .Extended<MarkupExtension>()*/;
 	}
 }

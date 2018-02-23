@@ -54,7 +54,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		readonly IMemberContentsAlteration<T> _alteration;
 
 		public ContentWriters(IContentMembers members, IMemberContentWriters<T> writers, IMemberContentsAlteration<T> alteration)
-			: this(members.ToDelegate(Support<T>.Key), writers.Get, alteration) {}
+			: this(members.ToFixDelegate(Support<T>.Key), writers.Get, alteration) {}
 
 		public ContentWriters(Func<ImmutableArray<IMember>> members, Func<IMember, IMemberContentWriter<T>> contents, IMemberContentsAlteration<T> alteration)
 		{

@@ -21,10 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
-using JetBrains.Annotations;
 using System.Collections.Immutable;
 using System.Reflection;
 
@@ -39,10 +37,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 	}
 
 
+/*
 	sealed class NullableContents : DelegatedSource<TypeInfo, ISerializer>, IContents
 	{
 		[UsedImplicitly]
 		public NullableContents(ConverterContents converters) : base(converters.In(AccountForNullableAlteration.Default)
 		                                                                       .Get) {}
 	}
+*/
 }

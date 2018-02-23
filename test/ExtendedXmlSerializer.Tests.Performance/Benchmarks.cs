@@ -62,8 +62,8 @@ namespace ExtendedXmlSerializer.Tests.Performance
 	public class ExtendedXmlSerializerV2Test
 	{
 		readonly IExtendedXmlSerializer _serializer = new ConfigurationContainer().EnableClassicMode()
-		                                                                         .OptimizeConverters()
-		                                                                         .Create();
+		                                                                          .OptimizeConverters()
+		                                                                          .Create();
 
 		readonly TestClassOtherClass _obj = new TestClassOtherClass().Init();
 		readonly byte[] _data;

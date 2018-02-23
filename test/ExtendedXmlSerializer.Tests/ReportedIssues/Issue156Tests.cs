@@ -1,11 +1,12 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Content.Registration;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System;
+using System.Xml;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -52,7 +53,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			readonly DateTime _dateTime;
 			readonly string _text;
 
-			public DateTimeConverter(DateTime dateTime) : this(dateTime, ExtendedXmlSerializer.ContentModel.Conversion.DateTimeConverter.Default.Format(dateTime)) {}
+			public DateTimeConverter(DateTime dateTime) : this(dateTime, XmlConvert.ToString(dateTime, XmlDateTimeSerializationMode.RoundtripKind)) {}
 
 			public DateTimeConverter(DateTime dateTime, string text)
 			{

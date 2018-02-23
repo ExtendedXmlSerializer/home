@@ -22,32 +22,29 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Encryption
 {
 	public static class Extensions
 	{
 		public static MemberConfiguration<T, TMember> Encrypt<T, TMember>(this MemberConfiguration<T, TMember> @this)
-			=> @this.Extend<EncryptionExtension>()
+			=> @this/*.Extend<EncryptionExtension>()
 			        .Registered.Adding(@this.Member())
-			        .Return(@this);
+			        .Return(@this)*/;
 
 		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this)
-			=> UseEncryptionAlgorithm(@this, EncryptionConverterAlteration.Default);
+			=> @this/*.UseEncryptionAlgorithm(EncryptionConverterAlteration.Default)*/;
 
 		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this, IEncryption encryption)
-			=> UseEncryptionAlgorithm(@this, new EncryptionConverterAlteration(encryption));
+			=> @this/*.UseEncryptionAlgorithm(new EncryptionConverterAlteration(encryption))*/;
 
-		public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this,
+		/*public static IConfigurationElement UseEncryptionAlgorithm(this IConfigurationElement @this,
 		                                                             IAlteration<IConverter> parameter)
 			=> @this.Extend<EncryptionExtension>()
 			        .IsSatisfiedBy(parameter)
 				   ? @this
 				   : @this.Extensions.Add
 				          .Executed(new EncryptionExtension(parameter))
-				          .Return(@this);
+				          .Return(@this);*/
 	}
 }

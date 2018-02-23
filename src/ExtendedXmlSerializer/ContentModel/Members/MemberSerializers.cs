@@ -22,8 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -32,7 +30,7 @@ using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberSerializers : IMemberSerializers
+	/*sealed class MemberSerializers : IMemberSerializers
 	{
 		readonly IMemberAccessors _accessors;
 		readonly IAttributeSpecifications _runtime;
@@ -83,7 +81,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter<object> writer)
 			=> new AlteringWriter(alteration, new ConditionalWriter(access, writer));
-	}
+	}*/
 
 	/*interface IMemberContentWriters<T> : IParameterizedSource<IMember, IContentWriter<T>> {}*/
 

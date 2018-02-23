@@ -179,13 +179,14 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 		{
 			var configuration =
 				Configure(cfg => { cfg.ConfigureType<SimpleTestSubject>().Member(p => p.BasicProperty).Attribute(); });
-			var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
-				.Member(nameof(SimpleTestSubject.BasicProperty));
-			Assert.True(configuration.Extend<MemberFormatExtension>().Registered.Contains(member.Member()));
+			/*var member = configuration.GetTypeConfiguration(typeof(SimpleTestSubject))
+				.Member(nameof(SimpleTestSubject.BasicProperty));*/
+			/*Assert.True(configuration.Extend<MemberFormatExtension>().Registered.Contains(member.Member()));*/
 
 			var instance = new SimpleTestSubject {BasicProperty = "Hello World as Attribute!"};
 			new SerializationSupport(configuration).Assert(instance,
 														   @"<?xml version=""1.0"" encoding=""utf-8""?><ConfigurationContainerTests-SimpleTestSubject BasicProperty=""Hello World as Attribute!"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.Configuration;assembly=ExtendedXmlSerializer.Tests"" />");
+			throw new InvalidOperationException();
 		}
 
 		[Fact]
@@ -207,13 +208,15 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member = type.Member(nameof(TestClassWithEncryptedData.Salary));
 			var property = member.Member();
 			Assert.NotNull(property);
-			Assert.Contains(property, extension.Registered);
+			/*Assert.Contains(property, extension.Registered);*/
 
 			const int salary = 6776;
 			var instance = new TestClassWithEncryptedData { Salary = salary };
 			var support = new SerializationSupport(configuration);
 			var actual = support.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests""><Salary>Njc3Ng==</Salary></TestClassWithEncryptedData>");
 			Assert.Equal(salary, actual.Salary);
+
+			throw new InvalidOperationException();
 		}
 
 		[Fact]
@@ -239,12 +242,14 @@ namespace ExtendedXmlSerializer.Tests.Configuration
 			var member = type.Member(nameof(TestClassWithEncryptedData.Salary));
 			var property = member.Member();
 			Assert.NotNull(property);
-			Assert.Contains(property, extension.Registered);
+			/*Assert.Contains(property, extension.Registered);*/
 
 			const int salary = 6776;
 			var instance = new TestClassWithEncryptedData { Salary = salary };
 			var actual = new SerializationSupport(container).Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><TestClassWithEncryptedData Salary=""Njc3Ng=="" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.TestObject;assembly=ExtendedXmlSerializer.Tests"" />");
 			Assert.Equal(salary, actual.Salary);
+
+			throw new InvalidOperationException();
 		}
 
 		class SimpleTestSubject

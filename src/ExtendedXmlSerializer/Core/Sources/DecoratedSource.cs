@@ -28,7 +28,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public DecoratedAlteration(IParameterizedSource<T, T> source) : base(source) {}
 	}
 
-	class DecoratedSource<TParameter, TResult> : DelegatedSource<TParameter, TResult>
+	public class DecoratedSource<TParameter, TResult> : DelegatedSource<TParameter, TResult>
 	{
 		public DecoratedSource(IParameterizedSource<TParameter, TResult> source) : base(source.Get) {}
 	}

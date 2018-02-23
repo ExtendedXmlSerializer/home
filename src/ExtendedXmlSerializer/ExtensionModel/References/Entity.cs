@@ -21,16 +21,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
 	sealed class Entity : IEntity
 	{
-		readonly static EntityIdentity EntityIdentity = EntityIdentity.Default;
+		/*readonly static EntityIdentity EntityIdentity = EntityIdentity.Default;
 
 		readonly IConverter _converter;
 		readonly IMemberSerializer _member;
@@ -56,6 +53,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		}
 
 		public object Reference(IFormatReader parameter)
-			=> parameter.IsSatisfiedBy(EntityIdentity) ? _converter.Parse(parameter.Content()) : null;
+			=> parameter.IsSatisfiedBy(EntityIdentity) ? _converter.Parse(parameter.Content()) : null;*/
+		public string Get(object parameter)
+		{
+			return null;
+		}
+
+		public object Get(IFormatReader parameter)
+		{
+			return null;
+		}
+
+		public object Reference(IFormatReader parameter)
+		{
+			return null;
+		}
 	}
 }

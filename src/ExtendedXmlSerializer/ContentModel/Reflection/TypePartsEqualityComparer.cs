@@ -21,20 +21,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.Core;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class TypedParsingReader : IReader<TypeInfo>
+	sealed class TypePartsEqualityComparer : IEqualityComparer<TypeParts>
 	{
-		readonly IReader<MemberInfo> _reader;
-		public TypedParsingReader(IIdentity identity) : this(new ParsedReader<MemberInfo>(x => x, identity)) {}
+		readonly static IdentityComparer<TypeParts> Comparer = IdentityComparer<TypeParts>.Default;
 
-		public TypedParsingReader(IReader<MemberInfo> reader) => _reader = reader;
+		public static TypePartsEqualityComparer Default { get; } = new TypePartsEqualityComparer();
 
-		public TypeInfo Get(IFormatReader parameter) => _reader.Get(parameter)?.To<TypeInfo>();
+		TypePartsEqualityComparer() {}
+
+		public bool Equals(TypeParts x, TypeParts y)
+		{
+			var argumentsX = x.GetArguments()
+			                  .GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
+			var argumentsY = y.GetArguments()
+			                  .GetValueOrDefault(ImmutableArray<TypeParts>.Empty);
+
+			var arguments = argumentsX.SequenceEqual(argumentsY, this);
+			var identity  = Comparer.Equals(x, y);
+
+			var dimensions = x.Dimensions.GetValueOrDefault(ImmutableArray<int>.Empty)
+			                  .SequenceEqual(y.Dimensions.GetValueOrDefault(ImmutableArray<int>.Empty));
+
+			var result = arguments && identity && dimensions;
+			return result;
+		}
+
+		public int GetHashCode(TypeParts obj)
+		{
+			unchecked
+			{
+				return ((obj.Dimensions?.GetHashCode() ?? 0) * 489) ^
+				       ((obj.GetArguments()
+				            ?.GetHashCode() ?? 0) * 397) ^
+				       Comparer.GetHashCode(obj);
+			}
+		}
 	}
 }

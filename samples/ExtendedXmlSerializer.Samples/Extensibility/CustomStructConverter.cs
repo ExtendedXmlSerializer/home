@@ -1,11 +1,11 @@
-﻿using ExtendedXmlSerializer.ContentModel.Conversion;
+﻿using ExtendedXmlSerializer.ContentModel;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.Samples.Extensibility
 {
-// CustomConverter
+	// CustomConverter
 
-public sealed class CustomStructConverter : IConverter<CustomStruct>
+	public sealed class CustomStructConverter : IConverter<CustomStruct>
 {
 	public static CustomStructConverter Default { get; } = new CustomStructConverter();
 	CustomStructConverter() {}

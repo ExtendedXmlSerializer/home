@@ -52,7 +52,7 @@ namespace ExtendedXmlSerializer.Core.Specifications
 
 		public static ISpecification<T> To<T>(this Func<bool> @this) => new FixedDelegateSpecification<T>(@this);
 
-		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Fix(parameter).ToDelegate();
+		public static Func<bool> Fix<T>(this ISpecification<T> @this, T parameter) => @this.ToSpecificationDelegate().Fix(parameter).ToSourceDelegate();
 
 		public static ISpecification<T> Any<T>(this ISpecification<T> @this, params T[] parameters)
 			=> new AnySpecification<T>();

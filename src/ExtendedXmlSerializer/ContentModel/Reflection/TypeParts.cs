@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,13 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Xml;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using System;
+using System.Collections.Immutable;
 
-namespace ExtendedXmlSerializer.ContentModel.Conversion
+namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class UnsignedIntegerConverter : Converter<uint>
+	struct TypeParts : IIdentity
 	{
-		public static UnsignedIntegerConverter Default { get; } = new UnsignedIntegerConverter();
-		UnsignedIntegerConverter() : base(XmlConvert.ToUInt32, XmlConvert.ToString) {}
+		readonly Func<ImmutableArray<TypeParts>> _arguments;
+
+		public TypeParts(string name, string identifier = "", Func<ImmutableArray<TypeParts>> arguments = null,
+			ImmutableArray<int>? dimensions = null)
+		{
+			Name = name;
+			Identifier = identifier;
+			Dimensions = dimensions;
+			_arguments = arguments;
+		}
+
+		public string Identifier { get; }
+		public ImmutableArray<int>? Dimensions { get; }
+		public string Name { get; }
+
+		public ImmutableArray<TypeParts>? GetArguments() => _arguments?.Invoke();
 	}
 }

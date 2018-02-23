@@ -23,8 +23,8 @@
 
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Parsing;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Services;
@@ -56,5 +56,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		EnumerationContents() :
 			base(ContentModel.Serializers.New(EnumerationParser<T>.Default.If(AssignedSpecification<string>.Default),
 			                                  StringCoercer<T>.Default)) {}
+	}
+
+	sealed class EnumerationParser<T> : IParser<T>
+	{
+		public static EnumerationParser<T> Default { get; } = new EnumerationParser<T>();
+		EnumerationParser() : this(Support<T>.Key) {}
+
+		readonly Type _type;
+
+		public EnumerationParser(Type type) => _type = type;
+
+		public T Get(string parameter) => (T)Enum.Parse(_type, parameter);
 	}
 }
