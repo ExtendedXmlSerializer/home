@@ -16,5 +16,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			    .ForTesting()
 			    .Assert(new List<int>(), @"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""int"" xmlns=""https://extendedxmlserializer.github.io/system"" />");
 	    }
+
+	    [Fact]
+	    public void VerifySpecific()
+	    {
+		    new ConfigurationContainer().Type<List<int>>().Member(x => x.Capacity).Ignore()
+			    .ForTesting()
+			    .Assert(new List<int>(), @"<?xml version=""1.0"" encoding=""utf-8""?><List xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:arguments=""int"" xmlns=""https://extendedxmlserializer.github.io/system"" />");
+	    }
     }
 }
