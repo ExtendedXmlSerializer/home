@@ -26,7 +26,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		    };
 
 		    var container = new ConfigurationContainer().ForTesting();
-			/*container.Cycle(orgC).ShouldBeEquivalentTo(orgC);*/
+			container.Cycle(orgC).ShouldBeEquivalentTo(orgC);
 			container.Cycle(orgA).ShouldBeEquivalentTo(orgA);
 
 	    }
