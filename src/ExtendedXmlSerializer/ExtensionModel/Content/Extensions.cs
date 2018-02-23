@@ -84,6 +84,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			return @this;
 		}
 
+		public static IConfigurationContainer Ignore(this IConfigurationContainer @this, MemberInfo member)
+		{
+			@this.Root.With<AllowedMembersExtension>()
+				.Blacklist.Add(member);
+			return @this;
+		}
+
 		public static IMemberConfiguration<T, TMember> Include<T, TMember>(this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<AllowedMembersExtension>()
