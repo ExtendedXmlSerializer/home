@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
@@ -74,7 +74,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 				if (parameter.IsSatisfiedBy(ExplicitTypeProperty.Default))
 				{
 					var classification = _classification.Get(parameter);
-					if (classification != null)
+					if (classification != null && !classification.IsArray)
 					{
 						return _activators.Get(classification.AsType())
 						                  .Get();
