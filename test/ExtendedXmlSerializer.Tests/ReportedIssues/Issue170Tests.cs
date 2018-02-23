@@ -51,9 +51,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
-		public void VerifyMultidimensional()
+		public void VerifyMultidimensional2D()
 		{
-			int[,] subject = new int[2, 4]
+			var subject = new[,]
 			{
 				{1, 2, 3, 4},
 				{5, 6, 7, 8}
@@ -64,5 +64,75 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.Cycle(subject)
 				.Should().BeEquivalentTo(subject);
 		}
+		[Fact]
+		public void VerifyMultidimensional3D()
+		{
+			var subject = new[,,]
+			{
+				{
+					{1, 2, 3, 4, 5},
+					{6, 7, 8, 9, 10},
+					{11, 12, 13, 14, 15}
+				},
+				{
+					{1, 2, 3, 4, 5},
+					{6, 7, 8, 9, 10},
+					{11, 12, 13, 14, 15},
+				}
+			};
+			var support = new ConfigurationContainer().ForTesting();
+			support.Cycle(subject).Should().BeEquivalentTo(subject);
+		}
+
+		[Fact]
+		public void VerifyMapDoesNotEmitForOneDimensionalArrays()
+		{
+			var subject = new[] {2, 3, 45, 32, 254};
+			var support = new ConfigurationContainer().ForTesting();
+			support.Assert(subject, @"<?xml version=""1.0"" encoding=""utf-8""?><Array xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:item=""int"" xmlns=""https://extendedxmlserializer.github.io/system""><int>2</int><int>3</int><int>45</int><int>32</int><int>254</int></Array>");
+		}
+
+		[Fact]
+		public void VerifyMultidimensional2()
+		{
+			var instance = new Person_Multi(){ Name = "Testing" };
+			instance.Initialize();
+			var support = new ConfigurationContainer().ForTesting();
+			support
+				.Cycle(instance).Should().BeEquivalentTo(instance);
+		}
+
+		public class Person_Multi
+		{
+			int one = 1, two = 2, three = 3;
+			//Props
+			public string Name { get; set; }
+
+			public double[] complex1D { get; set; }
+			public double[,] complex2D { get; set; }
+			public double[,,] complex3D { get; set; }
+
+			//Method 2 initialize complexArr.
+			public void Initialize()
+			{
+				complex1D = new double[one];
+				complex2D = new double[one, two];
+				complex3D = new double[one, two, three];
+
+				for (int i = 0; i < one; i++)
+				{
+					complex1D[i] = i;
+
+					for (int j = 0; j < two; j++)
+					{
+						complex2D[i, j] = j;
+						for (int k = 0; k < three; k++)
+							complex3D[i, j, k] = k;
+					}
+
+				}
+			}
+		}
+
 	}
 }

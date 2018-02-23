@@ -140,7 +140,7 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 				if (parameter.IsSatisfiedBy(ExplicitTypeProperty.Default))
 				{
 					var classification = _classification.Get(parameter);
-					if (classification != null)
+					if (classification != null && !classification.IsArray)
 					{
 						return _activators.Get(classification.AsType())
 						                  .Get();

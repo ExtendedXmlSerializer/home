@@ -90,6 +90,14 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			        .Blacklist.Adding(@this.Member())
 			        .Return(@this);
 
+		public static IConfigurationElement Ignore(this IConfigurationElement @this, MemberInfo member)
+		{
+			@this.Extend<MemberPolicyExtension>()
+				.Blacklist.Add(member);
+			return @this;
+		}
+
+
 		public static T Include<T>(this T @this) where T : class, IMemberConfiguration
 			=> @this.Extend<MemberPolicyExtension>()
 			        .Whitelist.Adding(@this.Member())
