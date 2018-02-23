@@ -50,9 +50,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
-		public void VerifyMultidimensional()
+		public void VerifyMultidimensional2D()
 		{
-			int[,] subject = new int[2, 4]
+			var subject = new[,]
 			{
 				{1, 2, 3, 4},
 				{5, 6, 7, 8}
@@ -62,10 +62,28 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			support
 				.Cycle(subject)
 				.ShouldBeEquivalentTo(subject);
-
-/*
-
-			*/
 		}
+
+		[Fact]
+		public void VerifyMultidimensional3D()
+		{
+			var subject = new[,,]
+			{
+				{
+					{1, 2, 3, 4, 5},
+					{6, 7, 8, 9, 10},
+					{11, 12, 13, 14, 15}
+				},
+				{
+					{1, 2, 3, 4, 5},
+					{6, 7, 8, 9, 10},
+					{11, 12, 13, 14, 15},
+				}
+			};
+
+			var support = new ConfigurationContainer().ForTesting();
+			support.Cycle(subject).ShouldBeEquivalentTo(subject);
+		}
+
 	}
 }
