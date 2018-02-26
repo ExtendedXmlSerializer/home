@@ -14,7 +14,9 @@ namespace ExtendedXmlSerializer.Core.Collections
 	{
 		public static T FirstOf<T>(this IEnumerable @this) => @this.OfType<T>().FirstOrDefault();
 
-		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) => @this.Where(Delegate<T>.Default.Get());
+		public static IEnumerable<T> Assigned<T>(this IEnumerable<T> @this) where T : class => @this.Where(x => x != null);
+
+		public static IEnumerable<T> Assigned<T>(this IEnumerable<T?> @this) where T : struct => @this.Where(x => x != null).Select(x => x.Value);
 
 		sealed class Delegate<T> : FixedInstanceSource<Func<T, bool>>
 		{
