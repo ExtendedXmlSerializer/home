@@ -100,92 +100,63 @@ namespace ExtendedXmlSerializer.Core.Sources
 	public class ConditionalSource<TParameter, TResult> : IParameterizedSource<TParameter, TResult>
 	{
 		readonly Func<TParameter, bool> _specification;
-		readonly Func<TResult, bool> _result;
 		readonly Func<TParameter, TResult> _source, _fallback;
 
 		public ConditionalSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source)
 			: this(specification, source, DefaultValueSource<TParameter, TResult>.Default) {}
 
-		public ConditionalSource(ISpecification<TParameter> specification, IParameterizedSource<TParameter, TResult> source,
-		                         IParameterizedSource<TParameter, TResult> fallback)
-			: this(specification, AlwaysSpecification<TResult>.Default, source, fallback) {}
-
-		public ConditionalSource(ISpecification<TParameter> specification, ISpecification<TResult> result,
+		public ConditionalSource(ISpecification<TParameter> specification,
 		                         IParameterizedSource<TParameter, TResult> source,
 		                         IParameterizedSource<TParameter, TResult> fallback)
-			: this(specification.IsSatisfiedBy, result.IsSatisfiedBy, source.Get, fallback.Get) {}
+			: this(specification.IsSatisfiedBy, source.Get, fallback.Get) {}
 
-		public ConditionalSource(Func<TParameter, bool> specification, Func<TResult, bool> result,
-		                         Func<TParameter, TResult> source)
-			: this(specification, result, source, x => default(TResult)) {}
-
-		public ConditionalSource(Func<TParameter, bool> specification, Func<TResult, bool> result,
-		                         Func<TParameter, TResult> source,
+		public ConditionalSource(Func<TParameter, bool> specification, Func<TParameter, TResult> source,
 		                         Func<TParameter, TResult> fallback)
 		{
 			_specification = specification;
-			_result = result;
-			_source = source;
-			_fallback = fallback;
+			_source        = source;
+			_fallback      = fallback;
 		}
 
-		public TResult Get(TParameter parameter)
-		{
-			if (_specification(parameter))
-			{
-				var result = _source(parameter);
-				if (_result(result))
-				{
-					return result;
-				}
-			}
-
-			return _fallback(parameter);
-		}
+		public TResult Get(TParameter parameter) => _specification(parameter) ? _source(parameter) : _fallback(parameter);
 	}
 
 	public class ConditionalSource<T> : ISource<T>
 	{
 		readonly Func<bool> _specification;
-		readonly Func<T, bool> _result;
 		readonly Func<T> _source, _fallback;
 
-		public ConditionalSource(Func<bool> specification,
-		                         ISource<T> source,
-		                         ISource<T> fallback)
-			: this(specification, AlwaysSpecification<T>.Default, source, fallback) {}
+		public ConditionalSource(Func<bool> specification, ISource<T> source, ISource<T> fallback)
+			: this(specification, source.Get, fallback.Get) {}
 
-		public ConditionalSource(Func<bool> specification, ISpecification<T> result,
-		                         ISource<T> source,
-		                         ISource<T> fallback)
-			: this(specification, result.IsSatisfiedBy, source.Get, fallback.Get) {}
-
-		/*public ConditionalSource(Func<bool> specification, Func<T, bool> result,
-		                         Func<T> source)
-			: this(specification, result, source, () => default(T)) {}*/
-
-		public ConditionalSource(Func<bool> specification, Func<T, bool> result,
-		                         Func<T> source,
-		                         Func<T> fallback)
+		public ConditionalSource(Func<bool> specification, Func<T> source, Func<T> fallback)
 		{
 			_specification = specification;
-			_result = result;
 			_source = source;
 			_fallback = fallback;
 		}
 
+		public T Get() => _specification() ? _source() : _fallback();
+	}
+
+	public class ConditionalDelegatedSource<T> : ISource<T>
+	{
+		readonly Func<T, bool> _specification;
+		readonly Func<T> _source;
+		readonly Func<T> _false;
+
+		public ConditionalDelegatedSource(Func<T, bool> specification, Func<T> source, Func<T> @false)
+		{
+			_specification = specification;
+			_source = source;
+			_false = @false;
+		}
+
 		public T Get()
 		{
-			if (_specification())
-			{
-				var result = _source();
-				if (_result(result))
-				{
-					return result;
-				}
-			}
-
-			return _fallback();
+			var instance = _source();
+			var result = _specification(instance) ? instance : _false();
+			return result;
 		}
 	}
 }

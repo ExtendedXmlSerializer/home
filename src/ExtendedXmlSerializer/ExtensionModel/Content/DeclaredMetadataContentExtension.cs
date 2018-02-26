@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
+using ExtendedXmlSerializer.Core.Collections;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Services;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Collections;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -95,8 +95,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	{
 		public DeclaredMetadataContents(IMetadataContents<T> source, IContents<T> contents)
 			: base(IsDefinedSpecification<ContentSerializerAttribute>.Default.Fix(Support<T>.Key),
-			       AssignedSpecification<IContentSerializer<T>>.Default,
-			       source.Fix(Support<T>.Key), contents)
+			       new ConditionalInstance<IContentSerializer<T>>(AssignedSpecification<IContentSerializer<T>>.Default,
+			                                                      source.Fix(Support<T>.Key),
+			                                                      contents),
+			       contents)
 		{ }
 	}
 
@@ -104,8 +106,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	{
 		public DeclaredMemberMetadataContents(IMetadataContents<T> source, IMemberContents<T> contents)
 			: base(IsDefinedSpecification<ContentSerializerAttribute>.Default.To(MemberMetadataCoercer.Default),
-				   AssignedSpecification<IContentSerializer<T>>.Default,
-			       source.In(MemberMetadataCoercer.Default), contents) { }
+				   source.In(MemberMetadataCoercer.Default)
+				         .Out(AssignedSpecification<IContentSerializer<T>>.Default, contents),
+			       contents) { }
 	}
 
 }

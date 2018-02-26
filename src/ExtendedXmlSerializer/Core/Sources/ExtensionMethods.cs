@@ -255,7 +255,7 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public static IParameterizedSource<TParameter, TResult> Unless<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, ISpecification<TParameter> specification,
 			ISpecification<TResult> result, IParameterizedSource<TParameter, TResult> other)
-			=> new ConditionalSource<TParameter, TResult>(specification, result, other, @this);
+			=> new ConditionalSource<TParameter, TResult>(specification, other.Out(result, @this), @this);
 
 		public static IParameterizedSource<TParameter, TResult> Or<TParameter, TResult>(
 			this IParameterizedSource<TParameter, TResult> @this, IParameterizedSource<TParameter, TResult> next)
