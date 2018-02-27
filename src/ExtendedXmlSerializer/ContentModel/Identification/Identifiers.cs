@@ -21,20 +21,26 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core;
 using System.Collections.Generic;
 using System.Reflection;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ContentModel.Identification
 {
 	sealed class Identifiers : IIdentifiers
 	{
 		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter _formatter;
+		readonly IIdentifiers                             _declared;
+		readonly INamespaceFormatter                      _formatter;
 
 		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
+			: this(known, DeclaredIdentifiers.Default, formatter) {}
+
+		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, IIdentifiers declared,
+		                   INamespaceFormatter formatter)
 		{
-			_known = known;
+			_known     = known;
+			_declared  = declared;
 			_formatter = formatter;
 		}
 
