@@ -32,7 +32,8 @@ namespace ExtendedXmlSerializer.DocGenerator
 				"Deserialization of old version of xml",
 				"Property encryption",
 				"Custom serializer",
-				"Support `XmlElementAttribute` and `XmlRootAttribute`",
+				"Support `XmlElementAttribute`, `XmlRootAttribute`, and `XmlTypeAttribute` for identity resolution.",
+				"Additional attribute support: `XmlIgnoreAttribute`, `XmlAttributeAttribute`, and `XmlEnumAttribute`.",
 				"POCO - all configurations (migrations, custom serializer...) are outside the clas");
 
 			doc.Add("Standard XML Serializer in .NET is very limited:");

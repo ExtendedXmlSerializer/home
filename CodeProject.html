@@ -17,7 +17,8 @@
 <li>Deserialization of old version of xml</li>
 <li>Property encryption</li>
 <li>Custom serializer</li>
-<li>Support <code>XmlElementAttribute</code> and <code>XmlRootAttribute</code></li>
+<li>Support <code>XmlElementAttribute</code>, <code>XmlRootAttribute</code>, and <code>XmlTypeAttribute</code> for identity resolution.</li>
+<li>Additional attribute support: <code>XmlIgnoreAttribute</code>, <code>XmlAttributeAttribute</code>, and <code>XmlEnumAttribute</code>.</li>
 <li>POCO - all configurations (migrations, custom serializer...) are outside the clas</li>
 </ul>
 
@@ -522,6 +523,7 @@
 
 <pre lang="cs">
     
+    
     public sealed class CustomStructConverter : IConverter&lt;CustomStruct&gt;
     {
         public static CustomStructConverter Default { get; } = new CustomStructConverter();
@@ -551,6 +553,7 @@
 <p>Register the converter:</p>
 
 <pre lang="cs">
+    
     var serializer = new ConfigurationContainer().Register(CustomStructConverter.Default).Create();
     var subject = new CustomStruct(123);
     var contents = serializer.Serialize(subject);
