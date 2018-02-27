@@ -139,13 +139,13 @@ namespace ExtendedXmlSerializer.Core.Sources
 		public T Get() => _specification() ? _source() : _fallback();
 	}
 
-	public class ConditionalDelegatedSource<T> : ISource<T>
+	public class ValidatedSource<T> : ISource<T>
 	{
 		readonly Func<T, bool> _specification;
 		readonly Func<T> _source;
 		readonly Func<T> _false;
 
-		public ConditionalDelegatedSource(Func<T, bool> specification, Func<T> source, Func<T> @false)
+		public ValidatedSource(Func<T, bool> specification, Func<T> source, Func<T> @false)
 		{
 			_specification = specification;
 			_source = source;

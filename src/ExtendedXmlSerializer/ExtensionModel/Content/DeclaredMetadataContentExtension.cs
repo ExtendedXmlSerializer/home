@@ -95,9 +95,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 	{
 		public DeclaredMetadataContents(IMetadataContents<T> source, IContents<T> contents)
 			: base(IsDefinedSpecification<ContentSerializerAttribute>.Default.Fix(Support<T>.Key),
-			       new ConditionalInstance<IContentSerializer<T>>(AssignedSpecification<IContentSerializer<T>>.Default,
-			                                                      source.Fix(Support<T>.Key),
-			                                                      contents),
+			       new ValidatedSource<IContentSerializer<T>>(AssignedSpecification<IContentSerializer<T>>.Default.IsSatisfiedBy,
+			                                                      source.ToFixDelegate(Support<T>.Key),
+			                                                      contents.Get),
 			       contents)
 		{ }
 	}
