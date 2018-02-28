@@ -22,50 +22,17 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.ReflectionModel
 {
-	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
+	sealed class EnumerableCoercer<T> : IParameterizedSource<ImmutableArray<T>, IEnumerable<T>>
 	{
-		readonly static VariableTypeSpecification Specification = VariableTypeSpecification.Default;
+		public static EnumerableCoercer<T> Default { get; } = new EnumerableCoercer<T>();
+		EnumerableCoercer() {}
 
-		readonly ISpecification<TypeInfo> _specification;
-
-		public VariableTypeWalker(ITypeMembers members, TypeInfo root) : this(Specification, members, root) {}
-
-		public VariableTypeWalker(ISpecification<TypeInfo> specification, ITypeMembers members, TypeInfo root)
-			: base(members, root)
-		{
-			_specification = specification;
-		}
-
-		protected override IEnumerable<TypeInfo> Select(TypeInfo type)
-		{
-			foreach (var typeInfo in type.Yield().Concat(base.Select(type)))
-			{
-				if (_specification.IsSatisfiedBy(typeInfo))
-				{
-					yield return typeInfo;
-				}
-			}
-		}
-
-		protected override IEnumerable<TypeInfo> Yield(IMember member)
-		{
-			var type = member.MemberType;
-			if (!Schedule(type))
-			{
-				yield return type;
-			}
-		}
-
-		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x);
+		public IEnumerable<T> Get(ImmutableArray<T> parameter) => parameter.ToArray();
 	}
 }

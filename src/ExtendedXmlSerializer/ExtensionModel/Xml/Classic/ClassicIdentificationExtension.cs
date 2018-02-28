@@ -21,31 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel.Types
+namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	public sealed class TypeModelExtension : ISerializerExtension
+	sealed class ClassicIdentificationExtension : ISerializerExtension
 	{
-		public static TypeModelExtension Default { get; } = new TypeModelExtension();
-		TypeModelExtension() {}
+		public ClassicIdentificationExtension() : this(new Collection<TypeInfo>()) {}
+
+		public ClassicIdentificationExtension(ICollection<TypeInfo> types) => Types = types;
+
+		public ICollection<TypeInfo> Types { get; }
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<ITypedSortOrder, TypedSortOrder>()
-			            .Register<IActivation, Activation>()
-			            .Register<IActivators, DefaultActivators>()
-			            .Register<IActivatingTypeSpecification, ActivatingTypeSpecification>()
-			            .Register<IConstructorLocator, ConstructorLocator>()
-			            .Register<IEnumeratorStore, EnumeratorStore>()
-			            .Register<IDiscoveredTypes, DiscoveredTypes>()
-			            .RegisterInstance<IDictionaryEnumerators>(DictionaryEnumerators.Default)
-			            .RegisterInstance<IEnumerators>(Enumerators.Default)
-			            .RegisterInstance<IConstructors>(Constructors.Default)
-			            .RegisterInstance<IFields>(Fields.Default)
-			            .RegisterInstance<IProperties>(Properties.Default)
-			            .RegisterInstance<IValidConstructorSpecification>(ValidConstructorSpecification.Default);
+			=> parameter.RegisterInstance<ITypeIdentity>(TypeIdentity.Default)
+			            .Register<ITypeIdentityRegistrations, TypeIdentityRegistrations>()
+			            .Register<ITypeIdentifications, TypeIdentifications>()
+			            .Decorate<IIdentifiers, Identifiers>()
+			            .Decorate<ITypeIdentities, TypeIdentities>()
+			            .Register(Register);
+
+		ITypeIdentification Register(IServiceProvider services) => services.Get<ITypeIdentifications>()
+		                                                                   .Get(Types);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

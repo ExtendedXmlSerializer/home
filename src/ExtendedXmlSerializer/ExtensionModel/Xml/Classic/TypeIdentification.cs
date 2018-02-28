@@ -1,6 +1,6 @@
-﻿// MIT License
+// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nagórski
+// Copyright (c) 2016-2018 Wojciech Nag�rski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,44 +21,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel.References
+namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	sealed class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
+	sealed class TypeIdentification : ITypeIdentification
 	{
-		public ContainsStaticReferenceSpecification(IDiscoveredTypes types) : base(new Source(types).Get) {}
+		readonly IParameterizedSource<TypeInfo, IIdentity> _identities;
+		readonly IParameterizedSource<IIdentity, TypeInfo> _types;
 
-		sealed class Source : StructureCacheBase<TypeInfo, bool>
+		public TypeIdentification(IDictionary<TypeInfo, IIdentity> store)
+			: this(new TableSource<TypeInfo, IIdentity>(store),
+			       new TableSource<IIdentity, TypeInfo>(store.ToDictionary(x => x.Value, x => x.Key))) {}
+
+		public TypeIdentification(IParameterizedSource<TypeInfo, IIdentity> identities,
+		                          IParameterizedSource<IIdentity, TypeInfo> types)
 		{
-			readonly IDiscoveredTypes _types;
-
-			public Source(IDiscoveredTypes types) => _types = types;
-
-			protected override bool Create(TypeInfo parameter)
-			{
-				var variables = _types.Get(parameter);
-				var length    = variables.Length;
-				for (var i = 0; i < length; i++)
-				{
-					var first = variables[i];
-					for (var j = 0; j < length; j++)
-					{
-						var second = variables[j];
-						if (i != j &&
-						    (first.IsInterface || second.IsInterface || first.IsAssignableFrom(second) || second.IsAssignableFrom(first))
-						)
-						{
-							return true;
-						}
-					}
-				}
-
-				return false;
-			}
+			_identities = identities;
+			_types      = types;
 		}
+
+		public IIdentity Get(TypeInfo parameter) => _identities.Get(parameter);
+
+		public TypeInfo Get(IIdentity parameter) => _types.Get(parameter);
 	}
 }

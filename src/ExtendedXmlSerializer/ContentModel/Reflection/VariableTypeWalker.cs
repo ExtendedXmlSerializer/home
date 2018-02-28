@@ -21,44 +21,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel.References
+namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class ContainsStaticReferenceSpecification : DelegatedSpecification<TypeInfo>, IStaticReferenceSpecification
+	class VariableTypeWalker : TypeMemberWalkerBase<TypeInfo>, ISource<IEnumerable<TypeInfo>>
 	{
-		public ContainsStaticReferenceSpecification(IDiscoveredTypes types) : base(new Source(types).Get) {}
+		readonly static ReflectionModel.VariableTypeSpecification Specification =
+			ReflectionModel.VariableTypeSpecification.Default;
 
-		sealed class Source : StructureCacheBase<TypeInfo, bool>
+		readonly ISpecification<TypeInfo> _specification;
+
+		public VariableTypeWalker(ITypeMembers members, TypeInfo root) : this(Specification, members, root) {}
+
+		public VariableTypeWalker(ISpecification<TypeInfo> specification, ITypeMembers members, TypeInfo root)
+			: base(members, root) => _specification = specification;
+
+		protected override IEnumerable<TypeInfo> Select(TypeInfo type)
 		{
-			readonly IDiscoveredTypes _types;
-
-			public Source(IDiscoveredTypes types) => _types = types;
-
-			protected override bool Create(TypeInfo parameter)
+			foreach (var typeInfo in type.Yield()
+			                             .Concat(base.Select(type)))
 			{
-				var variables = _types.Get(parameter);
-				var length    = variables.Length;
-				for (var i = 0; i < length; i++)
+				if (_specification.IsSatisfiedBy(typeInfo))
 				{
-					var first = variables[i];
-					for (var j = 0; j < length; j++)
-					{
-						var second = variables[j];
-						if (i != j &&
-						    (first.IsInterface || second.IsInterface || first.IsAssignableFrom(second) || second.IsAssignableFrom(first))
-						)
-						{
-							return true;
-						}
-					}
+					yield return typeInfo;
 				}
-
-				return false;
 			}
 		}
+
+		protected override IEnumerable<TypeInfo> Yield(IMember member)
+		{
+			var type = member.MemberType;
+			if (!Schedule(type))
+			{
+				yield return type;
+			}
+		}
+
+		public IEnumerable<TypeInfo> Get() => this.SelectMany(x => x);
 	}
 }

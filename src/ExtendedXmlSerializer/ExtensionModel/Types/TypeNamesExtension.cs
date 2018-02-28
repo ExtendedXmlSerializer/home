@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -42,7 +42,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public TypeNamesExtension(IDictionary<TypeInfo, string> names, IDictionary<TypeInfo, string> defaults)
 		{
-			Names = names;
+			Names     = names;
 			_defaults = defaults;
 		}
 
@@ -61,11 +61,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			            .Register<ITypes, ContentModel.Reflection.Types>()
 			            .Register<IGenericTypes, GenericTypes>()
 			            .RegisterInstance<IPartitionedTypeSpecification>(PartitionedTypeSpecification.Default)
-			            .Register(Register);
-
-		INames Register(IServiceProvider provider) => new Names(new TypedTable<string>(Names)
-		                                                        .Or(DeclaredNames.Default)
-		                                                        .Or(new TypedTable<string>(_defaults)));
+			            .RegisterInstance<INames>(new Names(new TypedTable<string>(Names).Or(DeclaredNames.Default)
+			                                                                             .Or(new TypedTable<string
+			                                                                                 >(_defaults))));
 
 		public void Execute(IServices parameter) {}
 	}

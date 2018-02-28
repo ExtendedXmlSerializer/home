@@ -21,25 +21,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core;
 
-namespace ExtendedXmlSerializer.ContentModel.Identification
+namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
-	sealed class Identifiers : IIdentifiers
+	sealed class TypeIdentifications : ITypeIdentifications
 	{
-		readonly IReadOnlyDictionary<Assembly, IIdentity> _known;
-		readonly INamespaceFormatter                      _formatter;
+		readonly Func<IEnumerable<TypeInfo>, IEnumerable<KeyValuePair<TypeInfo, IIdentity>>> _identities;
 
-		public Identifiers(IReadOnlyDictionary<Assembly, IIdentity> known, INamespaceFormatter formatter)
-		{
-			_known     = known;
-			_formatter = formatter;
-		}
+		public TypeIdentifications(ITypeIdentityRegistrations identities) : this(identities.Get) {}
 
-		public string Get(TypeInfo parameter)
-			=> _known.Get(parameter.Assembly)
-			         ?.Identifier ?? _formatter.Get(parameter);
+		public TypeIdentifications(Func<IEnumerable<TypeInfo>, IEnumerable<KeyValuePair<TypeInfo, IIdentity>>> identities)
+			=> _identities = identities;
+
+		public ITypeIdentification Get(IEnumerable<TypeInfo> parameter) => new TypeIdentification(_identities(parameter)
+			                                                                                          .ToDictionary());
 	}
 }
