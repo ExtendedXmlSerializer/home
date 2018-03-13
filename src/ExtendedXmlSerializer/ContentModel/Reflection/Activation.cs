@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
@@ -33,17 +32,17 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 	sealed class Activation : IActivation
 	{
 		readonly ISpecification<TypeInfo> _specification;
-		readonly IClassification _classification;
-		readonly IActivators _activators;
+		readonly IClassification          _classification;
+		readonly IActivators              _activators;
 
 		public Activation(IClassification classification, IActivators activators)
 			: this(ReflectionModel.VariableTypeSpecification.Default, classification, activators) {}
 
 		public Activation(ISpecification<TypeInfo> specification, IClassification classification, IActivators activators)
 		{
-			_specification = specification;
+			_specification  = specification;
 			_classification = classification;
-			_activators = activators;
+			_activators     = activators;
 		}
 
 		public IReader Get(TypeInfo parameter)
@@ -51,36 +50,40 @@ namespace ExtendedXmlSerializer.ContentModel.Reflection
 			var activate = new DelegatedActivator(_activators.Get(parameter.AsType())
 			                                                 .Get);
 			var result = _specification.IsSatisfiedBy(parameter)
-				             ? (IReader) new RuntimeActivator(_activators, _classification, activate)
+				             ? (IReader)new RuntimeActivator(_activators, _classification, activate)
 				             : activate;
 			return result;
 		}
 
 		sealed class RuntimeActivator : IReader
 		{
-			readonly IActivators _activators;
-			readonly IClassification _classification;
-			readonly IReader _activator;
+			readonly static ISpecification<TypeInfo> Specification =
+				AssignedSpecification<object>.Default.And(IsCollectionTypeSpecification.Default.Inverse());
+
+			readonly IActivators              _activators;
+			readonly IClassification          _classification;
+			readonly IReader                  _activator;
+			readonly ISpecification<TypeInfo> _specification;
 
 			public RuntimeActivator(IActivators activators, IClassification classification, IReader activator)
+				: this(activators, classification, activator, Specification) {}
+
+			public RuntimeActivator(IActivators activators, IClassification classification, IReader activator,
+			                        ISpecification<TypeInfo> specification)
 			{
-				_activators = activators;
+				_activators     = activators;
 				_classification = classification;
-				_activator = activator;
+				_activator      = activator;
+				_specification  = specification;
 			}
 
 			public object Get(IFormatReader parameter)
 			{
-				if (parameter.IsSatisfiedBy(ExplicitTypeProperty.Default))
-				{
-					var classification = _classification.Get(parameter);
-					if (classification != null && !classification.IsArray)
-					{
-						return _activators.Get(classification.AsType())
-						                  .Get();
-					}
-				}
-				var result = _activator.Get(parameter);
+				var classification = _classification.Get(parameter);
+				var result = _specification.IsSatisfiedBy(classification)
+					             ? _activators.Get(classification)
+					                          .Get()
+					             : _activator.Get(parameter);
 				return result;
 			}
 		}

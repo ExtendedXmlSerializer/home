@@ -22,11 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;
-using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -61,17 +60,56 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 					}
 				}
 			};
-			var support = new ConfigurationContainer()
-				.UseOptimizedNamespaces() //WITHOUT IT WORKS
-				.ForTesting();
+			var support = new ConfigurationContainer().ForTesting();
 
 			var result = support.Cycle(test);
 
 			var caseObj = result.Cases[0];
 			caseObj.Should().BeOfType<SimpleCase>();
 
-			// ShouldBeEquivalentTo doesn't work 
-			// support.Cycle(element).ShouldBeEquivalentTo(element);
+			// ShouldBeEquivalentTo doesn't work
+			support.Cycle(test).ShouldBeEquivalentTo(test);
+		}
+
+		[Fact]
+		public void VerifyOptimized()
+		{
+			var test = new SerializableProject
+			{
+				Cases = new List<Case>
+				{
+					new SimpleCase
+					{
+						Name       = "Simple",
+						Number     = 1,
+						ModesCount = 2,
+						Records = new List<LoadRecord>
+						{
+							new LoadRecord
+							{
+								Description = "DO NOT WORK :("
+							}
+						}
+					},
+					new CaseCombination()
+					{
+						Number = 2,
+						Name   = "A",
+						label  = "C"
+					}
+				}
+			};
+			var support = new ConfigurationContainer()
+			              .UseOptimizedNamespaces() //WITHOUT IT WORKS
+			              .ForTesting();
+
+			var result = support.Cycle(test);
+
+			var caseObj = result.Cases[0];
+			caseObj.Should().BeOfType<SimpleCase>();
+
+			// ShouldBeEquivalentTo doesn't work
+			support.Cycle(test).ShouldBeEquivalentTo(test);
 		}
 
 		public class Case
