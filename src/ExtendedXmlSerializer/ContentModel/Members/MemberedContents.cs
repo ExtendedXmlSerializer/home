@@ -28,19 +28,20 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberedContents : IContents
 	{
-		readonly IMemberSerializations _serializations;
-		readonly IInnerContentServices _services;
+		readonly IInstanceMemberSerializations _instances;
+		readonly IInnerContentServices         _services;
 
-		public MemberedContents(IMemberSerializations serializations, IInnerContentServices services)
+		public MemberedContents(IInstanceMemberSerializations instances, IInnerContentServices services)
 		{
-			_serializations = serializations;
-			_services = services;
+			_instances = instances;
+			_services  = services;
 		}
 
 		public ISerializer Get(TypeInfo parameter)
 		{
-			var members = _serializations.Get(parameter);
-			var reader = _services.Create(parameter, new MemberInnerContentHandler(members, _services, _services));
+			var members = _instances.Get(parameter);
+			var reader =
+				_services.Create(parameter, new MemberInnerContentHandler(_instances.Get(parameter), _services, _services));
 			var result = new Serializer(reader, new MemberListWriter(members));
 			return result;
 		}

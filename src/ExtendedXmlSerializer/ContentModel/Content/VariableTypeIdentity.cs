@@ -21,29 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
+using System;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class VariableTypeIdentity : IWriter
 	{
 		readonly ISpecification<Type> _specification;
-		readonly IWriter<object> _start;
-		readonly IIdentities _identities;
+		readonly IWriter<object>      _start;
+		readonly IIdentities          _identities;
 
 		public VariableTypeIdentity(Type definition, IIdentity identity, IIdentities identities)
-			: this(new VariableTypeSpecification(definition), new Identity<object>(identity), identities) {}
+			: this(VariableTypeSpecification.Defaults.Get(definition), new Identity<object>(identity), identities) {}
 
 		public VariableTypeIdentity(ISpecification<Type> specification, IWriter<object> start, IIdentities identities)
 		{
 			_specification = specification;
-			_start = start;
-			_identities = identities;
+			_start         = start;
+			_identities    = identities;
 		}
 
 		public void Write(IFormatWriter writer, object instance)

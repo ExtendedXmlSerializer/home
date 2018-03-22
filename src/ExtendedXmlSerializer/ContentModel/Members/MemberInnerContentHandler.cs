@@ -29,28 +29,30 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberInnerContentHandler : IInnerContentHandler, ISpecification<IInnerContent>
 	{
-		readonly IMemberSerialization _serialization;
-		readonly IMemberHandler _handler;
-		readonly IReaderFormatter _formatter;
+		readonly IInstanceMemberSerialization _serialization;
+		readonly IMemberHandler               _handler;
+		readonly IReaderFormatter             _formatter;
 
-		public MemberInnerContentHandler(IMemberSerialization serialization, IMemberHandler handler,
-		                            IReaderFormatter formatter)
+		public MemberInnerContentHandler(IInstanceMemberSerialization serialization, IMemberHandler handler,
+		                                 IReaderFormatter formatter)
 		{
 			_serialization = serialization;
-			_handler = handler;
-			_formatter = formatter;
+			_handler       = handler;
+			_formatter     = formatter;
 		}
 
 		public bool IsSatisfiedBy(IInnerContent parameter)
 		{
 			var content = parameter.Get();
-			var key = _formatter.Get(content);
-			var member = _serialization.Get(key);
+			var key     = _formatter.Get(content);
+			var member = _serialization.Get(parameter.Current)
+			                           .Get(key);
 			var result = member != null;
 			if (result)
 			{
 				_handler.Handle(parameter, member);
 			}
+
 			return result;
 		}
 

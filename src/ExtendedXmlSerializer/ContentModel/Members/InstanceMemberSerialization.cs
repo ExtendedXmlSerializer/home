@@ -21,30 +21,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.References;
+using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public sealed class SerializationExtension : ISerializerExtension
+	sealed class InstanceMemberSerialization : IInstanceMemberSerialization
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IMemberSerializations    _serializations;
+		readonly IMemberSerialization     _serialization;
 
-		SerializationExtension() {}
+		public InstanceMemberSerialization(TypeInfo type, IMemberSerializations serializations)
+			: this(VariableTypeSpecification.Defaults.Get(type), serializations, serializations.Get(type)) {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register(typeof(IRead<>), typeof(Read<>))
-			            .Register(typeof(IWrite<>), typeof(Write<>))
-			            .Register(typeof(ISerializer<,>), typeof(Serializer<,>))
-			            .Register<ISerializer, RuntimeSerializer>()
-			            .Register<RuntimeSerializers>()
-			            .Register<ISerializers, Serializers>()
-			            .Decorate<ISerializers, NullableAwareSerializers>()
-			            .Decorate<ISerializers, ReferenceAwareSerializers>()
-			            .Decorate<IContents, RecursionAwareContents>();
+		public InstanceMemberSerialization(ISpecification<TypeInfo> specification, IMemberSerializations serializations,
+		                                   IMemberSerialization serialization)
+		{
+			_specification  = specification;
+			_serializations = serializations;
+			_serialization  = serialization;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public IMemberSerialization Get(object parameter)
+		{
+			var type = parameter.GetType()
+			                    .GetTypeInfo();
+			var result = _specification.IsSatisfiedBy(type) ? _serializations.Get(type) : _serialization;
+			return result;
+		}
 	}
 }

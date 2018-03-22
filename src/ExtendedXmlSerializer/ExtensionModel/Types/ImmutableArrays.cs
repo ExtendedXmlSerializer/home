@@ -21,13 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
 	sealed class ImmutableArrays : Collections
 	{
-		public ImmutableArrays(ISerializers serializers, ImmutableArrayContents contents) : base(serializers, contents) {}
+		public ImmutableArrays(RuntimeSerializers serializers, ImmutableArrayContents contents) :
+			base(serializers, contents) {}
 	}
 }

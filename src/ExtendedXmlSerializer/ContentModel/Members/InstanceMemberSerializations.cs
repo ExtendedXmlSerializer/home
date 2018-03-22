@@ -21,30 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.References;
+using System.Reflection;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	public sealed class SerializationExtension : ISerializerExtension
+	sealed class InstanceMemberSerializations : IInstanceMemberSerializations
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
+		readonly ISpecification<TypeInfo> _specification;
+		readonly IMemberSerializations    _serializations;
 
-		SerializationExtension() {}
+		public InstanceMemberSerializations(IMemberSerializations serializations)
+			: this(VariableTypeSpecification.Default, serializations) {}
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register(typeof(IRead<>), typeof(Read<>))
-			            .Register(typeof(IWrite<>), typeof(Write<>))
-			            .Register(typeof(ISerializer<,>), typeof(Serializer<,>))
-			            .Register<ISerializer, RuntimeSerializer>()
-			            .Register<RuntimeSerializers>()
-			            .Register<ISerializers, Serializers>()
-			            .Decorate<ISerializers, NullableAwareSerializers>()
-			            .Decorate<ISerializers, ReferenceAwareSerializers>()
-			            .Decorate<IContents, RecursionAwareContents>();
+		public InstanceMemberSerializations(ISpecification<TypeInfo> specification, IMemberSerializations serializations)
+		{
+			_specification  = specification;
+			_serializations = serializations;
+		}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+		public IInstanceMemberSerialization Get(TypeInfo parameter)
+			=> _specification.IsSatisfiedBy(parameter)
+				   ? (IInstanceMemberSerialization)new InstanceMemberSerialization(parameter, _serializations)
+				   : new FixedInstanceMemberSerialization(_serializations.Get(parameter));
 	}
 }

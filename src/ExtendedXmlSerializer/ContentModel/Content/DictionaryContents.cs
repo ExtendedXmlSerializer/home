@@ -21,37 +21,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Collections;
 using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	sealed class DictionaryContents : IContents
 	{
-		readonly IMemberSerializations _serializations;
-		readonly IDictionaryEnumerators _enumerators;
-		readonly IDictionaryEntries _entries;
-		readonly IInnerContentServices _contents;
+		readonly IInstanceMemberSerializations _instances;
+		readonly IDictionaryEnumerators        _enumerators;
+		readonly IDictionaryEntries            _entries;
+		readonly IInnerContentServices         _contents;
 
-		public DictionaryContents(IMemberSerializations serializations, IDictionaryEnumerators enumerators,
+		public DictionaryContents(IInstanceMemberSerializations instances, IDictionaryEnumerators enumerators,
 		                          IDictionaryEntries entries, IInnerContentServices contents)
 		{
-			_serializations = serializations;
+			_instances   = instances;
 			_enumerators = enumerators;
-			_entries = entries;
-			_contents = contents;
+			_entries     = entries;
+			_contents    = contents;
 		}
 
 		public ISerializer Get(TypeInfo parameter)
 		{
-			var members = _serializations.Get(parameter);
-			var entry = _entries.Get(parameter);
+			var members = _instances.Get(parameter);
+			var entry   = _entries.Get(parameter);
 
 			var handler = new CollectionWithMembersInnerContentHandler(_contents,
-			                                                           new MemberInnerContentHandler(members, _contents,
-			                                                                                         _contents),
+			                                                           new MemberInnerContentHandler(_instances.Get(parameter),
+			                                                                                         _contents, _contents),
 			                                                           new CollectionInnerContentHandler(entry, _contents));
 			var reader = _contents.Create(parameter, handler);
 			var writer =

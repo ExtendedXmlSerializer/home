@@ -21,15 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ContentModel.Reflection
 {
-	sealed class VariableTypeSpecification : InverseSpecification<Type>, IVariableTypeSpecification
+	sealed class VariableTypeSpecification : DecoratedSpecification<Type>, IVariableTypeSpecification
 	{
-		public VariableTypeSpecification(Type type) : base(new EqualitySpecification<Type>(type)) {}
+		public static IParameterizedSource<Type, IVariableTypeSpecification> Defaults { get; }
+			= new ReferenceCache<Type, IVariableTypeSpecification>(x => new VariableTypeSpecification(x));
+
+		public VariableTypeSpecification(Type type)
+			: base(new DelegatedSpecification<Type>(IsAssignableSpecification.Defaults.Get(type)
+			                                                                 .IsSatisfiedBy)
+				       .And(new EqualitySpecification<Type>(type).Inverse())) {}
 
 		bool ISpecification<TypeInfo>.IsSatisfiedBy(TypeInfo parameter) => IsSatisfiedBy(parameter.AsType());
 	}

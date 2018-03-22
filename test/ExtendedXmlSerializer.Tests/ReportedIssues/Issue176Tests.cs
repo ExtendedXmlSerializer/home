@@ -26,12 +26,11 @@ using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
-	public class Issue176
+	public class Issue176Tests
 	{
 		[Fact]
 		public void Verify()
@@ -63,36 +62,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			};
 			var support = new ConfigurationContainer().ForTesting();
 
-			var result = support.Cycle(test);
-
-			result.Cases.Should()
-				.HaveCount(2);
-
-			var caseObj = result.Cases[0];
-			var obj = caseObj.Should().BeOfType<SimpleCase>().Subject;
-			obj.Name.Should().Be("Simple");
-			obj.Number.Should().Be(1);
-			obj.ModesCount.Should().Be(2);
-
-			obj.Records.Should()
-				.HaveCount(1)
-				.And.Subject.FirstOrDefault()
-				.Should()
-				.Be("DO NOT WORK :(");
-
-			var second = result.Cases[1];
-
-			var secondObj = second.Should()
-				.BeOfType<CaseCombination>()
-				.Subject;
-
-			secondObj.Number.Should().Be(2);
-			secondObj.Name.Should().Be("A");
-			secondObj.label.Should().Be("C");
-
-
-			// ShouldBeEquivalentTo doesn't work
-			support.Cycle(test).ShouldBeEquivalentTo(test);
+			support.Cycle(test)
+			       .ShouldBeEquivalentTo(test, options => options.RespectingRuntimeTypes());
 		}
 
 		[Fact]
@@ -127,13 +98,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			              .UseOptimizedNamespaces() //WITHOUT IT WORKS
 			              .ForTesting();
 
-			var result = support.Cycle(test);
-
-			var caseObj = result.Cases[0];
-			caseObj.Should().BeOfType<SimpleCase>();
-
 			// ShouldBeEquivalentTo doesn't work
-			support.Cycle(test).ShouldBeEquivalentTo(test);
+			support.Cycle(test).ShouldBeEquivalentTo(test, options => options.RespectingRuntimeTypes());
 		}
 
 		public class Case

@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,17 +36,17 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		readonly static TypeInfo Type = Support<DictionaryEntry>.Key;
 
 		readonly static PropertyInfo
-			Key = Type.GetProperty(nameof(DictionaryEntry.Key)),
+			Key   = Type.GetProperty(nameof(DictionaryEntry.Key)),
 			Value = Type.GetProperty(nameof(DictionaryEntry.Value));
 
 		readonly static DictionaryPairTypesLocator Pairs = DictionaryPairTypesLocator.Default;
 
 		readonly Func<IEnumerable<IMemberSerializer>, IMemberSerialization> _builder;
-		readonly IInnerContentServices _contents;
-		readonly IMembers _members;
-		readonly IMemberSerializers _serializers;
-		readonly IWriter _element;
-		readonly IDictionaryPairTypesLocator _locator;
+		readonly IInnerContentServices                                      _contents;
+		readonly IMembers                                                   _members;
+		readonly IMemberSerializers                                         _serializers;
+		readonly IWriter                                                    _element;
+		readonly IDictionaryPairTypesLocator                                _locator;
 
 		[UsedImplicitly]
 		public DictionaryEntries(IInnerContentServices contents, Element element, IMembers members,
@@ -57,12 +57,12 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 		                         IInnerContentServices contents, IMemberSerializers serializers, IMembers members,
 		                         IWriter element, IDictionaryPairTypesLocator locator)
 		{
-			_builder = builder;
-			_contents = contents;
-			_members = members;
+			_builder     = builder;
+			_contents    = contents;
+			_members     = members;
 			_serializers = serializers;
-			_element = element;
-			_locator = locator;
+			_element     = element;
+			_locator     = locator;
 		}
 
 		IMemberSerializer Create(PropertyInfo metadata, TypeInfo classification)
@@ -70,14 +70,14 @@ namespace ExtendedXmlSerializer.ContentModel.Content
 
 		public ISerializer Get(TypeInfo parameter)
 		{
-			var pair = _locator.Get(parameter);
-			var serializers = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)};
-			var serialization = _builder(serializers);
+			var pair          = _locator.Get(parameter);
+			var serializers   = new[] {Create(Key, pair.KeyType), Create(Value, pair.ValueType)};
+			var serialization = new FixedInstanceMemberSerialization(_builder(serializers));
 
 			var reader = _contents.Create(Type, new MemberInnerContentHandler(serialization, _contents, _contents));
 
 			var converter = new Serializer(reader, new MemberListWriter(serialization));
-			var result = new Container<object>(_element, converter);
+			var result    = new Container<object>(_element, converter);
 			return result;
 		}
 	}

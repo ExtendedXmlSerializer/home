@@ -33,12 +33,12 @@ namespace ExtendedXmlSerializer.ContentModel
 	[UsedImplicitly]
 	sealed class RuntimeSerializer : ISerializer
 	{
-		readonly IContents _contents;
+		readonly IContents       _contents;
 		readonly IClassification _classification;
 
 		public RuntimeSerializer(IContents contents, IClassification classification)
 		{
-			_contents = contents;
+			_contents       = contents;
 			_classification = classification;
 		}
 

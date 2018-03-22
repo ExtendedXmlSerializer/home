@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Collections;
-using ExtendedXmlSerializer.ContentModel.Content;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml.Classic
 {
 	sealed class ClassicCollections : Collections
 	{
-		public ClassicCollections(ISerializers serializers, ClassicCollectionContents contents) :
-			base(serializers, contents) {}
+		public ClassicCollections(RuntimeSerializers serializers, ClassicCollectionContents contents)
+			: base(serializers, contents) {}
 	}
 }

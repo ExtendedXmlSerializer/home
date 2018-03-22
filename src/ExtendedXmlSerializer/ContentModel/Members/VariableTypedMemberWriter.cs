@@ -32,20 +32,19 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 	sealed class VariableTypedMemberWriter : IWriter
 	{
 		readonly ISpecification<Type> _type;
-		readonly ISerializer _runtime;
-		readonly IWriter _body;
-		readonly IProperty<TypeInfo> _property;
+		readonly ISerializer          _runtime;
+		readonly IWriter              _body;
+		readonly IProperty<TypeInfo>  _property;
 
-		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
-			: this(type, runtime, body, ExplicitTypeProperty.Default) {}
+		/*public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body)
+			: this(type, runtime, body, ExplicitTypeProperty.Default) {}*/
 
 		public VariableTypedMemberWriter(ISpecification<Type> type, ISerializer runtime, IWriter body,
 		                                 IProperty<TypeInfo> property)
 		{
-			_type = type;
-			_runtime = runtime;
-			_body = body;
-			_property = property;
+			_type     = type;
+			_runtime  = runtime;
+			_body     = body;
 			_property = property;
 		}
 
