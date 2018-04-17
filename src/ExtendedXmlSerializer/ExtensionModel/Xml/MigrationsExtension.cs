@@ -21,14 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using System.Xml;
-using System.Xml.Linq;
 using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
@@ -36,7 +30,13 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using JetBrains.Annotations;
-using IContents = ExtendedXmlSerializer.ContentModel.Content.IContents;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -57,33 +57,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 
 		public void Add(TypeInfo key, params Action<XElement>[] items)
 		{
-			var current = Get(key)?.ToArray() ?? Enumerable.Empty<Action<XElement>>();
-			Assign(key, current.Appending(items).Fixed());
+			var current = Get(key)
+				              ?.ToArray() ?? Enumerable.Empty<Action<XElement>>();
+			Assign(key, current.Appending(items)
+			                   .Fixed());
 		}
 
 		sealed class Contents : IContents
 		{
-			readonly IFormatReaders<System.Xml.XmlReader> _factory;
-			readonly IClassification _classification;
+			readonly IFormatReaders<System.Xml.XmlReader>       _factory;
+			readonly IClassification                            _classification;
 			readonly ITypedTable<IEnumerable<Action<XElement>>> _migrations;
-			readonly IContents _contents;
+			readonly IContents                                  _contents;
 
 			public Contents(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
 			                ITypedTable<IEnumerable<Action<XElement>>> migrations, IContents contents)
 			{
-				_factory = factory;
+				_factory        = factory;
 				_classification = classification;
-				_migrations = migrations;
-				_contents = contents;
+				_migrations     = migrations;
+				_contents       = contents;
 			}
 
 			public ISerializer Get(TypeInfo parameter)
 			{
 				var migrations = _migrations.Get(parameter);
-				var content = _contents.Get(parameter);
+				var content    = _contents.Get(parameter);
 				var result = migrations != null
-					? new Serializer(new Migrator(_factory, _classification, migrations.ToImmutableArray()), content)
-					: content;
+					             ? new Serializer(new Migrator(_factory, parameter, _classification, migrations.ToImmutableArray()),
+					                              content)
+					             : content;
 				return result;
 			}
 
@@ -94,68 +97,70 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				readonly static MigrationVersionIdentity Identity = MigrationVersionIdentity.Default;
 
 				readonly IFormatReaders<System.Xml.XmlReader> _factory;
-				readonly IClassification _classification;
-				readonly ImmutableArray<Action<XElement>> _migrations;
-				readonly IProperty<uint> _property;
+				readonly TypeInfo                             _type;
+				readonly IClassification                      _classification;
+				readonly ImmutableArray<Action<XElement>>     _migrations;
+				readonly uint                                 _version;
+				readonly IProperty<uint>                      _property;
 
-				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type, IClassification classification,
 				                ImmutableArray<Action<XElement>> migrations)
-					: this(factory, classification, Identity, migrations) {}
+					: this(factory, type, classification, Identity, migrations, (uint)migrations.Length) {}
 
-				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, IClassification classification,
+				public Migrator(IFormatReaders<System.Xml.XmlReader> factory, TypeInfo type, IClassification classification,
 				                IProperty<uint> property,
-				                ImmutableArray<Action<XElement>> migrations)
+				                ImmutableArray<Action<XElement>> migrations, uint version)
 				{
-					_factory = factory;
+					_factory        = factory;
+					_type           = type;
 					_classification = classification;
-					_migrations = migrations;
-					_property = property;
+					_migrations     = migrations;
+					_version        = version;
+					_property       = property;
 				}
 
 				public IFormatReader Get(IFormatReader parameter)
 				{
-					var typeInfo = _classification.Get(parameter);
+					var typeInfo = _classification.Get(parameter) ?? _type;
 					var fullName = typeInfo.FullName;
-					var version = parameter.IsSatisfiedBy(_property) ? _property.Get(parameter) : 0;
+					var version  = parameter.IsSatisfiedBy(_property) ? _property.Get(parameter) : 0;
 
-					var length = _migrations.Length;
-
-					if (version > length)
+					if (version > _version)
 					{
 						throw new XmlException($"Unknown varsion number {version} for type {typeInfo}.");
 					}
 
-					if (_migrations == null)
+					var element = XElement.Load(parameter.Get()
+					                                     .AsValid<System.Xml.XmlReader>()
+					                                     .ReadSubtree());
+					for (var i = version; i < _version; i++)
 					{
-						throw new XmlException($"Migrations for type {fullName} is null.");
-					}
-
-					var element = XElement.Load(parameter.Get().AsValid<System.Xml.XmlReader>());
-					for (var i = version; i < length; i++)
-					{
-						var index = (int) i;
+						var index     = (int)i;
 						var migration = _migrations.ElementAtOrDefault(index);
 						if (migration == null)
 							throw new XmlException(
-								$"Migrations for type {fullName} contains invalid migration at index {i}.");
-						_migrations[index].Invoke(element);
+							                       $"Migrations for type {fullName} contains invalid migration at index {i}.");
+						_migrations[index]
+							.Invoke(element);
 					}
-					var result = _factory.Get(element.CreateReader());
+
+					var xmlReader = element.CreateReader();
+					var result    = _factory.Get(xmlReader);
+					AssociatedReaders.Default.Assign(result, parameter);
 					return result;
 				}
 
-				uint Version => (uint) _migrations.Length;
-				public void Write(IFormatWriter writer, object instance) => _property.Write(writer, Version);
+				public void Write(IFormatWriter writer, object instance) => _property.Write(writer, _version);
 			}
 
 			sealed class Serializer : ISerializer
 			{
-				readonly IMigrator _migrator;
+				readonly IMigrator   _migrator;
 				readonly ISerializer _serializer;
 
 				public Serializer(IMigrator migrator, ISerializer serializer)
 				{
-					_migrator = migrator;
+					_migrator   = migrator;
 					_serializer = serializer;
 				}
 

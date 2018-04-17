@@ -21,14 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class ReferenceMaps : AssociationAwareReferenceMaps
+	class AssociationAwareReferenceMaps : DecoratedSource<IFormatReader, IReferenceMap>, IReferenceMaps
 	{
-		public static ReferenceMaps Default { get; } = new ReferenceMaps();
-
-		ReferenceMaps() : base(new ReferenceCache<object, IReferenceMap>(_ => new ReferenceMap())) {}
+		public AssociationAwareReferenceMaps(IParameterizedSource<IFormatReader, IReferenceMap> maps)
+			: base(maps.In(AssociatedReaders.Default)) {}
 	}
 }

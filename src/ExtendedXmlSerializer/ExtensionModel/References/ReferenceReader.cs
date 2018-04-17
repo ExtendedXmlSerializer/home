@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
@@ -33,17 +33,17 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 		readonly static ContentModel.Properties.ReferenceIdentity ReferenceIdentity =
 			ContentModel.Properties.ReferenceIdentity.Default;
 
-		readonly IReferenceMaps _maps;
-		readonly IEntities _entities;
-		readonly TypeInfo _definition;
+		readonly IReferenceMaps  _maps;
+		readonly IEntities       _entities;
+		readonly TypeInfo        _definition;
 		readonly IClassification _classification;
 
 		public ReferenceReader(IReader reader, IReferenceMaps maps, IEntities entities, TypeInfo definition,
 		                       IClassification classification) : base(reader)
 		{
-			_maps = maps;
-			_entities = entities;
-			_definition = definition;
+			_maps           = maps;
+			_entities       = entities;
+			_definition     = definition;
 			_classification = classification;
 		}
 
@@ -56,11 +56,13 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			}
 
 			var type = _classification.GetClassification(parameter, _definition);
-			var entity = _entities.Get(type)?.Reference(parameter);
+			var entity = _entities.Get(type)
+			                      ?.Reference(parameter);
 			if (entity != null)
 			{
 				return new ReferenceIdentity(type, entity);
 			}
+
 			return null;
 		}
 
@@ -69,7 +71,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 			var identity = GetReference(parameter);
 			if (identity != null)
 			{
-				var reference = _maps.Get(parameter).Get(identity.Value);
+				var map       = _maps.Get(parameter);
+				var reference = map.Get(identity.Value);
 				return reference;
 			}
 

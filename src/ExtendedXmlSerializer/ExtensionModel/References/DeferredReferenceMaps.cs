@@ -28,23 +28,28 @@ using JetBrains.Annotations;
 
 namespace ExtendedXmlSerializer.ExtensionModel.References
 {
-	sealed class DeferredReferenceMaps : ReferenceCacheBase<IFormatReader, IReferenceMap>, IReferenceMaps
+	sealed class DeferredReferenceMaps : AssociationAwareReferenceMaps
 	{
-		readonly IContentsHistory _contexts;
-		readonly IDeferredCommands _commands;
-		readonly IReferenceMaps _maps;
+		public DeferredReferenceMaps(IReferenceMaps maps) : base(new Implementation(maps)) {}
 
-		[UsedImplicitly]
-		public DeferredReferenceMaps(IReferenceMaps maps) : this(ContentsHistory.Default, DeferredCommands.Default, maps) {}
-
-		public DeferredReferenceMaps(IContentsHistory contexts, IDeferredCommands commands, IReferenceMaps maps)
+		sealed class Implementation : ReferenceCacheBase<IFormatReader, IReferenceMap>, IReferenceMaps
 		{
-			_contexts = contexts;
-			_commands = commands;
-			_maps = maps;
-		}
+			readonly IContentsHistory  _contexts;
+			readonly IDeferredCommands _commands;
+			readonly IReferenceMaps    _maps;
 
-		protected override IReferenceMap Create(IFormatReader parameter)
-			=> new DeferredReferenceMap(_commands.Get(parameter), _contexts.Get(parameter), _maps.Get(parameter));
+			[UsedImplicitly]
+			public Implementation(IReferenceMaps maps) : this(ContentsHistory.Default, DeferredCommands.Default, maps) {}
+
+			public Implementation(IContentsHistory contexts, IDeferredCommands commands, IReferenceMaps maps)
+			{
+				_contexts = contexts;
+				_commands = commands;
+				_maps     = maps;
+			}
+
+			protected override IReferenceMap Create(IFormatReader parameter)
+				=> new DeferredReferenceMap(_commands.Get(parameter), _contexts.Get(parameter), _maps.Get(parameter));
+		}
 	}
 }

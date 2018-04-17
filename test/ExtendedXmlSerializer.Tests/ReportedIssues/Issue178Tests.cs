@@ -1,9 +1,11 @@
+using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using FluentAssertions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ExtensionModel.Xml;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -80,13 +82,17 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 								  </Children>
 								</Root>";
 
-			var serializer = new ConfigurationContainer()
+			new ConfigurationContainer()
 				.ConfigureType<SomeClass>()
 				.EnableReferences(s => s.Id)
 				.AddMigration(new SomeClassMigrations())
-				.Create();
-
-			var deserializedObject = serializer.Deserialize<Root>(initialXml);
+				.Create()
+				.Deserialize<Root>(initialXml)
+				.Children
+				.Select(x => x.Blubb.RenamedProperty)
+				.Take(4)
+				.Should()
+				.Equal("String2", "String1", "String2", "String1");
 		}
 	}
 
@@ -105,10 +111,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		public static void MigrationV0(XElement node)
 		{
 			var someStringElement = node.Member("SomeString");
-			// Add new node
-			node.Add(new XElement("RenamedProperty"), someStringElement.Value);
-			// Remove old node
-			someStringElement.Remove();
+			if (someStringElement != null)
+			{
+				// Add new node
+				node.Add(new XElement("RenamedProperty"), someStringElement.Value);
+				// Remove old node
+				someStringElement.Remove();
+			}
 		}
 	}
 
