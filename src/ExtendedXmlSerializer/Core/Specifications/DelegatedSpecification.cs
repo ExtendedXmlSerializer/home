@@ -25,7 +25,7 @@ using System;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	class DelegatedSpecification<T> : ISpecification<T>
+	public class DelegatedSpecification<T> : ISpecification<T>
 	{
 		readonly Func<T, bool> _delegate;
 
