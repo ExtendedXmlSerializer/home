@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Xunit;
-using XmlReader = System.Xml.XmlReader;
 using XmlWriter = System.Xml.XmlWriter;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -30,6 +29,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				      .Should()
 				      .Equal(data.Map);
 	        }
+
+			File.Delete(tempFile);
 
 	        /*// throws:
 	        using (var reader = XmlReader.Create(File.OpenRead(tempFile)))
