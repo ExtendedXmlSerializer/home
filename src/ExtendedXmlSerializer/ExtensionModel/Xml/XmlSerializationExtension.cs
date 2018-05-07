@@ -65,7 +65,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				                                                                                        .And(ElementSpecification
 					                                                                                             .Default)))
 			            .Register<IInnerContentActivation, XmlInnerContentActivation>()
-			            .Register<IFormatReaderContexts<XmlNameTable>, FormatReaderContexts>()
+			            .Register<IFormatReaderContexts, FormatReaderContexts>()
 			            .Register<IFormatWriters<System.Xml.XmlWriter>, FormatWriters>()
 			            .Register<IXmlReaderFactory, XmlReaderFactory>()
 			            .Register<IFormatReaders<System.Xml.XmlReader>, FormatReaders>()

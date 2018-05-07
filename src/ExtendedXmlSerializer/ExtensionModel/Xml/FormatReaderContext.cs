@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,11 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.Core.Parsing;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -33,20 +32,20 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 	{
 		readonly IIdentityStore _store;
 		readonly IParser<MemberInfo> _parser;
-		readonly IDisposable _disposable;
 
-
-		public FormatReaderContext(IIdentityStore store, IParser<MemberInfo> parser, IDisposable disposable)
+		public FormatReaderContext(IIdentityStore store, IParser<MemberInfo> parser)
 		{
 			_store = store;
 			_parser = parser;
-			_disposable = disposable;
 		}
 
 		public MemberInfo Get(string parameter) => _parser.Get(parameter);
 
 		public IIdentity Get(string name, string identifier) => _store.Get(name, identifier);
 
-		public void Dispose() => _disposable.Dispose();
+		public void Dispose()
+		{
+			//_disposable.Dispose();
+		}
 	}
 }
