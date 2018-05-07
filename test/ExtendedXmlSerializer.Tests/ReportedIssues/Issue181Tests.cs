@@ -22,12 +22,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
             using (XmlWriter writer = XmlWriter.Create(tempFile, new XmlWriterSettings { Indent = true }))
                 serializer.Serialize(writer, data);
 
-			using (var reader = new XmlReaderFactory().Get(File.OpenRead(tempFile)))
+	        using (var file = File.OpenRead(tempFile))
 	        {
-	            var result = (Model)serializer.Deserialize(reader);
-				result.Map
-				      .Should()
-				      .Equal(data.Map);
+		        using (var reader = new XmlReaderFactory().Get(file))
+		        {
+			        var result = (Model)serializer.Deserialize(reader);
+			        result.Map
+			              .Should()
+			              .Equal(data.Map);
+		        }
 	        }
 
 			File.Delete(tempFile);
