@@ -1,6 +1,6 @@
-// MIT License
+﻿// MIT License
 // 
-// Copyright (c) 2016-2018 Wojciech Nag�rski
+// Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,37 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core.Specifications;
 
-namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
+namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	sealed class MemberAccess : IMemberAccess
+	interface IInstanceValueSpecification : IAllowedValueSpecification
 	{
-		public ISpecification<object> Instance { get; }
-		readonly ISpecification<object> _specification;
-		readonly IProperty              _property;
-
-		public MemberAccess(ISpecification<object> specification, IProperty property)
-			: this(specification, specification.GetInstance(), property) {}
-
-		public MemberAccess(ISpecification<object> specification, ISpecification<object> instance, IProperty property)
-		{
-			Instance       = instance;
-			_specification = specification;
-			_property      = property;
-		}
-
-		public bool IsSatisfiedBy(object parameter) => _specification.IsSatisfiedBy(parameter);
-
-		public object Get(object instance) => _property.Get(instance);
-
-		public void Assign(object instance, object value)
-		{
-			if (_specification.IsSatisfiedBy(value))
-			{
-				_property.Assign(instance, value);
-			}
-		}
+		ISpecification<object> Instance { get; }
 	}
 }

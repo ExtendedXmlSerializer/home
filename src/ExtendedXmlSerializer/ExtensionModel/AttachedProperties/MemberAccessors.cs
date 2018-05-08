@@ -1,18 +1,18 @@
 // MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,17 +28,16 @@ namespace ExtendedXmlSerializer.ExtensionModel.AttachedProperties
 	sealed class MemberAccessors : IMemberAccessors
 	{
 		readonly IAllowedMemberValues _allow;
-		readonly IMemberAccessors _accessors;
+		readonly IMemberAccessors     _accessors;
 
 		public MemberAccessors(IAllowedMemberValues allow, IMemberAccessors accessors)
 		{
-			_allow = allow;
+			_allow     = allow;
 			_accessors = accessors;
 		}
 
-		public IMemberAccess Get(IMember parameter)
-			=> parameter is AttachedMember
-				? new MemberAccess(_allow.Get(parameter.Metadata), (IProperty) parameter)
-				: _accessors.Get(parameter);
+		public IMemberAccess Get(IMember parameter) => parameter is AttachedMember member
+			                                               ? new MemberAccess(_allow.Get(member.Metadata), member)
+			                                               : _accessors.Get(parameter);
 	}
 }

@@ -23,6 +23,7 @@
 
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.Core.Sources;
 
@@ -30,28 +31,28 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	sealed class MemberSerializers : IMemberSerializers
 	{
-		readonly IMemberAccessors _accessors;
+		readonly IMemberAccessors         _accessors;
 		readonly IAttributeSpecifications _runtime;
-		readonly IMemberConverters _converters;
-		readonly IMemberContents _content;
+		readonly IMemberConverters        _converters;
+		readonly IMemberContents          _content;
 
 		public MemberSerializers(IAttributeSpecifications runtime, IMemberAccessors accessors,
 		                         IMemberConverters converters, IMemberContents content)
 		{
-			_runtime = runtime;
-			_accessors = accessors;
+			_runtime    = runtime;
+			_accessors  = accessors;
 			_converters = converters;
-			_content = content;
+			_content    = content;
 		}
 
 		public IMemberSerializer Get(IMember parameter)
 		{
-			var converter = _converters.Get(parameter);
-			var access = _accessors.Get(parameter);
+			var converter  = _converters.Get(parameter);
+			var access     = _accessors.Get(parameter);
 			var alteration = new DelegatedAlteration<object>(access.Get);
 			var result = converter != null
 				             ? Property(alteration, converter, parameter, access)
-				             : Content(alteration, parameter, access);
+				             : Content(parameter, access);
 			return result;
 		}
 
@@ -59,25 +60,48 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		                           IMemberAccess access)
 		{
 			var serializer = new ConverterProperty<object>(converter, profile).Adapt();
-			var member = new MemberSerializer(profile, access, serializer, Wrap(alteration, access, serializer));
-			var runtime = _runtime.Get(profile.Metadata);
-			IMemberSerializer property = new PropertyMemberSerializer(member);
+			var member     = new MemberSerializer(profile, access, serializer, Wrap(access, serializer));
+			var runtime    = _runtime.Get(profile.Metadata);
+			var property   = (IMemberSerializer)new PropertyMemberSerializer(member);
 			return runtime != null
 				       ? new RuntimeSerializer(new AlteredSpecification<object>(alteration, runtime),
-				                               property, Content(alteration, profile, access))
+				                               property, Content(profile, access))
 				       : property;
 		}
 
-		IMemberSerializer Content(IAlteration<object> alteration, IMember profile, IMemberAccess access)
+		IMemberSerializer Content(IMember profile, IMemberAccess access)
 		{
-			var body = _content.Get(profile);
-			var start = new Identity<object>(profile).Adapt();
-			var writer = Wrap(alteration, access, new Enclosure(start, body));
+			var body   = _content.Get(profile);
+			var start  = new Identity<object>(profile).Adapt();
+			var writer = Wrap(access, new Enclosure(start, body));
 			var result = new MemberSerializer(profile, access, body, writer);
 			return result;
 		}
 
-		static IWriter Wrap(IAlteration<object> alteration, IMemberAccess access, IWriter<object> writer)
-			=> new AlteringWriter(alteration, new ConditionalWriter(access, writer));
+		static IWriter Wrap(IMemberAccess access, IWriter<object> writer) => new Writer(access, writer);
+
+		sealed class Writer : IWriter
+		{
+			readonly IMemberAccess   _access;
+			readonly IWriter<object> _writer;
+
+			public Writer(IMemberAccess access, IWriter<object> writer)
+			{
+				_access = access;
+				_writer = writer;
+			}
+
+			public void Write(IFormatWriter writer, object instance)
+			{
+				if (_access.Instance.IsSatisfiedBy(instance))
+				{
+					var member = _access.Get(instance);
+					if (_access.IsSatisfiedBy(member))
+					{
+						_writer.Write(writer, member);
+					}
+				}
+			}
+		}
 	}
 }

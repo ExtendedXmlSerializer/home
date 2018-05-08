@@ -1,18 +1,18 @@
 ﻿// MIT License
-//
+// 
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-//
+// 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Collections.Generic;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
@@ -29,8 +31,6 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
@@ -50,19 +50,19 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		sealed class Serializers : ISerializers
 		{
 			readonly IParameterizedSource<TypeInfo, ISpecification<object>> _specifications;
-			readonly ISerializers _serializers;
+			readonly ISerializers                                           _serializers;
 
 			public Serializers(ITypedSpecifications specifications, ISerializers serializers)
 			{
 				_specifications = specifications;
-				_serializers = serializers;
+				_serializers    = serializers;
 			}
 
 			public ISerializer Get(TypeInfo parameter)
 			{
 				var specification = _specifications.Get(parameter);
-				var serializer = _serializers.Get(parameter);
-				var result = specification != null ? new Serializer(specification, serializer) : serializer;
+				var serializer    = _serializers.Get(parameter);
+				var result        = specification != null ? new Serializer(specification, serializer) : serializer;
 				return result;
 			}
 		}
@@ -70,34 +70,36 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		sealed class MemberAccessors : IMemberAccessors
 		{
 			readonly ITypedSpecifications _specifications;
-			readonly IMemberAccessors _accessors;
+			readonly IMemberAccessors     _accessors;
 
 			public MemberAccessors(ITypedSpecifications specifications, IMemberAccessors accessors)
 			{
 				_specifications = specifications;
-				_accessors = accessors;
+				_accessors      = accessors;
 			}
 
 			public IMemberAccess Get(IMember parameter)
 			{
 				var specification = _specifications.Get(parameter.MemberType);
-				var access = _accessors.Get(parameter);
-				var result = specification != null ? new MemberAccess(specification.And(access), access) : access;
+				var access        = _accessors.Get(parameter);
+				var result        = specification != null ? new MemberAccess(specification.And(access), access) : access;
 				return result;
 			}
 
 			sealed class MemberAccess : IMemberAccess
 			{
 				readonly ISpecification<object> _specification;
-				readonly IMemberAccess _access;
+				readonly IMemberAccess          _access;
 
 				public MemberAccess(ISpecification<object> specification, IMemberAccess access)
 				{
 					_specification = specification;
-					_access = access;
+					_access        = access;
 				}
 
 				public bool IsSatisfiedBy(object parameter) => _specification.IsSatisfiedBy(parameter);
+
+				public ISpecification<object> Instance => _access.Instance;
 
 				public object Get(object instance) => _access.Get(instance);
 
@@ -108,16 +110,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 			}
 		}
 
-
 		sealed class Serializer : ISerializer
 		{
 			readonly ISpecification<object> _specification;
-			readonly ISerializer _serializer;
+			readonly ISerializer            _serializer;
 
 			public Serializer(ISpecification<object> specification, ISerializer serializer)
 			{
 				_specification = specification;
-				_serializer = serializer;
+				_serializer    = serializer;
 			}
 
 			public object Get(IFormatReader parameter) => _serializer.Get(parameter);
