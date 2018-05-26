@@ -81,6 +81,24 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\SimpleSamples.cs",
 				"Deserialization");
 
+			doc.AddHeader("Classic Serialization/Deserialization");
+			doc.Add("Most of the code examples that you see in this documentation make use of useful extension methods that make serialization and deserialization a snap with `ExtendedXmlSerializer.  However, if you would like to break down into the basic, classical pattern of serialization, and deserialization, this is supported too, as seen by the following examples.  Here's serialization:");
+			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\Serialization.cs",
+			            "Serialization");
+
+			doc.Add("And here's how to deserialize:");
+			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\Serialization.cs",
+			            "Deserialization");
+
+			doc.AddHeader("Serialization/Deserialization with Settings Overrides");
+			doc.Add("Additionally, `ExtendedXmlSerializer` also supports overrides for serialization and deserialization that allow you to pass in `XmlWriterSettings` and `XmlReaderSettings` respectively.  Here's an example of this for serialization:");
+			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\Overrides.cs",
+			            "Serialization");
+
+			doc.Add("And for deserialization:");
+			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\Simple\\Overrides.cs",
+			            "Deserialization");
+
 			doc.AddHeader("Fluent API");
 			doc.Add("ExtendedXmlSerializer use fluent API to configuration. Example:");
 			doc.AddCode("..\\..\\..\\..\\samples\\ExtendedXmlSerializer.Samples\\FluentApi\\FluentApiSamples.cs", "FluentAPI");

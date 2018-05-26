@@ -140,6 +140,66 @@
     var obj2 = serializer.Deserialize&lt;TestClass&gt;(xml);
 </pre>
 
+<h2>Classic Serialization/Deserialization</h2>
+
+<p>Most of the code examples that you see in this documentation make use of useful extension methods that make serialization and deserialization a snap with <code>ExtendedXmlSerializer.  However, if you would like to break down into the basic, classical pattern of serialization, and deserialization, this is supported too, as seen by the following examples.  Here's serialization:</p>
+
+<pre lang="cs">
+    
+    
+                var serializer = new ConfigurationContainer().Create();
+                var instance   = new TestClass();
+                var stream     = new MemoryStream();
+                using (var writer = XmlWriter.Create(stream))
+                {
+                    serializer.Serialize(writer, instance);
+                    writer.Flush();
+                }
+    
+                stream.Seek(0, SeekOrigin.Begin);
+                var contents = new StreamReader(stream).ReadToEnd();
+    
+</pre>
+
+<p>And here's how to deserialize:</p>
+
+<pre lang="cs">
+    
+    
+                TestClass deserialized;
+                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                using (var reader = XmlReader.Create(contentStream))
+                {
+                    deserialized = (TestClass)serializer.Deserialize(reader);
+                }
+    
+</pre>
+
+<h2>Serialization/Deserialization with Settings Overrides</h2>
+
+<p>Additionally, <code>ExtendedXmlSerializer</code> also supports overrides for serialization and deserialization that allow you to pass in <code>XmlWriterSettings</code> and <code>XmlReaderSettings</code> respectively.  Here's an example of this for serialization:</p>
+
+<pre lang="cs">
+    
+    
+                var serializer = new ConfigurationContainer().Create();
+                var instance   = new TestClass();
+                var stream     = new MemoryStream();
+    
+                var contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
+    
+</pre>
+
+<p>And for deserialization:</p>
+
+<pre lang="cs">
+    
+    
+                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                var deserialized = serializer.Deserialize&lt;TestClass&gt;(new XmlReaderSettings{ /* ... */ }, contentStream);
+    
+</pre>
+
 <h2>Fluent API</h2>
 
 <p>ExtendedXmlSerializer use fluent API to configuration. Example:</p>
@@ -665,7 +725,7 @@
     &lt;SubjectWithThreeProperties xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Number&gt;123&lt;/Number&gt;
       &lt;Message&gt;Hello World!&lt;/Message&gt;
-      &lt;Time&gt;2018-01-26T10:27:57.3304845-05:00&lt;/Time&gt;
+      &lt;Time&gt;2018-05-26T11:52:19.4981212-04:00&lt;/Time&gt;
     &lt;/SubjectWithThreeProperties&gt;
 </pre>
 
@@ -673,7 +733,7 @@
 
 <pre lang="xml">
     &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-    &lt;SubjectWithThreeProperties Number=&quot;123&quot; Message=&quot;Hello World!&quot; Time=&quot;2018-01-26T10:27:57.3304845-05:00&quot; xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot; /&gt;
+    &lt;SubjectWithThreeProperties Number=&quot;123&quot; Message=&quot;Hello World!&quot; Time=&quot;2018-05-26T11:52:19.4981212-04:00&quot; xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot; /&gt;
 </pre>
 
 <h2>Verbatim Content (CDATA)</h2>
@@ -779,7 +839,7 @@
     &lt;ParameterizedSubject xmlns=&quot;clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples&quot;&gt;
       &lt;Message&gt;Hello World!&lt;/Message&gt;
       &lt;Number&gt;123&lt;/Number&gt;
-      &lt;Time&gt;2018-01-26T10:27:57.488419-05:00&lt;/Time&gt;
+      &lt;Time&gt;2018-05-26T11:52:19.7551187-04:00&lt;/Time&gt;
     &lt;/ParameterizedSubject&gt;
 </pre>
 

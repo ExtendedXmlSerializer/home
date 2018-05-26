@@ -28,8 +28,8 @@ using ExtendedXmlSerializer.Samples.Extensibility;
 using ExtendedXmlSerializer.Samples.MigrationMap;
 using ExtendedXmlSerializer.Samples.ObjectReference;
 using ExtendedXmlSerializer.Samples.Simple;
-using System;
 using ExtendedXmlSerializer.Samples.Upgrade;
+using System;
 
 namespace ExtendedXmlSerializer.Samples
 {
@@ -62,6 +62,8 @@ namespace ExtendedXmlSerializer.Samples
 			VerbatimContent.Default.Execute(null);
 
 			SimpleSamples.Run();
+			Serialization.Default.Execute(null);
+			Overrides.Default.Execute(null);
 			DictianarySamples.Run();
 			FluentApiSamples.Run();
 

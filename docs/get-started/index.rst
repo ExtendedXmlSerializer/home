@@ -135,6 +135,60 @@ Deserialization
 
     var obj2 = serializer.Deserialize<TestClass>(xml);
 
+Classic Serialization/Deserialization
+=====================================
+
+Most of the code examples that you see in this documentation make use of useful extension methods that make serialization and deserialization a snap with `ExtendedXmlSerializer.  However, if you would like to break down into the basic, classical pattern of serialization, and deserialization, this is supported too, as seen by the following examples.  Here's serialization:
+
+.. sourcecode:: csharp
+
+                var serializer = new ConfigurationContainer().Create();
+                var instance   = new TestClass();
+                var stream     = new MemoryStream();
+                using (var writer = XmlWriter.Create(stream))
+                {
+                    serializer.Serialize(writer, instance);
+                    writer.Flush();
+                }
+    
+                stream.Seek(0, SeekOrigin.Begin);
+                var contents = new StreamReader(stream).ReadToEnd();
+    
+
+And here's how to deserialize:
+
+.. sourcecode:: csharp
+
+                TestClass deserialized;
+                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                using (var reader = XmlReader.Create(contentStream))
+                {
+                    deserialized = (TestClass)serializer.Deserialize(reader);
+                }
+    
+
+Serialization/Deserialization with Settings Overrides
+=====================================================
+
+Additionally, `ExtendedXmlSerializer` also supports overrides for serialization and deserialization that allow you to pass in `XmlWriterSettings` and `XmlReaderSettings` respectively.  Here's an example of this for serialization:
+
+.. sourcecode:: csharp
+
+                var serializer = new ConfigurationContainer().Create();
+                var instance   = new TestClass();
+                var stream     = new MemoryStream();
+    
+                var contents = serializer.Serialize(new XmlWriterSettings { /* ... */ }, stream, instance);
+    
+
+And for deserialization:
+
+.. sourcecode:: csharp
+
+                var contentStream = new MemoryStream(Encoding.UTF8.GetBytes(contents));
+                var deserialized = serializer.Deserialize<TestClass>(new XmlReaderSettings{ /* ... */ }, contentStream);
+    
+
 Fluent API
 ==========
 
@@ -634,7 +688,7 @@ The default behavior for emitting data in an Xml document is to use elements, wh
     <SubjectWithThreeProperties xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Number>123</Number>
       <Message>Hello World!</Message>
-      <Time>2018-01-26T10:27:57.3304845-05:00</Time>
+      <Time>2018-05-26T11:52:19.4981212-04:00</Time>
     </SubjectWithThreeProperties>
 
 Making use of the `UseAutoFormatting` call will enable all types that have a registered `IConverter` (convert to string and back) to emit as attributes:
@@ -642,7 +696,7 @@ Making use of the `UseAutoFormatting` call will enable all types that have a reg
 .. sourcecode:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
-    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2018-01-26T10:27:57.3304845-05:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
+    <SubjectWithThreeProperties Number="123" Message="Hello World!" Time="2018-05-26T11:52:19.4981212-04:00" xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples" />
 
 Verbatim Content (CDATA)
 ========================
@@ -749,7 +803,7 @@ Taking this concept bit further leads to a favorite feature of ours in `Extended
     <ParameterizedSubject xmlns="clr-namespace:ExtendedXmlSerializer.Samples.Extensibility;assembly=ExtendedXmlSerializer.Samples">
       <Message>Hello World!</Message>
       <Number>123</Number>
-      <Time>2018-01-26T10:27:57.488419-05:00</Time>
+      <Time>2018-05-26T11:52:19.7551187-04:00</Time>
     </ParameterizedSubject>
 
 Tuples
