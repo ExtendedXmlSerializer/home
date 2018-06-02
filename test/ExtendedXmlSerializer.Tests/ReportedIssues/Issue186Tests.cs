@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
 {
-	public sealed class Issue184Tests
+	public sealed class Issue186Tests
 	{
 		[Fact]
 		void Verify()
@@ -14,7 +14,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var serializer = new ConfigurationContainer().ConfigureType<SubjectRequest>()
 			                                             .Member(x => x.SomeInterface)
 			                                             .Name("YourName")
-			                                             .EnableImplicitTypingFromNested<Issue184Tests>()
+			                                             .EnableImplicitTypingFromNested<Issue186Tests>()
 			                                             .Create()
 			                                             .ForTesting();
 			var request = new SubjectRequest {
