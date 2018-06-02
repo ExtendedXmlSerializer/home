@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			var serialize = serializer.Serialize(request);
 			serialize.Should()
-			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue184Tests-SubjectRequest><YourName xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""Issue184Tests-Subject2""><Message>message1</Message><Message2>message2</Message2></YourName></Issue184Tests-SubjectRequest>");
+			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue186Tests-SubjectRequest><YourName xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""Issue186Tests-Subject2""><Message>message1</Message><Message2>message2</Message2></YourName></Issue186Tests-SubjectRequest>");
 		}
 
 		public interface ISomeInterface {
