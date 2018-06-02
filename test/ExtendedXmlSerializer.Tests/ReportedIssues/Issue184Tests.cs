@@ -1,0 +1,47 @@
+﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.Tests.Support;
+using FluentAssertions;
+using Xunit;
+
+namespace ExtendedXmlSerializer.Tests.ReportedIssues
+{
+	public sealed class Issue184Tests
+	{
+		[Fact]
+		void Verify()
+		{
+			var serializer = new ConfigurationContainer().ConfigureType<SubjectRequest>()
+			                                             .Member(x => x.SomeInterface)
+			                                             .Name("YourName")
+			                                             .EnableImplicitTypingFromNested<Issue184Tests>()
+			                                             .Create()
+			                                             .ForTesting();
+			var request = new SubjectRequest {
+					SomeInterface = new Subject2 { Message = "message1", Message2 = "message2" }
+				};
+
+			var serialize = serializer.Serialize(request);
+			serialize.Should()
+			         .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue184Tests-SubjectRequest><YourName xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:type=""Issue184Tests-Subject2""><Message>message1</Message><Message2>message2</Message2></YourName></Issue184Tests-SubjectRequest>");
+		}
+
+		public interface ISomeInterface {
+			string Message { get; set; }
+		}
+
+		public class Subject : ISomeInterface {
+			public string Message { get; set; }
+		}
+
+		public class Subject2 : ISomeInterface {
+			public string Message { get; set; }
+			public string Message2 { get; set; }
+		}
+
+		public class SubjectRequest {
+			public ISomeInterface SomeInterface { get; set; }
+		}
+
+	}
+}
