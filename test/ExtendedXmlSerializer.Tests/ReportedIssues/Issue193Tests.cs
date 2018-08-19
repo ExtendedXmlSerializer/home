@@ -6,6 +6,7 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
+using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Reflection;
@@ -74,7 +75,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				public ISerializer Get(TypeInfo parameter)
 				{
 					var serializer = _contents.Get(parameter);
-					var result = parameter == typeof(RandomType) ? new Serializer(serializer).Adapt() : serializer;
+					var result = IsAssignableSpecification<RandomType>.Default.IsSatisfiedBy(parameter)
+						? new Serializer(serializer).Adapt() : serializer;
 					return result;
 				}
 			}
