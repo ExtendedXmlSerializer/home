@@ -4,6 +4,7 @@ using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -28,7 +29,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Description = "Dangerous territory. :)",
 				Subject     = new Subject {Message = "Hello World! I haven't coded in forever yo!"}
 			};
-			var result = serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue193Tests-RandomType DescriptionOverride=""Override: Dangerous territory. :)"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Subject><Message>Hello World! I haven't coded in forever yo!</Message></Subject></Issue193Tests-RandomType>");
+			var result =
+				serializer.Assert(instance,
+				                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue193Tests-RandomType DescriptionOverride=""Override: Dangerous territory. :)"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Subject><Message>Hello World! I haven't coded in forever yo!</Message></Subject></Issue193Tests-RandomType>");
 
 			result.Description.Should()
 			      .Be("Override: Dangerous territory. :)");
@@ -48,7 +51,9 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				Description = "Dangerous territory. :)",
 				Subject     = new Subject {Message = "Hello World! I haven't coded in forever yo!"}
 			};
-			var result = serializer.Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue193Tests-RandomType DescriptionOverride=""Override: Dangerous territory. :)"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Description>Dangerous territory. :)</Description><Subject><Message>Hello World! I haven't coded in forever yo!</Message></Subject></Issue193Tests-RandomType>");
+			var result =
+				serializer.Assert(instance,
+				                  @"<?xml version=""1.0"" encoding=""utf-8""?><Issue193Tests-RandomType DescriptionOverride=""Override: Dangerous territory. :)"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Description>Dangerous territory. :)</Description><Subject><Message>Hello World! I haven't coded in forever yo!</Message></Subject></Issue193Tests-RandomType>");
 
 			result.Description.Should()
 			      .Be("Override: Dangerous territory. :)");
@@ -68,15 +73,23 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			sealed class Contents : IContents
 			{
-				readonly IContents _contents;
+				readonly IContents                _contents;
+				readonly ISpecification<TypeInfo> _specification;
 
-				public Contents(IContents contents) => _contents = contents;
+				public Contents(IContents contents) : this(contents, IsAssignableSpecification<RandomType>.Default) {}
+
+				public Contents(IContents contents, ISpecification<TypeInfo> specification)
+				{
+					_contents      = contents;
+					_specification = specification;
+				}
 
 				public ISerializer Get(TypeInfo parameter)
 				{
 					var serializer = _contents.Get(parameter);
-					var result = IsAssignableSpecification<RandomType>.Default.IsSatisfiedBy(parameter)
-						? new Serializer(serializer).Adapt() : serializer;
+					var result = _specification.IsSatisfiedBy(parameter)
+						             ? new Serializer(serializer).Adapt()
+						             : serializer;
 					return result;
 				}
 			}
@@ -89,9 +102,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 				public RandomType Get(IFormatReader parameter)
 				{
-					var xml         = parameter.Get().To<System.Xml.XmlReader>();
+					var xml = parameter.Get()
+					                   .To<System.Xml.XmlReader>();
 					var description = xml.GetAttribute("DescriptionOverride");
-					var result = (RandomType)_serializer.Get(parameter);
+					var result      = (RandomType)_serializer.Get(parameter);
 					result.Description = description;
 					return result;
 				}
@@ -129,7 +143,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public RandomType Get(IFormatReader parameter)
 			{
-				var xml = parameter.Get().To<System.Xml.XmlReader>();
+				var xml = parameter.Get()
+				                   .To<System.Xml.XmlReader>();
 				var description = xml.GetAttribute("DescriptionOverride");
 				xml.Read();
 				xml.MoveToContent();
@@ -137,7 +152,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				var result = new RandomType
 				{
 					Description = description,
-					Subject = subject
+					Subject     = subject
 				};
 				return result;
 			}
