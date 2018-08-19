@@ -21,20 +21,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Identification;
 using JetBrains.Annotations;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
 	[UsedImplicitly]
 	sealed class VariableTypeElement : IElement
 	{
-		readonly IIdentities _identities;
+		readonly IIdentities    _identities;
+		readonly RuntimeElement _runtime;
 
-		public VariableTypeElement(IIdentities identities) => _identities = identities;
+		public VariableTypeElement(IIdentities identities, RuntimeElement runtime)
+		{
+			_identities = identities;
+			_runtime    = runtime;
+		}
 
 		public IWriter Get(TypeInfo parameter)
-			=> new VariableTypeIdentity(parameter.AsType(), _identities.Get(parameter), _identities);
+			=> new VariableTypeIdentity(parameter.AsType(), _identities.Get(parameter), _runtime);
 	}
 }

@@ -21,43 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
 using System.Reflection;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ContentModel.Collections;
+using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Content
 {
-	sealed class VariableTypeIdentity : IWriter
+	sealed class RuntimeElement : DecoratedSource<TypeInfo, IWriter>, IElement
 	{
-		readonly ISpecification<Type> _specification;
-		readonly IWriter<object>      _start;
-		readonly RuntimeElement       _runtime;
-
-		public VariableTypeIdentity(Type definition, IIdentity identity, RuntimeElement runtime)
-			: this(VariableTypeSpecification.Defaults.Get(definition), new Identity<object>(identity), runtime) {}
-
-		public VariableTypeIdentity(ISpecification<Type> specification, IWriter<object> start, RuntimeElement runtime)
-		{
-			_specification = specification;
-			_start         = start;
-			_runtime       = runtime;
-		}
-
-		public void Write(IFormatWriter writer, object instance)
-		{
-			var type = instance.GetType();
-			if (_specification.IsSatisfiedBy(type))
-			{
-				_runtime.Get(type.GetTypeInfo())
-				        .Write(writer, instance);
-			}
-			else
-			{
-				_start.Write(writer, instance);
-			}
-		}
+		public RuntimeElement(Element element, GenericElement generic, ArrayElement array)
+			: base(element.Let(IsGenericTypeSpecification.Default, generic)
+			              .Let(IsArraySpecification.Default, array)) {}
 	}
 }
