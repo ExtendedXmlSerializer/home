@@ -21,12 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System;
-using System.Collections;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Serialization;
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
@@ -37,6 +31,12 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Serialization;
 using ISerializers = ExtendedXmlSerializer.ContentModel.Content.ISerializers;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		XmlTextExtension() {}
 
 		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register<IContentType, ContentType>()
+			=> parameter.Register<IContentMember, ContentMember>()
 			            .RegisterInstance<IContentMembers>(ContentMembers.Instance)
 			            .Decorate<IMemberSerializations, MemberSerializations>()
 			            .Decorate<IMemberSerializers, MemberSerializers>()
@@ -125,15 +125,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly ISerializers               _serializers;
 			readonly IMemberSerializers         _members;
 			readonly IConverters                _converters;
-			readonly IContentType               _type;
+			readonly IContentMember               _member;
 
 			public MemberSerializers(ISerializer serializer, IIdentities identities, ISerializers serializers,
-			                         IMemberSerializers members, IConverters converters, IContentType type)
-				: this(IsContent.Instance, serializer, identities, serializers, members, converters, type) {}
+			                         IMemberSerializers members, IConverters converters, IContentMember member)
+				: this(IsContent.Instance, serializer, identities, serializers, members, converters, member) {}
 
 			public MemberSerializers(ISpecification<MemberInfo> content, ISerializer serializer, IIdentities identities,
 			                         ISerializers serializers, IMemberSerializers members, IConverters converters,
-			                         IContentType type)
+			                         IContentMember member)
 			{
 				_content     = content;
 				_serializer  = serializer;
@@ -141,7 +141,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				_serializers = serializers;
 				_members     = members;
 				_converters  = converters;
-				_type        = type;
+				_member        = member;
 			}
 
 			public IMemberSerializer Get(IMember parameter)
@@ -156,7 +156,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			IMemberSerializer Create(IMemberSerializer serializer, Type owner)
 			{
 				var item     = CollectionItemTypeLocator.Default.Get(serializer.Profile.MemberType);
-				var itemType = _type.Get(owner);
+				var itemType = _member.Get(owner).Item1;
 				var member   = (IMemberSerializer)new MemberSerializer(serializer, _converters.Get(itemType));
 				var result = item != null
 					             ? new ListSerializer(_serializer, _serializers, serializer, member,
@@ -261,22 +261,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		sealed class InnerContentActivation : IInnerContentActivation
 		{
 			readonly IInnerContentActivation _activator;
-			readonly IContentType            _type;
+			readonly IContentMember            _member;
 
-			public InnerContentActivation(IInnerContentActivation activator, IContentType type)
+			public InnerContentActivation(IInnerContentActivation activator, IContentMember member)
 			{
 				_activator = activator;
-				_type      = type;
+				_member      = member;
 			}
 
 			public IInnerContentActivator Get(TypeInfo parameter)
 			{
 				var content  = _activator.Get(parameter);
-				var typeInfo = _type.Get(parameter);
+				var typeInfo = _member.Get(parameter)?.Item2.MemberType;
 				var result = typeInfo != null
 					             ? new InnerContentActivator(content,
-					                                         IsCollectionTypeSpecification
-						                                         .Default.IsSatisfiedBy(typeInfo))
+					                                         IsCollectionTypeSpecification.Default.IsSatisfiedBy(typeInfo))
 					             : content;
 				return result;
 			}
@@ -331,24 +330,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			IsContent() : base(IsDefinedSpecification<XmlTextAttribute>.Default) {}
 		}
 
-		interface IContentType : IParameterizedSource<TypeInfo, TypeInfo> {}
+		interface IContentMember : IParameterizedSource<TypeInfo, Tuple<TypeInfo, IMember>> {}
 
-		sealed class ContentType : ReferenceCacheBase<TypeInfo, TypeInfo>, IContentType
+		sealed class ContentMember : ReferenceCacheBase<TypeInfo, Tuple<TypeInfo, IMember>>, IContentMember
 		{
 			readonly static Func<MemberInfo, bool> Specification = IsContent.Instance.IsSatisfiedBy;
 
 			readonly Func<MemberInfo, bool> _specification;
 			readonly ITypeMembers           _members;
 
-			public ContentType(ITypeMembers members) : this(Specification, members) {}
+			public ContentMember(ITypeMembers members) : this(Specification, members) {}
 
-			public ContentType(Func<MemberInfo, bool> specification, ITypeMembers members)
+			public ContentMember(Func<MemberInfo, bool> specification, ITypeMembers members)
 			{
 				_specification = specification;
 				_members       = members;
 			}
 
-			protected override TypeInfo Create(TypeInfo parameter)
+			protected override Tuple<TypeInfo, IMember> Create(TypeInfo parameter)
 			{
 				var members = _members.Get(parameter);
 				for (var i = 0; i < members.Length; i++)
@@ -356,11 +355,11 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 					var member = members[i];
 					if (_specification(member.Metadata))
 					{
-						var result = IsCollectionTypeSpecification.Default.IsSatisfiedBy(member.MemberType)
+						var type = IsCollectionTypeSpecification.Default.IsSatisfiedBy(member.MemberType)
 							             ? member.Metadata.GetCustomAttribute<XmlTextAttribute>()
 							                     ?.Type?.GetTypeInfo() ?? member.MemberType
 							             : member.MemberType;
-						return result;
+						return Tuple.Create(type, member);
 					}
 				}
 
@@ -373,18 +372,21 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			readonly IInnerContent    _content;
 			readonly ConditionMonitor _monitor;
 
-			public InnerContent(IInnerContent content, bool apply) :
-				this(content, apply ? new ConditionMonitor() : null) {}
+			public InnerContent(IInnerContent content, bool apply)  : this(content, new ConditionMonitor(), apply) {}
 
-			public InnerContent(IInnerContent content, ConditionMonitor monitor)
+			public InnerContent(IInnerContent content, ConditionMonitor monitor, bool apply)
 			{
 				_content = content;
 				_monitor = monitor;
+				if (apply)
+				{
+					monitor.Apply();
+				}
 			}
 
 			public IFormatReader Get() => _content.Get();
 
-			public bool MoveNext() => _content.MoveNext() || (_monitor?.Apply() ?? false);
+			public bool MoveNext() => _content.MoveNext() || _monitor.Apply();
 
 			public void Reset()
 			{
