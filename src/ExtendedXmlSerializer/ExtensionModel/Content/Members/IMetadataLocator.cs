@@ -21,17 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
-using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedConstructorSpecification
-		: AnySpecification<ConstructorInfo>, IValidConstructorSpecification
-	{
-		public ParameterizedConstructorSpecification(IValidConstructorSpecification specification,
-		                                             IConstructorMembers source)
-			: base(specification, source.IfAssigned()) {}
-	}
+	interface IMetadataLocator : IParameterizedSource<string, MemberDescriptor?> {}
 }

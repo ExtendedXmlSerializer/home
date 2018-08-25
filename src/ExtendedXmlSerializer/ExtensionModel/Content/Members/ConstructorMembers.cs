@@ -22,11 +22,9 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
@@ -35,70 +33,44 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class ConstructorMembers : CacheBase<ConstructorInfo, ImmutableArray<IMember>?>, IConstructorMembers
 	{
-		readonly IMetadataSpecification _specification;
-		readonly IMembers _source;
+		readonly IMembers            _members;
+		readonly IMemberLocators     _locator;
+		readonly Func<IMember, bool> _member;
 
-		public ConstructorMembers(IMetadataSpecification specification, IMembers source)
+		public ConstructorMembers(IMembers members, IMemberLocators locator, IMemberSpecification member)
+			: this(members, locator, member.IsSatisfiedBy) {}
+
+		ConstructorMembers(IMembers members, IMemberLocators locator, Func<IMember, bool> member)
 		{
-			_specification = specification;
-			_source = source;
+			_members = members;
+			_locator = locator;
+			_member  = member;
 		}
 
 		protected override ImmutableArray<IMember>? Create(ConstructorInfo parameter)
 		{
-			var parameters = parameter.GetParameters();
-			if (parameters.Any())
+			var type = parameter.DeclaringType.GetTypeInfo();
+			if (!IsGenericDictionarySpecification.Default.IsSatisfiedBy(type))
+				// A bit of a hack to circumvent https://github.com/wojtpl2/ExtendedXmlSerializer/issues/134
+				// might want to pretty this up at some point.
 			{
-				var type = parameter.DeclaringType.GetTypeInfo();
-				if (!IsGenericDictionarySpecification.Default.IsSatisfiedBy(type)) // A bit of a hack to circumvent https://github.com/wojtpl2/ExtendedXmlSerializer/issues/134
-																				   // might want to pretty this up at some point.
+				var source = parameter.GetParameters();
+				var result = source.Select(x => x.Name)
+				                   .Select(_locator.Get(type)
+				                                   .Get)
+				                   .Where(x => x.HasValue)
+				                   .Select(x => x.Value)
+				                   .Select(_members.Get)
+				                   .Where(_member)
+				                   .Select(x => new ParameterizedMember(x))
+				                   .ToImmutableArray<IMember>();
+				if (result.Length == source.Length)
 				{
-					var result = Yield(type, parameters).ToImmutableArray();
-					if (result.Length == parameters.Length)
-					{
-						return result;
-					}
+					return result;
 				}
 			}
+
 			return null;
-		}
-
-		IEnumerable<IMember> Yield(TypeInfo type, ParameterInfo[] parameters)
-		{
-			var length = parameters.Length;
-			for (var i = 0; i < length; i++)
-			{
-				var reflected = Members(type, parameters[i].Name).Only();
-				var member = reflected != null ? _source.Get(reflected) : null;
-				if (member != null && !member.IsWritable && Allowed(reflected))
-				{
-					yield return new ParameterizedMember(member);
-				}
-			}
-		}
-
-		bool Allowed(MemberInfo reflected)
-		{
-			switch (reflected)
-			{
-				case FieldInfo field:
-					return _specification.IsSatisfiedBy(field);
-				case PropertyInfo property:
-					return _specification.IsSatisfiedBy(property);
-				default:
-					return false;
-			}
-		}
-
-		static IEnumerable<MemberInfo> Members(TypeInfo typeInfo, string name)
-		{
-			foreach (var member in typeInfo.GetMembers().Where(IsSerializableMember.Default.IsSatisfiedBy))
-			{
-				if (member.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-				{
-					yield return member;
-				}
-			}
 		}
 	}
 }

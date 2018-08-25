@@ -21,17 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
+using System;
+using System.Collections.Immutable;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedConstructorSpecification
-		: AnySpecification<ConstructorInfo>, IValidConstructorSpecification
+	sealed class MetadataLocator : IMetadataLocator
 	{
-		public ParameterizedConstructorSpecification(IValidConstructorSpecification specification,
-		                                             IConstructorMembers source)
-			: base(specification, source.IfAssigned()) {}
+		readonly ImmutableArray<MemberInfo> _members;
+
+		public MetadataLocator(ImmutableArray<MemberInfo> members) => _members = members;
+
+		public MemberDescriptor? Get(string parameter)
+		{
+			for (int i = 0; i < _members.Length; i++)
+			{
+				var member = _members[i];
+				if (member.Name.Equals(parameter, StringComparison.OrdinalIgnoreCase))
+				{
+					return member;
+				}
+			}
+
+			return null;
+		}
 	}
 }

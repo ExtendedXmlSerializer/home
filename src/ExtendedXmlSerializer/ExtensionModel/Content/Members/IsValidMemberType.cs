@@ -21,17 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.Core.Specifications;
-using ExtendedXmlSerializer.ReflectionModel;
 using System.Reflection;
+using ExtendedXmlSerializer.ContentModel.Members;
+using ExtendedXmlSerializer.Core.Specifications;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
-	sealed class ParameterizedConstructorSpecification
-		: AnySpecification<ConstructorInfo>, IValidConstructorSpecification
+	public sealed class IsValidMemberType : ISpecification<IMember>
 	{
-		public ParameterizedConstructorSpecification(IValidConstructorSpecification specification,
-		                                             IConstructorMembers source)
-			: base(specification, source.IfAssigned()) {}
+		readonly IMetadataSpecification _specification;
+
+		public IsValidMemberType(IMetadataSpecification specification) => _specification = specification;
+
+		public bool IsSatisfiedBy(IMember parameter)
+		{
+			switch (parameter.Metadata)
+			{
+				case FieldInfo field:
+					return _specification.IsSatisfiedBy(field);
+				case PropertyInfo property:
+					return _specification.IsSatisfiedBy(property);
+				default:
+					return false;
+			}
+		}
 	}
 }
