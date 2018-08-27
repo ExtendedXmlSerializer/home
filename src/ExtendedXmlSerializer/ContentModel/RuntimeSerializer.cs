@@ -21,24 +21,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using JetBrains.Annotations;
-using System;
-using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel
 {
 	[UsedImplicitly]
 	sealed class RuntimeSerializer : ISerializer
 	{
-		readonly IContents       _contents;
+		readonly IContents       _serialization;
 		readonly IClassification _classification;
 
-		public RuntimeSerializer(IContents contents, IClassification classification)
+		public RuntimeSerializer(IRuntimeSerialization serialization, IClassification classification)
 		{
-			_contents       = contents;
+			_serialization  = serialization;
 			_classification = classification;
 		}
 
@@ -46,23 +45,11 @@ namespace ExtendedXmlSerializer.ContentModel
 		{
 			var typeInfo = instance.GetType()
 			                       .GetTypeInfo();
-			var serializer = Serializer(typeInfo);
-			serializer.Write(writer, instance);
+			_serialization.Get(typeInfo)
+			              .Write(writer, instance);
 		}
 
-		ISerializer Serializer(TypeInfo typeInfo)
-		{
-			var serializer = _contents.Get(typeInfo);
-			if (serializer is RuntimeSerializer)
-			{
-				throw new InvalidOperationException(
-				                                    $"The serializer for type '{typeInfo}' could not be found.  Please ensure that the type is a valid type can be activated.  The default behavior requires an empty public constructor on the (non-abstract) class to activate.");
-			}
-
-			return serializer;
-		}
-
-		public object Get(IFormatReader reader) => Serializer(_classification.Get(reader))
-			.Get(reader);
+		public object Get(IFormatReader reader) => _serialization.Get(_classification.Get(reader))
+		                                                         .Get(reader);
 	}
 }

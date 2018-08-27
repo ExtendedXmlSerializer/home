@@ -21,31 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel;
+using System;
+using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.Core;
-using ExtendedXmlSerializer.ExtensionModel.References;
 
-namespace ExtendedXmlSerializer.ExtensionModel
+namespace ExtendedXmlSerializer.ContentModel
 {
-	public sealed class SerializationExtension : ISerializerExtension
+	sealed class RuntimeSerialization : IRuntimeSerialization
 	{
-		public static SerializationExtension Default { get; } = new SerializationExtension();
+		readonly IContents _contents;
 
-		SerializationExtension() {}
+		public RuntimeSerialization(IContents contents) => _contents = contents;
 
-		public IServiceRepository Get(IServiceRepository parameter)
-			=> parameter.Register(typeof(IRead<>), typeof(Read<>))
-			            .Register(typeof(IWrite<>), typeof(Write<>))
-			            .Register(typeof(ISerializer<,>), typeof(Serializer<,>))
-			            .Register<IRuntimeSerialization, RuntimeSerialization>()
-			            .Register<ISerializer, RuntimeSerializer>()
-			            .Register<RuntimeSerializers>()
-			            .Register<ISerializers, Serializers>()
-			            .Decorate<ISerializers, NullableAwareSerializers>()
-			            .Decorate<ISerializers, ReferenceAwareSerializers>()
-			            .Decorate<IContents, RecursionAwareContents>();
+		public ISerializer Get(TypeInfo parameter)
+		{
+			var serializer = _contents.Get(parameter);
+			if (serializer is RuntimeSerializer)
+			{
+				throw new InvalidOperationException(
+				                                    $"The serializer for type '{parameter}' could not be found.  Please ensure that the type is a valid type can be activated.  The default behavior requires an empty public constructor on the (non-abstract) class to activate.");
+			}
 
-		void ICommand<IServices>.Execute(IServices parameter) {}
+			return serializer;
+		}
 	}
 }
