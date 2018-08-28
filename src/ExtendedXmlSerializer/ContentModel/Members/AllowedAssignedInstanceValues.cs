@@ -21,17 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
+using System.Reflection;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class AllowedAssignedInstanceValues : IAllowedMemberValues
 	{
 		readonly ISpecification<TypeInfo> _specification;
-		readonly ITypeMemberDefaults _defaults;
+		readonly ITypeMemberDefaults      _defaults;
 
 		public static AllowedAssignedInstanceValues Default { get; } = new AllowedAssignedInstanceValues();
 
@@ -41,12 +41,12 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 		public AllowedAssignedInstanceValues(ISpecification<TypeInfo> specification, ITypeMemberDefaults defaults)
 		{
 			_specification = specification;
-			_defaults = defaults;
+			_defaults      = defaults;
 		}
 
 		public IAllowedValueSpecification Get(MemberInfo parameter)
 		{
-			var type = parameter.GetReflectedType();
+			var type   = parameter.ReflectedType.GetTypeInfo();
 			var result = _specification.IsSatisfiedBy(type) ? FromDefault(type, parameter) : null;
 			return result;
 		}
@@ -56,7 +56,7 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 			var defaultValue = _defaults.Get(reflectedType)
 			                            .Invoke(parameter);
 			var inverse = new EqualitySpecification<object>(defaultValue).Inverse();
-			var result = new AllowedValueSpecification(inverse);
+			var result  = new AllowedValueSpecification(inverse);
 			return result;
 		}
 	}

@@ -75,11 +75,52 @@ namespace ExtendedXmlSerializer.Core
 		public static MemberInfo GetMemberInfo(this Expression expression)
 		{
 			var lambda = (LambdaExpression) expression;
-			var result =
+			var member =
 				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ?? lambda.Body)
 				.To<MemberExpression>()
 				.Member;
-			return result;
+
+			return member;
+		}
+
+		static MemberInfo Member(this Expression expression)
+		{
+			var lambda = (LambdaExpression) expression;
+			var member =
+				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ?? lambda.Body)
+				.To<MemberExpression>()
+				.Member;
+
+			return member;
+		}
+
+		public static MemberInfo GetMemberInfo<T, TMember>(this Expression<Func<T, TMember>> expression)
+			=> Support<T>.Key.GetMember(expression.Member().Name).Single();
+
+		/// <summary>
+		/// When overridden in a derived class, returns the <see cref="propertyInfo"/> object for the
+		/// method on the direct or indirect base class in which the property represented
+		/// by this instance was first declared.
+		/// </summary>
+		/// <returns>A <see cref="propertyInfo"/> object for the first implementation of this property.</returns>
+		public static PropertyInfo GetBaseDefinition(this PropertyInfo propertyInfo)
+		{
+			var method = propertyInfo.GetAccessors(true)[0];
+			if (method != null)
+			{
+				var baseMethod = method.GetBaseDefinition();
+
+				var result = baseMethod == method ? propertyInfo : baseMethod.DeclaringType.GetProperty(propertyInfo.Name);
+				return result;
+			}
+
+			return null;
+
+			/*var arguments = propertyInfo.GetIndexParameters().Select(p => p.ParameterType).ToArray();
+			var allProperties = BindingFlags.Instance | BindingFlags.Public
+			                                          | BindingFlags.NonPublic | BindingFlags.Static;
+			return baseMethod.DeclaringType.GetProperty(propertyInfo.Name, allProperties,
+			                                            null, propertyInfo.PropertyType, arguments, null);*/
 		}
 
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,

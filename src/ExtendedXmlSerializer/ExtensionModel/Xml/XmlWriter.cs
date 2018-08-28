@@ -21,53 +21,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel.Content;
+using ExtendedXmlSerializer.ContentModel.Conversion;
+using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Properties;
+using ExtendedXmlSerializer.ContentModel.Reflection;
+using ExtendedXmlSerializer.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Conversion;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.ContentModel.Properties;
-using ExtendedXmlSerializer.ContentModel.Reflection;
-using ExtendedXmlSerializer.Core;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	sealed class XmlWriter : Dictionary<string, string>, IFormatWriter
 	{
-		readonly static string Xmlns = XNamespace.Xmlns.NamespaceName;
+		readonly static string    Xmlns            = XNamespace.Xmlns.NamespaceName;
 		readonly static Delimiter DefaultSeparator = DefaultClrDelimiters.Default.Separator;
 
-		readonly IAliases _aliases;
+		readonly IAliases             _aliases;
 		readonly IIdentifierFormatter _formatter;
-		readonly IIdentityStore _store;
-		readonly ITypePartResolver _parts;
+		readonly IIdentityStore       _store;
+		readonly ITypePartResolver    _parts;
 
-		readonly System.Xml.XmlWriter _writer;
-		readonly Delimiter _separator;
+		readonly System.Xml.XmlWriter       _writer;
+		readonly Delimiter                  _separator;
 		readonly Func<TypeParts, TypeParts> _selector;
 
-		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-			System.Xml.XmlWriter writer)
-			: this(aliases, formatter, store, parts, writer, DefaultSeparator)
-		{
-		}
+		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store,
+		                 ITypePartResolver parts,
+		                 System.Xml.XmlWriter writer)
+			: this(aliases, formatter, store, parts, writer, DefaultSeparator) {}
 
-		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-			System.Xml.XmlWriter writer, Delimiter separator)
+		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store,
+		                 ITypePartResolver parts,
+		                 System.Xml.XmlWriter writer, Delimiter separator)
 		{
-			_aliases = aliases;
+			_aliases   = aliases;
 			_formatter = formatter;
-			_store = store;
-			_parts = parts;
-			_writer = writer;
+			_store     = store;
+			_parts     = parts;
+			_writer    = writer;
 			_separator = separator;
-			_selector = Get;
+			_selector  = Get;
 		}
 
 		public object Get() => _writer;
@@ -91,7 +90,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			if (content == null)
 			{
-				_writer.WriteAttributeString("xsi", NullValueIdentity.Default.Name, NullValueIdentity.Default.Identifier, "true");
+				_writer.WriteAttributeString("xsi", NullValueIdentity.Default.Name,
+				                             NullValueIdentity.Default.Identifier, "true");
 			}
 			else
 			{
@@ -107,8 +107,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public void Content(IIdentity property, string content)
 		{
 			var identifier = property.Identifier.NullIfEmpty();
-			var prefix = identifier != null ? Prefix(identifier) : null;
-			var name = property.Name;
+			var prefix     = identifier != null ? Prefix(identifier) : null;
+			var name       = property.Name;
 
 			if (!string.IsNullOrEmpty(prefix))
 			{
@@ -154,15 +154,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		}
 
 		public string Get(MemberInfo parameter)
-			=> parameter is TypeInfo
-				? GetType((TypeInfo) parameter)
-				: string.Concat(GetType(parameter.GetReflectedType()), _separator, parameter.Name);
+			=> parameter is TypeInfo info
+				   ? GetType(info)
+				   : string.Concat(GetType(parameter.ReflectedType.GetTypeInfo()), _separator, parameter.Name);
 
 		string GetType(TypeInfo parameter)
 		{
 			var typeParts = _parts.Get(parameter);
 			var qualified = Get(typeParts);
-			var result = TypePartsFormatter.Default.Get(qualified);
+			var result    = TypePartsFormatter.Default.Get(qualified);
 			return result;
 		}
 
@@ -170,10 +170,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			var arguments = parameter.GetArguments();
 			var result = new TypeParts(parameter.Name, Prefix(parameter.Identifier),
-				arguments.HasValue
-					? arguments.Value.Select(_selector)
-						.ToImmutableArray
-					: (Func<ImmutableArray<TypeParts>>) null, parameter.Dimensions);
+			                           arguments.HasValue
+				                           ? arguments.Value.Select(_selector)
+				                                      .ToImmutableArray
+				                           : (Func<ImmutableArray<TypeParts>>)null, parameter.Dimensions);
 			return result;
 		}
 

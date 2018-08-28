@@ -21,32 +21,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ReflectionModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
 	class TypeMemberSource : ITypeMemberSource
 	{
 		readonly IMetadataSpecification _specification;
-		readonly IProperties _properties;
-		readonly IFields _fields;
-		readonly IMembers _members;
+		readonly IProperties            _properties;
+		readonly IFields                _fields;
+		readonly IMembers               _members;
 
-		public TypeMemberSource(IMetadataSpecification specification, IProperties properties, IFields fields, IMembers members)
+		public TypeMemberSource(IMetadataSpecification specification, IProperties properties, IFields fields,
+		                        IMembers members)
 		{
 			_specification = specification;
-			_properties = properties;
-			_fields = fields;
-			_members = members;
+			_properties    = properties;
+			_fields        = fields;
+			_members       = members;
 		}
 
 		public IEnumerable<IMember> Get(TypeInfo parameter)
 		{
-			var alteration = new ReflectedTypeAlteration(parameter);
-			var properties = _properties.Get(parameter).Select(alteration.Get).ToArray();
+			var properties = _properties.Get(parameter)
+			                            .ToArray();
 			var length = properties.Length;
 			for (var i = 0; i < length; i++)
 			{
@@ -57,7 +58,8 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 				}
 			}
 
-			var fields = _fields.Get(parameter).Select(alteration.Get).ToArray();
+			var fields = _fields.Get(parameter)
+			                    .ToArray();
 			var l = fields.Length;
 			for (var i = 0; i < l; i++)
 			{

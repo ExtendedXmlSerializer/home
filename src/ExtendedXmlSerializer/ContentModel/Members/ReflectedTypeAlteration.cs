@@ -21,12 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Reflection;
-using ExtendedXmlSerializer.Core.Sources;
-
 namespace ExtendedXmlSerializer.ContentModel.Members
 {
-	class ReflectedTypeAlteration : IAlteration<MemberInfo>
+	/*class ReflectedTypeAlteration : IAlteration<MemberInfo>
 	{
 		readonly ReflectedTypes _types;
 		readonly TypeInfo _reflectedType;
@@ -47,5 +44,5 @@ namespace ExtendedXmlSerializer.ContentModel.Members
 
 		public PropertyInfo Get(PropertyInfo parameter) => (PropertyInfo) Get((MemberInfo) parameter);
 		public FieldInfo Get(FieldInfo parameter) => (FieldInfo) Get((MemberInfo) parameter);
-	}
+	}*/
 }
