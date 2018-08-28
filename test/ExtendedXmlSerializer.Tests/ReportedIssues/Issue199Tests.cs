@@ -1,9 +1,12 @@
 ﻿using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -15,6 +18,22 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			var registry = new PrefixRegistryExtension(new Dictionary<Type, string>
 				                                            {{typeof(PatientVerificationRequest), "q"}});
+			var container = new ConfigurationContainer().Extend(registry)
+			                                            // Totally cheating here. Put formatter logic to get what you want:
+			                                            .Register(x => "2018-08-07+10:00",
+			                                                      x => new DateTime(2018, 8, 7, 10, 0, 0))
+			                                            .InspectingType<PatientVerificationRequest>()
+			                                            .Create()
+			                                            .ForTesting();
+
+			container.Assert(new PatientVerificationRequest {EarliestDateOfService = DateTime.Today},
+			                 @"<?xml version=""1.0"" encoding=""utf-8""?><q:patientVerificationRequest OPVTypeCde=""PVM"" earliestDateOfService=""2018-08-07+10:00"" xmlns:q=""http://hic.gov.au/hiconline/hiconline/version-4"" />");
+		}
+
+		[Fact]
+		void AllTypes()
+		{
+			var registry = new PrefixRegistryExtension(new AllTypesInSameNamespace<PatientVerificationRequest>().ToDictionary(x => x, x => "q"));
 			var container = new ConfigurationContainer().Extend(registry)
 			                                            // Totally cheating here. Put formatter logic to get what you want:
 			                                            .Register(x => "2018-08-07+10:00",
