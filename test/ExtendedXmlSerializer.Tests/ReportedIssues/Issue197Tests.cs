@@ -1,6 +1,7 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System;
@@ -40,6 +41,27 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .ForTesting()
 			                            .Assert(new Button(),
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue197Tests-Button xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><AutoSize>false</AutoSize><DialogResult>None</DialogResult></Issue197Tests-Button>");
+		}
+
+		[Fact]
+		void VerifyProperties()
+		{
+			var buttonEx2 = new ButtonEx2{MyProperty = 1.0};
+			var serializer = new ConfigurationContainer().Extend(FallbackSerializationExtension.Default)
+			                                             .Type<ButtonExBase2>().Member(x => x.MyProperty).Ignore()
+			                                             .Create()
+			                                             .ForTesting();
+			serializer.Cycle(buttonEx2).ShouldBeEquivalentTo(buttonEx2);
+		}
+
+		public class ButtonExBase2
+		{
+			public int MyProperty { get; set; }
+		}
+
+		public class ButtonEx2 : ButtonExBase2
+		{
+			public new double MyProperty { get; set; }
 		}
 
 		[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = true)]

@@ -31,7 +31,8 @@ namespace ExtendedXmlSerializer.ReflectionModel
 	{
 		public static MemberExpression PropertyOrField(this UnaryExpression expression, Type type, string name)
 		{
-			var property = type.GetProperty(name) ?? type.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			var typeInfo = type.GetTypeInfo();
+			var property = typeInfo.GetDeclaredProperty(name) ?? typeInfo.GetProperty(name, BindingFlags.NonPublic | BindingFlags.Instance);
 			if (property != null)
 			{
 				return Expression.Property(expression, property);
