@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ExtendedXmlSerializer.ReflectionModel
@@ -31,6 +32,8 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		public static Properties Default { get; } = new Properties();
 		Properties() {}
 
-		public IEnumerable<PropertyInfo> Get(TypeInfo parameter) => parameter.GetProperties();
+		public IEnumerable<PropertyInfo> Get(TypeInfo parameter) => parameter.GetProperties()
+		                                                                     .GroupBy(x => x.Name)
+		                                                                     .Select(x => x.First());
 	}
 }
