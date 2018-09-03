@@ -28,7 +28,7 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
+	public sealed class MemberSpecification<T> : AllSpecification<T> where T : MemberInfo
 	{
 		readonly static AllowSpecification Specification = AllowSpecification.Default;
 

@@ -31,10 +31,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	public sealed class DefaultMetadataSpecification : MetadataSpecification
 	{
-		readonly static MemberSpecification<PropertyInfo> Property =
+		public static ISpecification<PropertyInfo> Property { get; } =
 			new MemberSpecification<PropertyInfo>(PropertyMemberSpecification.Default);
 
-		readonly static MemberSpecification<FieldInfo> Field =
+		public static ISpecification<FieldInfo> Field { get; } =
 			new MemberSpecification<FieldInfo>(new FieldMemberSpecification(
 			                                                                IsDefinedSpecification<XmlElementAttribute>
 				                                                                .Default.Or(

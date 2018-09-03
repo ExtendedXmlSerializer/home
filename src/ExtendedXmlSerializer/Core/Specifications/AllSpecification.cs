@@ -25,7 +25,7 @@ using System.Collections.Immutable;
 
 namespace ExtendedXmlSerializer.Core.Specifications
 {
-	class AllSpecification<T> : ISpecification<T>
+	public class AllSpecification<T> : ISpecification<T>
 	{
 		readonly ImmutableArray<ISpecification<T>> _specifications;
 
