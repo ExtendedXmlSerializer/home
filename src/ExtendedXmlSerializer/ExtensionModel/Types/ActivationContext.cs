@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
-using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections;
 
@@ -31,10 +30,10 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 	sealed class ActivationContext : IActivationContext
 	{
 		readonly ITableSource<string, object> _source;
-		readonly IActivator _activator;
+		readonly Func<object> _activator;
 		readonly IList _list;
 
-		public ActivationContext(ITableSource<string, object> source, IActivator activator, IList list)
+		public ActivationContext(ITableSource<string, object> source, Func<object> activator, IList list)
 		{
 			_source = source;
 			_activator = activator;
@@ -47,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public void Assign(string key, object value) => _source.Assign(key, value);
 
-		public object Get() => _activator.Get();
+		public object Get() => _activator();
 		public bool Remove(string key) => _source.Remove(key);
 
 		public IEnumerator GetEnumerator() => _list.GetEnumerator();
@@ -60,7 +59,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public object SyncRoot => _list.SyncRoot;
 
-		public int Add(object value) => _list.Add(value);
+		public int Add(object value) => _list.Add(value is ISource<object>  source ? source.Get() : value);
 
 		public void Clear() => _list.Clear();
 

@@ -55,7 +55,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 			var command = new CompositeCommand<object>(new ApplyMemberValuesCommand(_accessors, _members, source), new AddItemsCommand(list));
 			var alteration = new ConfiguringAlteration<object>(command);
 			var activator = new AlteringActivator(alteration, _activator.Invoke(source.Get));
-			var result = new ActivationContext(source, activator, list);
+			var result = new ActivationContext(source, activator.Singleton().Get, list);
 			return result;
 		}
 	}
