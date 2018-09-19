@@ -1,19 +1,11 @@
 ﻿using ExtendedXmlSerializer.Configuration;
-using ExtendedXmlSerializer.ContentModel;
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel;
-using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
-using ExtendedXmlSerializer.ReflectionModel;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
-using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -30,13 +22,37 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                          .Create()
 			                                          .ForTesting();
 
-			var subject = new[] {new TravelFile {Name = "Hello World!"}};
-			support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfTravelFile><TravelFile Name=""Hello World!"" /></ArrayOfTravelFile>")
+			var subject = new[] {new TravelFile {Name = "Hello World!", Participants = new[]
+			{
+				new Participant{ParticipantId = 679556, Name = "xxxx"}, 
+				new Participant{ParticipantId = 679557, Name = "xxx"}
+			}.ToList()}};
+			support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfTravelFile><TravelFile Name=""Hello World!""><Participants>
+         <Participant>
+            <ParticipantId>679556</ParticipantId>
+            <Name>xxxx</Name>
+         </Participant>
+         <Participant>
+            <ParticipantId>679557</ParticipantId>
+            <Name>xxx</Name>
+</Participant>
+      </Participants></TravelFile></ArrayOfTravelFile>")
 			       .ShouldBeEquivalentTo(subject);
 		}
 
 		public sealed class TravelFile
 		{
+
+			public List<Participant> Participants { get; set; }
+
+			public string Name { get; set; }
+		}
+
+		public class Participant
+		{
+			public int ParticipantId { get; set; }
+
+
 			public string Name { get; set; }
 		}
 
