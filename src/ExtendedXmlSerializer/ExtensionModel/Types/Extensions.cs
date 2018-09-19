@@ -22,6 +22,10 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Types
 {
@@ -32,5 +36,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Types
 
 		public static IConfigurationContainer EnableAllConstructors(this IConfigurationContainer @this)
 			=> @this.Extend(AllConstructorsExtension.Default);
+
+		public static IEnumerable<Type> WithArrayTypes(this IEnumerable<Type> @this)
+			=> @this.ToArray()
+			        .Alter(x => x.Concat(x.Select(y => y.MakeArrayType())).ToArray());
 	}
 }

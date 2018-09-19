@@ -216,6 +216,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Emit(EmitBehaviors.Classic)
 			        .Extend(ClassicExtension.Default);
 
+		public static IConfigurationContainer EnableClassicListNaming(this IConfigurationContainer @this)
+			=> @this.Extend(ClassicListNamingExtension.Default);
+
 		public static IConfigurationContainer InspectingType<T>(this IConfigurationContainer @this)
 			=> @this.InspectingTypes(typeof(T).Yield());
 
