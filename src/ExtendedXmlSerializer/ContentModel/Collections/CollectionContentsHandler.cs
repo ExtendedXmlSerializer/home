@@ -21,8 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Content;
-using ExtendedXmlSerializer.ContentModel.Identification;
+using ExtendedXmlSerializer.ContentModel.Members;
 
 namespace ExtendedXmlSerializer.ContentModel.Collections
 {
@@ -34,9 +33,7 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 
 		public void Handle(IListInnerContent contents, IReader reader)
 		{
-			var parameter = contents.Get();
-			var item = IdentityComparer.Default.Equals(parameter, NullElementIdentity.Default) ? null : reader.Get(parameter);
-			_assignment.Assign(contents, item);
+			_assignment.Assign(contents, reader.GetIfAssigned(contents.Get()));
 		}
 	}
 }

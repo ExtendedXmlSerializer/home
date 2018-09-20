@@ -23,7 +23,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				new Participant{ParticipantId = 679556, Name = "xxxx"},
 				new Participant{ParticipantId = 679557, Name = "xxx"}
 			}.ToList()}};
-			support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfIssue206Tests-TravelFile><Issue206Tests-TravelFile Name=""Hello World!""><Participants>
+			support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""utf-8""?><ArrayOfIssue206Tests-TravelFile xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" ><Issue206Tests-TravelFile Name=""Hello World!""><Participants>
 		 <Issue206Tests-Participant>
 			<ParticipantId>679556</ParticipantId>
 			<Name>xxxx</Name>
