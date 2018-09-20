@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using Xunit;
@@ -23,10 +22,6 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                          .Create()
 			                                          .ForTesting();
 
-			var subject = new[] {new Issue206Tests.TravelFile {Name = "Hello World!", Participants = new[]
-			{
-				new Issue206Tests.Participant{ParticipantId = 679556}
-			}.ToList()}};
 			var files = support.Deserialize<TravelFile[]>(@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <ArrayOfIssue206TestsExtensive-TravelFile  xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" >
    <Issue206TestsExtensive-TravelFile>
