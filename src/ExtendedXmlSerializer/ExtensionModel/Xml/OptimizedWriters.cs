@@ -48,7 +48,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public IFormatWriter Get(System.Xml.XmlWriter parameter)
 			=> new OptimizedNamespaceXmlWriter(_factory.Get(parameter),
 			                                   new IdentifierCommand(_identifiers,
-			                                                         _specification.Build(parameter),
+			                                                         _specification.Fix(parameter),
 			                                                         _instances.Build(parameter)));
 	}
 }
