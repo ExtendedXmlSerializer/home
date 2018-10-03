@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>ExtendedXmlSerializer.Tests</AssemblyTitle>
-    <TargetFrameworks>netcoreapp2.0;net471;net45</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net471;net45</TargetFrameworks>
     <AssemblyName>ExtendedXmlSerializer.Tests</AssemblyName>
     <PackageId>ExtendedXmlSerializer.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
@@ -15,7 +15,7 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <DefineConstants>$(DefineConstants);CORE</DefineConstants>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
     <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netcoreapp2.1' ">
     <Reference Include="WindowsBase" />
   </ItemGroup>
 
