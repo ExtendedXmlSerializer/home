@@ -31,14 +31,14 @@ deploy:
 - provider: NuGet
   name: production
   api_key:
-    secure: 3kas96IOnYrNCEaDd12hoBJI3lTNGqMOUmlctK71KCPYvBSJIwdQAWoBMCSUsvrF
+    secure: BZXq18P7QWYeR9cShPTVYtgO0REK+wycTxcdayBx+Cu8hJC1P7b+vXKmcaEpHmE6
   on:
     branch: master
     appveyor_repo_tag: true
 - provider: NuGet
   name: production
   api_key:
-    secure: 3kas96IOnYrNCEaDd12hoBJI3lTNGqMOUmlctK71KCPYvBSJIwdQAWoBMCSUsvrF
+    secure: BZXq18P7QWYeR9cShPTVYtgO0REK+wycTxcdayBx+Cu8hJC1P7b+vXKmcaEpHmE6
   on:
     branch: v2.0.0
     appveyor_repo_tag: true    
