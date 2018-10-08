@@ -26,9 +26,12 @@ namespace ExtendedXmlSerializer.DocGenerator
 			doc.Add("We will mark it as a question/discussion and talk it through with you using sample code.  This process is currently being used to fill in the gaps with our documentation, which could use a little love.");
 			doc.Add(string.Empty);
 			doc.Add("Additionally, please make use of our documentation tag seen here:");
+			doc.Add(string.Empty);
 			doc.Add("https://github.com/wojtpl2/ExtendedXmlSerializer/issues?q=is%3Aissue+label%3ADocumentation");
 			doc.Add(string.Empty);
 			doc.Add("You can see the history of questions asked that we feel could eventually be added to our documentation.  We'll eventually get to it, we swear. 😆");
+			doc.Add(string.Empty);
+			doc.Add(string.Empty);
 
 			doc.AddHeader("Information");
 			doc.Add("Support platforms:");
