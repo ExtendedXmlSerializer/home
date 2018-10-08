@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Core.Sources;
+using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using System;
 using System.Collections.Generic;
@@ -50,18 +51,18 @@ namespace ExtendedXmlSerializer.Core
 
 		public static T Alter<T>(this T @this, Func<T, T> action) => @this != null ? action(@this) : default(T);
 
-
 		public static string Quoted(this string @this) => QuotedAlteration.Default.Get(@this);
 
-		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> @this,
-		                                                                  IEqualityComparer<TKey> comparer = null)
+		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(
+			this IEnumerable<KeyValuePair<TKey, TValue>> @this,
+			IEqualityComparer<TKey> comparer = null)
 			=> @this.ToDictionary(x => x.Key, x => x.Value, comparer);
 
 		public static T Only<T>(this ImmutableArray<T> @this) => @this.Length == 1 ? @this[0] : default(T);
 
 		public static T Only<T>(this IEnumerable<T> @this)
 		{
-			var items = @this.ToArray();
+			var items  = @this.ToArray();
 			var result = items.Length == 1 ? items[0] : default(T);
 			return result;
 		}
@@ -74,9 +75,10 @@ namespace ExtendedXmlSerializer.Core
 
 		public static MemberInfo GetMemberInfo(this Expression expression)
 		{
-			var lambda = (LambdaExpression) expression;
+			var lambda = (LambdaExpression)expression;
 			var member =
-				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ?? lambda.Body)
+				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ??
+				 lambda.Body)
 				.To<MemberExpression>()
 				.Member;
 
@@ -85,9 +87,10 @@ namespace ExtendedXmlSerializer.Core
 
 		static MemberInfo Member(this Expression expression)
 		{
-			var lambda = (LambdaExpression) expression;
+			var lambda = (LambdaExpression)expression;
 			var member =
-				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ?? lambda.Body)
+				(lambda.Body.AsTo<UnaryExpression, Expression>(unaryExpression => unaryExpression.Operand) ??
+				 lambda.Body)
 				.To<MemberExpression>()
 				.Member;
 
@@ -95,13 +98,15 @@ namespace ExtendedXmlSerializer.Core
 		}
 
 		public static MemberInfo GetMemberInfo<T, TMember>(this Expression<Func<T, TMember>> expression)
-			=> Support<T>.Key.GetMember(expression.Member().Name).Single();
+			=> Support<T>.Key.GetMember(expression.Member()
+			                                      .Name)
+			             .Single();
 
 		public static TResult AsTo<TSource, TResult>(this object target, Func<TSource, TResult> transform,
 		                                             Func<TResult> resolve = null)
 		{
 			var @default = resolve ?? (() => default(TResult));
-			var result = target is TSource ? transform((TSource) target) : @default();
+			var result   = target is TSource ? transform((TSource)target) : @default();
 			return result;
 		}
 
@@ -110,7 +115,7 @@ namespace ExtendedXmlSerializer.Core
 			var items = other.ToDictionary(x => x.GetType(), x => x);
 			foreach (var item in @this)
 			{
-				T found;
+				T   found;
 				var key = item.GetType();
 				yield return items.TryGetValue(key, out found) && items.Remove(key) ? found : item;
 			}
@@ -174,13 +179,17 @@ namespace ExtendedXmlSerializer.Core
 		public static IEnumerable<TValue> Get<TKey, TValue>(this ILookup<TKey, TValue> target, TKey key) => target[key];
 
 		public static TValue? GetStructure<TKey, TValue>(this IDictionary<TKey, TValue> target, TKey key)
-			where TValue : struct => target.TryGetValue(key, out var result) ? result : (TValue?) null;
+			where TValue : struct
+			=> AssignedSpecification<TKey>.Default.IsSatisfiedBy(key) && target.TryGetValue(key, out var result)
+				   ? result
+				   : (TValue?)null;
 
 		public static IEnumerable<T> Appending<T>(this IEnumerable<T> @this, params T[] items) => @this.Concat(items);
 
 		public static string NullIfEmpty(this string target) => string.IsNullOrEmpty(target) ? null : target;
 
 		public static T Self<T>(this T @this) => @this;
+
 		public static TResult Accept<TParameter, TResult>(this TResult @this, TParameter _) => @this;
 
 		public static IEnumerable<T> Yield<T>(this T @this)
@@ -188,33 +197,33 @@ namespace ExtendedXmlSerializer.Core
 			yield return @this;
 		}
 
-		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this) => @this.Select(x => x.GetTypeInfo());
+		public static IEnumerable<TypeInfo> YieldMetadata(this IEnumerable<Type> @this)
+			=> @this.Select(x => x.GetTypeInfo());
 
 		public static ImmutableArray<TypeInfo> ToMetadata(this IEnumerable<Type> @this)
 			=> @this.YieldMetadata()
 			        .ToImmutableArray();
 
-		public static IEnumerable<Type> YieldTypes(this IEnumerable<TypeInfo> @this) => @this.Select(x => x.GetTypeInfo());
+		public static IEnumerable<Type> YieldTypes(this IEnumerable<TypeInfo> @this)
+			=> @this.Select(x => x.GetTypeInfo());
 
 		public static ImmutableArray<Type> ToTypes(this IEnumerable<TypeInfo> @this)
 			=> @this.YieldTypes()
 			        .ToImmutableArray();
 
-
-		public static T To<T>(this object @this) => @this is T ? (T) @this : default(T);
+		public static T To<T>(this object @this) => @this is T ? (T)@this : default(T);
 
 		public static T Get<T>(this IServiceProvider @this)
 			=> @this is T
-				   ? (T) @this
+				   ? (T)@this
 				   : @this.GetService(typeof(T))
 				          .To<T>();
 
 		public static T GetValid<T>(this IServiceProvider @this)
 			=> @this is T
-				   ? (T) @this
+				   ? (T)@this
 				   : @this.GetService(typeof(T))
 				          .AsValid<T>($"Could not located service '{typeof(T)}'");
-
 
 		public static void ForEach<TIn, TOut>(this IEnumerable<TIn> @this, Func<TIn, TOut> select)
 		{
@@ -230,11 +239,11 @@ namespace ExtendedXmlSerializer.Core
 			{
 				if (@this is T)
 				{
-					return (T) @this;
+					return (T)@this;
 				}
 
 				throw new InvalidOperationException(message ??
-				                                    $"'{@this.GetType() .FullName}' is not of type {typeof(T).FullName}.");
+				                                    $"'{@this.GetType().FullName}' is not of type {typeof(T).FullName}.");
 			}
 
 			return default(T);

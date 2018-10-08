@@ -87,7 +87,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.References
 				var declared = Identity(parameter);
 				var result   = _activator.Get(parameter);
 
-				var identity = declared ?? Entity(parameter, result);
+				var identity = declared ?? (result != null ? Entity(parameter, result) : null);
 
 				if (identity != null)
 				{

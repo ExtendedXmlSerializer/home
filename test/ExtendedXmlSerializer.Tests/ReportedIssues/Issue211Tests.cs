@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
 using Xunit;
 
 namespace ExtendedXmlSerializer.Tests.ReportedIssues
@@ -30,10 +31,39 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .BeNull();
 		}
 
+		[Fact]
+		void VerifyConfigurationWithReferences()
+		{
+			var instance = new Subject {Message = null};
+			new ConfigurationContainer().Emit(EmitBehaviors.Assigned).EnableReferences()
+			                            .Create()
+			                            .Cycle(instance)
+			                            .Message
+			                            .Should()
+			                            .BeNull();
+		}
+
+		[Fact]
+		void VerifySubjectWithDate()
+		{
+			var instance = new SubjectWithDate {Date = null};
+			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			                            .Create()
+			                            .Cycle(instance).Date
+			                            .Should()
+			                            .Be(null);
+		}
+
 		sealed class Subject
 		{
 			public const string DefaultValue = "Default Value";
 			public string Message { get; set; } = DefaultValue;
 		}
+
+		public class SubjectWithDate
+		{
+			public DateTime? Date { get; set; } = DateTime.MinValue;
+		}
+
 	}
 }
