@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	interface IContentsHistory : IParameterizedSource<IFormatReader, Stack<IInnerContent>> {}
+	public interface IContentsHistory : IParameterizedSource<IFormatReader, Stack<IInnerContent>> {}
 }

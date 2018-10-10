@@ -21,16 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using System.Collections.Generic;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
 using ExtendedXmlSerializer.Core.Sources;
+using System.Collections.Generic;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Content
 {
-	sealed class ContentsHistory : ReferenceCache<IFormatReader, Stack<IInnerContent>>, IContentsHistory
+	public sealed class ContentsHistory : ReferenceCache<IFormatReader, Stack<IInnerContent>>, IContentsHistory
 	{
 		public static ContentsHistory Default { get; } = new ContentsHistory();
+
 		ContentsHistory() : base(_ => new Stack<IInnerContent>()) {}
 	}
 }

@@ -25,7 +25,7 @@ using System.Runtime.CompilerServices;
 
 namespace ExtendedXmlSerializer.Core.Sources
 {
-	class ReferenceCache<TKey, TValue> : ReferenceCacheBase<TKey, TValue>
+	public class ReferenceCache<TKey, TValue> : ReferenceCacheBase<TKey, TValue>
 		where TKey : class where TValue : class
 	{
 		readonly ConditionalWeakTable<TKey, TValue>.CreateValueCallback _callback;
