@@ -2,6 +2,7 @@
 using ExtendedXmlSerializer.ContentModel;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Format;
+using ExtendedXmlSerializer.ContentModel.Members;
 using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Content;
@@ -30,17 +31,15 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                            .Register(typeof(Serializer))
 			                                            .Create();
 
-			var instance = new Owner {Element = new DatabaseObject {Id = Guid.NewGuid(), Table = "TableName"}};
-			var content  = container.Serialize(instance);
-			var key      = new XmlReaderFactory().Get(new MemoryStream(Encoding.UTF8.GetBytes(content)));
-			var owner    = Get(key);
-			var list     = Proxies.Default.Get(key);
-
-			// Do processing/database calls here.
-			foreach (var tuple in list)
+			var instance = new Owner
 			{
-				tuple.Item1.Element = new DatabaseObject {Id = tuple.Item2.Id, Table = tuple.Item2.Table};
-			}
+				Element = new DatabaseObject {Id = Guid.NewGuid(), Table = "TableName", Creted = "Loader"}
+			};
+			var content = container.Serialize(instance);
+			var key     = new XmlReaderFactory().Get(new MemoryStream(Encoding.UTF8.GetBytes(content)));
+			var owner   = Get(key);
+
+			RestoreDatabaseObjects.Default.Execute(key);
 
 			owner.ShouldBeEquivalentTo(instance);
 			owner.Element.Table.Should()
@@ -55,27 +54,55 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			}
 		}
 
-		interface IProxies : IParameterizedSource<object, IList<ValueTuple<Owner, Proxy>>> {}
+		sealed class RestoreDatabaseObjects : ICommand<XmlReader>
+		{
+			public static RestoreDatabaseObjects Default { get; } = new RestoreDatabaseObjects();
 
-		sealed class Proxies : ReferenceCache<object, IList<ValueTuple<Owner, Proxy>>>, IProxies
+			RestoreDatabaseObjects() : this(Proxies.Default) {}
+
+			readonly IProxies _proxies;
+
+			public RestoreDatabaseObjects(IProxies proxies) => _proxies = proxies;
+
+			public void Execute(XmlReader parameter)
+			{
+				var list = _proxies.Get(parameter);
+
+				//Do processing/database calls here.
+				foreach (var valueTuple in list)
+				{
+					valueTuple.Item3.Assign(valueTuple.Item2, new DatabaseObject
+					{
+						Id = valueTuple.Item1.Id, Table = valueTuple.Item1.Table, Creted = "Loader"
+					});
+				}
+			}
+		}
+
+		interface IProxies : IParameterizedSource<object, IList<ValueTuple<Proxy, object, IMemberAccess>>> {}
+
+		sealed class Proxies : ReferenceCache<object, IList<ValueTuple<Proxy, object, IMemberAccess>>>, IProxies
 		{
 			public static Proxies Default { get; } = new Proxies();
 
-			Proxies() : base(_ => new List<ValueTuple<Owner, Proxy>>()) {}
+			Proxies() : base(_ => new List<ValueTuple<Proxy, object, IMemberAccess>>()) {}
 		}
 
 		sealed class Serializer : ISerializer<DatabaseObject>
 		{
-			readonly ISerializer      _serializer;
-			readonly IContentsHistory _history;
-			readonly IProxies         _proxies;
+			readonly ISerializer           _serializer;
+			readonly IMemberSerializations _members;
+			readonly IContentsHistory      _history;
+			readonly IProxies              _proxies;
 
-			public Serializer(IContents contents)
-				: this(contents.Get(typeof(Proxy).GetTypeInfo()), ContentsHistory.Default, Proxies.Default) {}
+			public Serializer(IContents contents, IMemberSerializations members)
+				: this(contents.Get(typeof(Proxy).GetTypeInfo()), members, ContentsHistory.Default, Proxies.Default) {}
 
-			public Serializer(ISerializer serializer, IContentsHistory history, IProxies proxies)
+			public Serializer(ISerializer serializer, IMemberSerializations members, IContentsHistory history,
+			                  IProxies proxies)
 			{
 				_serializer = serializer;
+				_members    = members;
 				_history    = history;
 				_proxies    = proxies;
 			}
@@ -84,10 +111,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			{
 				var owner = _history.Get(parameter)
 				                    .Peek()
-				                    .Current.To<Owner>();
-				var proxy = (Proxy)_serializer.Get(parameter);
+				                    .Current;
+				var access = _members.Get(owner.GetType())
+				                     .Get(parameter.Name)
+				                     .Access;
+
 				_proxies.Get(parameter.Get())
-				        .Add((owner, proxy));
+				        .Add(((Proxy)_serializer.Get(parameter), owner, access));
 				return null;
 			}
 
@@ -114,6 +144,8 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public Guid Id { get; set; }
 
 			public string Table { get; set; }
+
+			public string Creted { get; set; }
 		}
 	}
 #endif

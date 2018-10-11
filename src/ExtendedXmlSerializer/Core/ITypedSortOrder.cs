@@ -25,5 +25,5 @@ using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.Core
 {
-	interface ITypedSortOrder : ITypedTable<int> {}
+	public interface ITypedSortOrder : ITypedTable<int> {}
 }
