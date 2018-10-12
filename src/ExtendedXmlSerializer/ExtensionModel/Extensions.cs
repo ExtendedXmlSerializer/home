@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.Configuration;
+using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
@@ -30,11 +31,8 @@ namespace ExtendedXmlSerializer.ExtensionModel
 		public static IConfigurationContainer EnableThreadProtection(this IConfigurationContainer @this)
 			=> @this.Extend(ThreadProtectionExtension.Default);
 
-		/*public static IConfigurationContainer EnableRootInstances(this IConfigurationContainer @this)
-		{
-			@this.Root.With<RootInstanceExtension>();
-			return @this;
-		}*/
+		public static IConfigurationContainer EnableMemberExceptionHandling(this IConfigurationContainer @this)
+			=> @this.Extend(MemberExceptionHandlingExtension.Default);
 
 		public static T EnableRootInstances<T>(this T @this) where T : IRootContext
 		{
