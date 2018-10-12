@@ -67,6 +67,12 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				case XmlNodeType.Attribute:
 					return _reader.Value;
 				default:
+					if (_reader.IsEmptyElement && _reader.CanReadValueChunk)
+					{
+						Set();
+						return string.Empty;
+					}
+
 					var isNull = IsSatisfiedBy(NullValueIdentity.Default);
 
 					if (!isNull)
