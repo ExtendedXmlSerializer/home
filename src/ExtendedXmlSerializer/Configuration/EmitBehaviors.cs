@@ -22,7 +22,6 @@
 // SOFTWARE.
 
 using ExtendedXmlSerializer.ContentModel.Members;
-using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 
@@ -31,7 +30,7 @@ namespace ExtendedXmlSerializer.Configuration
 	public static class EmitBehaviors
 	{
 		public static IEmitBehavior Always { get; } =
-			new EmitBehavior(new AllowedSpecificationAlteration(AlwaysSpecification<object>.Default));
+			new EmitBehavior(new AllowedSpecificationAlteration(AlwaysEmitMemberSpecification.Default));
 
 		public static IEmitBehavior NotDefault { get; } =
 			new EmitBehavior(new AllowedSpecificationAlteration(AllowAssignedValues.Default));

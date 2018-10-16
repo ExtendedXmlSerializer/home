@@ -57,11 +57,14 @@ namespace ExtendedXmlSerializer.ReflectionModel
 
 		NewExpression Reference(Type parameter, TypeInfo typeInfo)
 		{
-			var constructor = _locator.Get(typeInfo);
+			var accounted = typeInfo.IsInterface && IsCollectionTypeSpecification.Default.IsSatisfiedBy(parameter)
+				                ? typeof(List<>).MakeGenericType(CollectionItemTypeLocator.Default.Get(typeInfo))
+				                : typeInfo;
+			var constructor = _locator.Get(accounted);
 			var parameters = constructor.GetParameters();
 			var result = parameters.Length > 0
 				? Expression.New(constructor, parameters.Select(Selector))
-				: Expression.New(parameter);
+				: Expression.New(accounted);
 			return result;
 		}
 

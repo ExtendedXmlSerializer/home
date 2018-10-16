@@ -24,7 +24,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			subject.ShouldAllBeEquivalentTo(instance);
 		}
 
-		
+
 		public sealed class Subject : IEnumerable<Subject>
 		{
 			Subject parent;
@@ -35,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			[XmlIgnore]
 			public ReadOnlyCollection<Subject> Children => children.AsReadOnly();
-			
+
 			public void AddChild(Subject go)
 			{
 				// remove old parent

@@ -46,7 +46,8 @@ namespace ExtendedXmlSerializer.ReflectionModel
 		{
 			foreach (var member in _members)
 			{
-				if (_values.IsSatisfiedBy(member.Name))
+				var isSatisfiedBy = _values.IsSatisfiedBy(member.Name);
+				if (isSatisfiedBy)
 				{
 					var access = _accessors.Get(member);
 					var value = _values.Get(member.Name);

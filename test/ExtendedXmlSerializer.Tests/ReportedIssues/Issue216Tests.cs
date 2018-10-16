@@ -22,7 +22,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void VerifyAlways()
 		{
-			var instance = new Foo {Baz = {"hello"}};
+			var instance = new Foo {Baz = {}};
 			var cycle = new ConfigurationContainer().Emit(EmitBehaviors.Always)
 			                                        .Create()
 			                                        .Cycle(instance);
@@ -40,6 +40,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 		[Fact]
+		void EmitEmpty()
+		{
+			var instance = new Foo();
+			new ConfigurationContainer().Emit(EmitBehaviors.Assigned)
+			                            .Create()
+			                            .ForTesting()
+			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests"" />");
+		}
+
+		[Fact]
 		void EmitAlways()
 		{
 			var instance = new Foo {Baz = {"hello"}};
@@ -47,6 +57,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">hello</string></Baz></Issue216Tests-Foo>");
+		}
+
+		[Fact]
+		void EmitAlwaysEmpty()
+		{
+			var instance = new Foo {Baz = {}};
+			new ConfigurationContainer().Emit(EmitBehaviors.Always)
+			                            .Create()
+			                            .ForTesting()
+			                            .Assert(instance, @"<?xml version=""1.0"" encoding=""utf-8""?><Issue216Tests-Foo xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Baz><Capacity>0</Capacity></Baz></Issue216Tests-Foo>");
 		}
 
 
