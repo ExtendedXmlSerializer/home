@@ -12,11 +12,24 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		[Fact]
 		void Verify()
 		{
-			var instance = new MyListImpl<string>("Hello World!");
+			var instance = new MyListImpl<string>("Hello World!") {"One", "Two"};
 			new ConfigurationContainer().EnableParameterizedContent()
 			                            .Create()
+			                            .ForTesting()
 			                            .Cycle(instance)
 			                            .ShouldBeEquivalentTo(instance);
+		}
+
+		[Fact]
+		void VerifyParent()
+		{
+			var instance = new SerializedObject();
+			new ConfigurationContainer().EnableParameterizedContent()
+			                            .EnableReferences()
+			                            .Create()
+			                            .ForTesting()
+			                            .Assert(instance,
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">Test</string><string xmlns=""https://extendedxmlserializer.github.io/system"">One</string><string xmlns=""https://extendedxmlserializer.github.io/system"">Two</string></MyListImpl></Issue218Tests-SerializedObject>");
 		}
 
 		public class MyListImpl<T> : List<T>
@@ -24,6 +37,13 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public MyListImpl(object owner) => Owner = owner;
 
 			public object Owner { get; }
+		}
+
+		public class SerializedObject
+		{
+			public SerializedObject() => MyListImpl = new MyListImpl<string>(this) {"Test", "One", "Two"};
+
+			public MyListImpl<string> MyListImpl { get; }
 		}
 	}
 }
