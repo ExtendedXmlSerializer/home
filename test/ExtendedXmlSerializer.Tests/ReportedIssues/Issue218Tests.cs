@@ -1,5 +1,6 @@
 ﻿using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
 using System.Collections.Generic;
@@ -26,10 +27,11 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			var instance = new SerializedObject();
 			new ConfigurationContainer().EnableParameterizedContent()
 			                            .EnableReferences()
+			                            .UseOptimizedNamespaces()
 			                            .Create()
 			                            .ForTesting()
 			                            .Assert(instance,
-			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><string xmlns=""https://extendedxmlserializer.github.io/system"">Test</string><string xmlns=""https://extendedxmlserializer.github.io/system"">One</string><string xmlns=""https://extendedxmlserializer.github.io/system"">Two</string></MyListImpl></Issue218Tests-SerializedObject>");
+			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><sys:string>Test</sys:string><sys:string>One</sys:string><sys:string>Two</sys:string></MyListImpl></Issue218Tests-SerializedObject>");
 		}
 
 		public class MyListImpl<T> : List<T>
