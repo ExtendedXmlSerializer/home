@@ -34,6 +34,45 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><sys:string>Test</sys:string><sys:string>One</sys:string><sys:string>Two</sys:string></MyListImpl></Issue218Tests-SerializedObject>");
 		}
 
+		
+		[Fact]
+		void VerifySerializeWithParent()
+		{
+			var serializer = new ConfigurationContainer().EnableParameterizedContent()
+				.EnableReferences()
+				.UseOptimizedNamespaces()
+				.Create()
+				.ForTesting();
+			
+			var p = new Parent();
+			p.Childs.Add("test");
+
+			var tset = serializer.Serialize(p);
+
+		}
+
+		
+		public class Parent
+		{
+			public Parent()
+			{
+				Childs = new ChildList(this);
+			}
+
+			public ChildList Childs { get; }
+		}
+
+
+		public class ChildList : List<string>
+		{
+			private readonly object _owner;
+
+			public ChildList(object owner)
+			{
+				_owner = owner;
+			}
+		}
+		
 		public class MyListImpl<T> : List<T>
 		{
 			public MyListImpl(object owner) => Owner = owner;
