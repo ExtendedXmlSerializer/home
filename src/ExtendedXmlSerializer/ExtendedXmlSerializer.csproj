@@ -22,7 +22,6 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>-->
     <NoWarn>1701;1702;1705;0436;0628</NoWarn>
-    <PackageReleaseNotes>Release notes and subsequent discussion may be found here: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/162</PackageReleaseNotes>
     <PackageIconUrl>https://extendedxmlserializer.github.io/img/logoBig.png</PackageIconUrl>
   </PropertyGroup>
 
