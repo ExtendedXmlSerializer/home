@@ -47,7 +47,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 			            .Decorate<IValidConstructorSpecification, ParameterizedConstructorSpecification>()
 			            .Decorate<ITypeMembers, ParameterizedTypeMembers>()
 			            .Decorate<IActivators, ParameterizedActivators>()
-			            .Decorate<IInnerContentResult, ParameterizedResultHandler>();
+			            .Decorate<IInnerContentResult, ParameterizedResultHandler>()
+			            .RegisterInstance(RuntimeSerializationExceptionMessage.Default);
 
 		void ICommand<IServices>.Execute(IServices parameter) {}
 	}

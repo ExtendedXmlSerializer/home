@@ -3,6 +3,7 @@ using ExtendedXmlSerializer.ExtensionModel.Content;
 using ExtendedXmlSerializer.ExtensionModel.Xml;
 using ExtendedXmlSerializer.Tests.Support;
 using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			                                    @"<?xml version=""1.0"" encoding=""utf-8""?><Issue218Tests-SerializedObject xmlns:sys=""https://extendedxmlserializer.github.io/system"" xmlns:exs=""https://extendedxmlserializer.github.io/v2"" exs:identity=""1"" xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><MyListImpl><Owner exs:type=""Issue218Tests-SerializedObject"" exs:reference=""1"" /><Capacity>4</Capacity><sys:string>Test</sys:string><sys:string>One</sys:string><sys:string>Two</sys:string></MyListImpl></Issue218Tests-SerializedObject>");
 		}
 
-		
+
 		[Fact]
 		void VerifySerializeWithParent()
 		{
@@ -43,15 +44,16 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 				.UseOptimizedNamespaces()
 				.Create()
 				.ForTesting();
-			
+
 			var p = new Parent();
 			p.Childs.Add("test");
 
-			var tset = serializer.Serialize(p);
+			Action action = () => serializer.Serialize(p);
+			action.ShouldThrow<InvalidOperationException>().WithMessage("The serializer for type \'ExtendedXmlSerializer.Tests.ReportedIssues.Issue218Tests+ChildList\' could not be found.  Please ensure that the type is a valid type can be activated. Parameterized Content is enabled on the container.  By default, the type must satisfy the following rules if a public parameterless constructor is not found:\r\n\r\n- Each member must not already be marked as an explicit contract\r\n- Must be a public fields / property.\r\n- Any public fields (spit) must be readonly\r\n- Any public properties must have a get but not a set (on the public API, at least)\r\n- There must be exactly one interesting constructor, with parameters that are a case-insensitive match for each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor parameter names)\r\n\r\nMore information can be found here: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/222");
 
 		}
 
-		
+
 		public class Parent
 		{
 			public Parent()
@@ -69,10 +71,10 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 
 			public ChildList(object owner)
 			{
-				_owner = owner;
+				this._owner = owner;
 			}
 		}
-		
+
 		public class MyListImpl<T> : List<T>
 		{
 			public MyListImpl(object owner) => Owner = owner;

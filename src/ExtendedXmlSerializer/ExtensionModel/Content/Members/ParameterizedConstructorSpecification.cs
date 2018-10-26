@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using ExtendedXmlSerializer.ContentModel;
+using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ReflectionModel;
 using System.Reflection;
@@ -33,5 +35,23 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 		public ParameterizedConstructorSpecification(IValidConstructorSpecification specification,
 		                                             IConstructorMembers source)
 			: base(specification, source.IfAssigned()) {}
+	}
+
+	sealed class RuntimeSerializationExceptionMessage
+		: DelegatedSource<TypeInfo, string>, IRuntimeSerializationExceptionMessage
+	{
+		public static IRuntimeSerializationExceptionMessage Default { get; }
+			= new RuntimeSerializationExceptionMessage();
+
+		RuntimeSerializationExceptionMessage() :
+			base(x => @"Parameterized Content is enabled on the container.  By default, the type must satisfy the following rules if a public parameterless constructor is not found:
+
+- Each member must not already be marked as an explicit contract
+- Must be a public fields / property.
+- Any public fields (spit) must be readonly
+- Any public properties must have a get but not a set (on the public API, at least)
+- There must be exactly one interesting constructor, with parameters that are a case-insensitive match for each field/property in some order (i.e. there must be an obvious 1:1 mapping between members and constructor parameter names)
+
+More information can be found here: https://github.com/wojtpl2/ExtendedXmlSerializer/issues/222") {}
 	}
 }
