@@ -54,6 +54,21 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		}
 
 
+		[Fact]
+		void VerifyPublicFieldsWorkAsExpected()
+		{
+			var serializer = new ConfigurationContainer().EnableParameterizedContent()
+			                                             .EnableReferences()
+			                                             .UseOptimizedNamespaces()
+			                                             .Create()
+			                                             .ForTesting();
+
+			var p = new ValidParent();
+			p.Childs.Add("test");
+
+			serializer.Serialize(p);
+		}
+
 		public class Parent
 		{
 			public Parent()
@@ -64,10 +79,23 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 			public ChildList Childs { get; }
 		}
 
+		public class ValidParent
+		{
+			public ValidParent() => Childs = new ValidChildList(this);
+
+			public ValidChildList Childs { get; }
+		}
+
+		public class ValidChildList : List<string>
+		{
+			public readonly object owner;
+
+			public ValidChildList(object owner) => this.owner = owner;
+		}
 
 		public class ChildList : List<string>
 		{
-			private readonly object _owner;
+			readonly object _owner;
 
 			public ChildList(object owner)
 			{

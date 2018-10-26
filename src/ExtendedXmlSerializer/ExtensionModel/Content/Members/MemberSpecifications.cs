@@ -29,6 +29,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content.Members
 {
 	sealed class MemberSpecifications : Items<ISpecification<IMember>>, IMemberSpecifications
 	{
-		public MemberSpecifications(IsValidMemberType valid) : base(IsWritable.Default.Inverse(), valid) {}
+		public MemberSpecifications(IsValidMemberType valid) : base(IsField.Default.Or(IsWritable.Default.Inverse()),
+		                                                            valid) {}
 	}
 }
