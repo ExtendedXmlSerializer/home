@@ -1,16 +1,18 @@
 <Project>
   <PropertyGroup>
-    <Milestone>9</Milestone>
     <Version>2.1.14</Version>
     <VersionPrefix>$(Version)</VersionPrefix>
     <PackageReleaseNotes>
-      List of all issues addressed in this release may be found here:
-      https://github.com/wojtpl2/ExtendedXmlSerializer/milestone/$(Milestone)?closed=1
+      Features addressed in this release (where applicable):
+      https://github.com/wojtpl2/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(Version)+label%3Aenhancement
 
-      To create a new discussion around this release, please visit here:
+      Bugs addressed in this release:
+      https://github.com/wojtpl2/ExtendedXmlSerializer/issues?q=is%3Aissue+sort%3Aupdated-desc+milestone%3A$(Version)+label%3Abug
+
+      To create a new discussion around this release, please feel free to comment on one of the above issues, or visit:
       https://github.com/wojtpl2/ExtendedXmlSerializer/issues/new?milestone=$(Version)&amp;labels=discussion
 
-      If you would like to report a new issue, please do so here:
+      If you would like to report a new issue altogether, please do so here:
       https://github.com/wojtpl2/ExtendedXmlSerializer/issues/new?labels=bug
 
       Or if you have a question and/or would like to discuss a topic around ExtendedXmlSerializer:
