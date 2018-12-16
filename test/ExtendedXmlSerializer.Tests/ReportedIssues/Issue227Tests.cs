@@ -20,7 +20,7 @@ namespace ExtendedXmlSerializer.Tests.ReportedIssues
 		{
 			_serializer.Serialize(new FooBar())
 			           .Should()
-			           .NotBeNull();
+			           .Be(@"<?xml version=""1.0"" encoding=""utf-8""?><Issue227Tests-FooBar xmlns=""clr-namespace:ExtendedXmlSerializer.Tests.ReportedIssues;assembly=ExtendedXmlSerializer.Tests""><Foo>Bar</Foo></Issue227Tests-FooBar>");
 		}
 	}
 }
