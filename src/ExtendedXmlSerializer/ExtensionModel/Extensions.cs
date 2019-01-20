@@ -23,11 +23,18 @@
 
 using ExtendedXmlSerializer.Configuration;
 using ExtendedXmlSerializer.ExtensionModel.Content.Members;
+using ExtendedXmlSerializer.ExtensionModel.Instances;
 
 namespace ExtendedXmlSerializer.ExtensionModel
 {
 	public static class Extensions
 	{
+		public static IConfigurationContainer AllowExistingInstances(this IConfigurationContainer @this)
+		{
+			@this.Root.With<ExistingInstanceExtension>();
+			return @this;
+		}
+
 		public static IConfigurationContainer EnableThreadProtection(this IConfigurationContainer @this)
 			=> @this.Extend(ThreadProtectionExtension.Default);
 

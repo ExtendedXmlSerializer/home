@@ -29,6 +29,7 @@ using ExtendedXmlSerializer.Core;
 using ExtendedXmlSerializer.Core.Sources;
 using ExtendedXmlSerializer.Core.Specifications;
 using ExtendedXmlSerializer.ExtensionModel.Content;
+using ExtendedXmlSerializer.ExtensionModel.Instances;
 using ExtendedXmlSerializer.ExtensionModel.Types.Sources;
 using ExtendedXmlSerializer.ExtensionModel.Xml.Classic;
 using ExtendedXmlSerializer.ReflectionModel;
@@ -57,7 +58,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return @this.Attribute();
 		}
 
-		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static IMemberConfiguration<T, TMember> Attribute<T, TMember>(
+			this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<MemberFormatExtension>()
 			     .Registered.Add(((ISource<MemberInfo>)@this).Get());
@@ -77,7 +79,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> write) =>
 			Alter(@this, Self<T>.Default.Get, write);
 
-		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read, Func<T, T> write)
+		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, Func<T, T> read,
+		                                             Func<T, T> write)
 			=> @this.Alter(new DelegatedAlteration<T>(read), new DelegatedAlteration<T>(write));
 
 		public static ITypeConfiguration<T> Alter<T>(this ITypeConfiguration<T> @this, IAlteration<T> read,
@@ -167,7 +170,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return @this;
 		}
 
-		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(this IMemberConfiguration<T, TMember> @this)
+		public static IMemberConfiguration<T, TMember> Unregister<T, TMember>(
+			this IMemberConfiguration<T, TMember> @this)
 		{
 			@this.Root.With<CustomSerializationExtension>()
 			     .Members.Remove(((ISource<MemberInfo>)@this).Get());
@@ -180,8 +184,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			     .Registered.Remove(((ISource<MemberInfo>)@this).Get());
 			return @this;
 		}
-
-
 
 		public static ITypeConfiguration<T> AddMigration<T>(this ITypeConfiguration<T> @this,
 		                                                    ICommand<XElement> migration)
@@ -222,7 +224,8 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IConfigurationContainer InspectingType<T>(this IConfigurationContainer @this)
 			=> @this.InspectingTypes(typeof(T).Yield());
 
-		public static IConfigurationContainer InspectingTypes(this IConfigurationContainer @this, IEnumerable<Type> types)
+		public static IConfigurationContainer InspectingTypes(this IConfigurationContainer @this,
+		                                                      IEnumerable<Type> types)
 			=> @this.Extend(new ClassicIdentificationExtension(types.YieldMetadata()
 			                                                        .ToList()));
 
@@ -298,10 +301,69 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			=> @this.Deserialize(factory.Get(reader))
 			        .AsValid<T>();
 
-		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this, params Type[] types)
-			=> EnableImplicitTyping(@this, types.AsEnumerable());
+		/// <summary>
+		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, string data)
+			where T : class
+			=> @this.Deserialize(existing, CloseRead, data);
 
-		public static IConfigurationContainer EnableImplicitTypingFromPublicNested<T>(this IConfigurationContainer @this) =>
+		/// <summary>
+		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="settings"></param>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
+		                               string data)
+			where T : class
+			=> @this.Deserialize(existing, settings, new MemoryStream(Encoding.UTF8.GetBytes(data)));
+
+		/// <summary>
+		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="stream"></param>
+		/// <returns></returns>
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, Stream stream)
+			where T : class
+			=> @this.Deserialize(existing, Defaults.ReaderSettings, stream);
+
+		/// <summary>
+		/// Call AllowExistingInstances when creating ConfigurationContainer to use this method.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="this"></param>
+		/// <param name="existing"></param>
+		/// <param name="settings"></param>
+		/// <param name="stream"></param>
+		/// <returns></returns>
+		public static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, XmlReaderSettings settings,
+		                               Stream stream)
+			where T : class
+			=> @this.Deserialize(existing, new XmlReaderFactory(settings, settings.NameTable.Context()), stream);
+
+		static T Deserialize<T>(this IExtendedXmlSerializer @this, T existing, IXmlReaderFactory factory, Stream stream)
+			where T : class
+			=> (T)InstanceReaders.Default.Get(@this)
+			                     .Get(new Existing(factory.Get(stream), existing));
+
+		public static IConfigurationContainer EnableImplicitTyping(this IConfigurationContainer @this,
+		                                                           params Type[] types)
+			=> @this.EnableImplicitTyping(types.AsEnumerable());
+
+		public static IConfigurationContainer EnableImplicitTypingFromPublicNested<T>(
+			this IConfigurationContainer @this) =>
 			@this.EnableImplicitTyping(new PublicNestedTypes<T>());
 
 		public static IConfigurationContainer EnableImplicitTypingFromNested<T>(this IConfigurationContainer @this) =>
@@ -313,8 +375,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		public static IConfigurationContainer EnableImplicitTypingFromPublic<T>(this IConfigurationContainer @this) =>
 			@this.EnableImplicitTyping(new PublicAssemblyTypes<T>());
 
-		public static IConfigurationContainer EnableImplicitTypingFromNamespace<T>(this IConfigurationContainer @this) =>
-			@this.EnableImplicitTyping(new AllTypesInSameNamespace<T>());
+		public static IConfigurationContainer EnableImplicitTypingFromNamespace<T>(this IConfigurationContainer @this)
+			=>
+				@this.EnableImplicitTyping(new AllTypesInSameNamespace<T>());
 
 		public static IConfigurationContainer
 			EnableImplicitTypingFromNamespacePublic<T>(this IConfigurationContainer @this) =>
@@ -330,6 +393,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		sealed class CloseSettings : IAlteration<XmlWriterSettings>, IAlteration<XmlReaderSettings>
 		{
 			public static CloseSettings Default { get; } = new CloseSettings();
+
 			CloseSettings() {}
 
 			public XmlWriterSettings Get(XmlWriterSettings parameter)
