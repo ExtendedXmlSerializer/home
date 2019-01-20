@@ -35,9 +35,9 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
 	public sealed class XmlSerializationExtension : ISerializerExtension
 	{
+		readonly XmlNameTable      _names;
 		readonly XmlReaderSettings _reader;
 		readonly XmlWriterSettings _writer;
-		readonly XmlNameTable _names;
 
 		public XmlSerializationExtension()
 			: this(Defaults.ReaderSettings, Defaults.WriterSettings, new NameTable()) {}
@@ -46,7 +46,7 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		{
 			_reader = reader;
 			_writer = writer;
-			_names = names;
+			_names  = names;
 		}
 
 		public IServiceRepository Get(IServiceRepository parameter)
@@ -55,12 +55,15 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			            .RegisterInstance(_reader.Clone())
 			            .RegisterInstance(_writer.Clone())
 			            .RegisterInstance<IIdentifierFormatter>(IdentifierFormatter.Default)
+			            .RegisterInstance<IPrefixes>(Prefixes.Default)
 			            .RegisterInstance<IReaderFormatter>(ReaderFormatter.Default)
 			            .RegisterInstance<IFormattedContentSpecification>(FormattedContentSpecification.Default)
 			            .RegisterInstance<IListContentsSpecification>(
 			                                                          new ListContentsSpecification(
-			                                                                                        IsTypeSpecification<
-					                                                                                        IListInnerContent>
+			                                                                                        IsTypeSpecification
+				                                                                                        <
+					                                                                                        IListInnerContent
+				                                                                                        >
 				                                                                                        .Default
 				                                                                                        .And(ElementSpecification
 					                                                                                             .Default)))

@@ -21,37 +21,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Reflection;
+using System.Xml;
+using ExtendedXmlSerializer.Core.Specifications;
+using ExtendedXmlSerializer.ReflectionModel;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
+	sealed class Prefixes : IPrefixes
 	{
-		readonly static Aliases              Aliases = Aliases.Default;
-		readonly        IIdentifierFormatter _formatter;
-		readonly        ITypePartResolver    _parts;
-		readonly        IPrefixes            _prefixes;
-		readonly        IIdentityStore       _store;
+		public static Prefixes Default { get; } = new Prefixes();
 
-		readonly IAliases _table;
+		Prefixes() : this(IsTypeSpecification<XmlTextWriter>.Default) {}
 
-		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-		                     IPrefixes prefixes)
-			: this(Aliases, formatter, store, parts, prefixes) {}
+		readonly ISpecification<System.Xml.XmlWriter> _specification;
 
-		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
-		                     ITypePartResolver parts, IPrefixes prefixes)
+		public Prefixes(ISpecification<System.Xml.XmlWriter> specification)
+			=> _specification = specification;
+
+		public IPrefix Get(System.Xml.XmlWriter parameter)
 		{
-			_table     = table;
-			_formatter = formatter;
-			_store     = store;
-			_parts     = parts;
-			_prefixes  = prefixes;
+			var prefix = new DefaultPrefix(parameter);
+			var result = _specification.IsSatisfiedBy(parameter) ? new Prefix(prefix) : (IPrefix)prefix;
+			return result;
 		}
-
-		public IFormatWriter Get(System.Xml.XmlWriter parameter)
-			=> new XmlWriter(_table, _formatter, _store, _parts, _prefixes.Get(parameter), parameter);
 	}
 }

@@ -21,37 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-using ExtendedXmlSerializer.ContentModel.Format;
-using ExtendedXmlSerializer.ContentModel.Identification;
-using ExtendedXmlSerializer.ContentModel.Reflection;
-
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
-	sealed class FormatWriters : IFormatWriters<System.Xml.XmlWriter>
+	sealed class DefaultPrefix : IPrefix
 	{
-		readonly static Aliases              Aliases = Aliases.Default;
-		readonly        IIdentifierFormatter _formatter;
-		readonly        ITypePartResolver    _parts;
-		readonly        IPrefixes            _prefixes;
-		readonly        IIdentityStore       _store;
+		readonly System.Xml.XmlWriter _writer;
 
-		readonly IAliases _table;
+		public DefaultPrefix(System.Xml.XmlWriter writer) => _writer = writer;
 
-		public FormatWriters(IIdentifierFormatter formatter, IIdentityStore store, ITypePartResolver parts,
-		                     IPrefixes prefixes)
-			: this(Aliases, formatter, store, parts, prefixes) {}
-
-		public FormatWriters(IAliases table, IIdentifierFormatter formatter, IIdentityStore store,
-		                     ITypePartResolver parts, IPrefixes prefixes)
-		{
-			_table     = table;
-			_formatter = formatter;
-			_store     = store;
-			_parts     = parts;
-			_prefixes  = prefixes;
-		}
-
-		public IFormatWriter Get(System.Xml.XmlWriter parameter)
-			=> new XmlWriter(_table, _formatter, _store, _parts, _prefixes.Get(parameter), parameter);
+		public string Get(string parameter) => _writer.LookupPrefix(parameter ?? string.Empty);
 	}
 }

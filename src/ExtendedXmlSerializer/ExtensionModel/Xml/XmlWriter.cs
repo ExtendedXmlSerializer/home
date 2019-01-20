@@ -21,6 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
+using System.Xml.Linq;
 using ExtendedXmlSerializer.ContentModel.Content;
 using ExtendedXmlSerializer.ContentModel.Conversion;
 using ExtendedXmlSerializer.ContentModel.Format;
@@ -28,12 +34,6 @@ using ExtendedXmlSerializer.ContentModel.Identification;
 using ExtendedXmlSerializer.ContentModel.Properties;
 using ExtendedXmlSerializer.ContentModel.Reflection;
 using ExtendedXmlSerializer.Core;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
 
 namespace ExtendedXmlSerializer.ExtensionModel.Xml
 {
@@ -42,28 +42,29 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 		readonly static string    Xmlns            = XNamespace.Xmlns.NamespaceName;
 		readonly static Delimiter DefaultSeparator = DefaultClrDelimiters.Default.Separator;
 
-		readonly IAliases             _aliases;
-		readonly IIdentifierFormatter _formatter;
-		readonly IIdentityStore       _store;
-		readonly ITypePartResolver    _parts;
-
-		readonly System.Xml.XmlWriter       _writer;
-		readonly Delimiter                  _separator;
+		readonly IAliases                   _aliases;
+		readonly IIdentifierFormatter       _formatter;
+		readonly ITypePartResolver          _parts;
+		readonly IPrefix                    _prefixes;
 		readonly Func<TypeParts, TypeParts> _selector;
+		readonly Delimiter                  _separator;
+		readonly IIdentityStore             _store;
+
+		readonly System.Xml.XmlWriter _writer;
 
 		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store,
-		                 ITypePartResolver parts,
-		                 System.Xml.XmlWriter writer)
-			: this(aliases, formatter, store, parts, writer, DefaultSeparator) {}
+		                 ITypePartResolver parts, IPrefix prefixes, System.Xml.XmlWriter writer)
+			: this(aliases, formatter, store, parts, prefixes, writer, DefaultSeparator) {}
 
 		public XmlWriter(IAliases aliases, IIdentifierFormatter formatter, IIdentityStore store,
-		                 ITypePartResolver parts,
+		                 ITypePartResolver parts, IPrefix prefixes,
 		                 System.Xml.XmlWriter writer, Delimiter separator)
 		{
 			_aliases   = aliases;
 			_formatter = formatter;
 			_store     = store;
 			_parts     = parts;
+			_prefixes  = prefixes;
 			_writer    = writer;
 			_separator = separator;
 			_selector  = Get;
@@ -120,11 +121,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			}
 		}
 
+		public string Get(MemberInfo parameter)
+			=> parameter is TypeInfo info
+				   ? GetType(info)
+				   : string.Concat(GetType(parameter.ReflectedType.GetTypeInfo()), _separator, parameter.Name);
+
+		public IIdentity Get(string name, string identifier) => _store.Get(name, Prefix(identifier));
+
+		public void Dispose()
+		{
+			_writer.Dispose();
+			Clear();
+		}
+
 		string Prefix(string parameter) => Lookup(parameter) ?? CreatePrefix(parameter);
 
 		string Lookup(string parameter)
 		{
-			var lookup = _writer.LookupPrefix(parameter ?? string.Empty);
+			var lookup = _prefixes.Get(parameter);
 			if (parameter != null && lookup == string.Empty && !ContainsKey(string.Empty))
 			{
 				Add(string.Empty, parameter);
@@ -153,11 +167,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 			return result;
 		}
 
-		public string Get(MemberInfo parameter)
-			=> parameter is TypeInfo info
-				   ? GetType(info)
-				   : string.Concat(GetType(parameter.ReflectedType.GetTypeInfo()), _separator, parameter.Name);
-
 		string GetType(TypeInfo parameter)
 		{
 			var typeParts = _parts.Get(parameter);
@@ -175,14 +184,6 @@ namespace ExtendedXmlSerializer.ExtensionModel.Xml
 				                                      .ToImmutableArray
 				                           : (Func<ImmutableArray<TypeParts>>)null, parameter.Dimensions);
 			return result;
-		}
-
-		public IIdentity Get(string name, string identifier) => _store.Get(name, Prefix(identifier));
-
-		public void Dispose()
-		{
-			_writer.Dispose();
-			Clear();
 		}
 	}
 }
