@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
@@ -75,6 +75,24 @@ namespace ExtendedXmlSerializer.ExtensionModel.Content
 		{
 			@this.Root.Find<AllowedMemberValuesExtension>()
 			     .Instances[@this.GetMember()] = new DelegatedSpecification<T>(specification).AdaptForNull();
+			return @this;
+		}
+
+		public static IMemberConfiguration<T> EmitWhen<T>(this IMemberConfiguration<T> @this,
+			Func<object, bool> specification)
+		{
+			@this.Root.Find<AllowedMemberValuesExtension>()
+					.Specifications[@this.GetMember()] =
+				new AllowedValueSpecification(new DelegatedSpecification<object>(specification).AdaptForNull());
+			return @this;
+		}
+
+		public static IMemberConfiguration<T> EmitWhenInstance<T>(
+			this IMemberConfiguration<T> @this,
+			Func<T, bool> specification)
+		{
+			@this.Root.Find<AllowedMemberValuesExtension>()
+				.Instances[@this.GetMember()] = new DelegatedSpecification<T>(specification).AdaptForNull();
 			return @this;
 		}
 

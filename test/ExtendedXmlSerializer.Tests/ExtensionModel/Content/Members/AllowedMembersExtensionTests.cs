@@ -1,4 +1,4 @@
-﻿// MIT License
+// MIT License
 //
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
@@ -86,6 +86,23 @@ namespace ExtendedXmlSerializer.Tests.ExtensionModel.Content.Members
 			var actual = support.Cycle(instance);
 			Assert.NotEqual(instance.Property1, actual.Property1);
 			Assert.Equal(instance.Property2, actual.Property2);
+			Assert.Equal(instance.Property3, actual.Property3);
+		}
+
+		[Fact]
+		public void MemberInfoConfiguration()
+		{
+			var container = new ConfigurationContainer();
+			var type = container.Type<Subject>();
+			var memberInfo = typeof(Subject).GetProperty(nameof(Subject.Property1));
+			type.Member(memberInfo, c => c.EmitWhen(v => (string)v == "ABC"));
+			memberInfo = typeof(Subject).GetProperty(nameof(Subject.Property2));
+			type.Member(memberInfo, c => c.EmitWhenInstance(subject => subject.Property2 == 3));
+			var support = new SerializationSupport(container);
+			var instance = new Subject { Property1 = "AB", Property2 = 1000, Property3 = DateTime.Now };
+			var actual = support.Cycle(instance);
+			Assert.NotEqual(instance.Property1, actual.Property1);
+			Assert.NotEqual(instance.Property2, actual.Property2);
 			Assert.Equal(instance.Property3, actual.Property3);
 		}
 

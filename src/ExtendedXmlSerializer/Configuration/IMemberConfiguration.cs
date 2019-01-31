@@ -28,7 +28,9 @@ using ExtendedXmlSerializer.Core.Sources;
 
 namespace ExtendedXmlSerializer.Configuration
 {
-	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration, ITypeConfiguration<T> {}
+	public interface IMemberConfiguration<T, TMember> : IMemberConfiguration<T> {}
+
+	public interface IMemberConfiguration<T> : IMemberConfiguration, ITypeConfiguration<T> {}
 
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public interface IMemberConfiguration : ITypeConfiguration, ISource<MemberInfo> {}

@@ -152,6 +152,12 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
+		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member, Action<IMemberConfiguration<T>> configure)
+		{
+				configure(((IInternalTypeConfiguration)@this).Member(member).AsValid<IMemberConfiguration<T>>());
+				return @this;
+		}
+
 		internal static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 		{
 			var metadata = @this.Get()
