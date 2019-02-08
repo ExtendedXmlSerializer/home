@@ -30,12 +30,12 @@ namespace ExtendedXmlSerializer.ContentModel.Collections
 	sealed class EnumerableWriter : IWriter<IEnumerable>
 	{
 		readonly IEnumerators _enumerator;
-		readonly IWriter _item;
+		readonly IWriter      _item;
 
 		public EnumerableWriter(IEnumerators enumerators, IWriter item)
 		{
 			_enumerator = enumerators;
-			_item = item;
+			_item       = item;
 		}
 
 		public void Write(IFormatWriter writer, IEnumerable instance)
