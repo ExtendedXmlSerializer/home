@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Xunit;
+using MemberInfo = System.Reflection.MemberInfo;
 
 namespace ExtendedXmlSerializer.Tests.Configuration
 {

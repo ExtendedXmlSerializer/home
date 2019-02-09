@@ -1,18 +1,18 @@
 // MIT License
-// 
+//
 // Copyright (c) 2016-2018 Wojciech Nagórski
 //                    Michael DeMond
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -146,11 +146,20 @@ namespace ExtendedXmlSerializer.Configuration
 			return @this;
 		}
 
-		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, MemberInfo member)
+		[Obsolete("This method has been replaced by MemberBy.")]
+		public static ITypeConfiguration<T> Member<T>(this ITypeConfiguration<T> @this, System.Reflection.MemberInfo member)
 		{
 			((IInternalTypeConfiguration)@this).Member(member);
 			return @this;
 		}
+
+		public static IMemberConfiguration MemberBy<T>(this ITypeConfiguration<T> @this, System.Reflection.MemberInfo member)
+			=> ((IInternalTypeConfiguration)@this).Member(member);
+
+		public static IMemberConfiguration<T, TMember> MemberBy<T, TMember>(this ITypeConfiguration<T> @this, MemberInfo<TMember> member)
+			=> @this.MemberBy(member.Get()).AsValid<MemberConfiguration<T, TMember>>();
+
+		public static MemberInfo<T> As<T>(this MemberInfo @this) => new MemberInfo<T>(@this);
 
 		internal static IMemberConfiguration Member(this ITypeConfiguration @this, string member)
 		{
@@ -203,7 +212,7 @@ namespace ExtendedXmlSerializer.Configuration
 			     .EnableReferences()
 			     .With<ReferencesExtension>()
 			     .Assign(@this.Parent.AsValid<ITypeConfigurationContext>()
-			                  .Get(), ((ISource<MemberInfo>)@this).Get());
+			                  .Get(), ((ISource<System.Reflection.MemberInfo>)@this).Get());
 			return @this;
 		}
 
